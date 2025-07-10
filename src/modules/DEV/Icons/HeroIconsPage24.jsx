@@ -38,7 +38,23 @@ const HeroIconsPage24 = () => {
   return (
     <div style={{background: 'white'}}>
       <h1>Hero Icons 24 {type === "solid"? "solid" : 'outline'} <NavLink to="/dev/icons/antdicons"><AtSymbolIcon width={'32px'} /></NavLink></h1>
-      <h3>How to use:</h3>
+              <h3>
+                  <div className={'sa-flex-space sa-flex-gap'}>
+                      <div></div>
+                      <div>
+                          <NavLink to={'/dev/icons/customicons'} >
+                              <Button variant="link" color="primary" size='large' >Custom</Button>
+                          </NavLink>
+                          <NavLink to={'/dev/icons/antdicons'} >
+                              <Button variant="link" color="primary" size='large'>ANTD</Button>
+                          </NavLink>
+                          <NavLink to={'/dev/icons/heroicons24'} >
+                              <Button variant="link" color="danger" size='large'>Hero24</Button>
+                          </NavLink>
+                      </div>
+                      <div></div>
+                  </div>
+                  </h3>
       {/* <p style={{background: '#e3e3e3', padding: '12px', fontFamily: 'monospace', fontSize: '1.3em'}}>{`
         <Icon style={{ width: 48, height: 48 }} />FaceSmileIcon</Icon>
       `}</p> */}

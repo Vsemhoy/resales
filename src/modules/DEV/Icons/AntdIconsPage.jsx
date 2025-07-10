@@ -47,6 +47,23 @@ const allIcons = Object.entries(AntdIcons).filter(([name, Icon]) =>
   return (
     <div style={{background: 'white'}}>
       <h1>Ant Design Icons ({type}) <NavLink to="/dev/icons/heroicons24"><AntdIcons.AmazonOutlined></AntdIcons.AmazonOutlined></NavLink></h1>
+        <h3>
+            <div className={'sa-flex-space sa-flex-gap'}>
+                <div></div>
+                <div>
+                    <NavLink to={'/dev/icons/customicons'} >
+                        <Button variant="link" color="primary" size='large' >Custom</Button>
+                    </NavLink>
+                    <NavLink to={'/dev/icons/antdicons'} >
+                        <Button variant="link" color="danger" size='large'>ANTD</Button>
+                    </NavLink>
+                    <NavLink to={'/dev/icons/heroicons24'} >
+                        <Button variant="link" color="primary" size='large'>Hero24</Button>
+                    </NavLink>
+                </div>
+                <div></div>
+            </div>
+          </h3>
       <Affix offsetTop={0}>
         <div
           style={{

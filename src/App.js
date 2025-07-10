@@ -27,6 +27,8 @@ import OffersOutlet from './modules/ORG_PAGE/outlets/OffersOutlet';
 import MeetingOutlet from './modules/ORG_PAGE/outlets/MeetingsOutlet';
 import NoteOutlet from './modules/ORG_PAGE/outlets/NoteOutlets';
 import HistoryOutlet from './modules/ORG_PAGE/outlets/HistoryOutlet';
+import MyIcon from './modules/DEV/Icons/MyIcon';
+import CustomIconPage from './modules/DEV/Icons/CustomIconsPage';
 
 function App() {
   const [userdata, setUserdata] = useState([]);
@@ -37,6 +39,8 @@ function App() {
 
         <TopMenu userdata={userdata} />
       
+      {/* <MyIcon /> */}
+
         <div>
           <Routes>
 
@@ -57,6 +61,10 @@ function App() {
 
             <Route path={BASE_ROUTE + '/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
             <Route path={'/dev/icons/heroicons24'} element={<HeroIconsPage userdata={0}/>} />
+
+            
+            <Route path={BASE_ROUTE + '/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
+            <Route path={'/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
 
           </Routes>
         </div>
