@@ -1,0 +1,26 @@
+
+.sa-orgpage-header {
+    background-color: var(--section-header-color);
+    width: 100%;
+}
+.sa-orgpage-body {
+    width: 100%;
+}
+
+.sa-orp-menu {
+    display: flex;
+    grid-gap: 3px;
+    font-weight: 500;
+}
+
+.sa-orp-menu > * {
+    text-decoration: none !important;
+    color: var(--table-text-color);
+}
+.sa-orp-menu > *.active {
+    color: var(--current-color) !important;
+}
+.sa-orp-menu-button {
+    padding: 3px 6px;
+    
+}
