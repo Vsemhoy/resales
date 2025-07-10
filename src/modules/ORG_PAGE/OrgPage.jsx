@@ -10,7 +10,7 @@ import Sider from 'antd/es/layout/Sider';
     const tabNames = [{ link: 'main', name: "Основная информация"},
         { link: 'bills', name: "Счета"},
         { link: 'offers', name: "КП"},
-        { link: 'notes', name: "Встречи/Звонки"},
+        { link: 'meetings', name: "Встречи/Звонки"},
         { link: 'notes', name: "Заметки"},
         { link: 'history', name: "История"}];
 
