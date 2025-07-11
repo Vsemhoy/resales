@@ -27,6 +27,9 @@ const TopMenu = (props) => {
             <NavLink to="/dev/icons/antdicons" >
                 <div className={'sa-topmenu-button'} >DEV</div>
             </NavLink>
+            <NavLink to="/curator/exmonitor" >
+                <div className={'sa-topmenu-button'} >Exmo</div>
+            </NavLink>
         </div>
         
     </div>

@@ -17,7 +17,7 @@
     text-decoration: none !important;
     color: var(--table-text-color);
 }
-.sa-orp-menu > *.active {
+.sa-orp-menu > *.active:not(.not-active) {
     color: var(--current-color) !important;
 }
 .sa-orp-menu-button {

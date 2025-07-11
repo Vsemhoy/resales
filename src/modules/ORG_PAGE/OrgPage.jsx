@@ -7,7 +7,8 @@ import { Button, DatePicker, Input, Layout, Pagination, Select } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 
-    const tabNames = [{ link: 'main', name: "Основная информация"},
+    const tabNames = [{ 
+          link: '', name: "Основная информация"},
         { link: 'bills', name: "Счета"},
         { link: 'offers', name: "КП"},
         { link: 'meetings', name: "Встречи/Звонки"},
@@ -32,14 +33,7 @@ const OrgPage = (props) => {
     const [test, setTest] = useState('hello');
 
 
-    /**
-     * Возврат на вкладку main, если её нет
-     */
-    useEffect(() => {
-        if (location.pathname == '/orgs/' + item_id){
-            navigate('/orgs/' + item_id + '/main');
-        }
-    }, [location.pathname]);
+
 
 
 
@@ -97,11 +91,21 @@ const OrgPage = (props) => {
                 <div>Паспорт организации</div>
                 <div className={'sa-orp-menu'}>
                     {tabNames.map((tab)=>(
+                        tab.link !== "" ? (
+
                         <NavLink to={`/orgs/${itemId}/${tab.link}`}>
                         <div className={'sa-orp-menu-button'}>
                             {tab.name}
                         </div>
                         </NavLink>
+                        ) : (
+                            // Эта проверка, чтобы пункт меню, который логически является родителем для соседних не подсвечивался
+                        <NavLink to={`/orgs/${itemId}`} className={`${location.pathname.endsWith(itemId) ? '' : 'not-active'}`}>
+                            <div className={'sa-orp-menu-button'}>
+                                {tab.name}
+                            </div>
+                        </NavLink>
+                        )
 
                     ))}
                 </div>

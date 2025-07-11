@@ -51,7 +51,7 @@
 
 .app-page {
     display: flex;
-
+flex-direction: column;
 }
 .ts-toolbar {
     display: flex;
@@ -525,4 +525,8 @@ font-size: smaller;
 
 .sa-outlet-body {
     min-height: 80vh;
+}
+
+.sa-table-box {
+    background-color: var(--table-background-color);
 }
