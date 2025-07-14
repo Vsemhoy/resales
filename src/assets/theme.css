@@ -31,22 +31,26 @@
     --icon-color-std: #767b82;
     --icon-color-std-hover: #4a4c50;
 
-    --column-divider-color: #00000038;
-
+    
     --table-depart-color: #84bdd3;
     --table-user-color: #c3d7df78;
     --table-sub-sub-accent-color: #ffe00738;
-
-
-
-
+    
+    
+    
+    
+    --column-divider-color: #00000036;
 
     --table-background-color: #ffffff;
-    --table-second-row-color: #f7f7f7;
+    --table-second-row-color: #00000011;
+    --table-hovered-row-color: #458db127;
+    --table-header-row-color: #dde9f1;
     --table-header-color: #e6edf5;
     --table-row-active-color: #fda26b;
 
-    --table-text-color: #3b6784;
+    --row-active-color: #1e88e5;
+
+    --table-text-color: #7299c1;
     
     --button-color: #7399bd;
 
@@ -68,8 +72,11 @@
 
 .App {
     min-height: 100vh;
-    background: #7681a3;
-background: linear-gradient(355deg,rgba(118, 129, 163, 0.5) 0%, rgba(141, 194, 235, 0.5) 54%, rgba(213, 232, 247, 0.5) 100%);
+    background: #b4cbe4;
+}
+.App > div {
+    
+    background: linear-gradient(355deg,rgba(118, 129, 163, 0.5) 0%, rgba(141, 194, 235, 0.5) 54%, rgba(213, 232, 247, 0.5) 100%);
 }
 
 .sa-outlet-body {

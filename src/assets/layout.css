@@ -5,9 +5,9 @@
 
 .sa-flex-gap {
     display: flex;
-    grid-gap: 1rem;
+    grid-gap: 9px;
     align-items: center;
-     padding: 15px 0 10px 0px;
+     /* padding: 15px 0 10px 0px; */
 }
 .sa-flex-gap > div {
     display: flex;
@@ -343,6 +343,30 @@ font-size: smaller;
 .sa-pa-12 {
     padding: 12px;
 }
+.sa-pa-s-12 {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+.sa-pa-s-3 {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.sa-pa-tb-12 {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+.sa-pa-tb-9 {
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+.sa-pa-tb-6 {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+.sa-pa-tb-3 {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
 
 .sa-padding-bottom-3 {
  padding-bottom: 3px;
@@ -527,6 +551,3 @@ font-size: smaller;
     min-height: 80vh;
 }
 
-.sa-table-box {
-    background-color: var(--table-background-color);
-}

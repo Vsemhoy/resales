@@ -1,0 +1,19 @@
+.sa-currency-monitor-bar {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: auto auto;
+    column-gap: 12px;
+    font-size: small;
+}
+
+.sa-cura-cb {
+    opacity: 0.7;
+}
+.sa-currency-monitor-bar span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--menu-button-active-color);
+}
+.sa-cura-loc {
+    /* background-color: rgb(255, 145, 0); */
+}

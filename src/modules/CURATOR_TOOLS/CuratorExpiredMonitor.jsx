@@ -78,7 +78,7 @@ const CuratorExpiredMonitor = (props) => {
             <Pagination />
           </div>
           <div className={'sa-pagination-panel sa-pa-12'}></div>
-          <div className={'sa-table-box sa-pa-12'}>
+          <div className={'sa-table-box'}>
             <div className={'sa-table-box-header'}>
               <div className={'sa-table-box-stm sa-table-box-row'}>
                 <div className={'sa-table-box-cell'}>

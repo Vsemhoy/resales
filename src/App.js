@@ -18,6 +18,7 @@ import { ApiOutlined } from '@ant-design/icons';
 
 import './assets/theme.css';
 import './assets/layout.css';
+import './assets/table.css';
 import OrgPage from './modules/ORG_PAGE/OrgPage';
 import { useState } from 'react';
 import TopMenu from './components/template/topmenu/TopMenu';
