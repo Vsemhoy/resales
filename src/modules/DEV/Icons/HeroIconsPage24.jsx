@@ -54,7 +54,7 @@ const HeroIconsPage24 = () => {
                       </div>
                       <div></div>
                   </div>
-                  </h3>
+                </h3>
       {/* <p style={{background: '#e3e3e3', padding: '12px', fontFamily: 'monospace', fontSize: '1.3em'}}>{`
         <Icon style={{ width: 48, height: 48 }} />FaceSmileIcon</Icon>
       `}</p> */}
