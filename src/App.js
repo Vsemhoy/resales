@@ -7,7 +7,7 @@ import { BellSlashIcon } from '@heroicons/react/24/solid';
 import { GiftTopIcon } from '@heroicons/react/16/solid';
 import HeroIconsPage from './modules/DEV/Icons/HeroIconsPage';
 
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { BASE_NAME, BASE_ROUTE } from './config/config';
 import HeroIconsPage24 from './modules/DEV/Icons/HeroIconsPage24';
 
@@ -37,6 +37,7 @@ import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor
 
 function App() {
   const [userdata, setUserdata] = useState([]);
+  
 
   return (
     <div className="App">
@@ -48,6 +49,10 @@ function App() {
 
         <div>
           <Routes>
+
+                    {/* Редирект с корня на /orgs */}
+            <Route path="/" element={<Navigate to="/orgs" replace />} />
+            <Route path={BASE_ROUTE + "/"} element={<Navigate to="/orgs" replace />} />
 
             <Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata}/>} />
             <Route path={'/orgs'} element={<OrgListPage userdata={userdata}/>} />
@@ -86,7 +91,7 @@ function App() {
             <Route path={'/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
 
             <Route path={BASE_ROUTE + '/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
-            <Route path={'/dev/icons/heroicons24'} element={<HeroIconsPage userdata={0}/>} />
+            <Route path={'/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
 
             
             <Route path={BASE_ROUTE + '/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />

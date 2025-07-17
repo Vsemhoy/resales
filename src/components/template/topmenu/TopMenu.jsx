@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import './style/topmenu.css';
 import { NavLink, useLocation } from 'react-router-dom';
-import { BASE_ROUTE } from '../../../config/config';
+import { BASE_ROUTE, HTTP_HOST } from '../../../config/config';
 import { HomeFilled } from '@ant-design/icons';
 
 
@@ -12,7 +12,7 @@ const TopMenu = (props) => {
   return (
     <div className='sa-top-menu'>
         <div className={'sa-top-menu-buttons'}>
-            <NavLink to={BASE_ROUTE}>
+            <NavLink to={HTTP_HOST}>
                 <div className={'sa-topmenu-button'} ><HomeFilled /></div>
             </NavLink>
             <NavLink to="/orgs" >

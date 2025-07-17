@@ -113,7 +113,7 @@ const OrgPage = (props) => {
         </div>
 
         <div className={'sa-outlet-body'}>
-            
+            <h1>Паспорт организации</h1>
             <Outlet  />
 
             <Input value={test} onChange={(ev)=>{setTest(ev.target.value)}} ></Input>

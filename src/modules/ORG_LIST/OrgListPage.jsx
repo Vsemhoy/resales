@@ -11,6 +11,7 @@ import { CaretDownFilled, CaretUpFilled, CloseOutlined, CloseSquareOutlined, Fil
 import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import OrgListRow from './components/OrgListRow';
+import OrgListPreviewModal from './components/OrgListPreviewModal';
 
 const OrgListPage = (props) => {
   const { userdata } = props;
@@ -22,6 +23,9 @@ const OrgListPage = (props) => {
 
   const [baseOrgs, setBaseOrgs] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0]);
 
+
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewItem, setPreviewItem] = useState(null);
 
 
   useEffect(() => {
@@ -64,6 +68,12 @@ const OrgListPage = (props) => {
 
   }
 
+  const handlePreviewOpen = (item, state) => {
+    console.log('HEllo');
+    setPreviewItem(item);
+    setIsPreviewOpen(true);
+  }
+
   return (
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
       <div className={'sa-control-panel sa-flex-space sa-pa-12'}>
@@ -88,12 +98,12 @@ const OrgListPage = (props) => {
           </Button.Group>
         </div>
         <div>
-          <Button color='default' variant='solid'>Solid</Button>
+          {/* <Button color='default' variant='solid'>Solid</Button>
           <Button color='default' variant='outlined'>Outlined</Button>
           <Button color='default' variant='dashed'>Dashed</Button>
           <Button color='default' variant='filled'>Filled</Button>
           <Button color='default' variant='text'>Text</Button>
-          <Button color='default' variant='link'>Link</Button>
+          <Button color='default' variant='link'>Link</Button> */}
         </div>
         <div>
           <CurrencyMonitorBar />
@@ -242,6 +252,9 @@ const OrgListPage = (props) => {
             <div className={'sa-table-box-stack'}>
               {baseOrgs.map((borg, index) => (
                 <OrgListRow
+                data={borg}
+                  is_active={isPreviewOpen && previewItem === borg}
+                  on_double_click={handlePreviewOpen}
                   key={index}
                  />
               ))}
@@ -269,7 +282,13 @@ const OrgListPage = (props) => {
           </div>
           </div>
         </Content>
+
       </Layout>
+          <OrgListPreviewModal
+            is_open={isPreviewOpen}
+            data={previewItem}
+            on_close={()=>{setIsPreviewOpen(false)}}
+            />
     </div>
   );
 };

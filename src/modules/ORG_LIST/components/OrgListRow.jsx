@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 const OrgListRow = (props) => {
 
+  const [active, setActive] = useState(false);
   const menu = (
     <Menu>
       <Menu.Item key="1">Запросить кураторство</Menu.Item>
@@ -15,25 +16,47 @@ const OrgListRow = (props) => {
     </Menu>
   );
 
+  const [data, setData] = useState(props.data);
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+
+  useEffect(() => {
+    setActive(props.is_active);
+  }, [props.is_active]);
+
+  const handleDoubleClick = () => {
+    if (props.on_double_click){
+      props.on_double_click(data);
+    }
+  }
+
   return (
     <Dropdown overlay={menu} trigger={['contextMenu']}>
-      <div className={'sa-table-box-orgs sa-table-box-row'} key={props.key}
+      <div className={`sa-table-box-orgs sa-table-box-row ${active ? 'active':''}`} key={props.key}
         style={{ color:'#ff8700'}}
+        onDoubleClick={handleDoubleClick}
       >
         <div className={'sa-table-box-cell'}
         // style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
         >
-        <NavLink to={'/orgs/4234'}>
         <div
         
-        >35667</div>
+        >
+        <NavLink to={'/orgs/4234'}>
+          35667
         </NavLink>
+          </div>
         </div>
         <div className={'sa-table-box-cell'}
         >
+        <div>
         <NavLink to={'/orgs/4234'}>
-        <div>Название / второе название</div>
+          Название / второе название
         </NavLink>
+          </div>
         </div>
         <div className={'sa-table-box-cell'}>
         <div>Дата отвязки</div>

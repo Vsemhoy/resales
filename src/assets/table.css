@@ -8,7 +8,11 @@
     height: 100% !important;
     color: rgb(30, 30, 30);
 }
-.sa-table-box-row > div > a:hover {
+.sa-table-box-row > div  a {
+    color: rgb(30, 30, 30);
+
+}
+.sa-table-box-row > div  a:hover {
     color: rgb(255, 89, 0);
     text-shadow: 0px 0px 5px white;
 }
@@ -18,7 +22,10 @@
     background-color: var(--table-hovered-row-color);
 }
 .ant-dropdown-open.sa-table-box-row > div > div,
-.ant-dropdown-open.sa-table-box-row > div > a > div {
+.ant-dropdown-open.sa-table-box-row > div> div > a, 
+.sa-table-box-row.active > div > div ,
+.sa-table-box-row.active > div > div > a
+  {
     background-color: var(--row-active-color);
     color: white !important;
 }
