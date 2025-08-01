@@ -29,6 +29,22 @@ import TrashbinMorningRuleIcon from '../../../assets/Comicon/Rule/TrashbinMornin
 import TrashbinEveningRuleIcon from '../../../assets/Comicon/Rule/TrashbinEveningRuleIcon';
 import PiggyBankRuleIcon from '../../../assets/Comicon/Rule/PiggyBankRuleIcon';
 import LockRuleIcon from '../../../assets/Comicon/Rule/LockRuleIcon';
+import LogoRondo from '../../../assets/Comicon/Logos/LogoRondo';
+import LogoArstel from '../../../assets/Comicon/Logos/LogoArstel';
+import StateSickleaveIcon from '../../../assets/Comicon/States/StateSickleaveIcon';
+import StateLongVacationIcon from '../../../assets/Comicon/States/StateLongVacationIcon';
+import StateContainerIcon from '../../../assets/Comicon/States/StateContainerIcon';
+import StateWarehouseIcon from '../../../assets/Comicon/States/StateWarehouseIcon';
+import StateTrainIcon from '../../../assets/Comicon/States/StateTrainIcon';
+import StateSuitcaseIcon from '../../../assets/Comicon/States/StateSuitcaseAction';
+import StateOfficeIcon from '../../../assets/Comicon/States/StateOfficeIcon';
+import StateSofaIcon from '../../../assets/Comicon/States/StateSofaIcon';
+import StateVillageIcon from '../../../assets/Comicon/States/StateVillageIcon';
+import StateComputerIcon from '../../../assets/Comicon/States/StateComputerIcon';
+import StateWarningIcon from '../../../assets/Comicon/States/StateWarningIcon';
+import StateWaitIcon from '../../../assets/Comicon/States/StateWaitIcon';
+import StateAgreedIcon from '../../../assets/Comicon/States/StateAgreedIcon';
+import StateForbiddenIcon from '../../../assets/Comicon/States/StateForbiddenIcon';
 
 const baseIcons = [
     {name: 'ScheduleEmptyIcon', Icon: ScheduleEmptyIcon },
@@ -59,6 +75,22 @@ const baseIcons = [
     {name: 'TrashbinEveningRuleIcon', Icon: TrashbinEveningRuleIcon},
     {name: 'PiggyBankRuleIcon', Icon: PiggyBankRuleIcon},
     {name: 'LockRuleIcon', Icon: LockRuleIcon},
+    {name: 'LogoRondo', Icon: LogoRondo},
+    {name: 'LogoArstel', Icon: LogoArstel},
+    {name: 'StateSickleaveIcon', Icon: StateSickleaveIcon},
+    {name: 'StateLongVacationIcon', Icon: StateLongVacationIcon},
+    {name: 'StateContainerIcon', Icon: StateContainerIcon},
+    {name: 'StateWarehouseIcon', Icon: StateWarehouseIcon},
+    {name: 'StateTrainIcon', Icon: StateTrainIcon},
+    {name: 'StateSuitcaseIcon', Icon: StateSuitcaseIcon},
+    {name: 'StateOfficeIcon', Icon: StateOfficeIcon},
+    {name: 'StateSofaIcon', Icon: StateSofaIcon},
+    {name: 'StateVillageIcon', Icon: StateVillageIcon},
+    {name: 'StateComputerIcon', Icon: StateComputerIcon},
+    {name: 'StateWarningIcon', Icon: StateWarningIcon},
+    {name: 'StateWaitIcon', Icon: StateWaitIcon},
+    {name: 'StateAgreedIcon', Icon: StateAgreedIcon},
+    {name: 'StateForbiddenIcon', Icon: StateForbiddenIcon},
 ]
 
 const CustomIconPage = (props) => {
@@ -152,28 +184,3 @@ const CustomIconPage = (props) => {
 export default CustomIconPage;
 
 
-        {/* <p style={{background: '#e3e3e3', padding: '12px', fontFamily: 'monospace', fontSize: '1.3em'}}>{`
-            <Icon style={{ width: 48, height: 48 }} />FaceSmileIcon</Icon>
-        `}</p> */}
-        {/* <Affix offsetTop={0}>      <div style={{background: '#770000bb', color: 'white', padding: '12px', fontFamily: 'monospace', fontSize: '1.3em', backdropFilter: 'blur(20px)' }}>{`
-            import { ${selectedIcon} } from '@heroicons/react/24/${type}';
-        `}</div>
-        </Affix> */}
-
-{/* 
-        <Card>
-            <div>
-            <Input value={iconToFind} onChange={(ev)=> {setIconToFind(ev.target.value)}} allowClear style={{textAlign: 'center'}} size='large'/>
-            </div>
-            <br/>
-            <div style={{display: 'flex', gridGap: '12px', alignItems: "center", justifyContent: 'center'}}>
-            <Button
-            color="default" variant="solid"
-            onClick={()=>{setType("solid")}}
-            >Solid</Button>
-            <Button
-            color="default" variant="outlined"
-            onClick={()=>{setType("outline")}}
-            >Outlined</Button>
-            </div>
-        </Card> */}

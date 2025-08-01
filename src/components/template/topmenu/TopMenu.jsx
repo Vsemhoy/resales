@@ -4,6 +4,8 @@ import './style/topmenu.css';
 import { NavLink, useLocation } from 'react-router-dom';
 import { BASE_ROUTE, HTTP_HOST } from '../../../config/config';
 import { HomeFilled } from '@ant-design/icons';
+import LogoArstel from '../../../assets/Comicon/Logos/LogoArstel';
+import LogoRondo from '../../../assets/Comicon/Logos/LogoRondo';
 
 
 const TopMenu = (props) => {
@@ -31,6 +33,13 @@ const TopMenu = (props) => {
                 <div className={'sa-topmenu-button'} >Exmo</div>
             </NavLink>
         </div>
+
+        {/* <div>
+            <div style={{ height: '36px'}}>
+            <LogoRondo height='145px'  />
+
+            </div>
+        </div> */}
         
     </div>
   );
