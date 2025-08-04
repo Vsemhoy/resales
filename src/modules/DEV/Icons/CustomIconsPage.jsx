@@ -45,6 +45,8 @@ import StateWarningIcon from '../../../assets/Comicon/States/StateWarningIcon';
 import StateWaitIcon from '../../../assets/Comicon/States/StateWaitIcon';
 import StateAgreedIcon from '../../../assets/Comicon/States/StateAgreedIcon';
 import StateForbiddenIcon from '../../../assets/Comicon/States/StateForbiddenIcon';
+import StateTransferredIcon from '../../../assets/Comicon/States/StateTransferredIcon';
+import StateAwaitedIcon from '../../../assets/Comicon/States/StateAwaitedIcon';
 
 const baseIcons = [
     {name: 'ScheduleEmptyIcon', Icon: ScheduleEmptyIcon },
@@ -91,6 +93,8 @@ const baseIcons = [
     {name: 'StateWaitIcon', Icon: StateWaitIcon},
     {name: 'StateAgreedIcon', Icon: StateAgreedIcon},
     {name: 'StateForbiddenIcon', Icon: StateForbiddenIcon},
+    {name: 'StateTransferredIcon', Icon: StateTransferredIcon},
+    {name: 'StateAwaitedIcon', Icon: StateAwaitedIcon},
 ]
 
 const CustomIconPage = (props) => {
