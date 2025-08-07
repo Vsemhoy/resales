@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import './components/style/orglistpage.css';
 import { PRODMODE } from '../../config/config';
-import { NavLink, useParams } from 'react-router-dom';
-import { Affix, Button, DatePicker, Input, Layout, Pagination, Select } from 'antd';
+import { NavLink, useParams, useSearchParams } from 'react-router-dom';
+import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Tooltip } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { DocumentPlusIcon } from '@heroicons/react/16/solid';
@@ -12,9 +12,15 @@ import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadName
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import OrgListRow from './components/OrgListRow';
 import OrgListPreviewModal from './components/OrgListPreviewModal';
+import OrgListSiderFilter from './components/OrgListSiderFilters';
+import OrgListTable from './components/OrgListTable';
+import { RectangleStackIcon } from '@heroicons/react/24/outline';
+import { FILTERPRESETLIST } from './components/mock/ORGLISTMOCK';
 
 const OrgListPage = (props) => {
   const { userdata } = props;
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [baseCompanies, setBaseCompanies] = useState([]);
   const [companies, setCompanies] = useState([]);
   const { item_id } = useParams();
@@ -22,10 +28,20 @@ const OrgListPage = (props) => {
   const [sortOrders, setSortOrders] = useState([]);
 
   const [baseOrgs, setBaseOrgs] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0]);
+  const [total, setTotal] = useState(0);
+  const [onPage, setOnPage] = useState(30);
+  const [currrentPage, setCurrentPage] = useState(1);
 
+  const [filterBox, setFilterBox] = useState({});
+  const [orderBox, setOrderBox] = useState({});
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
+
+  const [filterPresetList, setFilterPresetList] = useState(FILTERPRESETLIST);
+
+  const showGetItem = searchParams.get('show');
+
 
 
   useEffect(() => {
@@ -33,6 +49,13 @@ const OrgListPage = (props) => {
       // TODO: логика для PRODMODE
     } else {
       // TODO: логика для dev режима
+    };
+    if (showGetItem !== null){
+      handlePreviewOpen(showGetItem);
+      setTimeout(() => {
+        
+        setShowParam(showGetItem);
+      }, 2200);
     }
   }, []);
 
@@ -69,15 +92,33 @@ const OrgListPage = (props) => {
   }
 
   const handlePreviewOpen = (item, state) => {
-    console.log('HEllo');
+    console.log('HEllo', item);
+    setShowParam(item);
     setPreviewItem(item);
     setIsPreviewOpen(true);
   }
 
+    const setShowParam = (value) => {
+      if (value !== null){
+        searchParams.set('show', value);
+        setSearchParams(searchParams);
+      } else {
+        searchParams.delete('show');
+        setSearchParams(searchParams);
+      }
+
+  };
+
+  useEffect(() => {
+    if (!isPreviewOpen){
+      setShowParam(null);
+    }
+  }, [isPreviewOpen]);
+
   return (
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
       <div className={'sa-control-panel sa-flex-space sa-pa-12'}>
-        <div className={'s'}>
+        <div className={'sa-vertical-flex'}>
           <Button.Group>
             <Button
               onClick={() => {
@@ -96,6 +137,13 @@ const OrgListPage = (props) => {
               icon={<CloseOutlined />}
               ></Button>
           </Button.Group>
+          <Dropdown menu={{items: filterPresetList}}>
+          <Button 
+            icon={ <RectangleStackIcon width={'22px'}/>}
+          >
+           
+          </Button>
+          </Dropdown>
         </div>
         <div>
           {/* <Button color='default' variant='solid'>Solid</Button>
@@ -117,7 +165,15 @@ const OrgListPage = (props) => {
           width={'300px'}
           style={{ backgroundColor: '#ffffff' }}
         >
-          <div className={'sa-sider'}>Sider</div>
+          <div className={'sa-sider'}>
+            {openedFilters && (
+            <OrgListSiderFilter
+              base_orgs={baseOrgs}
+              filter_presets={filterPresetList}
+            />
+
+            )}
+          </div>
         </Sider>
         <Content>
           <div className={'sa-pagination-panel sa-pa-12'}></div>
@@ -131,135 +187,29 @@ const OrgListPage = (props) => {
 
             </div>
             <div className={'sa-flex-gap'}>
+              <Tooltip title="Я временный куратор">
+              <Button color="default" variant={false ? "solid" : "filled"}
+                  // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
+              >Временные</Button>
+              </Tooltip>
+              <Tooltip title="Компании с моим кураторством">
               <Button color="default" variant={false ? "solid" : "filled"}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Мои компании</Button>
+              </Tooltip>
               <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
             </div>
             </div>
           </div>
 
           <div className={`${openedFilters ? "sa-pa-tb-12 sa-pa-s-3":'sa-pa-12'}`}>
-          <div className={'sa-table-box'}>
-          <Affix >
-            <div className={'sa-table-box-header'}>
-              <div className={'sa-table-box-orgs sa-table-box-row'}>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <TableHeadNameWithSort 
-                      sort_key={'id'}
-                      on_double_click={handleActivateSorter}
-                      active_sort_items={sortOrders}
-                      >
-                      id
-                      </TableHeadNameWithSort>
-                    <div className={'sa-pa-3'}>
-                      <Input type={'number'} size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <TableHeadNameWithSort 
-                      sort_key={'name'}
-                      on_double_click={handleActivateSorter}
-                      active_sort_items={sortOrders}
-                      >Название организации
-                      </TableHeadNameWithSort>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <TableHeadNameWithSort 
-                      sort_key={'town'}
-                      on_double_click={handleActivateSorter}
-                      active_sort_items={sortOrders}
-                      >Город/регион
-                      </TableHeadNameWithSort>
-                    <div className={'sa-pa-3'}>
-                      <DatePicker size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <TableHeadNameWithSort 
-                      sort_key={'comment'}
-                      on_double_click={handleActivateSorter}
-                      active_sort_items={sortOrders}
-                      >Комментарий
-                      </TableHeadNameWithSort>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Статус $</div>
-                    <div className={'sa-pa-3'}>
-                      <Select size={'small'} style={{ width: '100%' }} variant='filled' options={companies} allowClear />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Баланс</div>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Профиль</div>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Куратор</div>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Свойства</div>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Действия</div>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Affix>
-
-            <div className={'sa-table-box-stack'}>
-              {baseOrgs.map((borg, index) => (
-                <OrgListRow
-                data={borg}
-                  is_active={isPreviewOpen && previewItem === borg}
-                  on_double_click={handlePreviewOpen}
-                  key={index}
-                 />
-              ))}
-            </div>
-          </div>
+          
+          <OrgListTable 
+              companies={companies}
+              base_orgs={baseOrgs}
+              on_preview_open={handlePreviewOpen}
+              on_set_sort_orders={setOrderBox}
+          />
 
           {baseOrgs.length > 20 && (
             <div className={'sa-pagination-panel sa-pa-12'}>

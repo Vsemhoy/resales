@@ -53,24 +53,27 @@ const TableHeadNameWithSort = (props) => {
     // }, [sortOrder]);
 
     const handleChangeDirection = () => {
-        if (sortOrder !== 0){
-            if (sortOrder === 1){
-                setSortOrder(2);
-                if (props.on_double_click){
-                    props.on_double_click(key, 2);
-                }
-            } else {
-                setSortOrder(1);
-                if (props.on_double_click){
-                    props.on_double_click(key, 1);
-                }
+        if (sortOrder === 0){
+            setSortOrder(1);
+            if (props.on_sort_change){
+                props.on_sort_change(key, 1);
+            }
+        } else if (sortOrder === 1) {
+            setSortOrder(2);
+            if (props.on_sort_change){
+                props.on_sort_change(key, 2);
+            }
+        } else {
+            setSortOrder(0);
+            if (props.on_sort_change){
+                props.on_sort_change(key, 0);
             }
         }
     }
 
   return (
     <div className={'sa-pa-3 sa-table-sort-trigger'}
-        onDoubleClick={handleDblClick}
+        // onDoubleClick={handleDblClick}
     >
         <span className={`${sortOrder !== 0 ? "sa-table-sort-trigger-active" : ""}`}>
             {children}

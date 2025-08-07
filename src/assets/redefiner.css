@@ -1,0 +1,68 @@
+.not-ant-modal .ant-modal-content {
+    padding: 0px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.not-ant-modal .ant-modal-title {
+    background-color: var( --modal-head-color);
+}
+.not-ant-modal .anticon-close {
+    z-index: -1;
+    /* position: absolute; */
+}
+
+.spec-modal-title {
+    padding: 6px;
+    font-size: 14px;
+    color: var(--modal-header-text-color-hover);
+}
+.spec-modal-control {
+    display: flex;
+    
+}
+.spec-modal-control-button {
+    padding: 6px;
+    font-weight: 500;
+    /* font-family: Arial; */
+    font-size: 14px;
+    color: var(--modal-header-text-color);
+    cursor: pointer;
+}
+.spec-modal-control-button:hover:not(.active) {
+    color: var(--modal-header-text-color-hover);
+}
+.spec-modal-control-button.active {
+    color: var(--modal-header-text-color-active);
+}
+
+.spec-modal-control-button.closer,
+.spec-modal-control-button.expander {
+    /* font-size: large; */
+    font-size: 14px;
+    transition: all 0.3s;
+    /* padding: 0px 8px; */
+    width: 22px;
+    text-align: center;
+    /* height: 100%; */
+}
+.spec-modal-control-button.closer {
+    color:white;
+    background-color: var(--close-color);
+}
+.spec-modal-control-button.expander {
+    background-color:  var(--expand-color);
+}
+.spec-modal-control-button.expander:hover {
+    background-color:  var(--expand-color-hover);
+}
+.spec-modal-control-button.expander:active {
+    background-color:  var(--expand-color-active);
+}
+.spec-modal-control-button.closer:hover {
+    background-color: var(--close-color-hover);
+}
+.spec-modal-control-button.closer:active {
+    background-color: var(--close-color-active);
+
+}

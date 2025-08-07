@@ -244,6 +244,10 @@ font-size: smaller;
     display: flex;
     
 }
+.sa-vertical-flex {
+    display: flex;
+    grid-gap: 9px;
+}
 .sa-microspacer {
     padding: 6px;
 }

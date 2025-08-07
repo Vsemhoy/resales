@@ -36,6 +36,7 @@
     /* backdrop-filter: blur(36px); */
     border-top: 1px solid var(--table-background-color);
     border-bottom: 1px solid var(--table-second-row-color);
+    border-bottom: 1px solid var(--column-divider-color);
 }
 
 .sa-table-box-stack .sa-table-box-row > div > div,
@@ -88,4 +89,13 @@
 }
 .sa-table-box-orgs:hover {
     box-shadow:-10px 0px 0px -1px, 2px 0px 0px -1px;
+}
+
+.sa-table-box-header input ,
+ .sa-table-box-header .ant-picker , 
+ .sa-table-box-header .ant-select-selector {
+    outline: 1px solid var(--column-divider-color);
+}
+.sa-table-box-header .ant-picker-input input {
+    outline: none;
 }

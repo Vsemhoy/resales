@@ -44,13 +44,16 @@
     --table-background-color: #ffffff;
     --table-second-row-color: #00000011;
     --table-hovered-row-color: #458db127;
-    --table-header-row-color: #dde9f1;
+    --table-header-row-color: #ffffff;
     --table-header-color: #e6edf5;
     --table-row-active-color: #fda26b;
 
     --row-active-color: #1e88e5;
 
     --table-text-color: #7299c1;
+    --modal-header-text-color-hover: #45607b;
+    --modal-header-text-color: #3d72a7;
+    --modal-header-text-color-active: #cb531f;
     
     --button-color: #7399bd;
 
@@ -68,6 +71,18 @@
     --section-text-title-color: #a2a7ad;
     --section-second-title-color: #c1c6ca;
 
+    --modal-head-color: #c9daeb;
+
+    /* --close-color: #ff4d4f;
+    --close-color-hover: #fb282c;
+    --close-color-active: #942b2d; */
+    --close-color: #ea8f90;
+    --close-color-hover: #ed5659;
+    --close-color-active: #ff3134;
+
+    --expand-color: #27c5c230;
+    --expand-color-hover: #27c5c259;
+    --expand-color-active: #27c5c2a5;
 }
 
 .App {
@@ -82,3 +97,4 @@
 .sa-outlet-body {
     background-color: var(--row-main-bg-color);
 }
+
