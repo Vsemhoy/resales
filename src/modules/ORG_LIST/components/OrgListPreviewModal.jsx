@@ -17,7 +17,7 @@ const OrgListPreviewModal = (props) => {
         if (props.on_close){
             props.on_close();
         };
-    }
+    };
 
 
 const menuItems = [
@@ -102,7 +102,7 @@ const menuItems = [
                     <Tooltip title="Перейти в редактор">
                     <NavLink to="/orgs/234">
                     <div className={'spec-modal-control-button expander'}
-                        onClick={handleClose}
+                        // onClick={handleClose}
                     >
                         <BorderOutlined /> 
                     </div>
