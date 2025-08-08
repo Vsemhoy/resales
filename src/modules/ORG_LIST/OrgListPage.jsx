@@ -285,6 +285,8 @@ const OrgListPage = (props) => {
               current={currrentPage}
               total={total}
               onChange={setCurrentPage}
+              // showSizeChanger
+              showQuickJumper
             />
             <Button disabled
               size={'small'}
@@ -321,6 +323,7 @@ const OrgListPage = (props) => {
               base_orgs={orgList}
               on_preview_open={handlePreviewOpen}
               on_set_sort_orders={setOrderBox}
+              userdata={userdata}
           />
 
           {/* {baseOrgs.length > 20 && (

@@ -25,7 +25,7 @@ export const getBidsItems = (bids) => {
             const formattedDate = dayjs(date * 1000).format("DD.MM.YYYY");
             const Label = () => {
               return (
-                <Tooltip title={`${object && object !== 'null' && object !== ' ' ? object : ''}`}>
+                <Tooltip title={`${object && object !== 'null' && object !== ' ' ? object : ''}`} placement="left">
                     <a href={'/bids/' + key} target="_blank" rel="noopener noreferrer">
                     <div
                         style={{ fontSize: "12px" }}
