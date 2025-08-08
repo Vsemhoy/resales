@@ -59,6 +59,8 @@ const OrgListPage = (props) => {
     }
   }, []);
 
+
+
   useEffect(() => {
     if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
       setBaseCompanies(userdata.companies);
@@ -152,6 +154,7 @@ const OrgListPage = (props) => {
           <Button color='default' variant='filled'>Filled</Button>
           <Button color='default' variant='text'>Text</Button>
           <Button color='default' variant='link'>Link</Button> */}
+          Организации
         </div>
         <div>
           <CurrencyMonitorBar />
@@ -180,20 +183,29 @@ const OrgListPage = (props) => {
           <div className={'sa-pagination-panel sa-pa-12'}>
             <div className={'sa-flex-space'}>
             <div className={'sa-flex-gap'}>
-            <Pagination />
-            <Button disabled>Всего 6546</Button>
+            <Pagination
+              size={'small'}
+            />
+            <Button disabled
+              size={'small'}
+            >Всего 6546</Button>
             </div>
             <div>
 
             </div>
             <div className={'sa-flex-gap'}>
               <Tooltip title="Я временный куратор">
-              <Button color="default" variant={false ? "solid" : "filled"}
+                <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
+                    // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
+                >Свободные</Button>
+              </Tooltip>
+              <Tooltip title="Я временный куратор">
+              <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Временные</Button>
               </Tooltip>
               <Tooltip title="Компании с моим кураторством">
-              <Button color="default" variant={false ? "solid" : "filled"}
+              <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Мои компании</Button>
               </Tooltip>

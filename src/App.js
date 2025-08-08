@@ -8,7 +8,7 @@ import { GiftTopIcon } from '@heroicons/react/16/solid';
 import HeroIconsPage from './modules/DEV/Icons/HeroIconsPage';
 
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { BASE_NAME, BASE_ROUTE } from './config/config';
+import { BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE } from './config/config';
 import HeroIconsPage24 from './modules/DEV/Icons/HeroIconsPage24';
 
 import { BuildingLibraryIcon } from '@heroicons/react/24/solid';
@@ -23,7 +23,7 @@ import './assets/redefiner.css';
 import './assets/sider.css';
 
 import OrgPage from './modules/ORG_PAGE/OrgPage';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TopMenu from './components/template/topmenu/TopMenu';
 import MainTabOutlet from './modules/ORG_PAGE/outlets/MainTabPage';
 import BillsOutlet from './modules/ORG_PAGE/outlets/BillsOutlet';
@@ -37,10 +37,62 @@ import MainTabPage from './modules/ORG_PAGE/outlets/MainTabPage';
 import OrgListPage from './modules/ORG_LIST/OrgListPage';
 import BidListPage from './modules/BID_LIST/BidListPage';
 import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor';
+import { PROD_AXIOS_INSTANCE } from './config/Api';
+import { MS_USER } from './mock/MAINSTATE';
 
 function App() {
   const [userdata, setUserdata] = useState([]);
+  const [pageLoaded, setPageLoaded] = useState(false);
   
+  useEffect(() => {
+    if (PRODMODE){
+      get_userdata();
+    } else {
+      setUserdata(MS_USER)
+    }
+  }, []);
+
+
+  /** ------------------ FETCHES ---------------- */
+    /**
+     * Получение списка отделов
+     * @param {*} req 
+     * @param {*} res 
+     */
+    const get_userdata = async () => {
+        if (PRODMODE) {
+            try {
+                // setLoadingOrgs(true)
+                const format_data = {
+                    CSRF_TOKEN,
+                    data: {
+                        // ...filters,
+                        // created_date: get_unix_by_datearray(filters.created_date),
+                        // active_date: get_unix_by_datearray(filters.active_date)
+                    }
+                }
+                let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
+                console.log('me: ', response);
+                // setOrganizations(organizations_response.data.org_list)
+                // setTotal(organizations_response.data.total_count)
+                setUserdata(response.data);
+            } catch (e) {
+                console.log(e)
+            } finally {
+                // setLoadingOrgs(false)
+                setPageLoaded(true);
+            }
+        } else {
+            //setUserAct(USDA);
+            setPageLoaded(true);
+        }
+  }
+
+
+
+
+  /** ------------------ FETCHES END ---------------- */
+
 
   return (
     <div className="App">

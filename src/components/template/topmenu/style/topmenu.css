@@ -1,5 +1,6 @@
 .sa-top-menu {
-    background-color: var(--menu-bg-color);
+    /* background-color: var(--menu-bg-color); */
+    background: linear-gradient(178deg, rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%);
 }
 .sa-topmenu-button {
     color: white;
@@ -14,8 +15,8 @@
 
 }
 .sa-top-menu-buttons {
-    background-color: var(--menu-buttons-color);
-    background: linear-gradient(178deg,rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%);
+    /* background-color: var(--menu-buttons-color);
+    background: linear-gradient(178deg,rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%); */
     display: flex;
 }
 .sa-top-menu-buttons a {
@@ -27,4 +28,14 @@
 }
 .sa-top-menu-buttons > *.active {
     background-color: rgba(255, 255, 255, 0.181);
+}
+
+.sa-topmenu-userbox {
+    display: flex;
+    color: white;
+    align-items: center;
+    justify-content: center;
+}
+.sa-topmenu-userbox > div {
+    padding: 6px 12px;
 }
