@@ -1,11 +1,14 @@
 import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon  } from '@heroicons/react/24/outline';
-import { Dropdown, Menu } from 'antd';
+import { Dropdown, Menu, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { ShortName } from '../../../components/helpers/TextHelpers';
+import { GlobeAltIcon, InboxStackIcon, MusicalNoteIcon } from '@heroicons/react/24/solid';
+import { getBidsItems } from './hooks/AlansOrgHooks';
 
 
 const OrgListRow = (props) => {
-
+  const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const menu = (
     <Menu>
@@ -27,11 +30,15 @@ const OrgListRow = (props) => {
     </Menu>
   );
 
-  const [data, setData] = useState(props.data);
+  const [orgData, setOrgData] = useState(props.data);
 
   useEffect(() => {
-    setData(props.data);
+    if (props.data){
+      setOrgData(props.data);
+    }
   }, [props.data]);
+
+
 
 
   useEffect(() => {
@@ -40,9 +47,39 @@ const OrgListRow = (props) => {
 
   const handleDoubleClick = () => {
     if (props.on_double_click){
-      props.on_double_click(data);
+      props.on_double_click(orgData.id);
     }
   }
+
+const wrapLink = (text) => {
+  return text.split(' ').map((word, index) => {
+    // Проверяем, начинается ли слово с "www" или "http"
+    if (word.toLowerCase().startsWith('www.') || word.toLowerCase().startsWith('http')) {
+      // Если нет http, добавляем
+      const href = word.startsWith('http') ? word : `https://${word}`;
+
+      return (
+        <a 
+          key={index}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: 'underline', color: 'white' }}
+        >
+          {word}
+        </a>
+      );
+    }
+
+    // Обычное слово
+    return <span key={index}> {word} </span>;
+  });
+};
+
+
+  const goToBid = (id) => {
+    navigate('/bids/' + id); // переход на /profile
+  };
 
   return (
     <Dropdown overlay={menu} trigger={['contextMenu']}>
@@ -57,40 +94,96 @@ const OrgListRow = (props) => {
         
         >
         <NavLink to={'/orgs/4234'}>
-          35667
+          {orgData.id}
         </NavLink>
           </div>
         </div>
-        <div className={'sa-table-box-cell'}
-        >
+        <div className={'sa-table-box-cell'}>
+         <div className={'sa-align-left'}>
+            <NavLink to={'/orgs/4234'}>
+              {orgData.name}
+            </NavLink>
+          </div>
+        </div>
+        <div className={'sa-table-box-cell'}>
+          <div className={'sa-align-left'} title={orgData.region_name} >{orgData.town_name}</div>
+        </div>
+        <div className={'sa-table-box-cell'}>
+          <div className={'sa-align-left'} >{orgData.comment}</div>
+        </div>
+        <div className={'sa-table-box-cell'}>
+          <div>{orgData.inn}</div>
+        </div>
+        <div className={'sa-table-box-cell'}>
+          <div className={'sa-align-left'} >{ShortName(orgData.curator_surname, orgData.curator_name, orgData.curator_secondname)}</div>
+        </div>
+        <div className={'sa-table-box-cell'}>
+        <div>1</div>
+        </div>
+        <div className={'sa-table-box-cell'}>
+        <div>1</div>
+        </div>
+        <div className={'sa-table-box-cell'}>
+          <div className={'sa-flex-7-columns'}>
+            <div>
+              {orgData.website && (
+                <Tooltip title={<div className='sa-flex-v'>
+                  {orgData.website.split(',').map((siter)=>{
+                    return wrapLink(siter)
+                  })}
+                </div>}>
+                <span >
+                  <GlobeAltIcon height={'18px'}/>
+                </span>
+                </Tooltip>
+              )}
+            </div>
+            <div>
+              {orgData.is_prosound === null || orgData.is_prosound === 0 && (
+                <MusicalNoteIcon height={'16px'}/>
+              )}
+            </div>
+            {/* <div>
+              
+            </div>
+            <div>
+              
+            </div>
+            <div>
+              
+            </div>
+            <div>
+              
+            </div>
+            <div>
+              
+            </div> */}
+          </div>
+
+        </div>
+        <div className={'sa-table-box-cell'}>
         <div>
-        <NavLink to={'/orgs/4234'}>
-          Название / второе название
-        </NavLink>
-          </div>
+          {orgData.bids?.length > 0 && (
+            <Dropdown menu={{ items: getBidsItems(orgData.bids) }} placement="bottom">
+            <div
+              className={'sa-col-with-menu'}
+              onClick={(item) =>
+                item.id_company === props.userdata?.user.active_company
+                  ? goToBid(item.id)
+                  : console.log("fail")
+              }
+            >
+              <InboxStackIcon height={'18px'} />
+              <Tag color={"geekblue"}>{orgData.bids.length}</Tag>
+            </div>
+          </Dropdown>
+          )}
         </div>
-        <div className={'sa-table-box-cell'}>
-        <div>Дата отвязки</div>
-        </div>
-        <div className={'sa-table-box-cell'}>
-        <div>Компания</div>
-        </div>
-        <div className={'sa-table-box-cell'}>
-        <div>1</div>
-        </div>
-        <div className={'sa-table-box-cell'}>
-        <div>1</div>
-        </div>
-        <div className={'sa-table-box-cell'}>
-        <div>1</div>
         </div>
         <div className={'sa-table-box-cell'}>
         <div>1</div>
         </div>
-        <div className={'sa-table-box-cell'}>
-        <div>1</div>
-        </div>
-        <div className={'sa-table-box-cell'}>
+                <div className={'sa-table-box-cell'}>
         <div>1</div>
         </div>
         {/* <div className={'sa-table-box-cell'}>

@@ -5,6 +5,7 @@ import OrgListRow from './OrgListRow';
 
 
 const OrgListTable = (props) => {
+    const {userdata} = props;
   const [sortOrders, setSortOrders] = useState([]);
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -12,10 +13,6 @@ const OrgListTable = (props) => {
 
 
 
-
-    const handleRowDblClick = (id) => {
-
-    }
 
     const handlePreviewOpen = (item, state) => {
         console.log('HEllo');
@@ -116,7 +113,7 @@ const OrgListTable = (props) => {
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Статус $</div>
+                    <div className={'sa-pa-3'}>ИНН</div>
                     <div className={'sa-pa-3'}>
                       <Select size={'small'} style={{ width: '100%' }} variant='filled' options={props.companies} allowClear />
                     </div>
@@ -124,7 +121,15 @@ const OrgListTable = (props) => {
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Баланс</div>
+                    <div className={'sa-pa-3'}>Куратор</div>
+                    <div className={'sa-pa-3'}>
+                      <Select size={'small'} style={{ width: '100%' }} variant='filled' options={props.companies} allowClear />
+                    </div>
+                  </div>
+                </div>
+                <div className={'sa-table-box-cell'}>
+                  <div className={'sa-table-head-on'}>
+                    <div className={'sa-pa-3'}>Памятка</div>
                     <div className={'sa-pa-3'}>
                       <Input size={'small'} style={{ width: '100%' }} variant='filled' />
                     </div>
@@ -138,14 +143,7 @@ const OrgListTable = (props) => {
                     </div>
                   </div>
                 </div>
-                <div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Куратор</div>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
-                  </div>
-                </div>
+
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Свойства</div>
@@ -156,7 +154,23 @@ const OrgListTable = (props) => {
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Действия</div>
+                    <div className={'sa-pa-3'}>Заявки</div>
+                    <div className={'sa-pa-3'}>
+                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                    </div>
+                  </div>
+                </div>
+                <div className={'sa-table-box-cell'}>
+                  <div className={'sa-table-head-on'}>
+                    <div className={'sa-pa-3'}>Встречи</div>
+                    <div className={'sa-pa-3'}>
+                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                    </div>
+                  </div>
+                </div>
+                <div className={'sa-table-box-cell'}>
+                  <div className={'sa-table-head-on'}>
+                    <div className={'sa-pa-3'}>Звонки</div>
                     <div className={'sa-pa-3'}>
                       <Input size={'small'} style={{ width: '100%' }} variant='filled' />
                     </div>
@@ -169,10 +183,11 @@ const OrgListTable = (props) => {
             <div className={'sa-table-box-stack'}>
               {props.base_orgs.map((borg, index) => (
                 <OrgListRow
-                data={borg}
-                  is_active={isPreviewOpen && previewItem === borg}
+                    data={borg}
+                  is_active={isPreviewOpen && previewItem === borg.id}
                   on_double_click={handlePreviewOpen}
-                  key={index}
+                  key={`borg_${borg.id}`}
+                  userdata={userdata}
                  />
               ))}
             </div>

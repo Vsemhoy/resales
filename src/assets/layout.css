@@ -26,6 +26,10 @@
     grid-gap: 12px;
     justify-content: space-between;
 }
+.sa-flex-v {
+    display: flex;
+    flex-direction: column;
+}
 
 .sa-w-33 {
     width: 33%;
@@ -535,6 +539,9 @@ font-size: smaller;
 
 .sa-align-center {
     text-align: center;
+}
+.sa-align-left {
+    text-align: left;
 }
 
 

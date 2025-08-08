@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './components/style/orglistpage.css';
-import { PRODMODE } from '../../config/config';
+import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Tooltip } from 'antd';
 import { Content } from 'antd/es/layout/layout';
@@ -15,7 +15,8 @@ import OrgListPreviewModal from './components/OrgListPreviewModal';
 import OrgListSiderFilter from './components/OrgListSiderFilters';
 import OrgListTable from './components/OrgListTable';
 import { RectangleStackIcon } from '@heroicons/react/24/outline';
-import { FILTERPRESETLIST } from './components/mock/ORGLISTMOCK';
+import { FILTERPRESETLIST, OM_COMP_LIST } from './components/mock/ORGLISTMOCK';
+import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 
 const OrgListPage = (props) => {
   const { userdata } = props;
@@ -23,19 +24,27 @@ const OrgListPage = (props) => {
 
   const [baseCompanies, setBaseCompanies] = useState([]);
   const [companies, setCompanies] = useState([]);
+
+
   const { item_id } = useParams();
   const [openedFilters, setOpenedFilters] = useState(false);
   const [sortOrders, setSortOrders] = useState([]);
 
   const [baseOrgs, setBaseOrgs] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0]);
+
+  const [orgList, setOrgList] = useState([]);
+
   const [total, setTotal] = useState(0);
-  const [onPage, setOnPage] = useState(30);
+  const [onPage, setOnPage] = useState(50);
   const [currrentPage, setCurrentPage] = useState(1);
+
 
   const [filterBox, setFilterBox] = useState({});
   const [orderBox, setOrderBox] = useState({});
 
+
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
 
   const [filterPresetList, setFilterPresetList] = useState(FILTERPRESETLIST);
@@ -44,11 +53,17 @@ const OrgListPage = (props) => {
 
 
 
+
+
   useEffect(() => {
+    setShowLoader(true);
     if (PRODMODE) {
       // TODO: логика для PRODMODE
+      get_orglist();
+
     } else {
       // TODO: логика для dev режима
+      setOrgList(OM_COMP_LIST);
     };
     if (showGetItem !== null){
       handlePreviewOpen(showGetItem);
@@ -76,6 +91,87 @@ const OrgListPage = (props) => {
       }))
     );
   }, [baseCompanies]);
+
+
+
+  useEffect(() => {
+    if (PRODMODE){
+      setShowLoader(true);
+      get_orglist();
+    }
+  }, [currrentPage]);
+
+
+
+
+
+
+
+  /** ------------------ FETCHES ---------------- */
+    /**
+     * Получение списка отделов
+     * @param {*} req 
+     * @param {*} res 
+     */
+    const get_orglist = async () => {
+        if (PRODMODE) {
+            try {
+                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/orglist', {
+                  data: {
+                    "profiles": null,
+                    "name": null,
+                    "id": null,
+                    "curators": null,
+                    "regions": null,
+                    "price_statuses": null,
+                    "rate_lists": null,
+                    "towns": null,
+                    "client_statuses": null,
+                    "profsound": null,
+                    "companies": null,
+                    "contact_user": null,
+                    "address": null,
+                    "phone": null,
+                    "email": null,
+                    "site": null,
+                    "created_date": [
+                        null,
+                        null
+                    ],
+                    "active_date": [
+                        null,
+                        null
+                    ],
+                    "page": currrentPage,
+                    "limit": onPage,
+                    "inn": null
+
+                },
+                  _token: CSRF_TOKEN
+                });
+                console.log('me: ', response);
+                setOrgList(response.data.org_list);
+                setTotal(response.data.total_count);
+            } catch (e) {
+                console.log(e)
+            } finally {
+                // setLoadingOrgs(false)
+                setShowLoader(true);
+            }
+        } else {
+            //setUserAct(USDA);
+            setShowLoader(true);
+        }
+    }
+
+
+
+
+  /** ------------------ FETCHES END ---------------- */
+
+
+
+
 
 
 
@@ -185,10 +281,14 @@ const OrgListPage = (props) => {
             <div className={'sa-flex-gap'}>
             <Pagination
               size={'small'}
+              defaultCurrent={1}
+              current={currrentPage}
+              total={total}
+              onChange={setCurrentPage}
             />
             <Button disabled
               size={'small'}
-            >Всего 6546</Button>
+            >Всего {total}</Button>
             </div>
             <div>
 
@@ -218,17 +318,17 @@ const OrgListPage = (props) => {
           
           <OrgListTable 
               companies={companies}
-              base_orgs={baseOrgs}
+              base_orgs={orgList}
               on_preview_open={handlePreviewOpen}
               on_set_sort_orders={setOrderBox}
           />
 
-          {baseOrgs.length > 20 && (
+          {/* {baseOrgs.length > 20 && (
             <div className={'sa-pagination-panel sa-pa-12'}>
               <div className={'sa-flex-space'}>
               <div className={'sa-flex-gap'}>
               <Pagination />
-              <Button disabled>Всего 6546</Button>
+              <Button disabled>Всего {total}</Button>
               </div>
               <div>
 
@@ -238,7 +338,7 @@ const OrgListPage = (props) => {
               </div>
               </div>
             </div>
-          )}
+          )} */}
           <div className={'sa-space-panel sa-pa-12'}>
 
           </div>

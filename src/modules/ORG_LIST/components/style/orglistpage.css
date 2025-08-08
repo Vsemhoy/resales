@@ -1,11 +1,25 @@
 .sa-table-box-orgs {
     display: grid;
-    grid-template-columns: 64px 3fr 1fr 2fr 60px 60px 60px 1fr 120px 60px;
+    grid-template-columns: 64px 5fr 4fr 4fr 100px 3fr 60px 60px  2fr 66px 66px 66px ;
 }
 
 .sa-filer-opened .sa-table-box-orgs {
-    grid-template-columns: 64px 3fr 1fr 2fr 60px 60px 60px 1fr 120px !important;
+    grid-template-columns: 64px 5fr 4fr 4fr 100px 3fr 60px 2fr 66px 66px 66px  !important;
 }
 .sa-filer-opened .sa-table-box-orgs > *:last-child {
     display: none;
 }
+
+.sa-flex-7-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+.sa-col-with-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-gap: 4px;
+    width: 100%;
+    color: gray;
+}
+
