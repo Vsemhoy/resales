@@ -1,10 +1,11 @@
-import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon  } from '@heroicons/react/24/outline';
+import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, Bars3BottomLeftIcon, DocumentCurrencyDollarIcon, NewspaperIcon  } from '@heroicons/react/24/outline';
 import { Dropdown, Menu, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ShortName } from '../../../components/helpers/TextHelpers';
 import { BriefcaseIcon, GlobeAltIcon, InboxStackIcon, MusicalNoteIcon, PhoneArrowUpRightIcon } from '@heroicons/react/24/solid';
 import { getBidsItems, getCallsItems, getMeetingsItems } from './hooks/AlansOrgHooks';
+import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
 
 
 const OrgListRow = (props) => {
@@ -125,10 +126,24 @@ const wrapLink = (text) => {
           <div className={'sa-align-left'} >{ShortName(orgData.curator_surname, orgData.curator_name, orgData.curator_secondname)}</div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+        <div>
+          {orgData.notes && orgData.notes !== "" && (
+            <Tooltip title={orgData.notes}>
+            <div >
+              <Bars3BottomLeftIcon height={'16px'}/>
+            </div>
+          </Tooltip>
+          )}
+        </div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+        <div>
+          {orgData.profile && orgData.profile !== "" && (
+          <Tooltip title={orgData.kindofactivity}>
+            <div >{getProfileLiterals(orgData.profile)}</div>
+          </Tooltip>
+          )}
+        </div>
         </div>
         <div className={'sa-table-box-cell'}>
           <div className={'sa-flex-7-columns'}>

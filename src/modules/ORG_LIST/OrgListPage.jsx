@@ -128,7 +128,7 @@ const OrgListPage = (props) => {
                     "towns": filterBox.towns,
                     "client_statuses": null,
                     "profsound": null,
-                    "companies": null,
+                    "companies": filterBox.companies,
                     "contact_user": null,
                     "address": null,
                     "phone": null,
@@ -233,6 +233,32 @@ const OrgListPage = (props) => {
     });
   };
 
+  const triggerMyCompaniesFilterButton = () => {
+    let value = filterBox.curators;
+    let newValue = null;
+    if (!value){
+      newValue = userdata.user?.id;
+    };
+    setFilterBox(prev => {
+      const updated = { ...prev }; // копируем старые фильтры
+        updated.curators = newValue;
+        return updated;
+      });
+  }
+
+  const triggerFreeCompaniesFilterButton = () => {
+    let value = filterBox.companies;
+    let newValue = null;
+    if (!value){
+      newValue = 1;
+    };
+    setFilterBox(prev => {
+      const updated = { ...prev }; // копируем старые фильтры
+        updated.companies = newValue;
+        return updated;
+      });
+  }
+
   return (
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
       <div className={'sa-control-panel sa-flex-space sa-pa-12'}>
@@ -317,8 +343,12 @@ const OrgListPage = (props) => {
             </div>
             <div className={'sa-flex-gap'}>
               <Tooltip title="Я временный куратор">
-                <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
+                <Button 
+                color={'default'}
+                variant={filterBox?.companies === 1 ? "solid" : "filled"}
+                size={'small'}
                     // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
+                    onClick={triggerFreeCompaniesFilterButton}
                 >Свободные</Button>
               </Tooltip>
               <Tooltip title="Я временный куратор">
@@ -327,7 +357,11 @@ const OrgListPage = (props) => {
               >Временные</Button>
               </Tooltip>
               <Tooltip title="Компании с моим кураторством">
-              <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
+              <Button
+                color={'default'}
+                variant={filterBox?.curators === userdata?.user?.id ? "solid" : "filled"}
+                size={'small'}
+                onClick={triggerMyCompaniesFilterButton}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Мои компании</Button>
               </Tooltip>
