@@ -66,9 +66,7 @@ function App() {
                 const format_data = {
                     CSRF_TOKEN,
                     data: {
-                        // ...filters,
-                        // created_date: get_unix_by_datearray(filters.created_date),
-                        // active_date: get_unix_by_datearray(filters.active_date)
+                      
                     }
                 }
                 let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
@@ -94,11 +92,18 @@ function App() {
   /** ------------------ FETCHES END ---------------- */
 
 
+
+
+
   return (
     <div className="App">
       <BrowserRouter basename={BASE_NAME}>
 
-        <TopMenu userdata={userdata} />
+        <TopMenu
+          userdata={userdata}
+          changed_user_data={setUserdata}
+
+          />
       
       {/* <MyIcon /> */}
 

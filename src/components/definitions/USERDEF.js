@@ -3,16 +3,16 @@ export const USER_ROLES = [
     {
         id: 1,
         name: "Менеджер",
-        color: '#1088ebff',
+        color: '#abd9ff',
     },
     {
         id: 2,
         name: "Администратор",
-        color: '#f5972bff',
+        color: '#ffbe73',
     },
     {
         id: 3,
         name: "Бухгалтер",
-        color: '#1dc447ff',
+        color: '#74ff97',
     }
 ]

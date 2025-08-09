@@ -150,7 +150,7 @@ export const MS_USER = {
         "email": null,
         "sales_role": 2,
         "password2": "$2y$12$vwqewb1to3XkD3FUvSrgoeydtcmsswjQSp6DWvJfxZanevLwAq6BS",
-        "active_company": 1,
+        "active_company": 2,
         "id_departament": 11,
         "id_company" : 2,
     },

@@ -311,7 +311,9 @@ const OrgListPage = (props) => {
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Мои компании</Button>
               </Tooltip>
-              <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
+              {userdata?.user?.sales_role === 1 && (
+                <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
+              )}
             </div>
             </div>
           </div>

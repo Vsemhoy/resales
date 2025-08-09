@@ -99,3 +99,6 @@
 .sa-table-box-header .ant-picker-input input {
     outline: none;
 }
+.sa-table-box-cell {
+    word-break: break-word;
+}
