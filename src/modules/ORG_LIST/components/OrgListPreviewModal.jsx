@@ -64,9 +64,7 @@ const menuItems = [
     <div>
             <Flex vertical gap="middle" align="flex-start">
         {/* Basic */}
-        <Button type="primary" onClick={() => setOpen(true)}>
-            Быстрый просмотр паспорта организации будет в модалке
-        </Button>
+
         <Modal
             title={<div className={'sa-flex-space'}>
                 <div className={'spec-modal-title'}>

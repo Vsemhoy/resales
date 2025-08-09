@@ -26,11 +26,10 @@ const OrgListPage = (props) => {
   const [companies, setCompanies] = useState([]);
 
 
-  const { item_id } = useParams();
+
   const [openedFilters, setOpenedFilters] = useState(false);
   const [sortOrders, setSortOrders] = useState([]);
 
-  const [baseOrgs, setBaseOrgs] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2, 3, 4, 5, 6, 7, 8, 9, 0]);
 
   const [orgList, setOrgList] = useState([]);
 
@@ -50,7 +49,6 @@ const OrgListPage = (props) => {
   const [filterPresetList, setFilterPresetList] = useState(FILTERPRESETLIST);
 
   const showGetItem = searchParams.get('show');
-
 
 
 
@@ -79,7 +77,7 @@ const OrgListPage = (props) => {
   useEffect(() => {
     if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
       setBaseCompanies(userdata.companies);
-    }
+    };
   }, [userdata]);
 
   useEffect(() => {
@@ -102,7 +100,9 @@ const OrgListPage = (props) => {
   }, [currrentPage]);
 
 
-
+  useEffect(() => {
+    get_orglist();
+  }, [filterBox, orderBox]);
 
 
 
@@ -119,13 +119,13 @@ const OrgListPage = (props) => {
                 let response = await PROD_AXIOS_INSTANCE.post('/api/sales/orglist', {
                   data: {
                     "profiles": null,
-                    "name": null,
-                    "id": null,
-                    "curators": null,
-                    "regions": null,
+                    "name": filterBox.name,
+                    "id": filterBox.id,
+                    "curators": filterBox.curators,
+                    "regions": filterBox.regions,
                     "price_statuses": null,
                     "rate_lists": null,
-                    "towns": null,
+                    "towns": filterBox.towns,
                     "client_statuses": null,
                     "profsound": null,
                     "companies": null,
@@ -144,7 +144,7 @@ const OrgListPage = (props) => {
                     ],
                     "page": currrentPage,
                     "limit": onPage,
-                    "inn": null
+                    "inn": filterBox.inn
 
                 },
                   _token: CSRF_TOKEN
@@ -213,6 +213,26 @@ const OrgListPage = (props) => {
     }
   }, [isPreviewOpen]);
 
+
+  /**
+   * Здесь сливаются фильтры от сайдбара и от хедера таблицы
+   * @param {*} filters 
+   */
+  const handleFilterChange = (filters) => {
+    setFilterBox(prev => {
+      const updated = { ...prev }; // копируем старые фильтры
+
+      // Проходим по каждому полю в пришедших фильтрах
+      Object.keys(filters).forEach(key => {
+        const value = filters[key];
+        // Превращаем пустую строку, null, undefined → в null
+        updated[key] = value === '' || value === null || value === undefined ? null : value;
+      });
+
+      return updated;
+    });
+  };
+
   return (
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
       <div className={'sa-control-panel sa-flex-space sa-pa-12'}>
@@ -267,7 +287,7 @@ const OrgListPage = (props) => {
           <div className={'sa-sider'}>
             {openedFilters && (
             <OrgListSiderFilter
-              base_orgs={baseOrgs}
+              base_orgs={orgList}
               filter_presets={filterPresetList}
             />
 
@@ -322,10 +342,14 @@ const OrgListPage = (props) => {
           
           <OrgListTable 
               companies={companies}
+              base_companies={baseCompanies}
               base_orgs={orgList}
               on_preview_open={handlePreviewOpen}
               on_set_sort_orders={setOrderBox}
               userdata={userdata}
+              on_change_filters={handleFilterChange}
+              base_filters={filterBox}
+              base_orders={orderBox}
           />
 
           {/* {baseOrgs.length > 20 && (

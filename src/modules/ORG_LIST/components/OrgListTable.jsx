@@ -1,4 +1,4 @@
-import { Affix, DatePicker, Input, Select } from 'antd';
+import { Affix, DatePicker, Input, Select, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import OrgListRow from './OrgListRow';
@@ -11,7 +11,52 @@ const OrgListTable = (props) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
 
+    const [filterInn, setFilterInn] = useState(null);
+    const [filterName, setFilterName] = useState(null);
+    const [filterRegion, setFilterRegion] = useState(null);
+    const [filterTown, setFilterTown] = useState(null);
+    const [filterComment, setFilterComment] = useState(null);
+    const [filterId, setFilterId] = useState(null);
+    // const [filterClaims, setFilterClaims] = useState(null);
+    // const [filterMeetings, setFilterMeetings] = useState(null);
+    // const [filterCalls, setFilterCalls] = useState(null);
+    const [filterCurator, setFilterCurator] = useState(null);
 
+
+    // Утилита: если строка пустая — возвращаем null
+    const toNullable = (value) => {
+    return value === '' || value === null || value === undefined ? null : value;
+    };
+
+    useEffect(() => {
+    // Создаём отложенную отправку через setTimeout
+    const timer = setTimeout(() => {
+        let filterBox = props.base_filters ?? {};
+
+        filterBox.regions = toNullable(filterRegion);
+        filterBox.towns = toNullable(filterTown);
+        filterBox.id = toNullable(filterId);
+        filterBox.name = toNullable(filterName);
+        filterBox.inn = toNullable(filterInn);
+        filterBox.comment = toNullable(filterComment);
+        // filterBox.curator = toNullable(filterCurator); // если нужен
+
+        if (props.on_change_filters) {
+            props.on_change_filters(filterBox);
+        }
+    }, 1000); // ⏱️ 1 секунда задержки
+
+    // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
+    return () => clearTimeout(timer);
+    }, [
+        filterRegion,
+        filterTown,
+        filterId,
+        filterName,
+        filterInn,
+        filterComment,
+    // filterCurator, // раскомментируй, если используется
+    ]);
 
 
     const handlePreviewOpen = (item, state) => {
@@ -68,7 +113,11 @@ const OrgListTable = (props) => {
                       id
                       </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input type={'number'} size={'small'} style={{ width: '100%' }} variant='filled' />
+                        <Input size={'small'} style={{ width: '100%' }}
+                        variant='filled'
+                        value={filterId}
+                        onChange={(ev)=>{setFilterId(ev.target.value)}}
+                        allowClear />
                     </div>
                   </div>
                 </div>
@@ -81,7 +130,11 @@ const OrgListTable = (props) => {
                       >Название организации
                       </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                        <Input size={'small'} style={{ width: '100%' }}
+                        variant='filled'
+                        value={filterName}
+                        onChange={(ev)=>{setFilterName(ev.target.value)}}
+                        allowClear />
                     </div>
                   </div>
                 </div>
@@ -93,9 +146,15 @@ const OrgListTable = (props) => {
                       active_sort_items={sortOrders}
                       >Город/регион
                       </TableHeadNameWithSort>
+                      <Tooltip placement='bottom'>
                     <div className={'sa-pa-3'}>
-                      <DatePicker size={'small'} style={{ width: '100%' }} variant='filled' />
-                    </div>
+                        <Input size={'small'} style={{ width: '100%' }}
+                            variant='filled'
+                            value={filterRegion}
+                            onChange={(ev)=>{setFilterRegion(ev.target.value)}}
+                            allowClear />
+                        </div>
+                    </Tooltip>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
@@ -107,7 +166,11 @@ const OrgListTable = (props) => {
                       >Комментарий
                       </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                        <Input size={'small'} style={{ width: '100%' }}
+                        variant='filled'
+                        value={filterComment}
+                        onChange={(ev)=>{setFilterComment(ev.target.value)}}
+                        allowClear />
                     </div>
                   </div>
                 </div>
@@ -115,7 +178,11 @@ const OrgListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>ИНН</div>
                     <div className={'sa-pa-3'}>
-                      <Select size={'small'} style={{ width: '100%' }} variant='filled' options={props.companies} allowClear />
+                      <Input size={'small'} style={{ width: '100%' }}
+                        variant='filled'
+                        value={filterInn}
+                        onChange={(ev)=>{setFilterInn(ev.target.value)}}
+                        allowClear />
                     </div>
                   </div>
                 </div>
@@ -188,6 +255,7 @@ const OrgListTable = (props) => {
                   on_double_click={handlePreviewOpen}
                   key={`borg_${borg.id}`}
                   userdata={userdata}
+                    company_color={props.base_companies?.find((item)=>item.id === borg.id_company)?.color}
                  />
               ))}
             </div>

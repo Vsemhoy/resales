@@ -1,5 +1,6 @@
 import { TrophyIcon } from "@heroicons/react/16/solid";
-import { BriefcaseIcon, DocumentCurrencyDollarIcon, PhoneArrowUpRightIcon, ShieldCheckIcon } from "@heroicons/react/24/solid";
+import { PhoneArrowUpRightIcon, BriefcaseIcon, DocumentCurrencyDollarIcon } from "@heroicons/react/24/outline";
+import { ShieldCheckIcon } from "@heroicons/react/24/solid";
 import { Tooltip } from "antd";
 import dayjs from "dayjs";
 import { NavLink } from "react-router-dom";
@@ -47,7 +48,9 @@ export const getBidsItems = (bids) => {
         : []),
     ];
   };
-  const getCallsItems = (calls) => {
+  
+  
+  export const getCallsItems = (calls) => {
     return [
       {
         key: "1",
@@ -77,7 +80,7 @@ export const getBidsItems = (bids) => {
             const formattedDate = dayjs(date * 1000).format("DD.MM.YYYY");
             const Label = () => {
               return (
-                <Tooltip title={`Результат: ${result}`}>
+                <Tooltip title={`Результат: ${result}`}  placement="left">
                   <div style={{ fontSize: "12px" }}>
                     {`${formattedDate} ${creator} ${subscriber}`}
                   </div>
@@ -95,7 +98,7 @@ export const getBidsItems = (bids) => {
         : []),
     ];
   };
-  const getMeetingsItems = (meetings) => {
+  export const getMeetingsItems = (meetings) => {
     return [
       {
         key: "1",
@@ -126,7 +129,7 @@ export const getBidsItems = (bids) => {
             const formattedDate = dayjs(date * 1000).format("DD.MM.YYYY");
             const Label = () => {
               return (
-                <Tooltip title={`Результат: ${result}`}>
+                <Tooltip title={`Результат: ${result}`} placement="left">
                   <div style={{ fontSize: "12px" }}>
                     {`${formattedDate} ${creator} ${subscriber}`}
                   </div>

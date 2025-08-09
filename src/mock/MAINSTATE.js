@@ -146,7 +146,7 @@ export const MS_USER = {
         "secondname": 'Мамонович',
         "occupy": "коммерческий директор",
         "passcard": null,
-        "id_role": 2,
+        "id_role": 1,
         "email": null,
         "sales_role": 2,
         "password2": "$2y$12$vwqewb1to3XkD3FUvSrgoeydtcmsswjQSp6DWvJfxZanevLwAq6BS",

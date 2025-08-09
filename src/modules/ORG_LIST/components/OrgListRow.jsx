@@ -3,13 +3,14 @@ import { Dropdown, Menu, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ShortName } from '../../../components/helpers/TextHelpers';
-import { GlobeAltIcon, InboxStackIcon, MusicalNoteIcon } from '@heroicons/react/24/solid';
-import { getBidsItems } from './hooks/AlansOrgHooks';
+import { BriefcaseIcon, GlobeAltIcon, InboxStackIcon, MusicalNoteIcon, PhoneArrowUpRightIcon } from '@heroicons/react/24/solid';
+import { getBidsItems, getCallsItems, getMeetingsItems } from './hooks/AlansOrgHooks';
 
 
 const OrgListRow = (props) => {
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
+  const [compColor, setCompColor] = useState("#00000000");
   const menu = (
     <Menu>
       <Menu.Item key="1"
@@ -38,7 +39,10 @@ const OrgListRow = (props) => {
     }
   }, [props.data]);
 
-
+  useEffect(() => {
+      setCompColor(props.company_color);
+        console.log('company_color', props.company_color)
+  }, [props.company_color]);
 
 
   useEffect(() => {
@@ -81,10 +85,13 @@ const wrapLink = (text) => {
     navigate('/bids/' + id); // переход на /profile
   };
 
+
+
+
   return (
     <Dropdown overlay={menu} trigger={['contextMenu']}>
       <div className={`sa-table-box-orgs sa-table-box-row ${active ? 'active':''}`} key={props.key}
-        style={{ color:'#ff8700'}}
+        style={{ color: compColor}}
         onDoubleClick={handleDoubleClick}
       >
         <div className={'sa-table-box-cell'}
@@ -181,10 +188,42 @@ const wrapLink = (text) => {
         </div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+          <div>
+            {orgData.meetings?.length > 0 && (
+              <Dropdown menu={{ items: getMeetingsItems(orgData.meetings) }} placement="bottom">
+                <div
+                  className={'sa-col-with-menu'}
+                  onClick={(item) =>
+                    item.id_company === props.userdata?.user.active_company
+                      ? goToBid(item.id)
+                      : console.log("fail")
+                  }
+                >
+                  <BriefcaseIcon height={'18px'} />
+                  <Tag color={"volcano"}>{orgData.meetings.length}</Tag>
+                </div>
+              </Dropdown>
+            )}
+          </div>
         </div>
-                <div className={'sa-table-box-cell'}>
-        <div>1</div>
+        <div className={'sa-table-box-cell'}>
+          <div>
+            {orgData.calls?.length > 0 && (
+              <Dropdown menu={{ items: getCallsItems(orgData.calls) }} placement="bottom">
+                <div
+                  className={'sa-col-with-menu'}
+                  onClick={(item) =>
+                    item.id_company === props.userdata?.user.active_company
+                      ? goToBid(item.id)
+                      : console.log("fail")
+                  }
+                >
+                  <PhoneArrowUpRightIcon height={'18px'} />
+                  <Tag color={"green"}>{orgData.calls.length}</Tag>
+                </div>
+              </Dropdown>
+            )}
+          </div>
         </div>
         {/* <div className={'sa-table-box-cell'}>
         <div>1</div>

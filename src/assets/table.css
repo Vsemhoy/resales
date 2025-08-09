@@ -33,6 +33,7 @@
 .sa-table-box-header {
     background-color: var(--table-header-row-color);
     font-weight: 600;
+    font-size: small;
     /* backdrop-filter: blur(36px); */
     border-top: 1px solid var(--table-background-color);
     border-bottom: 1px solid var(--table-second-row-color);
@@ -83,12 +84,14 @@
     flex-direction: column;
     height: 100%;
 }
-
-.sa-table-box-orgs {
+.sa-table-head-on > div:first-child {
+    overflow: hidden;
+}
+.sa-table-box-stack .sa-table-box-orgs {
     box-shadow:-4px 0px 0px -1px;
 }
-.sa-table-box-orgs:hover {
-    box-shadow:-10px 0px 0px -1px, 2px 0px 0px -1px;
+.sa-table-box-stack .sa-table-box-orgs:hover {
+    box-shadow:-10px 0px 0px -1px;
 }
 
 .sa-table-box-header input ,
