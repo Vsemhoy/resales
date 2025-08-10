@@ -8,6 +8,8 @@ const OrgListTable = (props) => {
     const {userdata} = props;
   const [sortOrders, setSortOrders] = useState([]);
 
+  const [curatorList, setCuratorList] = useState(props.curator_list);
+
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
 
@@ -29,6 +31,11 @@ const OrgListTable = (props) => {
     };
 
     useEffect(() => {
+        console.log('props.curator_list', props.curator_list)
+        setCuratorList(props.curator_list);
+    }, [props.curator_list]);
+
+    useEffect(() => {
     // Создаём отложенную отправку через setTimeout
     const timer = setTimeout(() => {
         let filterBox = props.base_filters ?? {};
@@ -39,7 +46,7 @@ const OrgListTable = (props) => {
         filterBox.name = toNullable(filterName);
         filterBox.inn = toNullable(filterInn);
         filterBox.comment = toNullable(filterComment);
-        // filterBox.curator = toNullable(filterCurator); // если нужен
+        filterBox.curator = toNullable(filterCurator); 
 
         if (props.on_change_filters) {
             props.on_change_filters(filterBox);
@@ -55,7 +62,7 @@ const OrgListTable = (props) => {
         filterName,
         filterInn,
         filterComment,
-    // filterCurator, // раскомментируй, если используется
+        filterCurator, 
     ]);
 
 
@@ -188,9 +195,19 @@ const OrgListTable = (props) => {
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Куратор</div>
+                    <TableHeadNameWithSort 
+                      sort_key={'curator'}
+                      on_sort_change={handleActivateSorter}
+                      active_sort_items={sortOrders}
+                      >Куратор
+                      </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Select size={'small'} style={{ width: '100%' }} variant='filled' options={props.companies} allowClear />
+                      <Select size={'small'} 
+                        style={{ width: '100%' }}
+                        variant='filled' 
+                        options={curatorList} allowClear
+                        onChange={setFilterCurator}
+                       />
                     </div>
                   </div>
                 </div>
@@ -198,7 +215,7 @@ const OrgListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Памятка</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      {/* <Input size={'small'} style={{ width: '100%' }} variant='filled' /> */}
                     </div>
                   </div>
                 </div>
@@ -206,7 +223,7 @@ const OrgListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Профиль</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      
                     </div>
                   </div>
                 </div>
@@ -215,7 +232,7 @@ const OrgListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Свойства</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      
                     </div>
                   </div>
                 </div>
@@ -223,7 +240,7 @@ const OrgListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Заявки</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      
                     </div>
                   </div>
                 </div>
@@ -231,7 +248,7 @@ const OrgListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Встречи</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      
                     </div>
                   </div>
                 </div>
@@ -239,7 +256,7 @@ const OrgListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Звонки</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      
                     </div>
                   </div>
                 </div>

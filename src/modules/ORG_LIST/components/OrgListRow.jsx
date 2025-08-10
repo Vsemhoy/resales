@@ -138,7 +138,7 @@ const wrapLink = (text) => {
         </div>
         <div className={'sa-table-box-cell'}>
         <div>
-          {orgData.profile && orgData.profile !== "" && (
+          {orgData.profile && orgData.profile !== "" && orgData.profile !== 0 && (
           <Tooltip title={orgData.kindofactivity}>
             <div >{getProfileLiterals(orgData.profile)}</div>
           </Tooltip>

@@ -15,7 +15,7 @@ import OrgListPreviewModal from './components/OrgListPreviewModal';
 import OrgListSiderFilter from './components/OrgListSiderFilters';
 import OrgListTable from './components/OrgListTable';
 import { RectangleStackIcon } from '@heroicons/react/24/outline';
-import { FILTERPRESETLIST, OM_COMP_LIST } from './components/mock/ORGLISTMOCK';
+import { FILTERPRESETLIST, OM_COMP_LIST, OM_ORG_FILTERDATA } from './components/mock/ORGLISTMOCK';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 
 const OrgListPage = (props) => {
@@ -25,7 +25,7 @@ const OrgListPage = (props) => {
   const [baseCompanies, setBaseCompanies] = useState([]);
   const [companies, setCompanies] = useState([]);
 
-
+  const [baseFiltersData, setBaseFilterstData] = useState(null); 
 
   const [openedFilters, setOpenedFilters] = useState(false);
   const [sortOrders, setSortOrders] = useState([]);
@@ -46,21 +46,25 @@ const OrgListPage = (props) => {
   const [showLoader, setShowLoader] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
 
+  // Пресеты - преднастроенные фильтры
   const [filterPresetList, setFilterPresetList] = useState(FILTERPRESETLIST);
 
   const showGetItem = searchParams.get('show');
 
-
+  // Список кураторов меняется в зависимости от выбранной компании
+  const [selectCuratorList, setSelectCuratorList] = useState([]);
 
 
   useEffect(() => {
     setShowLoader(true);
     if (PRODMODE) {
       // TODO: логика для PRODMODE
+      get_org_filters();
       get_orglist();
 
     } else {
       // TODO: логика для dev режима
+      setBaseFilterstData(OM_ORG_FILTERDATA);
       setOrgList(OM_COMP_LIST);
     };
     if (showGetItem !== null){
@@ -80,12 +84,15 @@ const OrgListPage = (props) => {
     };
   }, [userdata]);
 
+
+
   useEffect(() => {
     setCompanies(
       baseCompanies.map((item) => ({
         key: `kompa_${item.id}`,
         id: item.id,
-        label: item.name,
+        value: item.id,
+        label: item.id === 1 ? "Free company" : item.name,
       }))
     );
   }, [baseCompanies]);
@@ -101,6 +108,30 @@ const OrgListPage = (props) => {
 
 
   useEffect(() => {
+    if (baseFiltersData && baseFiltersData.curators)
+    {
+
+        let asetCurators = [];
+        if (!filterBox || !filterBox.companies || filterBox.companies === null){
+          asetCurators = baseFiltersData.curators.map((item)=>({
+            key: 'curacu_' + item.id,
+            label: item.fullname,
+            value: item.id
+          }));
+        } else {
+          asetCurators = baseFiltersData.curators.filter((item)=>item.id_company === filterBox.companies)
+            .map((item)=>({
+              key: 'curacu_' + item.id,
+              label: item.fullname,
+              value: item.id
+            }));
+        }
+        setSelectCuratorList(asetCurators);
+      }
+  }, [filterBox, baseFiltersData]);
+
+
+  useEffect(() => {
     get_orglist();
   }, [filterBox, orderBox]);
 
@@ -109,19 +140,26 @@ const OrgListPage = (props) => {
 
   /** ------------------ FETCHES ---------------- */
     /**
-     * Получение списка отделов
+     * Получение списка клиентов-компаний
      * @param {*} req 
      * @param {*} res 
      */
     const get_orglist = async () => {
         if (PRODMODE) {
+          console.log('filterBox', filterBox)
+          let sortBox = orderBox ? orderBox.map((item)=>({
+            field: item.key,
+            order: item.order === 2 ? 'DESC' : 'ASC'
+          })) : [];
+
             try {
                 let response = await PROD_AXIOS_INSTANCE.post('/api/sales/orglist', {
                   data: {
+                    "sort_orders": sortBox,
                     "profiles": null,
                     "name": filterBox.name,
                     "id": filterBox.id,
-                    "curators": filterBox.curators,
+                    "curators": filterBox.curator,
                     "regions": filterBox.regions,
                     "price_statuses": null,
                     "rate_lists": null,
@@ -156,15 +194,41 @@ const OrgListPage = (props) => {
                 console.log(e)
             } finally {
                 // setLoadingOrgs(false)
-                setShowLoader(true);
+                setShowLoader(false);
             }
         } else {
             //setUserAct(USDA);
-            setShowLoader(true);
+            setShowLoader(false);
         }
     }
 
 
+     /**
+     * Получение списка select data
+     * @param {*} req 
+     * @param {*} res 
+     */
+    const get_org_filters = async () => {
+        if (PRODMODE) {
+            try {
+                let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+                  data: {},
+                  _token: CSRF_TOKEN
+                });
+                console.log('me2: ', response);
+                setBaseFilterstData(response.data.filters);
+
+            } catch (e) {
+                console.log(e)
+            } finally {
+                // setLoadingOrgs(false)
+                
+            }
+        } else {
+            //setUserAct(USDA);
+            
+        }
+    }
 
 
   /** ------------------ FETCHES END ---------------- */
@@ -234,14 +298,14 @@ const OrgListPage = (props) => {
   };
 
   const triggerMyCompaniesFilterButton = () => {
-    let value = filterBox.curators;
+    let value = filterBox.curator;
     let newValue = null;
     if (!value){
       newValue = userdata.user?.id;
     };
     setFilterBox(prev => {
       const updated = { ...prev }; // копируем старые фильтры
-        updated.curators = newValue;
+        updated.curator = newValue;
         return updated;
       });
   }
@@ -315,6 +379,8 @@ const OrgListPage = (props) => {
             <OrgListSiderFilter
               base_orgs={orgList}
               filter_presets={filterPresetList}
+              companies={companies}
+              on_change_filters={handleFilterChange}
             />
 
             )}
@@ -359,7 +425,7 @@ const OrgListPage = (props) => {
               <Tooltip title="Компании с моим кураторством">
               <Button
                 color={'default'}
-                variant={filterBox?.curators === userdata?.user?.id ? "solid" : "filled"}
+                variant={filterBox?.curator === userdata?.user?.id ? "solid" : "filled"}
                 size={'small'}
                 onClick={triggerMyCompaniesFilterButton}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
@@ -384,6 +450,7 @@ const OrgListPage = (props) => {
               on_change_filters={handleFilterChange}
               base_filters={filterBox}
               base_orders={orderBox}
+              curator_list={selectCuratorList}
           />
 
           {/* {baseOrgs.length > 20 && (

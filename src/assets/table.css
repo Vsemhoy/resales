@@ -105,3 +105,10 @@
 .sa-table-box-cell {
     word-break: break-word;
 }
+.sa-table-box-header .ant-input-filled {
+    outline: 1px solid var(--column-divider-color);
+}
+.sa-table-box-header .ant-select-selection-wrap {
+        display: grid;
+    grid-template-columns: auto 18px;
+}

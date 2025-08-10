@@ -1,10 +1,10 @@
 .sa-table-box-orgs {
     display: grid;
-    grid-template-columns: 64px 5fr 4fr 4fr 100px 3fr 66px 66px  2fr 66px 66px 66px ;
+    grid-template-columns: 64px 5fr 4fr 4fr 100px 200px 66px 66px  2fr 66px 66px 66px ;
 }
 
 .sa-filer-opened .sa-table-box-orgs {
-    grid-template-columns: 64px 5fr 4fr 4fr 100px 3fr 60px 2fr 66px 66px 66px  !important;
+    grid-template-columns: 64px 5fr 4fr 4fr 100px 170px 50px 50px 2fr 66px 66px  !important;
 }
 .sa-filer-opened .sa-table-box-orgs > *:last-child {
     display: none;
