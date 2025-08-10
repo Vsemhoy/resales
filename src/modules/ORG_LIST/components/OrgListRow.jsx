@@ -146,7 +146,7 @@ const wrapLink = (text) => {
         </div>
         </div>
         <div className={'sa-table-box-cell'}>
-          <div className={'sa-flex-7-columns'}>
+          <div className={'sa-flex-2-columns'}>
             <div>
               {orgData.website && (
                 <Tooltip title={<div className='sa-flex-v'>

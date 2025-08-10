@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Flex, Modal, Tooltip } from 'antd'
+import { Button, Collapse, Dropdown, Flex, Modal, Tooltip } from 'antd'
 import { BorderOutlined, CloseOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { NavLink } from 'react-router-dom';
 import Title from 'antd/es/skeleton/Title';
 import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon } from '@heroicons/react/24/outline';
+
+import '../style/orgmodal.css';
+import OrgModalCommonTab from './Tabs/OrgModalCommonTab';
+import OrgModalDepartTab from './Tabs/OrgModalDepartTab';
+import OrgModalContactinfoTab from './Tabs/OrgModalContactinfoTab';
 
 const OrgListPreviewModal = (props) => {
     const [open, setOpen] = useState(false);
@@ -58,15 +63,88 @@ const menuItems = [
   },
 ];
 
+const itemsNest = [
+  {
+    key: '1',
+    label: 'This is panel nest panel',
+    children: <p>af sdfasdf asdfasdfasdf asd</p>,
+  },
+];
+
+
+  const contactItems = [
+  {
+    key: '1',
+    label: <div className='sk-omt-sub-title'>Трастов Василий Петрович</div>,
+    children: <Collapse defaultActiveKey="1" items={itemsNest} />,
+    open: true,
+  },
+  {
+    key: '2',
+    label: <div className='sk-omt-sub-title'>Клименко Игорь Степаныч</div>,
+    children: <p>df adfasdfasdf</p>,
+  },
+  {
+    key: '3',
+    label: <div className='sk-omt-sub-title'>Суворов Севчик Лютый</div>,
+    children: <p>fasd fasdfas df asdfasdfasdf</p>,
+  },
+];
+
+  const structureItems = [
+    {
+      key: 'st_commoninfo',
+      label: 'Общая информация',
+      children: <OrgModalCommonTab 
+
+      />
+    },
+        {
+      key: 'st_departinfo',
+      label: 'Информация отдела',
+      children: <OrgModalDepartTab
+
+      />
+    },
+        {
+      key: 'st_contactinfo',
+      label: 'Контактная информация',
+      children: <OrgModalContactinfoTab 
+
+      />
+    },
+      {
+      key: 'st_contacts',
+      label: 'Контактные лица',
+      children: (<div className='sk-omt-subs'><Collapse
+                  size={'small'}
+                  items={contactItems} /></div>)
+    },
+        {
+      key: 'st_firmspayers',
+      label: 'Фирмы/плательщики',
+      children: (<div>Hello</div>)
+    },
+        {
+      key: 'st_dogpost',
+      label: 'Договор поставки',
+      children: (<div>Hello</div>)
+    },
+  ]
+
+
+
 
 
   return (
-    <div>
+    <div className={'sa-special-modal'}>
             <Flex vertical gap="middle" align="flex-start">
         {/* Basic */}
 
         <Modal
-            title={<div className={'sa-flex-space'}>
+          
+          title={<div className={'sa-flex-space'}>
+
                 <div className={'spec-modal-title'}>
                     Паспорт организации
                 </div>
@@ -124,9 +202,18 @@ const menuItems = [
             closable={false}
             footer={null}
         >
-            <p>Быстрый просмотр паспорта организации будет в модалке</p>
-            <p>some contents...</p>
-            <p>some contents...</p>
+            <div className={'sa-org-modal-body '}>
+              <div className='sa-orgmodal-header'>
+                Тестовая компания
+              </div>
+
+              <div>
+                <Collapse
+                  defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
+                  size={'small'}
+                  items={structureItems} />
+              </div>
+            </div>
         </Modal>
 
         {/* Responsive */}

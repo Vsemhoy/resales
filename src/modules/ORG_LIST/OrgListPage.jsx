@@ -11,7 +11,7 @@ import { CaretDownFilled, CaretUpFilled, CloseOutlined, CloseSquareOutlined, Fil
 import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import OrgListRow from './components/OrgListRow';
-import OrgListPreviewModal from './components/OrgListPreviewModal';
+import OrgListPreviewModal from './components/OrgModal/OrgListPreviewModal';
 import OrgListSiderFilter from './components/OrgListSiderFilters';
 import OrgListTable from './components/OrgListTable';
 import { RectangleStackIcon } from '@heroicons/react/24/outline';

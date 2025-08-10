@@ -562,3 +562,10 @@ font-size: smaller;
     min-height: 80vh;
 }
 
+.ant-modal-header {
+    margin-bottom: 0px !important;
+}
+.ant-collapse-content-box {
+    padding: 0px !important;
+}
+

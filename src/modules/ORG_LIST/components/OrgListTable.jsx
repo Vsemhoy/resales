@@ -203,6 +203,8 @@ const OrgListTable = (props) => {
                       </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
                       <Select size={'small'} 
+                        showSearch
+                        optionFilterProp="label"
                         style={{ width: '100%' }}
                         variant='filled' 
                         options={curatorList} allowClear

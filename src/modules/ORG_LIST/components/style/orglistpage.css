@@ -10,7 +10,7 @@
     display: none;
 }
 
-.sa-flex-7-columns {
+.sa-flex-2-columns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
 }
@@ -20,6 +20,13 @@
     align-items: center;
     grid-gap: 4px;
     width: 100%;
-    color: gray;
+    
+}
+.sa-col-with-menu > svg , .sa-flex-2-columns svg {
+    opacity: 0.6;
+}
+.ant-dropdown-open .sa-col-with-menu > svg,
+.ant-dropdown-open .sa-flex-2-columns svg {
+    opacity: 1;
 }
 

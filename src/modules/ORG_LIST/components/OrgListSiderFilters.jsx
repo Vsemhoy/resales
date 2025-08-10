@@ -53,7 +53,7 @@ const OrgListSiderFilter = (props) => {
     <div className='sider-body'>
 
         <div className={'sider-unit'}>
-            <div className='sider-unit-title'>Контактное лицо</div>
+            <div className='sider-unit-title'>Компания</div>
             <div className='sider-unit-control'>
                 <Select  style={{ width: '100%' }}
                     options={props.companies} allowClear
