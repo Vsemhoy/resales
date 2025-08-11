@@ -9,6 +9,9 @@ import '../style/orgmodal.css';
 import OrgModalCommonTab from './Tabs/OrgModalCommonTab';
 import OrgModalDepartTab from './Tabs/OrgModalDepartTab';
 import OrgModalContactinfoTab from './Tabs/OrgModalContactinfoTab';
+import OrgModalPayersTab from './Tabs/OrgModalPayersTab';
+import OrgModalSupplyContractTab from './Tabs/OrgModalSupplyContractTab';
+import OrgModalContactsTab from './Tabs/OrgModalContactsTab';
 
 const OrgListPreviewModal = (props) => {
     const [open, setOpen] = useState(false);
@@ -76,18 +79,38 @@ const itemsNest = [
   {
     key: '1',
     label: <div className='sk-omt-sub-title'>Трастов Василий Петрович</div>,
-    children: <Collapse defaultActiveKey="1" items={itemsNest} />,
+    children: <OrgModalContactsTab
+      id={4532}
+    />,
     open: true,
   },
   {
     key: '2',
     label: <div className='sk-omt-sub-title'>Клименко Игорь Степаныч</div>,
-    children: <p>df adfasdfasdf</p>,
+    children: <OrgModalContactsTab
+    id={453232}
+    />,
   },
   {
     key: '3',
     label: <div className='sk-omt-sub-title'>Суворов Севчик Лютый</div>,
-    children: <p>fasd fasdfas df asdfasdfasdf</p>,
+    children: <OrgModalContactsTab
+    id={45532}
+    />,
+  },
+    {
+    key: '122',
+    label: <div className='sk-omt-sub-title'>Клименко Игорь Виталич</div>,
+    children: <OrgModalContactsTab
+    id={455432}
+    />,
+  },
+  {
+    key: '1233',
+    label: <div className='sk-omt-sub-title'>Дебонияр Руслан Сугран</div>,
+    children: <OrgModalContactsTab
+    id={4565432}
+    />,
   },
 ];
 
@@ -123,12 +146,15 @@ const itemsNest = [
         {
       key: 'st_firmspayers',
       label: 'Фирмы/плательщики',
-      children: (<div>Hello</div>)
+      children: <OrgModalPayersTab 
+
+
+      />
     },
         {
       key: 'st_dogpost',
       label: 'Договор поставки',
-      children: (<div>Hello</div>)
+      children: <OrgModalSupplyContractTab />
     },
   ]
 

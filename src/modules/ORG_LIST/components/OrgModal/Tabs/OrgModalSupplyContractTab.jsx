@@ -2,56 +2,56 @@ import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
 
 
-const OrgModalCommonTab = (props) => {
+const OrgModalSupplyContractTab = (props) => {
 
   return (
     <div className={'sk-omt-stack'}>
 
         <OrgModalRow
-            key={'fklasdjl'}
+            key={'mkpbasdjl'}
             titles={['Название организации']}
             datas={['Тестовая карточка организации']}
             comment={"Здесь будет длинный комментарий ли очень длинный"}
         />
 
         <OrgModalRow
-            key={'fklasddjl'}
+            key={'mkpbasddjl'}
             titles={['Форма собственности', 'ИНН']}
             datas={['Тестовая карточка ', '']}
         />
 
         <OrgModalRow
-        key={'fkl43asdjl'}
+        key={'mkpb43asdjl'}
             titles={['Вид деятельности']}
             datas={['Тестовая  ']}
         />
 
         <OrgModalRow
-            key={'fkla3sddjl'}
+            key={'mkpba3sddjl'}
             titles={['Второе название']}
             datas={['Тестова организации']}
         />
 
         <OrgModalRow
-            key={'fkla5sddjl'}
+            key={'mkpba5sddjl'}
             titles={['Профиль компании', 'Проф звук']}
             datas={['Тестовая карточка организации','']}
         />
 
         <OrgModalRow
-            key={'fklasd6352djl'}
+            key={'mkpbasd6352djl'}
             titles={['Источник']}
             datas={['Тестовая  организации']}
         />
 
         <OrgModalRow
-            key={'fkl452asddjl'}
+            key={'mkpb452asddjl'}
             titles={['Комментарий']}
             datas={[' карточка организации']}
         />
 
         <OrgModalRow
-            key={'fkla6454sddjl'}
+            key={'mkpba6454sddjl'}
             titles={['Памятка']}
             datas={['Тестовая карточка ']}
         />
@@ -61,4 +61,4 @@ const OrgModalCommonTab = (props) => {
   );
 };
 
-export default OrgModalCommonTab;
+export default OrgModalSupplyContractTab;

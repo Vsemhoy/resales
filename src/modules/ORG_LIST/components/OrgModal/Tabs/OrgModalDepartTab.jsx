@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import OrgModalRow from './OrgModalRow';
 
 
 const OrgModalDepartTab = (props) => {
@@ -6,109 +7,49 @@ const OrgModalDepartTab = (props) => {
   return (
     <div className={'sk-omt-stack'}>
 
-        <div className={'sk-omt-row omt-1-col'}>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Название огранизации
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-        </div>
+        <OrgModalRow
+            key={'rowfla00222'}
+            titles={['Автор', 'Куратор']}
+            datas={['Тестовая карточка организации','Bydfd']}
+        />
 
-        <div className={'sk-omt-row omt-2-col'}>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Форма собственности
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    ИНН
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-        </div>
+        <OrgModalRow
+            key={'rowfla00223'}
+            titles={['Отдел']}
+            datas={['Тестовая карточка организации']}
+        />
 
-        <div className={'sk-omt-row omt-1-col'}>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Вид деятельности
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-        </div>
+        <OrgModalRow
+            key={'rowfla00224'}
+            titles={['Статус $', 'Способ доставки']}
+            datas={['Тестовая карточка организации', 'fjsalkdj']}
+        />
 
-        <div className={'sk-omt-row omt-1-col'}>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Второе название
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-        </div>
+        <OrgModalRow
+            key={'rowfla00225'}
+            titles={['Комментарии']}
+            datas={['Тестовая карточка организации']}
+        />
 
-        <div className={'sk-omt-row omt-2-col'}>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Профиль компании
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Проф звук
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-        </div>
+        <OrgModalRow
+            key={'rowfla00226'}
+            titles={['Списки', 'Комментарий']}
+            datas={['Тестовая карточка организации','fklajdskl']}
+        />
 
-        <div className={'sk-omt-row omt-1-col'}>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Источник
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-        </div>
+        <OrgModalRow
+            key={'rowfla00227'}
+            titles={['Лицензия МЧС', 'Комментарий', '№ Дата']}
+            datas={['монтаж','Бессрочная', '56345']}
+            comment={"Здесь будет длинный комментарий ли очень длинный"}
+        />
 
-        <div className={'sk-omt-row omt-1-col'}>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Комментарий
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-        </div>
-
-        <div className={'sk-omt-row omt-1-col'}>
-            <div>
-                <div className={'sk-omt-legend'}>
-                    Памятка
-                </div>
-                <div className={'sk-omt-content'}>
-                    Тестовая карточка
-                </div>
-            </div>
-        </div>
+        <OrgModalRow
+            key={'rowfla00228'}
+            titles={['Допуски СРО','№ Дата']}
+            datas={['Строительное...', 'dfkjas']}
+            comment={"Здесь будет длинный комментарий ли очень длинный"}
+        />
 
 
     </div>
