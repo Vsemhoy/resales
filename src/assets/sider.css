@@ -20,6 +20,7 @@
 .sider-unit-title {
     color: var(--section-tab-text-color);
     margin-bottom: 6px;
+    font-weight: 500;
 }
 .sider-unit-wrapper-title {
     text-align: left;

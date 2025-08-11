@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
 
 
-const OrgModalContactsTab = (props) => {
+const OrgModalContactsSection = (props) => {
 
     const [contactId, setcontactId] = useState(props.id);
 
@@ -11,7 +11,9 @@ const OrgModalContactsTab = (props) => {
     }, [props]);
 
  return (
-    <div className={'sk-omt-stack'}>
+    <div className={'sk-omt-stack'}
+        style={{borderLeft: '4px solid orange'}}
+    >
 
         <OrgModalRow
             key={contactId + 'rowfla00722'}
@@ -79,4 +81,4 @@ const OrgModalContactsTab = (props) => {
   );
 };
 
-export default OrgModalContactsTab;
+export default OrgModalContactsSection;

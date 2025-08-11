@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
 
 
-const OrgModalPayersTab = (props) => {
+const OrgModalPayersSection = (props) => {
 
   return (
-    <div className={'sk-omt-stack'}>
+    <div className={'sk-omt-stack'}
+    style={{borderLeft: '4px solid yellow'}}
+    >
 
         <OrgModalRow
             key={'sthpasdjl'}
@@ -61,4 +63,4 @@ const OrgModalPayersTab = (props) => {
   );
 };
 
-export default OrgModalPayersTab;
+export default OrgModalPayersSection;

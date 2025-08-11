@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
 
 
-const OrgModalContactinfoTab = (props) => {
+const OrgModalContactinfoSection = (props) => {
 
   return (
-    <div className={'sk-omt-stack'}>
+    <div className={'sk-omt-stack'}
+        style={{borderLeft: '4px solid blueviolet'}}
+    >
 
         <OrgModalRow
             key={'rowfla00322'}
@@ -47,4 +49,4 @@ const OrgModalContactinfoTab = (props) => {
   );
 };
 
-export default OrgModalContactinfoTab;
+export default OrgModalContactinfoSection;

@@ -1,24 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Collapse, Dropdown, Flex, Modal, Tooltip } from 'antd'
 import { BorderOutlined, CloseOutlined, EllipsisOutlined } from '@ant-design/icons';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useSearchParams } from 'react-router-dom';
 import Title from 'antd/es/skeleton/Title';
 import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon } from '@heroicons/react/24/outline';
 
 import '../style/orgmodal.css';
-import OrgModalCommonTab from './Tabs/OrgModalCommonTab';
-import OrgModalDepartTab from './Tabs/OrgModalDepartTab';
-import OrgModalContactinfoTab from './Tabs/OrgModalContactinfoTab';
-import OrgModalPayersTab from './Tabs/OrgModalPayersTab';
-import OrgModalSupplyContractTab from './Tabs/OrgModalSupplyContractTab';
-import OrgModalContactsTab from './Tabs/OrgModalContactsTab';
+import OrgModalCommonSection from './Tabs/MainTabSections/OrgModalCommonSection';
+import OrgModalDepartSection from './Tabs/MainTabSections/OrgModalDepartSection';
+import OrgModalContactinfoSection from './Tabs/MainTabSections/OrgModalContactinfoSection';
+import OrgModalPayersSection from './Tabs/MainTabSections/OrgModalPayersSection';
+import OrgModalSupplyContractSection from './Tabs/MainTabSections/OrgModalSupplyContractSection';
+import OrgModalContactsSection from './Tabs/MainTabSections/OrgModalContactsSection';
+import OrgListMainTab from './Tabs/OrgListModalMainTab';
+import OrgListModalBillsTab from './Tabs/OrgListModalBillsTab';
+import OrgListModalOffersTab from './Tabs/OrgListModalOffersTab';
+import OrgListModalCallMeetingsTab from './Tabs/OrgListModalCallMeetingsTab';
+import OrgListModalNotesTab from './Tabs/OrgListModalNotesTab';
+import OrgListModalHistoryTab from './Tabs/OrgListModalHistoryTab';
 
 const OrgListPreviewModal = (props) => {
     const [open, setOpen] = useState(false);
 //   const [openResponsive, setOpenResponsive] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // m - main
+  // b - bills
+  // o - offers
+  // c - calls
+  // n - notes
+  // h - history
+  const [activeTab, setActiveTab] = useState('m');
+
+
 
     useEffect(() => {
       setOpen(props.is_open);
+
+      if (props.is_open){
+        let t = searchParams.get('tab');
+        if (t && ['m','b','o','c','n','h'].includes(t)) {
+          setActiveTab(t);
+        } else {
+          searchParams.set('tab', "m");
+          setSearchParams(searchParams);
+          setActiveTab('m');
+        }
+      }
+
     }, [props.is_open]);
 
     const handleClose = ()=>{
@@ -26,6 +55,12 @@ const OrgListPreviewModal = (props) => {
             props.on_close();
         };
     };
+
+    const handleChangeTab = (tabLit) => {
+        setActiveTab(tabLit);
+        searchParams.set('tab', tabLit);
+        setSearchParams(searchParams);
+    }
 
 
 const menuItems = [
@@ -79,7 +114,7 @@ const itemsNest = [
   {
     key: '1',
     label: <div className='sk-omt-sub-title'>Трастов Василий Петрович</div>,
-    children: <OrgModalContactsTab
+    children: <OrgModalContactsSection
       id={4532}
     />,
     open: true,
@@ -87,28 +122,28 @@ const itemsNest = [
   {
     key: '2',
     label: <div className='sk-omt-sub-title'>Клименко Игорь Степаныч</div>,
-    children: <OrgModalContactsTab
+    children: <OrgModalContactsSection
     id={453232}
     />,
   },
   {
     key: '3',
     label: <div className='sk-omt-sub-title'>Суворов Севчик Лютый</div>,
-    children: <OrgModalContactsTab
+    children: <OrgModalContactsSection
     id={45532}
     />,
   },
     {
     key: '122',
     label: <div className='sk-omt-sub-title'>Клименко Игорь Виталич</div>,
-    children: <OrgModalContactsTab
+    children: <OrgModalContactsSection
     id={455432}
     />,
   },
   {
     key: '1233',
     label: <div className='sk-omt-sub-title'>Дебонияр Руслан Сугран</div>,
-    children: <OrgModalContactsTab
+    children: <OrgModalContactsSection
     id={4565432}
     />,
   },
@@ -118,21 +153,21 @@ const itemsNest = [
     {
       key: 'st_commoninfo',
       label: 'Общая информация',
-      children: <OrgModalCommonTab 
+      children: <OrgModalCommonSection 
 
       />
     },
         {
       key: 'st_departinfo',
       label: 'Информация отдела',
-      children: <OrgModalDepartTab
+      children: <OrgModalDepartSection
 
       />
     },
         {
       key: 'st_contactinfo',
       label: 'Контактная информация',
-      children: <OrgModalContactinfoTab 
+      children: <OrgModalContactinfoSection 
 
       />
     },
@@ -146,7 +181,7 @@ const itemsNest = [
         {
       key: 'st_firmspayers',
       label: 'Фирмы/плательщики',
-      children: <OrgModalPayersTab 
+      children: <OrgModalPayersSection 
 
 
       />
@@ -154,7 +189,7 @@ const itemsNest = [
         {
       key: 'st_dogpost',
       label: 'Договор поставки',
-      children: <OrgModalSupplyContractTab />
+      children: <OrgModalSupplyContractSection />
     },
   ]
 
@@ -175,22 +210,34 @@ const itemsNest = [
                     Паспорт организации
                 </div>
                 <div className={'spec-modal-control'}>
-                    <div className={'spec-modal-control-button active'}>
+                    <div className={`spec-modal-control-button ${activeTab === 'm' ? 'active' : ''}`}
+                      onClick={()=>{handleChangeTab('m')}}
+                    >
                         Основная информация
                     </div>
-                    <div className={'spec-modal-control-button'}>
+                    <div className={`spec-modal-control-button ${activeTab === 'b' ? 'active' : ''}`}
+                      onClick={()=>{handleChangeTab('b')}}
+                    >
                         Счета
                     </div>
-                    <div className={'spec-modal-control-button'}>
+                    <div className={`spec-modal-control-button ${activeTab === 'o' ? 'active' : ''}`}
+                      onClick={()=>{handleChangeTab('o')}}
+                    >
                         КП
                     </div>
-                    <div className={'spec-modal-control-button'}>
+                    <div className={`spec-modal-control-button ${activeTab === 'c' ? 'active' : ''}`}
+                      onClick={()=>{handleChangeTab('c')}}
+                    >
                       Встречи/звонки  
                     </div>
-                    <div className={'spec-modal-control-button'}>
+                    <div className={`spec-modal-control-button ${activeTab === 'n' ? 'active' : ''}`}
+                      onClick={()=>{handleChangeTab('n')}}
+                    >
                         Заметки
                     </div>
-                    <div className={'spec-modal-control-button'}>
+                    <div className={`spec-modal-control-button ${activeTab === 'h' ? 'active' : ''}`}
+                      onClick={()=>{handleChangeTab('h')}}
+                    >
                         История
                     </div>
                     <Dropdown menu={{ items: menuItems }} placement="bottomRight">
@@ -228,17 +275,55 @@ const itemsNest = [
             closable={false}
             footer={null}
         >
-            <div className={'sa-org-modal-body '}>
+            <div className={'sa-org-modal-body'} style={{minHeight: '600px'}}>
               <div className='sa-orgmodal-header'>
                 Тестовая компания
               </div>
 
-              <div>
-                <Collapse
-                  defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
-                  size={'small'}
-                  items={structureItems} />
-              </div>
+
+
+              {activeTab === 'm' && (
+                <OrgListMainTab structure={structureItems} 
+
+
+                />
+              )}
+
+              {activeTab === 'b' && (
+                <OrgListModalBillsTab
+
+
+                />
+              )}
+
+              {activeTab === 'o' && (
+                <OrgListModalOffersTab
+
+
+                />
+              )}
+
+              {activeTab === 'c' && (
+                <OrgListModalCallMeetingsTab
+
+
+                />
+              )}
+
+              {activeTab === 'n' && (
+                <OrgListModalNotesTab
+
+
+                />
+              )}
+
+              {activeTab === 'h' && (
+                <OrgListModalHistoryTab
+
+
+                />
+              )}
+             
             </div>
         </Modal>
 

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
 
 
-const OrgModalSupplyContractTab = (props) => {
+const OrgModalSupplyContractSection = (props) => {
 
   return (
-    <div className={'sk-omt-stack'}>
+    <div className={'sk-omt-stack'}
+    style={{borderLeft: '4px solid red'}}
+    >
 
         <OrgModalRow
             key={'mkpbasdjl'}
@@ -61,4 +63,4 @@ const OrgModalSupplyContractTab = (props) => {
   );
 };
 
-export default OrgModalSupplyContractTab;
+export default OrgModalSupplyContractSection;
