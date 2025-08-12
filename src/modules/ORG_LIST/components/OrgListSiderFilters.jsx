@@ -14,10 +14,10 @@ const OrgListSiderFilter = (props) => {
     const [filterRegion, setFilterRegion] = useState(null);
     const [filterTown, setFilterTown] = useState(null);
 
-    const [filterAddress, setFilterAddress] = useState(null);
-    const [filterProfile, setFilterProfile] = useState(null);
+    const [filterAddress,      setFilterAddress] = useState(null);
+    const [filterProfile,      setFilterProfile] = useState(null);
     const [filterContactFace,  setFilterContactFace] = useState(null);
-    const [filterPriceStatus, setFilterPriceStatus] = useState(null);
+    const [filterPriceStatus,  setFilterPriceStatus] = useState(null);
     const [filterLists,        setFilterLists] = useState(null);
     const [filterStatus,       setFilterStatus] = useState(null);
     const [filterProfsound,    setFilterProfsound] = useState(null);
@@ -45,13 +45,19 @@ const OrgListSiderFilter = (props) => {
         const timer = setTimeout(() => {
             let filterBox = props.base_filters ?? {};
     
-            filterBox.companies = toNullable(filterCompany);
-            // filterBox.towns = toNullable(filterTown);
-            // filterBox.id = toNullable(filterId);
-            // filterBox.name = toNullable(filterName);
-            // filterBox.inn = toNullable(filterInn);
-            // filterBox.comment = toNullable(filterComment);
-            // filterBox.curator = toNullable(filterCurator); // если нужен
+            filterBox.companies       = toNullable(filterCompany);
+            filterBox.address         = toNullable(filterAddress);
+            filterBox.contact_user    = toNullable(filterContactFace);
+            filterBox.email           = toNullable(filterEmail);
+            filterBox.phone           = toNullable(filterPhone);
+            filterBox.regions         = toNullable(filterRegion);
+            filterBox.price_statuses  = toNullable(filterPriceStatus);
+            filterBox.client_statuses = toNullable(filterStatus);
+            filterBox.site            = toNullable(filterWebsite);
+            filterBox.profiles        = toNullable(filterProfile);
+            filterBox.created_date    = filterCreatedAt;
+            filterBox.updated_date    = filterUpdatedAt;
+
     
             if (props.on_change_filters) {
                 props.on_change_filters(filterBox);
@@ -60,7 +66,20 @@ const OrgListSiderFilter = (props) => {
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
-        }, [ filterCompany ]);
+        }, [ filterCompany,
+            filterAddress,    
+            filterProfile,    
+            filterContactFace,
+            filterPriceStatus,
+            filterLists,      
+            filterStatus,     
+            filterProfsound,  
+            filterPhone,      
+            filterEmail,      
+            filterWebsite,    
+            filterCreatedAt,  
+            filterUpdatedAt,  
+         ]);
 
 
         useEffect(() => {
@@ -279,9 +298,9 @@ const OrgListSiderFilter = (props) => {
             <div className='sider-unit-title'>Дата последнего обновления</div>
             <div className='sider-unit-control'>
                 <DatePicker.RangePicker 
-                    value={filterCreatedAt}
+                    value={filterUpdatedAt}
                     allowClear
-                    onChange={setFilterCreatedAt}
+                    onChange={setFilterupdatedAt}
                 />
             </div>
         </div>
