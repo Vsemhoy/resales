@@ -373,6 +373,7 @@ const OrgListPage = (props) => {
           collapsedWidth={0}
           width={'300px'}
           style={{ backgroundColor: '#ffffff' }}
+          
         >
           <div className={'sa-sider'}>
             {openedFilters && (
@@ -381,6 +382,7 @@ const OrgListPage = (props) => {
               filter_presets={filterPresetList}
               companies={companies}
               on_change_filters={handleFilterChange}
+              base_filters={baseFiltersData}
             />
 
             )}

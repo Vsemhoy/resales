@@ -18,6 +18,7 @@ import OrgListModalOffersTab from './Tabs/OrgListModalOffersTab';
 import OrgListModalCallMeetingsTab from './Tabs/OrgListModalCallMeetingsTab';
 import OrgListModalNotesTab from './Tabs/OrgListModalNotesTab';
 import OrgListModalHistoryTab from './Tabs/OrgListModalHistoryTab';
+import OrgListModalProjectsTab from './Tabs/MainTabSections/OrgListModalProjectsTab';
 
 const OrgListPreviewModal = (props) => {
     const [open, setOpen] = useState(false);
@@ -27,6 +28,7 @@ const OrgListPreviewModal = (props) => {
   // m - main
   // b - bills
   // o - offers
+  // p - projects
   // c - calls
   // n - notes
   // h - history
@@ -39,7 +41,7 @@ const OrgListPreviewModal = (props) => {
 
       if (props.is_open){
         let t = searchParams.get('tab');
-        if (t && ['m','b','o','c','n','h'].includes(t)) {
+        if (t && ['m','b','o', 'p','c','n','h'].includes(t)) {
           setActiveTab(t);
         } else {
           searchParams.set('tab', "m");
@@ -225,6 +227,11 @@ const itemsNest = [
                     >
                         КП
                     </div>
+                    <div className={`spec-modal-control-button ${activeTab === 'p' ? 'active' : ''}`}
+                      onClick={()=>{handleChangeTab('p')}}
+                    >
+                        Проекты
+                    </div>
                     <div className={`spec-modal-control-button ${activeTab === 'c' ? 'active' : ''}`}
                       onClick={()=>{handleChangeTab('c')}}
                     >
@@ -303,6 +310,13 @@ const itemsNest = [
                 />
               )}
 
+              {activeTab === 'p' && (
+                <OrgListModalProjectsTab
+
+
+                />
+              )}
+
               {activeTab === 'c' && (
                 <OrgListModalCallMeetingsTab
 
@@ -323,6 +337,7 @@ const itemsNest = [
 
                 />
               )}
+              
              
             </div>
         </Modal>

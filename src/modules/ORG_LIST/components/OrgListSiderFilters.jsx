@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 const OrgListSiderFilter = (props) => {
     const [filterPresetList, setFilterPresetList] = useState(props.filter_presets);
 
-
+    const [baseFilterList, setBaseFilterList] = useState(props.base_filters);
 
 
     const [filterCompany, setFilterCompany] = useState(null);
@@ -26,6 +26,14 @@ const OrgListSiderFilter = (props) => {
     const [filterWebsite,      setFilterWebsite] = useState(null);
     const [filterCreatedAt,    setFilterCreatedAt] = useState([null, null]);
     const [filterUpdatedAt,    setFilterupdatedAt] = useState([null, null]);
+
+    const [listProfiles, setListProfiles] = useState([]);
+    const [listStatuses, setListStatuses] = useState([]);
+    const [listLists, setListLists] = useState([]);
+    const [listProfSound, setListProfSound] = useState([]);
+    const [listPrices, setListPrices] = useState([]);
+    const [listRegions, setListRegions] = useState([]);
+    const [listClientStatuses, setListClientStatuses] = useState([]);
 
 
     useEffect(() => {
@@ -52,9 +60,71 @@ const OrgListSiderFilter = (props) => {
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
-        }, [
-            filterCompany
-        ]);
+        }, [ filterCompany ]);
+
+
+        useEffect(() => {
+          if (props.base_filters === null || props.base_filters === undefined){return;};
+            console.log('rops.base_filters', props.base_filters);
+            setListPrices(props.base_filters.price_statuses.map((item)=>(
+                {
+                    key: `clistat_${item.id}`,
+                    value: item.value,
+                    label: item.name
+                }
+            )));
+
+            setListRegions(props.base_filters.regions.map((item)=>(
+                {
+                    key: `clistat2_${item.id}`,
+                    value: item.value,
+                    label: item.name
+                }
+            )));
+            
+            setListPrices(props.base_filters.price_statuses.map((item)=>(
+                {
+                    key: `clistat3_${item.id}`,
+                    value: item.value,
+                    label: item.name
+                }
+            )));
+
+            setListProfiles(props.base_filters.profiles.map((item)=>(
+                {
+                    key: `clistat4_${item.id}`,
+                    value: item.value,
+                    label: item.name
+                }
+            )));
+
+            setListProfSound(props.base_filters.profsound.map((item)=>(
+                {
+                    key: `clistat5_${item.key}`,
+                    value: item.value,
+                    label: item.label
+                }
+            )));
+
+            setListClientStatuses(props.base_filters.client_statuses.map((item)=>(
+                {
+                    key: `clistat6_${item.id}`,
+                    value: item.value,
+                    label: item.name
+                }
+            )));
+
+            setListLists(props.base_filters.rate_lists.map((item)=>(
+                {
+                    key: `clistat6_${item.id}`,
+                    value: item.value,
+                    label: item.name
+                }
+            )));
+
+        }, [props.base_filters]);
+
+
 
 
     // Утилита: если строка пустая — возвращаем null
@@ -104,7 +174,8 @@ const OrgListSiderFilter = (props) => {
             <div className='sider-unit-title'>Профиль</div>
             <div className='sider-unit-control'>
                 <Select  style={{ width: '100%' }}
-                    options={props.companies} allowClear
+                    options={listProfiles}
+                    allowClear
                     value={filterProfile}
                     onChange={setFilterProfile}
                  />
@@ -114,10 +185,11 @@ const OrgListSiderFilter = (props) => {
         <div className={'sider-unit'}>
             <div className='sider-unit-title'>Статус цен</div>
             <div className='sider-unit-control'>
-                <Select  style={{ width: '100%' }}
-                    options={props.companies} allowClear
+                <Select style={{ width: '100%' }}
+                    allowClear
                     value={filterPriceStatus}
                     onChange={setFilterPriceStatus}
+                    options={listPrices}
                  />
             </div>
         </div>
@@ -126,7 +198,8 @@ const OrgListSiderFilter = (props) => {
             <div className='sider-unit-title'>Списки</div>
             <div className='sider-unit-control'>
                 <Select  style={{ width: '100%' }}
-                    options={props.companies} allowClear
+                    options={listLists} 
+                    allowClear
                     value={filterLists}
                     onChange={setFilterLists}
                  />
@@ -137,7 +210,8 @@ const OrgListSiderFilter = (props) => {
             <div className='sider-unit-title'>Статус</div>
             <div className='sider-unit-control'>
                 <Select  style={{ width: '100%' }}
-                    options={props.companies} allowClear
+                    options={listClientStatuses}
+                    allowClear
                     value={filterStatus}
                     onChange={setFilterStatus}
                  />
@@ -149,7 +223,8 @@ const OrgListSiderFilter = (props) => {
             <div className='sider-unit-title'>Профзвук</div>
             <div className='sider-unit-control'>
                 <Select  style={{ width: '100%' }}
-                    options={props.companies} allowClear
+                    options={listProfSound} 
+                    allowClear
                     value={filterProfsound}
                     onChange={setFilterProfsound}
                  />
