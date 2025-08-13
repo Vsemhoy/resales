@@ -104,3 +104,30 @@ background-color: #dae9fb;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
+
+.sa-orgtab-container {
+    background-color: #e7ebef;
+    min-height: 600px;
+}
+
+
+.sa-org-bid-row {
+    display: grid;
+    grid-template-columns: 100px 120px 2fr 1fr 100px 2fr;
+    border-bottom: 1px solid var(--column-divider-color);
+    background-color: var(--section-row-color);
+}
+.sa-org-bid-row:hover {
+    background-color: var(--table-hovered-row-color);
+}
+.sa-org-bid-row-header {
+    border-top: 1px solid var(--column-divider-color);
+    background-color: var(--section-header-color);
+}
+.sa-org-bid-row > div {
+    border-right: 1px solid var(--column-divider-color);
+}
+.sa-org-bid-row > div > div {
+    padding: 3px 6px;
+    text-align: center;
+}

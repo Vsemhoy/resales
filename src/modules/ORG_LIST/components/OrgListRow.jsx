@@ -12,25 +12,33 @@ const OrgListRow = (props) => {
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const [compColor, setCompColor] = useState("#00000000");
-  const menu = (
-    <Menu>
-      <Menu.Item key="1"
-        icon={<ArrowRightEndOnRectangleIcon  height={"18px"} />}
-      >Запросить кураторство</Menu.Item>
-      <Menu.Item key="2"
-        icon={<ArrowRightStartOnRectangleIcon height={"18px"} />}
-      >Передать кураторство</Menu.Item>
-      <Menu.Item key="3"
-      icon={<NewspaperIcon height={"18px"} />}
-      >Создать КП</Menu.Item>
-      <Menu.Item key="4"
-      icon={<DocumentCurrencyDollarIcon height={"18px"} />}
-      >Создать Счёт</Menu.Item>
-      <Menu.Item key="5"
-      icon={<ArchiveBoxXMarkIcon height={"18px"}/>}
-      >Удалить</Menu.Item>
-    </Menu>
-  );
+const menuItems = [
+  {
+    key: '1',
+    icon: <ArrowRightEndOnRectangleIcon height="18px" />,
+    label: 'Запросить кураторство',
+  },
+  {
+    key: '2',
+    icon: <ArrowRightStartOnRectangleIcon height="18px" />,
+    label: 'Передать кураторство',
+  },
+  {
+    key: '3',
+    icon: <NewspaperIcon height="18px" />,
+    label: 'Создать КП',
+  },
+  {
+    key: '4',
+    icon: <DocumentCurrencyDollarIcon height="18px" />,
+    label: 'Создать Счёт',
+  },
+  {
+    key: '5',
+    icon: <ArchiveBoxXMarkIcon height="18px" />,
+    label: 'Удалить',
+  },
+];
 
   const [orgData, setOrgData] = useState(props.data);
 
@@ -42,7 +50,7 @@ const OrgListRow = (props) => {
 
   useEffect(() => {
       setCompColor(props.company_color);
-        console.log('company_color', props.company_color)
+        // console.log('company_color', props.company_color)
   }, [props.company_color]);
 
 
@@ -87,11 +95,15 @@ const wrapLink = (text) => {
   };
 
 
-
+  const navigateToEditor = (e) => {
+    navigate('/orgs/' + orgData.id + "?mode=view", {
+      state: { from: window.location.pathname + window.location.search }
+    });
+  }
 
   return (
-    <Dropdown overlay={menu} trigger={['contextMenu']}>
-      <div className={`sa-table-box-orgs sa-table-box-row ${active ? 'active':''}`} key={props.key}
+    <Dropdown menu={{items: menuItems}} trigger={['contextMenu']} key={`orgrow_${orgData.id}`}>
+      <div className={`sa-table-box-orgs sa-table-box-row ${active ? 'active':''}`}
         style={{ color: compColor}}
         onDoubleClick={handleDoubleClick}
       >
@@ -101,14 +113,14 @@ const wrapLink = (text) => {
         <div
         
         >
-        <NavLink to={'/orgs/4234'}>
+        <NavLink to={'/orgs/' + orgData.id + '?mode=edit'} state={'hello'}>
           {orgData.id}
         </NavLink>
           </div>
         </div>
         <div className={'sa-table-box-cell'}>
          <div className={'sa-align-left'}>
-            <NavLink to={'/orgs/4234'}>
+            <NavLink to={'/orgs/' + orgData.id + '?mode=view'}>
               {orgData.name}
             </NavLink>
           </div>

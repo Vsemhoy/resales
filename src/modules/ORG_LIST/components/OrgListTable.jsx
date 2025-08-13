@@ -15,7 +15,7 @@ const OrgListTable = (props) => {
 
     const [filterInn, setFilterInn] = useState(null);
     const [filterName, setFilterName] = useState(null);
-    const [filterRegion, setFilterRegion] = useState(null);
+
     const [filterTown, setFilterTown] = useState(null);
     const [filterComment, setFilterComment] = useState(null);
     const [filterId, setFilterId] = useState(null);
@@ -40,7 +40,6 @@ const OrgListTable = (props) => {
     const timer = setTimeout(() => {
         let filterBox = props.base_filters ?? {};
 
-        filterBox.regions = toNullable(filterRegion);
         filterBox.towns = toNullable(filterTown);
         filterBox.id = toNullable(filterId);
         filterBox.name = toNullable(filterName);
@@ -56,7 +55,6 @@ const OrgListTable = (props) => {
     // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
     return () => clearTimeout(timer);
     }, [
-        filterRegion,
         filterTown,
         filterId,
         filterName,
@@ -151,14 +149,14 @@ const OrgListTable = (props) => {
                       sort_key={'town'}
                       on_sort_change={handleActivateSorter}
                       active_sort_items={sortOrders}
-                      >Город/регион
+                      >Город
                       </TableHeadNameWithSort>
                       <Tooltip placement='bottom'>
                     <div className={'sa-pa-3'}>
                         <Input size={'small'} style={{ width: '100%' }}
                             variant='filled'
-                            value={filterRegion}
-                            onChange={(ev)=>{setFilterRegion(ev.target.value)}}
+                            value={filterTown}
+                            onChange={(ev)=>{setFilterTown(ev.target.value)}}
                             allowClear />
                         </div>
                     </Tooltip>
@@ -270,10 +268,10 @@ const OrgListTable = (props) => {
               {props.base_orgs.map((borg, index) => (
                 <OrgListRow
                     data={borg}
-                  is_active={isPreviewOpen && previewItem === borg.id}
-                  on_double_click={handlePreviewOpen}
-                  key={`borg_${borg.id}`}
-                  userdata={userdata}
+                    is_active={isPreviewOpen && previewItem === borg.id}
+                    on_double_click={handlePreviewOpen}
+                    key={`borg_${borg.id}`}
+                    userdata={userdata}
                     company_color={props.base_companies?.find((item)=>item.id === borg.id_company)?.color}
                  />
               ))}

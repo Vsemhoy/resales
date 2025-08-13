@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Collapse, Dropdown, Flex, Modal, Tooltip } from 'antd'
 import { BorderOutlined, CloseOutlined, EllipsisOutlined } from '@ant-design/icons';
-import { NavLink, useSearchParams } from 'react-router-dom';
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import Title from 'antd/es/skeleton/Title';
 import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon } from '@heroicons/react/24/outline';
 
@@ -19,11 +19,15 @@ import OrgListModalCallMeetingsTab from './Tabs/OrgListModalCallMeetingsTab';
 import OrgListModalNotesTab from './Tabs/OrgListModalNotesTab';
 import OrgListModalHistoryTab from './Tabs/OrgListModalHistoryTab';
 import OrgListModalProjectsTab from './Tabs/MainTabSections/OrgListModalProjectsTab';
+import { getOrgTabLink, getOrgTabName } from './Tabs/TabComponents/OrgTabUtils';
 
 const OrgListPreviewModal = (props) => {
     const [open, setOpen] = useState(false);
 //   const [openResponsive, setOpenResponsive] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const [orgId, setOrgId] = useState(246);
 
   // m - main
   // b - bills
@@ -197,7 +201,22 @@ const itemsNest = [
 
 
 
+  const navigateToEditor = (ev) => {
+    const url = '/orgs/' + orgId + '?mode=edit';
+    var targetTab = getOrgTabLink(activeTab);
+    
 
+    if (ev.ctrlKey || ev.metaKey || ev.button === 1) {
+      // Open in Blank page
+       const fullUrl = window.location.origin + url + targetTab;
+        window.open(fullUrl, '_blank');
+      return; // не делаем переход внутри SPA
+    };
+
+    navigate('/orgs/' + orgId + targetTab + "?mode=edit", {
+      state: { from: window.location.pathname + window.location.search }
+    });
+  }
 
   return (
     <div className={'sa-special-modal'}>
@@ -256,13 +275,13 @@ const itemsNest = [
                         </div>
                     </Dropdown>
                     <Tooltip title="Перейти в редактор">
-                    <NavLink to="/orgs/234">
+                    <div onMouseDown={navigateToEditor}>
                     <div className={'spec-modal-control-button expander'}
                         // onClick={handleClose}
                     >
                         <BorderOutlined /> 
                     </div>
-                    </NavLink>
+                    </div>
                     </Tooltip>
                     <Tooltip title="Закрыть">
                     <div className={'spec-modal-control-button closer'}
@@ -284,7 +303,9 @@ const itemsNest = [
         >
             <div className={'sa-org-modal-body'} style={{minHeight: '600px'}}>
               <div className='sa-orgmodal-header'>
-                Тестовая компания
+                Тестовая компания {activeTab && activeTab !== "m" && (
+                  <span style={{opacity: '0.5'}}>/ {getOrgTabName(activeTab)}</span>
+                )}
               </div>
 
 

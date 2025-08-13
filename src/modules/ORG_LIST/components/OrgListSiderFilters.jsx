@@ -12,7 +12,7 @@ const OrgListSiderFilter = (props) => {
     const [filterCompany, setFilterCompany] = useState(null);
     const [filterName, setFilterName] = useState(null);
     const [filterRegion, setFilterRegion] = useState(null);
-    const [filterTown, setFilterTown] = useState(null);
+    // const [filterTown, setFilterTown] = useState(null);
 
     const [filterAddress,      setFilterAddress] = useState(null);
     const [filterProfile,      setFilterProfile] = useState(null);
@@ -43,7 +43,7 @@ const OrgListSiderFilter = (props) => {
     useEffect(() => {
         // Создаём отложенную отправку через setTimeout
         const timer = setTimeout(() => {
-            let filterBox = props.base_filters ?? {};
+            let filterBox = props.filters_data ?? {};
     
             filterBox.companies       = toNullable(filterCompany);
             filterBox.address         = toNullable(filterAddress);
@@ -55,8 +55,10 @@ const OrgListSiderFilter = (props) => {
             filterBox.client_statuses = toNullable(filterStatus);
             filterBox.site            = toNullable(filterWebsite);
             filterBox.profiles        = toNullable(filterProfile);
+            filterBox.profsound       = toNullable(filterProfsound);
             filterBox.created_date    = filterCreatedAt;
             filterBox.updated_date    = filterUpdatedAt;
+            filterBox.rate_lists      = toNullable(filterLists)
 
     
             if (props.on_change_filters) {
@@ -78,13 +80,14 @@ const OrgListSiderFilter = (props) => {
             filterEmail,      
             filterWebsite,    
             filterCreatedAt,  
-            filterUpdatedAt,  
+            filterUpdatedAt,
+            filterRegion,
          ]);
 
 
         useEffect(() => {
-          if (props.base_filters === null || props.base_filters === undefined){return;};
             console.log('rops.base_filters', props.base_filters);
+          if (props.base_filters === null || props.base_filters === undefined || props.base_filters.price_statuses === null){return;};
             setListPrices(props.base_filters.price_statuses.map((item)=>(
                 {
                     key: `clistat_${item.id}`,
@@ -175,6 +178,18 @@ const OrgListSiderFilter = (props) => {
                     value={filterContactFace}
                     onChange={(ev)=> {setFilterContactFace(ev.target.value)}}
                 />
+            </div>
+        </div>
+
+        <div className={'sider-unit'}>
+            <div className='sider-unit-title'>Регион</div>
+            <div className='sider-unit-control'>
+                <Select  style={{ width: '100%' }}
+                    options={listRegions} 
+                    allowClear
+                    value={filterRegion}
+                    onChange={setFilterRegion}
+                 />
             </div>
         </div>
 

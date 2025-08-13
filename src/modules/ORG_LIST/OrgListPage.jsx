@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './components/style/orglistpage.css';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
-import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Tooltip } from 'antd';
+import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Spin, Tooltip } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { DocumentPlusIcon } from '@heroicons/react/16/solid';
@@ -28,7 +28,7 @@ const OrgListPage = (props) => {
   const [baseFiltersData, setBaseFilterstData] = useState(null); 
 
   const [openedFilters, setOpenedFilters] = useState(false);
-  const [sortOrders, setSortOrders] = useState([]);
+  const [sortOrders, setSortOrders] = useState({});
 
 
   const [orgList, setOrgList] = useState([]);
@@ -146,39 +146,42 @@ const OrgListPage = (props) => {
      */
     const get_orglist = async () => {
         if (PRODMODE) {
-          console.log('filterBox', filterBox)
-          let sortBox = orderBox ? orderBox.map((item)=>({
+          setShowLoader(true);
+          console.log('filterBox', filterBox, orderBox)
+          let sortBox = orderBox && orderBox.length > 0 ? orderBox.map((item)=>({
             field: item.key,
             order: item.order === 2 ? 'DESC' : 'ASC'
           })) : [];
+
+          // let sortBox = [];
 
             try {
                 let response = await PROD_AXIOS_INSTANCE.post('/api/sales/orglist', {
                   data: {
                     "sort_orders": sortBox,
-                    "profiles": null,
+                    "profiles": filterBox.profiles,
                     "name": filterBox.name,
                     "id": filterBox.id,
                     "curators": filterBox.curator,
                     "regions": filterBox.regions,
-                    "price_statuses": null,
-                    "rate_lists": null,
+                    "price_statuses": filterBox.price_statuses,
+                    "rate_lists": filterBox.rate_lists,
                     "towns": filterBox.towns,
-                    "client_statuses": null,
-                    "profsound": null,
+                    "client_statuses": filterBox.client_statuses,
+                    "profsound": filterBox.profsound,
                     "companies": filterBox.companies,
-                    "contact_user": null,
-                    "address": null,
-                    "phone": null,
-                    "email": null,
-                    "site": null,
+                    "contact_user":  filterBox.contact_user,
+                    "address": filterBox.address,
+                    "phone": filterBox.phone,
+                    "email": filterBox.email,
+                    "site": filterBox.site,
                     "created_date": [
-                        null,
-                        null
+                        filterBox.created_date && filterBox.created_date[0] ? filterBox.created_date[0].unix() : null,
+                        filterBox.created_date && filterBox.created_date[1] ? filterBox.created_date[1].unix() : null,
                     ],
                     "active_date": [
-                        null,
-                        null
+                        filterBox.updated_date && filterBox.updated_date[0] ? filterBox.updated_date[0].unix() : null,
+                        filterBox.updated_date && filterBox.updated_date[1] ? filterBox.updated_date[1].unix() : null,
                     ],
                     "page": currrentPage,
                     "limit": onPage,
@@ -242,9 +245,9 @@ const OrgListPage = (props) => {
 
   const handleActivateSorter = (key, order) => {
     if (order === 0){
-      setSortOrders([]);
+      setOrderBox([]);
     } else {
-      setSortOrders([{key: key, order: order}]);
+      setOrderBox([{key: key, order: order}]);
     }
   }
 
@@ -295,6 +298,7 @@ const OrgListPage = (props) => {
 
       return updated;
     });
+    setShowLoader(true);
   };
 
   const triggerMyCompaniesFilterButton = () => {
@@ -383,6 +387,7 @@ const OrgListPage = (props) => {
               companies={companies}
               on_change_filters={handleFilterChange}
               base_filters={baseFiltersData}
+              filters_data={filterBox}
             />
 
             )}
@@ -442,6 +447,7 @@ const OrgListPage = (props) => {
 
           <div className={`${openedFilters ? "sa-pa-tb-12 sa-pa-s-3":'sa-pa-12'}`}>
           
+          <Spin spinning={showLoader} delay={500}>
           <OrgListTable 
               companies={companies}
               base_companies={baseCompanies}
@@ -453,7 +459,7 @@ const OrgListPage = (props) => {
               base_filters={filterBox}
               base_orders={orderBox}
               curator_list={selectCuratorList}
-          />
+          /></Spin>
 
           {/* {baseOrgs.length > 20 && (
             <div className={'sa-pagination-panel sa-pa-12'}>
