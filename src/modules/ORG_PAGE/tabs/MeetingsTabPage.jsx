@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
 
-const MeetingOutlet = (props) => {
+const MeetingsTabPage = (props) => {
 
   return (
     <h1>Hello Wolf from MeetingOutlet</h1>
   );
 };
 
-export default MeetingOutlet;
+export default MeetingsTabPage;

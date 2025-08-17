@@ -208,12 +208,13 @@ const itemsNest = [
 
     if (ev.ctrlKey || ev.metaKey || ev.button === 1) {
       // Open in Blank page
-       const fullUrl = window.location.origin + url + targetTab;
+       const fullUrl = window.location.origin + url + "?tab=" + activeTab;
         window.open(fullUrl, '_blank');
       return; // не делаем переход внутри SPA
     };
 
-    navigate('/orgs/' + orgId + targetTab + "?mode=edit", {
+    // Передача ссылки для возврата на предыдущую страницу (назад)
+    navigate('/orgs/' + orgId + "?tab=" + activeTab + "&mode=edit", {
       state: { from: window.location.pathname + window.location.search }
     });
   }

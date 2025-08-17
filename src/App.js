@@ -25,15 +25,15 @@ import './assets/sider.css';
 import OrgPage from './modules/ORG_PAGE/OrgPage';
 import { useEffect, useState } from 'react';
 import TopMenu from './components/template/topmenu/TopMenu';
-import MainTabOutlet from './modules/ORG_PAGE/outlets/MainTabPage';
-import BillsOutlet from './modules/ORG_PAGE/outlets/BillsOutlet';
-import OffersOutlet from './modules/ORG_PAGE/outlets/OffersOutlet';
-import MeetingOutlet from './modules/ORG_PAGE/outlets/MeetingsOutlet';
-import NoteOutlet from './modules/ORG_PAGE/outlets/NoteOutlets';
-import HistoryOutlet from './modules/ORG_PAGE/outlets/HistoryOutlet';
+// import MainTabOutlet from './modules/ORG_PAGE/outlets/MainTabPage';
+// import BillsOutlet from './modules/ORG_PAGE/outlets/BillsOutlet';
+// import OffersOutlet from './modules/ORG_PAGE/outlets/OffersOutlet';
+// import MeetingOutlet from './modules/ORG_PAGE/outlets/MeetingsOutlet';
+// import NoteOutlet from './modules/ORG_PAGE/outlets/NoteOutlets';
+// import HistoryOutlet from './modules/ORG_PAGE/outlets/HistoryOutlet';
 import MyIcon from './modules/DEV/Icons/MyIcon';
 import CustomIconPage from './modules/DEV/Icons/CustomIconsPage';
-import MainTabPage from './modules/ORG_PAGE/outlets/MainTabPage';
+// import MainTabPage from './modules/ORG_PAGE/outlets/MainTabPage';
 import OrgListPage from './modules/ORG_LIST/OrgListPage';
 import BidListPage from './modules/BID_LIST/BidListPage';
 import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor';
@@ -111,32 +111,20 @@ function App() {
           <Routes>
 
                     {/* Редирект с корня на /orgs */}
-            <Route path="/" element={<Navigate to="/orgs" replace />} />
+            <Route path="/"                element={<Navigate to="/orgs" replace />} />
             <Route path={BASE_ROUTE + "/"} element={<Navigate to="/orgs" replace />} />
 
             <Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata}/>} />
-            <Route path={'/orgs'} element={<OrgListPage userdata={userdata}/>} />
+            <Route path={'/orgs'} element={<OrgListPage              userdata={userdata}/>} />
 
             <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
-            <Route path={'/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
+            <Route path={'/orgs/:item_id'}              element={<OrgPage userdata={userdata}/>} />
             
-            <Route path={'/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} >
-              <Route index element={<MainTabPage userdata={userdata}/>} />
-              <Route path={'bills'} element={<BillsOutlet userdata={userdata}/>} />
-              <Route path={'offers'} element={<OffersOutlet userdata={userdata}/>} />
-              <Route path={'meetings'} element={<MeetingOutlet userdata={userdata}/>} />
-              <Route path={'notes'} element={<NoteOutlet userdata={userdata}/>} />
-              <Route path={'history'} element={<HistoryOutlet userdata={userdata}/>} />
-            </Route>
+            <Route path={'/orgs/:item_id'}              element={<OrgPage userdata={userdata}/>} />
+            <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
 
-            <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} >
-              <Route index element={<MainTabPage userdata={userdata}/>} />
-              <Route path={'bills'} element={<BillsOutlet userdata={userdata}/>} />
-              <Route path={'offers'} element={<OffersOutlet userdata={userdata}/>} />
-              <Route path={'meetings'} element={<MeetingOutlet userdata={userdata}/>} />
-              <Route path={'notes'} element={<NoteOutlet userdata={userdata}/>} />
-              <Route path={'history'} element={<HistoryOutlet userdata={userdata}/>} />
-            </Route>
+
+
 
 
 

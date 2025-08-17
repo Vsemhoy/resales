@@ -39,6 +39,7 @@
     padding-right: 10px;
     display: flex;
         align-items: center;
+        
 }
 
 .sk-omt-content {
@@ -53,9 +54,26 @@
     line-height: 24px;
     font-family: Arial;
     /* font-size: 13px; */
-    padding-left: 13px;
+    
     color: #2C6DA7;
     box-sizing: border-box;
+    text-align: left;
+}
+.sk-omt-row-wrapper:not(.sk-omt-row-editor) .sk-omt-content {
+    padding-left: 13px;
+}
+
+.sk-omt-row-editor .sk-omt-content {
+
+}
+
+.sk-omt-content-textarea {
+  white-space: pre-line;     /* Сохраняет переносы строк */
+  word-wrap: break-word;     /* Перенос длинных слов */
+  line-height: 1.5;
+  margin: 0;
+  font-size: 14px;
+  color: #262626;
 }
 
 .sk-omt-subs {
