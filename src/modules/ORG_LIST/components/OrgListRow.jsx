@@ -106,6 +106,7 @@ const wrapLink = (text) => {
       <div className={`sa-table-box-orgs sa-table-box-row ${active ? 'active':''}`}
         style={{ color: compColor}}
         onDoubleClick={handleDoubleClick}
+        id={'orgrow_' + orgData.id}
       >
         <div className={'sa-table-box-cell'}
         // style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}

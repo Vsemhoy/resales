@@ -145,7 +145,7 @@ const OrgPage = (props) => {
         // const returnPath = location.state?.from;
         const referrer = document.referrer;
         if (backeReturnPath) {
-            navigate(backeReturnPath);
+            navigate(backeReturnPath  + "?target=" + itemId);
         } else {
         // navigate('/orgs');
         window.close();
@@ -160,7 +160,7 @@ const OrgPage = (props) => {
             setSearchParams(searchParams);
 
         } else {
-            searchParams.set('mode', "view");
+            searchParams.delete('mode');
             setSearchParams(searchParams);
         }
     };

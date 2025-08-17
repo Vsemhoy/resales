@@ -50,6 +50,7 @@ const OrgListPage = (props) => {
   const [filterPresetList, setFilterPresetList] = useState(FILTERPRESETLIST);
 
   const showGetItem = searchParams.get('show');
+  const [targetRowId, setTargetRowId] = useState(searchParams.get('target'));
 
   // Список кураторов меняется в зависимости от выбранной компании
   const [selectCuratorList, setSelectCuratorList] = useState([]);
@@ -72,8 +73,19 @@ const OrgListPage = (props) => {
       setTimeout(() => {
         
         setShowParam(showGetItem);
+
+        
       }, 2200);
     }
+    setTimeout(() => {
+      if (targetRowId){
+          console.log('targetRowId', targetRowId)
+          let drow = document.querySelector('#orgrow_' + targetRowId);
+          if (drow){
+            drow.scrollIntoView( {behavior: "auto", block: "center", inline: "start"})
+          }
+        }
+    }, 100);
   }, []);
 
 
