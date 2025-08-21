@@ -1,0 +1,113 @@
+import dayjs from "dayjs";
+
+/**
+ * ЭТой штукой мы записываем параметры фильтров в URI
+ * @param {*} _filters 
+ * @param {*} _sorts 
+ * @param {*} _page 
+ * @param {*} limit 
+ */
+export const updateURL = (_filters, _sorts, _page, limit) => {
+  const params = new URLSearchParams();
+
+  // Добавляем фильтры (только не-null)
+  Object.keys(_filters).forEach(key => {
+    const value = _filters[key];
+    if (value !== null && value !== undefined && value !== '') {
+      if (Array.isArray(value)) {
+        // Для массивов: profiles=1,2,3
+        if (value[0] !== null){
+            params.append(key, value.join(','));
+        };
+      } else if (value instanceof dayjs || value?._isAMomentObject) {
+        // Для дат: created_date=1672531200,1675123200
+        params.append(key, `${value[0]?.unix() ?? ''},${value[1]?.unix() ?? ''}`);
+      } else {
+        params.append(key, value);
+      }
+    }
+  });
+
+  // Сортировка: преобразуем в строку, например: sort=id:ASC,name:DESC
+  if (_sorts && _sorts.length > 0) {
+    const sortStr = _sorts.map(s => `${s.field}:${s.order}`).join('|');
+    params.append('sort', sortStr);
+  }
+
+  // Пагинация
+  if (_page) params.append('_page', _page);
+  if (limit) params.append('_onPage', limit);
+
+  // Обновляем URL без перезагрузки
+  const newUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState(null, '', newUrl);
+};
+
+
+/**
+ * Читаем параметры фильтров, сортировки, пагинацию из URL для ORG LIST
+ * @returns 
+ */
+export const readOrgURL = () => {
+    const _filters = {};
+    const _sorts = [];
+    let _page = 1;
+    let _onPage = 30;
+
+    try {
+
+        const params = new URLSearchParams(window.location.search);
+      
+      
+        // === Фильтры ===
+        const filterKeys = [
+          'profiles', 'name', 'id', 'curators', 'regions', 'price_statuses',
+          'rate_lists', 'towns', 'client_statuses', 'profsound', 'companies',
+          'contact_user', 'address', 'phone', 'email', 'site', 'inn', 
+        ];
+      
+        filterKeys.forEach(key => {
+          const value = params.get(key);
+          if (value) {
+            if (key === 'profilesrr' || key === 'companiesrrr' || key.includes('statusrrr')) {
+              // Массивы
+              _filters[key] = value.split(',').map(Number);
+            } else {
+              _filters[key] = value;
+            }
+          }
+        });
+      
+        // === Даты ===
+        const createdStr = params.get('created_date');
+        if (createdStr) {
+          const [from, to] = createdStr.split(',').map(v => v ? dayjs.unix(parseInt(v)) : null);
+          if (from || to) _filters.created_date = [from, to];
+        }
+      
+        const updatedStr = params.get('active_date');
+        if (updatedStr) {
+          const [from, to] = updatedStr.split(',').map(v => v ? dayjs.unix(parseInt(v)) : null);
+          if (from || to) _filters.updated_date = [from, to];
+        }
+      
+        // === Сортировка ===
+        const sortStr = params.get('sort');
+        if (sortStr) {
+          _sorts.push(
+            ...sortStr.split('|').map(pair => {
+              const [field, order] = pair.split(':');
+              return { key: field, order: order === 'DESC' ? 2 : 1 }; // твой orderBox использует 1/2
+            })
+          );
+        }
+      
+        // === Пагинация ===
+        _page = parseInt(params.get('_page')) || 1;
+        _onPage = parseInt(params.get('_onPage')) || 30;
+    } catch (er){
+        console.log('Error: ', er);
+    }
+
+  return { _filters, _sorts, _page, _onPage };
+};

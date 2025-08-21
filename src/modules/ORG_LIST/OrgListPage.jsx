@@ -18,6 +18,7 @@ import { RectangleStackIcon } from '@heroicons/react/24/outline';
 import { FILTERPRESETLIST, OM_COMP_LIST, OM_ORG_FILTERDATA } from './components/mock/ORGLISTMOCK';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
+import { readOrgURL, updateURL } from '../../components/helpers/UriHelpers';
 
 
 
@@ -30,6 +31,7 @@ const OrgListPage = (props) => {
 
   const [baseFiltersData, setBaseFilterstData] = useState(null); 
 
+  /** Открытие сайдбара с фильтрами */
   const [openedFilters, setOpenedFilters] = useState(false);
   const [sortOrders, setSortOrders] = useState({});
 
@@ -41,8 +43,10 @@ const OrgListPage = (props) => {
   const [currrentPage, setCurrentPage] = useState(1);
   const [previousPage, setPreviousPage] = useState(1);
 
-
+  /** Фильтры как объект */
   const [filterBox, setFilterBox] = useState({});
+  const [initFilterBox, setInitFilterBox] = useState({});
+  /** Сортировки как объект, где колонка - ключ, значение - ASC/DESC */
   const [orderBox, setOrderBox] = useState({});
 
 
@@ -62,10 +66,23 @@ const OrgListPage = (props) => {
 
   useEffect(() => {
     setShowLoader(true);
+    // При загрузке — читаем URL
+    const { _filters, _sorts, _page, _onPage } = readOrgURL();
+
+    // Устанавливаем стейт фильтров, сортировок, страницы
+    setFilterBox(prev => ({ ...prev, ..._filters }));
+    setInitFilterBox(_filters);
+    setOrderBox(_sorts);
+    setCurrentPage(_page);
+    setOnPage(_onPage);
+
+    // console.clear();
+    console.log('_filters', _filters);
+
     if (PRODMODE) {
       // TODO: логика для PRODMODE
       get_org_filters();
-      get_orglist();
+      // get_orglist();
 
     } else {
       // TODO: логика для dev режима
@@ -131,6 +148,8 @@ const OrgListPage = (props) => {
   }, [onPage, currrentPage, orgList, total]);
 
 
+
+
   useEffect(() => {
     if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
       setBaseCompanies(userdata.companies);
@@ -184,9 +203,21 @@ const OrgListPage = (props) => {
   }, [filterBox, baseFiltersData]);
 
 
+
   useEffect(() => {
     get_orglist();
   }, [filterBox, orderBox]);
+
+
+  useEffect(() => {
+        const timer = setTimeout(() => {
+            updateURL(filterBox, orderBox, currrentPage, onPage);
+        }, 1500);
+    
+        // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
+        return () => clearTimeout(timer);
+  }, [filterBox, orderBox, onPage, currrentPage]);
+
 
 
   /** При смене страницы, если открыт модал, меняем ИД открытой компании */
@@ -213,6 +244,7 @@ const OrgListPage = (props) => {
     }
   }, [orgList]);
 
+  
 //   const prevPageRef = useRef(null);
 
 // useEffect(() => {
@@ -291,11 +323,13 @@ const OrgListPage = (props) => {
                 console.log(e)
             } finally {
                 // setLoadingOrgs(false)
+                // updateURL(filterBox, orderBox, currrentPage, onPage);
                 setShowLoader(false);
             }
         } else {
             //setUserAct(USDA);
             setShowLoader(false);
+            // updateURL(filterBox, orderBox, currrentPage, onPage);
         }
     }
 
@@ -358,13 +392,13 @@ const OrgListPage = (props) => {
   }
 
     const setShowParam = (value) => {
-      if (value !== null){
-        searchParams.set('show', value);
-        setSearchParams(searchParams);
-      } else {
-        searchParams.delete('show');
-        setSearchParams(searchParams);
-      }
+      // if (value !== null){
+      //   searchParams.set('show', value);
+      //   setSearchParams(searchParams);
+      // } else {
+      //   searchParams.delete('show');
+      //   setSearchParams(searchParams);
+      // }
 
   };
 
@@ -380,6 +414,7 @@ const OrgListPage = (props) => {
    * @param {*} filters 
    */
   const handleFilterChange = (filters) => {
+    console.log('filters', filters)
     setFilterBox(prev => {
       const updated = { ...prev }; // копируем старые фильтры
 
@@ -489,6 +524,7 @@ const OrgListPage = (props) => {
               on_change_filters={handleFilterChange}
               base_filters={baseFiltersData}
               filters_data={filterBox}
+              init_filters={initFilterBox}
             />
 
             )}

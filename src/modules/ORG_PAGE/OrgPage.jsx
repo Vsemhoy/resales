@@ -145,7 +145,14 @@ const OrgPage = (props) => {
         // const returnPath = location.state?.from;
         const referrer = document.referrer;
         if (backeReturnPath) {
-            navigate(backeReturnPath  + "?target=" + itemId);
+            // if (backeReturnPath.includes('?')){
+            //     if (backeReturnPath.includes("target=" + itemId))
+            //     console.log('NAVIGATE', backeReturnPath  + "&target=" + itemId)
+            //     navigate(backeReturnPath  + "&target=" + itemId);
+            // } else {
+            //     console.log('NAVIGATE', backeReturnPath  + "?target=" + itemId)
+            // }
+            navigate(backeReturnPath);
         } else {
         // navigate('/orgs');
         window.close();

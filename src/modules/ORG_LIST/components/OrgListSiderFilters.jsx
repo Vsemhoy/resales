@@ -1,5 +1,6 @@
 import { PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Affix, Button, DatePicker, Input, Select } from 'antd';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 
 
@@ -7,7 +8,7 @@ const OrgListSiderFilter = (props) => {
     const [filterPresetList, setFilterPresetList] = useState(props.filter_presets);
 
     const [baseFilterList, setBaseFilterList] = useState(props.base_filters);
-
+   
 
     const [filterCompany, setFilterCompany] = useState(null);
     const [filterName, setFilterName] = useState(null);
@@ -43,7 +44,7 @@ const OrgListSiderFilter = (props) => {
     useEffect(() => {
         // Создаём отложенную отправку через setTimeout
         const timer = setTimeout(() => {
-            let filterBox = props.filters_data ?? {};
+            let filterBox = props.filterBox ?? {};
     
             filterBox.companies       = toNullable(filterCompany);
             filterBox.address         = toNullable(filterAddress);
@@ -83,6 +84,64 @@ const OrgListSiderFilter = (props) => {
             filterUpdatedAt,
             filterRegion,
          ]);
+
+
+        useEffect(() => {
+            console.log('props.init_filters', props.init_filters)
+            if (props.init_filters){
+                if (props.init_filters.companies){
+                    setFilterCompany(parseInt(props.init_filters.companies));
+                };
+                if (props.init_filters.regions){
+                    setFilterRegion(parseInt(props.init_filters.regions));
+                };
+                if (props.init_filters.profsound){
+                    setFilterProfsound(parseInt(props.init_filters.profsound));
+                };
+                if (props.init_filters.rate_lists){
+                    setFilterLists(parseInt(props.init_filters.rate_lists));
+                };
+                if (props.init_filters.client_statuses){
+                    setFilterStatus(parseInt(props.init_filters.client_statuses));
+                };
+                if (props.init_filters.profiles){
+                    setFilterProfile(parseInt(props.init_filters.profiles));
+                };
+                if (props.init_filters.price_statuses){
+                    setFilterPriceStatus(parseInt(props.init_filters.price_statuses));
+                };
+
+                if (props.init_filters.address){
+                    setFilterAddress(props.init_filters.address);
+                };
+                if (props.init_filters.contact_user){
+                    setFilterContactFace(props.init_filters.contact_user);
+                };
+
+                if (props.init_filters.email){
+                    setFilterEmail(props.init_filters.email);
+                };
+                if (props.init_filters.phone){
+                    setFilterPhone(props.init_filters.phone);
+                };
+                if (props.init_filters.name){
+                    setFilterName(props.init_filters.name);
+                };
+                if (props.init_filters.site){
+                    setFilterWebsite(props.init_filters.site);
+                };
+
+                if (props.init_filters.created_date){
+                    setFilterCreatedAt([ dayjs(props.init_filters.created_date[0]), dayjs(props.init_filters.created_date[1])]);
+                };
+                if (props.init_filters.updated_date){
+                    setFilterupdatedAt([ dayjs(props.init_filters.updated_date[0]), dayjs(props.init_filters.updated_date[1])]);
+                };
+            };
+        }, [props.init_filters]);
+
+
+
 
 
         useEffect(() => {
