@@ -2,17 +2,17 @@ import dayjs from "dayjs";
 
 /**
  * ЭТой штукой мы записываем параметры фильтров в URI
- * @param {*} _filters 
- * @param {*} _sorts 
- * @param {*} _page 
+ * @param {*} filters 
+ * @param {*} sorts 
+ * @param {*} page 
  * @param {*} limit 
  */
-export const updateURL = (_filters, _sorts, _page, limit) => {
+export const updateURL = (filters, sorts, page, limit) => {
   const params = new URLSearchParams();
 
   // Добавляем фильтры (только не-null)
-  Object.keys(_filters).forEach(key => {
-    const value = _filters[key];
+  Object.keys(filters).forEach(key => {
+    const value = filters[key];
     if (value !== null && value !== undefined && value !== '') {
       if (Array.isArray(value)) {
         // Для массивов: profiles=1,2,3
@@ -29,14 +29,14 @@ export const updateURL = (_filters, _sorts, _page, limit) => {
   });
 
   // Сортировка: преобразуем в строку, например: sort=id:ASC,name:DESC
-  if (_sorts && _sorts.length > 0) {
-    const sortStr = _sorts.map(s => `${s.field}:${s.order}`).join('|');
+  if (sorts && sorts.length > 0) {
+    const sortStr = sorts.map(s => `${s.field}:${s.order}`).join('|');
     params.append('sort', sortStr);
   }
 
   // Пагинация
-  if (_page) params.append('_page', _page);
-  if (limit) params.append('_onPage', limit);
+  if (page) params.append('page', page);
+  if (limit) params.append('onPage', limit);
 
   // Обновляем URL без перезагрузки
   const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -103,8 +103,8 @@ export const readOrgURL = () => {
         }
       
         // === Пагинация ===
-        _page = parseInt(params.get('_page')) || 1;
-        _onPage = parseInt(params.get('_onPage')) || 30;
+        _page = parseInt(params.get('page')) || 1;
+        _onPage = parseInt(params.get('onPage')) || 30;
     } catch (er){
         console.log('Error: ', er);
     }
