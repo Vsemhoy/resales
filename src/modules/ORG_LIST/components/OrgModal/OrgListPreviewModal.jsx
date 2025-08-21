@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Collapse, Dropdown, Flex, Modal, Tooltip } from 'antd'
-import { BorderOutlined, CloseOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { BorderOutlined, CloseOutlined, EllipsisOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
 import Title from 'antd/es/skeleton/Title';
-import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon } from '@heroicons/react/24/outline';
+import { AdjustmentsVerticalIcon, ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon } from '@heroicons/react/24/outline';
 
 import '../style/orgmodal.css';
 import OrgModalCommonSection from './Tabs/MainTabSections/OrgModalCommonSection';
@@ -20,14 +20,27 @@ import OrgListModalNotesTab from './Tabs/OrgListModalNotesTab';
 import OrgListModalHistoryTab from './Tabs/OrgListModalHistoryTab';
 import OrgListModalProjectsTab from './Tabs/MainTabSections/OrgListModalProjectsTab';
 import { getOrgTabLink, getOrgTabName } from './Tabs/TabComponents/OrgTabUtils';
+import { BarsArrowDownIcon } from '@heroicons/react/24/outline';
+import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
 
+
+
+
+/**
+ * Модальное окно просмотрщика компании
+ * @param {*} props 
+ * @returns 
+ */
 const OrgListPreviewModal = (props) => {
     const [open, setOpen] = useState(false);
 //   const [openResponsive, setOpenResponsive] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [orgId, setOrgId] = useState(246);
+  /** ID организации получает через пропсы */
+  const [orgId, setOrgId] = useState(null);
+  const [orgName, setOrgName] = useState(null);
 
   // m - main
   // b - bills
@@ -38,7 +51,34 @@ const OrgListPreviewModal = (props) => {
   // h - history
   const [activeTab, setActiveTab] = useState('m');
 
+  // const [baseOrgData, setBaseOrgData] = useState(null);
 
+  // const [mainOrgData,     setMainOrgData   ] = useState(null);
+  // const [billsOrgData,    setBillsOrgData  ] = useState(null);
+  // const [offersOrgData,   setOffersOrgData ] = useState(null);
+  // const [callsOrgData,    setCallsOrgData  ] = useState(null);
+  // const [notesOrgData,    setNotesOrgData  ] = useState(null);
+  // const [mainHistoryData, setHistoryOrgData] = useState(null);
+
+
+  useEffect(() => {
+    if (props.data?.id){
+      // setMainOrgData(null); 
+      // setBillsOrgData(null);
+      // setOffersOrgData(null);
+      // setCallsOrgData(null);
+      // setNotesOrgData(null);
+      // setHistoryOrgData(null);
+      if(PRODMODE){
+
+      }
+      // get_org_data_action(props.data?.id);
+      setOrgId(props.data?.id);
+      setOrgName(props.data?.name);
+
+      // console.log(props.data);
+    };
+  }, [props.data]);
 
     useEffect(() => {
       setOpen(props.is_open);
@@ -107,13 +147,7 @@ const menuItems = [
   },
 ];
 
-const itemsNest = [
-  {
-    key: '1',
-    label: 'This is panel nest panel',
-    children: <p>af sdfasdf asdfasdfasdf asd</p>,
-  },
-];
+
 
 
   const contactItems = [
@@ -179,7 +213,17 @@ const itemsNest = [
     },
       {
       key: 'st_contacts',
-      label: 'Контактные лица',
+      label: <div className={'sa-flex-space'}><div>Контактные лица</div>
+      <div className={'sa-flex-space'}>
+        <Button 
+          onClick={(ev)=>{
+            ev.preventDefault();
+            ev.stopPropagation();
+          }}
+        size={'small'} icon={<PlusCircleOutlined />}>Добавить контакт</Button>
+        <BarsArrowDownIcon height={'24px'}/>
+        </div>
+      </div>,
       children: (<div className='sk-omt-subs'><Collapse
                   size={'small'}
                   items={contactItems} /></div>)
@@ -198,6 +242,74 @@ const itemsNest = [
       children: <OrgModalSupplyContractSection />
     },
   ]
+
+
+
+  /** ----------------------- FETCHES -------------------- */
+
+  // const get_org_data_action = async (id) => {
+
+  
+  //     try {
+  //         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/' + activeTab, {
+  //           data: {},
+  //           _token: CSRF_TOKEN
+  //         });
+  //         console.log('response', response);
+  //         if (response.data){
+  //             // if (props.changed_user_data){
+  //             //     props.changed_user_data(response.data);
+  //             // }
+  //             setBaseOrgData(response.data.content);
+  //         }
+  //     } catch (e) {
+  //         console.log(e)
+  //     } finally {
+  //         // setLoadingOrgs(false)
+
+  //     }
+
+  // }
+
+
+  /** ----------------------- FETCHES -------------------- */
+
+
+
+  /** Перелистывание табов стрелками + ALT */
+  useEffect(() => {
+    const handleKeyDown = (ev) => {
+      if (!ev.altKey) return; // игнорировать если Ctrl не нажат
+
+      if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') {
+        ev.preventDefault();
+
+        const baseTabs = ['m','b','o', 'p','c','n','h'];
+
+        // const currentIndex = orgs.findIndex(item => item.id === selectedItem);
+        // if (currentIndex === -1) return;
+
+        let newTab = activeTab;
+        let curIndex = baseTabs.indexOf(activeTab);
+
+        if (ev.key === 'ArrowRight' && activeTab !== baseTabs[baseTabs.length - 1]) {
+          newTab = baseTabs[curIndex + 1];
+        } else if (ev.key === 'ArrowLeft' && activeTab !== baseTabs[0]) {
+          newTab = baseTabs[curIndex - 1];
+        }
+
+        
+        if (newTab !== activeTab) {
+          handleChangeTab(newTab);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeTab, orgId]);
 
 
 
@@ -229,7 +341,7 @@ const itemsNest = [
           title={<div className={'sa-flex-space'}>
 
                 <div className={'spec-modal-title'}>
-                    Паспорт организации
+                    Паспорт организации ({orgId})
                 </div>
                 <div className={'spec-modal-control'}>
                     <div className={`spec-modal-control-button ${activeTab === 'm' ? 'active' : ''}`}
@@ -304,7 +416,7 @@ const itemsNest = [
         >
             <div className={'sa-org-modal-body'} style={{minHeight: '600px'}}>
               <div className='sa-orgmodal-header'>
-                Тестовая компания {activeTab && activeTab !== "m" && (
+                {orgName} {activeTab && activeTab !== "m" && (
                   <span style={{opacity: '0.5'}}>/ {getOrgTabName(activeTab)}</span>
                 )}
               </div>
@@ -313,49 +425,49 @@ const itemsNest = [
 
               {activeTab === 'm' && (
                 <OrgListMainTab structure={structureItems} 
-
+                  data={{id: orgId}}
 
                 />
               )}
 
               {activeTab === 'b' && (
                 <OrgListModalBillsTab
-
+                  data={{id: orgId}}
 
                 />
               )}
 
               {activeTab === 'o' && (
                 <OrgListModalOffersTab
-
+                  data={{id: orgId}}
 
                 />
               )}
 
               {activeTab === 'p' && (
                 <OrgListModalProjectsTab
-
+                  data={{id: orgId}}
 
                 />
               )}
 
               {activeTab === 'c' && (
                 <OrgListModalCallMeetingsTab
-
+                  data={{id: orgId}}
 
                 />
               )}
 
               {activeTab === 'n' && (
                 <OrgListModalNotesTab
-
+                  data={{id: orgId}}
 
                 />
               )}
 
               {activeTab === 'h' && (
                 <OrgListModalHistoryTab
-
+                  data={{id: orgId}}
 
                 />
               )}

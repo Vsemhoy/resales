@@ -17,6 +17,9 @@ import OrgListTable from './components/OrgListTable';
 import { RectangleStackIcon } from '@heroicons/react/24/outline';
 import { FILTERPRESETLIST, OM_COMP_LIST, OM_ORG_FILTERDATA } from './components/mock/ORGLISTMOCK';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
+import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
+
+
 
 const OrgListPage = (props) => {
   const { userdata } = props;
@@ -36,6 +39,7 @@ const OrgListPage = (props) => {
   const [total, setTotal] = useState(0);
   const [onPage, setOnPage] = useState(50);
   const [currrentPage, setCurrentPage] = useState(1);
+  const [previousPage, setPreviousPage] = useState(1);
 
 
   const [filterBox, setFilterBox] = useState({});
@@ -88,6 +92,43 @@ const OrgListPage = (props) => {
     }, 100);
   }, []);
 
+
+
+
+  /** Перелистывание страниц стрелками + CTRL */
+  useEffect(() => {
+    const handleKeyDown = (ev) => {
+      if (!ev.ctrlKey) return; // игнорировать если Ctrl не нажат
+
+      if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') {
+        ev.preventDefault();
+
+        if (total / onPage <= 1) return;
+
+        // const currentIndex = orgs.findIndex(item => item.id === selectedItem);
+        // if (currentIndex === -1) return;
+
+        let newIndex = currrentPage;
+        const maxPage = Math.ceil(total / onPage);
+
+        if (ev.key === 'ArrowRight' && currrentPage < Math.ceil(total / onPage)) {
+          newIndex = currrentPage + 1;
+        } else if (ev.key === 'ArrowLeft' && currrentPage > 1) {
+          newIndex = currrentPage - 1;
+        }
+
+        
+        if (newIndex !== currrentPage) {
+          setCurrentPage(newIndex);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onPage, currrentPage, orgList, total]);
 
 
   useEffect(() => {
@@ -148,6 +189,47 @@ const OrgListPage = (props) => {
   }, [filterBox, orderBox]);
 
 
+  /** При смене страницы, если открыт модал, меняем ИД открытой компании */
+  useEffect(() => {
+    let prevPage = previousPage;
+    if (previewItem !== null && prevPage !== currrentPage){
+
+      if (prevPage > currrentPage){
+        // Move page back
+        let newId = orgList[orgList.length - 1]?.id;
+        if (newId){
+          setPreviewItem(newId);
+        } else {
+          setPreviewItem(null);
+          setIsPreviewOpen(false);
+        }
+
+      } else {
+        // move page forward
+        let newId = orgList[0]?.id;
+        setPreviewItem(newId);
+      }
+      setPreviousPage(currrentPage);
+    }
+  }, [orgList]);
+
+//   const prevPageRef = useRef(null);
+
+// useEffect(() => {
+//   const prevPage = prevPageRef.current;
+//   if (prevPage !== null && prevPage !== currrentPage) {
+//     if (currrentPage > prevPage) {
+//       // Перешли на следующую страницу — выбрать первый элемент
+//       const newId = orgList[0]?.id;
+//       setPreviewItem(newId);
+//     } else if (currrentPage < prevPage) {
+//       // Перешли на предыдущую страницу — выбрать последний элемент
+//       const newId = orgList[orgList.length - 1]?.id;
+//       setPreviewItem(newId);
+//     }
+//   }
+//   prevPageRef.current = currrentPage;
+// }, [currrentPage, orgList]);
 
 
   /** ------------------ FETCHES ---------------- */
@@ -337,6 +419,13 @@ const OrgListPage = (props) => {
         updated.companies = newValue;
         return updated;
       });
+  };
+
+  const handleSelectedItemChange = (item_id) => {
+    console.log('item', item_id);
+    if (item_id){
+      setPreviewItem(item_id);
+    }
   }
 
   return (
@@ -411,6 +500,7 @@ const OrgListPage = (props) => {
             <div className={'sa-flex-space'}>
             <div className={'sa-flex-gap'}>
             <Pagination
+              defaultPageSize={onPage}
               size={'small'}
               defaultCurrent={1}
               current={currrentPage}
@@ -418,6 +508,7 @@ const OrgListPage = (props) => {
               onChange={setCurrentPage}
               // showSizeChanger
               showQuickJumper
+              locale={ANTD_PAGINATION_LOCALE}
             />
             <Button disabled
               size={'small'}
@@ -471,6 +562,8 @@ const OrgListPage = (props) => {
               base_filters={filterBox}
               base_orders={orderBox}
               curator_list={selectCuratorList}
+              selected_item={previewItem}
+              on_select_change={handleSelectedItemChange}
           /></Spin>
 
           {/* {baseOrgs.length > 20 && (
@@ -498,8 +591,11 @@ const OrgListPage = (props) => {
       </Layout>
           <OrgListPreviewModal
             is_open={isPreviewOpen}
-            data={previewItem}
-            on_close={()=>{setIsPreviewOpen(false)}}
+            data={{id: previewItem, name: orgList.find((item) => item.id === previewItem)?.name}}
+            on_close={()=>{
+              setIsPreviewOpen(false);
+              setPreviewItem(null);
+            }}
             />
     </div>
   );

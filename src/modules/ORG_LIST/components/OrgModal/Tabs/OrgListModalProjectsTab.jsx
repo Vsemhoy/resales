@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 
 
-const OrgListModalBillsTab = (props) => {
+const OrgListModalProjectsTab = (props) => {
   const [baseBids, setBaseBids] = useState([]);
   const [currrentPage, setCurrrentPage] = useState(1);
   const [onPage, setOnPage] = useState(30);
@@ -35,7 +35,7 @@ const OrgListModalBillsTab = (props) => {
 
   
       try {
-          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
+          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/p', {
             data: {},
             _token: CSRF_TOKEN
           });
@@ -120,4 +120,4 @@ const OrgListModalBillsTab = (props) => {
   );
 };
 
-export default OrgListModalBillsTab;
+export default OrgListModalProjectsTab;

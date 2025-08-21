@@ -24,6 +24,13 @@ const OrgListTable = (props) => {
     // const [filterCalls, setFilterCalls] = useState(null);
     const [filterCurator, setFilterCurator] = useState(null);
 
+    /** Выделенная строка */
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    useEffect(() => {
+        setSelectedItem(props.selected_item);
+    }, [props.selected_item]);
+
 
     // Утилита: если строка пустая — возвращаем null
     const toNullable = (value) => {
@@ -68,6 +75,7 @@ const OrgListTable = (props) => {
         console.log('HEllo');
         // setPreviewItem(item);
         // setIsPreviewOpen(true);
+        console.log(item,state);
         if (props.on_preview_open){
             props.on_preview_open(item, state);
         }
@@ -102,6 +110,46 @@ const OrgListTable = (props) => {
         props.on_set_sort_orders(sortOrders);
       }
     }, [sortOrders]);
+
+
+    /** Перемещение по списку компаний вверх-вних стрелками + CTRL */
+  useEffect(() => {
+    const handleKeyDown = (ev) => {
+      if (!ev.ctrlKey) return; // игнорировать если Ctrl не нажат
+
+      if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+        ev.preventDefault();
+
+        const orgs = props.base_orgs;
+        if (!orgs || orgs.length === 0) return;
+
+        const currentIndex = orgs.findIndex(item => item.id === selectedItem);
+        if (currentIndex === -1) return;
+
+        let newIndex = currentIndex;
+
+        if (ev.key === 'ArrowDown' && currentIndex < orgs.length - 1) {
+          newIndex = currentIndex + 1;
+        } else if (ev.key === 'ArrowUp' && currentIndex > 0) {
+          newIndex = currentIndex - 1;
+        }
+
+        if (newIndex !== currentIndex) {
+          setSelectedItem(orgs[newIndex].id);
+          // Optionally, notify parent component if needed
+          if (props.on_select_change) {
+            props.on_select_change(orgs[newIndex].id);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedItem, props.base_orgs, props.on_select_change]);
+
 
   return (
     <div className={'sa-table-box'}>
@@ -268,7 +316,7 @@ const OrgListTable = (props) => {
               {props.base_orgs.map((borg, index) => (
                 <OrgListRow
                     data={borg}
-                    is_active={isPreviewOpen && previewItem === borg.id}
+                    is_active={selectedItem === borg.id}
                     on_double_click={handlePreviewOpen}
                     key={`borg_${borg.id}`}
                     userdata={userdata}
