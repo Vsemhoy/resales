@@ -39,6 +39,7 @@ import BidListPage from './modules/BID_LIST/BidListPage';
 import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor';
 import { PROD_AXIOS_INSTANCE } from './config/Api';
 import { MS_USER } from './mock/MAINSTATE';
+import Price from "./modules/PRICE/Price";
 
 function App() {
   const [userdata, setUserdata] = useState([]);
@@ -130,6 +131,9 @@ function App() {
 
             <Route path={BASE_ROUTE + '/bids'} element={<BidListPage userdata={userdata}/>} />
             <Route path={'/bids'} element={<BidListPage userdata={userdata}/>} />
+
+              <Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata}/>} />
+              <Route path={'/price'} element={<Price userdata={userdata}/>} />
 
             <Route path={BASE_ROUTE + '/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
             <Route path={'/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
