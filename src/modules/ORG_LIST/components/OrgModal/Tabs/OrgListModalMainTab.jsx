@@ -11,11 +11,12 @@ import { BarsArrowDownIcon } from '@heroicons/react/16/solid';
 import OrgModalPayersSection from './MainTabSections/OrgModalPayersSection';
 import OrgModalSupplyContractSection from './MainTabSections/OrgModalSupplyContractSection';
 import { ORGLIST_MODAL_MOCK_MAINTAB } from '../../mock/ORGLISTMODALMOCK';
+import { ORG_DEF_DATA } from '../../mock/ORGDEFDATA';
 
 
 const OrgListMainTab = (props) => {
   const [orgId, setOrgId] = useState(null);
-  const [baseOrgData, setBaseOrgData] = useState(null);
+  const [baseOrgData, setBaseOrgData] = useState(ORG_DEF_DATA);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -109,7 +110,8 @@ const OrgListMainTab = (props) => {
       key: 'st_departinfo',
       label: 'Информация отдела',
       children: <OrgModalDepartSection
-
+        data={baseOrgData}
+        selects_data={props.selects_data}
       />
     },
         {
