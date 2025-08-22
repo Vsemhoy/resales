@@ -64,6 +64,12 @@ const OrgModalCommonSection = (props) => {
         console.log(props.data);
     }, [props.data]);
 
+
+    useEffect(() => {
+      // эффект
+      console.log(props.selects_data);
+    }, [props.selects_data]);
+
   return (
     <div className={'sk-omt-stack'}
     style={{borderLeft: '4px solid seagreen'}}
@@ -79,7 +85,9 @@ const OrgModalCommonSection = (props) => {
         <OrgModalRow
             key={'orgmodalrowcname_fs'}
             titles={['Форма собственности', 'ИНН']}
-            datas={['Тестовая карточка ', orgData.inn]}
+            datas={[
+                props.selects_data?.fss?.find((item)=> item.id === orgData.id8an_fs)?.name
+                , orgData.inn]}
         />
 
         <OrgModalRow

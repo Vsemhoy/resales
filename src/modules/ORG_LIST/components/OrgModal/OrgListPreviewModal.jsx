@@ -34,6 +34,7 @@ import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
  */
 const OrgListPreviewModal = (props) => {
     const [open, setOpen] = useState(false);
+    const [selectsData, setSelectsData] = useState([]);
 //   const [openResponsive, setOpenResponsive] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -79,6 +80,17 @@ const OrgListPreviewModal = (props) => {
       // console.log(props.data);
     };
   }, [props.data]);
+
+
+  useEffect(() => {
+    setSelectsData(props.selects_data);
+  }, [props.selects_data]);
+
+      useEffect(() => {
+        // эффект
+        console.log(props.selects_data);
+      }, [props.selects_data]);
+
 
     useEffect(() => {
       setOpen(props.is_open);
@@ -426,49 +438,49 @@ const menuItems = [
               {activeTab === 'm' && (
                 <OrgListMainTab structure={structureItems} 
                   data={{id: orgId}}
-
+                  selects_data={selectsData}
                 />
               )}
 
               {activeTab === 'b' && (
                 <OrgListModalBillsTab
                   data={{id: orgId}}
-
+                  selects_data={selectsData}
                 />
               )}
 
               {activeTab === 'o' && (
                 <OrgListModalOffersTab
                   data={{id: orgId}}
-
+                  selects_data={selectsData}
                 />
               )}
 
               {activeTab === 'p' && (
                 <OrgListModalProjectsTab
                   data={{id: orgId}}
-
+                  selects_data={selectsData}
                 />
               )}
 
               {activeTab === 'c' && (
                 <OrgListModalCallMeetingsTab
                   data={{id: orgId}}
-
+                  selects_data={selectsData}
                 />
               )}
 
               {activeTab === 'n' && (
                 <OrgListModalNotesTab
                   data={{id: orgId}}
-
+                  selects_data={selectsData}
                 />
               )}
 
               {activeTab === 'h' && (
                 <OrgListModalHistoryTab
                   data={{id: orgId}}
-
+                  selects_data={selectsData}
                 />
               )}
               

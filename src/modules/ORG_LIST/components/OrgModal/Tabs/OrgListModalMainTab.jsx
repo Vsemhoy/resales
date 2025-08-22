@@ -41,7 +41,10 @@ const OrgListMainTab = (props) => {
 
 
 
-
+    useEffect(() => {
+      // эффект
+      console.log(props.selects_data);
+    }, [props.selects_data]);
 
 
 
@@ -99,6 +102,7 @@ const OrgListMainTab = (props) => {
       label: 'Общая информация',
       children: <OrgModalCommonSection
         data={baseOrgData}
+        selects_data={props.selects_data}
       />
     },
         {
