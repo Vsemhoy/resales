@@ -30,11 +30,11 @@ const OrgModalDepartSection = (props) => {
                 props.selects_data?.curators?.find((item)=> item.id === orgData.id_orgs8an_orgsusers)?.name]}
         />
 
-        <OrgModalRow
+        {/* <OrgModalRow
             key={'rowfla00223'}
             titles={['Отдел']}
             datas={['Тестовая карточка организации']}
-        />
+        /> */}
 
         <OrgModalRow
             key={'rowfla00224'}
