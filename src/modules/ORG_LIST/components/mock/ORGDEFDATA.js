@@ -49,4 +49,5 @@ export const ORG_DEF_DATA = {
   profsound: null,
   date_create: "",
   id_company: 0,
+  contacts: [],
 };

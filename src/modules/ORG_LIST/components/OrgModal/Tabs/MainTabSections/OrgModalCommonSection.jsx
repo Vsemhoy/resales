@@ -17,10 +17,7 @@ const OrgModalCommonSection = (props) => {
     }, [props.data]);
 
 
-    useEffect(() => {
-      // эффект
-      console.log(props.selects_data);
-    }, [props.selects_data]);
+
 
   return (
     <div className={'sk-omt-stack'}

@@ -1,8 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
+import { ORG_DEF_DATA } from '../../../mock/ORGDEFDATA';
 
 
 const OrgModalDepartSection = (props) => {
+    const [orgData, setOrgData] = useState(ORG_DEF_DATA);
+
+    useEffect(() => {
+        if (props.data){
+            setOrgData(props.data);
+        } else {
+            setOrgData(ORG_DEF_DATA);
+        }
+        console.log(props.data);
+    }, [props.data]);
+
+
 
   return (
     <div className={'sk-omt-stack'}
@@ -12,7 +25,9 @@ const OrgModalDepartSection = (props) => {
         <OrgModalRow
             key={'rowfla00222'}
             titles={['Автор', 'Куратор']}
-            datas={['Тестовая карточка организации','Bydfd']}
+            datas={[
+                props.selects_data?.curators?.find((item)=> item.id === orgData.id8staff_list7author)?.name,
+                props.selects_data?.curators?.find((item)=> item.id === orgData.id_orgs8an_orgsusers)?.name]}
         />
 
         <OrgModalRow
