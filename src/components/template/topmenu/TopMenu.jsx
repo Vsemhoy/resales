@@ -225,6 +225,9 @@ const TopMenu = (props) => {
             <NavLink to="/bids" >
                 <div className={'sa-topmenu-button'} >Заявки</div>
             </NavLink>
+            <NavLink to="/price" >
+                <div className={'sa-topmenu-button'} >Прайс</div>
+            </NavLink>
             <NavLink to="/orgs/534" >
                 <div className={'sa-topmenu-button'} >Заявка</div>
             </NavLink>
