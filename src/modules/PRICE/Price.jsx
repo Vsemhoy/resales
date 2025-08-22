@@ -378,7 +378,7 @@ const Price = () => {
                     </Button>
                 </div>
             </div>
-            <h2 style={{marginTop: "50px"}}>Прайс-лист</h2>
+            <h1 style={{marginTop: "50px"}}>Прайс-лист</h1>
             <div className={style.price__cont}>
                 <Tree
                     checkable
@@ -386,6 +386,12 @@ const Price = () => {
                     treeData={treeData}
                     checkedKeys={checkedKeys}
                     onCheck={(keys) => setCheckedKeys(keys)}
+                    style={{
+                        backgroundColor: '#b4cbe4',
+                        // padding: '12px',
+                        // borderRadius: '6px',
+                        // border: '1px solid #d9d9d9'
+                    }}
                 />
             </div>
         </div>

@@ -24,7 +24,6 @@
     align-items: center;
 }
 .switch__currency{
-
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -34,7 +33,7 @@
     display: flex;
     width: 1300px;
     margin: 50px auto;
-    border: 1px solid #eaeaea;
+    /*border: 1px solid #eaeaea;*/
     padding: 20px;
 }
 .price__model__name{
@@ -43,14 +42,15 @@
     text-align: right;
     padding: 0 20px;
     border-right: 1px solid #ccc;
+    color: black;
 }
 .price__model__description{
     width: 400px;
     font-size: 12px;
     line-height: 12px;
     padding: 0 20px;
-    color: #757575;
-
+    /*color: #757575;*/
+    color: black;
 }
 .price__model__cost{
     min-width: 100px;
