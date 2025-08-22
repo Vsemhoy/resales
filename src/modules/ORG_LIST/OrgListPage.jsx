@@ -31,7 +31,6 @@ const OrgListPage = (props) => {
 
   const [baseFiltersData, setBaseFilterstData] = useState(null); 
 
-  /** Открытие сайдбара с фильтрами */
   const [openedFilters, setOpenedFilters] = useState(false);
   const [sortOrders, setSortOrders] = useState({});
 
@@ -43,12 +42,11 @@ const OrgListPage = (props) => {
   const [currrentPage, setCurrentPage] = useState(1);
   const [previousPage, setPreviousPage] = useState(1);
 
-  /** Фильтры как объект */
+
   const [filterBox, setFilterBox] = useState({});
+  const [orderBox, setOrderBox] = useState({});
   const [initFilterBox, setInitFilterBox] = useState({});
   /** Сортировки как объект, где колонка - ключ, значение - ASC/DESC */
-  const [orderBox, setOrderBox] = useState({});
-
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
@@ -66,18 +64,17 @@ const OrgListPage = (props) => {
 
   useEffect(() => {
     setShowLoader(true);
-    // При загрузке — читаем URL
-    const { _filters, _sorts, _page, _onPage } = readOrgURL();
+      // При загрузке — читаем URL
+      const { _filters, _sorts, _page, _onPage } = readOrgURL();
 
-    // Устанавливаем стейт фильтров, сортировок, страницы
-    setFilterBox(prev => ({ ...prev, ..._filters }));
-    setInitFilterBox(_filters);
-    setOrderBox(_sorts);
-    setCurrentPage(_page);
-    setOnPage(_onPage);
+      // Устанавливаем стейт фильтров, сортировок, страницы
+      setFilterBox(prev => ({ ...prev, ..._filters }));
+      setInitFilterBox(_filters);
+      setOrderBox(_sorts);
+      setCurrentPage(_page);
+      setOnPage(_onPage);
 
-    // console.clear();
-    console.log('_filters', _filters);
+      // console.clear();
 
     if (PRODMODE) {
       // TODO: логика для PRODMODE
@@ -110,6 +107,21 @@ const OrgListPage = (props) => {
   }, []);
 
 
+
+   useEffect(() => {
+        const timer = setTimeout(() => {
+            updateURL(filterBox, orderBox, currrentPage, onPage);
+        }, 1500);
+    
+        // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
+        return () => clearTimeout(timer);
+  }, [filterBox, orderBox, onPage, currrentPage]);
+
+
+
+  useEffect(() => {
+    console.log("baseFiltersData",baseFiltersData);
+  }, [baseFiltersData]);
 
 
   /** Перелистывание страниц стрелками + CTRL */
@@ -146,8 +158,6 @@ const OrgListPage = (props) => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [onPage, currrentPage, orgList, total]);
-
-
 
 
   useEffect(() => {
@@ -203,21 +213,9 @@ const OrgListPage = (props) => {
   }, [filterBox, baseFiltersData]);
 
 
-
   useEffect(() => {
     get_orglist();
   }, [filterBox, orderBox]);
-
-
-  useEffect(() => {
-        const timer = setTimeout(() => {
-            updateURL(filterBox, orderBox, currrentPage, onPage);
-        }, 1500);
-    
-        // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
-        return () => clearTimeout(timer);
-  }, [filterBox, orderBox, onPage, currrentPage]);
-
 
 
   /** При смене страницы, если открыт модал, меняем ИД открытой компании */
@@ -244,24 +242,7 @@ const OrgListPage = (props) => {
     }
   }, [orgList]);
 
-  
-//   const prevPageRef = useRef(null);
 
-// useEffect(() => {
-//   const prevPage = prevPageRef.current;
-//   if (prevPage !== null && prevPage !== currrentPage) {
-//     if (currrentPage > prevPage) {
-//       // Перешли на следующую страницу — выбрать первый элемент
-//       const newId = orgList[0]?.id;
-//       setPreviewItem(newId);
-//     } else if (currrentPage < prevPage) {
-//       // Перешли на предыдущую страницу — выбрать последний элемент
-//       const newId = orgList[orgList.length - 1]?.id;
-//       setPreviewItem(newId);
-//     }
-//   }
-//   prevPageRef.current = currrentPage;
-// }, [currrentPage, orgList]);
 
 
   /** ------------------ FETCHES ---------------- */
@@ -323,13 +304,11 @@ const OrgListPage = (props) => {
                 console.log(e)
             } finally {
                 // setLoadingOrgs(false)
-                // updateURL(filterBox, orderBox, currrentPage, onPage);
                 setShowLoader(false);
             }
         } else {
             //setUserAct(USDA);
             setShowLoader(false);
-            // updateURL(filterBox, orderBox, currrentPage, onPage);
         }
     }
 
@@ -392,14 +371,13 @@ const OrgListPage = (props) => {
   }
 
     const setShowParam = (value) => {
-      // if (value !== null){
-      //   searchParams.set('show', value);
-      //   setSearchParams(searchParams);
-      // } else {
-      //   searchParams.delete('show');
-      //   setSearchParams(searchParams);
-      // }
-
+      if (value !== null){
+        searchParams.set('show', value);
+        setSearchParams(searchParams);
+      } else {
+        searchParams.delete('show');
+        setSearchParams(searchParams);
+      }
   };
 
   useEffect(() => {
@@ -414,7 +392,6 @@ const OrgListPage = (props) => {
    * @param {*} filters 
    */
   const handleFilterChange = (filters) => {
-    console.log('filters', filters)
     setFilterBox(prev => {
       const updated = { ...prev }; // копируем старые фильтры
 
@@ -632,6 +609,7 @@ const OrgListPage = (props) => {
               setIsPreviewOpen(false);
               setPreviewItem(null);
             }}
+            selects_data={baseFiltersData}
             />
     </div>
   );
