@@ -1,11 +1,11 @@
 .sa-table-box-bids {
     display: grid;
-    grid-template-columns: 64px 3fr 1fr 2fr 60px 60px 60px 1fr 120px 60px;
+    grid-template-columns: 64px 2fr 80px 80px 120px 1fr 1fr 100px 2fr 2fr;
 }
 
 .sa-filer-opened .sa-table-box-bids {
-    grid-template-columns: 64px 3fr 1fr 2fr 60px 60px 60px 1fr 120px !important;
+    grid-template-columns: 64px 2fr 80px 80px 120px 1fr 1fr 100px 2fr 2fr !important;
 }
 .sa-filer-opened .sa-table-box-bids > *:last-child {
-    display: none;
+    /*display: none;*/
 }

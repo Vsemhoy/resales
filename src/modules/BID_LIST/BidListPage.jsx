@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './components/style/bidlistpage.css';
-import { PRODMODE } from '../../config/config';
+import {CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Tooltip } from 'antd';
 import { Content } from 'antd/es/layout/layout';
@@ -17,6 +17,9 @@ import { ChevronLeftIcon, RectangleStackIcon } from '@heroicons/react/24/outline
 import BidListTable from './components/BidListTable';
 import BidListSiderFilters from './components/BidListSiderFilters';
 import { FILTERPRESETLIST } from '../ORG_LIST/components/mock/ORGLISTMOCK';
+import {PROD_AXIOS_INSTANCE} from "../../config/Api";
+import {BID_LIST} from "./mock/mock";
+import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
 
 
 
@@ -31,6 +34,8 @@ const BidListPage = (props) => {
   const { item_id } = useParams();
   const [openedFilters, setOpenedFilters] = useState(false);
   const [sortOrders, setSortOrders] = useState([]);
+
+  const [bids, setBids] = useState([]);
 
   const [total, setTotal] = useState(0);
   const [onPage, setOnPage] = useState(30);
@@ -47,16 +52,13 @@ const BidListPage = (props) => {
   const showGetItem = searchParams.get('show');
 
 
-  const [backRoute, setBackRoute] = useState('/orgs?show=342');
+  const [isBackRoute, setIsBackRoute] = useState(false);
+  const [fromOrgId, setFromOrgId] = useState(0);
 
 
 
   useEffect(() => {
-    if (PRODMODE) {
-      // TODO: логика для PRODMODE
-    } else {
-      // TODO: логика для dev режима
-    };
+    fetchInfo().then();
     if (showGetItem !== null){
       handlePreviewOpen(showGetItem);
       setTimeout(() => {
@@ -85,7 +87,36 @@ const BidListPage = (props) => {
   }, [baseCompanies]);
 
 
+  const fetchInfo = async () => {
+    await fetchBids();
+    await fetchFilterSelects();
+  };
 
+  const fetchFilterSelects = async () => {
+    if (PRODMODE) {
+
+    } else {
+
+    }
+  };
+
+  const fetchBids = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/offerlist', {
+          data: {},
+          _token: CSRF_TOKEN
+        });
+        setBids(response.data.bid_list);
+        setTotal(response.data.total_count);
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      setBids(BID_LIST);
+      setTotal(33000);
+    }
+  };
 
   const handleActivateSorter = (key, order) => {
     if (order === 0){
@@ -178,7 +209,6 @@ const BidListPage = (props) => {
           <div className={'sa-sider'}>
             {openedFilters && (
             <BidListSiderFilters
-              base_orgs={baseOrgs}
               filter_presets={filterPresetList}
             />
 
@@ -193,36 +223,41 @@ const BidListPage = (props) => {
           <div className={'sa-pagination-panel sa-pa-12'}>
             <div className={'sa-flex-space'}>
             <div className={'sa-flex-gap'}>
-              {backRoute && (
-                <NavLink to={backRoute}>
-                <Button type={'default'}
-                size={'small'}
-                  // icon={<ChevronLeftIcon height={'18px'} />}
-                  icon={<CaretLeftFilled />}
-                >
-                  Назад в компанию
-                </Button></NavLink>
+              {isBackRoute && (
+                <NavLink to={`/orgs?show=${fromOrgId}`}>
+                  <Button type={'default'}
+                    // icon={<ChevronLeftIcon height={'18px'} />}
+                    icon={<CaretLeftFilled />}
+                  >
+                    Назад в компанию
+                  </Button>
+                </NavLink>
               )}
             <Pagination
-              size={'small'}
+                defaultPageSize={onPage}
+                defaultCurrent={1}
+                current={currrentPage}
+                total={total}
+                onChange={setCurrentPage}
+                // showSizeChanger
+                showQuickJumper
+                locale={ANTD_PAGINATION_LOCALE}
             />
 
 
-            <Button
-              size={'small'}
-            disabled>Всего 6546</Button>
+            <Button disabled>Всего {total}</Button>
             </div>
             <div>
 
             </div>
             <div className={'sa-flex-gap'}>
               <Tooltip title="Я временный куратор">
-              <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
+              <Button color="default" variant={false ? "solid" : "filled"}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Временные</Button>
               </Tooltip>
               <Tooltip title="Компании с моим кураторством">
-              <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
+              <Button color="default" variant={false ? "solid" : "filled"}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Мои</Button>
               </Tooltip>
@@ -238,17 +273,26 @@ const BidListPage = (props) => {
 
           <BidListTable 
               companies={companies}
-              base_orgs={baseOrgs}
+              bids={bids}
               on_preview_open={handlePreviewOpen}
               on_set_sort_orders={setOrderBox}
           />
 
-          {baseOrgs.length > 20 && (
+          {bids.length > 20 && (
             <div className={'sa-pagination-panel sa-pa-12'}>
               <div className={'sa-flex-space'}>
               <div className={'sa-flex-gap'}>
-              <Pagination />
-              <Button disabled>Всего 6546</Button>
+              <Pagination
+                  defaultPageSize={onPage}
+                  defaultCurrent={1}
+                  current={currrentPage}
+                  total={total}
+                  onChange={setCurrentPage}
+                  // showSizeChanger
+                  showQuickJumper
+                  locale={ANTD_PAGINATION_LOCALE}
+              />
+              <Button disabled>Всего {total}</Button>
               </div>
               <div>
 

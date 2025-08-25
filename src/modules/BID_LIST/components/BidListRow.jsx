@@ -1,7 +1,9 @@
 import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon  } from '@heroicons/react/24/outline';
-import { Dropdown, Menu } from 'antd';
+import {Dropdown, Menu, Tag, Tooltip} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import {DollarOutlined, FileDoneOutlined, LogoutOutlined, SafetyOutlined} from "@ant-design/icons";
+import dayjs from "dayjs";
 
 
 const BidListRow = (props) => {
@@ -29,6 +31,8 @@ const BidListRow = (props) => {
 
   const [data, setData] = useState(props.data);
 
+  const [compColor, setCompColor] = useState("#00000000");
+
   useEffect(() => {
     setData(props.data);
   }, [props.data]);
@@ -38,6 +42,10 @@ const BidListRow = (props) => {
     setActive(props.is_active);
   }, [props.is_active]);
 
+  useEffect(() => {
+    setCompColor(props.company_color);
+  }, [props.company_color]);
+
   const handleDoubleClick = () => {
     if (props.on_double_click){
       props.on_double_click(data);
@@ -46,53 +54,88 @@ const BidListRow = (props) => {
 
   return (
     <Dropdown overlay={menu} trigger={['contextMenu']}>
-      <div className={`sa-table-box-bids sa-table-box-row ${active ? 'active':''}`} key={props.key}
-        style={{ color:'#ff8700'}}
-        onDoubleClick={handleDoubleClick}
+      <div className={`sa-table-box-bids sa-table-box-row ${active ? 'active' : ''}`} key={props.key}
+           style={{color: compColor}}
+           onDoubleClick={handleDoubleClick}
       >
         <div className={'sa-table-box-cell'}
-        // style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
+            // style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
         >
-        <div
-        
-        >
-        <NavLink to={'/orgs/4234'}>
-          35667
-        </NavLink>
+          <div
+
+          >
+            <NavLink to={`/bids/${data.id}`}>
+              {data.id}
+            </NavLink>
           </div>
         </div>
         <div className={'sa-table-box-cell'}
         >
-        <div>
-        <NavLink to={'/orgs/4234'}>
-          Название / второе название
-        </NavLink>
+          <div>
+            <NavLink to={`/orgs/${data.id}`}>
+              {data.company_name}
+            </NavLink>
           </div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>Дата отвязки</div>
+          <Tooltip title={data.type_status_name}>
+            <div>
+              {data.type_status === 1 && (
+                  <FileDoneOutlined/>
+              )}
+              {data.type_status === 2 && (
+                  <DollarOutlined/>
+              )}
+            </div>
+          </Tooltip>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>Компания</div>
+          <Tooltip
+              title={data.protection_project === 1 ? 'Защита проекта' : data.protection_project === 2 ? 'Реализация проекта' : ''}>
+            <div>
+              {data.protection_project === 1 && (
+                  <SafetyOutlined/>
+              )}
+              {data.protection_project === 2 && (
+                  <LogoutOutlined/>
+              )}
+            </div>
+          </Tooltip>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+          <div>
+            {data.stage_id === 1 && (
+                <Tag color={'blue'}>менеджер</Tag>
+            )}
+            {data.stage_id === 2 && (
+                <Tag color={'volcano'}>администратор</Tag>
+            )}
+            {data.stage_id === 3 && (
+                <Tag color={'magenta'}>бухгалтер</Tag>
+            )}
+            {data.stage_id === 4 && (
+                <Tag color={'gold'}>завершено</Tag>
+            )}
+          </div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+          <div>{dayjs.unix(data.date).format('DD.MM.YYYY')}</div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+          <div>{data.username}</div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+          <div>{data.bill_number}</div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+          <div>{data.comment}</div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
+          <div>{data.object}</div>
         </div>
+        {/*<div className={'sa-table-box-cell'}>
+          <div>1</div>
+        </div>*/}
         {/* <div className={'sa-table-box-cell'}>
         <div>1</div>
         </div>
@@ -100,7 +143,7 @@ const BidListRow = (props) => {
         <div>1</div>
         </div> */}
 
-    </div>
+      </div>
     </Dropdown>
   );
 };
