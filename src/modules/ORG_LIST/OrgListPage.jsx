@@ -180,15 +180,6 @@ const OrgListPage = (props) => {
   }, [baseCompanies]);
 
 
-
-  useEffect(() => {
-    if (PRODMODE){
-      setShowLoader(true);
-      get_orglist();
-    }
-  }, [currrentPage]);
-
-
   useEffect(() => {
     if (baseFiltersData && baseFiltersData.curators)
     {
