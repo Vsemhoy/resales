@@ -58,7 +58,7 @@ const BidListTable = (props) => {
 
   return (
     <div className={'sa-table-box'}>
-          <Affix >
+          <Affix offsetTop={156}>
             <div className={'sa-table-box-header'}>
               <div className={'sa-table-box-bids sa-table-box-row'}>
                 <div className={'sa-table-box-cell'}>
