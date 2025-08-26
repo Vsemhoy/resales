@@ -213,7 +213,7 @@ const TopMenu = (props) => {
     };
 
   return (
-    <div className='sa-top-menu'>
+    <div className='sa-top-menu' style={{padding:'0 12px'}}>
         <div className={'sa-flex-space'}>
         <div className={'sa-top-menu-buttons'}>
             <NavLink to={HTTP_HOST}>

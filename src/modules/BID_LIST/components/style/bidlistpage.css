@@ -1,3 +1,6 @@
+.sa-app-page {
+    padding-top: 10px;
+}
 .sa-table-box-bids {
     display: grid;
     grid-template-columns: 64px 2fr 80px 80px 120px 1fr 1fr 100px 2fr 2fr;
@@ -8,4 +11,31 @@
 }
 .sa-filer-opened .sa-table-box-bids > *:last-child {
     /*display: none;*/
+}
+
+.sa-list-header {
+    background-color: aliceblue;
+    display: grid;
+    grid-template-columns: 1fr 125px;
+    margin: 0 12px;
+    align-items: end;
+}
+
+.sa-header-label-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 10px;
+}
+
+.sa-header-label {
+    display: block;
+    width: 230px;
+    margin: 0;
+    height: 100%;
+}
+
+.sa-back {
+    background: #b4cbe4;
 }
