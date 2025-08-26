@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
 import { ORG_DEF_DATA } from '../../../mock/ORGDEFDATA';
+import { FullNameWithOccupy, ShortName } from '../../../../../../components/helpers/TextHelpers';
+import { Tooltip } from 'antd';
+import dayjs from 'dayjs';
 
 
 const OrgModalDepartSection = (props) => {
     const [orgData, setOrgData] = useState(ORG_DEF_DATA);
+
 
     useEffect(() => {
         if (props.data){
@@ -12,7 +16,6 @@ const OrgModalDepartSection = (props) => {
         } else {
             setOrgData(ORG_DEF_DATA);
         }
-        console.log(props.data);
     }, [props.data]);
 
 
@@ -26,8 +29,10 @@ const OrgModalDepartSection = (props) => {
             key={'rowfla00222'}
             titles={['Автор', 'Куратор']}
             datas={[
-                props.selects_data?.curators?.find((item)=> item.id === orgData.id8staff_list7author)?.name,
-                props.selects_data?.curators?.find((item)=> item.id === orgData.id_orgs8an_orgsusers)?.name]}
+                orgData?.creator ? 
+                <span>{FullNameWithOccupy(orgData.creator)}</span> : '',
+                orgData?.curator ? 
+                <span>{FullNameWithOccupy(orgData.curator)}</span> : '',]}
         />
 
         {/* <OrgModalRow
@@ -39,13 +44,13 @@ const OrgModalDepartSection = (props) => {
         <OrgModalRow
             key={'rowfla00224'}
             titles={['Статус $', 'Способ доставки']}
-            datas={['Тестовая карточка организации', 'fjsalkdj']}
+            datas={[orgData.statusmoney?.name, orgData.deliverytype?.name]}
         />
 
         <OrgModalRow
             key={'rowfla00225'}
             titles={['Комментарии']}
-            datas={['Тестовая карточка организации']}
+            datas={[orgData.comment]}
         />
 
         <OrgModalRow
@@ -54,19 +59,68 @@ const OrgModalDepartSection = (props) => {
             datas={['Тестовая карточка организации','fklajdskl']}
         />
 
-        <OrgModalRow
+        {orgData.active_licenses && orgData.active_licenses.length > 0 && (
+            <>
+                {orgData.active_licenses.map((lic)=>(
+                <OrgModalRow
+                    key={'rowfla00227' + lic.id}
+                    titles={['Лицензия МЧС', 'Комментарий', '№ Дата']}
+                    datas={[lic.type?.name, lic.comment, lic.number]}
+                />
+                ))}
+            </>
+        )}
+
+        {orgData.active_tolerance && orgData.active_tolerance.length > 0 && (
+            <>
+                {orgData.active_tolerance.map((lic)=>(
+                <OrgModalRow
+                    key={'rowfla00227' + lic.id}
+                    titles={['Допуски СРО', 'Комментарий', '№ Дата']}
+                    datas={[lic.type?.name, lic.comment, lic.number]}
+                />
+                ))}
+            </>
+        )}
+
+        {orgData.active_licenses_bo && orgData.active_licenses_bo.length > 0 && (
+            <>
+                {orgData.active_licenses_bo.map((lic)=>{
+                    const namel = lic.document_type === 1 ? "Лицензия МЧС" : "Допуск СРО";
+                    const key = `${lic.document_type}-${lic.type}`;
+                    const tupel = props.selects_data.tollic[key];
+                    
+                    return (
+                <div className={'sa-tollic-group'}>
+                    <OrgModalRow
+                    key={'rowfla00228' + lic.id}
+                    titles={[namel, 'Начало действия']}
+                    datas={[lic.name, lic.start_date ? dayjs.unix(lic.start_date).format("DD.MM.YYYY") : ""]}
+                />
+                    <OrgModalRow
+                        key={'rowfla00228' + lic.id}
+                        titles={['Вид лицензии/допуска', 'Конец действия']}
+                        datas={[tupel,  lic.end_date ? dayjs.unix(lic.end_date).format("DD.MM.YYYY") : "" ]}
+                        comment={lic.comment}
+                    />
+                </div>
+                )})}
+            </>
+        )}
+
+        {/* <OrgModalRow
             key={'rowfla00227'}
             titles={['Лицензия МЧС', 'Комментарий', '№ Дата']}
             datas={['монтаж','Бессрочная', '56345']}
             comment={"Здесь будет длинный комментарий ли очень длинный"}
-        />
+        /> */}
 
-        <OrgModalRow
+        {/* <OrgModalRow
             key={'rowfla00228'}
             titles={['Допуски СРО','№ Дата']}
             datas={['Строительное...', 'dfkjas']}
             comment={"Здесь будет длинный комментарий ли очень длинный"}
-        />
+        /> */}
 
 
     </div>

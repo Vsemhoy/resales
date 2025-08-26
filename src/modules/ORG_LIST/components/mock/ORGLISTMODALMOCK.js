@@ -36,7 +36,7 @@ export const ORGLIST_MODAL_MOCK_MAINTAB = {
     "id_orgs8an_log": 0,
     "id8an_statusmoney": 1,
     "id8an_conveyance": 0,
-    "comment": "just comment",
+    "comment": "etting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
     "hashblack": "496dfd54f5a46d69466894c7cb651a22d1f2a323",
     "tv": 0,
     "commentinlist": "Может это и памятка ХЗ",
@@ -125,5 +125,288 @@ export const ORGLIST_MODAL_MOCK_MAINTAB = {
             "job": 1,
             "exittoorg_id": 0
         }
-    ]
+    ],
+
+      creator: {
+    "id": 547,
+    "surname": "Коханиц",
+    "name": "Гладезь",
+    "secondname": "Синабитоитч",
+    "id_occupy": null,
+    "occupy": "Региональный менеджер",
+    "id_departament": 5,
+    "rang": 50,
+    "id_user": null,
+    "id_komendant": null,
+    "status": "0",
+    "is_fired": 0,
+    "passcard": "22255868",
+    "passcard_blob": "186000",
+    "username": "gbalymov",
+    "id_role": 17,
+    "login_enabled": "no",
+    "email": null,
+    "qexit": "0",
+    "boss": 0,
+    "field": 0,
+    "tempid": 0,
+    "boss_id": 304,
+    "visible": 1,
+    "phone": "230",
+    "photo": "",
+    "sigur_user_id": 185,
+    "dismissal_date": 0,
+    "recruitment_date": 1713733200,
+    "deleted": 0,
+    "no_uses_skud": 0,
+    "id_company": 2,
+    "sales_role": 0,
+    "active_company": 0,
+    "telegram_id": null,
+    "skud_filial_id": 2,
+    "super": 0
+  }
+  , 
+  curator: {
+    "id": 547,
+    "surname": "Балымов",
+    "name": "Геннадий",
+    "secondname": "Робертович",
+    "id_occupy": null,
+    "occupy": "Региональный менеджер",
+    "id_departament": 5,
+    "rang": 50,
+    "id_user": null,
+    "id_komendant": null,
+    "status": "0",
+    "is_fired": 0,
+    "passcard": "22255868",
+    "passcard_blob": "186000",
+    "username": "gbalymov",
+    "id_role": 17,
+    "login_enabled": "no",
+    "email": null,
+    "qexit": "0",
+    "boss": 0,
+    "field": 0,
+    "tempid": 0,
+    "boss_id": 304,
+    "visible": 1,
+    "phone": "230",
+    "photo": "",
+    "sigur_user_id": 185,
+    "dismissal_date": 0,
+    "recruitment_date": 1713733200,
+    "deleted": 0,
+    "no_uses_skud": 0,
+    "id_company": 2,
+    "sales_role": 0,
+    "active_company": 0,
+    "telegram_id": null,
+    "skud_filial_id": 2,
+    "super": 0
+  },
+
+
+    contacts: [
+    {
+        "id": 19,
+        "id_orgs": 7,
+        "id_orgsusers8an_contacttel": 0,
+        "occupy": "Менеджер",
+        "lastname": "Казакевич",
+        "name": "Александр",
+        "middlename": "Николаевич",
+        "comment": "",
+        "id_orgsusers8an_contactfax": 0,
+        "deleted": 0,
+        "id_orgsusers8an_contactmobile": 0,
+        "id_orgsusers8an_contacthomephone": 0,
+        "id_orgsusers8an_contactemail": 0,
+        "id8an_sex": 0,
+        "unsubscribe": 1,
+        "id8an_orgsusers8an_visitexh": 0,
+        "id_orgsusers8an_spl": 0,
+        "id8an_contactchangeprice": 0,
+        "id8an_contactcall": 0,
+        "id8an_contactshop": 0,
+        "id_orgsusers8an_contacticq": 0,
+        "id_orgsusers8an_contactagent": 0,
+        "job": 4,
+        "exittoorg_id": 0
+    },
+    {
+        "id": 4873,
+        "id_orgs": 7,
+        "id_orgsusers8an_contacttel": 0,
+        "occupy": "Генеральный директор ASK group",
+        "lastname": "Карцева",
+        "name": "Елена",
+        "middlename": "Владимировна",
+        "comment": "по ИНН 7826115030",
+        "id_orgsusers8an_contactfax": 0,
+        "deleted": 0,
+        "id_orgsusers8an_contactmobile": 0,
+        "id_orgsusers8an_contacthomephone": 0,
+        "id_orgsusers8an_contactemail": 0,
+        "id8an_sex": 0,
+        "unsubscribe": 0,
+        "id8an_orgsusers8an_visitexh": 0,
+        "id_orgsusers8an_spl": 0,
+        "id8an_contactchangeprice": 0,
+        "id8an_contactcall": 0,
+        "id8an_contactshop": 0,
+        "id_orgsusers8an_contacticq": 0,
+        "id_orgsusers8an_contactagent": 0,
+        "job": 1,
+        "exittoorg_id": 0
+        }
+    ],
+    region: {
+        "id": 8,
+        "r_name": "Санкт-Петербург и Лен.обл."
+        },
+        town: {
+            "id": 383,
+            "id_region": 8,
+            "t_name": "Санкт-Петербург",
+            "t_code": "812"
+        },
+        legaladdresses: [
+        {
+            "id": 3993,
+            "id_orgs": 7,
+            "address": "ул. Рыбинская, д. 5, офис 512",
+            "comment": "ИНН 7810576317",
+            "post_index": "196084",
+            "deleted": 0
+        }
+    ],
+    list: null,
+    statusmoney: {
+        "id": 0,
+        "name": "Не выбрано",
+        "models_price_column": null
+    },
+    phones: [
+        {
+            "id": 10788,
+            "id_orgs": 7,
+            "number": "+7-812-316-30-76",
+            "ext": "",
+            "comment": "",
+            "deleted": 1
+        },
+        {
+            "id": 10789,
+            "id_orgs": 7,
+            "number": "+7-812-316-72-38",
+            "ext": "",
+            "comment": "",
+            "deleted": 1
+        },
+        {
+            "id": 21568,
+            "id_orgs": 7,
+            "number": "+7-812-746-72-85",
+            "ext": "",
+            "comment": "",
+            "deleted": 1
+        },
+        {
+            "id": 72455,
+            "id_orgs": 7,
+            "number": "+7-812-640-93-08 ",
+            "ext": "",
+            "comment": "Многоканальный / 2019",
+            "deleted": 0
+        },
+        {
+            "id": 72456,
+            "id_orgs": 7,
+            "number": "+7-921-353-33-03",
+            "ext": "",
+            "comment": "Мобильный/ 2019",
+            "deleted": 0
+        }
+    ],
+    address: [
+        {
+            "id": 11440,
+            "id_orgs": 7,
+            "address": "ул. Рыбинская, д. 5, офис 512",
+            "comment": "",
+            "deleted": 0,
+            "post_index": "196084"
+        }
+    ],
+    emails: [
+    {
+        "id": 14716,
+        "id_orgs": 22806,
+        "email": "giproteatr@list.ru",
+        "comment": "",
+        "deleted": 0
+    }
+    ],
+    active_licenses: [
+        {
+            "id": 8191,
+            "id_orgs": 22809,
+            "id8an_typelicenses": "2",
+            "number": "45-Б/00029",
+            "comment": "от 26.12.2014",
+            "deleted": 0,
+            "type": {
+                "id": 2,
+                "name": "монтаж"
+            }
+        }
+    ],
+
+
+    active_tolerance: [
+        {
+            "id": 3981,
+            "id_orgs": 22762,
+            "id8an_typetolerance": "3",
+            "number": "16-04-15-172-П-016/ 16.04.15   ",
+            "comment": "",
+            "deleted": 0,
+            "type": {
+                "id": 3,
+                "name": "10. Проектирование МПБ"
+            }
+        }
+    ],
+    active_licenses_bo: [
+        {
+            "id": 1,
+            "name": "123456789",
+            "comment": "",
+            "type": 4,
+            "deleted": 0,
+            "start_date": 1458709200,
+            "end_date": null,
+            "id_an_orgs": 1,
+            "document_type": 2
+        },
+        {
+            "id": 2,
+            "name": "34232423432",
+            "comment": "sccfdsfsd1",
+            "type": 1,
+            "deleted": 0,
+            "start_date": 1741424400,
+            "end_date": 1743235200,
+            "id_an_orgs": 1,
+            "document_type": 1
+        }
+    ],
+    deliverytype: {
+        "id": 1,
+        "name": "Самовывоз"
+    },
+    
+
 }

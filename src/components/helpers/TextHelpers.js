@@ -1,3 +1,4 @@
+import { Tooltip } from "antd";
 import dayjs from "dayjs";
 
 
@@ -95,6 +96,39 @@ export const ShortName = (surname, name, patronymic) => {
     return shortName;
 };
 
+
+export const FullNameWithOccupy = (user) => {
+    if (!user){
+        return <span></span>;
+    };
+
+    let ocName = "";
+
+
+    if (user.surname){
+        ocName += user.surname + " ";
+    };
+        if (user.name){
+        ocName += user.name + " ";
+    };
+    if (user.secondname){
+        ocName += user.secondname;
+    };
+
+        if (ocName.length && (user.surname || user.name)){
+        ocName += ", ";
+    };
+    if (user.occupy){
+        ocName += user.occupy;
+    };
+
+    let shortNameText = ShortName(user.surname, user.name, user.secondname);
+
+    return <Tooltip title={ocName}>
+        {shortNameText}
+    </Tooltip>
+        
+}
 
 export const generateYearOptions = () => {
     const startYear = 2014;
