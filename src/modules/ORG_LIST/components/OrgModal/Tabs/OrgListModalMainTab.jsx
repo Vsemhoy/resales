@@ -16,7 +16,7 @@ import { ORG_DEF_DATA } from '../../mock/ORGDEFDATA';
 
 const OrgListMainTab = (props) => {
   const [orgId, setOrgId] = useState(null);
-  const [baseOrgData, setBaseOrgData] = useState(ORG_DEF_DATA);
+  const [baseOrgData, setBaseOrgData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -36,6 +36,7 @@ const OrgListMainTab = (props) => {
       setBaseOrgData(null);
     }
     console.log(props.data);
+    console.log(ORGLIST_MODAL_MOCK_MAINTAB);
   }, [props.data]);
 
 
@@ -118,7 +119,8 @@ const OrgListMainTab = (props) => {
       key: 'st_contactinfo',
       label: 'Контактная информация',
       children: <OrgModalContactinfoSection
-
+        data={baseOrgData}
+        selects_data={props.selects_data}
       />
     },
       {
@@ -182,6 +184,7 @@ const OrgListMainTab = (props) => {
               // if (props.changed_user_data){
               //     props.changed_user_data(response.data);
               // }
+              setOrgId(response.data.content.id);
               setBaseOrgData(response.data.content);
               setLoading(false);
           }
