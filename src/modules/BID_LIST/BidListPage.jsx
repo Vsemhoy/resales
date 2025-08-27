@@ -38,6 +38,7 @@ import RemoteSearchSelect from "./components/RemoteSearchSelect";
 const BidListPage = (props) => {
   const { userdata } = props;
 
+  const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -101,13 +102,16 @@ const BidListPage = (props) => {
         setShowParam(showGetItem);
       }, 2200);
     }
+    setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchBids().then(() => {
-      setIsLoading(false);
-    });
+    if (isMounted) {
+      setIsLoading(true);
+      fetchBids().then(() => {
+        setIsLoading(false);
+      });
+    }
   }, [currentPage]);
 
   useEffect(() => {
@@ -164,8 +168,26 @@ const BidListPage = (props) => {
   const fetchBids = async () => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/offerlist', {
-          data: {},
+        const data = {
+          "company_name": null,
+          "company_id": null,
+          "object_name": null,
+          "comment": null,
+          "dates": null,
+          "type": null,
+          "manager": null,
+          "bill_number": null,
+          "protect_status": null,
+          "pay_status": null,
+          "stage_status": null,
+          "bid_id": null,
+          "to": 0,
+          "page": currentPage,
+          "limit": onPage
+        };
+
+        let response = await PROD_AXIOS_INSTANCE.post('/sales/data/offerlist', {
+          data,
           _token: CSRF_TOKEN
         });
         setBids(response.data.bid_list);
@@ -417,7 +439,7 @@ const BidListPage = (props) => {
               />
             </Spin>
 
-            {bids.length > 20 && (
+            {/*{bids.length > 20 && (
                 <div className={'sa-pagination-panel sa-pa-12'}>
                   <div className={'sa-flex-space'}>
                     <div className={'sa-flex-gap'}>
@@ -436,11 +458,11 @@ const BidListPage = (props) => {
 
                     </div>
                     <div>
-                      {/* <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button> */}
+                       <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
                     </div>
                   </div>
                 </div>
-            )}
+            )}*/}
             <div className={'sa-space-panel sa-pa-12'}></div>
           </div>
         </Content>
