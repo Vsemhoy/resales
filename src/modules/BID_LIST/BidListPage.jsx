@@ -199,7 +199,20 @@ const BidListPage = (props) => {
 
   const fetchChangeRole = async (sales_role) => {
     if (PRODMODE) {
-
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/auth/me', {
+          place: sales_role,
+          _token: CSRF_TOKEN
+        });
+        console.log('response', response);
+        if (response.data){
+          if (props.changed_user_data){
+            props.changed_user_data(response.data);
+          }
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
   };
 
