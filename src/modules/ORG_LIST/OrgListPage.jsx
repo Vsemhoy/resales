@@ -500,6 +500,9 @@ const OrgListPage = (props) => {
       setOrderBox({});
     };
 
+    const handleChangeOnPage = (evt) => {
+      console.log(evt);
+    }
 
   return (
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
@@ -581,7 +584,8 @@ const OrgListPage = (props) => {
               defaultCurrent={1}
               current={currrentPage}
               total={total}
-              onChange={setCurrentPage}
+              onChange={(ev, val)=>{
+                setCurrentPage(ev); setOnPage(val)}}
               // 
               onShowSizeChange={setOnPage}
               pageSizeOptions={[10, 30, 50, 100]}
@@ -641,7 +645,7 @@ const OrgListPage = (props) => {
               base_orders={orderBox}
               curator_list={selectCuratorList}
               selected_item={previewItem}
-              on_select_change={handleSelectedItemChange}
+              on_select_change={handleChangeOnPage}
           /></Spin>
 
           {/* {baseOrgs.length > 20 && (
