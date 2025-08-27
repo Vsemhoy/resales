@@ -129,8 +129,8 @@ function App() {
 
 
 
-            <Route path={BASE_ROUTE + '/bids'} element={<BidListPage userdata={userdata}/>} />
-            <Route path={'/bids'} element={<BidListPage userdata={userdata}/>} />
+            <Route path={BASE_ROUTE + '/bids'} element={<BidListPage userdata={userdata} changed_user_data={setUserdata}/>} />
+            <Route path={'/bids'} element={<BidListPage userdata={userdata} changed_user_data={setUserdata}/>} />
 
               <Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata}/>} />
               <Route path={'/price'} element={<Price userdata={userdata}/>} />
