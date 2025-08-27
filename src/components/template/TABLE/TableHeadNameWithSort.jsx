@@ -11,13 +11,13 @@ const TableHeadNameWithSort = (props) => {
     useEffect(() => {
         
       if (props.active_sort_items !== undefined && props.active_sort_items !== null){
-    
+            console.log('active_sort_items', props.active_sort_items, key);
             let found = false;
             // setSortOrder(props.active_sort_items);
             for (let i = 0; i < props.active_sort_items.length; i++) {
                 const element = props.active_sort_items[i];
                 if (element.key === key){
-                    setSortOrder(element.order);
+                    setSortOrder(parseInt(element.order));
                     found = true;
                     break;
                 }
@@ -28,9 +28,11 @@ const TableHeadNameWithSort = (props) => {
        
       }
       
-    }, [props?.active_sort_items]);
+    }, [props?.active_sort_items, key]);
 
-
+    useEffect(() => {
+      setKey(props.sort_key);
+    }, [props.sort_key]);
 
     const handleDblClick = () => {
         if (sortOrder === 0 ){

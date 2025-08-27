@@ -87,58 +87,58 @@ const OrgListSiderFilter = (props) => {
 
 
         useEffect(() => {
-            console.log('props.init_filters', props.init_filters)
-            if (props.init_filters){
-                if (props.init_filters.companies){
-                    setFilterCompany(parseInt(props.init_filters.companies));
+            console.log('props.filters_data', props.filters_data)
+            if (props.filters_data){
+                if (props.filters_data.companies){
+                    setFilterCompany(parseInt(props.filters_data.companies));
                 };
-                if (props.init_filters.regions){
-                    setFilterRegion(parseInt(props.init_filters.regions));
+                if (props.filters_data.regions){
+                    setFilterRegion(parseInt(props.filters_data.regions));
                 };
-                if (props.init_filters.profsound){
-                    setFilterProfsound(parseInt(props.init_filters.profsound));
+                if (props.filters_data.profsound){
+                    setFilterProfsound(parseInt(props.filters_data.profsound));
                 };
-                if (props.init_filters.rate_lists){
-                    setFilterLists(parseInt(props.init_filters.rate_lists));
+                if (props.filters_data.rate_lists){
+                    setFilterLists(parseInt(props.filters_data.rate_lists));
                 };
-                if (props.init_filters.client_statuses){
-                    setFilterStatus(parseInt(props.init_filters.client_statuses));
+                if (props.filters_data.client_statuses){
+                    setFilterStatus(parseInt(props.filters_data.client_statuses));
                 };
-                if (props.init_filters.profiles){
-                    setFilterProfile(parseInt(props.init_filters.profiles));
+                if (props.filters_data.profiles){
+                    setFilterProfile(parseInt(props.filters_data.profiles));
                 };
-                if (props.init_filters.price_statuses){
-                    setFilterPriceStatus(parseInt(props.init_filters.price_statuses));
-                };
-
-                if (props.init_filters.address){
-                    setFilterAddress(props.init_filters.address);
-                };
-                if (props.init_filters.contact_user){
-                    setFilterContactFace(props.init_filters.contact_user);
+                if (props.filters_data.price_statuses){
+                    setFilterPriceStatus(parseInt(props.filters_data.price_statuses));
                 };
 
-                if (props.init_filters.email){
-                    setFilterEmail(props.init_filters.email);
+                if (props.filters_data.address){
+                    setFilterAddress(props.filters_data.address);
                 };
-                if (props.init_filters.phone){
-                    setFilterPhone(props.init_filters.phone);
-                };
-                if (props.init_filters.name){
-                    setFilterName(props.init_filters.name);
-                };
-                if (props.init_filters.site){
-                    setFilterWebsite(props.init_filters.site);
+                if (props.filters_data.contact_user){
+                    setFilterContactFace(props.filters_data.contact_user);
                 };
 
-                if (props.init_filters.created_date){
-                    setFilterCreatedAt([ dayjs(props.init_filters.created_date[0]), dayjs(props.init_filters.created_date[1])]);
+                if (props.filters_data.email){
+                    setFilterEmail(props.filters_data.email);
                 };
-                if (props.init_filters.updated_date){
-                    setFilterupdatedAt([ dayjs(props.init_filters.updated_date[0]), dayjs(props.init_filters.updated_date[1])]);
+                if (props.filters_data.phone){
+                    setFilterPhone(props.filters_data.phone);
                 };
+                if (props.filters_data.name){
+                    setFilterName(props.filters_data.name);
+                };
+                if (props.filters_data.site){
+                    setFilterWebsite(props.filters_data.site);
+                };
+
+                // if (props.filters_data.created_date){
+                //     setFilterCreatedAt([ dayjs(props.filters_data.created_date[0]), dayjs(props.filters_data.created_date[1])]);
+                // };
+                // if (props.filters_data.updated_date){
+                //     setFilterupdatedAt([ dayjs(props.filters_data.updated_date[0]), dayjs(props.filters_data.updated_date[1])]);
+                // };
             };
-        }, [props.init_filters]);
+        }, [props.filters_data]);
 
 
 
