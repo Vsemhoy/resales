@@ -7,7 +7,16 @@ import {Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, 
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { DocumentPlusIcon } from '@heroicons/react/16/solid';
-import { CaretDownFilled, CaretLeftFilled, CaretUpFilled, CloseOutlined, CloseSquareOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  CaretDownFilled,
+  CaretLeftFilled,
+  CaretUpFilled,
+  CloseOutlined,
+  CloseSquareOutlined,
+  FilterOutlined,
+  PlusOutlined,
+  SearchOutlined
+} from '@ant-design/icons';
 import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 
@@ -20,6 +29,7 @@ import { FILTERPRESETLIST } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import {BID_LIST} from "./mock/mock";
 import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
+import RemoteSearchSelect from "./components/RemoteSearchSelect";
 
 
 
@@ -58,6 +68,28 @@ const BidListPage = (props) => {
   const [isBackRoute, setIsBackRoute] = useState(false);
   const [fromOrgId, setFromOrgId] = useState(0);
 
+  const [isHasRole, setIsHasRole] = useState(false);
+  const [isOneRole, setIsOneRole] = useState(true);
+
+  const [activeRole, setActiveRole] = useState(0);
+  const [roles, setRoles] = useState([
+    {
+      value: 1,
+      label: 'Менеджер',
+      acl: 89
+    },
+    {
+      value: 2,
+      label: 'Администратор',
+      acl: 90
+    },
+    {
+      value: 3,
+      label: 'Бухгалтер',
+      acl: 91
+    },
+  ]);
+
 
 
   useEffect(() => {
@@ -82,6 +114,18 @@ const BidListPage = (props) => {
     if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
       setBaseCompanies(userdata.companies);
     }
+    if (userdata !== null && userdata.acls) {
+      // 89 - менеджер
+      // 91 - администратор
+      // 90 - бухгалтер
+      const found = userdata.acls.filter(num => [89, 90, 91].includes(num));
+      if (found) setIsHasRole(true);
+      console.log('found', found.length);
+      setIsOneRole(found.length === 1);
+    }
+    if (userdata !== null && userdata.user && userdata.user.sales_role) {
+      setActiveRole(userdata.user.sales_role);
+    }
   }, [userdata]);
 
   useEffect(() => {
@@ -93,7 +137,6 @@ const BidListPage = (props) => {
       }))
     );
   }, [baseCompanies]);
-
 
   const fetchInfo = async () => {
     setIsLoading(true);
@@ -136,6 +179,43 @@ const BidListPage = (props) => {
     }
   };
 
+  const fetchSearchResults = async (searchText) => {
+    if (PRODMODE) {
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(searchText)}`);
+        const data = await response.json();
+
+        return data.items.map(item => ({
+          label: item.name,
+          value: item.id,
+          ...item
+        }));
+      } catch (error) {
+        console.error('Search error:', error);
+        return [];
+      }
+    }
+  };
+
+  const fetchChangeRole = async (sales_role) => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/auth/me', {
+          place: sales_role,
+          _token: CSRF_TOKEN
+        });
+        console.log('response', response);
+        if (response.data){
+          if (props.changed_user_data){
+            props.changed_user_data(response.data);
+          }
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  };
+
   const handleActivateSorter = (key, order) => {
     if (order === 0){
       setSortOrders([]);
@@ -144,27 +224,25 @@ const BidListPage = (props) => {
     }
   }
 
-
   const handleRowDblClick = (id) => {
 
   }
 
   const handlePreviewOpen = (item, state) => {
-    console.log('HEllo', item);
+    console.log('HELLO', item);
     setShowParam(item);
     setPreviewItem(item);
     setIsPreviewOpen(true);
   }
 
-    const setShowParam = (value) => {
-      if (value !== null){
-        searchParams.set('show', value);
-        setSearchParams(searchParams);
-      } else {
-        searchParams.delete('show');
-        setSearchParams(searchParams);
-      }
-
+  const setShowParam = (value) => {
+    if (value !== null){
+      searchParams.set('show', value);
+      setSearchParams(searchParams);
+    } else {
+      searchParams.delete('show');
+      setSearchParams(searchParams);
+    }
   };
 
   useEffect(() => {
@@ -178,43 +256,88 @@ const BidListPage = (props) => {
       <Affix>
         <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
           <div className={'sa-header-label-container'}>
-            <h1 className={'sa-header-label'}>Список заявок</h1>
-            <div className={'sa-vertical-flex'}>
-              <Button.Group>
-                <Button
-                    onClick={() => {
-                      setOpenedFilters(!openedFilters);
-                    }}
-                    color={'default'}
-                    variant={'solid'}
-                    icon={<FilterOutlined/>}
-                >
-                  Доп Фильтры
-                </Button>
-                <Button
-                    title='Очистить фильтры'
-                    color={'danger'}
-                    variant={'solid'}
-                    icon={<CloseOutlined/>}
-                ></Button>
-              </Button.Group>
-              <Tag
-                  style={{
-                    width: '160px',
-                    height: '32px',
-                    lineHeight: '27px',
-                    textAlign: 'center',
-                    // color: '#868686',
-                    fontSize: '14px',
-                    /*backgroundColor: '#ededed',
-                    borderColor: '#ededed',*/
-                  }}
-                  color="geekblue"
-              >Всего найдено: {total}</Tag>
+            <div className={'sa-header-label-container-small'}>
+              <h1 className={'sa-header-label'}>Список заявок</h1>
+              <div>
+                <CurrencyMonitorBar/>
+              </div>
             </div>
-          </div>
-          <div>
-            <CurrencyMonitorBar/>
+            <div className={'sa-header-label-container-small'}>
+              <div className={'sa-vertical-flex'}>
+                <Button.Group>
+                  <Button
+                      onClick={() => {
+                        setOpenedFilters(!openedFilters);
+                      }}
+                      color={'default'}
+                      variant={'solid'}
+                      icon={<FilterOutlined/>}
+                  >
+                    Доп Фильтры
+                  </Button>
+                  <Button
+                      title='Очистить фильтры'
+                      color={'danger'}
+                      variant={'solid'}
+                      icon={<CloseOutlined/>}
+                  ></Button>
+                </Button.Group>
+                <Tag
+                    style={{
+                      width: '160px',
+                      height: '32px',
+                      lineHeight: '27px',
+                      textAlign: 'center',
+                      fontSize: '14px',
+                    }}
+                    color="geekblue"
+                >Всего найдено: {total}</Tag>
+              </div>
+              <div style={{display: 'flex', alignItems: 'end'}}>
+
+                {activeRole > 0 && (
+                    <div>
+                      {isOneRole ? (
+                          <div style={{display:'flex',alignItems:'center',gap:'5px'}}>
+                            Роль:
+                            <Tag className={`
+                                  sa-tag-custom
+                                  ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
+                                  ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
+                                  ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
+                                `}
+                            >{roles.find(role => role.value === activeRole)?.label || 'Неизвестная роль'}</Tag>
+                          </div>
+                      ) : (
+                          <div style={{display:'flex',alignItems:'center',gap:'5px'}}>
+                            Роль:
+                            <Select className={`
+                                      ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
+                                      ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
+                                      ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
+                                    `}
+                                    style={{width:'150px',marginRight:'8px'}}
+                                    options={roles.filter(role => userdata.acls.includes(role.acl))}
+                                    value={activeRole}
+                                    onChange={fetchChangeRole}
+                            />
+                          </div>
+                      )}
+                    </div>
+                )}
+
+                <RemoteSearchSelect
+                    placeholder="Поиск..."
+                    fetchOptions={fetchSearchResults}
+                    debounceTimeout={500}
+                    allowClear
+                    style={{ width: '250px', textAlign: 'left' }}
+                    onSelect={(value, option) => {
+                      console.log('Selected:', value, option);
+                    }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </Affix>
@@ -231,7 +354,6 @@ const BidListPage = (props) => {
                 <BidListSiderFilters
                     filter_presets={filterPresetList}
                 />
-
             )}
           </div>
         </Sider>
@@ -239,7 +361,7 @@ const BidListPage = (props) => {
 
         <Content>
           <Affix offsetTop={100}>
-            <div className={'sa-pagination-panel sa-pa-12 sa-back'}>
+            <div className={'sa-pagination-panel sa-pa-12-24 sa-back'}>
               <div className={'sa-flex-space'}>
                 <div className={'sa-flex-gap'}>
                   {isBackRoute && (
@@ -248,7 +370,7 @@ const BidListPage = (props) => {
                             // icon={<ChevronLeftIcon height={'18px'} />}
                                 icon={<CaretLeftFilled/>}
                         >
-                        Назад в компанию
+                          Назад в компанию
                         </Button>
                       </NavLink>
                   )}
@@ -268,12 +390,12 @@ const BidListPage = (props) => {
                 </div>
                 <div className={'sa-flex-gap'}>
                   <Tooltip title="Я временный куратор">
-                    <Button color="default" variant={false ? "solid" : "filled"}
+                    <Button color="default" variant={false ? "solid" : "outlined"}
                         // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     >Временные</Button>
                   </Tooltip>
                   <Tooltip title="Компании с моим кураторством">
-                    <Button color="default" variant={false ? "solid" : "filled"}
+                    <Button color="default" variant={false ? "solid" : "outlined"}
                         // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     >Мои</Button>
                   </Tooltip>
