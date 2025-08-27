@@ -91,45 +91,71 @@ const OrgListSiderFilter = (props) => {
             if (props.filters_data){
                 if (props.filters_data.companies){
                     setFilterCompany(parseInt(props.filters_data.companies));
-                };
+                } else {
+                    setFilterCompany(null);
+                }
                 if (props.filters_data.regions){
                     setFilterRegion(parseInt(props.filters_data.regions));
-                };
+                } else {
+                    setFilterRegion(null);
+                }
                 if (props.filters_data.profsound){
                     setFilterProfsound(parseInt(props.filters_data.profsound));
-                };
+                } else {
+                    setFilterProfsound(null);
+                }
                 if (props.filters_data.rate_lists){
                     setFilterLists(parseInt(props.filters_data.rate_lists));
-                };
+                } else {
+                    setFilterLists(null);
+                }
                 if (props.filters_data.client_statuses){
                     setFilterStatus(parseInt(props.filters_data.client_statuses));
-                };
+                } else {
+                    setFilterStatus(null);
+                }
                 if (props.filters_data.profiles){
                     setFilterProfile(parseInt(props.filters_data.profiles));
-                };
+                } else {
+                    setFilterProfile(null);
+                }
                 if (props.filters_data.price_statuses){
                     setFilterPriceStatus(parseInt(props.filters_data.price_statuses));
-                };
+                } else {
+                    setFilterPriceStatus(null);
+                }
 
                 if (props.filters_data.address){
                     setFilterAddress(props.filters_data.address);
-                };
+                } else {
+                    setFilterAddress(null);
+                }
                 if (props.filters_data.contact_user){
                     setFilterContactFace(props.filters_data.contact_user);
-                };
+                } else {
+                    setFilterContactFace(null);
+                }
 
                 if (props.filters_data.email){
                     setFilterEmail(props.filters_data.email);
-                };
+                } else {
+                    setFilterEmail(null);
+                }
                 if (props.filters_data.phone){
                     setFilterPhone(props.filters_data.phone);
-                };
+                } else {
+                    setFilterPhone(null);
+                }
                 if (props.filters_data.name){
                     setFilterName(props.filters_data.name);
-                };
+                } else {
+                    setFilterName(null);
+                }
                 if (props.filters_data.site){
                     setFilterWebsite(props.filters_data.site);
-                };
+                } else {
+                    setFilterWebsite(null);
+                }
 
                 // if (props.filters_data.created_date){
                 //     setFilterCreatedAt([ dayjs(props.filters_data.created_date[0]), dayjs(props.filters_data.created_date[1])]);
