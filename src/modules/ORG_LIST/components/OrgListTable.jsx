@@ -80,15 +80,23 @@ const OrgListTable = (props) => {
       console.log(props.base_filters);
       if (props.base_filters?.towns   !== null){
         setFilterTown(props.base_filters.towns);
+      } else {
+        setFilterTown(null);
       }
       if (props.base_filters?.id      !== null){
         setFilterId(props.base_filters.id);
+      } else {
+        setFilterId(null);
       }
       if (props.base_filters?.name    !== null){
         setFilterName(props.base_filters.name);
+      } else {
+        setFilterName(null);
       }
       if (props.base_filters?.inn     !== null){
         setFilterInn(props.base_filters.inn);
+      } else {
+        setFilterInn(null);
       }
       if (props.base_filters?.comment !== null){
         setFilterComment(props.base_filters.comment);
@@ -100,6 +108,8 @@ const OrgListTable = (props) => {
         && props.base_filters?.curator !== undefined
       ){
         setFilterCurator(parseInt(props.base_filters.curator));
+      } else {
+        setFilterCurator(null);
       }
     }, [props.base_filters]);
 
