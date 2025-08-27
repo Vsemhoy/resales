@@ -319,7 +319,7 @@ const BidListPage = (props) => {
                                     style={{width:'150px',marginRight:'8px'}}
                                     options={roles.filter(role => userdata.acls.includes(role.acl))}
                                     value={activeRole}
-                                    onChange={fetchChangeRole()}
+                                    onChange={fetchChangeRole}
                             />
                           </div>
                       )}
