@@ -208,7 +208,7 @@ const OrgListPage = (props) => {
 
   useEffect(() => {
     get_orglist();
-  }, [filterBox, orderBox]);
+  }, [filterBox, orderBox, currrentPage, onPage]);
 
 
   /** При смене страницы, если открыт модал, меняем ИД открытой компании */
@@ -582,7 +582,9 @@ const OrgListPage = (props) => {
               current={currrentPage}
               total={total}
               onChange={setCurrentPage}
-              // showSizeChanger
+              // 
+              onShowSizeChange={setOnPage}
+              pageSizeOptions={[10, 30, 50, 100]}
               showQuickJumper
               locale={ANTD_PAGINATION_LOCALE}
             />
