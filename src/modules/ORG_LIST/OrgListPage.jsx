@@ -182,6 +182,7 @@ const OrgListPage = (props) => {
   }, [baseCompanies]);
 
 
+  /** Заполняем селекты с кураторами */
   useEffect(() => {
     if (baseFiltersData && baseFiltersData.curators)
     {
@@ -277,12 +278,12 @@ const OrgListPage = (props) => {
                     "site": filterBox.site,
                     "comment" : filterBox.comment,
                     "created_date": [
-                        filterBox.created_date && filterBox.created_date[0] ? filterBox.created_date[0].unix() : null,
-                        filterBox.created_date && filterBox.created_date[1] ? filterBox.created_date[1].unix() : null,
+                        filterBox.filterCreatedUntil ? filterBox.filterCreatedUntil : null,
+                        filterBox.filterCreatedBefore ? filterBox.filterCreatedBefore : null,
                     ],
                     "active_date": [
-                        filterBox.updated_date && filterBox.updated_date[0] ? filterBox.updated_date[0].unix() : null,
-                        filterBox.updated_date && filterBox.updated_date[1] ? filterBox.updated_date[1].unix() : null,
+                        filterBox.filterUpdatedUntil ? filterBox.filterUpdatedUntil : null,
+                        filterBox.filterUpdatedBefore ? filterBox.filterUpdatedBefore : null,
                     ],
                     "page": currrentPage,
                     "limit": onPage,
@@ -436,6 +437,7 @@ const OrgListPage = (props) => {
   }
 
 
+  /** Формирует меню кнопки очистки фильтров и сортиров */
   const makeFilterMenu = () => {
     let clearItems = [];
     let hasFilter = false;
@@ -444,23 +446,20 @@ const OrgListPage = (props) => {
     for (const key in filterBox) {
       const fib = filterBox[key];
       if (fib !== null){
-        if (key === "updated_at" && fib[0] !== null){
+        if (key === "updated_date" && fib[0] !== null){
           hasFilter = true;
-        } else if (key === "created_at" && fib[0] !== null){
+        } else if (key === "created_date" && fib[0] !== null){
           hasFilter = true;
-        } else if (key !== "updated_at" && key !== "created_at" && key !== "page" && key !== "onpage" && key !== 'limit')
+        } else if (key !== "updated_date" && key !== "created_date" && key !== "page" && key !== "onpage" && key !== 'limit')
           hasFilter = true;
         }
     };
-
-
     for (const key in orderBox) {
       const fib = orderBox[key];
       if (fib !== null){
         hasSorter = true;
       };
     };
-
 
     if (hasFilter){
       clearItems.push({
@@ -477,14 +476,13 @@ const OrgListPage = (props) => {
         label: <div onClick={handleClearOrderBox}>Очистить cортировки</div>
       })
     };
-
-    console.log('clearItems', clearItems);
     setFilterSortClearMenu(clearItems);
   }
 
   useEffect(() => {
     makeFilterMenu();
   }, [filterBox, orderBox]);
+
 
 
   const handleClearAllBoxes = ()=> {
