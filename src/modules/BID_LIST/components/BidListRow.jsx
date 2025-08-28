@@ -59,7 +59,7 @@ const BidListRow = (props) => {
            onDoubleClick={handleDoubleClick}
       >
         <div className={'sa-table-box-cell'}
-            // style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
+             //style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
         >
           <div
 
