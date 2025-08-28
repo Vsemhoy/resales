@@ -75,7 +75,7 @@ const BidListTable = (props) => {
                              size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('bid_id', val)}
+                             onChange={(val) => props.on_change_filter_box('bid_id', val.target.value)}
                       />
                     </div>
                   </div>
@@ -92,7 +92,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('company_name', val)}
+                             onChange={(val) => props.on_change_filter_box('company_name', val.target.value)}
                       />
                     </div>
                   </div>
@@ -166,7 +166,13 @@ const BidListTable = (props) => {
                       <DatePicker size={'small'}
                                   style={{width: '100%'}}
                                   variant='filled'
-                                  onChange={(val) => props.on_change_filter_box('dates', [val,val])}
+                                  onChange={(val) => {
+                                    if (val) {
+                                      props.on_change_filter_box('dates', [val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
+                                    } else {
+                                      props.on_change_filter_box('dates', [null, null]);
+                                    }
+                                  }}
                       />
                     </div>
                   </div>
@@ -183,7 +189,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('manager', val)}
+                             onChange={(val) => props.on_change_filter_box('manager', val.target.value)}
                       />
                     </div>
                   </div>
@@ -195,7 +201,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('bill_number', val)}
+                             onChange={(val) => props.on_change_filter_box('bill_number', val.target.value)}
                       />
                     </div>
                   </div>
@@ -207,7 +213,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('comment', val)}
+                             onChange={(val) => props.on_change_filter_box('comment', val.target.value)}
                       />
                     </div>
                   </div>
@@ -219,7 +225,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('object_name', val)}
+                             onChange={(val) => props.on_change_filter_box('object_name', val.target.value)}
                       />
                     </div>
                   </div>
