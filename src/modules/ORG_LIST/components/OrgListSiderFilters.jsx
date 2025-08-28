@@ -425,13 +425,25 @@ const OrgListSiderFilter = (props) => {
             </div>
         </div>
 
-        {/* <div className={'sider-unit'}>
+        <div className={'sider-unit'}>
             <div className='sider-unit-title'>Дата создания</div>
             <div className='sider-unit-control'>
                 <DatePicker.RangePicker 
-                    value={filterCreatedAt}
+                    value={[filterCreatedBefore ? dayjs.unix(filterCreatedBefore) : null, filterCreatedUntil ? dayjs.unix(filterCreatedUntil) : null]}
                     allowClear
-                    onChange={setFilterCreatedAt}
+                    // onChange={setFilterCreatedAt}
+                    onChange={(date) => {
+                        console.log(date);
+                        if (date){
+
+                            setFilterCreatedBefore(date[0] !== null ? date[0].unix() : null);
+                            setFilterCreatedUntil(date[1] !== null ? date[1].unix() : null);
+                        } else {
+                            setFilterCreatedBefore(null);
+                            setFilterCreatedUntil(null);
+                        }
+                    }}
+                    allowEmpty={[true, true]}
                 />
             </div>
         </div>
@@ -440,15 +452,26 @@ const OrgListSiderFilter = (props) => {
             <div className='sider-unit-title'>Дата последнего обновления</div>
             <div className='sider-unit-control'>
                 <DatePicker.RangePicker 
-                    value={filterUpdatedAt}
+                    value={[filterUpdatedBefore ? dayjs.unix(filterUpdatedBefore) : null, filterUpdatedUntil ? dayjs.unix(filterUpdatedUntil) : null]}
                     allowClear
-                    onChange={setFilterupdatedAt}
+                    // onChange={setFilterupdatedAt}
+                    onChange={(date) => {
+                        if (date){
+                            setFilterUpdatedBefore(date[0] !== null ? date[0].unix() : null);
+                            setFilterUpdatedUntil(date[1] !== null ? date[1].unix() : null);
+                        } else {
+                            setFilterUpdatedBefore(null);
+                            setFilterUpdatedUntil(null);
+                        }
+                        
+                    }}
+                    allowEmpty={[true, true]}
                 />
             </div>
-        </div> */}
+        </div>
 
 
-    <div className={'sider-unit'}>
+    {/* <div className={'sider-unit'}>
         <div className='sider-unit-title'>Дата создания</div>
             <div className='sider-unit-control'>
                 <DatePicker
@@ -494,7 +517,7 @@ const OrgListSiderFilter = (props) => {
                     format={'DD.MM.YYYY'}
                     />
                 </div>
-        </div>
+        </div> */}
 
        
         <br />

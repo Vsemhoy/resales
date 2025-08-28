@@ -277,6 +277,11 @@ const OrgListPage = (props) => {
                     "email": filterBox.email,
                     "site": filterBox.site,
                     "comment" : filterBox.comment,
+                    // "created_until"  : filterBox.created_until ,
+                    // "created_before" : filterBox.created_before,
+                    // "updated_until"  : filterBox.updated_until ,
+                    // "updated_before" : filterBox.updated_before,
+
                     "created_date": [
                         filterBox.filterCreatedUntil ? filterBox.filterCreatedUntil : null,
                         filterBox.filterCreatedBefore ? filterBox.filterCreatedBefore : null,
@@ -548,7 +553,7 @@ const OrgListPage = (props) => {
                   )}
 
                 </Button.Group>
-                {/* <Tag
+                <Tag
                     style={{
                       width: '160px',
                       height: '32px',
@@ -557,10 +562,12 @@ const OrgListPage = (props) => {
                       fontSize: '14px',
                     }}
                     color="geekblue"
-                >Всего найдено: {total}</Tag> */}
+                >Всего найдено: {total}</Tag>
               </div>
               <div style={{display: 'flex', alignItems: 'end'}}>
-
+              {userdata?.user?.sales_role === 1 && (
+                <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
+              )}
 
 
                 {/* <RemoteSearchSelect
@@ -613,21 +620,20 @@ const OrgListPage = (props) => {
             <div className={'sa-flex-gap'}>
             <Pagination
               defaultPageSize={onPage}
-              size={'small'}
               defaultCurrent={1}
               current={currrentPage}
               total={total}
               onChange={(ev, val)=>{
                 setCurrentPage(ev); setOnPage(val)}}
-              // 
+              showTotal={false}
               onShowSizeChange={setOnPage}
               pageSizeOptions={[10, 30, 50, 100]}
               showQuickJumper
               locale={ANTD_PAGINATION_LOCALE}
             />
-            <Button disabled
+            {/* <Button disabled
               size={'small'}
-            >Всего {total}</Button>
+            >Всего {total}</Button> */}
             </div>
             <div>
 
@@ -637,13 +643,12 @@ const OrgListPage = (props) => {
                 <Button 
                 color={'default'}
                 variant={filterBox?.companies === 1 ? "solid" : "filled"}
-                size={'small'}
                     // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     onClick={triggerFreeCompaniesFilterButton}
                 >Свободные</Button>
               </Tooltip>
               <Tooltip title="Я временный куратор">
-              <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
+              <Button color="default" variant={false ? "solid" : "filled"} 
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Временные</Button>
               </Tooltip>
@@ -651,14 +656,11 @@ const OrgListPage = (props) => {
               <Button
                 color={'default'}
                 variant={filterBox?.curator === userdata?.user?.id ? "solid" : "filled"}
-                size={'small'}
                 onClick={triggerMyCompaniesFilterButton}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Мои компании</Button>
               </Tooltip>
-              {userdata?.user?.sales_role === 1 && (
-                <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
-              )}
+
             </div>
             </div>
           </div>
