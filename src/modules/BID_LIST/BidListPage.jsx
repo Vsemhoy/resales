@@ -311,6 +311,7 @@ const BidListPage = (props) => {
     const fb = JSON.parse(JSON.stringify(filterBox))
     fb[key] = value;
     setFilterBox(fb);
+    console.log(fb)
   };
 
   return (
