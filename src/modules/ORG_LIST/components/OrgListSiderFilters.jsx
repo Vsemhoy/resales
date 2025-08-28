@@ -282,8 +282,8 @@ const OrgListSiderFilter = (props) => {
     };
 
   return (
-    <Affix offsetTop={0}>
-    <div className='sider-body'>
+    <Affix offsetTop={100}>
+    <div className='sider-body sa-sai-orgs'>
 
         <div className={'sider-unit'}>
             <div className='sider-unit-title'>Компания</div>

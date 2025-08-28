@@ -60,6 +60,7 @@
     display: grid;
     grid-template-columns: auto 12px;
     user-select: none;
+    cursor:n-resize;
 }
 
 .sa-table-sort-trigger .sa-table-sort-bit {
