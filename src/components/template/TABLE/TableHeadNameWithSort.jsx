@@ -78,7 +78,9 @@ const TableHeadNameWithSort = (props) => {
         // onDoubleClick={handleDblClick}
          onClick={handleChangeDirection}
     >
-        <span className={`${sortOrder !== 0 ? "sa-table-sort-trigger-active" : ""}`}>
+        <span className={`${sortOrder !== 0 ? "sa-table-sort-trigger-active" : ""}`}
+            onClick={handleChangeDirection}
+        >
             {children}
         </span>
         <div className='sa-table-sort-bit'

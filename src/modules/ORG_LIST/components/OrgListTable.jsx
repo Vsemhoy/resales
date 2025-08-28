@@ -204,7 +204,7 @@ const OrgListTable = (props) => {
 
   return (
     <div className={'sa-table-box'}>
-          <Affix >
+          <Affix offsetTop={150}>
             <div className={'sa-table-box-header'}>
               <div className={'sa-table-box-orgs sa-table-box-row'}>
                 <div className={'sa-table-box-cell'}>
@@ -338,7 +338,12 @@ const OrgListTable = (props) => {
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Заявки</div>
+                    <TableHeadNameWithSort 
+                      sort_key={'bids'}
+                      on_sort_change={handleActivateSorter}
+                      active_sort_items={sortOrders}
+                      >Заявки
+                      </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
                       
                     </div>
@@ -346,7 +351,13 @@ const OrgListTable = (props) => {
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Встречи</div>
+                      <TableHeadNameWithSort 
+                      sort_key={'meetings'}
+                      on_sort_change={handleActivateSorter}
+                      active_sort_items={sortOrders}
+                      >Встречи
+                      </TableHeadNameWithSort>
+
                     <div className={'sa-pa-3'}>
                       
                     </div>
@@ -354,7 +365,12 @@ const OrgListTable = (props) => {
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Звонки</div>
+                    <TableHeadNameWithSort 
+                      sort_key={'calls'}
+                      on_sort_change={handleActivateSorter}
+                      active_sort_items={sortOrders}
+                      >Звонки
+                      </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
                       
                     </div>

@@ -300,6 +300,13 @@ const OrgListPage = (props) => {
                 console.log('me: ', response);
                 setOrgList(response.data.org_list);
                 setTotal(response.data.total_count);
+
+                let max = onPage * currrentPage;
+                if (response.data.total_count < max)
+                {
+                  setCurrentPage(1);
+                };
+
             } catch (e) {
                 console.log(e)
             } finally {
@@ -508,15 +515,10 @@ const OrgListPage = (props) => {
     }
 
   return (
-    <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
-      <Affix>
-      <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
+    <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`} style={{paddingTop: '12px'}}>
 
-
-
-
-
-
+      <Affix offsetTop={-10}>
+      <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'} >
 
           <div className={'sa-header-label-container'}>
             <div className={'sa-flex-space'}>
@@ -615,10 +617,13 @@ const OrgListPage = (props) => {
         </Sider>
         <Content>
           <div className={'sa-pagination-panel sa-pa-12'}></div>
-          <div className={'sa-pagination-panel sa-pa-12'}>
+
+          <Affix offsetTop={96}>
+          <div className={'sa-pagination-panel sa-pa-12'} style={{background: '#b4cbe4', minHeight: '54px'}}>
             <div className={'sa-flex-space'}>
             <div className={'sa-flex-gap'}>
             <Pagination
+              size={openedFilters ? 'small' : 'middle'}
               defaultPageSize={onPage}
               defaultCurrent={1}
               current={currrentPage}
@@ -639,24 +644,26 @@ const OrgListPage = (props) => {
 
             </div>
             <div className={'sa-flex-gap'}>
-              {/* <Tooltip title="Я временный куратор">
+              <Tooltip title="Я временный куратор">
                 <Button 
                 color={'default'}
+                size={openedFilters ? 'small' : 'middle'}
                 variant={filterBox?.companies === 1 ? "solid" : "filled"}
                     // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     onClick={triggerFreeCompaniesFilterButton}
                 >Свободные</Button>
-              </Tooltip> */}
-              <Tooltip title="Я временный куратор">
+              </Tooltip>
+              {/* <Tooltip title="Я временный куратор">
               <Button color="default" variant={false ? "solid" : "filled"} 
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Временные</Button>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title="Компании с моим кураторством">
               <Button
                 color={'default'}
                 variant={filterBox?.curator === userdata?.user?.id ? "solid" : "filled"}
                 onClick={triggerMyCompaniesFilterButton}
+                size={openedFilters ? 'small' : 'middle'}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Мои компании</Button>
               </Tooltip>
@@ -664,6 +671,7 @@ const OrgListPage = (props) => {
             </div>
             </div>
           </div>
+          </Affix>
 
           <div className={`${openedFilters ? "sa-pa-tb-12 sa-pa-s-3":'sa-pa-12'}`}>
           
