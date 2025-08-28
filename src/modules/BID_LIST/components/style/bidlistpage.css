@@ -3,14 +3,14 @@
 }
 .sa-table-box-bids {
     display: grid;
-    grid-template-columns: 64px 2fr 100px 100px 140px 1fr 1fr 100px 2fr 2fr;
+    grid-template-columns: 64px 2fr 100px 100px 140px 140px 170px 100px 2fr 2fr;
 }
 
 .sa-filer-opened .sa-table-box-bids {
-    grid-template-columns: 64px 2fr 100px 100px 140px 1fr 1fr 100px 2fr 2fr !important;
+    grid-template-columns: 64px 2fr 100px 100px 140px 1fr 1fr 100px 2fr !important;
 }
-.sa-filer-opened .sa-table-box-bids > *:last-child {
-    /*display: none;*/
+.sa-filer-opened .sa-table-box-bids > *:nth-child(8) {
+    display: none;
 }
 
 .sa-list-header {

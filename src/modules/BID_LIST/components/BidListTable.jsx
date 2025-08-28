@@ -101,6 +101,7 @@ const BidListTable = (props) => {
                               style={{width: '100%'}}
                               variant='filled'
                               options={props.filter_bid_types}
+                              onChange={(val) => props.on_change_filter_box('type', val)}
                               allowClear
                       />
                     </div>
@@ -119,6 +120,7 @@ const BidListTable = (props) => {
                               style={{width: '100%'}}
                               variant='filled'
                               options={props.filter_protection_projects}
+                              onChange={(val) => props.on_change_filter_box('protect_status', val)}
                               allowClear
                       />
                     </div>
@@ -137,6 +139,7 @@ const BidListTable = (props) => {
                               style={{width: '100%'}}
                               variant='filled'
                               options={props.filter_steps}
+                              onChange={(val) => props.on_change_filter_box('stage_status', val)}
                               allowClear
                       />
                     </div>
@@ -192,14 +195,6 @@ const BidListTable = (props) => {
                     </div>
                   </div>
                 </div>
-                {/*<div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Контактное лицо</div>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
-                    </div>
-                  </div>
-                </div>*/}
               </div>
             </div>
           </Affix>

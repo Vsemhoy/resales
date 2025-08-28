@@ -56,7 +56,20 @@ const BidListPage = (props) => {
 
   const [bids, setBids] = useState([]);
 
-  const [filterBox, setFilterBox] = useState({});
+  const [filterBox, setFilterBox] = useState({
+      "company_name": null,
+      "company_id": null,
+      "object_name": null,
+      "comment": null,
+      "dates": null,
+      "type": null,
+      "manager": null,
+      "bill_number": null,
+      "protect_status": null,
+      "pay_status": null,
+      "stage_status": null,
+      "bid_id": null
+  });
   const [orderBox, setOrderBox] = useState({});
 
   const [sortOrders, setSortOrders] = useState([]);
@@ -109,7 +122,7 @@ const BidListPage = (props) => {
         setIsLoading(false);
       });
     }
-  }, [currentPage]);
+  }, [currentPage, onPage, filterBox]);
 
   useEffect(() => {
     if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
@@ -170,25 +183,24 @@ const BidListPage = (props) => {
 
   const fetchBids = async () => {
     if (PRODMODE) {
+      const data = {
+        "company_name": filterBox.company_name,
+        "company_id": filterBox.company_id,
+        "object_name": filterBox.object_name,
+        "comment": filterBox.comment,
+        "dates": filterBox.dates,
+        "type": filterBox.type,
+        "manager": filterBox.manager,
+        "bill_number": filterBox.bill_number,
+        "protect_status": filterBox.protect_status,
+        "pay_status": filterBox.pay_status,
+        "stage_status": filterBox.stage_status,
+        "bid_id": filterBox.bid_id,
+        "to": 0,
+        "page": currentPage,
+        "limit": onPage
+      };
       try {
-        const data = {
-          "company_name": null,
-          "company_id": null,
-          "object_name": null,
-          "comment": null,
-          "dates": null,
-          "type": null,
-          "manager": null,
-          "bill_number": null,
-          "protect_status": null,
-          "pay_status": null,
-          "stage_status": null,
-          "bid_id": null,
-          "to": 0,
-          "page": currentPage,
-          "limit": onPage
-        };
-
         let response = await PROD_AXIOS_INSTANCE.post('/sales/data/offerlist', {
           data,
           _token: CSRF_TOKEN
@@ -275,6 +287,31 @@ const BidListPage = (props) => {
       setShowParam(null);
     }
   }, [isPreviewOpen]);
+
+  const prepareSelectOptions = (options) => {
+    if (options && options.length > 0) {
+      return options.map((option) => {
+        return ({
+          key: `option-${option.id}-${option.name}`,
+          value: option.id,
+          label: option.name,
+          boss_id: option.boss_id,
+          id_company: option.id_company,
+          count: option.count,
+          match: option.match,
+        })
+      });
+    } else {
+      return [];
+    }
+  };
+
+  const handleUpdateFilterBox = (key, value) => {
+    if (!filterBox) return 0;
+    const fb = JSON.parse(JSON.stringify(filterBox))
+    fb[key] = value;
+    setFilterBox(fb);
+  };
 
   return (
     <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
@@ -438,9 +475,11 @@ const BidListPage = (props) => {
                   companies={companies}
                   bids={bids}
 
-                  filter_steps={filterStep}
-                  filter_protection_projects={filterProtectionProject}
-                  filter_bid_types={filterBidType}
+                  filter_steps={prepareSelectOptions(filterStep)}
+                  filter_protection_projects={prepareSelectOptions(filterProtectionProject)}
+                  filter_bid_types={prepareSelectOptions(filterBidType)}
+
+                  on_change_filter_box={handleUpdateFilterBox}
 
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
