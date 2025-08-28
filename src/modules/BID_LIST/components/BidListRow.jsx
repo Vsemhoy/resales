@@ -71,7 +71,7 @@ const BidListRow = (props) => {
         </div>
         <div className={'sa-table-box-cell'}
         >
-          <div>
+          <div className={'text-align-left'}>
             <NavLink to={`/orgs/${data.id}`}>
               {data.company_name}
             </NavLink>
@@ -127,10 +127,10 @@ const BidListRow = (props) => {
         <div className={'sa-table-box-cell'}>
           <div>{data.bill_number}</div>
         </div>
-        <div className={'sa-table-box-cell'}>
+        <div className={'sa-table-box-cell text-align-justify'}>
           <div>{data.comment}</div>
         </div>
-        <div className={'sa-table-box-cell'}>
+        <div className={'sa-table-box-cell text-align-justify'}>
           <div>{data.object}</div>
         </div>
         {/*<div className={'sa-table-box-cell'}>

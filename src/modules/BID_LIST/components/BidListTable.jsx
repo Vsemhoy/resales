@@ -81,7 +81,7 @@ const BidListTable = (props) => {
                         sort_key={'company_name'}
                         on_sort_change={handleActivateSorter}
                         active_sort_items={sortOrders}
-                    >Название
+                    >Название организации
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
                       <Input size={'small'} style={{width: '100%'}} variant='filled'/>
@@ -97,7 +97,12 @@ const BidListTable = (props) => {
                     >Тип
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Select size={'small'}
+                              style={{width: '100%'}}
+                              variant='filled'
+                              options={props.filter_bid_types}
+                              allowClear
+                      />
                     </div>
                   </div>
                 </div>
@@ -110,7 +115,12 @@ const BidListTable = (props) => {
                     >Защита
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Select size={'small'}
+                              style={{width: '100%'}}
+                              variant='filled'
+                              options={props.filter_protection_projects}
+                              allowClear
+                      />
                     </div>
                   </div>
                 </div>
@@ -123,8 +133,12 @@ const BidListTable = (props) => {
                     >Этап
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Select size={'small'} style={{width: '100%'}} variant='filled' options={props.companies}
-                              allowClear/>
+                      <Select size={'small'}
+                              style={{width: '100%'}}
+                              variant='filled'
+                              options={props.filter_steps}
+                              allowClear
+                      />
                     </div>
                   </div>
                 </div>
