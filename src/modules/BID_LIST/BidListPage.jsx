@@ -152,11 +152,10 @@ const BidListPage = (props) => {
   const fetchFilterSelects = async () => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/offerfilters', {
-          data: {},
+        let response = await PROD_AXIOS_INSTANCE.get('/api/sales/filterlist', {
           _token: CSRF_TOKEN
         });
-        setFilterPresetList(response.data.offerfilters);
+        setFilterPresetList(response.data.filters);
       } catch (e) {
         console.log(e);
       }
