@@ -25,9 +25,8 @@ import { ChevronLeftIcon, RectangleStackIcon } from '@heroicons/react/24/outline
 
 import BidListTable from './components/BidListTable';
 import BidListSiderFilters from './components/BidListSiderFilters';
-import { FILTERPRESETLIST } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
-import {BID_LIST} from "./mock/mock";
+import {BID_LIST, FILTERS} from "./mock/mock";
 import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
 import RemoteSearchSelect from "./components/RemoteSearchSelect";
 
@@ -40,37 +39,27 @@ const BidListPage = (props) => {
 
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenedFilters, setIsOpenedFilters] = useState(false);
+  const [isHasRole, setIsHasRole] = useState(false);
+  const [isOneRole, setIsOneRole] = useState(true);
+  const [isBackRoute, setIsBackRoute] = useState(false);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [fromOrgId, setFromOrgId] = useState(0);
 
-  const [baseCompanies, setBaseCompanies] = useState([]);
-  const [companies, setCompanies] = useState([]);
-  const { item_id } = useParams();
-  const [openedFilters, setOpenedFilters] = useState(false);
-  const [sortOrders, setSortOrders] = useState([]);
-
-  const [bids, setBids] = useState([]);
+  const [filterStep, setFilterStep] = useState([]);
+  const [filterProtectionProject, setFilterProtectionProject] = useState([]);
+  const [filterBidType, setFilterBidType] = useState([]);
 
   const [total, setTotal] = useState(0);
-  const [onPage, setOnPage] = useState(50);
+  const [onPage, setOnPage] = useState(30);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [bids, setBids] = useState([]);
 
   const [filterBox, setFilterBox] = useState({});
   const [orderBox, setOrderBox] = useState({});
 
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewItem, setPreviewItem] = useState(null);
-
-  const [filterPresetList, setFilterPresetList] = useState([]);
-
-  const showGetItem = searchParams.get('show');
-
-
-  const [isBackRoute, setIsBackRoute] = useState(false);
-  const [fromOrgId, setFromOrgId] = useState(0);
-
-  const [isHasRole, setIsHasRole] = useState(false);
-  const [isOneRole, setIsOneRole] = useState(true);
+  const [sortOrders, setSortOrders] = useState([]);
 
   const [activeRole, setActiveRole] = useState(0);
   const [roles, setRoles] = useState([
@@ -91,6 +80,14 @@ const BidListPage = (props) => {
     },
   ]);
 
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [baseCompanies, setBaseCompanies] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const { item_id } = useParams();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewItem, setPreviewItem] = useState(null);
+  const showGetItem = searchParams.get('show');
 
 
   useEffect(() => {
@@ -152,15 +149,22 @@ const BidListPage = (props) => {
   const fetchFilterSelects = async () => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.get('/api/sales/filterlist', {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/filterlist', {
           _token: CSRF_TOKEN
         });
-        setFilterPresetList(response.data.filters);
+        if (response.data) {
+          const filters = response.data.content;
+          setFilterStep(filters.step);
+          setFilterProtectionProject(filters.protection_project);
+          setFilterBidType(filters.type_select);
+        }
       } catch (e) {
         console.log(e);
       }
     } else {
-      setFilterPresetList(FILTERPRESETLIST);
+      setFilterStep(FILTERS.step);
+      setFilterProtectionProject(FILTERS.protection_project);
+      setFilterBidType(FILTERS.type_select);
     }
   };
 
@@ -273,7 +277,7 @@ const BidListPage = (props) => {
   }, [isPreviewOpen]);
 
   return (
-    <div className={`app-page sa-app-page ${openedFilters ? "sa-filer-opened":''}`}>
+    <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
       <Affix>
         <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
           <div className={'sa-header-label-container'}>
@@ -288,7 +292,7 @@ const BidListPage = (props) => {
                 <Button.Group>
                   <Button
                       onClick={() => {
-                        setOpenedFilters(!openedFilters);
+                        setIsOpenedFilters(!isOpenedFilters);
                       }}
                       color={'default'}
                       variant={'solid'}
@@ -319,7 +323,7 @@ const BidListPage = (props) => {
                 {activeRole > 0 && (
                     <div>
                       {isOneRole ? (
-                          <div style={{display:'flex',alignItems:'center',gap:'5px'}}>
+                          <div style={{display:'flex',alignItems:'center',gap:'5px',justifyContent:'end'}}>
                             Роль:
                             <Tag className={`
                                   sa-tag-custom
@@ -347,7 +351,7 @@ const BidListPage = (props) => {
                     </div>
                 )}
 
-                <RemoteSearchSelect
+                {/*<RemoteSearchSelect
                     placeholder="Поиск..."
                     fetchOptions={fetchSearchResults}
                     debounceTimeout={500}
@@ -356,7 +360,7 @@ const BidListPage = (props) => {
                     onSelect={(value, option) => {
                       console.log('Selected:', value, option);
                     }}
-                />
+                />*/}
               </div>
             </div>
           </div>
@@ -365,15 +369,15 @@ const BidListPage = (props) => {
 
       <Layout className={'sa-layout sa-w-100'}>
         <Sider
-            collapsed={!openedFilters}
+            collapsed={!isOpenedFilters}
             collapsedWidth={0}
             width={'300px'}
             style={{backgroundColor: '#ffffff'}}
         >
           <div className={'sa-sider'}>
-            {openedFilters && (
+            {isOpenedFilters && (
                 <BidListSiderFilters
-                    filter_presets={filterPresetList}
+
                 />
             )}
           </div>
@@ -381,7 +385,7 @@ const BidListPage = (props) => {
 
 
         <Content>
-          <Affix offsetTop={100}>
+          <Affix offsetTop={106}>
             <div className={'sa-pagination-panel sa-pa-12-24 sa-back'}>
               <div className={'sa-flex-space'}>
                 <div className={'sa-flex-gap'}>
@@ -427,12 +431,17 @@ const BidListPage = (props) => {
           </Affix>
 
 
-          <div className={`${openedFilters ? "sa-pa-tb-12 sa-pa-s-3" : 'sa-pa-12'}`} style={{paddingTop: 0}}>
+          <div className={`${isOpenedFilters ? "sa-pa-tb-12 sa-pa-s-3" : 'sa-pa-12'}`} style={{paddingTop: 0}}>
 
             <Spin spinning={isLoading}>
               <BidListTable
                   companies={companies}
                   bids={bids}
+
+                  filter_steps={filterStep}
+                  filter_protection_projects={filterProtectionProject}
+                  filter_bid_types={filterBidType}
+
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
               />
