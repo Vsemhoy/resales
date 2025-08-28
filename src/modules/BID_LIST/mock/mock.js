@@ -911,82 +911,50 @@ export const BID_LIST = [
 ];
 
 export const FILTERS = {
-    "orders": [
-        {
-            "key": "id",
-            "value": "id",
-            "label": "ID"
-        },
-        {
-            "key": "date",
-            "value": "date",
-            "label": "Дата создания"
-        },
-        {
-            "key": "date_update",
-            "value": "date_update",
-            "label": "Дата обновления"
-        },
-        {
-            "key": "date_last_view",
-            "value": "date_last_view",
-            "label": "Дата просмотра"
-        }
-    ],
     "pay_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "Нет"
+            "id": 0,
+            "name": "Нет"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "Есть"
+            "id": 1,
+            "name": "Есть"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Оплачен"
+            "id": 2,
+            "name": "Оплачен"
         }
     ],
     "step": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "Менеджер"
+            "id": 1,
+            "name": "Менеджер"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Администраторы"
+            "id": 2,
+            "name": "Администратор"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "Бухгалтерия"
+            "id": 3,
+            "name": "Бухгалтерия"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "Завершено"
+            "id": 4,
+            "name": "Завершено"
         }
     ],
     "protection_project": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "ЗП"
+            "id": 1,
+            "name": "ЗП"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "РП"
+            "id": 2,
+            "name": "РП"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "ЗП или РП"
+            "id": 3,
+            "name": "ЗП и РП"
         }
     ],
     "admin_accept_select": [
@@ -1047,16 +1015,12 @@ export const FILTERS = {
     ],
     "type_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "КП",
-            "shortname": "КП"
+            "id": 1,
+            "name": "КП"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Счет",
-            "shortname": "СЧ"
+            "id": 2,
+            "name": "Счет"
         }
     ],
     "bid_currency_select": [
@@ -1085,41 +1049,34 @@ export const FILTERS = {
     ],
     "stage_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "Менеджер"
+            "id": 1,
+            "name": "Менеджер"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Администратор"
+            "id": 2,
+            "name": "Администратор"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "Бухгалтер"
+            "id": 3,
+            "name": "Бухгалтер"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "Завершено"
+            "id": 4,
+            "name": "Завершено"
         }
     ],
     "complete_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "В работе"
+            "id": 1,
+            "name": "В работе"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Реализовано"
+            "id": 2,
+            "name": "Реализовано"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "Не  реализовано"
+            "id": 3,
+            "name": "Не  реализовано"
         }
     ]
 };
