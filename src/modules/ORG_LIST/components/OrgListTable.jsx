@@ -61,7 +61,7 @@ const OrgListTable = (props) => {
         if (props.on_change_filters) {
             props.on_change_filters(filterBox);
         }
-    }, 1000); // ⏱️ 1 секунда задержки
+    }, 700); // ⏱️ 1 секунда задержки
 
     // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
     return () => clearTimeout(timer);

@@ -64,10 +64,10 @@ const OrgListSiderFilter = (props) => {
             filterBox.profsound       = toNullable(filterProfsound);
             // filterBox.created_date    = [filterCreatedBefore, filterCreatedUntil];
             // filterBox.updated_date    = [filterUpdateddBefore, filterUpdatedUntil];
-            filterBox.created_until  = filterCreatedUntil  !== null ? filterCreatedUntil.unix()  : null;
-            filterBox.created_before = filterCreatedBefore !== null ? filterCreatedBefore.unix() : null;
-            filterBox.updated_until  = filterUpdatedUntil  !== null ? filterUpdatedUntil.unix()  : null;
-            filterBox.updated_before = filterUpdatedBefore !== null ? filterUpdatedBefore.unix() : null;
+            filterBox.created_until  = toNullable(filterCreatedUntil );
+            filterBox.created_before = toNullable(filterCreatedBefore);
+            filterBox.updated_until  = toNullable(filterUpdatedUntil );
+            filterBox.updated_before = toNullable(filterUpdatedBefore);
             filterBox.rate_lists      = toNullable(filterLists)
 
    
@@ -75,7 +75,7 @@ const OrgListSiderFilter = (props) => {
             if (props.on_change_filters) {
                 props.on_change_filters(filterBox);
             }
-        }, 1000); // ⏱️ 1 секунда задержки
+        }, 700); // ⏱️ 1 секунда задержки
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
@@ -172,26 +172,26 @@ const OrgListSiderFilter = (props) => {
                 }
 
                 if (props.filters_data.created_until){
-                    setFilterCreatedUntil(dayjs.unix(props.filters_data.created_until));
+                    setFilterCreatedUntil(props.filters_data.created_until);
                 } else {
                     setFilterCreatedUntil(null);
                 }
 
                 if (props.filters_data.created_before){
-                    setFilterCreatedBefore(dayjs.unix(props.filters_data.created_before));
+                    setFilterCreatedBefore(props.filters_data.created_before);
                 } else {
                     setFilterCreatedBefore(null);
                 }
 
 
                 if (props.filters_data.updated_until){
-                    setFilterUpdatedUntil(dayjs.unix(props.filters_data.updated_until));
+                    setFilterUpdatedUntil(props.filters_data.updated_until);
                 } else {
                     setFilterUpdatedUntil(null);
                 }
 
                 if (props.filters_data.updated_before){
-                    setFilterUpdatedBefore(dayjs.unix(props.filters_data.updated_before));
+                    setFilterUpdatedBefore(props.filters_data.updated_before);
                 } else {
                     setFilterUpdatedBefore(null);
                 }
@@ -448,52 +448,52 @@ const OrgListSiderFilter = (props) => {
         </div> */}
 
 
-        <div className={'sider-unit'}>
-            <div className='sider-unit-title'>Дата создания</div>
+    <div className={'sider-unit'}>
+        <div className='sider-unit-title'>Дата создания</div>
             <div className='sider-unit-control'>
                 <DatePicker
                 style={{ width: '100%' }}
-                    value={filterCreatedUntil}
-                    allowClear
-                    onChange={setFilterCreatedUntil}
-                    placeholder='Создано до'
-                    format={'DD.MM.YYYY'}
+                value={filterCreatedUntil ? dayjs.unix(filterCreatedUntil) : null}
+                allowClear
+                onChange={(date) => setFilterCreatedUntil(date ? date.unix() : null)}
+                placeholder='Создано до'
+                format={'DD.MM.YYYY'}
                 />
             </div>
             <div className='sider-unit-control'>
                 <DatePicker 
-                    style={{ width: '100%' }}
-                    value={filterCreatedBefore}
-                    allowClear
-                    onChange={setFilterCreatedBefore}
-                    placeholder='Создано после'
-                    format={'DD.MM.YYYY'}
+                style={{ width: '100%' }}
+                value={filterCreatedBefore ? dayjs.unix(filterCreatedBefore) : null}
+                allowClear
+                onChange={(date) => setFilterCreatedBefore(date ? date.unix() : null)}
+                placeholder='Создано после'
+                format={'DD.MM.YYYY'}
                 />
             </div>
         </div>
 
         <div className={'sider-unit'}>
             <div className='sider-unit-title'>Дата последнего обновления</div>
-            <div className='sider-unit-control'>
-                <DatePicker 
-                style={{ width: '100%' }}
-                    value={filterUpdatedUntil}
+                <div className='sider-unit-control'>
+                    <DatePicker 
+                    style={{ width: '100%' }}
+                    value={filterUpdatedUntil ? dayjs.unix(filterUpdatedUntil) : null}
                     allowClear
-                    onChange={setFilterUpdatedUntil}
+                    onChange={(date) => setFilterUpdatedUntil(date ? date.unix() : null)}
                     placeholder='Обновлено до'
                     format={'DD.MM.YYYY'}
-                />
-            </div>
-            <div className='sider-unit-control'>
-                <DatePicker 
-                style={{ width: '100%' }}
-                    value={filterUpdatedBefore}
+                    />
+                </div>
+                <div className='sider-unit-control'>
+                    <DatePicker 
+                    style={{ width: '100%' }}
+                    value={filterUpdatedBefore ? dayjs.unix(filterUpdatedBefore) : null}
                     allowClear
-                    onChange={setFilterUpdatedBefore}
+                    onChange={(date) => setFilterUpdatedBefore(date ? date.unix() : null)}
                     placeholder='Обновлено после'
                     format={'DD.MM.YYYY'}
-                />
-            </div>
+                    />
+                </div>
         </div>
 
        

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './components/style/orglistpage.css';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
-import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Spin, Tooltip } from 'antd';
+import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Spin, Tag, Tooltip } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { DocumentPlusIcon } from '@heroicons/react/16/solid';
@@ -95,7 +95,7 @@ const OrgListPage = (props) => {
         setShowParam(showGetItem);
 
         
-      }, 2200);
+      }, 500);
     }
     setTimeout(() => {
       if (targetRowId){
@@ -105,7 +105,7 @@ const OrgListPage = (props) => {
             drow.scrollIntoView( {behavior: "auto", block: "center", inline: "start"})
           }
         }
-    }, 100);
+    }, 300);
   }, []);
 
 
@@ -113,7 +113,7 @@ const OrgListPage = (props) => {
    useEffect(() => {
         const timer = setTimeout(() => {
             updateURL(filterBox, orderBox, currrentPage, onPage);
-        }, 700);
+        }, 200);
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
@@ -504,49 +504,84 @@ const OrgListPage = (props) => {
 
   return (
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
-      <div className={'sa-control-panel sa-flex-space sa-pa-12'}>
-        <div className={'sa-vertical-flex'}>
-          <Button.Group>
-            <Button
-              onClick={() => {
-                setOpenedFilters(!openedFilters);
-              }}
-              color={'default'}
-              variant={'solid'}
-              icon={<FilterOutlined />}
-            >
-              Доп Фильтры
-            </Button>
-            {filterSortClearMenu.length > 0 && (
-              <Dropdown menu={{items: filterSortClearMenu}}>
-              <Button
-                title='Очистить фильтры'
-                color={'danger'}
-                variant={'solid'}
-                icon={<CloseOutlined />}
-                onClick={handleClearAllBoxes}
-                >
+      <Affix>
+      <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
 
-                </Button>
-              </Dropdown>
-            )}
 
-          </Button.Group>
-          
-        </div>
-        <div>
-          {/* <Button color='default' variant='solid'>Solid</Button>
-          <Button color='default' variant='outlined'>Outlined</Button>
-          <Button color='default' variant='dashed'>Dashed</Button>
-          <Button color='default' variant='filled'>Filled</Button>
-          <Button color='default' variant='text'>Text</Button>
-          <Button color='default' variant='link'>Link</Button> */}
-          Организации
-        </div>
-        <div>
-          <CurrencyMonitorBar />
-        </div>
+
+
+
+
+
+          <div className={'sa-header-label-container'}>
+            <div className={'sa-flex-space'}>
+              <div><h1 className={'sa-header-label-org'} style={{width: '100% !important'}}>Клиенты</h1></div>
+              <div>
+                <CurrencyMonitorBar/>
+              </div>
+            </div>
+            <div className={'sa-header-label-container-small'}>
+              <div className={'sa-vertical-flex'}>
+                <Button.Group>
+                  <Button
+                    onClick={() => {
+                      setOpenedFilters(!openedFilters);
+                    }}
+                    color={'default'}
+                    variant={'solid'}
+                    icon={<FilterOutlined />}
+                  >
+                    Доп Фильтры
+                  </Button>
+                  {filterSortClearMenu.length > 0 && (
+                    <Dropdown menu={{items: filterSortClearMenu}}>
+                    <Button
+                      title='Очистить фильтры'
+                      color={'danger'}
+                      variant={'solid'}
+                      icon={<CloseOutlined />}
+                      onClick={handleClearAllBoxes}
+                      >
+
+                      </Button>
+                    </Dropdown>
+                  )}
+
+                </Button.Group>
+                {/* <Tag
+                    style={{
+                      width: '160px',
+                      height: '32px',
+                      lineHeight: '27px',
+                      textAlign: 'center',
+                      fontSize: '14px',
+                    }}
+                    color="geekblue"
+                >Всего найдено: {total}</Tag> */}
+              </div>
+              <div style={{display: 'flex', alignItems: 'end'}}>
+
+
+
+                {/* <RemoteSearchSelect
+                    placeholder="Поиск..."
+                    fetchOptions={fetchSearchResults}
+                    debounceTimeout={500}
+                    allowClear
+                    style={{ width: '250px', textAlign: 'left' }}
+                    onSelect={(value, option) => {
+                      console.log('Selected:', value, option);
+                    }}
+                /> */}
+              </div>
+            </div>
+          </div>
+
+
+
       </div>
+
+      </Affix>
 
       <Layout className={'sa-layout sa-w-100'}>
         <Sider
