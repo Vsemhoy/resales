@@ -42,18 +42,22 @@ const OrgListTable = (props) => {
         setCuratorList(props.curator_list);
     }, [props.curator_list]);
 
+
     useEffect(() => {
     // Создаём отложенную отправку через setTimeout
     const timer = setTimeout(() => {
         let filterBox = props.base_filters ?? {};
 
-        filterBox.towns = toNullable(filterTown);
-        filterBox.id = toNullable(filterId);
-        filterBox.name = toNullable(filterName);
-        filterBox.inn = toNullable(filterInn);
+      console.log(props.base_filters);
+
+        filterBox.towns   = toNullable(filterTown);
+        filterBox.id      = toNullable(filterId);
+        filterBox.name    = toNullable(filterName);
+        filterBox.inn     = toNullable(filterInn);
         filterBox.comment = toNullable(filterComment);
         filterBox.curator = toNullable(filterCurator); 
 
+        console.log(filterBox);
         if (props.on_change_filters) {
             props.on_change_filters(filterBox);
         }
@@ -71,6 +75,45 @@ const OrgListTable = (props) => {
     ]);
 
 
+    useEffect(() => {
+
+      console.log(props.base_filters);
+      if (props.base_filters?.towns   !== null){
+        setFilterTown(props.base_filters.towns);
+      } else {
+        setFilterTown(null);
+      }
+      if (props.base_filters?.id      !== null){
+        setFilterId(props.base_filters.id);
+      } else {
+        setFilterId(null);
+      }
+      if (props.base_filters?.name    !== null){
+        setFilterName(props.base_filters.name);
+      } else {
+        setFilterName(null);
+      }
+      if (props.base_filters?.inn     !== null){
+        setFilterInn(props.base_filters.inn);
+      } else {
+        setFilterInn(null);
+      }
+      if (props.base_filters?.comment !== null){
+        setFilterComment(props.base_filters.comment);
+      }
+      if (props.base_filters?.curator !== null 
+        && props.base_filters?.curator !== ""
+        && props.base_filters?.curator !== "null"
+        && props.base_filters?.curator !== NaN
+        && props.base_filters?.curator !== undefined
+      ){
+        setFilterCurator(parseInt(props.base_filters.curator));
+      } else {
+        setFilterCurator(null);
+      }
+    }, [props.base_filters]);
+
+
     const handlePreviewOpen = (item, state) => {
         console.log('HEllo');
         // setPreviewItem(item);
@@ -80,6 +123,11 @@ const OrgListTable = (props) => {
             props.on_preview_open(item, state);
         }
     }
+
+    useEffect(() => {
+      console.log('BAESE ORDERS', props.base_orders);
+      setSortOrders(props.base_orders);
+    }, [props.base_orders]);
 
     /**
      * Обработчик сортировки колонок в таблице - триггер: клик на TableHeadNameWithSort
@@ -102,14 +150,17 @@ const OrgListTable = (props) => {
             newSorts.push({key: key, order: order});
         }
         setSortOrders(newSorts);
+        if (props.on_set_sort_orders){
+          props.on_set_sort_orders(newSorts);
+        }
     }
 
-    useEffect(() => {
-      console.log('sortOrders', sortOrders)
-      if (props.on_set_sort_orders){
-        props.on_set_sort_orders(sortOrders);
-      }
-    }, [sortOrders]);
+    // useEffect(() => {
+    //   console.log('sortOrders', sortOrders)
+    //   if (props.on_set_sort_orders){
+    //     props.on_set_sort_orders(sortOrders);
+    //   }
+    // }, [sortOrders]);
 
 
     /** Перемещение по списку компаний вверх-вних стрелками + CTRL */
@@ -255,6 +306,7 @@ const OrgListTable = (props) => {
                         variant='filled' 
                         options={curatorList} allowClear
                         onChange={setFilterCurator}
+                        value={filterCurator}
                        />
                     </div>
                   </div>

@@ -9,7 +9,7 @@ import dayjs from "dayjs";
  */
 export const updateURL = (filters, sorts, page, limit) => {
   const params = new URLSearchParams();
-
+  console.log(sorts);
   // Добавляем фильтры (только не-null)
   Object.keys(filters).forEach(key => {
     const value = filters[key];
@@ -30,7 +30,8 @@ export const updateURL = (filters, sorts, page, limit) => {
 
   // Сортировка: преобразуем в строку, например: sort=id:ASC,name:DESC
   if (sorts && sorts.length > 0) {
-    const sortStr = sorts.map(s => `${s.field}:${s.order}`).join('|');
+    const sortStr = sorts.map(s => `${s.key}-${s.order}`).join('+');
+    console.log(sortStr);
     params.append('sort', sortStr);
   }
 
@@ -61,9 +62,10 @@ export const readOrgURL = () => {
       
         // === Фильтры ===
         const filterKeys = [
-          'profiles', 'name', 'id', 'curators', 'regions', 'price_statuses',
+          'profiles', 'name', 'id', 'curator', 'regions', 'price_statuses',
           'rate_lists', 'towns', 'client_statuses', 'profsound', 'companies',
-          'contact_user', 'address', 'phone', 'email', 'site', 'inn', 
+          'contact_user', 'address', 'phone', 'email', 'site', 'inn', 'comment', 
+
         ];
       
         filterKeys.forEach(key => {
@@ -93,21 +95,23 @@ export const readOrgURL = () => {
       
         // === Сортировка ===
         const sortStr = params.get('sort');
+        console.log(sortStr);
         if (sortStr) {
           _sorts.push(
-            ...sortStr.split('|').map(pair => {
-              const [field, order] = pair.split(':');
-              return { key: field, order: order === 'DESC' ? 2 : 1 }; // твой orderBox использует 1/2
+            ...sortStr.split('+').map(pair => {
+              console.log(pair);
+              const [field, order] = pair.split('-');
+              return { key: field, order: order }; // твой orderBox использует 1/2
             })
           );
         }
-      
+        console.log(_sorts);
         // === Пагинация ===
         _page = parseInt(params.get('page')) || 1;
         _onPage = parseInt(params.get('onPage')) || 30;
     } catch (er){
         console.log('Error: ', er);
     }
-
+    console.log("FILTERE",_filters);
   return { _filters, _sorts, _page, _onPage };
 };

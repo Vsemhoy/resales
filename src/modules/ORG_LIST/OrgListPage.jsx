@@ -15,7 +15,7 @@ import OrgListPreviewModal from './components/OrgModal/OrgListPreviewModal';
 import OrgListSiderFilter from './components/OrgListSiderFilters';
 import OrgListTable from './components/OrgListTable';
 import { RectangleStackIcon } from '@heroicons/react/24/outline';
-import { FILTERPRESETLIST, OM_COMP_LIST, OM_ORG_FILTERDATA } from './components/mock/ORGLISTMOCK';
+import { filterSortClearMenu, OM_COMP_LIST, OM_ORG_FILTERDATA } from './components/mock/ORGLISTMOCK';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { readOrgURL, updateURL } from '../../components/helpers/UriHelpers';
@@ -29,6 +29,7 @@ const OrgListPage = (props) => {
   const [baseCompanies, setBaseCompanies] = useState([]);
   const [companies, setCompanies] = useState([]);
 
+  // Это селекты
   const [baseFiltersData, setBaseFilterstData] = useState(null); 
 
   const [openedFilters, setOpenedFilters] = useState(false);
@@ -45,7 +46,7 @@ const OrgListPage = (props) => {
 
   const [filterBox, setFilterBox] = useState({});
   const [orderBox, setOrderBox] = useState({});
-  const [initFilterBox, setInitFilterBox] = useState({});
+
   /** Сортировки как объект, где колонка - ключ, значение - ASC/DESC */
 
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -53,13 +54,14 @@ const OrgListPage = (props) => {
   const [previewItem, setPreviewItem] = useState(null);
 
   // Пресеты - преднастроенные фильтры
-  const [filterPresetList, setFilterPresetList] = useState(FILTERPRESETLIST);
+  const [filterSortClearMenu, setFilterSortClearMenu] = useState([]);
 
   const showGetItem = searchParams.get('show');
   const [targetRowId, setTargetRowId] = useState(searchParams.get('target'));
 
   // Список кураторов меняется в зависимости от выбранной компании
   const [selectCuratorList, setSelectCuratorList] = useState([]);
+
 
 
   useEffect(() => {
@@ -69,7 +71,7 @@ const OrgListPage = (props) => {
 
       // Устанавливаем стейт фильтров, сортировок, страницы
       setFilterBox(prev => ({ ...prev, ..._filters }));
-      setInitFilterBox(_filters);
+      // (_filters);
       setOrderBox(_sorts);
       setCurrentPage(_page);
       setOnPage(_onPage);
@@ -111,7 +113,7 @@ const OrgListPage = (props) => {
    useEffect(() => {
         const timer = setTimeout(() => {
             updateURL(filterBox, orderBox, currrentPage, onPage);
-        }, 1500);
+        }, 700);
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
@@ -180,15 +182,6 @@ const OrgListPage = (props) => {
   }, [baseCompanies]);
 
 
-
-  useEffect(() => {
-    if (PRODMODE){
-      setShowLoader(true);
-      get_orglist();
-    }
-  }, [currrentPage]);
-
-
   useEffect(() => {
     if (baseFiltersData && baseFiltersData.curators)
     {
@@ -215,7 +208,7 @@ const OrgListPage = (props) => {
 
   useEffect(() => {
     get_orglist();
-  }, [filterBox, orderBox]);
+  }, [filterBox, orderBox, currrentPage, onPage]);
 
 
   /** При смене страницы, если открыт модал, меняем ИД открытой компании */
@@ -282,6 +275,7 @@ const OrgListPage = (props) => {
                     "phone": filterBox.phone,
                     "email": filterBox.email,
                     "site": filterBox.site,
+                    "comment" : filterBox.comment,
                     "created_date": [
                         filterBox.created_date && filterBox.created_date[0] ? filterBox.created_date[0].unix() : null,
                         filterBox.created_date && filterBox.created_date[1] ? filterBox.created_date[1].unix() : null,
@@ -418,6 +412,7 @@ const OrgListPage = (props) => {
         updated.curator = newValue;
         return updated;
       });
+      console.log('TRIIGGERED');
   }
 
   const triggerFreeCompaniesFilterButton = () => {
@@ -440,6 +435,75 @@ const OrgListPage = (props) => {
     }
   }
 
+
+  const makeFilterMenu = () => {
+    let clearItems = [];
+    let hasFilter = false;
+    let hasSorter = false;
+    
+    for (const key in filterBox) {
+      const fib = filterBox[key];
+      if (fib !== null){
+        if (key === "updated_at" && fib[0] !== null){
+          hasFilter = true;
+        } else if (key === "created_at" && fib[0] !== null){
+          hasFilter = true;
+        } else if (key !== "updated_at" && key !== "created_at" && key !== "page" && key !== "onpage" && key !== 'limit')
+          hasFilter = true;
+        }
+    };
+
+
+    for (const key in orderBox) {
+      const fib = orderBox[key];
+      if (fib !== null){
+        hasSorter = true;
+      };
+    };
+
+
+    if (hasFilter){
+      clearItems.push({
+        key: 'clarboxofilta',
+        value: 'clear_filters',
+        label: <div onClick={handleClearAllFilterBox}>Очистить фильтры</div>
+      })
+    };
+
+  if (hasSorter){
+      clearItems.push({
+        key: 'clarboxsorta',
+        value: 'clear_filters',
+        label: <div onClick={handleClearOrderBox}>Очистить cортировки</div>
+      })
+    };
+
+    console.log('clearItems', clearItems);
+    setFilterSortClearMenu(clearItems);
+  }
+
+  useEffect(() => {
+    makeFilterMenu();
+  }, [filterBox, orderBox]);
+
+
+  const handleClearAllBoxes = ()=> {
+    setFilterBox({});
+    setOrderBox({});
+  };
+
+    const handleClearAllFilterBox = ()=> {
+      setFilterBox({});
+    };
+
+    const handleClearOrderBox = ()=> {
+      setOrderBox({});
+    };
+
+    const handleChangeOnPage = (evt) => {
+      console.log(evt);
+    }
+
   return (
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
       <div className={'sa-control-panel sa-flex-space sa-pa-12'}>
@@ -455,20 +519,22 @@ const OrgListPage = (props) => {
             >
               Доп Фильтры
             </Button>
-            <Button
-              title='Очистить фильтры'
-              color={'danger'}
-              variant={'solid'}
-              icon={<CloseOutlined />}
-              ></Button>
+            {filterSortClearMenu.length > 0 && (
+              <Dropdown menu={{items: filterSortClearMenu}}>
+              <Button
+                title='Очистить фильтры'
+                color={'danger'}
+                variant={'solid'}
+                icon={<CloseOutlined />}
+                onClick={handleClearAllBoxes}
+                >
+
+                </Button>
+              </Dropdown>
+            )}
+
           </Button.Group>
-          <Dropdown menu={{items: filterPresetList}}>
-          <Button 
-            icon={ <RectangleStackIcon width={'22px'}/>}
-          >
-           
-          </Button>
-          </Dropdown>
+          
         </div>
         <div>
           {/* <Button color='default' variant='solid'>Solid</Button>
@@ -496,12 +562,12 @@ const OrgListPage = (props) => {
             {openedFilters && (
             <OrgListSiderFilter
               base_orgs={orgList}
-              filter_presets={filterPresetList}
+              filter_presets={filterSortClearMenu}
               companies={companies}
               on_change_filters={handleFilterChange}
               base_filters={baseFiltersData}
               filters_data={filterBox}
-              init_filters={initFilterBox}
+
             />
 
             )}
@@ -518,8 +584,11 @@ const OrgListPage = (props) => {
               defaultCurrent={1}
               current={currrentPage}
               total={total}
-              onChange={setCurrentPage}
-              // showSizeChanger
+              onChange={(ev, val)=>{
+                setCurrentPage(ev); setOnPage(val)}}
+              // 
+              onShowSizeChange={setOnPage}
+              pageSizeOptions={[10, 30, 50, 100]}
               showQuickJumper
               locale={ANTD_PAGINATION_LOCALE}
             />
@@ -576,7 +645,7 @@ const OrgListPage = (props) => {
               base_orders={orderBox}
               curator_list={selectCuratorList}
               selected_item={previewItem}
-              on_select_change={handleSelectedItemChange}
+              on_select_change={handleChangeOnPage}
           /></Spin>
 
           {/* {baseOrgs.length > 20 && (

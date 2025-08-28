@@ -11,11 +11,12 @@ import { BarsArrowDownIcon } from '@heroicons/react/16/solid';
 import OrgModalPayersSection from './MainTabSections/OrgModalPayersSection';
 import OrgModalSupplyContractSection from './MainTabSections/OrgModalSupplyContractSection';
 import { ORGLIST_MODAL_MOCK_MAINTAB } from '../../mock/ORGLISTMODALMOCK';
+import { ORG_DEF_DATA } from '../../mock/ORGDEFDATA';
 
 
 const OrgListMainTab = (props) => {
   const [orgId, setOrgId] = useState(null);
-  const [baseOrgData, setBaseOrgData] = useState(null);
+  const [baseOrgData, setBaseOrgData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ const OrgListMainTab = (props) => {
       setBaseOrgData(null);
     }
     console.log(props.data);
+    console.log(ORGLIST_MODAL_MOCK_MAINTAB);
   }, [props.data]);
 
 
@@ -109,14 +111,16 @@ const OrgListMainTab = (props) => {
       key: 'st_departinfo',
       label: 'Информация отдела',
       children: <OrgModalDepartSection
-
+        data={baseOrgData}
+        selects_data={props.selects_data}
       />
     },
         {
       key: 'st_contactinfo',
       label: 'Контактная информация',
       children: <OrgModalContactinfoSection
-
+        data={baseOrgData}
+        selects_data={props.selects_data}
       />
     },
       {
@@ -180,6 +184,7 @@ const OrgListMainTab = (props) => {
               // if (props.changed_user_data){
               //     props.changed_user_data(response.data);
               // }
+              setOrgId(response.data.content.id);
               setBaseOrgData(response.data.content);
               setLoading(false);
           }

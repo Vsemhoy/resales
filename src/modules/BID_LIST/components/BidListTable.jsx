@@ -58,121 +58,146 @@ const BidListTable = (props) => {
 
   return (
     <div className={'sa-table-box'}>
-          <Affix >
+          <Affix offsetTop={156}>
             <div className={'sa-table-box-header'}>
               <div className={'sa-table-box-bids sa-table-box-row'}>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <TableHeadNameWithSort 
-                      sort_key={'id'}
-                      on_sort_change={handleActivateSorter}
-                      active_sort_items={sortOrders}
-                      >
+                    <TableHeadNameWithSort
+                        sort_key={'id'}
+                        on_sort_change={handleActivateSorter}
+                        active_sort_items={sortOrders}
+                    >
                       id
-                      </TableHeadNameWithSort>
+                    </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input type={'number'} size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <Input type={'number'} size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <TableHeadNameWithSort 
-                      sort_key={'name'}
-                      on_sort_change={handleActivateSorter}
-                      active_sort_items={sortOrders}
-                      >Название организации
-                      </TableHeadNameWithSort>
+                    <TableHeadNameWithSort
+                        sort_key={'company_name'}
+                        on_sort_change={handleActivateSorter}
+                        active_sort_items={sortOrders}
+                    >Название
+                    </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <TableHeadNameWithSort 
-                      sort_key={'town'}
-                      on_sort_change={handleActivateSorter}
-                      active_sort_items={sortOrders}
-                      >Город/регион
-                      </TableHeadNameWithSort>
+                    <TableHeadNameWithSort
+                        sort_key={'type_status'}
+                        on_sort_change={handleActivateSorter}
+                        active_sort_items={sortOrders}
+                    >Тип
+                    </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <DatePicker size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <TableHeadNameWithSort 
-                      sort_key={'comment'}
-                      on_sort_change={handleActivateSorter}
-                      active_sort_items={sortOrders}
-                      >Комментарий
-                      </TableHeadNameWithSort>
+                    <TableHeadNameWithSort
+                        sort_key={'protection_project'}
+                        on_sort_change={handleActivateSorter}
+                        active_sort_items={sortOrders}
+                    >Защита
+                    </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Статус $</div>
+                    <TableHeadNameWithSort
+                        sort_key={'stage_id'}
+                        on_sort_change={handleActivateSorter}
+                        active_sort_items={sortOrders}
+                    >Этап
+                    </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Select size={'small'} style={{ width: '100%' }} variant='filled' options={props.companies} allowClear />
+                      <Select size={'small'} style={{width: '100%'}} variant='filled' options={props.companies}
+                              allowClear/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Баланс</div>
+                    <TableHeadNameWithSort
+                        sort_key={'date'}
+                        on_sort_change={handleActivateSorter}
+                        active_sort_items={sortOrders}
+                    >Дата
+                    </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <DatePicker size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Профиль</div>
+                    <TableHeadNameWithSort
+                        sort_key={'username'}
+                        on_sort_change={handleActivateSorter}
+                        active_sort_items={sortOrders}
+                    >Менеджер
+                    </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Куратор</div>
+                    <div className={'sa-pa-3'}>Счета</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Свойства</div>
+                    <div className={'sa-pa-3'}>Комментарий</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
                 <div className={'sa-table-box-cell'}>
                   <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Действия</div>
+                    <div className={'sa-pa-3'}>Объект</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{ width: '100%' }} variant='filled' />
+                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
                     </div>
                   </div>
                 </div>
+                {/*<div className={'sa-table-box-cell'}>
+                  <div className={'sa-table-head-on'}>
+                    <div className={'sa-pa-3'}>Контактное лицо</div>
+                    <div className={'sa-pa-3'}>
+                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                    </div>
+                  </div>
+                </div>*/}
               </div>
             </div>
           </Affix>
 
-            <div className={'sa-table-box-stack'}>
-              {props.base_orgs.map((borg, index) => (
-                <BidListRow
-                data={borg}
-                  is_active={isPreviewOpen && previewItem === borg}
-                  on_double_click={handlePreviewOpen}
-                  key={index}
+      <div className={'sa-table-box-stack'}>
+        {props.bids.map((bid, index) => (
+            <BidListRow
+                data={bid}
+                is_active={isPreviewOpen && previewItem === bid.id}
+                on_double_click={handlePreviewOpen}
+                key={index}
+                company_color={props.base_companies?.find((item)=>item.id === bid.id_company)?.color}
                  />
               ))}
             </div>

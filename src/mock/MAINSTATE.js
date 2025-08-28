@@ -46,7 +46,10 @@ export const MS_USER = {
         118,
         108,
         84,
-        81
+        81,
+        89,
+        90,
+        91,
       ],
     "companies": [
         {
@@ -148,7 +151,7 @@ export const MS_USER = {
         "passcard": null,
         "id_role": 1,
         "email": null,
-        "sales_role": 2,
+        "sales_role": 1,
         "password2": "$2y$12$vwqewb1to3XkD3FUvSrgoeydtcmsswjQSp6DWvJfxZanevLwAq6BS",
         "active_company": 2,
         "id_departament": 11,

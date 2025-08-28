@@ -124,14 +124,14 @@ const TopMenu = (props) => {
             ),
             icon: <ArrowTopRightOnSquareIcon height={'18px'} />,
         },
-                {
+                /*{
             key: '1gsdf',
             label: (
                 <Dropdown menu={{items:roleMenu}}>
                 <div>Сменить роль</div></Dropdown>
             ),
             icon: <BarsArrowDownIcon height={'18px'} />
-        },
+        },*/
     ]
 
 
@@ -213,7 +213,7 @@ const TopMenu = (props) => {
     };
 
   return (
-    <div className='sa-top-menu'>
+    <div className='sa-top-menu' style={{padding:'0 12px'}}>
         <div className={'sa-flex-space'}>
         <div className={'sa-top-menu-buttons'}>
             <NavLink to={HTTP_HOST}>
@@ -252,13 +252,13 @@ const TopMenu = (props) => {
                 <div>
                 {ShortName(props.userdata?.user?.surname, props.userdata?.user?.name, props.userdata?.user?.secondname)}
                 </div>
-                <div>
+                {/*<div>
                     {props.userdata?.user?.sales_role && USER_ROLES && (
                         <span
                             style={{color: `${USER_ROLES.find((item)=> item.id === props.userdata?.user?.sales_role)?.color}`, padding: '3px 12px', borderRadius: '3px'}}
                         >{USER_ROLES.find((item)=> item.id === props.userdata?.user?.sales_role)?.name}</span>
                     )}
-                </div>
+                </div>*/}
             </div>
             </Dropdown> 
             <Dropdown menu={{items: companiesMenu}}>
