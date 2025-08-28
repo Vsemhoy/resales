@@ -25,8 +25,8 @@ const OrgListSiderFilter = (props) => {
     const [filterPhone,        setFilterPhone] = useState(null);
     const [filterEmail,        setFilterEmail] = useState(null);
     const [filterWebsite,      setFilterWebsite] = useState(null);
-    const [filterCreatedAt,    setFilterCreatedAt] = useState([null, null]);
-    const [filterUpdatedAt,    setFilterupdatedAt] = useState([null, null]);
+    // const [filterCreatedAt,    setFilterCreatedAt] = useState([null, null]);
+    // const [filterUpdatedAt,    setFilterupdatedAt] = useState([null, null]);
 
     const [filterCreatedUntil, setFilterCreatedUntil] = useState(null);
     const [filterCreatedBefore, setFilterCreatedBefore] = useState(null);
@@ -68,7 +68,7 @@ const OrgListSiderFilter = (props) => {
             filterBox.created_before = toNullable(filterCreatedBefore);
             filterBox.updated_until  = toNullable(filterUpdatedUntil );
             filterBox.updated_before = toNullable(filterUpdatedBefore);
-            filterBox.rate_lists      = toNullable(filterLists)
+            filterBox.rate_lists     = toNullable(filterLists);
 
    
 
@@ -311,12 +311,17 @@ const OrgListSiderFilter = (props) => {
         <div className={'sider-unit'}>
             <div className='sider-unit-title'>Регион</div>
             <div className='sider-unit-control'>
-                <Select  style={{ width: '100%' }}
+                {/* <Select  style={{ width: '100%' }}
                     options={listRegions} 
                     allowClear
                     value={filterRegion}
                     onChange={setFilterRegion}
-                 />
+                 /> */}
+                 <Input placeholder='Северо-западный...' 
+                    allowClear
+                    value={filterRegion}
+                    onChange={(ev)=> {setFilterRegion(ev.target.value)}}
+                />
             </div>
         </div>
 

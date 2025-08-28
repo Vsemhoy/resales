@@ -175,7 +175,7 @@ const wrapLink = (text) => {
               )}
             </div>
             <div>
-              {orgData.is_prosound === null || orgData.is_prosound === 0 && (
+              {(orgData.is_prosound !== null || orgData.is_prosound === 2) && (
                 <MusicalNoteIcon height={'16px'}/>
               )}
             </div>

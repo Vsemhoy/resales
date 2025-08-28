@@ -283,12 +283,12 @@ const OrgListPage = (props) => {
                     // "updated_before" : filterBox.updated_before,
 
                     "created_date": [
-                        filterBox.filterCreatedUntil ? filterBox.filterCreatedUntil : null,
-                        filterBox.filterCreatedBefore ? filterBox.filterCreatedBefore : null,
+                        filterBox.created_before ? parseInt(filterBox.created_before) * 1000 : null,
+                        filterBox.created_until ? parseInt(filterBox.created_until) * 1000 : null,
                     ],
                     "active_date": [
-                        filterBox.filterUpdatedUntil ? filterBox.filterUpdatedUntil : null,
-                        filterBox.filterUpdatedBefore ? filterBox.filterUpdatedBefore : null,
+                        filterBox.updated_before ? parseInt(filterBox.updated_before) * 1000 : null,
+                        filterBox.updated_until ? parseInt(filterBox.updated_until) * 1000 : null,
                     ],
                     "page": currrentPage,
                     "limit": onPage,
@@ -639,14 +639,14 @@ const OrgListPage = (props) => {
 
             </div>
             <div className={'sa-flex-gap'}>
-              <Tooltip title="Я временный куратор">
+              {/* <Tooltip title="Я временный куратор">
                 <Button 
                 color={'default'}
                 variant={filterBox?.companies === 1 ? "solid" : "filled"}
                     // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     onClick={triggerFreeCompaniesFilterButton}
                 >Свободные</Button>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title="Я временный куратор">
               <Button color="default" variant={false ? "solid" : "filled"} 
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
@@ -708,7 +708,7 @@ const OrgListPage = (props) => {
       </Layout>
           <OrgListPreviewModal
             is_open={isPreviewOpen}
-            data={{id: previewItem, name: orgList.find((item) => item.id === previewItem)?.name}}
+            data={{id: previewItem, name: orgList?.find((item) => item.id === previewItem)?.name}}
             on_close={()=>{
               setIsPreviewOpen(false);
               setPreviewItem(null);
