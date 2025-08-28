@@ -71,7 +71,12 @@ const BidListTable = (props) => {
                       id
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input type={'number'} size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input type={'number'}
+                             size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('bid_id', val)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -84,7 +89,11 @@ const BidListTable = (props) => {
                     >Название организации
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('company_name', val)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -154,7 +163,11 @@ const BidListTable = (props) => {
                     >Дата
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <DatePicker size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <DatePicker size={'small'}
+                                  style={{width: '100%'}}
+                                  variant='filled'
+                                  onChange={(val) => props.on_change_filter_box('dates', [val,val])}
+                      />
                     </div>
                   </div>
                 </div>
@@ -167,7 +180,11 @@ const BidListTable = (props) => {
                     >Менеджер
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('manager', val)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -175,7 +192,11 @@ const BidListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Счета</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('bill_number', val)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -183,7 +204,11 @@ const BidListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Комментарий</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('comment', val)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -191,7 +216,11 @@ const BidListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Объект</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('object_name', val)}
+                      />
                     </div>
                   </div>
                 </div>
