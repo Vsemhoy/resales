@@ -172,14 +172,17 @@ const OrgListPage = (props) => {
 
 
   useEffect(() => {
-    setCompanies(
-      baseFiltersData.companies?.map((item) => ({
-        key: `kompa_${item.id}`,
-        id: item.id,
-        value: item.id,
-        label: item.id === 1 ? "Free company" : item.name,
-      })) ?? []
-    )
+    if (baseFiltersData?.companies){
+      setCompanies(
+        baseFiltersData?.companies?.map((item) => ({
+          key: `kompa_${item.id}`,
+          id: item.id,
+          value: item.id,
+          label: item.id === 1 ? "Free company" : item.name,
+        }))
+      )
+
+    }
   }, [baseCompanies]);
 
 
