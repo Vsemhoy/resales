@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {DollarOutlined, FileDoneOutlined, LogoutOutlined, SafetyOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
+import PositionList from "./PositionList";
 
 
 const BidListRow = (props) => {
@@ -34,6 +35,7 @@ const BidListRow = (props) => {
 
   useEffect(() => {
     setData(props.data);
+    console.log(props.data)
   }, [props.data]);
 
 
@@ -132,15 +134,26 @@ const BidListRow = (props) => {
         <div className={'sa-table-box-cell text-align-left'}>
           <div>{data.object}</div>
         </div>
-        {/*<div className={'sa-table-box-cell'}>
-          <div>1</div>
-        </div>*/}
-        {/* <div className={'sa-table-box-cell'}>
-        <div>1</div>
+        <div className={'sa-table-box-cell'}>
+          <div>
+            <Tooltip
+                placement="leftTop"
+                title={<PositionList bidId={data.id} />}
+                color="white"
+                overlayInnerStyle={{
+                  color: 'black',
+                  border: '1px solid #d9d9d9'
+                }}
+            >
+              <Tag color={"magenta"}>{data.models_count}</Tag>
+            </Tooltip>
+          </div>
         </div>
         <div className={'sa-table-box-cell'}>
-        <div>1</div>
-        </div> */}
+          <div>
+
+          </div>
+        </div>
 
       </div>
     </Dropdown>

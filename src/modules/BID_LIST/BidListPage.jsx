@@ -43,6 +43,7 @@ const BidListPage = (props) => {
   const [filterBidCurrencySelect, setFilterBidCurrencySelect] = useState([]);
   const [filterNdsSelect, setFilterNdsSelect] = useState([]);
   const [filterCompleteSelect, setFilterCompleteSelect] = useState([]);
+  const [filterCompaniesSelect, setFilterCompaniesSelect] = useState([]);
 
   const [filterSortClearMenu, setFilterSortClearMenu] = useState([]);
 
@@ -183,6 +184,7 @@ const BidListPage = (props) => {
           setFilterBidCurrencySelect(filters.bid_currency_select);
           setFilterNdsSelect(filters.nds_select);
           setFilterCompleteSelect(filters.complete_select);
+          setFilterCompaniesSelect(filters.companies);
         }
       } catch (e) {
         console.log(e);
@@ -198,6 +200,7 @@ const BidListPage = (props) => {
       setFilterBidCurrencySelect(FILTERS.bid_currency_select);
       setFilterNdsSelect(FILTERS.nds_select);
       setFilterCompleteSelect(FILTERS.complete_select);
+      setFilterCompaniesSelect(FILTERS.companies);
     }
   };
 
@@ -405,7 +408,6 @@ const BidListPage = (props) => {
                               icon={<CloseOutlined />}
                               onClick={handleClearAllBoxes}
                           >
-
                           </Button>
                         </Dropdown>
                       </Tooltip>
@@ -478,6 +480,7 @@ const BidListPage = (props) => {
                     filter_bid_currency_select={prepareSelectOptions(filterBidCurrencySelect)}
                     filter_nds_select={prepareSelectOptions(filterNdsSelect)}
                     filter_complete_select={prepareSelectOptions(filterCompleteSelect)}
+                    filter_companies_select={prepareSelectOptions(filterCompaniesSelect)}
                     on_change_filter_box={handleUpdateFilterBox}
                 />
             )}

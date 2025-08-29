@@ -1064,5 +1064,19 @@ export const FILTERS = {
             "id": 3,
             "name": "Не  реализовано"
         }
-    ]
+    ],
+    "companies": [
+        {
+            "id": 1,
+            "name": "FreeCompany"
+        },
+        {
+            "id": 2,
+            "name": "Arstel"
+        },
+        {
+            "id": 3,
+            "name": "Rondo"
+        }
+    ],
 };

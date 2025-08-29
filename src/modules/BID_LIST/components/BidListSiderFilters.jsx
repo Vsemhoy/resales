@@ -9,6 +9,18 @@ const BidListSiderFilters = (props) => {
     <Affix offsetTop={115}>
         <div className='sider-body sider-body-filters'>
             <div className={'sider-unit'}>
+                <div className='sider-unit-title'>Компания</div>
+                <div className='sider-unit-control'>
+                    <Select placeholder=''
+                            style={{width: '100%'}}
+                            options={props.filter_companies_select}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            allowClear
+                    />
+                </div>
+            </div>
+
+            <div className={'sider-unit'}>
                 <div className='sider-unit-title'>Оплата</div>
                 <div className='sider-unit-control'>
                     <Select placeholder='Нет, есть, оплачен'

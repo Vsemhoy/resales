@@ -3,7 +3,7 @@
 }
 .sa-table-box-bids {
     display: grid;
-    grid-template-columns: 64px 2fr 100px 100px 140px 140px 170px 100px 2fr 2fr;
+    grid-template-columns: 64px 2fr 100px 100px 140px 140px 170px 100px 2fr 2fr 64px 64px;
 }
 
 .sa-filer-opened .sa-table-box-bids {
