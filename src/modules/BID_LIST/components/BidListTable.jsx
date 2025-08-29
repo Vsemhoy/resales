@@ -18,7 +18,7 @@ const BidListTable = (props) => {
     }
 
     const handlePreviewOpen = (item, state) => {
-        console.log('HEllo');
+        console.log('Hello');
         // setPreviewItem(item);
         // setIsPreviewOpen(true);
         if (props.on_preview_open){
