@@ -40,6 +40,7 @@ import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor
 import { PROD_AXIOS_INSTANCE } from './config/Api';
 import { MS_USER } from './mock/MAINSTATE';
 import Price from "./modules/PRICE/Price";
+import CuratorPage from "./modules/CURATOR/CuratorPage";
 
 function App() {
   const [userdata, setUserdata] = useState([]);
@@ -138,6 +139,8 @@ function App() {
             <Route path={BASE_ROUTE + '/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
             <Route path={'/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
 
+              <Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata}/>} />
+              <Route path={'/curator'} element={<CuratorPage userdata={userdata}/>} />
 
             <Route path={BASE_ROUTE + '/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
             <Route path={'/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
