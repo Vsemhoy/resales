@@ -207,6 +207,12 @@ const BidListPage = (props) => {
         });
         setBids(response.data.bid_list);
         setTotal(response.data.total_count);
+
+        let max = (onPage * currentPage) - (onPage - 1);
+        if (response.data.total_count < max)
+        {
+          setCurrentPage(1);
+        }
       } catch (e) {
         console.log(e);
       }
@@ -311,7 +317,7 @@ const BidListPage = (props) => {
     const fb = JSON.parse(JSON.stringify(filterBox))
     fb[key] = value;
     setFilterBox(fb);
-    console.log(fb)
+    console.log(fb);
   };
 
   return (

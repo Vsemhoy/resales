@@ -170,7 +170,7 @@ const BidListTable = (props) => {
                                     if (val) {
                                       props.on_change_filter_box('dates', [val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
                                     } else {
-                                      props.on_change_filter_box('dates', [null, null]);
+                                      props.on_change_filter_box('dates', null);
                                     }
                                   }}
                       />
