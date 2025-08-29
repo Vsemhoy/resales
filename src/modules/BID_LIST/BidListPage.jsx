@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './components/style/bidlistpage.css';
 import {CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
-import {Affix, Button, Layout, Pagination, Select, Spin, Tag, Tooltip} from 'antd';
+import {Affix, Button, Dropdown, Layout, Pagination, Select, Spin, Tag, Tooltip} from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import {
@@ -43,6 +43,8 @@ const BidListPage = (props) => {
   const [filterBidCurrencySelect, setFilterBidCurrencySelect] = useState([]);
   const [filterNdsSelect, setFilterNdsSelect] = useState([]);
   const [filterCompleteSelect, setFilterCompleteSelect] = useState([]);
+
+  const [filterSortClearMenu, setFilterSortClearMenu] = useState([]);
 
   const [total, setTotal] = useState(0);
   const [onPage, setOnPage] = useState(30);
@@ -151,6 +153,10 @@ const BidListPage = (props) => {
       setShowParam(null);
     }
   }, [isPreviewOpen]);
+
+  useEffect(() => {
+    makeFilterMenu();
+  }, [filterBox, orderBox]);
 
   const fetchInfo = async () => {
     setIsLoading(true);
@@ -311,6 +317,60 @@ const BidListPage = (props) => {
     console.log(fb);
   };
 
+  const makeFilterMenu = () => {
+    let clearItems = [];
+    let hasFilter = false;
+    let hasSorter = false;
+
+    for (const key in filterBox) {
+      const fib = filterBox[key];
+      if (fib !== null){
+        if (key === "updated_date" && fib[0] !== null){
+          hasFilter = true;
+        } else if (key === "created_date" && fib[0] !== null){
+          hasFilter = true;
+        } else if (key !== "updated_date" && key !== "created_date" && key !== "page" && key !== "onpage" && key !== 'limit')
+          hasFilter = true;
+      }
+    }
+    for (const key in orderBox) {
+      const fib = orderBox[key];
+      if (fib !== null){
+        hasSorter = true;
+      }
+    }
+
+    if (hasFilter){
+      clearItems.push({
+        key: 'clarboxofilta',
+        value: 'clear_filters',
+        label: <div onClick={handleClearAllFilterBox}>Очистить фильтры</div>
+      })
+    }
+
+    if (hasSorter){
+      clearItems.push({
+        key: 'clarboxsorta',
+        value: 'clear_filters',
+        label: <div onClick={handleClearOrderBox}>Очистить cортировки</div>
+      })
+    }
+    setFilterSortClearMenu(clearItems);
+  }
+
+  const handleClearAllFilterBox = ()=> {
+    setFilterBox({});
+  };
+
+  const handleClearOrderBox = ()=> {
+    setOrderBox({});
+  };
+
+  const handleClearAllBoxes = ()=> {
+    setFilterBox({});
+    setOrderBox({});
+  };
+
   return (
     <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
       <Affix>
@@ -336,12 +396,21 @@ const BidListPage = (props) => {
                   >
                     Доп Фильтры
                   </Button>
-                  {/*<Button
-                      title='Очистить фильтры'
-                      color={'danger'}
-                      variant={'solid'}
-                      icon={<CloseOutlined/>}
-                  ></Button>*/}
+                  {filterSortClearMenu.length > 0 && (
+                      <Tooltip title={'Очистить фильтры'}  placement={'right'}>
+                        <Dropdown menu={{items: filterSortClearMenu}}>
+                          <Button
+                              color={'danger'}
+                              variant={'solid'}
+                              icon={<CloseOutlined />}
+                              onClick={handleClearAllBoxes}
+                          >
+
+                          </Button>
+                        </Dropdown>
+                      </Tooltip>
+
+                  )}
                 </Button.Group>
                 <Tag
                     style={{
@@ -472,6 +541,7 @@ const BidListPage = (props) => {
                   on_change_filter_box={handleUpdateFilterBox}
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
+                  base_companies={baseCompanies}
               />
             </Spin>
             <div className={'sa-space-panel sa-pa-12'}></div>

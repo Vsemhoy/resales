@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 const BidListRow = (props) => {
 
   const [active, setActive] = useState(false);
+  const [compColor, setCompColor] = useState("#00000000");
   const menu = (
     <Menu>
       <Menu.Item key="1"
@@ -30,8 +31,6 @@ const BidListRow = (props) => {
   );
 
   const [data, setData] = useState(props.data);
-
-  const [compColor, setCompColor] = useState("#00000000");
 
   useEffect(() => {
     setData(props.data);
@@ -127,10 +126,10 @@ const BidListRow = (props) => {
         <div className={'sa-table-box-cell'}>
           <div>{data.bill_number}</div>
         </div>
-        <div className={'sa-table-box-cell text-align-justify'}>
+        <div className={'sa-table-box-cell text-align-left'}>
           <div>{data.comment}</div>
         </div>
-        <div className={'sa-table-box-cell text-align-justify'}>
+        <div className={'sa-table-box-cell text-align-left'}>
           <div>{data.object}</div>
         </div>
         {/*<div className={'sa-table-box-cell'}>

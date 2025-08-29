@@ -535,24 +535,27 @@ const OrgListPage = (props) => {
                     onClick={() => {
                       setOpenedFilters(!openedFilters);
                     }}
+                    className={`${openedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'}`}
                     color={'default'}
-                    variant={'solid'}
+                    variant={openedFilters ? 'solid' : 'outlined'}
                     icon={<FilterOutlined />}
                   >
                     Доп Фильтры
                   </Button>
                   {filterSortClearMenu.length > 0 && (
-                    <Dropdown menu={{items: filterSortClearMenu}}>
-                    <Button
-                      title='Очистить фильтры'
-                      color={'danger'}
-                      variant={'solid'}
-                      icon={<CloseOutlined />}
-                      onClick={handleClearAllBoxes}
-                      >
+                      <Tooltip title={'Очистить фильтры'} placement={'right'}>
+                        <Dropdown menu={{items: filterSortClearMenu}}>
+                          <Button
+                            title='Очистить фильтры'
+                            color={'danger'}
+                            variant={'solid'}
+                            icon={<CloseOutlined />}
+                            onClick={handleClearAllBoxes}
+                          >
 
-                      </Button>
-                    </Dropdown>
+                          </Button>
+                        </Dropdown>
+                      </Tooltip>
                   )}
 
                 </Button.Group>

@@ -103,9 +103,13 @@
     color: white !important;
 }
 
-.sider-body-filters {
-    border: none;
-    border-radius: 6px;
-    background-color: var(--sider-bg-color);;
-    height: calc(100vh - 109px - 34px - 10px - 9px - 9px);
+.sa-table-box-bids {
+    box-shadow: -4px 0 0 -1px;
+}
+.sa-table-box-bids:hover {
+    box-shadow: -10px 0 0 -1px;
+}
+.sa-table-box-header .sa-table-box-bids {
+    /*box-shadow: -4px 0 0 -1px #fdfdfd;*/
+    box-shadow: none;
 }
