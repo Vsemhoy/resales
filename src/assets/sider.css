@@ -63,3 +63,9 @@
 .filter-preset-item:active {
 background-color: rgba(0, 146, 250, 0.486);
 }
+.sider-body-filters {
+    border: none;
+    border-radius: 6px;
+    background-color: var(--sider-bg-color);;
+    height: calc(100vh - 109px - 34px - 10px - 9px - 9px);
+}
