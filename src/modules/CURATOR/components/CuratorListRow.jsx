@@ -8,7 +8,6 @@ import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {CONFIRM_LIST} from "../mock/mock";
 
-
 const CuratorListRow = (props) => {
 
   const [active, setActive] = useState(false);
@@ -83,7 +82,8 @@ const CuratorListRow = (props) => {
         </div>
         <div className={'sa-table-box-cell'}>
         <Button
-              // className={style.menu_action__btn}
+              style={{marginRight: '10px', marginTop: '5px'}}
+              className={'sa-list-button'}
               size={"small"}
               color="danger"
               loading={pressButton !== null && !pressButton}
@@ -98,7 +98,7 @@ const CuratorListRow = (props) => {
           </Button>
           {props.supervisor && (
               <Button
-                  // className={style.menu_action__btn}
+                  className={'sa-list-button'}
                   size={"small"}
                   color="primary"
                   loading={pressButton !== null && pressButton}
