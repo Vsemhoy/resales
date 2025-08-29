@@ -91,16 +91,16 @@ const CuratorPage = (props) => {
                         <div className={'sa-pagination-panel sa-pa-12-24 sa-back'}>
                             <div className={'sa-flex-space'}>
                                 <div className={'sa-flex-gap'}>
-                                    <Tooltip title="Я временный куратор">
-                                        <Button color="default" variant={false ? "solid" : "outlined"}
-                                            // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
-                                        >Временные</Button>
-                                    </Tooltip>
-                                    <Tooltip title="Компании с моим кураторством">
-                                        <Button color="default" variant={false ? "solid" : "outlined"}
-                                            // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
-                                        >Мои</Button>
-                                    </Tooltip>
+                                    {/*<Tooltip title="Я временный куратор">*/}
+                                    {/*    <Button color="default" variant={false ? "solid" : "outlined"}*/}
+                                    {/*        // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}*/}
+                                    {/*    >Временные</Button>*/}
+                                    {/*</Tooltip>*/}
+                                    {/*<Tooltip title="Компании с моим кураторством">*/}
+                                    {/*    <Button color="default" variant={false ? "solid" : "outlined"}*/}
+                                    {/*        // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}*/}
+                                    {/*    >Мои</Button>*/}
+                                    {/*</Tooltip>*/}
                                     {/* <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button> */}
                                 </div>
                             </div>
