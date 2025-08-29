@@ -22,6 +22,10 @@
     align-items: end;
 }
 
+.sa-table-box-curators .sa-table-box-cell .sa-list-button {
+    height: 40px !important;
+}
+
 .sa-header-label-container {
     display: flex;
     flex-direction: column;
