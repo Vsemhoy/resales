@@ -176,7 +176,9 @@ const wrapLink = (text) => {
             </div>
             <div>
               {(orgData.is_prosound !== null || orgData.is_prosound === 2) && (
-                <MusicalNoteIcon height={'16px'}/>
+                <Tooltip title={"Профзвук"}>
+                  <MusicalNoteIcon height={'16px'}/>
+                </Tooltip>
               )}
             </div>
             {/* <div>

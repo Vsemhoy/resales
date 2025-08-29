@@ -12,6 +12,7 @@ import OrgModalPayersSection from './MainTabSections/OrgModalPayersSection';
 import OrgModalSupplyContractSection from './MainTabSections/OrgModalSupplyContractSection';
 import { ORGLIST_MODAL_MOCK_MAINTAB } from '../../mock/ORGLISTMODALMOCK';
 import { ORG_DEF_DATA } from '../../mock/ORGDEFDATA';
+import { ChevronDoubleDownIcon, ChevronDoubleUpIcon } from '@heroicons/react/24/solid';
 
 
 const OrgListMainTab = (props) => {
@@ -51,51 +52,96 @@ const OrgListMainTab = (props) => {
 
 
 
+  // Читаем из локалсторедж или ставим дефолт
+    const [modalSectionsOpened, setModalSectionsOpened] = useState(() => {
+      const saved = localStorage.getItem("modalOrgSectionsOpened");
+      if (saved && saved !== undefined && saved !== "undefined"){
+        return JSON.parse(saved);
+      } else {
+        return ['st_commoninfo','st_departinfo','st_contactinfo','st_contacts'];
+      }
+    });
+
+    const [modalUsersExpanded, setModalUsersExpanded] = useState(() => {
+      const saved = localStorage.getItem("setModalOrgUsersExpanded");
+      if (saved && saved !== undefined && saved !== "undefined" && saved !== "false" && saved !== false){
+        return JSON.parse(saved);
+      } else {
+        return false;
+      }
+    });
+
+    const [modalUsersOpened, setModalUsersOpened] = useState([]);
+
+    // Сохраняем изменения в локалсторедж при изменении modalSectionsOpened
+    // useEffect(() => {
+    //   localStorage.setItem("setModalOrgUsersExpanded", JSON.stringify());
+    // }, [modalUsersExpanded]);
 
 
 
 
 
-
-  const contactItems = [
-  {
-    key: 'contitems_0N_1',
-    label: <div className='sk-omt-sub-title'>Трастов Василий Петрович</div>,
-    children: <OrgModalContactsSection
-      id={4532}
-    />,
-    open: true,
-  },
-  {
-    key: 'contitems_0N_2',
-    label: <div className='sk-omt-sub-title'>Клименко Игорь Степаныч</div>,
-    children: <OrgModalContactsSection
-    id={453232}
-    />,
-  },
-  {
-    key: 'contitems_0N_3',
-    label: <div className='sk-omt-sub-title'>Суворов Севчик Лютый</div>,
-    children: <OrgModalContactsSection
-    id={45532}
-    />,
-  },
+    const contactItems = [
     {
-    key: 'contitems_0N_4',
-    label: <div className='sk-omt-sub-title'>Клименко Игорь Виталич</div>,
-    children: <OrgModalContactsSection
-    id={455432}
-    />,
-  },
-  {
-    key: '1contitems_0N_233',
-    label: <div className='sk-omt-sub-title'>Дебонияр Руслан Сугран</div>,
-    children: <OrgModalContactsSection
-    id={4565432}
-    />,
-  },
-];
+      key: 'contitems_0N_1',
+      label: <div className='sk-omt-sub-title'>Трастов Василий Петрович</div>,
+      children: <OrgModalContactsSection
+        id={4532}
+      />,
+      open: true,
+    },
+    {
+      key: 'contitems_0N_2',
+      label: <div className='sk-omt-sub-title'>Клименко Игорь Степаныч</div>,
+      children: <OrgModalContactsSection
+      id={453232}
+      />,
+    },
+    {
+      key: 'contitems_0N_3',
+      label: <div className='sk-omt-sub-title'>Суворов Севчик Лютый</div>,
+      children: <OrgModalContactsSection
+      id={45532}
+      />,
+    },
+      {
+      key: 'contitems_0N_4',
+      label: <div className='sk-omt-sub-title'>Клименко Игорь Виталич</div>,
+      children: <OrgModalContactsSection
+      id={45544532}
+      />,
+    },
+    {
+      key: '1contitems_0N_233',
+      label: <div className='sk-omt-sub-title'>Дебонияр Руслан Сугран</div>,
+      children: <OrgModalContactsSection
+      id={456546532}
+      />,
+    },
+  ];
 
+  useEffect(() => {
+    let ar = [];
+    if (modalUsersExpanded){
+      for (let i = 0; i < contactItems.length; i++) {
+        const element = contactItems[i];
+        ar.push(element.key);
+      }
+    };
+    setModalUsersOpened(ar);
+  }, [modalUsersExpanded]);
+
+
+  const handleExpandAll = (state) => {
+    setModalUsersExpanded(state);
+    localStorage.setItem("setModalOrgUsersExpanded", JSON.stringify(state));
+  }
+
+  const handleChangeUserSelection = (val) => {
+    setModalUsersOpened(val);
+    // localStorage.setItem("setModalOrgUsersExpanded", JSON.stringify());
+  }
 
 
   const structureItems = [
@@ -127,18 +173,33 @@ const OrgListMainTab = (props) => {
       key: 'st_contacts',
       label: <div className={'sa-flex-space'}><div>Контактные лица</div>
       <div className={'sa-flex-space'}>
+        {modalUsersExpanded ? (
         <Button
           onClick={(ev)=>{
             ev.preventDefault();
             ev.stopPropagation();
+            handleExpandAll(false);
           }}
-        size={'small'} icon={<PlusCircleOutlined />}>Добавить контакт</Button>
-        <BarsArrowDownIcon height={'24px'}/>
+          size={'small'} icon={<ChevronDoubleUpIcon height={'20px'} style={{marginTop: '4px'}} />}>Свернуть всех</Button>
+        ) : (
+          <Button
+          onClick={(ev)=>{
+            ev.preventDefault();
+            ev.stopPropagation();
+            handleExpandAll(true);
+          }}
+        size={'small'} icon={<ChevronDoubleDownIcon height={'20px'} style={{marginTop: '4px'}} />}>Развернуть всех</Button>
+        )}
         </div>
       </div>,
-      children: (<div className='sk-omt-subs'><Collapse
+      children: (
+        <div className='sk-omt-subs'>
+          <Collapse
                   size={'small'}
-                  items={contactItems} /></div>)
+                  items={contactItems} 
+                  activeKey={modalUsersOpened}
+                  onChange={handleChangeUserSelection}
+          /></div>)
     },
         {
       key: 'st_firmspayers',
@@ -203,9 +264,14 @@ const OrgListMainTab = (props) => {
 
 
 
+  const handleSectionChange = (keys) => {
+    console.log(keys);
+    setModalSectionsOpened(keys);
+    localStorage.setItem("modalOrgSectionsOpened", JSON.stringify(keys));
+    // localStorage обновится в useEffect
+  };
 
 
-  
 
   return (
     <div>
@@ -213,8 +279,12 @@ const OrgListMainTab = (props) => {
 
         <Collapse
             defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
+            activeKey={modalSectionsOpened}
             size={'small'}
+            onChange={handleSectionChange}
+            // onMouseDown={handleSectionClick}
             items={structureItems} />
+            
         </Spin>
     </div>
   );

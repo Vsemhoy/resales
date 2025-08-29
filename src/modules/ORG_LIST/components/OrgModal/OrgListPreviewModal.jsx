@@ -43,6 +43,15 @@ const OrgListPreviewModal = (props) => {
   const [orgId, setOrgId] = useState(null);
   const [orgName, setOrgName] = useState(null);
 
+    // // Это локалсторадж открытых секций
+    // const [modalSectionsOpened, setModalSectionsOpened] = useState(['st_commoninfo','st_departinfo','st_contactinfo','st_contacts']);
+    // // будут ли все юзеры раскрыты
+    // const [modalUsersExpanded, setModalUsersExpanded] = useState(false);
+
+
+
+
+
   // m - main
   // b - bills
   // o - offers
