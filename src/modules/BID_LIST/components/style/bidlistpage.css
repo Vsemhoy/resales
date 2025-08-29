@@ -9,12 +9,12 @@
 .sa-filer-opened .sa-table-box-bids {
     grid-template-columns: 64px 2fr 100px 100px 140px 1fr 1fr 100px 2fr !important;
 }
-.sa-filer-opened .sa-table-box-bids > *:nth-child(8) {
+.sa-filer-opened .sa-table-box-bids > *:nth-child(9) {
     display: none;
 }
 
 .sa-list-header {
-    background-color: aliceblue;
+    background-color: var(--sa-list-header);
     display: grid;
     grid-template-columns: 1fr;
     margin: 0 12px;
@@ -91,9 +91,21 @@
     border-color: #ffadd2 !important;
 }
 
+.sa-default-outlined-btn-color {
+    border-color: black !important;
+    color: black !important;
+}
+.sa-default-outlined-btn-color:hover {
+    opacity: .6 !important;
+}
+.sa-default-solid-btn-color {
+    border-color: black !important;
+    color: white !important;
+}
+
 .sider-body-filters {
-    border: 1px solid white;
+    border: none;
     border-radius: 6px;
-    background-color: #fdfdfd;
+    background-color: var(--sider-bg-color);;
     height: calc(100vh - 109px - 34px - 10px - 9px - 9px);
 }

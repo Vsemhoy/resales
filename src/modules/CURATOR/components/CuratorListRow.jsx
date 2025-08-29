@@ -8,7 +8,6 @@ import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {CONFIRM_LIST} from "../mock/mock";
 
-
 const CuratorListRow = (props) => {
 
   const [active, setActive] = useState(false);
@@ -35,6 +34,7 @@ const CuratorListRow = (props) => {
   const [data, setData] = useState(props.data);
 
   const [compColor, setCompColor] = useState("#00000000");
+  const [pressButton, setPressButton] = useState(null);
 
   useEffect(() => {
     setData(props.data);
@@ -54,6 +54,7 @@ const CuratorListRow = (props) => {
       props.on_double_click(data);
     }
   }
+
 
 
 
@@ -81,23 +82,32 @@ const CuratorListRow = (props) => {
         </div>
         <div className={'sa-table-box-cell'}>
         <Button
-              // className={style.menu_action__btn}
+              style={{marginRight: '10px', marginTop: '5px'}}
+              className={'sa-list-button'}
               size={"small"}
               color="danger"
-              loading={props.buttonLoading}
+              loading={pressButton !== null && !pressButton}
+              disabled={pressButton !== null && pressButton}
               variant="filled"
-              onClick={(_) => props.approve(false, data.id)}
+              onClick={(_) => {
+                props.approve(false, data.id)
+                setPressButton(false)
+              }}
           >
             {props.supervisor ? "Отклонить" : "Отозвать"}
           </Button>
           {props.supervisor && (
               <Button
-                  // className={style.menu_action__btn}
+                  className={'sa-list-button'}
                   size={"small"}
                   color="primary"
-                  loading={props.buttonLoading}
+                  loading={pressButton !== null && pressButton}
+                  disabled={pressButton !== null && !pressButton}
                   variant="filled"
-                  onClick={(_) => props.approve(true, data.id)}
+                  onClick={(_) => {
+                    props.approve(true, data.id)
+                    setPressButton(true)
+                  }}
               >
                 Подтвердить
               </Button>

@@ -302,7 +302,7 @@ const OrgListPage = (props) => {
                 setOrgList(response.data.org_list);
                 setTotal(response.data.total_count);
 
-                let max = onPage * currrentPage - 1;
+                let max = (onPage * currrentPage) - (onPage - 1);
                 if (response.data.total_count < max)
                 {
                   setCurrentPage(1);

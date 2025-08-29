@@ -959,58 +959,48 @@ export const FILTERS = {
     ],
     "admin_accept_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "рассматривается"
+            "id": 1,
+            "name": "рассматривается"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "согласовано"
+            "id": 2,
+            "name": "согласовано"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "не согласовано"
+            "id": 3,
+            "name": "не согласовано"
         }
     ],
     "package_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "нет"
+            "id": 0,
+            "name": "нет"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "стандартная упаковка"
+            "id": 1,
+            "name": "стандартная упаковка"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "жесткая упаковка"
+            "id": 2,
+            "name": "жесткая упаковка"
         }
     ],
     "price_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "розница"
+            "id": 1,
+            "name": "розница"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "10000"
+            "id": 2,
+            "name": "10000"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "20000"
+            "id": 3,
+            "name": "20000"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "30000"
+            "id": 4,
+            "name": "30000"
         }
     ],
     "type_select": [
@@ -1025,26 +1015,22 @@ export const FILTERS = {
     ],
     "bid_currency_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "Валюта"
+            "id": 0,
+            "name": "Валюта"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "Рубли"
+            "id": 1,
+            "name": "Рубли"
         }
     ],
     "nds_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "нет"
+            "id": 0,
+            "name": "нет"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "да"
+            "id": 1,
+            "name": "да"
         }
     ],
     "stage_select": [
