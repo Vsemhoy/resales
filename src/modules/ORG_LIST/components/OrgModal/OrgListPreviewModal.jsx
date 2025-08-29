@@ -358,7 +358,7 @@ const menuItems = [
         {/* Basic */}
 
         <Modal
-          
+          style={{maxWidth: '1400px'}}
           title={<div className={'sa-flex-space'}>
 
                 <div className={'spec-modal-title'}>
@@ -445,7 +445,8 @@ const menuItems = [
 
 
               {activeTab === 'm' && (
-                <OrgListMainTab structure={structureItems} 
+                <OrgListMainTab
+                  structure={structureItems} 
                   data={{id: orgId}}
                   selects_data={selectsData}
                 />
