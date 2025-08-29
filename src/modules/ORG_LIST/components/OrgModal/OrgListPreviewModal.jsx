@@ -43,6 +43,15 @@ const OrgListPreviewModal = (props) => {
   const [orgId, setOrgId] = useState(null);
   const [orgName, setOrgName] = useState(null);
 
+    // // Это локалсторадж открытых секций
+    // const [modalSectionsOpened, setModalSectionsOpened] = useState(['st_commoninfo','st_departinfo','st_contactinfo','st_contacts']);
+    // // будут ли все юзеры раскрыты
+    // const [modalUsersExpanded, setModalUsersExpanded] = useState(false);
+
+
+
+
+
   // m - main
   // b - bills
   // o - offers
@@ -349,7 +358,7 @@ const menuItems = [
         {/* Basic */}
 
         <Modal
-          
+          style={{maxWidth: '1400px'}}
           title={<div className={'sa-flex-space'}>
 
                 <div className={'spec-modal-title'}>
@@ -436,7 +445,8 @@ const menuItems = [
 
 
               {activeTab === 'm' && (
-                <OrgListMainTab structure={structureItems} 
+                <OrgListMainTab
+                  structure={structureItems} 
                   data={{id: orgId}}
                   selects_data={selectsData}
                 />

@@ -98,7 +98,7 @@ const OrgModalDepartSection = (props) => {
                     datas={[lic.name, lic.start_date ? dayjs.unix(lic.start_date).format("DD.MM.YYYY") : ""]}
                 />
                     <OrgModalRow
-                        key={'rowfla00228' + lic.id}
+                        key={'rowfla00228' + lic.id + 'extra'}
                         titles={['Вид лицензии/допуска', 'Конец действия']}
                         datas={[tupel,  lic.end_date ? dayjs.unix(lic.end_date).format("DD.MM.YYYY") : "" ]}
                         comment={lic.comment}

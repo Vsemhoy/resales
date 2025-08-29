@@ -64,6 +64,7 @@ const OrgListPage = (props) => {
 
 
 
+
   useEffect(() => {
     setShowLoader(true);
       // При загрузке — читаем URL
@@ -585,12 +586,9 @@ const OrgListPage = (props) => {
               </div>
             </div>
           </div>
-
-
-
       </div>
-
       </Affix>
+
 
       <Layout className={'sa-layout sa-w-100'}>
         <Sider
@@ -616,7 +614,7 @@ const OrgListPage = (props) => {
           </div>
         </Sider>
         <Content>
-          <div className={'sa-pagination-panel sa-pa-12'}></div>
+         
 
           <Affix offsetTop={96}>
           <div className={'sa-pagination-panel sa-pa-12'} style={{background: '#b4cbe4', minHeight: '54px'}}>
@@ -673,8 +671,10 @@ const OrgListPage = (props) => {
           </div>
           </Affix>
 
+
+
+
           <div className={`${openedFilters ? "sa-pa-tb-12 sa-pa-s-3":'sa-pa-12'}`}>
-          
           <Spin spinning={showLoader} delay={500}>
           <OrgListTable 
               companies={companies}
