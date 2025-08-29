@@ -66,7 +66,7 @@ const CuratorPage = (props) => {
     const approve = async (status, id) => {
         setButtonLoading(true);
         if (PRODMODE){
-            let response = await PROD_AXIOS_INSTANCE.post('/api/curators/approved/' + id, {
+            let response = await PROD_AXIOS_INSTANCE.put('/api/curators/approved/' + id, {
                 status: status,
                 _token: CSRF_TOKEN
             });
