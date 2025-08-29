@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './components/style/orglistpage.css';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
-import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Spin, Tooltip } from 'antd';
+import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Spin, Tag, Tooltip } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { DocumentPlusIcon } from '@heroicons/react/16/solid';
@@ -95,7 +95,7 @@ const OrgListPage = (props) => {
         setShowParam(showGetItem);
 
         
-      }, 2200);
+      }, 500);
     }
     setTimeout(() => {
       if (targetRowId){
@@ -105,7 +105,7 @@ const OrgListPage = (props) => {
             drow.scrollIntoView( {behavior: "auto", block: "center", inline: "start"})
           }
         }
-    }, 100);
+    }, 300);
   }, []);
 
 
@@ -113,7 +113,7 @@ const OrgListPage = (props) => {
    useEffect(() => {
         const timer = setTimeout(() => {
             updateURL(filterBox, orderBox, currrentPage, onPage);
-        }, 700);
+        }, 200);
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
@@ -182,6 +182,7 @@ const OrgListPage = (props) => {
   }, [baseCompanies]);
 
 
+  /** Заполняем селекты с кураторами */
   useEffect(() => {
     if (baseFiltersData && baseFiltersData.curators)
     {
@@ -276,13 +277,18 @@ const OrgListPage = (props) => {
                     "email": filterBox.email,
                     "site": filterBox.site,
                     "comment" : filterBox.comment,
+                    // "created_until"  : filterBox.created_until ,
+                    // "created_before" : filterBox.created_before,
+                    // "updated_until"  : filterBox.updated_until ,
+                    // "updated_before" : filterBox.updated_before,
+
                     "created_date": [
-                        filterBox.created_date && filterBox.created_date[0] ? filterBox.created_date[0].unix() : null,
-                        filterBox.created_date && filterBox.created_date[1] ? filterBox.created_date[1].unix() : null,
+                        filterBox.created_before ? parseInt(filterBox.created_before) * 1000 : null,
+                        filterBox.created_until ? parseInt(filterBox.created_until) * 1000 : null,
                     ],
                     "active_date": [
-                        filterBox.updated_date && filterBox.updated_date[0] ? filterBox.updated_date[0].unix() : null,
-                        filterBox.updated_date && filterBox.updated_date[1] ? filterBox.updated_date[1].unix() : null,
+                        filterBox.updated_before ? parseInt(filterBox.updated_before) * 1000 : null,
+                        filterBox.updated_until ? parseInt(filterBox.updated_until) * 1000 : null,
                     ],
                     "page": currrentPage,
                     "limit": onPage,
@@ -294,6 +300,13 @@ const OrgListPage = (props) => {
                 console.log('me: ', response);
                 setOrgList(response.data.org_list);
                 setTotal(response.data.total_count);
+
+                let max = onPage * currrentPage;
+                if (response.data.total_count < max)
+                {
+                  setCurrentPage(1);
+                };
+
             } catch (e) {
                 console.log(e)
             } finally {
@@ -436,6 +449,7 @@ const OrgListPage = (props) => {
   }
 
 
+  /** Формирует меню кнопки очистки фильтров и сортиров */
   const makeFilterMenu = () => {
     let clearItems = [];
     let hasFilter = false;
@@ -444,23 +458,20 @@ const OrgListPage = (props) => {
     for (const key in filterBox) {
       const fib = filterBox[key];
       if (fib !== null){
-        if (key === "updated_at" && fib[0] !== null){
+        if (key === "updated_date" && fib[0] !== null){
           hasFilter = true;
-        } else if (key === "created_at" && fib[0] !== null){
+        } else if (key === "created_date" && fib[0] !== null){
           hasFilter = true;
-        } else if (key !== "updated_at" && key !== "created_at" && key !== "page" && key !== "onpage" && key !== 'limit')
+        } else if (key !== "updated_date" && key !== "created_date" && key !== "page" && key !== "onpage" && key !== 'limit')
           hasFilter = true;
         }
     };
-
-
     for (const key in orderBox) {
       const fib = orderBox[key];
       if (fib !== null){
         hasSorter = true;
       };
     };
-
 
     if (hasFilter){
       clearItems.push({
@@ -477,14 +488,13 @@ const OrgListPage = (props) => {
         label: <div onClick={handleClearOrderBox}>Очистить cортировки</div>
       })
     };
-
-    console.log('clearItems', clearItems);
     setFilterSortClearMenu(clearItems);
   }
 
   useEffect(() => {
     makeFilterMenu();
   }, [filterBox, orderBox]);
+
 
 
   const handleClearAllBoxes = ()=> {
@@ -505,50 +515,82 @@ const OrgListPage = (props) => {
     }
 
   return (
-    <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`}>
-      <div className={'sa-control-panel sa-flex-space sa-pa-12'}>
-        <div className={'sa-vertical-flex'}>
-          <Button.Group>
-            <Button
-              onClick={() => {
-                setOpenedFilters(!openedFilters);
-              }}
-              color={'default'}
-              variant={'solid'}
-              icon={<FilterOutlined />}
-            >
-              Доп Фильтры
-            </Button>
-            {filterSortClearMenu.length > 0 && (
-              <Dropdown menu={{items: filterSortClearMenu}}>
-              <Button
-                title='Очистить фильтры'
-                color={'danger'}
-                variant={'solid'}
-                icon={<CloseOutlined />}
-                onClick={handleClearAllBoxes}
-                >
+    <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`} style={{paddingTop: '12px'}}>
 
-                </Button>
-              </Dropdown>
-            )}
+      <Affix offsetTop={-10}>
+      <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'} >
 
-          </Button.Group>
-          
-        </div>
-        <div>
-          {/* <Button color='default' variant='solid'>Solid</Button>
-          <Button color='default' variant='outlined'>Outlined</Button>
-          <Button color='default' variant='dashed'>Dashed</Button>
-          <Button color='default' variant='filled'>Filled</Button>
-          <Button color='default' variant='text'>Text</Button>
-          <Button color='default' variant='link'>Link</Button> */}
-          Организации
-        </div>
-        <div>
-          <CurrencyMonitorBar />
-        </div>
+          <div className={'sa-header-label-container'}>
+            <div className={'sa-flex-space'}>
+              <div><h1 className={'sa-header-label-org'} style={{width: '100% !important'}}>Клиенты</h1></div>
+              <div>
+                <CurrencyMonitorBar/>
+              </div>
+            </div>
+            <div className={'sa-header-label-container-small'}>
+              <div className={'sa-vertical-flex'}>
+                <Button.Group>
+                  <Button
+                    onClick={() => {
+                      setOpenedFilters(!openedFilters);
+                    }}
+                    color={'default'}
+                    variant={'solid'}
+                    icon={<FilterOutlined />}
+                  >
+                    Доп Фильтры
+                  </Button>
+                  {filterSortClearMenu.length > 0 && (
+                    <Dropdown menu={{items: filterSortClearMenu}}>
+                    <Button
+                      title='Очистить фильтры'
+                      color={'danger'}
+                      variant={'solid'}
+                      icon={<CloseOutlined />}
+                      onClick={handleClearAllBoxes}
+                      >
+
+                      </Button>
+                    </Dropdown>
+                  )}
+
+                </Button.Group>
+                <Tag
+                    style={{
+                      width: '160px',
+                      height: '32px',
+                      lineHeight: '27px',
+                      textAlign: 'center',
+                      fontSize: '14px',
+                    }}
+                    color="geekblue"
+                >Всего найдено: {total}</Tag>
+              </div>
+              <div style={{display: 'flex', alignItems: 'end'}}>
+              {userdata?.user?.sales_role === 1 && (
+                <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
+              )}
+
+
+                {/* <RemoteSearchSelect
+                    placeholder="Поиск..."
+                    fetchOptions={fetchSearchResults}
+                    debounceTimeout={500}
+                    allowClear
+                    style={{ width: '250px', textAlign: 'left' }}
+                    onSelect={(value, option) => {
+                      console.log('Selected:', value, option);
+                    }}
+                /> */}
+              </div>
+            </div>
+          </div>
+
+
+
       </div>
+
+      </Affix>
 
       <Layout className={'sa-layout sa-w-100'}>
         <Sider
@@ -575,26 +617,28 @@ const OrgListPage = (props) => {
         </Sider>
         <Content>
           <div className={'sa-pagination-panel sa-pa-12'}></div>
-          <div className={'sa-pagination-panel sa-pa-12'}>
+
+          <Affix offsetTop={96}>
+          <div className={'sa-pagination-panel sa-pa-12'} style={{background: '#b4cbe4', minHeight: '54px'}}>
             <div className={'sa-flex-space'}>
             <div className={'sa-flex-gap'}>
             <Pagination
+              size={openedFilters ? 'small' : 'middle'}
               defaultPageSize={onPage}
-              size={'small'}
               defaultCurrent={1}
               current={currrentPage}
               total={total}
               onChange={(ev, val)=>{
                 setCurrentPage(ev); setOnPage(val)}}
-              // 
+              showTotal={false}
               onShowSizeChange={setOnPage}
               pageSizeOptions={[10, 30, 50, 100]}
               showQuickJumper
               locale={ANTD_PAGINATION_LOCALE}
             />
-            <Button disabled
+            {/* <Button disabled
               size={'small'}
-            >Всего {total}</Button>
+            >Всего {total}</Button> */}
             </div>
             <div>
 
@@ -603,32 +647,31 @@ const OrgListPage = (props) => {
               <Tooltip title="Я временный куратор">
                 <Button 
                 color={'default'}
+                size={openedFilters ? 'small' : 'middle'}
                 variant={filterBox?.companies === 1 ? "solid" : "filled"}
-                size={'small'}
                     // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     onClick={triggerFreeCompaniesFilterButton}
                 >Свободные</Button>
               </Tooltip>
-              <Tooltip title="Я временный куратор">
-              <Button color="default" variant={false ? "solid" : "filled"} size={'small'}
+              {/* <Tooltip title="Я временный куратор">
+              <Button color="default" variant={false ? "solid" : "filled"} 
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Временные</Button>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title="Компании с моим кураторством">
               <Button
                 color={'default'}
                 variant={filterBox?.curator === userdata?.user?.id ? "solid" : "filled"}
-                size={'small'}
                 onClick={triggerMyCompaniesFilterButton}
+                size={openedFilters ? 'small' : 'middle'}
                   // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
               >Мои компании</Button>
               </Tooltip>
-              {userdata?.user?.sales_role === 1 && (
-                <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
-              )}
+
             </div>
             </div>
           </div>
+          </Affix>
 
           <div className={`${openedFilters ? "sa-pa-tb-12 sa-pa-s-3":'sa-pa-12'}`}>
           
@@ -673,7 +716,7 @@ const OrgListPage = (props) => {
       </Layout>
           <OrgListPreviewModal
             is_open={isPreviewOpen}
-            data={{id: previewItem, name: orgList.find((item) => item.id === previewItem)?.name}}
+            data={{id: previewItem, name: orgList?.find((item) => item.id === previewItem)?.name}}
             on_close={()=>{
               setIsPreviewOpen(false);
               setPreviewItem(null);

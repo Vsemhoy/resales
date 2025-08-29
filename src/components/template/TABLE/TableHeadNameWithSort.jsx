@@ -76,12 +76,14 @@ const TableHeadNameWithSort = (props) => {
   return (
     <div className={'sa-pa-3 sa-table-sort-trigger'}
         // onDoubleClick={handleDblClick}
+         onClick={handleChangeDirection}
     >
-        <span className={`${sortOrder !== 0 ? "sa-table-sort-trigger-active" : ""}`}>
+        <span className={`${sortOrder !== 0 ? "sa-table-sort-trigger-active" : ""}`}
+            onClick={handleChangeDirection}
+        >
             {children}
         </span>
         <div className='sa-table-sort-bit'
-            onClick={handleChangeDirection}
         >
             <div className={`${sortOrder === 2 ? "active" : ""}`}>
                 <CaretUpFilled />

@@ -25,8 +25,13 @@ const OrgListSiderFilter = (props) => {
     const [filterPhone,        setFilterPhone] = useState(null);
     const [filterEmail,        setFilterEmail] = useState(null);
     const [filterWebsite,      setFilterWebsite] = useState(null);
-    const [filterCreatedAt,    setFilterCreatedAt] = useState([null, null]);
-    const [filterUpdatedAt,    setFilterupdatedAt] = useState([null, null]);
+    // const [filterCreatedAt,    setFilterCreatedAt] = useState([null, null]);
+    // const [filterUpdatedAt,    setFilterupdatedAt] = useState([null, null]);
+
+    const [filterCreatedUntil, setFilterCreatedUntil] = useState(null);
+    const [filterCreatedBefore, setFilterCreatedBefore] = useState(null);
+    const [filterUpdatedUntil, setFilterUpdatedUntil] = useState(null);
+    const [filterUpdatedBefore, setFilterUpdatedBefore] = useState(null);
 
     const [listProfiles, setListProfiles] = useState([]);
     const [listStatuses, setListStatuses] = useState([]);
@@ -57,15 +62,20 @@ const OrgListSiderFilter = (props) => {
             filterBox.site            = toNullable(filterWebsite);
             filterBox.profiles        = toNullable(filterProfile);
             filterBox.profsound       = toNullable(filterProfsound);
-            filterBox.created_date    = filterCreatedAt;
-            filterBox.updated_date    = filterUpdatedAt;
-            filterBox.rate_lists      = toNullable(filterLists)
+            // filterBox.created_date    = [filterCreatedBefore, filterCreatedUntil];
+            // filterBox.updated_date    = [filterUpdateddBefore, filterUpdatedUntil];
+            filterBox.created_until  = toNullable(filterCreatedUntil );
+            filterBox.created_before = toNullable(filterCreatedBefore);
+            filterBox.updated_until  = toNullable(filterUpdatedUntil );
+            filterBox.updated_before = toNullable(filterUpdatedBefore);
+            filterBox.rate_lists     = toNullable(filterLists);
 
-    
+   
+
             if (props.on_change_filters) {
                 props.on_change_filters(filterBox);
             }
-        }, 1000); // ⏱️ 1 секунда задержки
+        }, 700); // ⏱️ 1 секунда задержки
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
@@ -80,8 +90,12 @@ const OrgListSiderFilter = (props) => {
             filterPhone,      
             filterEmail,      
             filterWebsite,    
-            filterCreatedAt,  
-            filterUpdatedAt,
+            // filterCreatedAt,  
+            // filterUpdatedAt,
+            filterCreatedUntil,
+            filterCreatedBefore,
+            filterUpdatedUntil,
+            filterUpdatedBefore,
             filterRegion,
          ]);
 
@@ -157,17 +171,45 @@ const OrgListSiderFilter = (props) => {
                     setFilterWebsite(null);
                 }
 
-                // if (props.filters_data.created_date){
-                //     setFilterCreatedAt([ dayjs(props.filters_data.created_date[0]), dayjs(props.filters_data.created_date[1])]);
-                // };
-                // if (props.filters_data.updated_date){
-                //     setFilterupdatedAt([ dayjs(props.filters_data.updated_date[0]), dayjs(props.filters_data.updated_date[1])]);
-                // };
+                if (props.filters_data.created_until){
+                    setFilterCreatedUntil(props.filters_data.created_until);
+                } else {
+                    setFilterCreatedUntil(null);
+                }
+
+                if (props.filters_data.created_before){
+                    setFilterCreatedBefore(props.filters_data.created_before);
+                } else {
+                    setFilterCreatedBefore(null);
+                }
+
+
+                if (props.filters_data.updated_until){
+                    setFilterUpdatedUntil(props.filters_data.updated_until);
+                } else {
+                    setFilterUpdatedUntil(null);
+                }
+
+                if (props.filters_data.updated_before){
+                    setFilterUpdatedBefore(props.filters_data.updated_before);
+                } else {
+                    setFilterUpdatedBefore(null);
+                }
+                // if (props.filters_data.created_date && props.filters_data.created_date[0] !== null){
+                //     setFilterCreatedAt([ dayjs.unix(props.filters_data.created_date[0]), dayjs.unix(props.filters_data.created_date[1])]);
+                // } else {
+                //     setFilterCreatedAt([null, null]);
+                // }
+                // if (props.filters_data.updated_date && props.filters_data.updated_date !== null){
+                //     setFilterupdatedAt([ dayjs.unix(props.filters_data.updated_date[0]), dayjs.unix(props.filters_data.updated_date[1])]);
+                // } else {
+                //     setFilterupdatedAt([null, null]);
+                // }
             };
         }, [props.filters_data]);
 
 
-
+        
 
 
         useEffect(() => {
@@ -240,8 +282,8 @@ const OrgListSiderFilter = (props) => {
     };
 
   return (
-    <Affix offsetTop={0}>
-    <div className='sider-body'>
+    <Affix offsetTop={100}>
+    <div className='sider-body sa-sai-orgs'>
 
         <div className={'sider-unit'}>
             <div className='sider-unit-title'>Компания</div>
@@ -269,12 +311,17 @@ const OrgListSiderFilter = (props) => {
         <div className={'sider-unit'}>
             <div className='sider-unit-title'>Регион</div>
             <div className='sider-unit-control'>
-                <Select  style={{ width: '100%' }}
+                {/* <Select  style={{ width: '100%' }}
                     options={listRegions} 
                     allowClear
                     value={filterRegion}
                     onChange={setFilterRegion}
-                 />
+                 /> */}
+                 <Input placeholder='Северо-западный...' 
+                    allowClear
+                    value={filterRegion}
+                    onChange={(ev)=> {setFilterRegion(ev.target.value)}}
+                />
             </div>
         </div>
 
@@ -387,9 +434,21 @@ const OrgListSiderFilter = (props) => {
             <div className='sider-unit-title'>Дата создания</div>
             <div className='sider-unit-control'>
                 <DatePicker.RangePicker 
-                    value={filterCreatedAt}
+                    value={[filterCreatedBefore ? dayjs.unix(filterCreatedBefore) : null, filterCreatedUntil ? dayjs.unix(filterCreatedUntil) : null]}
                     allowClear
-                    onChange={setFilterCreatedAt}
+                    // onChange={setFilterCreatedAt}
+                    onChange={(date) => {
+                        console.log(date);
+                        if (date){
+
+                            setFilterCreatedBefore(date[0] !== null ? date[0].unix() : null);
+                            setFilterCreatedUntil(date[1] !== null ? date[1].unix() : null);
+                        } else {
+                            setFilterCreatedBefore(null);
+                            setFilterCreatedUntil(null);
+                        }
+                    }}
+                    allowEmpty={[true, true]}
                 />
             </div>
         </div>
@@ -398,12 +457,72 @@ const OrgListSiderFilter = (props) => {
             <div className='sider-unit-title'>Дата последнего обновления</div>
             <div className='sider-unit-control'>
                 <DatePicker.RangePicker 
-                    value={filterUpdatedAt}
+                    value={[filterUpdatedBefore ? dayjs.unix(filterUpdatedBefore) : null, filterUpdatedUntil ? dayjs.unix(filterUpdatedUntil) : null]}
                     allowClear
-                    onChange={setFilterupdatedAt}
+                    // onChange={setFilterupdatedAt}
+                    onChange={(date) => {
+                        if (date){
+                            setFilterUpdatedBefore(date[0] !== null ? date[0].unix() : null);
+                            setFilterUpdatedUntil(date[1] !== null ? date[1].unix() : null);
+                        } else {
+                            setFilterUpdatedBefore(null);
+                            setFilterUpdatedUntil(null);
+                        }
+                        
+                    }}
+                    allowEmpty={[true, true]}
                 />
             </div>
         </div>
+
+
+    {/* <div className={'sider-unit'}>
+        <div className='sider-unit-title'>Дата создания</div>
+            <div className='sider-unit-control'>
+                <DatePicker
+                style={{ width: '100%' }}
+                value={filterCreatedUntil ? dayjs.unix(filterCreatedUntil) : null}
+                allowClear
+                onChange={(date) => setFilterCreatedUntil(date ? date.unix() : null)}
+                placeholder='Создано до'
+                format={'DD.MM.YYYY'}
+                />
+            </div>
+            <div className='sider-unit-control'>
+                <DatePicker 
+                style={{ width: '100%' }}
+                value={filterCreatedBefore ? dayjs.unix(filterCreatedBefore) : null}
+                allowClear
+                onChange={(date) => setFilterCreatedBefore(date ? date.unix() : null)}
+                placeholder='Создано после'
+                format={'DD.MM.YYYY'}
+                />
+            </div>
+        </div>
+
+        <div className={'sider-unit'}>
+            <div className='sider-unit-title'>Дата последнего обновления</div>
+                <div className='sider-unit-control'>
+                    <DatePicker 
+                    style={{ width: '100%' }}
+                    value={filterUpdatedUntil ? dayjs.unix(filterUpdatedUntil) : null}
+                    allowClear
+                    onChange={(date) => setFilterUpdatedUntil(date ? date.unix() : null)}
+                    placeholder='Обновлено до'
+                    format={'DD.MM.YYYY'}
+                    />
+                </div>
+                <div className='sider-unit-control'>
+                    <DatePicker 
+                    style={{ width: '100%' }}
+                    value={filterUpdatedBefore ? dayjs.unix(filterUpdatedBefore) : null}
+                    allowClear
+                    onChange={(date) => setFilterUpdatedBefore(date ? date.unix() : null)}
+                    placeholder='Обновлено после'
+                    format={'DD.MM.YYYY'}
+                    />
+                </div>
+        </div> */}
 
        
         <br />

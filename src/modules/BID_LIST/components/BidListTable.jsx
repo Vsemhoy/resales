@@ -71,7 +71,12 @@ const BidListTable = (props) => {
                       id
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input type={'number'} size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input type={'number'}
+                             size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('bid_id', val.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -81,10 +86,14 @@ const BidListTable = (props) => {
                         sort_key={'company_name'}
                         on_sort_change={handleActivateSorter}
                         active_sort_items={sortOrders}
-                    >Название
+                    >Название организации
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('company_name', val.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -97,7 +106,13 @@ const BidListTable = (props) => {
                     >Тип
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Select size={'small'}
+                              style={{width: '100%'}}
+                              variant='filled'
+                              options={props.filter_bid_types}
+                              onChange={(val) => props.on_change_filter_box('type', val)}
+                              allowClear
+                      />
                     </div>
                   </div>
                 </div>
@@ -110,7 +125,13 @@ const BidListTable = (props) => {
                     >Защита
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Select size={'small'}
+                              style={{width: '100%'}}
+                              variant='filled'
+                              options={props.filter_protection_projects}
+                              onChange={(val) => props.on_change_filter_box('protect_status', val)}
+                              allowClear
+                      />
                     </div>
                   </div>
                 </div>
@@ -123,8 +144,13 @@ const BidListTable = (props) => {
                     >Этап
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Select size={'small'} style={{width: '100%'}} variant='filled' options={props.companies}
-                              allowClear/>
+                      <Select size={'small'}
+                              style={{width: '100%'}}
+                              variant='filled'
+                              options={props.filter_steps}
+                              onChange={(val) => props.on_change_filter_box('stage_status', val)}
+                              allowClear
+                      />
                     </div>
                   </div>
                 </div>
@@ -137,7 +163,17 @@ const BidListTable = (props) => {
                     >Дата
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <DatePicker size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <DatePicker size={'small'}
+                                  style={{width: '100%'}}
+                                  variant='filled'
+                                  onChange={(val) => {
+                                    if (val) {
+                                      props.on_change_filter_box('dates', [val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
+                                    } else {
+                                      props.on_change_filter_box('dates', [null, null]);
+                                    }
+                                  }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -150,7 +186,11 @@ const BidListTable = (props) => {
                     >Менеджер
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('manager', val.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -158,7 +198,11 @@ const BidListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Счета</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('bill_number', val.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -166,7 +210,11 @@ const BidListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Комментарий</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('comment', val.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -174,18 +222,14 @@ const BidListTable = (props) => {
                   <div className={'sa-table-head-on'}>
                     <div className={'sa-pa-3'}>Объект</div>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
+                      <Input size={'small'}
+                             style={{width: '100%'}}
+                             variant='filled'
+                             onChange={(val) => props.on_change_filter_box('object_name', val.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
-                {/*<div className={'sa-table-box-cell'}>
-                  <div className={'sa-table-head-on'}>
-                    <div className={'sa-pa-3'}>Контактное лицо</div>
-                    <div className={'sa-pa-3'}>
-                      <Input size={'small'} style={{width: '100%'}} variant='filled'/>
-                    </div>
-                  </div>
-                </div>*/}
               </div>
             </div>
           </Affix>

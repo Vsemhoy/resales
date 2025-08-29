@@ -64,10 +64,13 @@ export const readOrgURL = () => {
         const filterKeys = [
           'profiles', 'name', 'id', 'curator', 'regions', 'price_statuses',
           'rate_lists', 'towns', 'client_statuses', 'profsound', 'companies',
-          'contact_user', 'address', 'phone', 'email', 'site', 'inn', 'comment', 
-
+          'contact_user', 'address', 'phone', 'email', 'site', 'inn', 'comment',
+          'created_until',
+          'created_before',
+          'updated_until',
+          'updated_before'
         ];
-      
+
         filterKeys.forEach(key => {
           const value = params.get(key);
           if (value) {
