@@ -12442,22 +12442,49 @@ export const OM_ORG_FILTERDATA = {
         }
     ],
     "companies": [
-        {
-            "key": 1,
-            "value": 1,
-            "label": "FreeCompany"
-        },
-        {
-            "key": 2,
-            "value": 2,
-            "label": "Arstel"
-        },
-        {
-            "key": 3,
-            "value": 3,
-            "label": "Rondo"
-        }
-    ],
+    {
+        "id": 1,
+        "name": "FreeCompany",
+        "description": "Свободная компания",
+        "is_active": 1,
+        "template_prefix": "free",
+        "folder": "free",
+        "color": "#8d8d8d",
+        "ext_address_offers": null,
+        "path_logo": "",
+        "created_at": null,
+        "updated_at": "2025-08-09T22:24:27.000000Z",
+        "phone": null
+    },
+    {
+        "id": 2,
+        "name": "Arstel",
+        "description": "OOO Арстел",
+        "is_active": 1,
+        "template_prefix": "ars",
+        "folder": "arstel",
+        "color": "#ff7700",
+        "ext_address_offers": null,
+        "path_logo": "/images/identics/adw32jk2jl/Arstel_logo.svg",
+        "created_at": null,
+        "updated_at": null,
+        "phone": null
+    },
+    {
+        "id": 3,
+        "name": "Rondo",
+        "description": "ООО Рондо",
+        "is_active": 1,
+        "template_prefix": "rond",
+        "folder": "rondo",
+        "color": "#229922",
+        "ext_address_offers": null,
+        "path_logo": "/images/identics/iwtRd02l2h/logo_LDA.svg",
+        "created_at": null,
+        "updated_at": null,
+        "phone": null
+    }
+],
     "rate_lists": [
         {
             "key": 1,

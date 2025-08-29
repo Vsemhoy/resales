@@ -183,7 +183,7 @@ const OrgListPage = (props) => {
       )
 
     }
-  }, [baseCompanies]);
+  }, [baseFiltersData]);
 
 
   /** Заполняем селекты с кураторами */
