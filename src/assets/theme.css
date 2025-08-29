@@ -83,6 +83,10 @@
     --expand-color: #278bc530;
     --expand-color-hover:  #278bc559;
     --expand-color-active: #278bc5a5;
+
+    --sider-bg-color: #e1e7ed;
+
+    --sa-list-header: aliceblue;
 }
 
 .App {

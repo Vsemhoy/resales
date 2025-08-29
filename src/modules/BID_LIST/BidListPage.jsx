@@ -3,35 +3,20 @@ import React, { useEffect, useState } from 'react';
 import './components/style/bidlistpage.css';
 import {CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
-import {Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Spin, Tag, Tooltip} from 'antd';
+import {Affix, Button, Layout, Pagination, Select, Spin, Tag, Tooltip} from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
-import { DocumentPlusIcon } from '@heroicons/react/16/solid';
 import {
-  CaretDownFilled,
   CaretLeftFilled,
-  CaretUpFilled,
   CloseOutlined,
-  CloseSquareOutlined,
   FilterOutlined,
-  PlusOutlined,
-  SearchOutlined
 } from '@ant-design/icons';
-import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
-
-
-import { ChevronLeftIcon, RectangleStackIcon } from '@heroicons/react/24/outline';
-
 import BidListTable from './components/BidListTable';
 import BidListSiderFilters from './components/BidListSiderFilters';
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import {BID_LIST, FILTERS} from "./mock/mock";
 import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
-import RemoteSearchSelect from "./components/RemoteSearchSelect";
-
-
-
 
 
 const BidListPage = (props) => {
@@ -122,7 +107,7 @@ const BidListPage = (props) => {
         setIsLoading(false);
       });
     }
-  }, [currentPage, onPage, filterBox]);
+  }, [currentPage, onPage, filterBox, orderBox]);
 
   useEffect(() => {
     if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
@@ -151,6 +136,12 @@ const BidListPage = (props) => {
       }))
     );
   }, [baseCompanies]);
+
+  useEffect(() => {
+    if (!isPreviewOpen){
+      setShowParam(null);
+    }
+  }, [isPreviewOpen]);
 
   const fetchInfo = async () => {
     setIsLoading(true);
@@ -198,8 +189,9 @@ const BidListPage = (props) => {
         "bid_id": filterBox.bid_id,
         "to": 0,
         "page": currentPage,
-        "limit": onPage
-      };
+        "limit": onPage,
+        "sort_orders": orderBox,
+      }
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/sales/data/offerlist', {
           data,
@@ -207,30 +199,18 @@ const BidListPage = (props) => {
         });
         setBids(response.data.bid_list);
         setTotal(response.data.total_count);
+
+        let max = (onPage * currentPage) - (onPage - 1);
+        if (response.data.total_count < max)
+        {
+          setCurrentPage(1);
+        }
       } catch (e) {
         console.log(e);
       }
     } else {
       setBids(BID_LIST);
       setTotal(33000);
-    }
-  };
-
-  const fetchSearchResults = async (searchText) => {
-    if (PRODMODE) {
-      try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(searchText)}`);
-        const data = await response.json();
-
-        return data.items.map(item => ({
-          label: item.name,
-          value: item.id,
-          ...item
-        }));
-      } catch (error) {
-        console.error('Search error:', error);
-        return [];
-      }
     }
   };
 
@@ -259,18 +239,18 @@ const BidListPage = (props) => {
     } else {
       setSortOrders([{key: key, order: order}]);
     }
-  }
+  };
 
   const handleRowDblClick = (id) => {
 
-  }
+  };
 
   const handlePreviewOpen = (item, state) => {
     console.log('HELLO', item);
     setShowParam(item);
     setPreviewItem(item);
     setIsPreviewOpen(true);
-  }
+  };
 
   const setShowParam = (value) => {
     if (value !== null){
@@ -281,12 +261,6 @@ const BidListPage = (props) => {
       setSearchParams(searchParams);
     }
   };
-
-  useEffect(() => {
-    if (!isPreviewOpen){
-      setShowParam(null);
-    }
-  }, [isPreviewOpen]);
 
   const prepareSelectOptions = (options) => {
     if (options && options.length > 0) {
@@ -311,7 +285,7 @@ const BidListPage = (props) => {
     const fb = JSON.parse(JSON.stringify(filterBox))
     fb[key] = value;
     setFilterBox(fb);
-    console.log(fb)
+    console.log(fb);
   };
 
   return (
@@ -388,17 +362,6 @@ const BidListPage = (props) => {
                       )}
                     </div>
                 )}
-
-                {/*<RemoteSearchSelect
-                    placeholder="Поиск..."
-                    fetchOptions={fetchSearchResults}
-                    debounceTimeout={500}
-                    allowClear
-                    style={{ width: '250px', textAlign: 'left' }}
-                    onSelect={(value, option) => {
-                      console.log('Selected:', value, option);
-                    }}
-                />*/}
               </div>
             </div>
           </div>
@@ -430,7 +393,6 @@ const BidListPage = (props) => {
                   {isBackRoute && (
                       <NavLink to={`/orgs?show=${fromOrgId}`}>
                         <Button type={'default'}
-                            // icon={<ChevronLeftIcon height={'18px'} />}
                                 icon={<CaretLeftFilled/>}
                         >
                           Назад в компанию
@@ -443,7 +405,6 @@ const BidListPage = (props) => {
                       current={currentPage}
                       total={total}
                       onChange={setCurrentPage}
-                      // showSizeChanger
                       showQuickJumper
                       locale={ANTD_PAGINATION_LOCALE}
                   />
@@ -462,7 +423,6 @@ const BidListPage = (props) => {
                         // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     >Мои</Button>
                   </Tooltip>
-                  {/* <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button> */}
                 </div>
               </div>
             </div>
@@ -475,52 +435,19 @@ const BidListPage = (props) => {
               <BidListTable
                   companies={companies}
                   bids={bids}
-
                   filter_steps={prepareSelectOptions(filterStep)}
                   filter_protection_projects={prepareSelectOptions(filterProtectionProject)}
                   filter_bid_types={prepareSelectOptions(filterBidType)}
-
                   on_change_filter_box={handleUpdateFilterBox}
-
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
               />
             </Spin>
-
-            {/*{bids.length > 20 && (
-                <div className={'sa-pagination-panel sa-pa-12'}>
-                  <div className={'sa-flex-space'}>
-                    <div className={'sa-flex-gap'}>
-                      <Pagination
-                          defaultPageSize={onPage}
-                          defaultCurrent={1}
-                          current={currentPage}
-                          total={total}
-                          onChange={setCurrentPage}
-                          // showSizeChanger
-                          showQuickJumper
-                          locale={ANTD_PAGINATION_LOCALE}
-                      />
-                    </div>
-                    <div>
-
-                    </div>
-                    <div>
-                       <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
-                    </div>
-                  </div>
-                </div>
-            )}*/}
             <div className={'sa-space-panel sa-pa-12'}></div>
           </div>
         </Content>
 
       </Layout>
-      {/* <OrgListPreviewModal
-            is_open={isPreviewOpen}
-            data={previewItem}
-            on_close={()=>{setIsPreviewOpen(false)}}
-            /> */}
     </div>
   );
 };
