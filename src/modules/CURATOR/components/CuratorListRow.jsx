@@ -35,6 +35,7 @@ const CuratorListRow = (props) => {
   const [data, setData] = useState(props.data);
 
   const [compColor, setCompColor] = useState("#00000000");
+  const [pressButton, setPressButton] = useState(null);
 
   useEffect(() => {
     setData(props.data);
@@ -54,6 +55,7 @@ const CuratorListRow = (props) => {
       props.on_double_click(data);
     }
   }
+
 
 
 
@@ -84,9 +86,13 @@ const CuratorListRow = (props) => {
               // className={style.menu_action__btn}
               size={"small"}
               color="danger"
-              loading={props.buttonLoading}
+              loading={pressButton !== null && !pressButton}
+              disabled={pressButton !== null && pressButton}
               variant="filled"
-              onClick={(_) => props.approve(false, data.id)}
+              onClick={(_) => {
+                props.approve(false, data.id)
+                setPressButton(false)
+              }}
           >
             {props.supervisor ? "Отклонить" : "Отозвать"}
           </Button>
@@ -95,9 +101,13 @@ const CuratorListRow = (props) => {
                   // className={style.menu_action__btn}
                   size={"small"}
                   color="primary"
-                  loading={props.buttonLoading}
+                  loading={pressButton !== null && pressButton}
+                  disabled={pressButton !== null && !pressButton}
                   variant="filled"
-                  onClick={(_) => props.approve(true, data.id)}
+                  onClick={(_) => {
+                    props.approve(true, data.id)
+                    setPressButton(true)
+                  }}
               >
                 Подтвердить
               </Button>
