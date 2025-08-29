@@ -31,9 +31,18 @@ const BidListPage = (props) => {
 
   const [fromOrgId, setFromOrgId] = useState(0);
 
+  /* в шапке таблицы */
   const [filterStep, setFilterStep] = useState([]);
   const [filterProtectionProject, setFilterProtectionProject] = useState([]);
   const [filterBidType, setFilterBidType] = useState([]);
+  /* в фильтрах sider */
+  const [filterPaySelect, setFilterPaySelect] = useState([]);
+  const [filterAdminAcceptSelect, setFilterAdminAcceptSelect] = useState([]);
+  const [filterPackageSelect, setFilterPackageSelect] = useState([]);
+  const [filterPriceSelect, setFilterPriceSelect] = useState([]);
+  const [filterBidCurrencySelect, setFilterBidCurrencySelect] = useState([]);
+  const [filterNdsSelect, setFilterNdsSelect] = useState([]);
+  const [filterCompleteSelect, setFilterCompleteSelect] = useState([]);
 
   const [total, setTotal] = useState(0);
   const [onPage, setOnPage] = useState(30);
@@ -161,6 +170,13 @@ const BidListPage = (props) => {
           setFilterStep(filters.step);
           setFilterProtectionProject(filters.protection_project);
           setFilterBidType(filters.type_select);
+          setFilterPaySelect(filters.pay_select);
+          setFilterAdminAcceptSelect(filters.admin_accept_select);
+          setFilterPackageSelect(filters.package_select);
+          setFilterPriceSelect(filters.price_select);
+          setFilterBidCurrencySelect(filters.bid_currency_select);
+          setFilterNdsSelect(filters.nds_select);
+          setFilterCompleteSelect(filters.complete_select);
         }
       } catch (e) {
         console.log(e);
@@ -169,6 +185,13 @@ const BidListPage = (props) => {
       setFilterStep(FILTERS.step);
       setFilterProtectionProject(FILTERS.protection_project);
       setFilterBidType(FILTERS.type_select);
+      setFilterPaySelect(FILTERS.pay_select);
+      setFilterAdminAcceptSelect(FILTERS.admin_accept_select);
+      setFilterPackageSelect(FILTERS.package_select);
+      setFilterPriceSelect(FILTERS.price_select);
+      setFilterBidCurrencySelect(FILTERS.bid_currency_select);
+      setFilterNdsSelect(FILTERS.nds_select);
+      setFilterCompleteSelect(FILTERS.complete_select);
     }
   };
 
@@ -306,18 +329,19 @@ const BidListPage = (props) => {
                       onClick={() => {
                         setIsOpenedFilters(!isOpenedFilters);
                       }}
+                      className={`${isOpenedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'}`}
                       color={'default'}
-                      variant={'solid'}
+                      variant={isOpenedFilters ? 'solid' : 'outlined'}
                       icon={<FilterOutlined/>}
                   >
                     Доп Фильтры
                   </Button>
-                  <Button
+                  {/*<Button
                       title='Очистить фильтры'
                       color={'danger'}
                       variant={'solid'}
                       icon={<CloseOutlined/>}
-                  ></Button>
+                  ></Button>*/}
                 </Button.Group>
                 <Tag
                     style={{
@@ -378,7 +402,14 @@ const BidListPage = (props) => {
           <div className={'sa-sider'}>
             {isOpenedFilters && (
                 <BidListSiderFilters
-
+                    filter_pay_select={prepareSelectOptions(filterPaySelect)}
+                    filter_admin_accept_select={prepareSelectOptions(filterAdminAcceptSelect)}
+                    filter_package_select={prepareSelectOptions(filterPackageSelect)}
+                    filter_price_select={prepareSelectOptions(filterPriceSelect)}
+                    filter_bid_currency_select={prepareSelectOptions(filterBidCurrencySelect)}
+                    filter_nds_select={prepareSelectOptions(filterNdsSelect)}
+                    filter_complete_select={prepareSelectOptions(filterCompleteSelect)}
+                    on_change_filter_box={handleUpdateFilterBox}
                 />
             )}
           </div>
@@ -413,13 +444,13 @@ const BidListPage = (props) => {
 
                 </div>
                 <div className={'sa-flex-gap'}>
-                  <Tooltip title="Я временный куратор">
-                    <Button color="default" variant={false ? "solid" : "outlined"}
+                  <Tooltip placement="bottom" title="Я временный куратор">
+                    <Button color="default" variant={false ? "solid" : "filled"}
                         // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     >Временные</Button>
                   </Tooltip>
-                  <Tooltip title="Компании с моим кураторством">
-                    <Button color="default" variant={false ? "solid" : "outlined"}
+                  <Tooltip placement="bottom" title="Компании с моим кураторством">
+                    <Button color="default" variant={false ? "solid" : "filled"}
                         // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     >Мои</Button>
                   </Tooltip>
