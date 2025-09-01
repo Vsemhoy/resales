@@ -65,7 +65,8 @@ const BidListPage = (props) => {
       "protect_status": null,
       "pay_status": null,
       "stage_status": null,
-      "bid_id": null
+      "bid_id": null,
+      "target_company": null,
   });
   const [orderBox, setOrderBox] = useState({});
 
@@ -219,6 +220,7 @@ const BidListPage = (props) => {
         "pay_status": filterBox.pay_status,
         "stage_status": filterBox.stage_status,
         "bid_id": filterBox.bid_id,
+        "target_company": filterBox.target_company,
         "to": 0,
         "page": currentPage,
         "limit": onPage,
