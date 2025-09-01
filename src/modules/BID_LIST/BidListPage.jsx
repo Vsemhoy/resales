@@ -75,6 +75,7 @@ const BidListPage = (props) => {
       "bid_currency": null,
       "nds": null,
       "complete": null,
+
   });
   const [orderBox, setOrderBox] = useState({});
 
