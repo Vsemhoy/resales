@@ -5,12 +5,15 @@ import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
 import { OM_ORG_BIDS } from '../../mock/ORGLISTMOCK';
 import { NavLink } from 'react-router-dom';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
+import OrgBillModalRow from './TabComponents/RowTemplates/OrgBillModalRow';
 
 
 const OrgListModalBillsTab = (props) => {
   const [baseBids, setBaseBids] = useState([]);
   const [currrentPage, setCurrrentPage] = useState(1);
   const [onPage, setOnPage] = useState(30);
+  const [showLoader, setShowLoader] = useState(false);
+  const [total, setTotal] = useState(1);
 
   const [orgId, setOrgId] = useState(null);
   const [baseOrgData, setBaseOrgData] = useState(null);
@@ -75,6 +78,8 @@ const OrgListModalBillsTab = (props) => {
 
           />
         </div>
+
+          <Spin spinning={showLoader} delay={500}>
         <div>
             <div className={'sa-org-bid-row sa-org-bid-row-header'}>
               <div>
@@ -110,11 +115,12 @@ const OrgListModalBillsTab = (props) => {
               </div>
           </div>
           {baseBids.map((bid)=>(
-            <OrgBidTabRow 
+            <OrgBillModalRow 
               data={bid}
             />
           ))}
         </div>
+        </Spin>
     </div>
     </Spin>
   );
