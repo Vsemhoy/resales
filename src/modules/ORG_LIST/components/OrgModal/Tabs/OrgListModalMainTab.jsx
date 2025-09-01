@@ -24,7 +24,7 @@ const OrgListMainTab = (props) => {
     if (props.data?.id){
       setLoading(true);
       setOrgId(props.data.id);
-
+      console.log('CALL TO RELOAD', props.data.id);
       if (PRODMODE){
         get_org_data_action(props.data.id);
       } else {
