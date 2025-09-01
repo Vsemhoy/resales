@@ -186,10 +186,12 @@ const BidListTable = (props) => {
                     >Менеджер
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'}
-                             style={{width: '100%'}}
-                             variant='filled'
-                             onChange={(val) => props.on_change_filter_box('manager', val.target.value)}
+                      <Select size={'small'}
+                              style={{width: '100%'}}
+                              variant='filled'
+                              options={props.filter_managers}
+                              onChange={(val) => props.on_change_filter_box('manager', val)}
+                              allowClear
                       />
                     </div>
                   </div>

@@ -1095,6 +1095,16 @@ export const FILTERS = {
             "name": "Не  реализовано"
         }
     ],
+    "managers_select": [
+        {
+            "id": 1,
+            "name": 'Ковальчук В.Д.'
+        },
+        {
+            "id": 2,
+            "name": 'Кальчук В.Д.'
+        },
+    ],
     "companies": [
         {
             "id": 1,

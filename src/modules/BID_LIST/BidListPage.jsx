@@ -43,6 +43,7 @@ const BidListPage = (props) => {
   const [filterBidCurrencySelect, setFilterBidCurrencySelect] = useState([]);
   const [filterNdsSelect, setFilterNdsSelect] = useState([]);
   const [filterCompleteSelect, setFilterCompleteSelect] = useState([]);
+  const [filterManagersSelect, setFilterManagersSelect] = useState([]);
   const [filterCompaniesSelect, setFilterCompaniesSelect] = useState([]);
 
   const [filterSortClearMenu, setFilterSortClearMenu] = useState([]);
@@ -63,10 +64,17 @@ const BidListPage = (props) => {
       "manager": null,
       "bill_number": null,
       "protect_status": null,
-      "pay_status": null,
       "stage_status": null,
       "bid_id": null,
+
       "target_company": null,
+      "pay_status": null,
+      "admin_accept": null,
+      "package": null,
+      "price": null,
+      "bid_currency": null,
+      "nds": null,
+      "complete": null,
   });
   const [orderBox, setOrderBox] = useState({});
 
@@ -185,6 +193,7 @@ const BidListPage = (props) => {
           setFilterBidCurrencySelect(filters.bid_currency_select);
           setFilterNdsSelect(filters.nds_select);
           setFilterCompleteSelect(filters.complete_select);
+          setFilterManagersSelect(filters.managers_select);
           setFilterCompaniesSelect(filters.companies);
         }
       } catch (e) {
@@ -201,6 +210,7 @@ const BidListPage = (props) => {
       setFilterBidCurrencySelect(FILTERS.bid_currency_select);
       setFilterNdsSelect(FILTERS.nds_select);
       setFilterCompleteSelect(FILTERS.complete_select);
+      setFilterManagersSelect(FILTERS.managers_select);
       setFilterCompaniesSelect(FILTERS.companies);
     }
   };
@@ -217,10 +227,18 @@ const BidListPage = (props) => {
         "manager": filterBox.manager,
         "bill_number": filterBox.bill_number,
         "protect_status": filterBox.protect_status,
-        "pay_status": filterBox.pay_status,
         "stage_status": filterBox.stage_status,
         "bid_id": filterBox.bid_id,
+
         "target_company": filterBox.target_company,
+        "pay_status": filterBox.pay_status,
+        "admin_accept": filterBox.admin_accept,
+        "package": filterBox.package,
+        "price": filterBox.price,
+        "bid_currency": filterBox.bid_currency,
+        "nds": filterBox.nds,
+        "complete": filterBox.complete,
+
         "to": 0,
         "page": currentPage,
         "limit": onPage,
@@ -543,6 +561,7 @@ const BidListPage = (props) => {
                   filter_steps={prepareSelectOptions(filterStep)}
                   filter_protection_projects={prepareSelectOptions(filterProtectionProject)}
                   filter_bid_types={prepareSelectOptions(filterBidType)}
+                  filter_managers={prepareSelectOptions(filterManagersSelect)}
                   on_change_filter_box={handleUpdateFilterBox}
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
