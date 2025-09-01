@@ -151,7 +151,17 @@ const BidListRow = (props) => {
         </div>
         <div className={'sa-table-box-cell'}>
           <div>
-
+            <Tooltip
+                placement="leftTop"
+                title={<PositionList bidId={data.id} />}
+                color="white"
+                overlayInnerStyle={{
+                  color: 'black',
+                  border: '1px solid #d9d9d9'
+                }}
+            >
+              <Tag color={"magenta"}>{data.models_count}</Tag>
+            </Tooltip>
           </div>
         </div>
 
