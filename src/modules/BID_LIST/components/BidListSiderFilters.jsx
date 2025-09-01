@@ -14,7 +14,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder=''
                             style={{width: '100%'}}
                             options={props.filter_companies_select}
-                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            onChange={(val) => props.on_change_filter_box('target_company', val)}
                             allowClear
                     />
                 </div>
