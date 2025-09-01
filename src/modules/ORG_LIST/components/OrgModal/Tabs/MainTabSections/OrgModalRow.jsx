@@ -1,5 +1,6 @@
 import { CaretDownOutlined, CaretUpOutlined, EnterOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
+import { TextWithLineBreaks } from '../../../../../../components/helpers/TextHelpers';
 
 
 const OrgModalRow = (props) => {
@@ -12,6 +13,8 @@ const OrgModalRow = (props) => {
     const [comment, setComment] = useState(null);
 
     const [opened, setOpened] = useState(false);
+
+    const [commentTitle, setCommentTitle] = useState('КОММ');
 
     useEffect(() => {
         if (props.columns > 1){
@@ -28,6 +31,9 @@ const OrgModalRow = (props) => {
         };
         if (props.comment){
             setComment(props.comment);
+        };
+        if (props.comment_title){
+            setCommentTitle(props.comment_title);
         }
     }, [props]);
 
@@ -45,7 +51,7 @@ const OrgModalRow = (props) => {
                                         {opened ? (<CaretUpOutlined />) : (<CaretDownOutlined />)}
                                     </span>
                                     <span>
-                                        комм
+                                       {commentTitle}
                                     </span>
                                 </div>
                             )}
@@ -98,11 +104,11 @@ const OrgModalRow = (props) => {
                     <span
                         className={'sk-comment-arrow-sign'}
                      ><EnterOutlined /></span>
-                    <span><i>Комментарий</i></span>
+                    <span><i>{commentTitle !== "КОММ" ? commentTitle : 'Комментарий'}</i></span>
                     
                 </div>
                 <div className={'sk-omt-content'}>
-                    {comment}
+                    <TextWithLineBreaks text={comment}></TextWithLineBreaks>
                 </div>
             </div>
         </div>

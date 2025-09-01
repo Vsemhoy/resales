@@ -1,62 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
+import { ORG_DEF_DATA } from '../../../mock/ORGDEFDATA';
+import dayjs from 'dayjs';
 
 
 const OrgModalPayersSection = (props) => {
+    const [orgData, setOrgData] = useState(ORG_DEF_DATA);
+
+
+    useEffect(() => {
+        if (props.data){
+            setOrgData(props.data);
+        } else {
+            setOrgData(ORG_DEF_DATA);
+        }
+    }, [props.data]);
 
   return (
     <div className={'sk-omt-stack'}
     style={{borderLeft: '4px solid yellow'}}
     >
 
-        <OrgModalRow
-            key={'sthpasdjl'}
-            titles={['Название организации']}
-            datas={['Тестовая карточка организации']}
-            comment={"Здесь будет длинный комментарий ли очень длинный"}
-        />
+        {orgData.requisites && orgData.requisites.length > 0 && (
+            <>
+                {orgData.requisites.map((req)=>{
+                    // const namel = req.document_type === 1 ? "Лицензия МЧС" : "Допуск СРО";
+                    // const key = `${req.document_type}-${req.type}`;
+                    // const tupel = props.selects_data.tolreq[key];
+                    
+                    return (
+                <div className={'sa-tolreq-group'}>
+                    <OrgModalRow
+                    key={'rowfla00228' + req.id}
+                    titles={['Название']}
+                    datas={[req.nameorg,  ]}
+                        comment={req.requisites}
+                        comment_title={'Реквизиты'}
+                />
+                    <OrgModalRow
+                        key={'rowfla00228' + req.id + 'extra'}
+                        titles={['ИНН', 'КПП']}
+                        datas={[req.inn, req.kpp ]}
+                    />
+                </div>
+                )})}
+            </>
+        )}
 
-        <OrgModalRow
-            key={'sthpasddjl'}
-            titles={['Форма собственности', 'ИНН']}
-            datas={['Тестовая карточка ', '']}
-        />
 
-        <OrgModalRow
-        key={'sthp43asdjl'}
-            titles={['Вид деятельности']}
-            datas={['Тестовая  ']}
-        />
-
-        <OrgModalRow
-            key={'sthpa3sddjl'}
-            titles={['Второе название']}
-            datas={['Тестова организации']}
-        />
-
-        <OrgModalRow
-            key={'sthpa5sddjl'}
-            titles={['Профиль компании', 'Проф звук']}
-            datas={['Тестовая карточка организации','']}
-        />
-
-        <OrgModalRow
-            key={'sthpasd6352djl'}
-            titles={['Источник']}
-            datas={['Тестовая  организации']}
-        />
-
-        <OrgModalRow
-            key={'sthp452asddjl'}
-            titles={['Комментарий']}
-            datas={[' карточка организации']}
-        />
-
-        <OrgModalRow
-            key={'sthpa6454sddjl'}
-            titles={['Памятка']}
-            datas={['Тестовая карточка ']}
-        />
         
 
     </div>

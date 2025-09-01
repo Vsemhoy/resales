@@ -6,8 +6,26 @@ const OrgModalContactsSection = (props) => {
 
     const [contactId, setcontactId] = useState(props.id);
 
+    const [contactData, setContactData] = useState({});
+
+
+
+
+
+    const workString = (id) => {
+        if (id < 1){
+            return "Уволен";
+        }
+        if (id === 1){
+            return "Работает";
+        }
+        return "Перешел в другую компанию";
+    }
+
+
     useEffect(() => {
       setcontactId(props.id);
+      setContactData(props.data);
     }, [props]);
 
  return (
@@ -18,51 +36,86 @@ const OrgModalContactsSection = (props) => {
         <OrgModalRow
             key={contactId + 'rowfla00722'}
             titles={['Имя', 'Отчество']}
-            datas={['Юзернейм','Суворович']}
+            datas={[contactData?.name,contactData?.middlename]}
         />
 
         <OrgModalRow
             key={contactId + 'rowfla00723'}
             titles={['Фамилия','Должность']}
-            datas={['Пряников','Большой человек']}
+            datas={[contactData?.lastname,contactData?.occupy]}
         />
 
         <OrgModalRow
             key={contactId + 'rowfla00724'}
             titles={['Комментарий']}
-            datas={['Здесь данныз нет']}
+            datas={[contactData?.comment]}
         />
 
+        {contactData?.contactstelephones && contactData?.contactstelephones.map((item)=>(
         <OrgModalRow
-            key={contactId + 'rowfla00725'}
-            titles={['Телефон','Комментарий']}
-            datas={['5234234523', '']}
-            comment={"Здесь будет длинный комментарий ли очень длинный"}
+            key={contactId + 'rowfla00725'  + item.id}
+            titles={['Телефон','Доб.']}
+            datas={[item.number, item.ext]}
+            comment={item.comment}
         />
+        ))}
 
+        {contactData?.contactmobiles && contactData?.contactmobiles.map((item)=>(
         <OrgModalRow
-            key={contactId + 'rowfla00726'}
+            key={contactId + 'rowfla00726' + item.id}
             titles={['Мобильный телефон','Комментарий']}
-            datas={['4356345', '']}
+            datas={[item.number, item.comment]}
         />
+        ))}
 
+        {contactData?.contacthomephones && contactData?.contacthomephones.map((item)=>(
         <OrgModalRow
-            key={contactId + 'rowfla00727'}
-            titles={['Электронная почта','Комментарий']}
-            datas={['step@by.step', 'until blind']}
+            key={contactId + 'rowfla007260' + item.id}
+            titles={['Домашний телефон','Комментарий']}
+            datas={[item.number, item.comment]}
         />
+        ))}
 
+        {contactData?.contactemails && contactData?.contactemails.map((item)=>(
+            <OrgModalRow
+                key={contactId + 'rowfla00727' + item.id}
+                titles={['Электронная почта','Комментарий']}
+                datas={[item.email, item.comment]}
+            />
+        ))}
+
+
+
+        {contactData?.C && contactData?.contactspls.map((item)=>(
+            <OrgModalRow
+                key={contactId + 'rowfla00727' + item.id}
+                titles={['Электронная почта','Комментарий']}
+                datas={[item.email, item.comment]}
+            />
+        ))}
+
+        {contactData?.C && contactData?.contactspls.map((item)=>(
+            <OrgModalRow
+                key={contactId + 'rowfla00727' + item.id}
+                titles={['Электронная почта','Комментарий']}
+                datas={[JSON.stringify(item)]}
+            />
+        ))}
+        
+        {/* 
         <OrgModalRow
             key={contactId + 'rowfla00728'}
-            titles={['Мероприятия','Комментарий']}
+            titles={['Мероприятия','Комментарий']}bbbbbbbbb
             datas={['', '']}
-        />
+        /> */}
 
         <OrgModalRow
             key={contactId + 'rowfla00729'}
             titles={['Участие в рассылке']}
-            datas={['Ничего не получает']}
+            datas={[contactData?.unsubscribe < 1 ? "Разрешено" : "Запрещено"]}
         />
+
+        
 
         <OrgModalRow
             key={contactId + 'rowfla00730'}
@@ -72,8 +125,8 @@ const OrgModalContactsSection = (props) => {
 
         <OrgModalRow
             key={contactId + 'rowfla00731'}
-            titles={['Работает?','Ушел в организацию']}
-            datas={['да', '']}
+            titles={['Статус','Ушел в организацию']}
+            datas={[ workString(contactData?.job), contactData?.exittoorg]}
         />
 
 
