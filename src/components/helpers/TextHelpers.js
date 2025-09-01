@@ -1,5 +1,6 @@
 import { Tooltip } from "antd";
 import dayjs from "dayjs";
+import React from "react";
 
 
  export const DS_YEARMONTHS_SELECT = [
@@ -234,4 +235,20 @@ export const secondsToTime = (seconds) => {
       case 6: return "суббота";
       default: return "неизвестный день";
     }
-  };
+    };
+
+
+
+
+      export const TextWithLineBreaks = ({ text }) => {
+        return (
+            <div>
+            {text.split('\n').map((line, index) => (
+                <React.Fragment key={index}>
+                {line}
+                <br />
+                </React.Fragment>
+            ))}
+            </div>
+        );
+    }

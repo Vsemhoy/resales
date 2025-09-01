@@ -19,36 +19,10 @@ const OrgListMainTab = (props) => {
   const [orgId, setOrgId] = useState(null);
   const [baseOrgData, setBaseOrgData] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (props.data?.id){
-      setLoading(true);
-      setOrgId(props.data.id);
-      console.log('CALL TO RELOAD', props.data.id);
-      if (PRODMODE){
-        get_org_data_action(props.data.id);
-      } else {
-        setBaseOrgData(ORGLIST_MODAL_MOCK_MAINTAB);
-        setLoading(false);
-      }
-
-    } else {
-      setOrgId(null);
-      setBaseOrgData(null);
-    }
-    console.log(props.data);
-    console.log(ORGLIST_MODAL_MOCK_MAINTAB);
-  }, [props.data]);
-
-
-
-
-
-    useEffect(() => {
-      // эффект
-      console.log(props.selects_data);
-    }, [props.selects_data]);
-
+  const [openedContactItems, setOpenedContactItems] = useState([]);
+  
+  
+  const [contactItems, setContactItems] = useState([]);
 
 
 
@@ -73,73 +47,121 @@ const OrgListMainTab = (props) => {
 
     const [modalUsersOpened, setModalUsersOpened] = useState([]);
 
+
+
+  useEffect(() => {
+    if (props.data?.id){
+      setLoading(true);
+      setOrgId(props.data.id);
+      console.log('CALL TO RELOAD', props.data.id);
+      if (PRODMODE){
+        get_org_data_action(props.data.id);
+      } else {
+        setBaseOrgData(ORGLIST_MODAL_MOCK_MAINTAB);
+        setLoading(false);
+      }
+
+    } else {
+      setOrgId(null);
+      setBaseOrgData(null);
+    }
+    console.log(props.data);
+    console.log(ORGLIST_MODAL_MOCK_MAINTAB);
+  }, [props.data]);
+
+
+
+  useEffect(() => {
+    if (baseOrgData && baseOrgData.contacts){
+      let opened_ids = modalUsersOpened;
+      if (modalUsersExpanded === 2 || modalUsersExpanded === 0){
+        opened_ids = [];
+      }
+
+      setContactItems(baseOrgData.contacts.map((contact)=>{
+       if (modalUsersExpanded === 2){
+        opened_ids.push(`extracontactrowstack_${contact.id}`);
+       };
+
+        return {
+          key: `contitems_0N_1${contact.id}`,
+          label: <div className='sk-omt-sub-title'>{contact.lastname} {contact.name} {contact.middlename} <span style={{color: 'gray', fontWeight: '100'}}>({contact.id})</span></div>,
+          children: <OrgModalContactsSection
+            key={`extracontactrowstack_${contact.id}`}
+            id={`${contact.id}`}
+            data={contact}
+            
+          />,
+          // open: true,
+        }
+      }))
+      setModalUsersOpened(opened_ids);
+    } else {
+      setContactItems([]);
+    }
+  }, [baseOrgData]);
+
+    useEffect(() => {
+      // эффект
+      console.log(props.selects_data);
+    }, [props.selects_data]);
+
+
+
     // Сохраняем изменения в локалсторедж при изменении modalSectionsOpened
     // useEffect(() => {
     //   localStorage.setItem("setModalOrgUsersExpanded", JSON.stringify());
     // }, [modalUsersExpanded]);
 
 
+  
 
-
-
-    const contactItems = [
-    {
-      key: 'contitems_0N_1',
-      label: <div className='sk-omt-sub-title'>Трастов Василий Петрович</div>,
-      children: <OrgModalContactsSection
-        id={4532}
-      />,
-      open: true,
-    },
-    {
-      key: 'contitems_0N_2',
-      label: <div className='sk-omt-sub-title'>Клименко Игорь Степаныч</div>,
-      children: <OrgModalContactsSection
-      id={453232}
-      />,
-    },
-    {
-      key: 'contitems_0N_3',
-      label: <div className='sk-omt-sub-title'>Суворов Севчик Лютый</div>,
-      children: <OrgModalContactsSection
-      id={45532}
-      />,
-    },
-      {
-      key: 'contitems_0N_4',
-      label: <div className='sk-omt-sub-title'>Клименко Игорь Виталич</div>,
-      children: <OrgModalContactsSection
-      id={45544532}
-      />,
-    },
-    {
-      key: '1contitems_0N_233',
-      label: <div className='sk-omt-sub-title'>Дебонияр Руслан Сугран</div>,
-      children: <OrgModalContactsSection
-      id={456546532}
-      />,
-    },
-  ];
 
   useEffect(() => {
-    let ar = [];
-    if (modalUsersExpanded){
-      for (let i = 0; i < contactItems.length; i++) {
-        const element = contactItems[i];
-        ar.push(element.key);
-      }
-    };
-    setModalUsersOpened(ar);
+    // let ar = [];
+    // if (modalUsersExpanded){
+    //   for (let i = 0; i < contactItems.length; i++) {
+    //     const element = contactItems[i];
+    //     ar.push(element.key);
+    //   }
+    // };
+    // setModalUsersOpened(ar);
   }, [modalUsersExpanded]);
 
 
   const handleExpandAll = (state) => {
+    console.log(state);
     setModalUsersExpanded(state);
-    localStorage.setItem("setModalOrgUsersExpanded", JSON.stringify(state));
+    if (state === 0){
+      setModalUsersOpened([]);
+    } else if (state === 2){
+      console.log(contactItems);
+      console.log(contactItems.map((contact)=> contact.key  ));
+      setModalUsersOpened(contactItems.map((contact)=> contact.key  ));
+      setModalSectionsOpened(prev => 
+        prev.includes('st_contactinfo') ? prev : [...prev, 'st_contactinfo']
+      );
+    };
+    localStorage.setItem("setModalOrgUsersExpanded", state);
   }
 
   const handleChangeUserSelection = (val) => {
+    if (val.length === 0){
+      setModalUsersExpanded(0);
+      localStorage.setItem("setModalOrgUsersExpanded", 0);
+      console.log('LEN 0');
+    } else if (val.length === contactItems.length){
+      console.log('LEN ALLL');
+      setModalUsersExpanded(2);
+      localStorage.setItem("setModalOrgUsersExpanded", 2);
+    } else {
+      console.log('LEN ANYYYYYYY');
+      setModalUsersExpanded(1);
+      localStorage.setItem("setModalOrgUsersExpanded", 1);
+    };
+
     setModalUsersOpened(val);
+    console.log(val);
     // localStorage.setItem("setModalOrgUsersExpanded", JSON.stringify());
   }
 
@@ -171,25 +193,32 @@ const OrgListMainTab = (props) => {
     },
       {
       key: 'st_contacts',
-      label: <div className={'sa-flex-space'}><div>Контактные лица</div>
+      label: <div className={'sa-flex-space'}><div>Контактные лица ({contactItems.length})</div>
       <div className={'sa-flex-space'}>
-        {modalUsersExpanded ? (
-        <Button
-          onClick={(ev)=>{
-            ev.preventDefault();
-            ev.stopPropagation();
-            handleExpandAll(false);
-          }}
-          size={'small'} icon={<ChevronDoubleUpIcon height={'20px'} style={{marginTop: '4px'}} />}>Свернуть всех</Button>
-        ) : (
+
+        {modalSectionsOpened.includes('st_contacts') && (
+          <div>
+          {modalUsersExpanded > 0 ? (
           <Button
-          onClick={(ev)=>{
-            ev.preventDefault();
-            ev.stopPropagation();
-            handleExpandAll(true);
-          }}
-        size={'small'} icon={<ChevronDoubleDownIcon height={'20px'} style={{marginTop: '4px'}} />}>Развернуть всех</Button>
+            onClick={(ev)=>{
+              ev.preventDefault();
+              ev.stopPropagation();
+              handleExpandAll(0);
+            }}
+            size={'small'} icon={<ChevronDoubleUpIcon height={'20px'} style={{marginTop: '4px'}} />}>Свернуть всех</Button>
+          ) : (
+            <Button
+            onClick={(ev)=>{
+              ev.preventDefault();
+              ev.stopPropagation();
+              handleExpandAll(2);
+            }}
+          size={'small'} icon={<ChevronDoubleDownIcon height={'20px'} style={{marginTop: '4px'}} />}>Развернуть всех</Button>
+          )}
+          </div>
         )}
+
+
         </div>
       </div>,
       children: (
@@ -202,18 +231,19 @@ const OrgListMainTab = (props) => {
           /></div>)
     },
         {
-      key: 'st_firmspayers',
-      label: 'Фирмы/плательщики',
-      children: <OrgModalPayersSection
-
+          key: 'st_firmspayers',
+          label: `Фирмы/плательщики  (${baseOrgData.requisites?.length})` ,
+          children: <OrgModalPayersSection
+          data={baseOrgData}
+          selects_data={props.selects_data}
 
       />
     },
-        {
-      key: 'st_dogpost',
-      label: 'Договор поставки',
-      children: <OrgModalSupplyContractSection />
-    },
+    //     {
+    //   key: 'st_dogpost',
+    //   label: 'Договор поставки' ,
+    //   children: <OrgModalSupplyContractSection />
+    // },
   ]
 
 
