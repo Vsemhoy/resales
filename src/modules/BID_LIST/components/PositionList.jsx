@@ -96,18 +96,18 @@ const PositionList = ({ bidId, path }) => {
         let data = {};
         if (file.type === 1) {
             data = {
-                template_id: 1,
+                template_id: file.template_id,
                 id: file.id,
                 bid_id: bidId,
-                type: 1,
+                type: file.type,
                 new: false
             };
         } else {
             data = {
-                "template_id": "path_usd",
+                "template_id": file.template_id,
                 "id": file.id,
                 "bid_id": bidId,
-                "type": "oldFile",
+                "type": file.type,
                 "new": false
             };
         }
