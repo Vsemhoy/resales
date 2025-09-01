@@ -26,7 +26,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder='Нет, есть, оплачен'
                             style={{width: '100%'}}
                             options={props.filter_pay_select}
-                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            onChange={(val) => props.on_change_filter_box('pay_status', val)}
                             allowClear
                     />
                 </div>
@@ -38,7 +38,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder=''
                             style={{width: '100%'}}
                             options={props.filter_admin_accept_select}
-                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            onChange={(val) => props.on_change_filter_box('admin_accept', val)}
                             allowClear
                     />
                 </div>
@@ -50,7 +50,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder=''
                             style={{width: '100%'}}
                             options={props.filter_package_select}
-                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            onChange={(val) => props.on_change_filter_box('package', val)}
                             allowClear
                     />
                 </div>
@@ -61,7 +61,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder=''
                             style={{width: '100%'}}
                             options={props.filter_price_select}
-                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            onChange={(val) => props.on_change_filter_box('price', val)}
                             allowClear
                     />
                 </div>
@@ -72,7 +72,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder=''
                             style={{width: '100%'}}
                             options={props.filter_bid_currency_select}
-                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            onChange={(val) => props.on_change_filter_box('bid_currency', val)}
                             allowClear
                     />
                 </div>
@@ -83,7 +83,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder='Да, нет'
                             style={{width: '100%'}}
                             options={props.filter_nds_select}
-                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            onChange={(val) => props.on_change_filter_box('nds', val)}
                             allowClear
                     />
                 </div>
@@ -94,7 +94,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder=''
                             style={{width: '100%'}}
                             options={props.filter_complete_select}
-                            onChange={(val) => props.on_change_filter_box('type', val)}
+                            onChange={(val) => props.on_change_filter_box('complete', val)}
                             allowClear
                     />
                 </div>
