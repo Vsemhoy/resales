@@ -230,6 +230,16 @@ const BidListTable = (props) => {
                     </div>
                   </div>
                 </div>
+                <div className={'sa-table-box-cell'}>
+                  <div className={'sa-table-head-on'} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    <div className={'sa-pa-3'}>Список</div>
+                  </div>
+                </div>
+                <div className={'sa-table-box-cell'}>
+                  <div className={'sa-table-head-on'} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    <div className={'sa-pa-3'}>Файлы</div>
+                  </div>
+                </div>
               </div>
             </div>
           </Affix>
@@ -241,11 +251,11 @@ const BidListTable = (props) => {
                 is_active={isPreviewOpen && previewItem === bid.id}
                 on_double_click={handlePreviewOpen}
                 key={index}
-                company_color={props.base_companies?.find((item)=>item.id === bid.id_company)?.color}
-                 />
-              ))}
-            </div>
-          </div>
+                company_color={props.base_companies?.find((item) => item.id === bid.id_company)?.color}
+            />
+        ))}
+      </div>
+    </div>
   );
 };
 
