@@ -446,7 +446,7 @@ const OrgListPage = (props) => {
   };
 
   const handleSelectedItemChange = (item_id) => {
-    console.log('item', item_id);
+    // console.log('item', item_id);
     if (item_id){
       setPreviewItem(item_id);
     }
@@ -694,7 +694,7 @@ const OrgListPage = (props) => {
               base_orders={orderBox}
               curator_list={selectCuratorList}
               selected_item={previewItem}
-              on_select_change={handleChangeOnPage}
+              on_select_change={handleSelectedItemChange}
           /></Spin>
 
           {/* {baseOrgs.length > 20 && (
