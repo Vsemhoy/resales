@@ -7,7 +7,7 @@
 }
 
 .sa-filer-opened .sa-table-box-bids {
-    grid-template-columns: 64px 2fr 100px 100px 140px 140px 170px 100px 1fr 64px 64px !important;
+    grid-template-columns: 64px 1fr 100px 100px 140px 140px 170px 100px 1fr 64px 64px !important;
 }
 .sa-filer-opened .sa-table-box-bids > *:nth-child(9) {
     display: none;

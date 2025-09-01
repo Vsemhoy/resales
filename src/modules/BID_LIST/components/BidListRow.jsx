@@ -138,14 +138,14 @@ const BidListRow = (props) => {
           <div>
             <Tooltip
                 placement="leftTop"
-                title={<PositionList bidId={data.id} />}
+                title={<PositionList bidId={data.id} path={'/sales/data/getbidmodels'} />}
                 color="white"
                 overlayInnerStyle={{
                   color: 'black',
                   border: '1px solid #d9d9d9'
                 }}
             >
-              <Tag color={"magenta"}>{data.models_count}</Tag>
+              <Tag color={"purple"}>{data.models_count}</Tag>
             </Tooltip>
           </div>
         </div>
@@ -153,14 +153,20 @@ const BidListRow = (props) => {
           <div>
             <Tooltip
                 placement="leftTop"
-                title={<PositionList bidId={data.id} />}
+                title={<PositionList bidId={data.id} path={'/api/sales/doclist'} />}
                 color="white"
+                style={{
+                  maxWidth: '300px',
+                  overflow: 'hidden',
+                  wordWrap: 'break-word'
+                }}
                 overlayInnerStyle={{
                   color: 'black',
                   border: '1px solid #d9d9d9'
                 }}
+                overlayStyle={{ maxWidth: '400px' }}
             >
-              <Tag color={"magenta"}>{data.models_count}</Tag>
+              <Tag color={"cyan"}>{data.files_count}</Tag>
             </Tooltip>
           </div>
         </div>
