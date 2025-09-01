@@ -65,7 +65,8 @@ const BidListPage = (props) => {
       "protect_status": null,
       "pay_status": null,
       "stage_status": null,
-      "bid_id": null
+      "bid_id": null,
+      "target_company": null,
   });
   const [orderBox, setOrderBox] = useState({});
 
@@ -219,6 +220,7 @@ const BidListPage = (props) => {
         "pay_status": filterBox.pay_status,
         "stage_status": filterBox.stage_status,
         "bid_id": filterBox.bid_id,
+        "target_company": filterBox.target_company,
         "to": 0,
         "page": currentPage,
         "limit": onPage,
@@ -516,15 +518,15 @@ const BidListPage = (props) => {
 
                 </div>
                 <div className={'sa-flex-gap'}>
-                  <Tooltip placement="bottom" title="Я временный куратор">
+                  {/*<Tooltip placement="bottom" title="Я временный куратор">
                     <Button color="default" variant={false ? "solid" : "filled"}
                         // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
                     >Временные</Button>
-                  </Tooltip>
-                  <Tooltip placement="bottom" title="Компании с моим кураторством">
+                  </Tooltip>*/}
+                  <Tooltip placement="bottom" title="Заявки созданные Вами">
                     <Button color="default" variant={false ? "solid" : "filled"}
                         // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
-                    >Мои</Button>
+                    >Мои заявки</Button>
                   </Tooltip>
                 </div>
               </div>
