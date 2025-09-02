@@ -18,6 +18,7 @@ import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import {BID_LIST, FILTERS} from "./mock/mock";
 import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
 import {updateURL} from "../../components/helpers/UriHelpers";
+import dayjs from "dayjs";
 
 
 const BidListPage = (props) => {
@@ -236,18 +237,24 @@ const BidListPage = (props) => {
 
   const fetchBids = async () => {
     if (PRODMODE) {
+      let dates = null;
+      if (filterBox.dates) {
+        dates = [
+          filterBox.dates.startOf('day').valueOf(),
+          filterBox.dates.endOf('day').valueOf()
+        ];
+      }
       const data = {
+        "bid_id": filterBox.bid_id,
         "company_name": filterBox.company_name,
-        "company_id": filterBox.company_id,
-        "object_name": filterBox.object_name,
-        "comment": filterBox.comment,
-        "dates": filterBox.dates,
         "type": filterBox.type,
-        "manager": filterBox.manager,
-        "bill_number": filterBox.bill_number,
         "protect_status": filterBox.protect_status,
         "stage_status": filterBox.stage_status,
-        "bid_id": filterBox.bid_id,
+        "dates": dates,
+        "manager": filterBox.manager,
+        "bill_number": filterBox.bill_number,
+        "comment": filterBox.comment,
+        "object_name": filterBox.object_name,
 
         "target_company": filterBox.target_company,
         "pay_status": filterBox.pay_status,
@@ -263,6 +270,7 @@ const BidListPage = (props) => {
         "limit": onPage,
         "sort_orders": orderBox,
       }
+      console.log(data)
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/sales/data/offerlist', {
           data,
