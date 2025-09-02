@@ -2,6 +2,7 @@ import { Affix, DatePicker, Input, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import BidListRow from './BidListRow';
+import dayjs from "dayjs";
 
 
 const BidListTable = (props) => {
@@ -68,10 +69,8 @@ const BidListTable = (props) => {
         "comment": comment ?? null,
         "object_name": objectName ?? null,
       };
+      console.log(newFilterBox)
       props.on_change_filter_box(newFilterBox);
-        if (props.on_change_filters) {
-          props.on_change_filters(filterBox);
-        }
     }, 700); // ⏱️ 1 секунда задержки
     return () => clearTimeout(timer);
   }, [
@@ -241,14 +240,13 @@ const BidListTable = (props) => {
                       <DatePicker size={'small'}
                                   style={{width: '100%'}}
                                   variant='filled'
-                                  value={dates}
-                                  onChange={(val) => {
-                                    if (val) {
-                                      setDates([val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
-                                    } else {
-                                      setDates(null);
-                                    }
+                                  value={dates ? dayjs.unix(dates) : null}
+                                  onChange={(date, dateString) => {
+                                    console.log(date)
+                                    console.log(dateString)
+                                    setDates(date ? date.unix() : null);
                                   }}
+                                  format="DD.MM.YYYY"
                       />
                     </div>
                   </div>

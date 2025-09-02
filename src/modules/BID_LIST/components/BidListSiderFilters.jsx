@@ -42,17 +42,20 @@ const BidListSiderFilters = (props) => {
     }, [props.filter_box]);
 
     useEffect(() => {
-        const newFilterBox = {
-            "target_company": targetCompany ?? null,
-            "pay_status": payStatus ?? null,
-            "admin_accept": adminAccept ?? null,
-            "package": packageStatus ?? null,
-            "price": priceStatus ?? null,
-            "bid_currency": bidCurrency ?? null,
-            "nds": nds ?? null,
-            "complete": completeStatus ?? null,
-        };
-        props.on_change_filter_box(newFilterBox);
+        const timer = setTimeout((filterBox) => {
+            const newFilterBox = {
+                "target_company": targetCompany ?? null,
+                "pay_status": payStatus ?? null,
+                "admin_accept": adminAccept ?? null,
+                "package": packageStatus ?? null,
+                "price": priceStatus ?? null,
+                "bid_currency": bidCurrency ?? null,
+                "nds": nds ?? null,
+                "complete": completeStatus ?? null,
+            };
+            props.on_change_filter_box(newFilterBox);
+        }, 700); // ⏱️ 1 секунда задержки
+        return () => clearTimeout(timer);
     }, [
         targetCompany, payStatus, adminAccept, packageStatus,
         priceStatus, bidCurrency, nds, completeStatus,
