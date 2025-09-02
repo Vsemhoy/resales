@@ -40,7 +40,7 @@ const OrgListPage = (props) => {
 
   const [total, setTotal] = useState(0);
   const [onPage, setOnPage] = useState(50);
-  const [currrentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [previousPage, setPreviousPage] = useState(1);
 
 
@@ -113,12 +113,12 @@ const OrgListPage = (props) => {
 
    useEffect(() => {
         const timer = setTimeout(() => {
-            updateURL(filterBox, orderBox, currrentPage, onPage);
+            updateURL(filterBox, orderBox, currentPage, onPage);
         }, 200);
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
-  }, [filterBox, orderBox, onPage, currrentPage]);
+  }, [filterBox, orderBox, onPage, currentPage]);
 
 
 
@@ -140,17 +140,17 @@ const OrgListPage = (props) => {
         // const currentIndex = orgs.findIndex(item => item.id === selectedItem);
         // if (currentIndex === -1) return;
 
-        let newIndex = currrentPage;
+        let newIndex = currentPage;
         const maxPage = Math.ceil(total / onPage);
 
-        if (ev.key === 'ArrowRight' && currrentPage < Math.ceil(total / onPage)) {
-          newIndex = currrentPage + 1;
-        } else if (ev.key === 'ArrowLeft' && currrentPage > 1) {
-          newIndex = currrentPage - 1;
+        if (ev.key === 'ArrowRight' && currentPage < Math.ceil(total / onPage)) {
+          newIndex = currentPage + 1;
+        } else if (ev.key === 'ArrowLeft' && currentPage > 1) {
+          newIndex = currentPage - 1;
         }
 
         
-        if (newIndex !== currrentPage) {
+        if (newIndex !== currentPage) {
           setCurrentPage(newIndex);
         }
       }
@@ -160,7 +160,7 @@ const OrgListPage = (props) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onPage, currrentPage, orgList, total]);
+  }, [onPage, currentPage, orgList, total]);
 
 
   useEffect(() => {
@@ -213,15 +213,15 @@ const OrgListPage = (props) => {
 
   useEffect(() => {
     get_orglist();
-  }, [filterBox, orderBox, currrentPage, onPage]);
+  }, [filterBox, orderBox, currentPage, onPage]);
 
 
   /** При смене страницы, если открыт модал, меняем ИД открытой компании */
   useEffect(() => {
     let prevPage = previousPage;
-    if (previewItem !== null && prevPage !== currrentPage){
+    if (previewItem !== null && prevPage !== currentPage){
 
-      if (prevPage > currrentPage){
+      if (prevPage > currentPage){
         // Move page back
         let newId = orgList[orgList.length - 1]?.id;
         if (newId){
@@ -236,7 +236,7 @@ const OrgListPage = (props) => {
         let newId = orgList[0]?.id;
         setPreviewItem(newId);
       }
-      setPreviousPage(currrentPage);
+      setPreviousPage(currentPage);
     }
     console.log('CHANGE PAGE');
   }, [orgList]);
@@ -295,7 +295,7 @@ const OrgListPage = (props) => {
                         filterBox.updated_before ? parseInt(filterBox.updated_before) * 1000 : null,
                         filterBox.updated_until ? parseInt(filterBox.updated_until) * 1000 : null,
                     ],
-                    "page": currrentPage,
+                    "page": currentPage,
                     "limit": onPage,
                     "inn": filterBox.inn
 
@@ -306,7 +306,7 @@ const OrgListPage = (props) => {
                 setOrgList(response.data.org_list);
                 setTotal(response.data.total_count);
 
-                let max = (onPage * currrentPage) - (onPage - 1);
+                let max = (onPage * currentPage) - (onPage - 1);
                 if (response.data.total_count < max)
                 {
                   setCurrentPage(1);
@@ -627,7 +627,7 @@ const OrgListPage = (props) => {
               size={openedFilters ? 'small' : 'middle'}
               defaultPageSize={onPage}
               defaultCurrent={1}
-              current={currrentPage}
+              current={currentPage}
               total={total}
               onChange={(ev, val)=>{
                 setCurrentPage(ev); setOnPage(val)}}

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-const OrgProjectModalRow = (props) => {
+
+
+const OrgProjectsModalRow = (props) => {
 
   const [baseData, setBaseData] = useState(null);
   const [orgId, setOrgId] = useState(null);
@@ -52,4 +54,4 @@ const OrgProjectModalRow = (props) => {
   );
 };
 
-export default OrgProjectModalRow;
+export default OrgProjectsModalRow;

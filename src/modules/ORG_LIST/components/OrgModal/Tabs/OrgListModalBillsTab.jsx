@@ -12,7 +12,7 @@ import { MODAL_BILLS_LIST } from '../../mock/MODALBILLSTABMOCK';
 
 const OrgListModalBillsTab = (props) => {
   const [baseBids, setBaseBids] = useState([]);
-  const [currrentPage, setCurrrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [onPage, setOnPage] = useState(30);
   const [showLoader, setShowLoader] = useState(false);
   const [total, setTotal] = useState(1);
@@ -21,13 +21,16 @@ const OrgListModalBillsTab = (props) => {
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const [dataList, setDataList] = useState([]);
+
   useEffect(() => {
     if (props.data?.id){
       if (PRODMODE){
-        setLoading(true);
-        setOrgId(props.data.id);
-        get_org_data_action(props.data.id);
-
+        if (props.data?.id !== orgId){
+          setLoading(true);
+          setOrgId(props.data.id);
+          get_org_data_action(props.data.id);
+        }
       } else {
         setBaseOrgData(MODAL_BILLS_LIST);
       }
@@ -39,6 +42,19 @@ const OrgListModalBillsTab = (props) => {
   }, [props.data]);
 
 
+
+
+    useEffect(() => {
+      if (baseOrgData?.bids !== null && baseOrgData?.bids?.length > 0){
+        setDataList(baseOrgData.bids);
+      } else {
+        setDataList([]);
+      }
+      setLoading(false);
+    }, [baseOrgData]);
+
+
+
   /** ----------------------- FETCHES -------------------- */
 
   const get_org_data_action = async (id) => {
@@ -47,7 +63,7 @@ const OrgListModalBillsTab = (props) => {
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
             data: {
-              page: currrentPage,
+              page: currentPage,
               limit: onPage,
               type: 2,
             },
@@ -88,7 +104,7 @@ const OrgListModalBillsTab = (props) => {
           <div>
             <Pagination 
               size={'small'}
-              current={currrentPage}
+              current={currentPage}
               pageSizeOptions={[10, 30, 50, 100]}
               defaultPageSize={onPage}
               locale={ANTD_PAGINATION_LOCALE}
@@ -135,7 +151,7 @@ const OrgListModalBillsTab = (props) => {
                   </div>
               </div>
           </div>
-          {baseBids.map((item)=>(
+          {dataList.map((item)=>(
             <OrgBillModalRow
               org_id={orgId}
               data={item}
