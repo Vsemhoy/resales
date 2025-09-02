@@ -10,15 +10,74 @@ const BidListTable = (props) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
 
-  const [selectedManager, setSelectedManager] = useState(null);
+  const [bidId, setBidId] = useState(null);
+  const [companyName, setCompanyName] = useState(null);
+  const [type, setType] = useState(null);
+  const [protectStatus, setProtectStatus] = useState(null);
+  const [stageStatus, setStageStatus] = useState(null);
+  const [dates, setDates] = useState(null);
+  const [manager, setManager] = useState(null);
+  const [billNumber, setBillNumber] = useState(null);
+  const [comment, setComment] = useState(null);
+  const [objectName, setObjectName] = useState(null);
+
+  useEffect(() => {
+    if (props.filter_box.bid_id !== bidId) {
+      setBidId(props.filter_box.bid_id);
+    }
+    if (props.filter_box.company_name !== companyName) {
+      setCompanyName(props.filter_box.company_name);
+    }
+    if (props.filter_box.type !== type) {
+      setType(props.filter_box.type);
+    }
+    if (props.filter_box.protect_status !== protectStatus) {
+      setProtectStatus(props.filter_box.protect_status);
+    }
+    if (props.filter_box.stage_status !== stageStatus) {
+      setStageStatus(props.filter_box.stage_status);
+    }
+    if (props.filter_box.dates !== dates) {
+      setDates(props.filter_box.dates);
+    }
+    if (props.filter_box.manager !== manager) {
+      setManager(props.filter_box.manager);
+    }
+    if (props.filter_box.bill_number !== billNumber) {
+      setBillNumber(props.filter_box.bill_number);
+    }
+    if (props.filter_box.comment !== comment) {
+      setComment(props.filter_box.comment);
+    }
+    if (props.filter_box.object_name !== objectName) {
+      setObjectName(props.filter_box.object_name);
+    }
+  }, [props.filter_box]);
+
+  useEffect(() => {
+    const newFilterBox = {
+      "bid_id": bidId ?? null,
+      "company_name": companyName ?? null,
+      "type": type ?? null,
+      "protect_status": protectStatus ?? null,
+      "stage_status": stageStatus ?? null,
+      "dates": dates ?? null,
+      "manager": manager ?? null,
+      "bill_number": billNumber ?? null,
+      "comment": comment ?? null,
+      "object_name": objectName ?? null,
+    };
+    props.on_change_filter_box(newFilterBox);
+  }, [
+    bidId, companyName, type, protectStatus, stageStatus,
+    dates, manager, billNumber, comment, objectName
+  ]);
 
   useEffect(() => {
     if (props.my_bids && props.user_info) {
-      setSelectedManager(props.user_info.id);
-      props.on_change_filter_box('manager', props.user_info.id);
-    } else if (!props.my_bids && props.user_info && +selectedManager === +props.user_info.id) {
-      setSelectedManager(null);
-      props.on_change_filter_box('manager', null);
+      setManager(props.user_info.id);
+    } else if (!props.my_bids && props.user_info && +manager === +props.user_info.id) {
+      setManager(null);
     }
   }, [props.my_bids]);
 
@@ -80,7 +139,8 @@ const BidListTable = (props) => {
                              size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('bid_id', val.target.value)}
+                             value={bidId}
+                             onChange={(val) => setBidId(val.target.value)}
                       />
                     </div>
                   </div>
@@ -97,7 +157,8 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('company_name', val.target.value)}
+                             value={companyName}
+                             onChange={(val) => setCompanyName(val.target.value)}
                       />
                     </div>
                   </div>
@@ -114,8 +175,9 @@ const BidListTable = (props) => {
                       <Select size={'small'}
                               style={{width: '100%'}}
                               variant='filled'
+                              value={type}
                               options={props.filter_bid_types}
-                              onChange={(val) => props.on_change_filter_box('type', val)}
+                              onChange={(val) => setType(val)}
                               allowClear
                       />
                     </div>
@@ -133,8 +195,9 @@ const BidListTable = (props) => {
                       <Select size={'small'}
                               style={{width: '100%'}}
                               variant='filled'
+                              value={protectStatus}
                               options={props.filter_protection_projects}
-                              onChange={(val) => props.on_change_filter_box('protect_status', val)}
+                              onChange={(val) => setProtectStatus(val)}
                               allowClear
                       />
                     </div>
@@ -152,8 +215,9 @@ const BidListTable = (props) => {
                       <Select size={'small'}
                               style={{width: '100%'}}
                               variant='filled'
+                              value={stageStatus}
                               options={props.filter_steps}
-                              onChange={(val) => props.on_change_filter_box('stage_status', val)}
+                              onChange={(val) => setStageStatus(val)}
                               allowClear
                       />
                     </div>
@@ -171,11 +235,12 @@ const BidListTable = (props) => {
                       <DatePicker size={'small'}
                                   style={{width: '100%'}}
                                   variant='filled'
+                                  value={dates}
                                   onChange={(val) => {
                                     if (val) {
-                                      props.on_change_filter_box('dates', [val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
+                                      setDates([val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
                                     } else {
-                                      props.on_change_filter_box('dates', null);
+                                      setDates(null);
                                     }
                                   }}
                       />
@@ -194,12 +259,9 @@ const BidListTable = (props) => {
                       <Select size={'small'}
                               style={{width: '100%'}}
                               variant='filled'
-                              value={selectedManager}
+                              value={manager}
                               options={props.filter_managers}
-                              onChange={(val) => {
-                                setSelectedManager(val);
-                                props.on_change_filter_box('manager', val);
-                              }}
+                              onChange={(val) => setManager(val)}
                               allowClear
                               showSearch
                               optionFilterProp="label"
@@ -217,7 +279,8 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('bill_number', val.target.value)}
+                             value={billNumber}
+                             onChange={(val) => setBillNumber(val.target.value)}
                       />
                     </div>
                   </div>
@@ -229,7 +292,8 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('comment', val.target.value)}
+                             value={comment}
+                             onChange={(val) => setComment(val.target.value)}
                       />
                     </div>
                   </div>
@@ -241,7 +305,8 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('object_name', val.target.value)}
+                             value={objectName}
+                             onChange={(val) => setObjectName(val.target.value)}
                       />
                     </div>
                   </div>
