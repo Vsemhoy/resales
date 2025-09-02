@@ -17,6 +17,7 @@ import BidListSiderFilters from './components/BidListSiderFilters';
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import {BID_LIST, FILTERS} from "./mock/mock";
 import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
+import {updateURL} from "../../components/helpers/UriHelpers";
 
 
 const BidListPage = (props) => {
@@ -126,10 +127,14 @@ const BidListPage = (props) => {
 
   useEffect(() => {
     if (isMounted) {
-      setIsLoading(true);
-      fetchBids().then(() => {
-        setIsLoading(false);
-      });
+      const timer = setTimeout(() => {
+        setIsLoading(true);
+        fetchBids().then(() => {
+          setIsLoading(false);
+        });
+      }, 200);
+
+      return () => clearTimeout(timer);
     }
   }, [currentPage, onPage, filterBox, orderBox]);
 
@@ -559,21 +564,21 @@ const BidListPage = (props) => {
             collapsed={!isOpenedFilters}
             collapsedWidth={0}
             width={'300px'}
-            style={{backgroundColor: '#ffffff'}}
+            style={{backgroundColor: '#ffffff',  overflow: 'hidden'}}
         >
           <div className={'sa-sider'}>
             {isOpenedFilters && (
                 <BidListSiderFilters
-                    filter_pay_select={prepareSelectOptions(filterPaySelect)}
-                    filter_admin_accept_select={prepareSelectOptions(filterAdminAcceptSelect)}
-                    filter_package_select={prepareSelectOptions(filterPackageSelect)}
-                    filter_price_select={prepareSelectOptions(filterPriceSelect)}
-                    filter_bid_currency_select={prepareSelectOptions(filterBidCurrencySelect)}
-                    filter_nds_select={prepareSelectOptions(filterNdsSelect)}
-                    filter_complete_select={prepareSelectOptions(filterCompleteSelect)}
-                    filter_companies_select={prepareSelectOptions(filterCompaniesSelect)}
-                    filter_box={filterBox}
-                    on_change_filter_box={handleUpdateFilterBoxSider}
+                  filter_pay_select={prepareSelectOptions(filterPaySelect)}
+                  filter_admin_accept_select={prepareSelectOptions(filterAdminAcceptSelect)}
+                  filter_package_select={prepareSelectOptions(filterPackageSelect)}
+                  filter_price_select={prepareSelectOptions(filterPriceSelect)}
+                  filter_bid_currency_select={prepareSelectOptions(filterBidCurrencySelect)}
+                  filter_nds_select={prepareSelectOptions(filterNdsSelect)}
+                  filter_complete_select={prepareSelectOptions(filterCompleteSelect)}
+                  filter_companies_select={prepareSelectOptions(filterCompaniesSelect)}
+                  filter_box={filterBox}
+                  on_change_filter_box={handleUpdateFilterBoxSider}
                 />
             )}
           </div>
