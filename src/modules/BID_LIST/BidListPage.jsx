@@ -238,7 +238,7 @@ const BidListPage = (props) => {
         "price": filterBox.price,
         "bid_currency": filterBox.bid_currency,
         "nds": filterBox.nds,
-        "complete": filterBox.complete,
+        "complete_status": filterBox.complete,
 
         "to": 0,
         "page": currentPage,
