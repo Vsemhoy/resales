@@ -56,29 +56,28 @@ const BidListPage = (props) => {
 
   const [myBids, setMyBids] = useState(false);
 
-  const [filterBox, setFilterBox] = useState({
-      "company_name": null,
-      "company_id": null,
-      "object_name": null,
-      "comment": null,
-      "dates": null,
-      "type": null,
-      "manager": null,
-      "bill_number": null,
-      "protect_status": null,
-      "stage_status": null,
-      "bid_id": null,
+  const initialFilterBox = {
+    "bid_id": null,
+    "company_name": null,
+    "type": null,
+    "protect_status": null,
+    "stage_status": null,
+    "dates": null,
+    "manager": null,
+    "bill_number": null,
+    "comment": null,
+    "object_name": null,
 
-      "target_company": null,
-      "pay_status": null,
-      "admin_accept": null,
-      "package": null,
-      "price": null,
-      "bid_currency": null,
-      "nds": null,
-      "complete": null,
-
-  });
+    "target_company": null,
+    "pay_status": null,
+    "admin_accept": null,
+    "package": null,
+    "price": null,
+    "bid_currency": null,
+    "nds": null,
+    "complete": null,
+  };
+  const [filterBox, setFilterBox] = useState(initialFilterBox);
   const [orderBox, setOrderBox] = useState({});
 
   const [sortOrders, setSortOrders] = useState([]);
@@ -347,14 +346,71 @@ const BidListPage = (props) => {
     }
   };
 
-  const handleUpdateFilterBox = (key, value) => {
-    if (!filterBox) return 0;
-    const fb = JSON.parse(JSON.stringify(filterBox))
-    fb[key] = value;
-    setFilterBox(fb);
-    console.log(fb);
-  };
+  const handleUpdateFilterBoxHeader = (newFilterBox) => {
+    const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
 
+    if (filterBox.bid_id !== newFilterBox.bid_id) {
+      filterBoxUpd.bid_id = newFilterBox.bid_id;
+    }
+    if (filterBox.company_name !== newFilterBox.company_name) {
+      filterBoxUpd.company_name = newFilterBox.company_name;
+    }
+    if (filterBox.type !== newFilterBox.type) {
+      filterBoxUpd.type = newFilterBox.type;
+    }
+    if (filterBox.protect_status !== newFilterBox.protect_status) {
+      filterBoxUpd.protect_status = newFilterBox.protect_status;
+    }
+    if (filterBox.stage_status !== newFilterBox.stage_status) {
+      filterBoxUpd.stage_status = newFilterBox.stage_status;
+    }
+    if (filterBox.dates !== newFilterBox.dates) {
+      filterBoxUpd.dates = newFilterBox.dates;
+    }
+    if (filterBox.manager !== newFilterBox.manager) {
+      filterBoxUpd.manager = newFilterBox.manager;
+    }
+    if (filterBox.bill_number !== newFilterBox.bill_number) {
+      filterBoxUpd.bill_number = newFilterBox.bill_number;
+    }
+    if (filterBox.comment !== newFilterBox.comment) {
+      filterBoxUpd.comment = newFilterBox.comment;
+    }
+    if (filterBox.object_name !== newFilterBox.object_name) {
+      filterBoxUpd.object_name = newFilterBox.object_name;
+    }
+
+    setFilterBox(filterBoxUpd);
+  };
+  const handleUpdateFilterBoxSider = (newFilterBox) => {
+    const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
+
+    if (filterBox.target_company !== newFilterBox.target_company) {
+      filterBoxUpd.target_company = newFilterBox.target_company;
+    }
+    if (filterBox.pay_status !== newFilterBox.pay_status) {
+      filterBoxUpd.pay_status = newFilterBox.pay_status;
+    }
+    if (filterBox.admin_accept !== newFilterBox.admin_accept) {
+      filterBoxUpd.admin_accept = newFilterBox.admin_accept;
+    }
+    if (filterBox.package !== newFilterBox.package) {
+      filterBoxUpd.package = newFilterBox.package;
+    }
+    if (filterBox.price !== newFilterBox.price) {
+      filterBoxUpd.price = newFilterBox.price;
+    }
+    if (filterBox.bid_currency !== newFilterBox.bid_currency) {
+      filterBoxUpd.bid_currency = newFilterBox.bid_currency;
+    }
+    if (filterBox.nds !== newFilterBox.nds) {
+      filterBoxUpd.nds = newFilterBox.nds;
+    }
+    if (filterBox.complete !== newFilterBox.complete) {
+      filterBoxUpd.complete = newFilterBox.complete;
+    }
+    setFilterBox(filterBoxUpd);
+  };
   const makeFilterMenu = () => {
     let clearItems = [];
     let hasFilter = false;
@@ -394,7 +450,7 @@ const BidListPage = (props) => {
       })
     }
     setFilterSortClearMenu(clearItems);
-  }
+  };
 
   const handleClearAllFilterBox = ()=> {
     setFilterBox({});
@@ -405,7 +461,7 @@ const BidListPage = (props) => {
   };
 
   const handleClearAllBoxes = ()=> {
-    setFilterBox({});
+    setFilterBox(initialFilterBox);
     setOrderBox({});
   };
 
@@ -516,7 +572,8 @@ const BidListPage = (props) => {
                     filter_nds_select={prepareSelectOptions(filterNdsSelect)}
                     filter_complete_select={prepareSelectOptions(filterCompleteSelect)}
                     filter_companies_select={prepareSelectOptions(filterCompaniesSelect)}
-                    on_change_filter_box={handleUpdateFilterBox}
+                    filter_box={filterBox}
+                    on_change_filter_box={handleUpdateFilterBoxSider}
                 />
             )}
           </div>
@@ -579,7 +636,8 @@ const BidListPage = (props) => {
                   filter_managers={prepareSelectOptions(filterManagersSelect)}
                   user_info={userInfo}
                   my_bids={myBids}
-                  on_change_filter_box={handleUpdateFilterBox}
+                  filter_box={filterBox}
+                  on_change_filter_box={handleUpdateFilterBoxHeader}
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
                   base_companies={baseCompanies}
