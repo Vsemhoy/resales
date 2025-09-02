@@ -194,7 +194,7 @@ const BidListPage = (props) => {
           setFilterBidCurrencySelect(filters.bid_currency_select);
           setFilterNdsSelect(filters.nds_select);
           setFilterCompleteSelect(filters.complete_select);
-          setFilterManagersSelect(filters.managers_select);
+          setFilterManagersSelect(filters.managers);
           setFilterCompaniesSelect(filters.companies);
         }
       } catch (e) {
@@ -238,7 +238,7 @@ const BidListPage = (props) => {
         "price": filterBox.price,
         "bid_currency": filterBox.bid_currency,
         "nds": filterBox.nds,
-        "complete": filterBox.complete,
+        "complete_status": filterBox.complete,
 
         "to": 0,
         "page": currentPage,
