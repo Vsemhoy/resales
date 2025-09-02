@@ -6,6 +6,8 @@ import { OM_ORG_BIDS } from '../../mock/ORGLISTMOCK';
 import { NavLink } from 'react-router-dom';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 import OrgBillModalRow from './TabComponents/RowTemplates/OrgBillModalRow';
+import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
+import { MODAL_BILLS_LIST } from '../../mock/MODALBILLSTABMOCK';
 
 
 const OrgListModalBillsTab = (props) => {
@@ -21,9 +23,14 @@ const OrgListModalBillsTab = (props) => {
 
   useEffect(() => {
     if (props.data?.id){
-      setLoading(true);
-      setOrgId(props.data.id);
-      get_org_data_action(props.data.id);
+      if (PRODMODE){
+        setLoading(true);
+        setOrgId(props.data.id);
+        get_org_data_action(props.data.id);
+
+      } else {
+        setBaseOrgData(MODAL_BILLS_LIST);
+      }
 
     } else {
       setOrgId(null);
@@ -39,7 +46,10 @@ const OrgListModalBillsTab = (props) => {
   
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
-            data: {},
+            data: {
+              page: currrentPage,
+              limit: onPage
+            },
             _token: CSRF_TOKEN
           });
           console.log('response', response);
@@ -73,10 +83,20 @@ const OrgListModalBillsTab = (props) => {
   return (
     <Spin spinning={loading}>
     <div className={'sa-orgtab-container'}>
-        <div className={'sa-pa-6'}>
-          <Pagination size={'small'}
-
-          />
+        <div className={'sa-pa-6 sa-flex-space'}>
+          <div>
+            <Pagination 
+              size={'small'}
+              current={currrentPage}
+              pageSizeOptions={[10, 30, 50, 100]}
+              defaultPageSize={onPage}
+              locale={ANTD_PAGINATION_LOCALE}
+              showQuickJumper
+            />
+          </div>
+          <div>
+            {/* Здесь будут фильтры */}
+          </div>
         </div>
 
           <Spin spinning={showLoader} delay={500}>
@@ -114,9 +134,10 @@ const OrgListModalBillsTab = (props) => {
                   </div>
               </div>
           </div>
-          {baseBids.map((bid)=>(
-            <OrgBillModalRow 
-              data={bid}
+          {baseBids.map((item)=>(
+            <OrgBillModalRow
+              org_id={orgId}
+              data={item}
             />
           ))}
         </div>

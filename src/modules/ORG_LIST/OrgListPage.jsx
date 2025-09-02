@@ -122,9 +122,9 @@ const OrgListPage = (props) => {
 
 
 
-  useEffect(() => {
-    console.log("baseFiltersData",baseFiltersData);
-  }, [baseFiltersData]);
+  // useEffect(() => {
+  //   console.log("baseFiltersData",baseFiltersData);
+  // }, [baseFiltersData]);
 
 
   /** Перелистывание страниц стрелками + CTRL */
@@ -238,6 +238,7 @@ const OrgListPage = (props) => {
       }
       setPreviousPage(currrentPage);
     }
+    console.log('CHANGE PAGE');
   }, [orgList]);
 
 
@@ -370,12 +371,8 @@ const OrgListPage = (props) => {
   }
 
 
-  const handleRowDblClick = (id) => {
-
-  }
-
   const handlePreviewOpen = (item, state) => {
-    console.log('HEllo', item);
+    console.log('HAPREOPENEJREK', item);
     setShowParam(item);
     setPreviewItem(item);
     setIsPreviewOpen(true);
@@ -391,11 +388,11 @@ const OrgListPage = (props) => {
       }
   };
 
-  useEffect(() => {
-    if (!isPreviewOpen){
-      setShowParam(null);
-    }
-  }, [isPreviewOpen]);
+  // useEffect(() => {
+  //   if (!isPreviewOpen){
+  //     setShowParam(null);
+  //   }
+  // }, [isPreviewOpen]);
 
 
   /**
@@ -447,7 +444,7 @@ const OrgListPage = (props) => {
 
   const handleSelectedItemChange = (item_id) => {
     // console.log('item', item_id);
-    if (item_id){
+    if (item_id !== previewItem){
       setPreviewItem(item_id);
     }
   }
@@ -723,6 +720,7 @@ const OrgListPage = (props) => {
           <OrgListPreviewModal
             is_open={isPreviewOpen}
             data={{id: previewItem, name: orgList?.find((item) => item.id === previewItem)?.name}}
+            // name={orgList?.find((item) => item.id === previewItem)?.name}
             on_close={()=>{
               setIsPreviewOpen(false);
               setPreviewItem(null);

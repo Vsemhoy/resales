@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const OrgBillModalRow = (props) => {
+const OrgCallsModalRow = (props) => {
 
   const [baseData, setBaseData] = useState(null);
   const [orgId, setOrgId] = useState(null);
@@ -52,4 +52,4 @@ const OrgBillModalRow = (props) => {
   );
 };
 
-export default OrgBillModalRow;
+export default OrgCallsModalRow;

@@ -70,41 +70,46 @@ const OrgListPreviewModal = (props) => {
   // const [notesOrgData,    setNotesOrgData  ] = useState(null);
   // const [mainHistoryData, setHistoryOrgData] = useState(null);
 
+  // if(PRODMODE){
+
+  // }
 
   useEffect(() => {
     if (props.data?.id){
-      // setMainOrgData(null); 
-      // setBillsOrgData(null);
-      // setOffersOrgData(null);
-      // setCallsOrgData(null);
-      // setNotesOrgData(null);
-      // setHistoryOrgData(null);
-      if(PRODMODE){
 
-      }
-      // get_org_data_action(props.data?.id);
       setOrgId(props.data?.id);
       setOrgName(props.data?.name);
 
-      // console.log(props.data);
     };
   }, [props.data]);
+
+
+//   useEffect(() => {
+//   if (props.data?.id !== orgId) {
+//     const timer = setTimeout(() => {
+//       setOrgId(props.data.id);
+//       setOrgName(props.data.name);
+//     }, 1500); // задержка 100 мс
+
+//     return () => clearTimeout(timer); // очистка таймера при обновлении эффекта
+//   }
+// }, [props.data]);
 
 
   useEffect(() => {
     setSelectsData(props.selects_data);
   }, [props.selects_data]);
 
-      useEffect(() => {
-        // эффект
-        console.log(props.selects_data);
-      }, [props.selects_data]);
+  //     useEffect(() => {
+  //       // эффект
+  //       console.log(props.selects_data);
+  // }, [props.selects_data]);
 
 
-    useEffect(() => {
-      setOpen(props.is_open);
-
-      if (props.is_open){
+      
+      
+  useEffect(() => {
+      if (props.is_open !== open){
         let t = searchParams.get('tab');
         if (t && ['m','b','o', 'p','c','n','h'].includes(t)) {
           setActiveTab(t);
@@ -114,6 +119,7 @@ const OrgListPreviewModal = (props) => {
           setActiveTab('m');
         }
       }
+      setOpen(props.is_open);
 
     }, [props.is_open]);
 
@@ -494,6 +500,9 @@ const menuItems = [
                 />
               )}
               
+              <div class={'sa-org-modal-after-filler'}>
+
+              </div>
              
             </div>
         </Modal>

@@ -154,9 +154,27 @@ background-color: #dae9fb;
     text-align: center;
 }
 
-.sa-tollic-group {
+.sa-tollic-group, .sa-tolreq-group {
     /* border:#ffffff 2px solid; */
     padding: 3px;
-    border-bottom: 1px solid rgb(204, 204, 204);
+    border-bottom: 1px solid rgb(148 180 208);
     /* box-shadow: 1px 3px 6px black; */
+}
+
+.sa-org-modal-after-filler {
+    background-color: #ececec;
+    border-top: 1px solid white;
+    border-bottom: 1px solid rgb(175, 175, 175);
+    min-height: 100px;
+}
+.sa-org-modal-body {
+    display: grid;
+    grid-template-rows: max-content max-content auto;
+}
+.sa-org-modal-body .ant-collapse-item:hover {
+    background-color: #2c6ea711;
+}
+
+.ant-collapse-content-box, .ant-collapse-item {
+    border-radius: 0px !important;
 }

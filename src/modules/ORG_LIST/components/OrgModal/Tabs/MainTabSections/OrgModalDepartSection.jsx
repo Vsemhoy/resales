@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import OrgModalRow from './OrgModalRow';
 import { ORG_DEF_DATA } from '../../../mock/ORGDEFDATA';
-import { FullNameWithOccupy, ShortName } from '../../../../../../components/helpers/TextHelpers';
+import { FullNameWithOccupy, ShortName, TextWithLineBreaks } from '../../../../../../components/helpers/TextHelpers';
 import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 
@@ -53,11 +53,15 @@ const OrgModalDepartSection = (props) => {
             datas={[orgData.comment]}
         />
 
-        <OrgModalRow
-            key={'rowfla00226'}
-            titles={['Списки', 'Комментарий']}
-            datas={['Тестовая карточка организации','fklajdskl']}
-        />
+        {orgData.list && (
+
+            <OrgModalRow
+                key={'rowfla00226'}
+                titles={['Списки', 'Комментарий']}
+                datas={[orgData.list?.typelist?.name, <TextWithLineBreaks text={orgData.list.comment} /> ]}
+                
+            />
+        )}
 
         {orgData.active_licenses && orgData.active_licenses.length > 0 && (
             <>
