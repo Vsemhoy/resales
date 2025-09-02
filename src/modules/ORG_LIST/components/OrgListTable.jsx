@@ -155,12 +155,6 @@ const OrgListTable = (props) => {
         }
     }
 
-    // useEffect(() => {
-    //   console.log('sortOrders', sortOrders)
-    //   if (props.on_set_sort_orders){
-    //     props.on_set_sort_orders(sortOrders);
-    //   }
-    // }, [sortOrders]);
 
 
     /** Перемещение по списку компаний вверх-вних стрелками + CTRL */

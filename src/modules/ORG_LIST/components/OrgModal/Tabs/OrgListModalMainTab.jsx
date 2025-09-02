@@ -51,22 +51,24 @@ const OrgListMainTab = (props) => {
 
   useEffect(() => {
     if (props.data?.id){
-      setLoading(true);
-      setOrgId(props.data.id);
-      console.log('CALL TO RELOAD', props.data.id);
-      if (PRODMODE){
-        get_org_data_action(props.data.id);
-      } else {
-        setBaseOrgData(ORGLIST_MODAL_MOCK_MAINTAB);
-        setLoading(false);
+      if (props.data?.id !== orgId){
+
+        setLoading(true);
+        setOrgId(props.data.id);
+        console.log('CALL TO RELOAD', props.data.id);
+        if (PRODMODE){
+          get_org_data_action(props.data.id);
+        } else {
+          setBaseOrgData(ORGLIST_MODAL_MOCK_MAINTAB);
+          setLoading(false);
+        }
       }
 
     } else {
       setOrgId(null);
       setBaseOrgData(null);
     }
-    console.log(props.data);
-    console.log(ORGLIST_MODAL_MOCK_MAINTAB);
+
   }, [props.data]);
 
 
@@ -300,7 +302,21 @@ const OrgListMainTab = (props) => {
     localStorage.setItem("modalOrgSectionsOpened", JSON.stringify(keys));
     // localStorage обновится в useEffect
   };
+  
 
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
 
   return (

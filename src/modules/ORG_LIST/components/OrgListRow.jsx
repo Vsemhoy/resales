@@ -55,9 +55,11 @@ const menuItems = [
 
 
   useEffect(() => {
-    setActive(props.is_active);
-    console.log('props.is_active', props.is_active);
+    if (props.is_active !== active){
+      setActive(props.is_active);
+    }
   }, [props.is_active]);
+
 
   const handleDoubleClick = () => {
     if (props.on_double_click){
