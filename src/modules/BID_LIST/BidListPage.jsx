@@ -54,6 +54,8 @@ const BidListPage = (props) => {
 
   const [bids, setBids] = useState([]);
 
+  const [myBids, setMyBids] = useState(false);
+
   const [filterBox, setFilterBox] = useState({
       "company_name": null,
       "company_id": null,
@@ -81,6 +83,7 @@ const BidListPage = (props) => {
 
   const [sortOrders, setSortOrders] = useState([]);
 
+  const [userInfo, setUserInfo] = useState(null);
   const [activeRole, setActiveRole] = useState(0);
   const [roles, setRoles] = useState([
     {
@@ -145,6 +148,7 @@ const BidListPage = (props) => {
       setIsOneRole(found.length === 1);
     }
     if (userdata !== null && userdata.user && userdata.user.sales_role) {
+      setUserInfo(userdata.user);
       setActiveRole(userdata.user.sales_role);
     }
   }, [userdata]);
@@ -168,6 +172,16 @@ const BidListPage = (props) => {
   useEffect(() => {
     makeFilterMenu();
   }, [filterBox, orderBox]);
+
+  useEffect(() => {
+    if (filterBox.manager && +filterBox.manager === +userInfo.id) {
+      setMyBids(true);
+    } else {
+      setTimeout(() => {
+        setMyBids(false);
+      }, 500);
+    }
+  }, [filterBox]);
 
   const fetchInfo = async () => {
     setIsLoading(true);
@@ -543,8 +557,8 @@ const BidListPage = (props) => {
                     >Временные</Button>
                   </Tooltip>*/}
                   <Tooltip placement="bottom" title="Заявки созданные Вами">
-                    <Button color="default" variant={false ? "solid" : "filled"}
-                        // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
+                    <Button color="default" variant={myBids ? "solid" : "filled"}
+                            onClick={()=>{setMyBids(!myBids)}}
                     >Мои заявки</Button>
                   </Tooltip>
                 </div>
@@ -563,6 +577,8 @@ const BidListPage = (props) => {
                   filter_protection_projects={prepareSelectOptions(filterProtectionProject)}
                   filter_bid_types={prepareSelectOptions(filterBidType)}
                   filter_managers={prepareSelectOptions(filterManagersSelect)}
+                  user_info={userInfo}
+                  my_bids={myBids}
                   on_change_filter_box={handleUpdateFilterBox}
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
