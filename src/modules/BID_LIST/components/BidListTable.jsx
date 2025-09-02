@@ -10,51 +10,56 @@ const BidListTable = (props) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
 
+  const [selectedManager, setSelectedManager] = useState(null);
 
-
-
-    const handleRowDblClick = (id) => {
-
+  useEffect(() => {
+    if (props.my_bids && props.user_info) {
+      setSelectedManager(props.user_info.id);
+      props.on_change_filter_box('manager', props.user_info.id);
+    } else if (!props.my_bids && props.user_info && +selectedManager === +props.user_info.id) {
+      setSelectedManager(null);
+      props.on_change_filter_box('manager', null);
     }
+  }, [props.my_bids]);
 
-    const handlePreviewOpen = (item, state) => {
-        console.log('Hello');
-        // setPreviewItem(item);
-        // setIsPreviewOpen(true);
-        if (props.on_preview_open){
-            props.on_preview_open(item, state);
-        }
+  useEffect(() => {
+    console.log('sortOrders', sortOrders)
+    if (props.on_set_sort_orders){
+      props.on_set_sort_orders(sortOrders);
     }
+  }, [sortOrders]);
 
-    /**
-     * Обработчик сортировки колонок в таблице - триггер: клик на TableHeadNameWithSort
-     * @param {name} key 
-     * @param {int} order 
-     */
-    const handleActivateSorter = (key, order) => {
-        let newSorts = [];
-        for (let i = 0; i < sortOrders.length; i++) {
-            const element = sortOrders[i];
-            if (element.order !== 0){
-                if (element.key !== key){
-                    newSorts.push(element);
-                }
-            }
-        };
-        if (order === 0){
-            
-        } else {
-            newSorts.push({key: key, order: order});
-        }
-        setSortOrders(newSorts);
-    }
-
-    useEffect(() => {
-      console.log('sortOrders', sortOrders)
-      if (props.on_set_sort_orders){
-        props.on_set_sort_orders(sortOrders);
+  const handlePreviewOpen = (item, state) => {
+      console.log('Hello');
+      // setPreviewItem(item);
+      // setIsPreviewOpen(true);
+      if (props.on_preview_open){
+          props.on_preview_open(item, state);
       }
-    }, [sortOrders]);
+  }
+
+  /**
+   * Обработчик сортировки колонок в таблице - триггер: клик на TableHeadNameWithSort
+   * @param {name} key
+   * @param {int} order
+   */
+  const handleActivateSorter = (key, order) => {
+      let newSorts = [];
+      for (let i = 0; i < sortOrders.length; i++) {
+          const element = sortOrders[i];
+          if (element.order !== 0){
+              if (element.key !== key){
+                  newSorts.push(element);
+              }
+          }
+      }
+      if (order === 0){
+
+      } else {
+          newSorts.push({key: key, order: order});
+      }
+      setSortOrders(newSorts);
+  }
 
   return (
     <div className={'sa-table-box'}>
@@ -189,9 +194,18 @@ const BidListTable = (props) => {
                       <Select size={'small'}
                               style={{width: '100%'}}
                               variant='filled'
+                              value={selectedManager}
                               options={props.filter_managers}
-                              onChange={(val) => props.on_change_filter_box('manager', val)}
+                              onChange={(val) => {
+                                setSelectedManager(val);
+                                props.on_change_filter_box('manager', val);
+                              }}
                               allowClear
+                              showSearch
+                              optionFilterProp="label"
+                              filterOption={(input, option) =>
+                                  option.label.toLowerCase().includes(input.toLowerCase())
+                              }
                       />
                     </div>
                   </div>
