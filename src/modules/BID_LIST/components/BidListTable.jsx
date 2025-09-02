@@ -2,6 +2,7 @@ import { Affix, DatePicker, Input, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import BidListRow from './BidListRow';
+import dayjs from "dayjs";
 
 
 const BidListTable = (props) => {
@@ -55,19 +56,23 @@ const BidListTable = (props) => {
   }, [props.filter_box]);
 
   useEffect(() => {
-    const newFilterBox = {
-      "bid_id": bidId ?? null,
-      "company_name": companyName ?? null,
-      "type": type ?? null,
-      "protect_status": protectStatus ?? null,
-      "stage_status": stageStatus ?? null,
-      "dates": dates ?? null,
-      "manager": manager ?? null,
-      "bill_number": billNumber ?? null,
-      "comment": comment ?? null,
-      "object_name": objectName ?? null,
-    };
-    props.on_change_filter_box(newFilterBox);
+    const timer = setTimeout((filterBox) => {
+      const newFilterBox = {
+        "bid_id": bidId ?? null,
+        "company_name": companyName ?? null,
+        "type": type ?? null,
+        "protect_status": protectStatus ?? null,
+        "stage_status": stageStatus ?? null,
+        "dates": dates ?? null,
+        "manager": manager ?? null,
+        "bill_number": billNumber ?? null,
+        "comment": comment ?? null,
+        "object_name": objectName ?? null,
+      };
+      console.log(newFilterBox)
+      props.on_change_filter_box(newFilterBox);
+    }, 700); // ⏱️ 1 секунда задержки
+    return () => clearTimeout(timer);
   }, [
     bidId, companyName, type, protectStatus, stageStatus,
     dates, manager, billNumber, comment, objectName
@@ -140,7 +145,7 @@ const BidListTable = (props) => {
                              style={{width: '100%'}}
                              variant='filled'
                              value={bidId}
-                             onChange={(val) => setBidId(val.target.value)}
+                             onChange={(val) => (val.target.value && +val.target.value !== 0) ? setBidId(val.target.value) : setBidId(null)}
                       />
                     </div>
                   </div>
@@ -158,7 +163,7 @@ const BidListTable = (props) => {
                              style={{width: '100%'}}
                              variant='filled'
                              value={companyName}
-                             onChange={(val) => setCompanyName(val.target.value)}
+                             onChange={(val) => (val.target.value && +val.target.value !== 0) ? setCompanyName(val.target.value) : setCompanyName(null)}
                       />
                     </div>
                   </div>
@@ -235,14 +240,13 @@ const BidListTable = (props) => {
                       <DatePicker size={'small'}
                                   style={{width: '100%'}}
                                   variant='filled'
-                                  value={dates}
-                                  onChange={(val) => {
-                                    if (val) {
-                                      setDates([val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
-                                    } else {
-                                      setDates(null);
-                                    }
+                                  value={dates ? dayjs.unix(dates) : null}
+                                  onChange={(date, dateString) => {
+                                    console.log(date)
+                                    console.log(dateString)
+                                    setDates(date ? date.unix() : null);
                                   }}
+                                  format="DD.MM.YYYY"
                       />
                     </div>
                   </div>
@@ -280,7 +284,7 @@ const BidListTable = (props) => {
                              style={{width: '100%'}}
                              variant='filled'
                              value={billNumber}
-                             onChange={(val) => setBillNumber(val.target.value)}
+                             onChange={(val) => (val.target.value && +val.target.value !== 0) ? setBillNumber(val.target.value) : setBillNumber(null)}
                       />
                     </div>
                   </div>
@@ -293,7 +297,7 @@ const BidListTable = (props) => {
                              style={{width: '100%'}}
                              variant='filled'
                              value={comment}
-                             onChange={(val) => setComment(val.target.value)}
+                             onChange={(val) => (val.target.value && +val.target.value !== 0) ? setComment(val.target.value) : setComment(null)}
                       />
                     </div>
                   </div>
@@ -306,7 +310,7 @@ const BidListTable = (props) => {
                              style={{width: '100%'}}
                              variant='filled'
                              value={objectName}
-                             onChange={(val) => setObjectName(val.target.value)}
+                             onChange={(val) => (val.target.value && +val.target.value !== 0) ? setObjectName(val.target.value) : setObjectName(null)}
                       />
                     </div>
                   </div>
