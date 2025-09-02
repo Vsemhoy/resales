@@ -10,51 +10,115 @@ const BidListTable = (props) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
 
+  const [bidId, setBidId] = useState(null);
+  const [companyName, setCompanyName] = useState(null);
+  const [type, setType] = useState(null);
+  const [protectStatus, setProtectStatus] = useState(null);
+  const [stageStatus, setStageStatus] = useState(null);
+  const [dates, setDates] = useState(null);
+  const [manager, setManager] = useState(null);
+  const [billNumber, setBillNumber] = useState(null);
+  const [comment, setComment] = useState(null);
+  const [objectName, setObjectName] = useState(null);
 
-
-
-    const handleRowDblClick = (id) => {
-
+  useEffect(() => {
+    if (props.filter_box.bid_id !== bidId) {
+      setBidId(props.filter_box.bid_id);
     }
-
-    const handlePreviewOpen = (item, state) => {
-        console.log('Hello');
-        // setPreviewItem(item);
-        // setIsPreviewOpen(true);
-        if (props.on_preview_open){
-            props.on_preview_open(item, state);
-        }
+    if (props.filter_box.company_name !== companyName) {
+      setCompanyName(props.filter_box.company_name);
     }
-
-    /**
-     * Обработчик сортировки колонок в таблице - триггер: клик на TableHeadNameWithSort
-     * @param {name} key 
-     * @param {int} order 
-     */
-    const handleActivateSorter = (key, order) => {
-        let newSorts = [];
-        for (let i = 0; i < sortOrders.length; i++) {
-            const element = sortOrders[i];
-            if (element.order !== 0){
-                if (element.key !== key){
-                    newSorts.push(element);
-                }
-            }
-        };
-        if (order === 0){
-            
-        } else {
-            newSorts.push({key: key, order: order});
-        }
-        setSortOrders(newSorts);
+    if (props.filter_box.type !== type) {
+      setType(props.filter_box.type);
     }
+    if (props.filter_box.protect_status !== protectStatus) {
+      setProtectStatus(props.filter_box.protect_status);
+    }
+    if (props.filter_box.stage_status !== stageStatus) {
+      setStageStatus(props.filter_box.stage_status);
+    }
+    if (props.filter_box.dates !== dates) {
+      setDates(props.filter_box.dates);
+    }
+    if (props.filter_box.manager !== manager) {
+      setManager(props.filter_box.manager);
+    }
+    if (props.filter_box.bill_number !== billNumber) {
+      setBillNumber(props.filter_box.bill_number);
+    }
+    if (props.filter_box.comment !== comment) {
+      setComment(props.filter_box.comment);
+    }
+    if (props.filter_box.object_name !== objectName) {
+      setObjectName(props.filter_box.object_name);
+    }
+  }, [props.filter_box]);
 
-    useEffect(() => {
-      console.log('sortOrders', sortOrders)
-      if (props.on_set_sort_orders){
-        props.on_set_sort_orders(sortOrders);
+  useEffect(() => {
+    const newFilterBox = {
+      "bid_id": bidId ?? null,
+      "company_name": companyName ?? null,
+      "type": type ?? null,
+      "protect_status": protectStatus ?? null,
+      "stage_status": stageStatus ?? null,
+      "dates": dates ?? null,
+      "manager": manager ?? null,
+      "bill_number": billNumber ?? null,
+      "comment": comment ?? null,
+      "object_name": objectName ?? null,
+    };
+    props.on_change_filter_box(newFilterBox);
+  }, [
+    bidId, companyName, type, protectStatus, stageStatus,
+    dates, manager, billNumber, comment, objectName
+  ]);
+
+  useEffect(() => {
+    if (props.my_bids && props.user_info) {
+      setManager(props.user_info.id);
+    } else if (!props.my_bids && props.user_info && +manager === +props.user_info.id) {
+      setManager(null);
+    }
+  }, [props.my_bids]);
+
+  useEffect(() => {
+    console.log('sortOrders', sortOrders)
+    if (props.on_set_sort_orders){
+      props.on_set_sort_orders(sortOrders);
+    }
+  }, [sortOrders]);
+
+  const handlePreviewOpen = (item, state) => {
+      console.log('Hello');
+      // setPreviewItem(item);
+      // setIsPreviewOpen(true);
+      if (props.on_preview_open){
+          props.on_preview_open(item, state);
       }
-    }, [sortOrders]);
+  }
+
+  /**
+   * Обработчик сортировки колонок в таблице - триггер: клик на TableHeadNameWithSort
+   * @param {name} key
+   * @param {int} order
+   */
+  const handleActivateSorter = (key, order) => {
+      let newSorts = [];
+      for (let i = 0; i < sortOrders.length; i++) {
+          const element = sortOrders[i];
+          if (element.order !== 0){
+              if (element.key !== key){
+                  newSorts.push(element);
+              }
+          }
+      }
+      if (order === 0){
+
+      } else {
+          newSorts.push({key: key, order: order});
+      }
+      setSortOrders(newSorts);
+  }
 
   return (
     <div className={'sa-table-box'}>
@@ -75,7 +139,8 @@ const BidListTable = (props) => {
                              size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('bid_id', val.target.value)}
+                             value={bidId}
+                             onChange={(val) => setBidId(val.target.value)}
                       />
                     </div>
                   </div>
@@ -92,7 +157,8 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('company_name', val.target.value)}
+                             value={companyName}
+                             onChange={(val) => setCompanyName(val.target.value)}
                       />
                     </div>
                   </div>
@@ -109,8 +175,9 @@ const BidListTable = (props) => {
                       <Select size={'small'}
                               style={{width: '100%'}}
                               variant='filled'
+                              value={type}
                               options={props.filter_bid_types}
-                              onChange={(val) => props.on_change_filter_box('type', val)}
+                              onChange={(val) => setType(val)}
                               allowClear
                       />
                     </div>
@@ -128,8 +195,9 @@ const BidListTable = (props) => {
                       <Select size={'small'}
                               style={{width: '100%'}}
                               variant='filled'
+                              value={protectStatus}
                               options={props.filter_protection_projects}
-                              onChange={(val) => props.on_change_filter_box('protect_status', val)}
+                              onChange={(val) => setProtectStatus(val)}
                               allowClear
                       />
                     </div>
@@ -147,8 +215,9 @@ const BidListTable = (props) => {
                       <Select size={'small'}
                               style={{width: '100%'}}
                               variant='filled'
+                              value={stageStatus}
                               options={props.filter_steps}
-                              onChange={(val) => props.on_change_filter_box('stage_status', val)}
+                              onChange={(val) => setStageStatus(val)}
                               allowClear
                       />
                     </div>
@@ -166,11 +235,12 @@ const BidListTable = (props) => {
                       <DatePicker size={'small'}
                                   style={{width: '100%'}}
                                   variant='filled'
+                                  value={dates}
                                   onChange={(val) => {
                                     if (val) {
-                                      props.on_change_filter_box('dates', [val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
+                                      setDates([val.startOf('day').unix() * 1000, val.endOf('day').unix() * 1000]);
                                     } else {
-                                      props.on_change_filter_box('dates', null);
+                                      setDates(null);
                                     }
                                   }}
                       />
@@ -186,10 +256,18 @@ const BidListTable = (props) => {
                     >Менеджер
                     </TableHeadNameWithSort>
                     <div className={'sa-pa-3'}>
-                      <Input size={'small'}
-                             style={{width: '100%'}}
-                             variant='filled'
-                             onChange={(val) => props.on_change_filter_box('manager', val.target.value)}
+                      <Select size={'small'}
+                              style={{width: '100%'}}
+                              variant='filled'
+                              value={manager}
+                              options={props.filter_managers}
+                              onChange={(val) => setManager(val)}
+                              allowClear
+                              showSearch
+                              optionFilterProp="label"
+                              filterOption={(input, option) =>
+                                  option.label.toLowerCase().includes(input.toLowerCase())
+                              }
                       />
                     </div>
                   </div>
@@ -201,7 +279,8 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('bill_number', val.target.value)}
+                             value={billNumber}
+                             onChange={(val) => setBillNumber(val.target.value)}
                       />
                     </div>
                   </div>
@@ -213,7 +292,8 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('comment', val.target.value)}
+                             value={comment}
+                             onChange={(val) => setComment(val.target.value)}
                       />
                     </div>
                   </div>
@@ -225,7 +305,8 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
-                             onChange={(val) => props.on_change_filter_box('object_name', val.target.value)}
+                             value={objectName}
+                             onChange={(val) => setObjectName(val.target.value)}
                       />
                     </div>
                   </div>
