@@ -239,9 +239,10 @@ const BidListPage = (props) => {
     if (PRODMODE) {
       let dates = null;
       if (filterBox.dates) {
+        const dateObj = dayjs(filterBox.dates);
         dates = [
-          filterBox.dates.startOf('day').valueOf(),
-          filterBox.dates.endOf('day').valueOf()
+          dateObj.startOf('day').valueOf(),
+          dateObj.endOf('day').valueOf()
         ];
       }
       const data = {
