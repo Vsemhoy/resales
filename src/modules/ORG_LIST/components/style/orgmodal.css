@@ -178,3 +178,10 @@ background-color: #dae9fb;
 .ant-collapse-content-box, .ant-collapse-item {
     border-radius: 0px !important;
 }
+/* 
+.sa-spec-modal-hater .ant-affix {
+    background-color: rgba(255, 255, 255, 0.301);
+    margin-top: -1px;
+    backdrop-filter: blur(22px);
+    box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.11);
+} */
