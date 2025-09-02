@@ -1,13 +1,15 @@
-import { Spin } from 'antd';
+import { Pagination, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
 import { MODAL_OFFERS_LIST } from '../../mock/MODALOFFERSTABMOCK';
+import OrgOfferModalRow from './TabComponents/RowTemplates/OrgOfferModalRow';
+import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
 
 
 const OrgListModalOffersTab = (props) => {
   const [baseBids, setBaseBids] = useState([]);
-  const [currrentPage, setCurrrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [onPage, setOnPage] = useState(30);
   const [showLoader, setShowLoader] = useState(false);
   const [total, setTotal] = useState(1);
@@ -16,13 +18,17 @@ const OrgListModalOffersTab = (props) => {
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+    const [dataList, setDataList] = useState([]);
+
   useEffect(() => {
     if (props.data?.id){
       if (PRODMODE){
-        setLoading(true);
-        setOrgId(props.data.id);
-        get_org_data_action(props.data.id);
+        if (props.data?.id !== orgId){
+          setLoading(true);
+          setOrgId(props.data.id);
+          get_org_data_action(props.data.id);
 
+        }
       } else {
         setBaseOrgData(MODAL_OFFERS_LIST);
       }
@@ -34,6 +40,17 @@ const OrgListModalOffersTab = (props) => {
   }, [props.data]);
 
 
+
+      useEffect(() => {
+        if (baseOrgData?.bids !== null && baseOrgData?.bids?.length > 0){
+          setDataList(baseOrgData.bids);
+        } else {
+          setDataList([]);
+        }
+        setLoading(false);
+      }, [baseOrgData]);
+
+
   /** ----------------------- FETCHES -------------------- */
 
   const get_org_data_action = async (id) => {
@@ -42,7 +59,7 @@ const OrgListModalOffersTab = (props) => {
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
             data: {
-              page: currrentPage,
+              page: currentPage,
               limit: onPage,
               type: 1
             },
@@ -74,10 +91,70 @@ const OrgListModalOffersTab = (props) => {
   
 
   return (
-    <div>
-      <Spin spinning={loading}>
-        OrgListOffersTab</Spin>
+    <Spin spinning={loading}>
+    <div className={'sa-orgtab-container'}>
+        <div className={'sa-pa-6 sa-flex-space'}>
+          <div>
+            <Pagination
+              size={'small'}
+              current={currentPage}
+              pageSizeOptions={[10, 30, 50, 100]}
+              defaultPageSize={onPage}
+              locale={ANTD_PAGINATION_LOCALE}
+              showQuickJumper
+              onChange={(ev, val)=>{setCurrentPage(ev); setOnPage(val)}}
+            />
+          </div>
+          <div>
+            {/* Здесь будут фильтры */}
+          </div>
+        </div>
+
+          <Spin spinning={showLoader} delay={500}>
+        <div>
+            <div className={'sa-org-bid-row sa-org-bid-row-header'}>
+              <div>
+                  <div>
+                    Дата
+                  </div>
+              </div>
+              <div>
+                  <div>
+                    
+                    Номер
+                  </div>
+              </div>
+              <div>
+                  <div>
+                    Контактное лицо
+                  </div>
+              </div>
+              <div>
+                  <div>
+                  Менеджер
+                  </div>
+              </div>
+              <div>
+                  <div>
+                  Статус
+                  </div>
+              </div>
+              <div>
+                  <div>
+                  Комментарий
+                  </div>
+              </div>
+          </div>
+          {dataList.map((item)=>(
+            <OrgOfferModalRow
+              org_id={orgId}
+              data={item}
+            />
+          ))}
+        </div>
+        </Spin>
     </div>
+    </Spin>
   );
 };
 

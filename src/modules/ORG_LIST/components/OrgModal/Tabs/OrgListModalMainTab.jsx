@@ -52,7 +52,7 @@ const OrgListMainTab = (props) => {
   useEffect(() => {
     if (props.data?.id){
       if (props.data?.id !== orgId){
-
+        
         setLoading(true);
         setOrgId(props.data.id);
         console.log('CALL TO RELOAD', props.data.id);
@@ -68,7 +68,8 @@ const OrgListMainTab = (props) => {
       setOrgId(null);
       setBaseOrgData(null);
     }
-
+    console.log(props.data);
+    console.log(ORGLIST_MODAL_MOCK_MAINTAB);
   }, [props.data]);
 
 

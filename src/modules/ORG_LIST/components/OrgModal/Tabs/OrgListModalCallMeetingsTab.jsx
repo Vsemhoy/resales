@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
-import { CSRF_TOKEN } from '../../../../../config/config';
+import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
 import { Spin } from 'antd';
 
 
 const OrgListModalCallMeetingsTab = (props) => {
   const [baseBids, setBaseBids] = useState([]);
-  const [currrentPage, setCurrrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [onPage, setOnPage] = useState(30);
   const [showLoader, setShowLoader] = useState(false);
   const [total, setTotal] = useState(1);
@@ -15,17 +15,41 @@ const OrgListModalCallMeetingsTab = (props) => {
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+    const [dataList, setDataList] = useState([]);
+
   useEffect(() => {
     if (props.data?.id){
-      setLoading(true);
-      setOrgId(props.data.id);
-      get_org_data_action(props.data.id);
+      if (PRODMODE){
+          if (props.data?.id !== orgId){
+            setLoading(true);
+            setOrgId(props.data.id);
+            get_org_data_action(props.data.id);
+          }
+      } else {
+        
+      }
 
     } else {
       setOrgId(null);
       setBaseOrgData(null);
     }
   }, [props.data]);
+
+
+
+
+    useEffect(() => {
+      let result = [];
+
+      if (baseOrgData?.calls !== null && baseOrgData?.projects?.calls > 0){
+        result = baseOrgData.calls;
+      };
+      if (baseOrgData?.meetings !== null && baseOrgData?.meetings?.calls > 0){
+        result = result.concat(baseOrgData.meetings);
+      };
+      setDataList(result);
+      setLoading(false);
+    }, [baseOrgData]);
 
 
   /** ----------------------- FETCHES -------------------- */
@@ -36,7 +60,7 @@ const OrgListModalCallMeetingsTab = (props) => {
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
             data: {
-              page: currrentPage,
+              page: currentPage,
               limit: onPage,
             },
             _token: CSRF_TOKEN

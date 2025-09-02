@@ -18,11 +18,12 @@ import OrgListModalOffersTab from './Tabs/OrgListModalOffersTab';
 import OrgListModalCallMeetingsTab from './Tabs/OrgListModalCallMeetingsTab';
 import OrgListModalNotesTab from './Tabs/OrgListModalNotesTab';
 import OrgListModalHistoryTab from './Tabs/OrgListModalHistoryTab';
-import OrgListModalProjectsTab from './Tabs/MainTabSections/OrgListModalProjectsTab';
+
 import { getOrgTabLink, getOrgTabName } from './Tabs/TabComponents/OrgTabUtils';
 import { BarsArrowDownIcon } from '@heroicons/react/24/outline';
 import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
+import OrgListModalProjectsTab from './Tabs/OrgListModalProjectsTab';
 
 
 
@@ -336,6 +337,7 @@ const menuItems = [
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
+
   }, [activeTab, orgId]);
 
 

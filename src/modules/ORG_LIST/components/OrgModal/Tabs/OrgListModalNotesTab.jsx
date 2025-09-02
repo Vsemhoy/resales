@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { CSRF_TOKEN } from '../../../../../config/config';
+import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 import { Spin } from 'antd';
+import { MODAL_NOTES_LIST } from '../../mock/MODALNOTESTABMOCK';
+import OrgNoteModalRow from './TabComponents/RowTemplates/OrgNoteModalRow';
 
 
 const OrgListModalNotesTab = (props) => {
   const [baseBids, setBaseBids] = useState([]);
-  const [currrentPage, setCurrrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [onPage, setOnPage] = useState(30);
   const [showLoader, setShowLoader] = useState(false);
   const [total, setTotal] = useState(1);
@@ -15,17 +17,39 @@ const OrgListModalNotesTab = (props) => {
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+    const [dataList, setDataList] = useState([]);
+
   useEffect(() => {
     if (props.data?.id){
-      setLoading(true);
-      setOrgId(props.data.id);
-      get_org_data_action(props.data.id);
+      if (props.data?.id !== orgId){
+      if (PRODMODE){
+          setLoading(true);
+          setOrgId(props.data.id);
+          get_org_data_action(props.data.id);
+        } else {
+          setBaseOrgData(MODAL_NOTES_LIST);
+        }
+      }
+
 
     } else {
       setOrgId(null);
       setBaseOrgData(null);
     }
   }, [props.data]);
+
+
+
+  useEffect(() => {
+    
+    console.log('BORGD', dataList);
+    if (baseOrgData && baseOrgData?.notes !== null && baseOrgData.notes?.length > 0){
+      setDataList(baseOrgData.notes);
+    } else {
+      setDataList([]);
+    }
+    setLoading(false);
+  }, [baseOrgData]);
 
 
   /** ----------------------- FETCHES -------------------- */
@@ -36,7 +60,7 @@ const OrgListModalNotesTab = (props) => {
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/n', {
             data: {
-              page: currrentPage,
+              page: currentPage,
               limit: onPage,
             },
             _token: CSRF_TOKEN
@@ -65,7 +89,14 @@ const OrgListModalNotesTab = (props) => {
   return (
     <div>
       <Spin spinning={loading}>
-        OrgListNotesTab
+        
+        {dataList && dataList.map((item)=> (
+          <OrgNoteModalRow
+           data={item}
+
+           />
+        ))}
+
         </Spin>
     </div>
   );
