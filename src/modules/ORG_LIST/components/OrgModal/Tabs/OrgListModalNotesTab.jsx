@@ -5,6 +5,12 @@ import { Spin } from 'antd';
 
 
 const OrgListModalNotesTab = (props) => {
+  const [baseBids, setBaseBids] = useState([]);
+  const [currrentPage, setCurrrentPage] = useState(1);
+  const [onPage, setOnPage] = useState(30);
+  const [showLoader, setShowLoader] = useState(false);
+  const [total, setTotal] = useState(1);
+
   const [orgId, setOrgId] = useState(null);
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -29,7 +35,10 @@ const OrgListModalNotesTab = (props) => {
   
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/n', {
-            data: {},
+            data: {
+              page: currrentPage,
+              limit: onPage,
+            },
             _token: CSRF_TOKEN
           });
           console.log('response', response);

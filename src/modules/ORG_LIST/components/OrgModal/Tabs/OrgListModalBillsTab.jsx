@@ -48,7 +48,8 @@ const OrgListModalBillsTab = (props) => {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
             data: {
               page: currrentPage,
-              limit: onPage
+              limit: onPage,
+              type: 2,
             },
             _token: CSRF_TOKEN
           });
