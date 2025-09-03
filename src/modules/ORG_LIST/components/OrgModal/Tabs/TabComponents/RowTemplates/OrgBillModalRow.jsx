@@ -71,7 +71,7 @@ const OrgBillModalRow = (props) => {
               </div>
               <div>
                   <div style={{wordBreak: 'break-all'}}>
-                    {baseData?.orguser_id}
+                    {baseData?.count_models}
                   </div>
               </div>
           </div>

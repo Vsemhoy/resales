@@ -30,8 +30,9 @@ const OrgListModalBillsTab = (props) => {
 
       if (PRODMODE){
         if (props.data?.id !== orgId){
+          setCurrentPage(1);
           setLoading(true);
-          get_org_data_action(props.data.id);
+          get_org_data_action(props.data.id, 1, onPage);
         }
       } else {
         setBaseOrgData(MODAL_BILLS_LIST);
@@ -61,14 +62,14 @@ const OrgListModalBillsTab = (props) => {
 
   /** ----------------------- FETCHES -------------------- */
 
-  const get_org_data_action = async (id) => {
+  const get_org_data_action = async (id, cpage, onpage) => {
 
   
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
             data: {
-              page: currentPage,
-              limit: onPage,
+              page: cpage,
+              limit: onpage,
               type: 2,
             },
             _token: CSRF_TOKEN
@@ -115,6 +116,15 @@ const OrgListModalBillsTab = (props) => {
               locale={ANTD_PAGINATION_LOCALE}
               showQuickJumper
               total={total}
+              onChange={(ev, on)=>{
+                if (ev !== currentPage){
+                  setCurrentPage(ev);
+                };
+                if (on !== onPage){
+                  setOnPage(on);
+                };
+                get_org_data_action(orgId, ev, on);
+              }}
             />
           </div>
           <div>
