@@ -1,4 +1,4 @@
-import { Pagination, Spin } from 'antd';
+import { Collapse, Pagination, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OrgBidTabRow from './TabComponents/OrgBidTabRow';
 import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
@@ -17,15 +17,19 @@ const OrgListModalProjectsTab = (props) => {
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [dataList, setDataList] = useState([]);
+  const [total, setTotal] = useState(1);
+  const [structureItems, setStructureItems] = useState([]);
+
+
 
   useEffect(() => {
     if (props.data?.id){
       if (PRODMODE){
         if (props.data?.id !== orgId){
+          setCurrentPage(1);
           setLoading(true);
           setOrgId(props.data.id);
-          get_org_data_action(props.data.id);
+          get_org_data_action(props.data.id, 1, onPage);
         }
       } else {
 
@@ -41,9 +45,21 @@ const OrgListModalProjectsTab = (props) => {
 
     useEffect(() => {
       if (baseOrgData?.projects !== null && baseOrgData?.projects?.length > 0){
-        setDataList(baseOrgData.projects);
+        // setDataList(baseOrgData.projects);
+          setStructureItems(baseOrgData?.projects.map((item)=>{
+            
+            return {
+                key: 'orprow_' + item.id,
+                label: 'Общая информация' + item.id,
+                children: <OrgProjectsModalRow
+                  data={item}
+                  // selects_data={props.selects_data}
+                />
+            }
+          })
+        )
       } else {
-        setDataList([]);
+        setStructureItems([]);
       }
       setLoading(false);
     }, [baseOrgData]);
@@ -51,14 +67,14 @@ const OrgListModalProjectsTab = (props) => {
 
   /** ----------------------- FETCHES -------------------- */
 
-  const get_org_data_action = async (id) => {
+  const get_org_data_action = async (id, cpage, onpage) => {
 
   
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/p', {
              data: {
-              page: currentPage,
-              limit: onPage,
+              page: cpage,
+              limit: onpage,
             },
             _token: CSRF_TOKEN
           });
@@ -85,7 +101,6 @@ const OrgListModalProjectsTab = (props) => {
 
 
 
-  
 
   
 
@@ -101,48 +116,28 @@ const OrgListModalProjectsTab = (props) => {
               defaultPageSize={onPage}
               locale={ANTD_PAGINATION_LOCALE}
               showQuickJumper
-              onChange={(ev, val)=>{setCurrentPage(ev); setOnPage(val)}}
+              total={total}
+              onChange={(ev, on)=>{
+                if (ev !== currentPage){
+                  setCurrentPage(ev);
+                };
+                if (on !== onPage){
+                  setOnPage(on);
+                };
+                get_org_data_action(orgId, ev, on);
+              }}
             />
         </div>
         <div>
-            <div className={'sa-org-bid-row sa-org-bid-row-header'}>
-              <div>
-                  <div>
-                    Дата
-                  </div>
-              </div>
-              <div>
-                  <div>
-                    
-                    Номер
-                  </div>
-              </div>
-              <div>
-                  <div>
-                    Контактное лицо
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Менеджер
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Статус
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Комментарий
-                  </div>
-              </div>
-          </div>
-          {dataList.map((item)=>(
-            <OrgProjectsModalRow
-              data={item}
-            />
-          ))}
+        <Collapse
+            // defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
+            // activeKey={modalSectionsOpened}
+            size={'small'}
+            // onChange={handleSectionChange}
+            // onMouseDown={handleSectionClick}
+            items={structureItems} />
+            
+
         </div>
     </div>
     </Spin>

@@ -1,4 +1,4 @@
-import { Button, Pagination, Spin } from 'antd';
+import { Button, Pagination, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OrgBidTabRow from './TabComponents/OrgBidTabRow';
 import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
@@ -107,7 +107,7 @@ const OrgListModalBillsTab = (props) => {
     <Spin spinning={loading}>
     <div className={'sa-orgtab-container'}>
         <div className={'sa-pa-6 sa-flex-space'}>
-          <div>
+          <div className='sa-flex-space'>
             <Pagination 
               size={'small'}
               current={currentPage}
@@ -126,6 +126,9 @@ const OrgListModalBillsTab = (props) => {
                 get_org_data_action(orgId, ev, on);
               }}
             />
+            <Tag  color="#cdd2d6ff" style={{color:'#5a5a5aff'}}>
+              Всего {dataList.length}
+            </Tag>
           </div>
           <div>
             {/* Здесь будут фильтры */}
