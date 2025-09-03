@@ -144,6 +144,7 @@ const BidListTable = (props) => {
                              size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
+                             allowClear
                              value={bidId}
                              onChange={(val) => (val.target.value && +val.target.value !== 0) ? setBidId(val.target.value) : setBidId(null)}
                       />
@@ -162,6 +163,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
+                             allowClear
                              value={companyName}
                              onChange={(val) => (val.target.value && +val.target.value !== 0) ? setCompanyName(val.target.value) : setCompanyName(null)}
                       />
@@ -240,6 +242,7 @@ const BidListTable = (props) => {
                       <DatePicker size={'small'}
                                   style={{width: '100%'}}
                                   variant='filled'
+                                  allowClear
                                   value={dates ? dayjs.unix(dates) : null}
                                   onChange={(date, dateString) => {
                                     console.log(date)
@@ -283,6 +286,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
+                             allowClear
                              value={billNumber}
                              onChange={(val) => (val.target.value && +val.target.value !== 0) ? setBillNumber(val.target.value) : setBillNumber(null)}
                       />
@@ -296,6 +300,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
+                             allowClear
                              value={comment}
                              onChange={(val) => (val.target.value && +val.target.value !== 0) ? setComment(val.target.value) : setComment(null)}
                       />
@@ -309,6 +314,7 @@ const BidListTable = (props) => {
                       <Input size={'small'}
                              style={{width: '100%'}}
                              variant='filled'
+                             allowClear
                              value={objectName}
                              onChange={(val) => (val.target.value && +val.target.value !== 0) ? setObjectName(val.target.value) : setObjectName(null)}
                       />
