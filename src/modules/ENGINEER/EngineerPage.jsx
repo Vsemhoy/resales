@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './components/style/engineerlistpage.css';
-import {CSRF_TOKEN, PRODMODE} from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import {Affix, Button, Dropdown, Layout, Pagination, Select, Spin, Tag, Tooltip} from 'antd';
 import { Content } from 'antd/es/layout/layout';
@@ -9,7 +9,7 @@ import Sider from 'antd/es/layout/Sider';
 import {
   CaretLeftFilled,
   CloseOutlined,
-  FilterOutlined,
+  FilterOutlined, PlusOutlined,
 } from '@ant-design/icons';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import EngineerListTable from './components/EngineerListTable';
@@ -17,6 +17,7 @@ import EngineerListSiderFilters from './components/EngineerListSiderFilters';
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import {BID_LIST, FILTERS, SPECS_LIST} from "./mock/mock";
 import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
+import {c} from "react/compiler-runtime";
 
 
 const EngineerPage = (props) => {
@@ -51,6 +52,7 @@ const EngineerPage = (props) => {
   const [onPage, setOnPage] = useState(30);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [blockNewSpec, setBlockNewSpec] = useState(false);
   const [specs, setSpecs] = useState([]);
 
   const [filterBox, setFilterBox] = useState({
@@ -229,37 +231,6 @@ const EngineerPage = (props) => {
     }
   };
 
-  // const fetchChangeRole = async (sales_role) => {
-  //   if (PRODMODE) {
-  //     try {
-  //       let response = await PROD_AXIOS_INSTANCE.post('/auth/me', {
-  //         place: sales_role,
-  //         _token: CSRF_TOKEN
-  //       });
-  //       console.log('response', response);
-  //       if (response.data){
-  //         if (props.changed_user_data){
-  //           props.changed_user_data(response.data);
-  //         }
-  //       }
-  //     } catch (e) {
-  //       console.log(e)
-  //     }
-  //   }
-  // };
-  //
-  // const handleActivateSorter = (key, order) => {
-  //   if (order === 0){
-  //     setSortOrders([]);
-  //   } else {
-  //     setSortOrders([{key: key, order: order}]);
-  //   }
-  // };
-  //
-  // const handleRowDblClick = (id) => {
-  //
-  // };
-
   const handlePreviewOpen = (item, state) => {
     console.log('HELLO', item);
     setShowParam(item);
@@ -357,6 +328,24 @@ const EngineerPage = (props) => {
     setOrderBox({});
   };
 
+  const fetchNewSpec = async () => {
+    if (PRODMODE){
+      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/add', {
+        _token: CSRF_TOKEN,
+        data: {}
+      })
+
+      window.open(BASE_ROUTE + "/engineer/" + response.data.spec);
+    } else {
+      window.open(BASE_ROUTE + "/engineer/" + 1);
+    }
+  }
+
+  const addNewSpec = () => {
+    setBlockNewSpec(true);
+    fetchNewSpec().then(r => setBlockNewSpec(false));
+  }
+
   return (
     <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
       <Affix>
@@ -380,12 +369,12 @@ const EngineerPage = (props) => {
                     Доп Фильтры
                   </Button>
                   {filterSortClearMenu.length > 0 && (
-                      <Tooltip title={'Очистить фильтры'}  placement={'right'}>
+                      <Tooltip title={'Очистить фильтры'} placement={'right'}>
                         <Dropdown menu={{items: filterSortClearMenu}}>
                           <Button
                               color={'danger'}
                               variant={'solid'}
-                              icon={<CloseOutlined />}
+                              icon={<CloseOutlined/>}
                               onClick={handleClearAllBoxes}
                           >
                           </Button>
@@ -404,6 +393,11 @@ const EngineerPage = (props) => {
                     }}
                     color="geekblue"
                 >Всего найдено: {total}</Tag>
+              </div>
+              <div style={{display: 'flex', alignItems: 'end'}}>
+                {userdata?.user?.sales_role === 1 && (
+                    <Button type={'primary'} icon={<PlusOutlined/>} onClick={addNewSpec} disabled={blockNewSpec}>Добавить</Button>
+                )}
               </div>
             </div>
           </div>

@@ -572,7 +572,7 @@ const OrgListPage = (props) => {
               </div>
               <div style={{display: 'flex', alignItems: 'end'}}>
               {userdata?.user?.sales_role === 1 && (
-                <Button type={'primary'} icon={<PlusOutlined/>}>Добавить</Button>
+                <Button type={'primary'} icon={<PlusOutlined/>} >Добавить</Button>
               )}
 
 
