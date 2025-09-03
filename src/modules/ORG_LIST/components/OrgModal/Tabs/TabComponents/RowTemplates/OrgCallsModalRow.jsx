@@ -34,8 +34,8 @@ return (
 
         <OrgModalRow
             key={'rowfla_0032271_' + orgId}
-            titles={['Цель встречи']}
-            datas={[<TextWithLineBreaks text={baseData?.notes}/>]}
+            titles={[baseData?.type === 'call' ? 'Цель звонка' : 'Цель встречи']}
+            datas={[<TextWithLineBreaks text={baseData?.theme}/>]}
         />
 
         <OrgModalRow

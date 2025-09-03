@@ -54,3 +54,13 @@
     border-color: black !important;
     color: white !important;
 }
+
+.sa-org-list-header {
+    background-color: var(--sa-list-header);
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 0 12px;
+    align-items: end;
+    margin: 0 12px;
+    outline: 9px solid #b4cbe4;
+}

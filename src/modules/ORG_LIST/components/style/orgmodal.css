@@ -196,3 +196,7 @@ background-color: #dae9fb;
     border-top: 1px solid rgba(255, 255, 255, 0.829);
     border-bottom: 1px solid rgba(167, 167, 167, 0.363);
 }
+
+.sa-org-section-deleted .sk-omt-legend {
+    background-color: rgba(255, 0, 0, 0.192);
+}

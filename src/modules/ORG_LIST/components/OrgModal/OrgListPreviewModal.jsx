@@ -426,13 +426,13 @@ const menuItems = [
                     </div>
                     </div>
                     </Tooltip>
-                    <Tooltip title="Закрыть">
+                    
                     <div className={'spec-modal-control-button closer'}
                         onClick={handleClose}
                     >
                         <CloseOutlined /> 
                     </div>
-                    </Tooltip>
+                    
                 </div>
             </div>}
             centered

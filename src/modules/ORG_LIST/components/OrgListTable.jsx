@@ -198,7 +198,7 @@ const OrgListTable = (props) => {
 
   return (
     <div className={'sa-table-box'}>
-          <Affix offsetTop={150}>
+          <Affix offsetTop={146}>
             <div className={'sa-table-box-header'}>
               <div className={'sa-table-box-orgs sa-table-box-row'}>
                 <div className={'sa-table-box-cell'}>

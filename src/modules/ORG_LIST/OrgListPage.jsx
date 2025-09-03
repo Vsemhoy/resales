@@ -519,7 +519,7 @@ const OrgListPage = (props) => {
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`} style={{paddingTop: '12px'}}>
 
       <Affix offsetTop={-10}>
-      <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'} >
+      <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-org-list-header'} >
 
           <div className={'sa-header-label-container'}>
             <div className={'sa-flex-space'}>
@@ -619,7 +619,7 @@ const OrgListPage = (props) => {
         <Content>
          
 
-          <Affix offsetTop={96}>
+          <Affix offsetTop={94}>
           <div className={'sa-pagination-panel sa-pa-12'} style={{background: '#b4cbe4', minHeight: '54px'}}>
             <div className={'sa-flex-space'}>
             <div className={'sa-flex-gap'}>
