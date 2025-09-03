@@ -70,7 +70,7 @@ const BidListSiderFilters = (props) => {
                     <Select placeholder=''
                             style={{width: '100%'}}
                             value={targetCompany}
-                            options={props.filter_companies_select}
+                            options={props.filter_companies_select ? props.filter_companies_select.filter(comp => comp.value !== 1) : null}
                             onChange={(val) => setTargetCompany(val)}
                             allowClear
                     />
