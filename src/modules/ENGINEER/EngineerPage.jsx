@@ -339,7 +339,6 @@ const EngineerPage = (props) => {
     } else {
       window.open(BASE_ROUTE + "/engineer/" + 1);
     }
-
   }
 
   const addNewSpec = () => {
