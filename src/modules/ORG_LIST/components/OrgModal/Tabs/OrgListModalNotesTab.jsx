@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
-import { Spin } from 'antd';
+import { Collapse, Pagination, Spin } from 'antd';
 import { MODAL_NOTES_LIST } from '../../mock/MODALNOTESTABMOCK';
 import OrgNoteModalRow from './TabComponents/RowTemplates/OrgNoteModalRow';
+import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
 
 
 const OrgListModalNotesTab = (props) => {
@@ -11,18 +12,20 @@ const OrgListModalNotesTab = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [onPage, setOnPage] = useState(30);
   const [showLoader, setShowLoader] = useState(false);
-  const [total, setTotal] = useState(1);
 
   const [orgId, setOrgId] = useState(null);
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-    const [dataList, setDataList] = useState([]);
+
+  const [total, setTotal] = useState(1);
+  const [structureItems, setStructureItems] = useState([]);
 
   useEffect(() => {
     if (props.data?.id){
       if (props.data?.id !== orgId){
       if (PRODMODE){
+          setCurrentPage(1);
           setLoading(true);
           setOrgId(props.data.id);
           get_org_data_action(props.data.id);
@@ -40,16 +43,26 @@ const OrgListModalNotesTab = (props) => {
 
 
 
-  useEffect(() => {
-    
-    console.log('BORGD', dataList);
-    if (baseOrgData && baseOrgData?.notes !== null && baseOrgData.notes?.length > 0){
-      setDataList(baseOrgData.notes);
-    } else {
-      setDataList([]);
-    }
-    setLoading(false);
-  }, [baseOrgData]);
+    useEffect(() => {
+      if (baseOrgData?.notes !== null && baseOrgData?.notes?.length > 0){
+        // setDataList(baseOrgData.projects);
+          setStructureItems(baseOrgData?.notes.map((item)=>{
+            
+            return {
+                key: 'orprow_' + item.id,
+                label: 'Общая информация' + item.id,
+                children: <OrgNoteModalRow
+                  data={item}
+                  // selects_data={props.selects_data}
+                />
+            }
+          })
+        )
+      } else {
+        setStructureItems([]);
+      }
+      setLoading(false);
+    }, [baseOrgData]);
 
 
   /** ----------------------- FETCHES -------------------- */
@@ -74,7 +87,7 @@ const OrgListModalNotesTab = (props) => {
               setLoading(false);
           }
       } catch (e) {
-          console.log(e)
+          setStructureItems([]);
       } finally {
         setTimeout(() => {
           setLoading(false);
@@ -86,19 +99,42 @@ const OrgListModalNotesTab = (props) => {
 
   /** ----------------------- FETCHES -------------------- */
 
-  return (
-    <div>
-      <Spin spinning={loading}>
-        
-        {dataList && dataList.map((item)=> (
-          <OrgNoteModalRow
-           data={item}
+ return (
+    <Spin spinning={loading}>
+    <div className={'sa-orgtab-container'}>
+        <div className={'sa-pa-6'}>
+            <Pagination
+              size={'small'}
+              current={currentPage}
+              pageSizeOptions={[10, 30, 50, 100]}
+              defaultPageSize={onPage}
+              locale={ANTD_PAGINATION_LOCALE}
+              showQuickJumper
+              total={total}
+              onChange={(ev, on)=>{
+                if (ev !== currentPage){
+                  setCurrentPage(ev);
+                };
+                if (on !== onPage){
+                  setOnPage(on);
+                };
+                get_org_data_action(orgId, ev, on);
+              }}
+            />
+        </div>
+        <div>
+        <Collapse
+            // defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
+            // activeKey={modalSectionsOpened}
+            size={'small'}
+            // onChange={handleSectionChange}
+            // onMouseDown={handleSectionClick}
+            items={structureItems} />
+            
 
-           />
-        ))}
-
-        </Spin>
+        </div>
     </div>
+    </Spin>
   );
 };
 

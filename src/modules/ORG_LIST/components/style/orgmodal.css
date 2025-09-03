@@ -190,3 +190,9 @@ background-color: #dae9fb;
 .sa-org-bid-row-deleted {
     background-color: rgba(255, 0, 0, 0.192);
 }
+
+.sa-orgtab-container .ant-collapse-item {
+    margin-bottom: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(167, 167, 167, 0.363);
+}

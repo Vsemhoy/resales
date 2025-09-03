@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import OrgModalRow from '../../MainTabSections/OrgModalRow';
 
 const OrgNoteModalRow = (props) => {
 
@@ -15,38 +16,24 @@ const OrgNoteModalRow = (props) => {
 
   return (
     <div className={'sa-org-row-wrapper'}>
-        <div className={'sa-org-bill-row'}>
-            <div>
-                  <div>
-                    Дата
-                  </div>
-              </div>
-              <div>
-                  <div>
-                    
-                    Номер
-                  </div>
-              </div>
-              <div>
-                  <div>
-                    Контактное лицо
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Менеджер
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Статус
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Комментарий
-                  </div>
-              </div>
+        <div className={'sa-org-bill-tab-form'}>
+        <OrgModalRow
+            key={'rowfla0032241'}
+            titles={['Тема']}
+            datas={[baseData?.t_name]}
+        />
+
+        <OrgModalRow
+            key={'rowfla0032251'}
+            titles={['Автор', 'Дата']}
+            datas={[baseData?.theme, baseData?.date]}
+        />
+
+        <OrgModalRow
+            key={'rowfla0032271'}
+            titles={['Заметка']}
+            datas={[baseData?.notes]}
+        />
           </div>
         </div>
   );

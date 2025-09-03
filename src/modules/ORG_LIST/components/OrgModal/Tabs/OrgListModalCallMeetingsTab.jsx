@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
-import { Spin } from 'antd';
+import { Collapse, Pagination, Spin } from 'antd';
+import { MODAL_CALLS_LIST } from '../../mock/MODALCALLSTABMOCK';
+import OrgCallsModalRow from './TabComponents/RowTemplates/OrgCallsModalRow';
+import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
 
 
 const OrgListModalCallMeetingsTab = (props) => {
@@ -14,19 +17,20 @@ const OrgListModalCallMeetingsTab = (props) => {
   const [orgId, setOrgId] = useState(null);
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
-
-    const [dataList, setDataList] = useState([]);
+  const [structureItems, setStructureItems] = useState([]);
 
   useEffect(() => {
     if (props.data?.id){
       if (PRODMODE){
-          if (props.data?.id !== orgId){
+        setCurrentPage(1);
+        if (props.data?.id !== orgId){
             setLoading(true);
             setOrgId(props.data.id);
             get_org_data_action(props.data.id);
           }
       } else {
-        
+        setOrgId(props.data.id);
+        setBaseOrgData(MODAL_CALLS_LIST);
       }
 
     } else {
@@ -41,14 +45,27 @@ const OrgListModalCallMeetingsTab = (props) => {
     useEffect(() => {
       let result = [];
 
-      if (baseOrgData?.calls !== null && baseOrgData?.projects?.calls > 0){
+      if (baseOrgData?.calls !== null && baseOrgData?.calls?.length > 0){
         result = baseOrgData.calls;
       };
-      if (baseOrgData?.meetings !== null && baseOrgData?.meetings?.calls > 0){
+      if (baseOrgData?.meetings !== null && baseOrgData?.meetings?.length > 0){
         result = result.concat(baseOrgData.meetings);
       };
-      setDataList(result);
+      // setDataList(result);
       setLoading(false);
+      setStructureItems(result.map((item)=>{
+            
+            return {
+                key: 'orprow_' + item.id,
+                label: 'Общая информация' + item.id,
+                children: <OrgCallsModalRow
+                  data={item}
+                  // selects_data={props.selects_data}
+                />
+            }
+          })
+        )
+        console.log(baseOrgData?.meetings);
     }, [baseOrgData]);
 
 
@@ -88,13 +105,42 @@ const OrgListModalCallMeetingsTab = (props) => {
 
 
 
-  
+return (
+    <Spin spinning={loading}>
+    <div className={'sa-orgtab-container'}>
+        <div className={'sa-pa-6'}>
+            <Pagination
+              size={'small'}
+              current={currentPage}
+              pageSizeOptions={[10, 30, 50, 100]}
+              defaultPageSize={onPage}
+              locale={ANTD_PAGINATION_LOCALE}
+              showQuickJumper
+              total={total}
+              onChange={(ev, on)=>{
+                if (ev !== currentPage){
+                  setCurrentPage(ev);
+                };
+                if (on !== onPage){
+                  setOnPage(on);
+                };
+                get_org_data_action(orgId, ev, on);
+              }}
+            />
+        </div>
+        <div>
+        <Collapse
+            // defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
+            // activeKey={modalSectionsOpened}
+            size={'small'}
+            // onChange={handleSectionChange}
+            // onMouseDown={handleSectionClick}
+            items={structureItems} />
+            
 
-  return (
-    <div>
-      <Spin spinning={loading}>
-        OrgListCallMeetingsTab</Spin>
+        </div>
     </div>
+    </Spin>
   );
 };
 
