@@ -8,6 +8,8 @@ import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 import OrgProjectsModalRow from './TabComponents/RowTemplates/OrgProjectsModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
 import { MODAL_PROJECTS_LIST } from '../../mock/MODALPROJECTSTABMOCK';
+import dayjs from 'dayjs';
+import { getMonthName } from '../../../../../components/helpers/TextHelpers';
 
 const OrgListModalProjectsTab = (props) => {
   const [baseBids, setBaseBids] = useState([]);
@@ -52,7 +54,7 @@ const OrgListModalProjectsTab = (props) => {
             
             return {
                 key: 'orprow_' + item.id,
-                label: 'Общая информация' + item.id,
+                label: <div className='sa-flex'><div>{item.name}<span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month()) + " " + dayjs(item.date).format("YYYY"): ""}</span> <span className={'sa-text-phantom'}>({item.id})</span></div></div>,
                 children: <OrgProjectsModalRow
                   data={item}
                   // selects_data={props.selects_data}

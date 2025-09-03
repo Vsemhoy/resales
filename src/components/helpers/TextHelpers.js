@@ -241,6 +241,7 @@ export const secondsToTime = (seconds) => {
 
 
       export const TextWithLineBreaks = ({ text }) => {
+        if (text === undefined || text === null){ return "";};
         return (
             <div>
             {text.split('\n').map((line, index) => (

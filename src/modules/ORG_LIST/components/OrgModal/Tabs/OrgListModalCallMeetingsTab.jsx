@@ -5,6 +5,9 @@ import { Collapse, Pagination, Spin } from 'antd';
 import { MODAL_CALLS_LIST } from '../../mock/MODALCALLSTABMOCK';
 import OrgCallsModalRow from './TabComponents/RowTemplates/OrgCallsModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
+import { getMonthName } from '../../../../../components/helpers/TextHelpers';
+import dayjs from 'dayjs';
+import { BriefcaseIcon, PhoneIcon } from '@heroicons/react/24/outline';
 
 
 const OrgListModalCallMeetingsTab = (props) => {
@@ -46,21 +49,35 @@ const OrgListModalCallMeetingsTab = (props) => {
       let result = [];
 
       if (baseOrgData?.calls !== null && baseOrgData?.calls?.length > 0){
-        result = baseOrgData.calls;
+        
+        for (let i = 0; i < baseOrgData.calls.length; i++) {
+          const element = baseOrgData?.calls[i];
+          element.type = 'call';
+          result.push(element);
+        }
       };
       if (baseOrgData?.meetings !== null && baseOrgData?.meetings?.length > 0){
-        result = result.concat(baseOrgData.meetings);
+        for (let i = 0; i < baseOrgData.meetings.length; i++) {
+          const element = baseOrgData?.meetings[i];
+          element.type = 'meeting';
+          result.push(element);
+        }
       };
       // setDataList(result);
       setLoading(false);
       setStructureItems(result.map((item)=>{
             
             return {
-                key: 'orprow_' + item.id,
-                label: 'Общая информация' + item.id,
+                key: 'orcamirow_' + item.id,
+                label: <div className='sa-flex'>
+                {item.type === 'call' ? (
+                  <span title='Звонок'><PhoneIcon height={'20px'}/></span>
+                ):(
+                  <span title='Встреча'><BriefcaseIcon height={'20px'}/></span>
+                )} 
+                <div>{item.theme}<span  className='sa-date-text'>{item?.date ? " - "  + getMonthName(dayjs(item.date).month()) + " " + dayjs(item.date).format("YYYY"): ""}</span> <span className={'sa-text-phantom'}>({item.id})</span></div></div>,
                 children: <OrgCallsModalRow
                   data={item}
-                  // selects_data={props.selects_data}
                 />
             }
           })

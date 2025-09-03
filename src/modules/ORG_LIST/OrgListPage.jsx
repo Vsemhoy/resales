@@ -18,12 +18,13 @@ import { RectangleStackIcon } from '@heroicons/react/24/outline';
 import { filterSortClearMenu, OM_COMP_LIST, OM_ORG_FILTERDATA } from './components/mock/ORGLISTMOCK';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
-import { readOrgURL, updateURL } from '../../components/helpers/UriHelpers';
+import { readOrgURL, updateURL, useURLParams } from '../../components/helpers/UriHelpers';
 
 
 
 const OrgListPage = (props) => {
   const { userdata } = props;
+  const { updateURL, readOrgURL } = useURLParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [baseCompanies, setBaseCompanies] = useState([]);
@@ -41,6 +42,7 @@ const OrgListPage = (props) => {
   const [total, setTotal] = useState(0);
   const [onPage, setOnPage] = useState(50);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentTab, setCurrentTab] = useState('m');
   const [previousPage, setPreviousPage] = useState(1);
 
 
@@ -68,7 +70,7 @@ const OrgListPage = (props) => {
   useEffect(() => {
     setShowLoader(true);
       // При загрузке — читаем URL
-      const { _filters, _sorts, _page, _onPage } = readOrgURL();
+      const { _filters, _sorts, _page, _onPage, _show, _tab } = readOrgURL();
 
       // Устанавливаем стейт фильтров, сортировок, страницы
       setFilterBox(prev => ({ ...prev, ..._filters }));
@@ -76,6 +78,13 @@ const OrgListPage = (props) => {
       setOrderBox(_sorts);
       setCurrentPage(_page);
       setOnPage(_onPage);
+      if (_show){
+          setPreviewItem(_show);
+          setIsPreviewOpen(true);
+      };
+      if (_tab){
+        setCurrentTab(_tab);
+      }
 
       // console.clear();
 
@@ -113,12 +122,12 @@ const OrgListPage = (props) => {
 
    useEffect(() => {
         const timer = setTimeout(() => {
-            updateURL(filterBox, orderBox, currentPage, onPage);
+            updateURL(filterBox, orderBox, currentPage, onPage, previewItem, currentTab);
         }, 200);
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
-  }, [filterBox, orderBox, onPage, currentPage]);
+  }, [filterBox, orderBox, onPage, currentPage, previewItem, currentTab]);
 
 
 
@@ -379,13 +388,15 @@ const OrgListPage = (props) => {
   }
 
     const setShowParam = (value) => {
-      if (value !== null){
-        searchParams.set('show', value);
-        setSearchParams(searchParams);
-      } else {
-        searchParams.delete('show');
-        setSearchParams(searchParams);
-      }
+      updateURL(filterBox,orderBox,currentPage,onPage,value,currentTab);
+      // if (value !== null){
+      //   se
+      //   searchParams.set('show', value);
+      //   setSearchParams(searchParams);
+      // } else {
+      //   searchParams.delete('show');
+      //   setSearchParams(searchParams);
+      // }
   };
 
   // useEffect(() => {
@@ -515,11 +526,16 @@ const OrgListPage = (props) => {
       console.log(evt);
     }
 
+
+    // const handleModalTabChange = (tab) => {
+    //   updateURL(filterBox,orderBox,currentPage,onPage,previewItem,tab);
+    // }
+
   return (
     <div className={`app-page ${openedFilters ? "sa-filer-opened":''}`} style={{paddingTop: '12px'}}>
 
       <Affix offsetTop={-10}>
-      <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'} >
+      <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-org-list-header'} >
 
           <div className={'sa-header-label-container'}>
             <div className={'sa-flex-space'}>
@@ -619,7 +635,7 @@ const OrgListPage = (props) => {
         <Content>
          
 
-          <Affix offsetTop={96}>
+          <Affix offsetTop={94}>
           <div className={'sa-pagination-panel sa-pa-12'} style={{background: '#b4cbe4', minHeight: '54px'}}>
             <div className={'sa-flex-space'}>
             <div className={'sa-flex-gap'}>
@@ -719,6 +735,7 @@ const OrgListPage = (props) => {
       </Layout>
           <OrgListPreviewModal
             is_open={isPreviewOpen}
+            current_tab={currentTab}
             data={{id: previewItem, name: orgList?.find((item) => item.id === previewItem)?.name}}
             // name={orgList?.find((item) => item.id === previewItem)?.name}
             on_close={()=>{
@@ -726,6 +743,7 @@ const OrgListPage = (props) => {
               setPreviewItem(null);
             }}
             selects_data={baseFiltersData}
+            on_change_tab={(tab)=>{setCurrentTab(tab)}}
             />
     </div>
   );
