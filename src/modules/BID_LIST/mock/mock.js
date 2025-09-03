@@ -1108,15 +1108,18 @@ export const FILTERS = {
     "companies": [
         {
             "id": 1,
-            "name": "FreeCompany"
+            "name": "FreeCompany",
+            "color": "#8d8d8d"
         },
         {
             "id": 2,
-            "name": "Arstel"
+            "name": "Arstel",
+            "color": "#ff7700"
         },
         {
             "id": 3,
-            "name": "Rondo"
+            "name": "Rondo",
+            "color": "#229922"
         }
     ],
 };

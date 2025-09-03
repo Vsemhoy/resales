@@ -668,7 +668,7 @@ const BidListPage = (props) => {
                   on_change_filter_box={handleUpdateFilterBoxHeader}
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
-                  base_companies={baseCompanies}
+                  base_companies={filterCompaniesSelect}
               />
             </Spin>
             <div className={'sa-space-panel sa-pa-12'}></div>
