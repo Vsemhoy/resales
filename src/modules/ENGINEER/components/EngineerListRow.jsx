@@ -46,6 +46,15 @@ const EngineerListRow = (props) => {
           </div>
         </div>
         <div className={'sa-table-box-cell'}>
+          <div>{dayjs.unix(data.created_at).format('DD.MM.YYYY')}</div>
+        </div>
+        <div className={'sa-table-box-cell'}>
+          <div>{data.engineer}</div>
+        </div>
+        <div className={'sa-table-box-cell text-align-left'}>
+          <div>{data.comment}</div>
+        </div>
+        <div className={'sa-table-box-cell'}>
           <div>
             <Tooltip
                 placement="leftTop"
@@ -59,15 +68,6 @@ const EngineerListRow = (props) => {
               <Tag color={"magenta"}>{data.specs_count}</Tag>
             </Tooltip>
           </div>
-        </div>
-        <div className={'sa-table-box-cell'}>
-          <div>{dayjs.unix(data.created_at).format('DD.MM.YYYY')}</div>
-        </div>
-        <div className={'sa-table-box-cell'}>
-          <div>{data.engineer}</div>
-        </div>
-        <div className={'sa-table-box-cell text-align-left'}>
-          <div>{data.comment}</div>
         </div>
         <div className={'sa-table-box-cell'} style={{display: "inline-block"}}>
           <div>
