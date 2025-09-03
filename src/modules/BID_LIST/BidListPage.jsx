@@ -24,6 +24,8 @@ import dayjs from "dayjs";
 const BidListPage = (props) => {
   const { userdata } = props;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenedFilters, setIsOpenedFilters] = useState(false);
@@ -50,9 +52,9 @@ const BidListPage = (props) => {
 
   const [filterSortClearMenu, setFilterSortClearMenu] = useState([]);
 
-  const [total, setTotal] = useState(0);
-  const [onPage, setOnPage] = useState(30);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState( 0);
+  const [onPage, setOnPage] = useState(parseInt(searchParams.get('onPage')) || 30);
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('currentPage')) || 1);
 
   const [bids, setBids] = useState([]);
 
@@ -79,8 +81,28 @@ const BidListPage = (props) => {
     "nds": null,
     "complete": null,
   };
-  const [filterBox, setFilterBox] = useState(initialFilterBox);
-  const [orderBox, setOrderBox] = useState({});
+  const [filterBox, setFilterBox] = useState({
+    "bid_id":            searchParams.get('bid_id')                           || null,
+    "company_name":      searchParams.get('company_name')                     || null,
+    "type":              searchParams.get('type')                             || null,
+    "protect_status":    searchParams.get('protect_status')                   || null,
+    "stage_status":      searchParams.get('stage_status')                     || null,
+    "dates":             searchParams.get('dates')                            || null,
+    "manager":           searchParams.get('manager')                          || null,
+    "bill_number":       searchParams.get('bill_number')                      || null,
+    "comment":           searchParams.get('comment')                          || null,
+    "object_name":       searchParams.get('object_name')                      || null,
+
+    "target_company":    searchParams.get('target_company')                   || null,
+    "pay_status":        searchParams.get('pay_status')                       || null,
+    "admin_accept":      searchParams.get('admin_accept')                     || null,
+    "package":           searchParams.get('package')                          || null,
+    "price":             searchParams.get('price')                            || null,
+    "bid_currency":      searchParams.get('bid_currency')                     || null,
+    "nds":               searchParams.get('nds')                              || null,
+    "complete":          searchParams.get('complete')                         || null,
+  });
+  const [orderBox, setOrderBox] = useState([]);
 
   const [sortOrders, setSortOrders] = useState([]);
 
@@ -105,13 +127,12 @@ const BidListPage = (props) => {
   ]);
 
 
-  const [searchParams, setSearchParams] = useSearchParams();
   const [baseCompanies, setBaseCompanies] = useState([]);
   const [companies, setCompanies] = useState([]);
   const { item_id } = useParams();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
-  const showGetItem = searchParams.get('show');
+  const showGetItem = null;//searchParams.get('show');
 
 
   useEffect(() => {
@@ -119,8 +140,7 @@ const BidListPage = (props) => {
     if (showGetItem !== null){
       handlePreviewOpen(showGetItem);
       setTimeout(() => {
-        
-        setShowParam(showGetItem);
+
       }, 2200);
     }
     setIsMounted(true);
@@ -170,7 +190,7 @@ const BidListPage = (props) => {
 
   useEffect(() => {
     if (!isPreviewOpen){
-      setShowParam(null);
+
     }
   }, [isPreviewOpen]);
 
@@ -179,7 +199,7 @@ const BidListPage = (props) => {
   }, [filterBox, orderBox]);
 
   useEffect(() => {
-    if (filterBox.manager && +filterBox.manager === +userInfo.id) {
+    if (filterBox.manager && userInfo && +filterBox.manager === +userInfo.id) {
       setMyBids(true);
     } else {
       setTimeout(() => {
@@ -284,6 +304,7 @@ const BidListPage = (props) => {
         if (response.data.total_count < max)
         {
           setCurrentPage(1);
+          handleSearchParamsChange('currentPage', 1);
         }
       } catch (e) {
         console.log(e);
@@ -314,6 +335,10 @@ const BidListPage = (props) => {
   };
 
   const prepareOrderBox = (orders) => {
+    if (!Array.isArray(orders)) {
+      return [];
+    }
+
     return orders.map(order => {
       if (order.order === 1) {
         return { ...order, order: 'ASC' };
@@ -333,25 +358,10 @@ const BidListPage = (props) => {
     }
   };
 
-  const handleRowDblClick = (id) => {
-
-  };
-
   const handlePreviewOpen = (item, state) => {
     console.log('HELLO', item);
-    setShowParam(item);
     setPreviewItem(item);
     setIsPreviewOpen(true);
-  };
-
-  const setShowParam = (value) => {
-    if (value !== null){
-      searchParams.set('show', value);
-      setSearchParams(searchParams);
-    } else {
-      searchParams.delete('show');
-      setSearchParams(searchParams);
-    }
   };
 
   const prepareSelectOptions = (options) => {
@@ -377,33 +387,43 @@ const BidListPage = (props) => {
 
     if (filterBox.bid_id !== newFilterBox.bid_id) {
       filterBoxUpd.bid_id = newFilterBox.bid_id;
+      handleSearchParamsChange('bid_id', newFilterBox.bid_id);
     }
     if (filterBox.company_name !== newFilterBox.company_name) {
       filterBoxUpd.company_name = newFilterBox.company_name;
+      handleSearchParamsChange('company_name', newFilterBox.company_name);
     }
     if (filterBox.type !== newFilterBox.type) {
       filterBoxUpd.type = newFilterBox.type;
+      handleSearchParamsChange('type', newFilterBox.type);
     }
     if (filterBox.protect_status !== newFilterBox.protect_status) {
       filterBoxUpd.protect_status = newFilterBox.protect_status;
+      handleSearchParamsChange('protect_status', newFilterBox.protect_status);
     }
     if (filterBox.stage_status !== newFilterBox.stage_status) {
       filterBoxUpd.stage_status = newFilterBox.stage_status;
+      handleSearchParamsChange('stage_status', newFilterBox.stage_status);
     }
     if (filterBox.dates !== newFilterBox.dates) {
       filterBoxUpd.dates = newFilterBox.dates;
+      handleSearchParamsChange('dates', newFilterBox.dates);
     }
     if (filterBox.manager !== newFilterBox.manager) {
       filterBoxUpd.manager = newFilterBox.manager;
+      handleSearchParamsChange('manager', newFilterBox.manager);
     }
     if (filterBox.bill_number !== newFilterBox.bill_number) {
       filterBoxUpd.bill_number = newFilterBox.bill_number;
+      handleSearchParamsChange('bill_number', newFilterBox.bill_number);
     }
     if (filterBox.comment !== newFilterBox.comment) {
       filterBoxUpd.comment = newFilterBox.comment;
+      handleSearchParamsChange('comment', newFilterBox.comment);
     }
     if (filterBox.object_name !== newFilterBox.object_name) {
       filterBoxUpd.object_name = newFilterBox.object_name;
+      handleSearchParamsChange('object_name', newFilterBox.object_name);
     }
 
     setFilterBox(filterBoxUpd);
@@ -413,27 +433,35 @@ const BidListPage = (props) => {
 
     if (filterBox.target_company !== newFilterBox.target_company) {
       filterBoxUpd.target_company = newFilterBox.target_company;
+      handleSearchParamsChange('target_company', newFilterBox.target_company);
     }
     if (filterBox.pay_status !== newFilterBox.pay_status) {
       filterBoxUpd.pay_status = newFilterBox.pay_status;
+      handleSearchParamsChange('pay_status', newFilterBox.pay_status);
     }
     if (filterBox.admin_accept !== newFilterBox.admin_accept) {
       filterBoxUpd.admin_accept = newFilterBox.admin_accept;
+      handleSearchParamsChange('admin_accept', newFilterBox.admin_accept);
     }
     if (filterBox.package !== newFilterBox.package) {
       filterBoxUpd.package = newFilterBox.package;
+      handleSearchParamsChange('package', newFilterBox.package);
     }
     if (filterBox.price !== newFilterBox.price) {
       filterBoxUpd.price = newFilterBox.price;
+      handleSearchParamsChange('price', newFilterBox.price);
     }
     if (filterBox.bid_currency !== newFilterBox.bid_currency) {
       filterBoxUpd.bid_currency = newFilterBox.bid_currency;
+      handleSearchParamsChange('bid_currency', newFilterBox.bid_currency);
     }
     if (filterBox.nds !== newFilterBox.nds) {
       filterBoxUpd.nds = newFilterBox.nds;
+      handleSearchParamsChange('nds', newFilterBox.nds);
     }
     if (filterBox.complete !== newFilterBox.complete) {
       filterBoxUpd.complete = newFilterBox.complete;
+      handleSearchParamsChange('complete', newFilterBox.complete);
     }
     setFilterBox(filterBoxUpd);
   };
@@ -479,16 +507,40 @@ const BidListPage = (props) => {
   };
 
   const handleClearAllFilterBox = ()=> {
-    setFilterBox({});
+    setFilterBox(initialFilterBox);
+    handleSearchParamsZeroing(initialFilterBox);
   };
 
   const handleClearOrderBox = ()=> {
-    setOrderBox({});
+    setOrderBox([]);
   };
 
   const handleClearAllBoxes = ()=> {
-    setFilterBox(initialFilterBox);
-    setOrderBox({});
+    handleClearAllFilterBox();
+    handleClearOrderBox();
+  };
+
+  const handleSearchParamsZeroing = (obj) => {
+    setSearchParams(prevParams => {
+      const newParams = new URLSearchParams(prevParams);
+      for (const key in obj) {
+        if (obj[key] === null){} {
+          newParams.delete(key);
+        }
+      }
+      return newParams;
+    });
+  };
+  const handleSearchParamsChange = (key, value) => {
+    setSearchParams(prevParams => {
+      const newParams = new URLSearchParams(prevParams);
+        if (value) {
+          newParams.set(key, value);
+        } else {
+          newParams.delete(key);
+        }
+      return newParams;
+    });
   };
 
   return (
@@ -627,7 +679,14 @@ const BidListPage = (props) => {
                       defaultCurrent={1}
                       current={currentPage}
                       total={total}
-                      onChange={setCurrentPage}
+                      onShowSizeChange={(current, newSize) => {
+                        handleSearchParamsChange('onPage', newSize);
+                        setOnPage(newSize);
+                      }}
+                      onChange={(val) => {
+                        handleSearchParamsChange('currentPage', val);
+                        setCurrentPage(val);
+                      }}
                       showQuickJumper
                       locale={ANTD_PAGINATION_LOCALE}
                   />
