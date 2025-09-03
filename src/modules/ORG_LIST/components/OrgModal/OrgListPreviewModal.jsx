@@ -78,6 +78,7 @@ const OrgListPreviewModal = (props) => {
   useEffect(() => {
     if (props.data?.id){
 
+      console.log(props.data);
       setOrgId(props.data?.id);
       setOrgName(props.data?.name);
 
@@ -464,6 +465,7 @@ const menuItems = [
                 <OrgListModalBillsTab
                   data={{id: orgId}}
                   selects_data={selectsData}
+                  org_name={orgName}
                 />
               )}
 
@@ -471,6 +473,7 @@ const menuItems = [
                 <OrgListModalOffersTab
                   data={{id: orgId}}
                   selects_data={selectsData}
+                  org_name={orgName}
                 />
               )}
 
@@ -478,6 +481,7 @@ const menuItems = [
                 <OrgListModalProjectsTab
                   data={{id: orgId}}
                   selects_data={selectsData}
+                  org_name={orgName}
                 />
               )}
 
@@ -485,6 +489,7 @@ const menuItems = [
                 <OrgListModalCallMeetingsTab
                   data={{id: orgId}}
                   selects_data={selectsData}
+                  org_name={orgName}
                 />
               )}
 
@@ -492,6 +497,7 @@ const menuItems = [
                 <OrgListModalNotesTab
                   data={{id: orgId}}
                   selects_data={selectsData}
+                  org_name={orgName}
                 />
               )}
 
@@ -499,6 +505,7 @@ const menuItems = [
                 <OrgListModalHistoryTab
                   data={{id: orgId}}
                   selects_data={selectsData}
+                  org_name={orgName}
                 />
               )}
               

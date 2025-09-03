@@ -16,6 +16,7 @@ const OrgListModalBillsTab = (props) => {
   const [onPage, setOnPage] = useState(30);
   const [showLoader, setShowLoader] = useState(false);
   const [total, setTotal] = useState(1);
+  const [orgName, setOrgName] = useState(null);
 
   const [orgId, setOrgId] = useState(null);
   const [baseOrgData, setBaseOrgData] = useState(null);
@@ -43,7 +44,9 @@ const OrgListModalBillsTab = (props) => {
   }, [props.data]);
 
 
-
+  useEffect(() => {
+    setOrgName(props.org_name);
+  }, [props.org_name]);
 
     useEffect(() => {
       if (baseOrgData?.bids !== null && baseOrgData?.bids?.length > 0){
@@ -77,6 +80,7 @@ const OrgListModalBillsTab = (props) => {
               // }
               setBaseOrgData(response.data.content);
               setLoading(false);
+              setTotal(response.data.total);
           }
       } catch (e) {
           console.log(e)
@@ -110,11 +114,12 @@ const OrgListModalBillsTab = (props) => {
               defaultPageSize={onPage}
               locale={ANTD_PAGINATION_LOCALE}
               showQuickJumper
+              total={total}
             />
           </div>
           <div>
             {/* Здесь будут фильтры */}
-            <NavLink to={'/bids?type=2&org_id=' + orgId}>
+            <NavLink to={'/bids?type=2&&orgname=' + orgName}>
             <Button size={'small'} >
               Открыть в полном списке
             </Button></NavLink>
