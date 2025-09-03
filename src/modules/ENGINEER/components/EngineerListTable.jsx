@@ -76,11 +76,6 @@ const EngineerListTable = (props) => {
                     </div>
                     <div className={'sa-table-box-cell'}>
                         <div className={'sa-table-head-on'}>
-                            Спецификация
-                        </div>
-                    </div>
-                    <div className={'sa-table-box-cell'}>
-                        <div className={'sa-table-head-on'}>
                             <TableHeadNameWithSort
                                 sort_key={'date'}
                                 on_sort_change={handleActivateSorter}
@@ -129,6 +124,11 @@ const EngineerListTable = (props) => {
                                        onChange={(val) => props.on_change_filter_box('comment', val.target.value)}
                                 />
                             </div>
+                        </div>
+                    </div>
+                    <div className={'sa-table-box-cell'}>
+                        <div className={'sa-table-head-on'}>
+                            Спецификация
                         </div>
                     </div>
                     <div className={'sa-table-box-cell'}>

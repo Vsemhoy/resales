@@ -3,11 +3,11 @@
 }
 .sa-table-box-engineers {
     display: grid;
-    grid-template-columns: 100px 150px 150px 1fr 1fr 250px;
+    grid-template-columns: 100px 150px 150px 1fr 150px 250px;
 }
 
 .sa-filer-opened .sa-table-box-engineers {
-    grid-template-columns: 100px 150px 150px 1fr 1fr 250px !important;
+    grid-template-columns: 100px 150px 150px 1fr 150px 250px !important;
 }
 .sa-filer-opened .sa-table-box-engineers > *:nth-child(9) {
     display: none;
