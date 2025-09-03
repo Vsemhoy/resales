@@ -144,6 +144,9 @@ const BidListPage = (props) => {
       }, 2200);
     }
     setIsMounted(true);
+
+    handleSearchParamsChange('currentPage', currentPage);
+    handleSearchParamsChange('onPage', onPage);
   }, []);
 
   useEffect(() => {
@@ -535,6 +538,7 @@ const BidListPage = (props) => {
     setSearchParams(prevParams => {
       const newParams = new URLSearchParams(prevParams);
         if (value) {
+          console.log(key, value);
           newParams.set(key, value);
         } else {
           newParams.delete(key);
@@ -675,20 +679,28 @@ const BidListPage = (props) => {
                       </NavLink>
                   )}
                   <Pagination
-                      defaultPageSize={onPage}
                       defaultCurrent={1}
+                      pageSize={onPage}
+                      pageSizeOptions={[30, 50, 100, 200, 300]}
                       current={currentPage}
                       total={total}
-                      onShowSizeChange={(current, newSize) => {
-                        handleSearchParamsChange('onPage', newSize);
-                        setOnPage(newSize);
-                      }}
-                      onChange={(val) => {
-                        handleSearchParamsChange('currentPage', val);
-                        setCurrentPage(val);
+                      onChange={(val, newOnPage) => {
+                        if (val !== currentPage) {
+                          handleSearchParamsChange('currentPage', val);
+                          setCurrentPage(val);
+                        }
+                        if (newOnPage !== onPage) {
+                          handleSearchParamsChange('onPage', newOnPage);
+                          setOnPage(newOnPage);
+                        }
                       }}
                       showQuickJumper
-                      locale={ANTD_PAGINATION_LOCALE}
+                      locale={{
+                        items_per_page: 'на странице',
+                        jump_to: 'Перейти',
+                        jump_to_confirm: 'OK',
+                        page: 'Страница'
+                      }}
                   />
                 </div>
                 <div>
