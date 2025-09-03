@@ -141,7 +141,7 @@ const EngineerListTable = (props) => {
           </Affix>
 
         <div className={'sa-table-box-stack'}>
-            {props.specs.map((spec, index) => (
+            {props.specs?.length > 0 && props.specs.map((spec, index) => (
                 <EngineerListRow
                     activeRole={props.activeRole}
                     data={spec}
