@@ -7,7 +7,7 @@ import style from "./style/main.module.css";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
 
-const PositionList = ({ bidId }) => {
+const PositionList = ({ bidId, type = 1 }) => {
     const [positions, setPositions] = useState(null);
     const [comment, setComment] = useState(null);
     const [load, setLoad] = useState(true);
@@ -20,6 +20,7 @@ const PositionList = ({ bidId }) => {
                 _token: CSRF_TOKEN,
                 data: {
                     bid_id: bidId,
+                    type: type,
                 },
             };
             const models_response = await PROD_AXIOS_INSTANCE.post(
