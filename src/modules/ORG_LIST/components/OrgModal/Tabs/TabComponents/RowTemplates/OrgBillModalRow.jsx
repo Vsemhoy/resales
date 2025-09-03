@@ -34,7 +34,7 @@ const OrgBillModalRow = (props) => {
 
 
               <div>
-                  <div>
+                  <div style={{textAlign: 'left'}}>
                     {baseData?.orguser_id ? (
                       <div>{baseData.contactuser?.lastname + " " + baseData.contactuser?.name  + " " + baseData.contactuser?.middlename}</div>
                     ) : ""}
@@ -48,8 +48,8 @@ const OrgBillModalRow = (props) => {
                   </div>
               </div>
              <div>
-                  <div>
-                  {baseData?.statusbid_id && baseData?.statusbid_id === 1 ? "Оплачено" : "Не оплачено"}
+               <div>
+                  {baseData?.statusbid_id && baseData?.statusbid_id === 1 ? "Оплачено" : <span style={{color: 'gray'}} >Не оплачено</span>}
                   </div>
               </div>
               <div>
@@ -60,12 +60,12 @@ const OrgBillModalRow = (props) => {
                   </div>
               </div>
               <div>
-                  <div>
+                  <div style={{textAlign: 'left'}}>
                     {baseData?.comment}
                   </div>
               </div>
               <div>
-                  <div>
+                  <div style={{textAlign: 'left'}}>
                     {baseData?.project}
                   </div>
               </div>

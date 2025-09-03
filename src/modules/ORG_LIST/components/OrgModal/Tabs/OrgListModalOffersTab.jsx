@@ -1,10 +1,11 @@
-import { Pagination, Spin } from 'antd';
+import { Button, Pagination, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
 import { MODAL_OFFERS_LIST } from '../../mock/MODALOFFERSTABMOCK';
 import OrgOfferModalRow from './TabComponents/RowTemplates/OrgOfferModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
+import { NavLink } from 'react-router-dom';
 
 
 const OrgListModalOffersTab = (props) => {
@@ -15,6 +16,7 @@ const OrgListModalOffersTab = (props) => {
   const [total, setTotal] = useState(1);
 
   const [orgId, setOrgId] = useState(null);
+  const [orgName, setOrgName] = useState(null);
   const [baseOrgData, setBaseOrgData] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -22,10 +24,10 @@ const OrgListModalOffersTab = (props) => {
 
   useEffect(() => {
     if (props.data?.id){
+      setOrgId(props.data.id);
       if (PRODMODE){
         if (props.data?.id !== orgId){
           setLoading(true);
-          setOrgId(props.data.id);
           get_org_data_action(props.data.id);
 
         }
@@ -39,6 +41,10 @@ const OrgListModalOffersTab = (props) => {
     }
   }, [props.data]);
 
+
+    useEffect(() => {
+      setOrgName(props.org_name);
+    }, [props.org_name]);
 
 
       useEffect(() => {
@@ -72,6 +78,7 @@ const OrgListModalOffersTab = (props) => {
               // }
               setBaseOrgData(response.data.content);
               setLoading(false);
+              setTotal(response.data.total);
           }
       } catch (e) {
           console.log(e)
@@ -91,22 +98,27 @@ const OrgListModalOffersTab = (props) => {
   
 
   return (
-    <Spin spinning={loading}>
+<Spin spinning={loading}>
     <div className={'sa-orgtab-container'}>
         <div className={'sa-pa-6 sa-flex-space'}>
           <div>
-            <Pagination
+            <Pagination 
               size={'small'}
               current={currentPage}
               pageSizeOptions={[10, 30, 50, 100]}
               defaultPageSize={onPage}
               locale={ANTD_PAGINATION_LOCALE}
               showQuickJumper
-              onChange={(ev, val)=>{setCurrentPage(ev); setOnPage(val)}}
+              total={total}
+              showTotal
             />
           </div>
           <div>
             {/* Здесь будут фильтры */}
+            <NavLink to={'/bids?type=1&orgname=' + orgName}>
+            <Button size={'small'} >
+              Открыть в полном списке
+            </Button></NavLink>
           </div>
         </div>
 
@@ -115,15 +127,15 @@ const OrgListModalOffersTab = (props) => {
             <div className={'sa-org-bid-row sa-org-bid-row-header'}>
               <div>
                   <div>
-                    Дата
+                    id
                   </div>
               </div>
               <div>
                   <div>
-                    
-                    Номер
+                    Дата
                   </div>
               </div>
+
               <div>
                   <div>
                     Контактное лицо
@@ -136,12 +148,27 @@ const OrgListModalOffersTab = (props) => {
               </div>
               <div>
                   <div>
+                  Статус оплаты
+                  </div>
+              </div>
+              <div>
+                  <div>
                   Статус
                   </div>
               </div>
               <div>
                   <div>
                   Комментарий
+                  </div>
+              </div>
+              <div>
+                  <div>
+                  Проект
+                  </div>
+              </div>
+              <div>
+                  <div>
+                    Кол-во моделей
                   </div>
               </div>
           </div>
