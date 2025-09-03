@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import OrgModalRow from '../../MainTabSections/OrgModalRow';
+import dayjs from 'dayjs';
+import { TextWithLineBreaks } from '../../../../../../../components/helpers/TextHelpers';
 
 const OrgCallsModalRow = (props) => {
 
@@ -13,42 +16,53 @@ const OrgCallsModalRow = (props) => {
     setOrgId(props.org_id);
   }, [props.org_id]);
 
-  return (
+return (
     <div className={'sa-org-row-wrapper'}>
-        <div className={'sa-org-bill-row'}>
-            <div>
-                  <div>
-                    Дата
-                  </div>
-              </div>
-              <div>
-                  <div>
-                    
-                    Номер
-                  </div>
-              </div>
-              <div>
-                  <div>
-                    Контактное лицо
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Менеджер
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Статус
-                  </div>
-              </div>
-              <div>
-                  <div>
-                  Комментарий
-                  </div>
-              </div>
-          </div>
-        </div>
+      <div className={'sa-org-bill-tab-form'}>
+        <OrgModalRow
+            key={'rowfla_0032241'}
+            titles={['Отдел', 'Автор']}
+            datas={[baseData?.departament?.name, baseData?.id]}
+        />
+
+        <OrgModalRow
+            key={'rowfla_0032251_' + orgId}
+            titles={['Абонент', 'Должность']}
+            datas={[baseData?.creator ? baseData.creator.surname + " " + baseData.creator.name + " " + baseData.creator.secondname  : ""  ,
+             baseData?.date ? dayjs(baseData.date).format("DD.MM.YYYY"): ""]}
+        />
+
+        <OrgModalRow
+            key={'rowfla_0032271_' + orgId}
+            titles={['Цель встречи']}
+            datas={[<TextWithLineBreaks text={baseData?.notes}/>]}
+        />
+
+        <OrgModalRow
+            key={'rowfla_0032252_' + orgId}
+            titles={['Дата', 'Телефон']}
+            datas={[
+             baseData?.date ? dayjs(baseData.date).format("DD.MM.YYYY"): "",
+             baseData?.phone]}
+        />
+
+        <OrgModalRow
+            key={'rowfla_0032253_' + orgId}
+            titles={['Заметка']}
+            datas={[<TextWithLineBreaks text={baseData?.note}/>]}
+        />
+        
+
+        <OrgModalRow
+            key={'rowfla_0032254_' + orgId}
+            titles={['Результат']}
+            datas={[<TextWithLineBreaks text={baseData?.result}/>]}
+        />
+        
+
+
+      </div>
+    </div>
   );
 };
 

@@ -5,6 +5,9 @@ import { Collapse, Pagination, Spin } from 'antd';
 import { MODAL_NOTES_LIST } from '../../mock/MODALNOTESTABMOCK';
 import OrgNoteModalRow from './TabComponents/RowTemplates/OrgNoteModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
+import { PencilIcon } from '@heroicons/react/24/solid';
+import dayjs from 'dayjs';
+import { getMonthName } from '../../../../../components/helpers/TextHelpers';
 
 
 const OrgListModalNotesTab = (props) => {
@@ -50,7 +53,7 @@ const OrgListModalNotesTab = (props) => {
             
             return {
                 key: 'orprow_' + item.id,
-                label: 'Общая информация' + item.id,
+                label: <div className='sa-flex'><div>{item.theme}<span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month()) + " " + dayjs(item.date).format("YYYY"): ""}</span> <span className={'sa-text-phantom'}>({item.id})</span></div></div>,
                 children: <OrgNoteModalRow
                   data={item}
                   // selects_data={props.selects_data}
@@ -102,7 +105,8 @@ const OrgListModalNotesTab = (props) => {
  return (
     <Spin spinning={loading}>
     <div className={'sa-orgtab-container'}>
-        <div className={'sa-pa-6'}>
+        <div className={'sa-pa-6 sa-flex-space'}>
+          <div>
             <Pagination
               size={'small'}
               current={currentPage}
@@ -121,6 +125,10 @@ const OrgListModalNotesTab = (props) => {
                 get_org_data_action(orgId, ev, on);
               }}
             />
+            </div>
+            <div>
+              
+            </div>
         </div>
         <div>
         <Collapse

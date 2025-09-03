@@ -569,3 +569,18 @@ font-size: smaller;
     padding: 0px !important;
 }
 
+
+.sa-text-phantom {
+    color: #004d96b9;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s;
+}
+*:hover > .sa-text-phantom {
+    opacity: 1 !important;
+}
+.sa-date-text {
+    font-style: italic;
+    font-weight: 400;
+    opacity: 0.8;
+}

@@ -5,6 +5,8 @@ import { Collapse, Pagination, Spin } from 'antd';
 import { MODAL_CALLS_LIST } from '../../mock/MODALCALLSTABMOCK';
 import OrgCallsModalRow from './TabComponents/RowTemplates/OrgCallsModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
+import { getMonthName } from '../../../../../components/helpers/TextHelpers';
+import dayjs from 'dayjs';
 
 
 const OrgListModalCallMeetingsTab = (props) => {
@@ -56,8 +58,8 @@ const OrgListModalCallMeetingsTab = (props) => {
       setStructureItems(result.map((item)=>{
             
             return {
-                key: 'orprow_' + item.id,
-                label: 'Общая информация' + item.id,
+                key: 'orcamirow_' + item.id,
+                label: <div className='sa-flex'><div>{item.theme}<span  className='sa-date-text'>{item?.date ? " - "  + getMonthName(dayjs(item.date).month()) + " " + dayjs(item.date).format("YYYY"): ""}</span> <span className={'sa-text-phantom'}>({item.id})</span></div></div>,
                 children: <OrgCallsModalRow
                   data={item}
                   // selects_data={props.selects_data}

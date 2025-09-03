@@ -38,7 +38,7 @@
     padding: 1px;
     padding-right: 10px;
     display: flex;
-        align-items: center;
+    align-items: flex-start;
         
 }
 
@@ -193,6 +193,6 @@ background-color: #dae9fb;
 
 .sa-orgtab-container .ant-collapse-item {
     margin-bottom: 6px;
-    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.829);
     border-bottom: 1px solid rgba(167, 167, 167, 0.363);
 }

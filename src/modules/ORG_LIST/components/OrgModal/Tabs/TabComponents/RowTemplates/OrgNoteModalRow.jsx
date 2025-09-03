@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import OrgModalRow from '../../MainTabSections/OrgModalRow';
+import { TextWithLineBreaks } from '../../../../../../../components/helpers/TextHelpers';
+import dayjs from 'dayjs';
 
 const OrgNoteModalRow = (props) => {
 
@@ -16,26 +18,27 @@ const OrgNoteModalRow = (props) => {
 
   return (
     <div className={'sa-org-row-wrapper'}>
-        <div className={'sa-org-bill-tab-form'}>
+      <div className={'sa-org-bill-tab-form'}>
         <OrgModalRow
-            key={'rowfla0032241'}
+            key={'rowfla0032241_' + orgId}
             titles={['Тема']}
-            datas={[baseData?.t_name]}
+            datas={[baseData?.theme]}
         />
 
         <OrgModalRow
-            key={'rowfla0032251'}
+            key={'rowfla0032251_' + orgId}
             titles={['Автор', 'Дата']}
-            datas={[baseData?.theme, baseData?.date]}
+            datas={[baseData?.creator ? baseData.creator.surname + " " + baseData.creator.name + " " + baseData.creator.secondname  : ""  ,
+             baseData?.date ? dayjs(baseData.date).format("DD.MM.YYYY"): ""]}
         />
 
         <OrgModalRow
-            key={'rowfla0032271'}
+            key={'rowfla0032271_' + orgId}
             titles={['Заметка']}
-            datas={[baseData?.notes]}
+            datas={[<TextWithLineBreaks text={baseData?.notes}/>]}
         />
-          </div>
-        </div>
+      </div>
+    </div>
   );
 };
 
