@@ -1,4 +1,4 @@
-import { Pagination, Spin } from 'antd';
+import { Button, Pagination, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OrgBidTabRow from './TabComponents/OrgBidTabRow';
 import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
@@ -25,10 +25,11 @@ const OrgListModalBillsTab = (props) => {
 
   useEffect(() => {
     if (props.data?.id){
+      setOrgId(props.data.id);
+
       if (PRODMODE){
         if (props.data?.id !== orgId){
           setLoading(true);
-          setOrgId(props.data.id);
           get_org_data_action(props.data.id);
         }
       } else {
@@ -113,6 +114,10 @@ const OrgListModalBillsTab = (props) => {
           </div>
           <div>
             {/* Здесь будут фильтры */}
+            <NavLink to={'/bids?type=2&org_id=' + orgId}>
+            <Button size={'small'} >
+              Открыть в полном списке
+            </Button></NavLink>
           </div>
         </div>
 
@@ -121,15 +126,15 @@ const OrgListModalBillsTab = (props) => {
             <div className={'sa-org-bid-row sa-org-bid-row-header'}>
               <div>
                   <div>
-                    Дата
+                    id
                   </div>
               </div>
               <div>
                   <div>
-                    
-                    Номер
+                    Дата
                   </div>
               </div>
+
               <div>
                   <div>
                     Контактное лицо
@@ -142,12 +147,27 @@ const OrgListModalBillsTab = (props) => {
               </div>
               <div>
                   <div>
+                  Статус оплаты
+                  </div>
+              </div>
+              <div>
+                  <div>
                   Статус
                   </div>
               </div>
               <div>
                   <div>
                   Комментарий
+                  </div>
+              </div>
+              <div>
+                  <div>
+                  Проект
+                  </div>
+              </div>
+              <div>
+                  <div>
+                    Кол-во моделей
                   </div>
               </div>
           </div>

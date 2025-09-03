@@ -1,4 +1,7 @@
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { ShortName } from '../../../../../../../components/helpers/TextHelpers';
 
 const OrgBillModalRow = (props) => {
 
@@ -7,6 +10,7 @@ const OrgBillModalRow = (props) => {
 
   useEffect(() => {
     setBaseData(props.data);
+    console.log(props.data);
   }, [props.data]);
 
   useEffect(() => {
@@ -15,36 +19,59 @@ const OrgBillModalRow = (props) => {
 
   return (
     <div className={'sa-org-row-wrapper'}>
-        <div className={'sa-org-bill-row'}>
+        <div className={`sa-org-bid-row ${baseData?.deleted === 1 ? 'sa-org-bid-row-deleted' : ''}`}>
             <div>
                   <div>
-                    Дата
+                    <NavLink to={'/bids/' + baseData?.id}>
+                    {baseData?.id}</NavLink>
+                  </div>
+              </div>
+            <div>
+                  <div>
+                    {baseData?.date ? dayjs.unix(baseData.date).format('DD.MM.YYYY') : "" }
+                  </div>
+              </div>
+
+
+              <div>
+                  <div>
+                    {baseData?.orguser_id ? (
+                      <div>{baseData.contactuser?.lastname + " " + baseData.contactuser?.name  + " " + baseData.contactuser?.middlename}</div>
+                    ) : ""}
                   </div>
               </div>
               <div>
                   <div>
-                    
-                    Номер
+                    {baseData?.user_id ? (
+                      <div>{ShortName(baseData.manager?.surname, baseData.manager?.name,baseData.manager?.secondname)}</div>
+                    ) : ""}
+                  </div>
+              </div>
+             <div>
+                  <div>
+                  {baseData?.statusbid_id && baseData?.statusbid_id === 1 ? "Оплачено" : "Не оплачено"}
                   </div>
               </div>
               <div>
                   <div>
-                    Контактное лицо
+                  {baseData?.deleted === 1 ? "Удалено" : (<div>
+                    {baseData?.place?.name}
+                    </div>)}
                   </div>
               </div>
               <div>
                   <div>
-                  Менеджер
+                    {baseData?.comment}
                   </div>
               </div>
               <div>
                   <div>
-                  Статус
+                    {baseData?.project}
                   </div>
               </div>
               <div>
-                  <div>
-                  Комментарий
+                  <div style={{wordBreak: 'break-all'}}>
+                    {baseData?.orguser_id}
                   </div>
               </div>
           </div>

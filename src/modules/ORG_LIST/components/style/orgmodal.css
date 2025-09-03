@@ -135,7 +135,7 @@ background-color: #dae9fb;
 
 .sa-org-bid-row {
     display: grid;
-    grid-template-columns: 100px 120px 2fr 1fr 100px 2fr;
+    grid-template-columns: 80px 100px  2fr 1fr 100px 100px 2fr 2fr 120px;
     border-bottom: 1px solid var(--column-divider-color);
     background-color: var(--section-row-color);
 }
@@ -177,4 +177,16 @@ background-color: #dae9fb;
 
 .ant-collapse-content-box, .ant-collapse-item {
     border-radius: 0px !important;
+}
+/* 
+.sa-spec-modal-hater .ant-affix {
+    background-color: rgba(255, 255, 255, 0.301);
+    margin-top: -1px;
+    backdrop-filter: blur(22px);
+    box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.11);
+} */
+
+
+.sa-org-bid-row-deleted {
+    background-color: rgba(255, 0, 0, 0.192);
 }
