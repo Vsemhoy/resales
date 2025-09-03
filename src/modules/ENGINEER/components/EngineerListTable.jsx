@@ -54,7 +54,7 @@ const EngineerListTable = (props) => {
     <div className={'sa-table-box'} style={{width:'80%', marginRight: "auto "}} >
           <Affix offsetTop={156}>
             <div className={'sa-table-box-header'}>
-                <div className={'sa-table-box-bids sa-table-box-row'}>
+                <div className={'sa-table-box-engineers sa-table-box-row'}>
                     <div className={'sa-table-box-cell'}>
                         <div className={'sa-table-head-on'}>
                             <TableHeadNameWithSort
@@ -141,7 +141,7 @@ const EngineerListTable = (props) => {
           </Affix>
 
         <div className={'sa-table-box-stack'}>
-            {props.specs.map((spec, index) => (
+            {props.specs?.length > 0 && props.specs.map((spec, index) => (
                 <EngineerListRow
                     activeRole={props.activeRole}
                     data={spec}
