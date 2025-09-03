@@ -26,9 +26,10 @@ const OrgListModalOffersTab = (props) => {
     if (props.data?.id){
       setOrgId(props.data.id);
       if (PRODMODE){
-        if (props.data?.id !== orgId){
+        if (props.data?.id !== orgId){ 
+          setCurrentPage(1);
           setLoading(true);
-          get_org_data_action(props.data.id);
+          get_org_data_action(props.data.id, 1, onPage);
 
         }
       } else {
@@ -59,14 +60,14 @@ const OrgListModalOffersTab = (props) => {
 
   /** ----------------------- FETCHES -------------------- */
 
-  const get_org_data_action = async (id) => {
+  const get_org_data_action = async (id, cpage, onpage) => {
 
   
       try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
             data: {
-              page: currentPage,
-              limit: onPage,
+              page: cpage,
+              limit: onpage,
               type: 1
             },
             _token: CSRF_TOKEN
@@ -110,7 +111,15 @@ const OrgListModalOffersTab = (props) => {
               locale={ANTD_PAGINATION_LOCALE}
               showQuickJumper
               total={total}
-              showTotal
+              onChange={(ev, on)=>{
+                if (ev !== currentPage){
+                  setCurrentPage(ev);
+                };
+                if (on !== onPage){
+                  setOnPage(on);
+                };
+                get_org_data_action(orgId, ev, on);
+              }}
             />
           </div>
           <div>
