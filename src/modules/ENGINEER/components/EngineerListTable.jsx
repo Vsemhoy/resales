@@ -76,11 +76,6 @@ const EngineerListTable = (props) => {
                     </div>
                     <div className={'sa-table-box-cell'}>
                         <div className={'sa-table-head-on'}>
-                            Спецификация
-                        </div>
-                    </div>
-                    <div className={'sa-table-box-cell'}>
-                        <div className={'sa-table-head-on'}>
                             <TableHeadNameWithSort
                                 sort_key={'date'}
                                 on_sort_change={handleActivateSorter}
@@ -133,13 +128,17 @@ const EngineerListTable = (props) => {
                     </div>
                     <div className={'sa-table-box-cell'}>
                         <div className={'sa-table-head-on'}>
+                            Спецификация
+                        </div>
+                    </div>
+                    <div className={'sa-table-box-cell'}>
+                        <div className={'sa-table-head-on'}>
                             <div className={'sa-pa-3'}>Действия</div>
                         </div>
                     </div>
                 </div>
             </div>
           </Affix>
-
         <div className={'sa-table-box-stack'}>
             {props.specs?.length > 0 && props.specs.map((spec, index) => (
                 <EngineerListRow
