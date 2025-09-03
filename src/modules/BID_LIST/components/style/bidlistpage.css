@@ -45,7 +45,7 @@
     background-color: var(--sa-list-header);
     display: grid;
     grid-template-columns: 1fr;
-    margin: 0 12px;
+    /*margin: 0 12px;*/
     align-items: end;
 }
 
