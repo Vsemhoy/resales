@@ -239,10 +239,10 @@ const BidListPage = (props) => {
     if (PRODMODE) {
       let dates = null;
       if (filterBox.dates) {
-        const dateObj = dayjs(filterBox.dates);
+        const dateObj = dayjs.unix(filterBox.dates);
         dates = [
-          dateObj.startOf('day').valueOf(),
-          dateObj.endOf('day').valueOf()
+          dateObj.startOf('day').unix() * 1000,
+          dateObj.endOf('day').unix() * 1000
         ];
       }
       const data = {
@@ -269,7 +269,7 @@ const BidListPage = (props) => {
         "to": 0,
         "page": currentPage,
         "limit": onPage,
-        "sort_orders": orderBox,
+        "sort_orders": prepareOrderBox(orderBox),
       }
       console.log(data)
       try {
@@ -311,6 +311,18 @@ const BidListPage = (props) => {
         console.log(e)
       }
     }
+  };
+
+  const prepareOrderBox = (orders) => {
+    return orders.map(order => {
+      if (order.order === 1) {
+        return { ...order, order: 'ASC' };
+      } else if (order.order === 2) {
+        return { ...order, order: 'DESC' };
+      } else {
+        return order;
+      }
+    });
   };
 
   const handleActivateSorter = (key, order) => {
@@ -638,7 +650,7 @@ const BidListPage = (props) => {
           </Affix>
 
 
-          <div className={`${isOpenedFilters ? "sa-pa-tb-12 sa-pa-s-3" : 'sa-pa-12'}`} style={{paddingTop: 0}}>
+          <div className={`${isOpenedFilters ? "sa-pa-tb-12 sa-pa-s-3" : 'sa-pa-12'} sa-table`} style={{paddingTop: 0}}>
 
             <Spin spinning={isLoading}>
               <BidListTable
