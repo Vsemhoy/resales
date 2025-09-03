@@ -36,7 +36,7 @@ const EngineerListRow = (props) => {
 
   return (
     <Dropdown trigger={['contextMenu']}>
-      <div className={`sa-table-box-bids sa-table-box-row ${active ? 'active' : ''}`} key={props.key}
+      <div className={`sa-table-box-engineers sa-table-box-row ${active ? 'active' : ''}`} key={props.key}
            style={{color: compColor}}>
         <div className={'sa-table-box-cell'}>
           <div>
