@@ -88,16 +88,16 @@ const PositionList = ({ bidId, type = 1 }) => {
                     loading={load}
                 />
             </div>
-            <div className={style.add__btn}>
-                <Button
-                    onClick={() => {
-                        //exportToExcel(excel_data, bidId);
-                    }}
-                    size={"small"}
-                >
-                    Экспорт в EXCEL
-                </Button>
-            </div>
+            {/*<div className={style.add__btn}>*/}
+            {/*    <Button*/}
+            {/*        onClick={() => {*/}
+            {/*            //exportToExcel(excel_data, bidId);*/}
+            {/*        }}*/}
+            {/*        size={"small"}*/}
+            {/*    >*/}
+            {/*        Экспорт в EXCEL*/}
+            {/*    </Button>*/}
+            {/*</div>*/}
         </div>
     );
 };
