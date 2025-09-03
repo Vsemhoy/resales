@@ -49,7 +49,7 @@ const EngineerListRow = (props) => {
           <div>
             <Tooltip
                 placement="leftTop"
-                title={<PositionList bidId={data.id}/>}
+                title={<PositionList bidId={data.id} type={2}/>}
                 color="white"
                 overlayInnerStyle={{
                   color: 'black',
