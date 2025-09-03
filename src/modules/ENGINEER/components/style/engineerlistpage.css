@@ -1,15 +1,15 @@
 .sa-app-page {
     padding-top: 10px;
 }
-.sa-table-box-bids {
+.sa-table-box-engineers {
     display: grid;
     grid-template-columns: 100px 150px 150px 1fr 1fr 250px;
 }
 
-.sa-filer-opened .sa-table-box-bids {
+.sa-filer-opened .sa-table-box-engineers {
     grid-template-columns: 100px 150px 150px 1fr 1fr 250px !important;
 }
-.sa-filer-opened .sa-table-box-bids > *:nth-child(9) {
+.sa-filer-opened .sa-table-box-engineers > *:nth-child(9) {
     display: none;
 }
 
@@ -103,13 +103,13 @@
     color: white !important;
 }
 
-.sa-table-box-bids {
+.sa-table-box-engineers {
     box-shadow: -4px 0 0 -1px;
 }
-.sa-table-box-bids:hover {
+.sa-table-box-engineers:hover {
     box-shadow: -10px 0 0 -1px;
 }
-.sa-table-box-header .sa-table-box-bids {
+.sa-table-box-header .sa-table-box-engineers {
     /*box-shadow: -4px 0 0 -1px #fdfdfd;*/
     box-shadow: none;
 }
