@@ -75,7 +75,7 @@ const CuratorListRow = (props) => {
         </div>
         <div className={'sa-table-box-cell'}>
           <div>
-            <NavLink to={`/orgs/${data.org_id}`}>
+            <NavLink to={`/orgs/${data.org_id}?from=curator`}>
               {data.org_name} ({data.org_id})
             </NavLink>
           </div>

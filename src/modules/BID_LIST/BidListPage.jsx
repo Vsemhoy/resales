@@ -494,86 +494,88 @@ const BidListPage = (props) => {
   return (
     <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
       <Affix>
-        <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
-          <div className={'sa-header-label-container'}>
-            <div className={'sa-header-label-container-small'}>
-              <h1 className={'sa-header-label'}>Список заявок</h1>
-              <div>
-                <CurrencyMonitorBar/>
+        <div style={{padding: '0', backgroundColor: '#b4c9e1'}}>
+          <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
+            <div className={'sa-header-label-container'}>
+              <div className={'sa-header-label-container-small'}>
+                <h1 className={'sa-header-label'}>Список заявок</h1>
+                <div>
+                  <CurrencyMonitorBar/>
+                </div>
               </div>
-            </div>
-            <div className={'sa-header-label-container-small'}>
-              <div className={'sa-vertical-flex'}>
-                <Button.Group>
-                  <Button
-                      onClick={() => {
-                        setIsOpenedFilters(!isOpenedFilters);
+              <div className={'sa-header-label-container-small'}>
+                <div className={'sa-vertical-flex'}>
+                  <Button.Group>
+                    <Button
+                        onClick={() => {
+                          setIsOpenedFilters(!isOpenedFilters);
+                        }}
+                        className={`${isOpenedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'}`}
+                        color={'default'}
+                        variant={isOpenedFilters ? 'solid' : 'outlined'}
+                        icon={<FilterOutlined/>}
+                    >
+                      Доп Фильтры
+                    </Button>
+                    {filterSortClearMenu.length > 0 && (
+                        <Tooltip title={'Очистить фильтры'}  placement={'right'}>
+                          <Dropdown menu={{items: filterSortClearMenu}}>
+                            <Button
+                                color={'danger'}
+                                variant={'solid'}
+                                icon={<CloseOutlined />}
+                                onClick={handleClearAllBoxes}
+                            >
+                            </Button>
+                          </Dropdown>
+                        </Tooltip>
+
+                    )}
+                  </Button.Group>
+                  <Tag
+                      style={{
+                        width: '160px',
+                        height: '32px',
+                        lineHeight: '27px',
+                        textAlign: 'center',
+                        fontSize: '14px',
                       }}
-                      className={`${isOpenedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'}`}
-                      color={'default'}
-                      variant={isOpenedFilters ? 'solid' : 'outlined'}
-                      icon={<FilterOutlined/>}
-                  >
-                    Доп Фильтры
-                  </Button>
-                  {filterSortClearMenu.length > 0 && (
-                      <Tooltip title={'Очистить фильтры'}  placement={'right'}>
-                        <Dropdown menu={{items: filterSortClearMenu}}>
-                          <Button
-                              color={'danger'}
-                              variant={'solid'}
-                              icon={<CloseOutlined />}
-                              onClick={handleClearAllBoxes}
-                          >
-                          </Button>
-                        </Dropdown>
-                      </Tooltip>
+                      color="geekblue"
+                  >Всего найдено: {total}</Tag>
+                </div>
+                <div style={{display: 'flex', alignItems: 'end'}}>
 
+                  {activeRole > 0 && (
+                      <div>
+                        {isOneRole ? (
+                            <div style={{display:'flex',alignItems:'center',gap:'5px',justifyContent:'end'}}>
+                              Роль:
+                              <Tag className={`
+                                    sa-tag-custom
+                                    ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
+                                    ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
+                                    ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
+                                  `}
+                              >{roles.find(role => role.value === activeRole)?.label || 'Неизвестная роль'}</Tag>
+                            </div>
+                        ) : (
+                            <div style={{display:'flex',alignItems:'center',gap:'5px'}}>
+                              Роль:
+                              <Select className={`
+                                        ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
+                                        ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
+                                        ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
+                                      `}
+                                      style={{width:'150px',marginRight:'8px'}}
+                                      options={roles.filter(role => userdata.acls.includes(role.acl))}
+                                      value={activeRole}
+                                      onChange={fetchChangeRole}
+                              />
+                            </div>
+                        )}
+                      </div>
                   )}
-                </Button.Group>
-                <Tag
-                    style={{
-                      width: '160px',
-                      height: '32px',
-                      lineHeight: '27px',
-                      textAlign: 'center',
-                      fontSize: '14px',
-                    }}
-                    color="geekblue"
-                >Всего найдено: {total}</Tag>
-              </div>
-              <div style={{display: 'flex', alignItems: 'end'}}>
-
-                {activeRole > 0 && (
-                    <div>
-                      {isOneRole ? (
-                          <div style={{display:'flex',alignItems:'center',gap:'5px',justifyContent:'end'}}>
-                            Роль:
-                            <Tag className={`
-                                  sa-tag-custom
-                                  ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
-                                  ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
-                                  ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
-                                `}
-                            >{roles.find(role => role.value === activeRole)?.label || 'Неизвестная роль'}</Tag>
-                          </div>
-                      ) : (
-                          <div style={{display:'flex',alignItems:'center',gap:'5px'}}>
-                            Роль:
-                            <Select className={`
-                                      ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
-                                      ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
-                                      ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
-                                    `}
-                                    style={{width:'150px',marginRight:'8px'}}
-                                    options={roles.filter(role => userdata.acls.includes(role.acl))}
-                                    value={activeRole}
-                                    onChange={fetchChangeRole}
-                            />
-                          </div>
-                      )}
-                    </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
@@ -666,7 +668,7 @@ const BidListPage = (props) => {
                   on_change_filter_box={handleUpdateFilterBoxHeader}
                   on_preview_open={handlePreviewOpen}
                   on_set_sort_orders={setOrderBox}
-                  base_companies={baseCompanies}
+                  base_companies={filterCompaniesSelect}
               />
             </Spin>
             <div className={'sa-space-panel sa-pa-12'}></div>

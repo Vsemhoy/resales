@@ -3,63 +3,7 @@ import {Affix, Button, Input, Select} from 'antd';
 import React, { useEffect, useState } from 'react';
 
 
-const BidListSiderFilters = (props) => {
-
-    const [targetCompany, setTargetCompany] = useState(null);
-    const [payStatus, setPayStatus] = useState(null);
-    const [adminAccept, setAdminAccept] = useState(null);
-    const [packageStatus, setPackageStatus] = useState(null);
-    const [priceStatus, setPriceStatus] = useState(null);
-    const [bidCurrency, setBidCurrency] = useState(null);
-    const [nds, setNds] = useState(null);
-    const [completeStatus, setCompleteStatus] = useState(null);
-
-    useEffect(() => {
-        if (props.filter_box.target_company !== targetCompany) {
-            setTargetCompany(props.filter_box.target_company);
-        }
-        if (props.filter_box.pay_status !== payStatus) {
-            setPayStatus(props.filter_box.pay_status);
-        }
-        if (props.filter_box.admin_accept !== adminAccept) {
-            setAdminAccept(props.filter_box.admin_accept);
-        }
-        if (props.filter_box.package !== packageStatus) {
-            setPackageStatus(props.filter_box.package);
-        }
-        if (props.filter_box.price !== priceStatus) {
-            setPriceStatus(props.filter_box.price);
-        }
-        if (props.filter_box.bid_currency !== bidCurrency) {
-            setBidCurrency(props.filter_box.bid_currency);
-        }
-        if (props.filter_box.nds !== nds) {
-            setNds(props.filter_box.nds);
-        }
-        if (props.filter_box.complete !== completeStatus) {
-            setCompleteStatus(props.filter_box.complete);
-        }
-    }, [props.filter_box]);
-
-    useEffect(() => {
-        const timer = setTimeout((filterBox) => {
-            const newFilterBox = {
-                "target_company": targetCompany ?? null,
-                "pay_status": payStatus ?? null,
-                "admin_accept": adminAccept ?? null,
-                "package": packageStatus ?? null,
-                "price": priceStatus ?? null,
-                "bid_currency": bidCurrency ?? null,
-                "nds": nds ?? null,
-                "complete": completeStatus ?? null,
-            };
-            props.on_change_filter_box(newFilterBox);
-        }, 700); // ⏱️ 1 секунда задержки
-        return () => clearTimeout(timer);
-    }, [
-        targetCompany, payStatus, adminAccept, packageStatus,
-        priceStatus, bidCurrency, nds, completeStatus,
-    ]);
+const EngineerListSiderFilters = (props) => {
 
   return (
     <Affix offsetTop={115}>
@@ -69,9 +13,8 @@ const BidListSiderFilters = (props) => {
                 <div className='sider-unit-control'>
                     <Select placeholder=''
                             style={{width: '100%'}}
-                            value={targetCompany}
-                            options={props.filter_companies_select ? props.filter_companies_select.filter(comp => comp.value !== 1) : null}
-                            onChange={(val) => setTargetCompany(val)}
+                            options={props.filter_companies_select}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
                             allowClear
                     />
                 </div>
@@ -82,9 +25,8 @@ const BidListSiderFilters = (props) => {
                 <div className='sider-unit-control'>
                     <Select placeholder='Нет, есть, оплачен'
                             style={{width: '100%'}}
-                            value={payStatus}
                             options={props.filter_pay_select}
-                            onChange={(val) => setPayStatus(val)}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
                             allowClear
                     />
                 </div>
@@ -95,9 +37,8 @@ const BidListSiderFilters = (props) => {
                 <div className='sider-unit-control'>
                     <Select placeholder=''
                             style={{width: '100%'}}
-                            value={adminAccept}
                             options={props.filter_admin_accept_select}
-                            onChange={(val) => setAdminAccept(val)}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
                             allowClear
                     />
                 </div>
@@ -108,9 +49,8 @@ const BidListSiderFilters = (props) => {
                 <div className='sider-unit-control'>
                     <Select placeholder=''
                             style={{width: '100%'}}
-                            value={packageStatus}
                             options={props.filter_package_select}
-                            onChange={(val) => setPackageStatus(val)}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
                             allowClear
                     />
                 </div>
@@ -120,9 +60,8 @@ const BidListSiderFilters = (props) => {
                 <div className='sider-unit-control'>
                     <Select placeholder=''
                             style={{width: '100%'}}
-                            value={priceStatus}
                             options={props.filter_price_select}
-                            onChange={(val) => setPriceStatus(val)}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
                             allowClear
                     />
                 </div>
@@ -132,9 +71,8 @@ const BidListSiderFilters = (props) => {
                 <div className='sider-unit-control'>
                     <Select placeholder=''
                             style={{width: '100%'}}
-                            value={bidCurrency}
                             options={props.filter_bid_currency_select}
-                            onChange={(val) => setBidCurrency(val)}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
                             allowClear
                     />
                 </div>
@@ -144,9 +82,8 @@ const BidListSiderFilters = (props) => {
                 <div className='sider-unit-control'>
                     <Select placeholder='Да, нет'
                             style={{width: '100%'}}
-                            value={nds}
                             options={props.filter_nds_select}
-                            onChange={(val) => setNds(val)}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
                             allowClear
                     />
                 </div>
@@ -156,9 +93,8 @@ const BidListSiderFilters = (props) => {
                 <div className='sider-unit-control'>
                     <Select placeholder=''
                             style={{width: '100%'}}
-                            value={completeStatus}
                             options={props.filter_complete_select}
-                            onChange={(val) => setCompleteStatus(val)}
+                            onChange={(val) => props.on_change_filter_box('type', val)}
                             allowClear
                     />
                 </div>
@@ -168,4 +104,4 @@ const BidListSiderFilters = (props) => {
   );
 };
 
-export default BidListSiderFilters;
+export default EngineerListSiderFilters;
