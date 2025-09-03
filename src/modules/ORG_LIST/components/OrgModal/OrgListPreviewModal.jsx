@@ -112,18 +112,20 @@ const OrgListPreviewModal = (props) => {
       
   useEffect(() => {
       if (props.is_open !== open){
-        let t = searchParams.get('tab');
+        let t = props.current_tab;
         if (t && ['m','b','o', 'p','c','n','h'].includes(t)) {
           setActiveTab(t);
+          
+
         } else {
-          searchParams.set('tab', "m");
-          setSearchParams(searchParams);
+          // searchParams.set('tab', "m");
+          // setSearchParams(searchParams);
           setActiveTab('m');
         }
       }
       setOpen(props.is_open);
 
-    }, [props.is_open]);
+    }, [props.is_open, props.current_tab]);
 
     const handleClose = ()=>{
         if (props.on_close){
@@ -133,8 +135,7 @@ const OrgListPreviewModal = (props) => {
 
     const handleChangeTab = (tabLit) => {
         setActiveTab(tabLit);
-        searchParams.set('tab', tabLit);
-        setSearchParams(searchParams);
+        props.on_change_tab(tabLit);
     }
 
 
