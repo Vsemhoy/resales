@@ -1,13 +1,41 @@
 .sa-app-page {
     padding-top: 10px;
 }
+.sa-table {
+    width: 100%;
+    overflow-x: auto;
+}
 .sa-table-box-bids {
     display: grid;
-    grid-template-columns: 64px 2fr 100px 100px 140px 140px 170px 100px 2fr 2fr 64px 64px;
+    grid-template-columns:
+            minmax(50px, 85px)
+            minmax(100px, 2fr)
+            minmax(40px, 100px)
+            minmax(40px, 100px)
+            minmax(50px, 140px)
+            minmax(50px, 140px)
+            minmax(50px, 170px)
+            minmax(50px, 100px)
+            minmax(100px, 2fr)
+            minmax(100px, 2fr)
+            minmax(30px, 64px)
+            minmax(30px, 64px);
 }
 
 .sa-filer-opened .sa-table-box-bids {
-    grid-template-columns: 64px 1fr 100px 100px 140px 140px 170px 100px 1fr 64px 64px !important;
+    grid-template-columns:
+            minmax(50px, 85px)
+            minmax(100px, 1fr)
+            minmax(40px, 100px)
+            minmax(40px, 100px)
+            minmax(50px, 140px)
+            minmax(50px, 140px)
+            minmax(50px, 170px)
+            minmax(50px, 100px)
+            minmax(100px, 1fr)
+            minmax(30px, 64px)
+            minmax(30px, 64px)
+            !important;
 }
 .sa-filer-opened .sa-table-box-bids > *:nth-child(9) {
     display: none;
@@ -112,4 +140,8 @@
 .sa-table-box-header .sa-table-box-bids {
     /*box-shadow: -4px 0 0 -1px #fdfdfd;*/
     box-shadow: none;
+}
+
+.sa-table-box-row {
+    /*min-width: 1294px !important;*/
 }
