@@ -40,7 +40,9 @@ const EngineerListRow = (props) => {
            style={{color: compColor}}>
         <div className={'sa-table-box-cell'}>
           <div>
-            {data.id}
+            <NavLink to={'/engineer/' + data.id}>
+              {data.id}
+            </NavLink>
           </div>
         </div>
         <div className={'sa-table-box-cell'}>
