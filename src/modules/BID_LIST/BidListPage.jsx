@@ -84,23 +84,23 @@ const BidListPage = (props) => {
   const [filterBox, setFilterBox] = useState({
     "bid_id":            searchParams.get('bid_id')                           || null,
     "company_name":      searchParams.get('company_name')                     || null,
-    "type":              searchParams.get('type')                             || null,
-    "protect_status":    searchParams.get('protect_status')                   || null,
-    "stage_status":      searchParams.get('stage_status')                     || null,
+    "type":              parseInt(searchParams.get('type'))                   || null,
+    "protect_status":    parseInt(searchParams.get('protect_status'))         || null,
+    "stage_status":      parseInt(searchParams.get('stage_status'))           || null,
     "dates":             searchParams.get('dates')                            || null,
-    "manager":           searchParams.get('manager')                          || null,
+    "manager":           parseInt(searchParams.get('manager'))                || null,
     "bill_number":       searchParams.get('bill_number')                      || null,
     "comment":           searchParams.get('comment')                          || null,
     "object_name":       searchParams.get('object_name')                      || null,
 
-    "target_company":    searchParams.get('target_company')                   || null,
-    "pay_status":        searchParams.get('pay_status')                       || null,
-    "admin_accept":      searchParams.get('admin_accept')                     || null,
-    "package":           searchParams.get('package')                          || null,
-    "price":             searchParams.get('price')                            || null,
-    "bid_currency":      searchParams.get('bid_currency')                     || null,
-    "nds":               searchParams.get('nds')                              || null,
-    "complete":          searchParams.get('complete')                         || null,
+    "target_company":    parseInt(searchParams.get('target_company'))         || null,
+    "pay_status":        parseInt(searchParams.get('pay_status'))             || null,
+    "admin_accept":      parseInt(searchParams.get('admin_accept'))           || null,
+    "package":           parseInt(searchParams.get('package'))                || null,
+    "price":             parseInt(searchParams.get('price'))                  || null,
+    "bid_currency":      parseInt(searchParams.get('bid_currency'))           || null,
+    "nds":               parseInt(searchParams.get('nds'))                    || null,
+    "complete":          parseInt(searchParams.get('complete'))               || null,
   });
   const [orderBox, setOrderBox] = useState([]);
 
@@ -144,6 +144,9 @@ const BidListPage = (props) => {
       }, 2200);
     }
     setIsMounted(true);
+
+    handleSearchParamsChange('currentPage', currentPage);
+    handleSearchParamsChange('onPage', onPage);
   }, []);
 
   useEffect(() => {
@@ -535,6 +538,7 @@ const BidListPage = (props) => {
     setSearchParams(prevParams => {
       const newParams = new URLSearchParams(prevParams);
         if (value) {
+          console.log(key, value);
           newParams.set(key, value);
         } else {
           newParams.delete(key);
@@ -675,20 +679,28 @@ const BidListPage = (props) => {
                       </NavLink>
                   )}
                   <Pagination
-                      defaultPageSize={onPage}
                       defaultCurrent={1}
+                      pageSize={onPage}
+                      pageSizeOptions={[30, 50, 100, 200, 300]}
                       current={currentPage}
                       total={total}
-                      onShowSizeChange={(current, newSize) => {
-                        handleSearchParamsChange('onPage', newSize);
-                        setOnPage(newSize);
-                      }}
-                      onChange={(val) => {
-                        handleSearchParamsChange('currentPage', val);
-                        setCurrentPage(val);
+                      onChange={(val, newOnPage) => {
+                        if (val !== currentPage) {
+                          handleSearchParamsChange('currentPage', val);
+                          setCurrentPage(val);
+                        }
+                        if (newOnPage !== onPage) {
+                          handleSearchParamsChange('onPage', newOnPage);
+                          setOnPage(newOnPage);
+                        }
                       }}
                       showQuickJumper
-                      locale={ANTD_PAGINATION_LOCALE}
+                      locale={{
+                        items_per_page: 'на странице',
+                        jump_to: 'Перейти',
+                        jump_to_confirm: 'OK',
+                        page: 'Страница'
+                      }}
                   />
                 </div>
                 <div>
