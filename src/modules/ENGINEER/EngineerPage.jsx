@@ -214,8 +214,8 @@ const EngineerPage = (props) => {
           data,
           _token: CSRF_TOKEN
         });
-        setSpecs(response.data.specs);
-        setTotal(response.data.total_count);
+        setSpecs(response.data.content.specs);
+        setTotal(response.data.content.total_count);
 
         let max = (onPage * currentPage) - (onPage - 1);
         if (response.data.total_count < max)
