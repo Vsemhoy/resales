@@ -139,7 +139,6 @@ const EngineerListTable = (props) => {
                 </div>
             </div>
           </Affix>
-
         <div className={'sa-table-box-stack'}>
             {props.specs?.length > 0 && props.specs.map((spec, index) => (
                 <EngineerListRow
