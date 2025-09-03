@@ -127,7 +127,7 @@ const OrgListModalOffersTab = (props) => {
           </div>
           <div>
             {/* Здесь будут фильтры */}
-            <NavLink to={'/bids?type=1&orgname=' + orgName}>
+            <NavLink to={'/bids?type=1&company_name=' + orgName}>
             <Button size={'small'} >
               Открыть в полном списке
             </Button></NavLink>

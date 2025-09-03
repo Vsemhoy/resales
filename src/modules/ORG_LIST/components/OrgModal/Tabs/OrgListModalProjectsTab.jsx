@@ -7,6 +7,7 @@ import { NavLink } from 'react-router-dom';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 import OrgProjectsModalRow from './TabComponents/RowTemplates/OrgProjectsModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
+import { MODAL_PROJECTS_LIST } from '../../mock/MODALPROJECTSTABMOCK';
 
 const OrgListModalProjectsTab = (props) => {
   const [baseBids, setBaseBids] = useState([]);
@@ -25,14 +26,15 @@ const OrgListModalProjectsTab = (props) => {
   useEffect(() => {
     if (props.data?.id){
       if (PRODMODE){
+        setCurrentPage(1);
         if (props.data?.id !== orgId){
-          setCurrentPage(1);
           setLoading(true);
           setOrgId(props.data.id);
           get_org_data_action(props.data.id, 1, onPage);
         }
       } else {
-
+        setOrgId(props.data.id);
+        setBaseOrgData(MODAL_PROJECTS_LIST);
       }
 
     } else {

@@ -234,7 +234,7 @@ export const MODAL_CALLS_LIST = {
             }
         }
     ],
-    "mettings": [
+    "meetings": [
         {
             "id": 1105,
             "id_orgs": 40,
