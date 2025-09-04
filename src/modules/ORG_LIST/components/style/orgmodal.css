@@ -244,3 +244,23 @@ background-color: #dae9fb;
 .sa-orghistory-date-break-row {
     padding: 6px 12px;
 }
+
+/* .not-ant-modal .ant-modal-content {
+    max-height: 100vh;
+}
+.ant-modal-body {
+    max-height: calc(100vh - 34px);
+} */
+/* .sa-org-history-table-container {
+    overflow-y: auto;
+}
+*/
+/* .sa-org-modal-body {
+    display: grid;
+    grid-template-rows: auto minmax(200px, calc(100vh - 74px));
+    height: fit-content;
+} */
+/* .sa-org-modal-body > div:nth-child(2) {
+    height: 100%;
+    overflow-y: auto;
+}  */

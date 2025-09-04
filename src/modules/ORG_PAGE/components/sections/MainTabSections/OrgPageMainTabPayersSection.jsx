@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import OrgPageSectionRow from './OrgPageSectionRow';
-import { PRODMODE } from '../../../../config/config';
-import { OM_ORG_FILTERDATA } from '../../../ORG_LIST/components/mock/ORGLISTMOCK';
+import OrgPageSectionRow from '../OrgPageSectionRow';
+import { PRODMODE } from '../../../../../config/config';
+import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTMOCK';
 
 
 
-const OrgPageMainTabCommonSection = (props) => {
+
+const OrgPageMainTabPayersSection = (props) => {
     const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
     const [filterData, setFilterData] = useState([]);
 
@@ -149,4 +150,4 @@ faskdjfklasj dkfljsdklfjsakl`,
   );
 };
 
-export default OrgPageMainTabCommonSection;
+export default OrgPageMainTabPayersSection;
