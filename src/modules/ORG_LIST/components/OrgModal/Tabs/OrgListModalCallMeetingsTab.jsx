@@ -46,6 +46,10 @@ const OrgListModalCallMeetingsTab = (props) => {
 
 
     useEffect(() => {
+    if (baseOrgData?.name && props.on_load){
+      props.on_load(baseOrgData.name);
+    }
+
       let result = [];
 
       if (baseOrgData?.calls !== null && baseOrgData?.calls?.length > 0){

@@ -22,7 +22,7 @@ const OrgBillModalRow = (props) => {
         <div className={`sa-org-bid-row ${baseData?.deleted === 1 ? 'sa-org-bid-row-deleted' : ''}`}>
             <div>
                   <div>
-                    <NavLink to={'/bids/' + baseData?.id}>
+                    <NavLink to={'/bids/' + baseData?.id + '?frompage=orgs&fromtab=b&fromview=modal&fromid=' + baseData?.id }>
                     {baseData?.id}</NavLink>
                   </div>
               </div>

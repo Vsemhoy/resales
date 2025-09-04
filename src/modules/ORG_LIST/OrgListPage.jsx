@@ -736,7 +736,7 @@ const OrgListPage = (props) => {
           <OrgListPreviewModal
             is_open={isPreviewOpen}
             current_tab={currentTab}
-            data={{id: previewItem, name: orgList?.find((item) => item.id === previewItem)?.name}}
+            data={{id: previewItem}}
             // name={orgList?.find((item) => item.id === previewItem)?.name}
             on_close={()=>{
               setIsPreviewOpen(false);
