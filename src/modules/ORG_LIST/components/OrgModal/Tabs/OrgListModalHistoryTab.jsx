@@ -75,8 +75,8 @@ const OrgListModalHistoryTab = (props) => {
       });
 
       if (response.data) {
-        const newData = response.data.content || response.data;
-        const newItems = newData.notes || newData.history || newData;
+        const newData = response.data.content || response.data?.data;
+        const newItems = newData;
         
         if (Array.isArray(newItems)) {
           if (newItems.length === 0) {
@@ -88,6 +88,7 @@ const OrgListModalHistoryTab = (props) => {
             setDataList(prev => reset ? newItems : [...prev, ...newItems]);
             setCurrentPage(page);
             setTotal(prev => newData.total || prev + newItems.length);
+            console.log(newItems);
           }
         }
       }
