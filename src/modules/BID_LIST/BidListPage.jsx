@@ -29,7 +29,11 @@ const BidListPage = (props) => {
   const [isOpenedFilters, setIsOpenedFilters] = useState(false);
   const [isHasRole, setIsHasRole] = useState(false);
   const [isOneRole, setIsOneRole] = useState(true);
-  const [isBackRoute, setIsBackRoute] = useState(false);
+
+  const [fromPage, setFromPage] = useState(searchParams.get('frompage')           || null);
+  const [fromView, setFromView] = useState(searchParams.get('fromview')           || null);
+  const [fromTab, setFromTab] = useState(searchParams.get('fromtab')              || null);
+  const [fromId, setFromId] =   useState(parseInt(searchParams.get('fromid'))   || null);
 
   const [fromOrgId, setFromOrgId] = useState(0);
 
@@ -582,6 +586,10 @@ const BidListPage = (props) => {
     });
   };
 
+  const backUrl = () => {
+    return `/${fromPage}` + (fromView === 'modal' ? `?show=${fromId}&` : fromView === 'full' ? `/${fromId}?` : '') + `tab=${fromTab}`;
+  };
+
   return (
     <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
       <Affix>
@@ -704,8 +712,8 @@ const BidListPage = (props) => {
             <div className={'sa-pagination-panel sa-pa-12-24 sa-back'}>
               <div className={'sa-flex-space'}>
                 <div className={'sa-flex-gap'}>
-                  {isBackRoute && (
-                      <NavLink to={`/orgs?show=${fromOrgId}`}>
+                  {fromId && (
+                      <NavLink to={backUrl()}>
                         <Button type={'default'}
                                 icon={<CaretLeftFilled/>}
                         >
