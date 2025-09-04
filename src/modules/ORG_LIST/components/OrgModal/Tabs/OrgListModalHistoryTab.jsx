@@ -18,6 +18,9 @@ const OrgListModalHistoryTab = (props) => {
     const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
+    if (baseOrgData?.name && props.on_load){
+      props.on_load(baseOrgData.name);
+    }
     if (props.data?.id){
       if (PRODMODE){
         if (props.data?.id !== orgId){

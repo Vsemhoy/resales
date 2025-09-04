@@ -25,6 +25,9 @@ const OrgListModalBillsTab = (props) => {
   const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
+    if (baseOrgData?.name && props.on_load){
+      props.on_load(baseOrgData.name);
+    }
     if (props.data?.id){
       setOrgId(props.data.id);
 
@@ -132,7 +135,7 @@ const OrgListModalBillsTab = (props) => {
           </div>
           <div>
             {/* Здесь будут фильтры */}
-            <NavLink to={'/bids?type=2&&company_name=' + orgName}>
+            <NavLink to={'/bids?type=2&company_name=' + orgName + '&frompage=orgs&fromtab=b&fromview=modal&fromid=' + orgId}>
             <Button size={'small'} >
               Открыть в полном списке
             </Button></NavLink>

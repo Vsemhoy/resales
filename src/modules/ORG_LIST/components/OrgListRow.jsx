@@ -117,14 +117,14 @@ const wrapLink = (text) => {
         <div
         
         >
-        <NavLink to={'/orgs/' + orgData.id + '?mode=edit'} state={'hello'}>
+        <NavLink to={'/orgs/' + orgData.id + '?frompage=orgs'} state={'hello'}>
           {orgData.id}
         </NavLink>
           </div>
         </div>
         <div className={'sa-table-box-cell'}>
          <div className={'sa-align-left'}>
-            <NavLink to={'/orgs/' + orgData.id + '?mode=view'}>
+            <NavLink to={'/orgs/' + orgData.id + '?frompage=orgs'}>
               {orgData.name}
             </NavLink>
           </div>
