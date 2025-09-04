@@ -44,7 +44,10 @@ const OrgListModalHistoryTab = (props) => {
       if (PRODMODE) {
         if (props.data?.id !== orgId) {
           resetState();
-          setOrgId(props.data.id);
+          if (props.data.id){
+            setOrgId(parseInt(props.data.id));
+
+          }
           get_org_data_action(props.data.id, 1, onPage, true);
         }
       } else {
@@ -61,13 +64,12 @@ const OrgListModalHistoryTab = (props) => {
     setDataList([]);
     setCurrentPage(1);
     setHasMore(true);
-    setOrgId(null);
     setTotal(0);
   };
 
   const loadNextPage = () => {
     console.log("PRE CALL TO LOAD");
-    if (!loadingMore && hasMore && orgId) {
+    if (!loadingMore && hasMore && orgId ) { // 
       get_org_data_action(orgId, currentPage + 1, onPage, false);
     }
   };
@@ -198,7 +200,7 @@ const OrgListModalHistoryTab = (props) => {
             Нет данных для отображения
           </div>
         )}
-        {!hasMore && (
+        {dataList.length > 0 && !hasMore && (
           <div className='sa-orghistory-date-break-row'>Все существующие записи загружены...</div>
         )}
       </div>
