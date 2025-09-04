@@ -93,6 +93,31 @@ const BidListTable = (props) => {
     }
   }, [sortOrders]);
 
+  useEffect(() => {
+    if (!arraysEqualIgnoreOrder(props.order_box, sortOrders)) {
+      setSortOrders(props.order_box);
+    }
+  }, [props.order_box]);
+
+  const arraysEqualIgnoreOrder = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+
+    // Создаем копии и сортируем по key для consistent comparison
+    const sorted1 = [...arr1].sort((a, b) => a.key - b.key);
+    const sorted2 = [...arr2].sort((a, b) => a.key - b.key);
+
+    // Сравниваем каждый объект
+    for (let i = 0; i < sorted1.length; i++) {
+      if (sorted1[i].key !== sorted2[i].key || sorted1[i].order !== sorted2[i].order) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   const handlePreviewOpen = (item, state) => {
       console.log('Hello');
       // setPreviewItem(item);
