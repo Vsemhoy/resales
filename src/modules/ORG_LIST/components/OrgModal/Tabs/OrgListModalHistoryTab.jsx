@@ -69,7 +69,7 @@ const OrgListModalHistoryTab = (props) => {
     try {
       reset ? setLoading(true) : setLoadingMore(true);
       
-      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/orglist/' + id + '/10', {
+      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/h', {
         data: { page, limit },
         _token: CSRF_TOKEN
       });
