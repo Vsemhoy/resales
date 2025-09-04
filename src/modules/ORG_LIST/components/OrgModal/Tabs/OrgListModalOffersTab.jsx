@@ -67,7 +67,7 @@ const OrgListModalOffersTab = (props) => {
 
   
       try {
-          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/o', {
+          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
             data: {
               page: cpage,
               limit: onpage,

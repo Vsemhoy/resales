@@ -50,11 +50,6 @@ const OrgHistoryModalRow = (props) => {
 
 
 
-
-
-
-
-
   const getPath = (data) => {
     if (!data || data.length < 1){ return ""};
     let result = "";
@@ -69,12 +64,6 @@ const OrgHistoryModalRow = (props) => {
   }
 
 
-
-
-
-
-
-
   return (
     <div className={'sa-org-row-wrapper'}>
         <div className={`sa-org-history-row ${typeClass}`}>
@@ -82,7 +71,7 @@ const OrgHistoryModalRow = (props) => {
               <div>
                   <div className='sa-orghistory-datacell'>
                     
-                    {baseData && baseData?.date && dayjs.unix(baseData.date).format('hh:mm:ss')}
+                    {baseData && baseData?.date && dayjs.unix(baseData.date).format('HH:mm:ss')}
                   </div>
               </div>
               <div>
