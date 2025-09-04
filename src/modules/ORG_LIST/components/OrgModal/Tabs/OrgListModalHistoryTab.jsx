@@ -7,6 +7,7 @@ import OrgHistoryModalRow from '../Tabs/TabComponents/RowTemplates/OrgHistoryMod
 import { MODAL_HISTORY_LIST } from '../../mock/MODALHISTORYTABMOCK';
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../../../components/helpers/TextHelpers';
+import { has } from 'lodash';
 
 const OrgListModalHistoryTab = (props) => {
   const [dataList, setDataList] = useState([]);
@@ -19,18 +20,24 @@ const OrgListModalHistoryTab = (props) => {
   const [total, setTotal] = useState(0);
   
   const observer = useRef();
+
+
   const lastElementRef = useCallback(node => {
+    console.log("OBSERVER");
     if (loadingMore) return;
     if (observer.current) observer.current.disconnect();
-    
+    console.log("OBSERVER 2");
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore && !loadingMore) {
+        console.log("LOAD NEXT TO");
         loadNextPage();
       }
     });
     
     if (node) observer.current.observe(node);
   }, [loadingMore, hasMore]);
+
+
 
   useEffect(() => {
     if (props.data?.id) {
@@ -42,6 +49,7 @@ const OrgListModalHistoryTab = (props) => {
         }
       } else {
         setDataList(MODAL_HISTORY_LIST);
+        setTotal(300);
         setHasMore(false);
       }
     } else {
@@ -58,6 +66,7 @@ const OrgListModalHistoryTab = (props) => {
   };
 
   const loadNextPage = () => {
+    console.log("PRE CALL TO LOAD");
     if (!loadingMore && hasMore && orgId) {
       get_org_data_action(orgId, currentPage + 1, onPage, false);
     }
@@ -118,8 +127,39 @@ const OrgListModalHistoryTab = (props) => {
         </div>
 
         <div>
-          <div className={'sa-org-history-row sa-org-bid-row-header'}>
-            {/* Заголовки таблицы */}
+            <div className={'sa-org-history-row sa-org-bid-row-header'}>
+
+              <div>
+                  <div className='sa-orghistory-datacell'>
+                    Дата
+                  </div>
+              </div>
+
+              <div>
+                  <div className='sa-orghistory-datacell'>
+                    Путь
+                  </div>
+              </div>
+              <div>
+                  <div className='sa-orghistory-datacell'>
+                  Старое значение
+                  </div>
+              </div>
+              <div>
+                  <div className='sa-orghistory-datacell'>
+                  Новое значение
+                  </div>
+              </div>
+              <div>
+                  <div className='sa-orghistory-datacell'>
+                  Пользователь
+                  </div>
+              </div>
+              <div>
+                  <div className='sa-orghistory-datacell'>
+                  Тип
+                  </div>
+              </div>
           </div>
           
           {dataList.map((item, index) => {
@@ -157,6 +197,9 @@ const OrgListModalHistoryTab = (props) => {
           <div style={{ textAlign: 'center', padding: '40px' }}>
             Нет данных для отображения
           </div>
+        )}
+        {!hasMore && (
+          <div className='sa-orghistory-date-break-row'>Все существующие записи загружены...</div>
         )}
       </div>
     </Spin>
