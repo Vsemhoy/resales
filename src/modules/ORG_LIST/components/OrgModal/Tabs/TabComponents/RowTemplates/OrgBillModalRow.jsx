@@ -2,6 +2,8 @@ import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ShortName } from '../../../../../../../components/helpers/TextHelpers';
+import { Tag, Tooltip } from 'antd';
+import PositionList from '../../../../../../BID_LIST/components/PositionList';
 
 const OrgBillModalRow = (props) => {
 
@@ -71,7 +73,17 @@ const OrgBillModalRow = (props) => {
               </div>
               <div>
                   <div style={{wordBreak: 'break-all'}}>
-                    {baseData?.count_models}
+                    <Tooltip
+                        placement="leftTop"
+                        title={<PositionList bidId={baseData?.id} path={'/sales/data/getbidmodels'} />}
+                        color="white"
+                        overlayInnerStyle={{
+                          color: 'black',
+                          border: '1px solid #d9d9d9'
+                        }}
+                    >
+                      <Tag color={"purple"}>{baseData?.count_models}</Tag>
+                    </Tooltip>
                   </div>
               </div>
           </div>
