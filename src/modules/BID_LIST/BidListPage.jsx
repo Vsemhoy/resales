@@ -16,8 +16,6 @@ import BidListTable from './components/BidListTable';
 import BidListSiderFilters from './components/BidListSiderFilters';
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import {BID_LIST, FILTERS} from "./mock/mock";
-import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
-import {updateURL} from "../../components/helpers/UriHelpers";
 import dayjs from "dayjs";
 
 
@@ -31,7 +29,11 @@ const BidListPage = (props) => {
   const [isOpenedFilters, setIsOpenedFilters] = useState(false);
   const [isHasRole, setIsHasRole] = useState(false);
   const [isOneRole, setIsOneRole] = useState(true);
-  const [isBackRoute, setIsBackRoute] = useState(false);
+
+  const [fromPage, setFromPage] = useState(searchParams.get('frompage')           || null);
+  const [fromView, setFromView] = useState(searchParams.get('fromview')           || null);
+  const [fromTab, setFromTab] = useState(searchParams.get('fromtab')              || null);
+  const [fromId, setFromId] =   useState(parseInt(searchParams.get('fromid'))   || null);
 
   const [fromOrgId, setFromOrgId] = useState(0);
 
@@ -61,6 +63,7 @@ const BidListPage = (props) => {
   const [myBids, setMyBids] = useState(false);
 
   const initialFilterBox = {
+    /* header */
     "bid_id": null,
     "company_name": null,
     "type": null,
@@ -71,7 +74,7 @@ const BidListPage = (props) => {
     "bill_number": null,
     "comment": null,
     "object_name": null,
-
+    /* sider */
     "target_company": null,
     "pay_status": null,
     "admin_accept": null,
@@ -82,6 +85,7 @@ const BidListPage = (props) => {
     "complete": null,
   };
   const [filterBox, setFilterBox] = useState({
+    /* header */
     "bid_id":            searchParams.get('bid_id')                           || null,
     "company_name":      searchParams.get('company_name')                     || null,
     "type":              parseInt(searchParams.get('type'))                   || null,
@@ -92,7 +96,7 @@ const BidListPage = (props) => {
     "bill_number":       searchParams.get('bill_number')                      || null,
     "comment":           searchParams.get('comment')                          || null,
     "object_name":       searchParams.get('object_name')                      || null,
-
+    /* sider */
     "target_company":    parseInt(searchParams.get('target_company'))         || null,
     "pay_status":        parseInt(searchParams.get('pay_status'))             || null,
     "admin_accept":      parseInt(searchParams.get('admin_accept'))           || null,
@@ -102,6 +106,16 @@ const BidListPage = (props) => {
     "nds":               parseInt(searchParams.get('nds'))                    || null,
     "complete":          parseInt(searchParams.get('complete'))               || null,
   });
+  const parseArraySort = (stringOfSorts) => {
+    const arr = [];
+    stringOfSorts.split(' ').forEach((item) => {
+      if (item) {
+        let a = item.split('-');
+        arr.push({ key: a[0], order: a[1] });
+      }
+    });
+    return arr;
+  };
   const [orderBox, setOrderBox] = useState([]);
 
   const [sortOrders, setSortOrders] = useState([]);
@@ -134,7 +148,6 @@ const BidListPage = (props) => {
   const [previewItem, setPreviewItem] = useState(null);
   const showGetItem = null;//searchParams.get('show');
 
-
   useEffect(() => {
     fetchInfo().then();
     if (showGetItem !== null){
@@ -144,6 +157,9 @@ const BidListPage = (props) => {
       }, 2200);
     }
     setIsMounted(true);
+    if (searchParams.get('sort')) {
+      setOrderBox(parseArraySort(searchParams.get('sort')));
+    }
 
     handleSearchParamsChange('currentPage', currentPage);
     handleSearchParamsChange('onPage', onPage);
@@ -269,6 +285,7 @@ const BidListPage = (props) => {
         ];
       }
       const data = {
+        /* header */
         "bid_id": filterBox.bid_id,
         "company_name": filterBox.company_name,
         "type": filterBox.type,
@@ -279,7 +296,7 @@ const BidListPage = (props) => {
         "bill_number": filterBox.bill_number,
         "comment": filterBox.comment,
         "object_name": filterBox.object_name,
-
+        /* sider */
         "target_company": filterBox.target_company,
         "pay_status": filterBox.pay_status,
         "admin_accept": filterBox.admin_accept,
@@ -509,6 +526,11 @@ const BidListPage = (props) => {
     setFilterSortClearMenu(clearItems);
   };
 
+  const handleUpdateOrderBox = (newOrderBox) => {
+    setOrderBox(newOrderBox);
+    handleSearchParamsSortChange(newOrderBox);
+  };
+
   const handleClearAllFilterBox = ()=> {
     setFilterBox(initialFilterBox);
     handleSearchParamsZeroing(initialFilterBox);
@@ -516,6 +538,7 @@ const BidListPage = (props) => {
 
   const handleClearOrderBox = ()=> {
     setOrderBox([]);
+    handleSearchParamsSortChange([]);
   };
 
   const handleClearAllBoxes = ()=> {
@@ -538,13 +561,33 @@ const BidListPage = (props) => {
     setSearchParams(prevParams => {
       const newParams = new URLSearchParams(prevParams);
         if (value) {
-          console.log(key, value);
           newParams.set(key, value);
         } else {
           newParams.delete(key);
         }
       return newParams;
     });
+  };
+  const handleSearchParamsSortChange = (sortBoxArray) => {
+    setSearchParams(prevParams => {
+      const newParams = new URLSearchParams(prevParams);
+      if (sortBoxArray && sortBoxArray.length > 0) {
+        let sortUpd = '';
+        sortBoxArray.forEach(sort => {
+          console.log(sort.order)
+          sortUpd += `${sort.key}-${sort.order}` + ` `;
+        });
+        newParams.set('sort', sortUpd);
+        console.log(sortUpd)
+      } else {
+        newParams.delete('sort');
+      }
+      return newParams;
+    });
+  };
+
+  const backUrl = () => {
+    return `/${fromPage}` + (fromView === 'modal' ? `?show=${fromId}&` : fromView === 'full' ? `/${fromId}?` : '') + `tab=${fromTab}`;
   };
 
   return (
@@ -669,8 +712,8 @@ const BidListPage = (props) => {
             <div className={'sa-pagination-panel sa-pa-12-24 sa-back'}>
               <div className={'sa-flex-space'}>
                 <div className={'sa-flex-gap'}>
-                  {isBackRoute && (
-                      <NavLink to={`/orgs?show=${fromOrgId}`}>
+                  {fromId && (
+                      <NavLink to={backUrl()}>
                         <Button type={'default'}
                                 icon={<CaretLeftFilled/>}
                         >
@@ -736,9 +779,10 @@ const BidListPage = (props) => {
                   user_info={userInfo}
                   my_bids={myBids}
                   filter_box={filterBox}
+                  order_box={orderBox}
                   on_change_filter_box={handleUpdateFilterBoxHeader}
                   on_preview_open={handlePreviewOpen}
-                  on_set_sort_orders={setOrderBox}
+                  on_set_sort_orders={handleUpdateOrderBox}
                   base_companies={filterCompaniesSelect}
               />
             </Spin>
