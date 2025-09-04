@@ -22,11 +22,74 @@ const OrgListModalHistoryTab = (props) => {
   const observer = useRef();
 
 
+
+
+  // const lastElementRef = useCallback(node => {
+  //   console.log("OBSERVER");
+  //   if (!orgId) return;
+  //   if (loadingMore) return;
+  //   if (observer.current) observer.current.disconnect();
+  //   console.log("OBSERVER 2", orgId);
+  //   observer.current = new IntersectionObserver(entries => {
+  //     if (entries[0].isIntersecting && hasMore && !loadingMore) {
+  //       console.log("LOAD NEXT TO");
+  //       loadNextPage();
+  //     }
+  //   });
+    
+  //   if (node) observer.current.observe(node);
+  // }, [loadingMore, hasMore, orgId]);
+
+
+
+  useEffect(() => {
+    console.log('props.data?.id', props.data?.id)
+    if (props.data?.id) {
+      if (PRODMODE) {
+        if (props.data?.id !== orgId) {
+          resetState();
+          if (props.data.id){
+            setOrgId(parseInt(props.data.id));
+            console.log('SETID', parseInt(props.data.id));
+            orgIdRef.current = parseInt(props.data.id);
+          }
+          get_org_data_action(props.data.id, 1, onPage, true);
+        }
+      } else {
+        setDataList(MODAL_HISTORY_LIST);
+        setOrgId(parseInt(props.data.id));
+            console.log('SETID', parseInt(props.data.id));
+            orgIdRef.current = parseInt(props.data.id);
+        setTotal(0);
+        setHasMore(false);
+      }
+    } else {
+      resetState();
+    }
+  }, [props.data?.id]);
+
+  const resetState = () => {
+    setDataList([]);
+    setCurrentPage(1);
+    setHasMore(true);
+    setTotal(0);
+  };
+
+
+const orgIdRef = useRef(orgId);
+  
+  // Обновляем ref при изменении orgId
+  useEffect(() => {
+    console.log('orgId', orgId)
+    orgIdRef.current = orgId;
+  }, [orgId]);
+
   const lastElementRef = useCallback(node => {
-    console.log("OBSERVER");
+    console.log("OBSERVER", orgIdRef.current, node); // Теперь всегда актуальное значение
+    // if (!orgIdRef.current) return;
     if (loadingMore) return;
     if (observer.current) observer.current.disconnect();
-    console.log("OBSERVER 2");
+    
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore && !loadingMore) {
         console.log("LOAD NEXT TO");
@@ -38,37 +101,10 @@ const OrgListModalHistoryTab = (props) => {
   }, [loadingMore, hasMore]);
 
 
-
-  useEffect(() => {
-    if (props.data?.id) {
-      if (PRODMODE) {
-        if (props.data?.id !== orgId) {
-          resetState();
-          setOrgId(props.data.id);
-          get_org_data_action(props.data.id, 1, onPage, true);
-        }
-      } else {
-        setDataList(MODAL_HISTORY_LIST);
-        setTotal(300);
-        setHasMore(false);
-      }
-    } else {
-      resetState();
-    }
-  }, [props.data]);
-
-  const resetState = () => {
-    setDataList([]);
-    setCurrentPage(1);
-    setHasMore(true);
-    setOrgId(null);
-    setTotal(0);
-  };
-
   const loadNextPage = () => {
-    console.log("PRE CALL TO LOAD");
-    if (!loadingMore && hasMore && orgId) {
-      get_org_data_action(orgId, currentPage + 1, onPage, false);
+    console.log("PRE CALL TO LOAD", orgIdRef.current);
+    if (!loadingMore && hasMore && orgIdRef.current ) { // 
+      get_org_data_action(orgIdRef.current, currentPage + 1, onPage, false);
     }
   };
 
@@ -118,7 +154,7 @@ const OrgListModalHistoryTab = (props) => {
         <div className={'sa-pa-6 sa-flex-space'}>
           <div className='sa-flex-space'>
             <Tag color="#cdd2d6ff" style={{color: '#5a5a5aff'}}>
-              Загружено {dataList.length} из {total || '∞'}
+              Загружено {dataList.length} строк
             </Tag>
             {!hasMore && dataList.length > 0 && (
               <Tag color="green">Все данные загружены</Tag>
@@ -126,7 +162,7 @@ const OrgListModalHistoryTab = (props) => {
           </div>
         </div>
 
-        <div>
+        <div className='sa-org-history-table-container'>
             <div className={'sa-org-history-row sa-org-bid-row-header'}>
 
               <div>
@@ -184,6 +220,8 @@ const OrgListModalHistoryTab = (props) => {
               </div>
             );
           })}
+          {/* <div className='sa-orghistory-list-interceptor'
+            on */}
         </div>
 
         {loadingMore && (
@@ -198,7 +236,7 @@ const OrgListModalHistoryTab = (props) => {
             Нет данных для отображения
           </div>
         )}
-        {!hasMore && (
+        {dataList.length > 0 && !hasMore && (
           <div className='sa-orghistory-date-break-row'>Все существующие записи загружены...</div>
         )}
       </div>

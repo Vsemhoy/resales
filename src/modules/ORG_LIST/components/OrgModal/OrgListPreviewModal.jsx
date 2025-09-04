@@ -511,7 +511,7 @@ const menuItems = [
                 />
               )}
 
-              {activeTab === 'h' && (
+              {activeTab === 'h' && orgId && (
                 <OrgListModalHistoryTab
                   data={{id: orgId}}
                   selects_data={selectsData}
