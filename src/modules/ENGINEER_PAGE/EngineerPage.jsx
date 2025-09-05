@@ -65,6 +65,8 @@ const EngineerPage = (props) => {
   }
 
   const fetchUpdate = async () => {
+    console.log("commentEngineer: ", commentEngineer);
+
     if (PRODMODE){
       let response = await PROD_AXIOS_INSTANCE.put('/api/sales/engineer/' + item_id, {
         _token: CSRF_TOKEN,
