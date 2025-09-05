@@ -5,19 +5,20 @@ import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import {DeleteOutlined} from "@ant-design/icons";
 import './components/style/bidPage.css'
+import {BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, SELECTS} from "./mock/mock";
+import MODELS from './mock/mock_models';
 
 const BidPage = (props) => {
     const {bidId} = useParams();
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-
+    const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
     /* ШАПКА СТРАНИЦЫ */
     const [bidType, setBidType] = useState(null);
     const [bidIdCompany, setBidIdCompany] = useState(null);
-    const [bidOrg, setBidOrg] = useState(null);
+    const [bidOrg, setBidOrg] = useState({});
     const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
-    const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
     const [companyCurrency, setCompanyCurrency] = useState(null);
     const [bankCurrency, setBankCurrency] = useState(null);
     /* БАЗОВЫЙ БЛОК */
@@ -49,6 +50,21 @@ const BidPage = (props) => {
     const [garbage, setGarbage] = useState([]);
     /* ВСЕ ОСТАЛЬНЫЕ СЕЛЕКТЫ */
     const [typeSelect, setTypeSelect] = useState([]);
+    const [actionEnumSelect, setActionEnumSelect] = useState([]);
+    const [adminAcceptSelect, setAdminAcceptSelect] = useState([]);
+    const [bidCurrencySelect, setBidCurrencySelect] = useState([]);
+    const [bidPresenceSelect, setBidPresenceSelect] = useState([]);
+    const [completeSelect, setCompleteSelect] = useState([]);
+    const [conveyanceSelect, setConveyanceSelect] = useState([]);
+    const [insuranceSelect, setInsuranceSelect] = useState([]);
+    const [ndsSelect, setNdsSelect] = useState([]);
+    const [packageSelect, setPackageSelect] = useState([]);
+    const [paySelect, setPaySelect] = useState([]);
+    const [presenceSelect, setPresenceSelect] = useState([]);
+    const [priceSelect, setPriceSelect] = useState([]);
+    const [protectionSelect, setProtectionSelect] = useState([]);
+    const [stageSelect, setStageSelect] = useState([]);
+    const [templateWordSelect, setTemplateWordSelect] = useState([]);
 
 
     useEffect(() => {
@@ -73,15 +89,60 @@ const BidPage = (props) => {
                     data: {},
                     _token: CSRF_TOKEN
                 });
-                if (response.data) {
-                    const data = response.data;
+                if (response.data && response.data.bid && response.data.models) {
+                    const openMode = response.data.openmode;
+                    setOpenMode(openMode);
 
+                    const bid = response.data.bid;
+                    setBidType(bid.type);
+                    setBidIdCompany(bid.id_company);
+                    setBidOrg(bid.properties.org);
+                    setBidPlace(bid.place);
+                    setBidOrgUser(bid.statuses.orguser); // пока что у меня есть только id, надо еще телефон и почту
+                    setBidProtectionProject(bid.statuses.protection);
+                    setBidObject(bid.properties.object);
+                    setBidSellBy(bid.properties.sellby);
+                    setBidCommentEngineer(bid.comments.engineer);
+                    setBidCommentManager(bid.comments.manager);
+                    setBidCommentAdmin(bid.comments.admin);
+                    setBidCommentAccountant(bid.comments.accountant);
+                    setBidCommentAddEquipment(bid.comments.add_equipment);
+                    setBidCurrency(bid.finance.bid_currency);
+                    setBidPriceStatus(bid.statuses.price);
+                    setBidPercent(bid.finance.percent);
+                    setBidNds(bid.finance.nds);
+
+                    const models = response.data.bid_models;
+                    setBidModels(models);
+                    // Надо будет так
+                    //const models = response.data.models;
+                    //setBidModels(models.bid_models);
+                    //setAmounts(models.amounts);
+                    //setEngineerParameters(models.engineer_parameters);
                 }
             } catch (e) {
                 console.log(e);
             }
         } else {
+            setBidType(BID.type);
+            setBidIdCompany(BID.id_company);
+            setBidOrg(BID.properties.org);
+            setBidPlace(BID.place);
+            setBidOrgUser(BID.statuses.orguser);
+            setBidProtectionProject(BID.statuses.protection);
+            setBidObject(BID.properties.object);
+            setBidSellBy(BID.properties.sellby);
+            setBidCommentEngineer(BID.comments.engineer);
+            setBidCommentManager(BID.comments.manager);
+            setBidCommentAdmin(BID.comments.admin);
+            setBidCommentAccountant(BID.comments.accountant);
+            setBidCommentAddEquipment(BID.comments.add_equipment);
+            setBidCurrency(BID.finance.bid_currency);
+            setBidPriceStatus(BID.statuses.price);
+            setBidPercent(BID.finance.percent);
+            setBidNds(BID.finance.nds);
 
+            setBidModels(BID_MODELS);
         }
     };
     const fetchSelects = async () => {
@@ -92,13 +153,44 @@ const BidPage = (props) => {
                     _token: CSRF_TOKEN
                 });
                 if (response.data && response.data.selects) {
-                    //setTypeSelect(response.data.selects.type_select);
+                    const selects = response.data.selects;
+                    setTypeSelect(selects.type_select);
+                    setActionEnumSelect(selects.action_enum);
+                    setAdminAcceptSelect(selects.admin_accept_select);
+                    setBidCurrencySelect(selects.bid_currency_select);
+                    setBidPresenceSelect(selects.bid_presence_select);
+                    setCompleteSelect(selects.complete_select);
+                    setConveyanceSelect(selects.conveyance_select);
+                    setInsuranceSelect(selects.insurance_select);
+                    setNdsSelect(selects.nds_select);
+                    setPackageSelect(selects.package_select);
+                    setPaySelect(selects.pay_select);
+                    setPresenceSelect(selects.presence);
+                    setPriceSelect(selects.price_select);
+                    setProtectionSelect(selects.protection_select);
+                    setStageSelect(selects.stage_select);
+                    setTemplateWordSelect(selects.template_word_select);
                 }
             } catch (e) {
                 console.log(e);
             }
         } else {
-            //setTypeSelect([]);
+            setTypeSelect(SELECTS.type_select);
+            setActionEnumSelect(SELECTS.action_enum);
+            setAdminAcceptSelect(SELECTS.admin_accept_select);
+            setBidCurrencySelect(SELECTS.bid_currency_select);
+            setBidPresenceSelect(SELECTS.bid_presence_select);
+            setCompleteSelect(SELECTS.complete_select);
+            setConveyanceSelect(SELECTS.conveyance_select);
+            setInsuranceSelect(SELECTS.insurance_select);
+            setNdsSelect(SELECTS.nds_select);
+            setPackageSelect(SELECTS.package_select);
+            setPaySelect(SELECTS.pay_select);
+            setPresenceSelect(SELECTS.presence);
+            setPriceSelect(SELECTS.price_select);
+            setProtectionSelect(SELECTS.protection_select);
+            setStageSelect(SELECTS.stage_select);
+            setTemplateWordSelect(SELECTS.template_word_select);
         }
     };
     const fetchCurrencySelects = async () => {
@@ -116,8 +208,8 @@ const BidPage = (props) => {
                 console.log(e);
             }
         } else {
-            setCompanyCurrency(null);
-            setBankCurrency(null);
+            setCompanyCurrency(CUR_COMPANY);
+            setBankCurrency(CUR_CURRENCY);
         }
     };
     const fetchBidModels = async () => {
@@ -135,8 +227,8 @@ const BidPage = (props) => {
                 console.log(e);
             }
         } else {
-            setCompanyCurrency([]);
-            setModelsSelect([]);
+            setGarbage([]);
+            setModelsSelect(MODELS);
         }
     };
 
