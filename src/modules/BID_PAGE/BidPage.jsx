@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {Select, Spin} from "antd";
+import {Spin} from "antd";
 import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
-import {DeleteOutlined} from "@ant-design/icons";
 import './components/style/bidPage.css'
 import {BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, SELECTS} from "./mock/mock";
 import MODELS from './mock/mock_models';
@@ -236,7 +235,7 @@ const BidPage = (props) => {
         <div className={'sa-bid-page-container'}>
             <Spin size="large" spinning={isLoading}>
                 <div className={'sa-bid-page'}>
-                    {bidId}
+
                 </div>
             </Spin>
         </div>
