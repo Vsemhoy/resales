@@ -75,6 +75,9 @@ const OrgListMainTab = (props) => {
 
 
   useEffect(() => {
+    if (baseOrgData?.name && props.on_load){
+      props.on_load(baseOrgData.name);
+    }
     if (baseOrgData && baseOrgData.contacts){
       let opened_ids = modalUsersOpened;
       if (modalUsersExpanded === 2 || modalUsersExpanded === 0){

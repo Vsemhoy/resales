@@ -80,8 +80,6 @@ const OrgListPreviewModal = (props) => {
 
       console.log(props.data);
       setOrgId(props.data?.id);
-      setOrgName(props.data?.name);
-
     };
   }, [props.data]);
 
@@ -136,6 +134,11 @@ const OrgListPreviewModal = (props) => {
     const handleChangeTab = (tabLit) => {
         setActiveTab(tabLit);
         props.on_change_tab(tabLit);
+    }
+
+    const handleChangeName = (name) => {
+      console.log('NAME', name);
+      setOrgName(name);
     }
 
 
@@ -459,6 +462,7 @@ const menuItems = [
                   structure={structureItems} 
                   data={{id: orgId}}
                   selects_data={selectsData}
+                  on_load={handleChangeName}
                 />
               )}
 
@@ -467,6 +471,7 @@ const menuItems = [
                   data={{id: orgId}}
                   selects_data={selectsData}
                   org_name={orgName}
+                  on_load={handleChangeName}
                 />
               )}
 
@@ -475,6 +480,7 @@ const menuItems = [
                   data={{id: orgId}}
                   selects_data={selectsData}
                   org_name={orgName}
+                  on_load={handleChangeName}
                 />
               )}
 
@@ -483,6 +489,7 @@ const menuItems = [
                   data={{id: orgId}}
                   selects_data={selectsData}
                   org_name={orgName}
+                  on_load={handleChangeName}
                 />
               )}
 
@@ -491,6 +498,7 @@ const menuItems = [
                   data={{id: orgId}}
                   selects_data={selectsData}
                   org_name={orgName}
+                  on_load={handleChangeName}
                 />
               )}
 
@@ -499,14 +507,16 @@ const menuItems = [
                   data={{id: orgId}}
                   selects_data={selectsData}
                   org_name={orgName}
+                  on_load={handleChangeName}
                 />
               )}
 
-              {activeTab === 'h' && (
+              {activeTab === 'h' && orgId && (
                 <OrgListModalHistoryTab
                   data={{id: orgId}}
                   selects_data={selectsData}
                   org_name={orgName}
+                  on_load={handleChangeName}
                 />
               )}
               

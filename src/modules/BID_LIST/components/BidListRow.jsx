@@ -1,13 +1,14 @@
 import { ArchiveBoxXMarkIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, DocumentCurrencyDollarIcon, NewspaperIcon  } from '@heroicons/react/24/outline';
 import {Dropdown, Menu, Tag, Tooltip} from 'antd';
 import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import {NavLink, useNavigate} from 'react-router-dom';
 import {DollarOutlined, FileDoneOutlined, LogoutOutlined, SafetyOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
 import PositionList from "./PositionList";
 
 
 const BidListRow = (props) => {
+  const navigate = useNavigate();
 
   const [active, setActive] = useState(false);
   const [compColor, setCompColor] = useState("#00000000");
@@ -49,13 +50,14 @@ const BidListRow = (props) => {
   const handleDoubleClick = () => {
     if (props.on_double_click){
       props.on_double_click(data);
+      navigate(`/bods/${data.id}`, { relative: 'path' });
     }
   }
 
   return (
     <Dropdown overlay={menu} trigger={['contextMenu']}>
       <div className={`sa-table-box-bids sa-table-box-row ${active ? 'active' : ''}`} key={props.key}
-           style={{color: compColor}}
+           style={{color: compColor, cursor: 'pointer'}}
            onDoubleClick={handleDoubleClick}
       >
         <div className={'sa-table-box-cell'}

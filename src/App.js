@@ -43,6 +43,8 @@ import Price from "./modules/PRICE/Price";
 import CuratorPage from "./modules/CURATOR/CuratorPage";
 import EngineerListPage from "./modules/ENGINEER_LIST/EngineerListPage";
 import EngineerPage from "./modules/ENGINEER_PAGE/EngineerPage";
+import EngineerPage from "./modules/ENGINEER/EngineerPage";
+import BidPage from "./modules/BID_PAGE/BidPage";
 
 function App() {
   const [userdata, setUserdata] = useState([]);
@@ -113,33 +115,29 @@ function App() {
 
         <div>
           <Routes>
+              {/* Редирект с корня на /orgs */}
+              <Route path="/"                element={<Navigate to="/orgs" replace />} />
+              <Route path={BASE_ROUTE + "/"} element={<Navigate to="/orgs" replace />} />
 
-                    {/* Редирект с корня на /orgs */}
-            <Route path="/"                element={<Navigate to="/orgs" replace />} />
-            <Route path={BASE_ROUTE + "/"} element={<Navigate to="/orgs" replace />} />
+              <Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata}/>} />
+              <Route path={'/orgs'} element={<OrgListPage              userdata={userdata}/>} />
 
-            <Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata}/>} />
-            <Route path={'/orgs'} element={<OrgListPage              userdata={userdata}/>} />
+              <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
+              <Route path={'/orgs/:item_id'}              element={<OrgPage userdata={userdata}/>} />
+              <Route path={'/orgs/:item_id'}              element={<OrgPage userdata={userdata}/>} />
+              <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
 
-            <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
-            <Route path={'/orgs/:item_id'}              element={<OrgPage userdata={userdata}/>} />
-            
-            <Route path={'/orgs/:item_id'}              element={<OrgPage userdata={userdata}/>} />
-            <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
+              <Route path={BASE_ROUTE + '/bids'} element={<BidListPage userdata={userdata} changed_user_data={setUserdata}/>} />
+              <Route path={'/bids'} element={<BidListPage userdata={userdata} changed_user_data={setUserdata}/>} />
 
-
-
-
-
-
-            <Route path={BASE_ROUTE + '/bids'} element={<BidListPage userdata={userdata} changed_user_data={setUserdata}/>} />
-            <Route path={'/bids'} element={<BidListPage userdata={userdata} changed_user_data={setUserdata}/>} />
+              <Route path={BASE_ROUTE + '/bids/:bidId'} element={<BidPage userdata={userdata} changed_user_data={setUserdata}/>} />
+              <Route path={'/bids/:bidId'} element={<BidPage userdata={userdata} changed_user_data={setUserdata}/>} />
 
               <Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata}/>} />
               <Route path={'/price'} element={<Price userdata={userdata}/>} />
 
-            <Route path={BASE_ROUTE + '/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
-            <Route path={'/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
+              <Route path={BASE_ROUTE + '/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
+              <Route path={'/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
 
               <Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata}/>} />
               <Route path={'/curator'} element={<CuratorPage userdata={userdata}/>} />
@@ -150,15 +148,14 @@ function App() {
               <Route path={BASE_ROUTE + '/engineer/:item_id'} element={<EngineerPage userdata={userdata}/>} />
               <Route path={'/engineer/:item_id'} element={<EngineerPage userdata={userdata}/>} />
 
-            <Route path={BASE_ROUTE + '/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
-            <Route path={'/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
+              <Route path={BASE_ROUTE + '/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
+              <Route path={'/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
 
-            <Route path={BASE_ROUTE + '/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
-            <Route path={'/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
+              <Route path={BASE_ROUTE + '/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
+              <Route path={'/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
 
-            
-            <Route path={BASE_ROUTE + '/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
-            <Route path={'/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
+              <Route path={BASE_ROUTE + '/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
+              <Route path={'/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
 
           </Routes>
         </div>

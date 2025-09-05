@@ -47,6 +47,9 @@ const OrgListModalNotesTab = (props) => {
 
 
     useEffect(() => {
+        if (baseOrgData?.name && props.on_load){
+          props.on_load(baseOrgData.name);
+        }
       if (baseOrgData?.notes !== null && baseOrgData?.notes?.length > 0){
         // setDataList(baseOrgData.projects);
           setStructureItems(baseOrgData?.notes.map((item)=>{

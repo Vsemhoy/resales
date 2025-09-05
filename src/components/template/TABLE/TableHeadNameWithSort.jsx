@@ -11,7 +11,7 @@ const TableHeadNameWithSort = (props) => {
     useEffect(() => {
         
       if (props.active_sort_items !== undefined && props.active_sort_items !== null){
-            console.log('active_sort_items', props.active_sort_items, key);
+            // console.log('active_sort_items', props.active_sort_items, key);
             let found = false;
             // setSortOrder(props.active_sort_items);
             for (let i = 0; i < props.active_sort_items.length; i++) {
