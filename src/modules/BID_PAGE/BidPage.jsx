@@ -144,7 +144,7 @@ const BidPage = (props) => {
         <div className={'sa-bid-page-container'}>
             <Spin size="large" spinning={isLoading}>
                 <div className={'sa-bid-page'}>
-
+                    {bidId}
                 </div>
             </Spin>
         </div>
