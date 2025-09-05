@@ -84,6 +84,15 @@ const OrgListPreviewModal = (props) => {
   }, [props.data]);
 
 
+  // Патч для фиксирования хедера в модалке, ибо модалка рендерится в body
+  useEffect(() => {
+    if (open){
+      document.body.classList.add('sa-org-modal-open');
+    } else {
+      document.body.classList.remove('sa-org-modal-open');
+    }
+  }, [open]);
+
 //   useEffect(() => {
 //   if (props.data?.id !== orgId) {
 //     const timer = setTimeout(() => {
@@ -366,14 +375,20 @@ const menuItems = [
   }
 
   return (
-    <div className={'sa-special-modal'}>
+    <div className={'sa-special-modal sam-org-modal-entity'}>
             <Flex vertical gap="middle" align="flex-start">
         {/* Basic */}
 
         <Modal
+          // modalRender={(modal) => (
+          //   <div className="sa-special-modal sam-org-modal-entity">
+          //     {modal}
+          //   </div>
+          // )}
+          rootClassName="sa-special-modal sam-org-modal-entity"
           style={{maxWidth: '1400px'}}
           title={<div className={'sa-flex-space'}>
-
+            
                 <div className={'spec-modal-title'}>
                     Паспорт организации ({orgId})
                 </div>
