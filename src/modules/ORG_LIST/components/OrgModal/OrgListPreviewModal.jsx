@@ -91,6 +91,7 @@ const OrgListPreviewModal = (props) => {
     } else {
       document.body.classList.remove('sa-org-modal-open');
     }
+    document.body.classList.remove('sa-org-page-open');
   }, [open]);
 
 //   useEffect(() => {
@@ -357,7 +358,7 @@ const menuItems = [
 
 
   const navigateToEditor = (ev) => {
-    const url = '/orgs/' + orgId + '?mode=edit';
+    const url = '/orgs/' + orgId ; //+ '?mode=edit';
     var targetTab = getOrgTabLink(activeTab);
     
 
@@ -369,7 +370,7 @@ const menuItems = [
     };
 
     // Передача ссылки для возврата на предыдущую страницу (назад)
-    navigate('/orgs/' + orgId + "?tab=" + activeTab + "&mode=edit", {
+    navigate('/orgs/' + orgId + "?tab=" + activeTab , { // + "&mode=edit"
       state: { from: window.location.pathname + window.location.search }
     });
   }
@@ -478,6 +479,7 @@ const menuItems = [
                   data={{id: orgId}}
                   selects_data={selectsData}
                   on_load={handleChangeName}
+                  environment={'modal'}
                 />
               )}
 
@@ -487,6 +489,7 @@ const menuItems = [
                   selects_data={selectsData}
                   org_name={orgName}
                   on_load={handleChangeName}
+                  environment={'modal'}
                 />
               )}
 
@@ -496,6 +499,7 @@ const menuItems = [
                   selects_data={selectsData}
                   org_name={orgName}
                   on_load={handleChangeName}
+                  environment={'modal'}
                 />
               )}
 
@@ -505,6 +509,7 @@ const menuItems = [
                   selects_data={selectsData}
                   org_name={orgName}
                   on_load={handleChangeName}
+                  environment={'modal'}
                 />
               )}
 
@@ -514,6 +519,7 @@ const menuItems = [
                   selects_data={selectsData}
                   org_name={orgName}
                   on_load={handleChangeName}
+                  environment={'modal'}
                 />
               )}
 
@@ -523,6 +529,7 @@ const menuItems = [
                   selects_data={selectsData}
                   org_name={orgName}
                   on_load={handleChangeName}
+                  environment={'modal'}
                 />
               )}
 
@@ -532,6 +539,7 @@ const menuItems = [
                   selects_data={selectsData}
                   org_name={orgName}
                   on_load={handleChangeName}
+                  environment={'modal'}
                 />
               )}
               

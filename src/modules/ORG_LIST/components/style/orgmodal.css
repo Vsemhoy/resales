@@ -247,9 +247,7 @@ background-color: #dae9fb;
 }
 
 
-.sam-org-modal-entity {
-    outline: 3px solid red;
-}
+
 
 .sa-org-modal-open .not-ant-modal .ant-modal-content {
     /* overflow: auto !important;
