@@ -1,0 +1,36 @@
+.blurred-spinner-container {
+    position: relative;
+    min-height: 200px;
+}
+
+.blurred-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ant-spin-blur {
+    backdrop-filter: blur(5px) !important;
+    background-color: rgba(255, 255, 255, 0.7) !important;
+}
+.ant-spin-spinning {
+    max-height: 100vh !important;
+}
+.ant-spin-nested-loading {
+    transition: 1s;
+}
+.sa-bid-page {
+    width: 100vw;
+    height: calc(100vh - 34px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
