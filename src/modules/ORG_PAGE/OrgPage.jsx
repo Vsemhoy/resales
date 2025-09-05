@@ -12,6 +12,7 @@ import { CloseOutlined } from '@ant-design/icons';
 
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
+import '../ORG_LIST/components/style/orgmodal.css';
 
 
 import OffersTabPage from './tabs/OffersTabPage';
@@ -21,6 +22,9 @@ import MeetingsTabPage from './tabs/MeetingsTabPage';
 import NotesTabPage from './tabs/NotesTabPage';
 import HistoryTabPage from './tabs/HistoryTabPage';
 import ProjectsTabPage from './tabs/OffersTabPage';
+import OrgListModalBillsTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalBillsTab';
+import OrgListModalOffersTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalOffersTab';
+import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalHistoryTab';
 
 
 
@@ -187,7 +191,7 @@ const OrgPage = (props) => {
         
 
 
-    <div className='sa-orgpage-body sa-mw-1200'>
+    <div className='sa-orgpage-body sa-mw-1400'>
         <div className='sa-orgpage-header'>
             <div className={'sa-flex-space'}>
                 <div className={'sa-flex-space'}>
@@ -256,24 +260,38 @@ const OrgPage = (props) => {
 
 
             {activeTab === 'o' && (
-                <OffersTabPage
-                    edit_mode={editMode}
-                    item_id={itemId}
-                />
+                // <OffersTabPage
+                //     edit_mode={editMode}
+                //     item_id={itemId}
+                // />
+                <OrgListModalOffersTab
+                    data={{id: orgId}}
+
+                    />
             )}
 
             {activeTab === 'b' && (
-                <BillsTabPage
-                    edit_mode={editMode}
-                    item_id={itemId}
-                 />
+                // <BillsTabPage
+                //     edit_mode={editMode}
+                //     item_id={itemId}
+                //  />
+                <OrgListModalBillsTab
+                    data={{id: orgId}}
+                    // selects_data={selectsData}
+                    // org_name={orgName}
+                    // on_load={handleChangeName}
+                    />
             )}
 
             {activeTab === 'c' && (
-                <MeetingsTabPage
-                    edit_mode={editMode}
-                    item_id={itemId}
-                 />
+                // <MeetingsTabPage
+                //     edit_mode={editMode}
+                //     item_id={itemId}
+                //  />
+                <OrgListModalBillsTab
+                    data={{id: orgId}}
+
+                    />
             )}
 
             {activeTab === 'p' && (
@@ -291,10 +309,13 @@ const OrgPage = (props) => {
             )}
 
             {activeTab === 'h' && (
-                <HistoryTabPage
-                    edit_mode={editMode}
-                    item_id={itemId}
-                 />
+                // <HistoryTabPage
+                //     edit_mode={editMode}
+                //     item_id={itemId}
+                //  />
+                <OrgListModalHistoryTab
+                    data={{id: orgId}}
+                />
             )}
             
         </div>

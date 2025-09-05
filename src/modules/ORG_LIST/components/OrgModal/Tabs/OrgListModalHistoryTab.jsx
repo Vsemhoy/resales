@@ -209,7 +209,9 @@ const orgIdRef = useRef(orgId);
                 ref={isLastElement ? lastElementRef : null}
               >
                 {showDateBreak && item?.date && (
-                  <div className='sa-orghistory-date-break-row'>
+                  <div className='sa-orghistory-date-break-row'
+                    style={{textAlign: 'left', fontWeight: '600'}}
+                  >
                     {dayjs.unix(item.date).date()} {getMonthName(dayjs.unix(item.date).month())} {dayjs.unix(item.date).year()}
                   </div>
                 )}
