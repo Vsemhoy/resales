@@ -61,10 +61,10 @@ const BidPage = (props) => {
     const fetchInfo = async () => {
         setIsLoading(true);
         await fetchBidInfo();
-        await fetchSelects();
         await fetchBidModels();
-        await fetchCurrencySelects();
         setTimeout(() => setIsLoading(false), 1000);
+        await fetchSelects();
+        await fetchCurrencySelects();
     };
     const fetchBidInfo = async () => {
         if (PRODMODE) {
