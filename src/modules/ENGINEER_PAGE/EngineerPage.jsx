@@ -50,14 +50,18 @@ const EngineerPage = (props) => {
 
   const fetchModelsBySpec = async () => {
     if (PRODMODE){
-      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/' + item_id, {
-        _token: CSRF_TOKEN,
-        data: {}
-      })
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/' + item_id, {
+          _token: CSRF_TOKEN,
+          data: {}
+        })
 
-      setEditMode(response.data.content.edit);
-      setModels(response.data.content.models);
-      setCommentEngineer(response.data.content.comment);
+        setEditMode(response.data.content.edit);
+        setModels(response.data.content.models);
+        setCommentEngineer(response.data.content.comment);
+      } catch (e) {
+        console.log(e);
+      }
     } else {
       setEditMode(true);
       setModels(MODELS_LIST);
