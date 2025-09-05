@@ -166,7 +166,7 @@ const BidListPage = (props) => {
   }, []);
 
   useEffect(() => {
-    if (isMounted) {
+    if (isMounted && currentPage && onPage && filterBox && orderBox) {
       const timer = setTimeout(() => {
         setIsLoading(true);
         fetchBids().then(() => {
@@ -321,8 +321,7 @@ const BidListPage = (props) => {
         setTotal(response.data.total_count);
 
         let max = (onPage * currentPage) - (onPage - 1);
-        if (response.data.total_count < max)
-        {
+        if (response.data.total_count < max) {
           setCurrentPage(1);
           handleSearchParamsChange('currentPage', 1);
         }
@@ -330,6 +329,7 @@ const BidListPage = (props) => {
         console.log(e);
       }
     } else {
+      console.log(123)
       setBids(BID_LIST);
       setTotal(33000);
     }
@@ -445,8 +445,11 @@ const BidListPage = (props) => {
       filterBoxUpd.object_name = newFilterBox.object_name;
       handleSearchParamsChange('object_name', newFilterBox.object_name);
     }
-
-    setFilterBox(filterBoxUpd);
+    console.log(areObjectsEqual(filterBox, filterBoxUpd))
+    console.log(searchParams)
+    if (!areObjectsEqual(filterBox, filterBoxUpd)) {
+      setFilterBox(filterBoxUpd);
+    }
   };
   const handleUpdateFilterBoxSider = (newFilterBox) => {
     const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
@@ -483,7 +486,54 @@ const BidListPage = (props) => {
       filterBoxUpd.complete = newFilterBox.complete;
       handleSearchParamsChange('complete', newFilterBox.complete);
     }
-    setFilterBox(filterBoxUpd);
+    console.log(areObjectsEqual(filterBox, filterBoxUpd))
+    if (!areObjectsEqual(filterBox, filterBoxUpd)) {
+      setFilterBox(filterBoxUpd);
+    }
+  };
+
+  function areObjectsEqual(obj1, obj2) {
+    const keys = Object.keys(obj1);
+
+    for (const key of keys) {
+      const value1 = obj1[key];
+      const value2 = obj2[key];
+
+      // Если оба значения null - считаем равными
+      if (value1 === null && value2 === null) {
+        continue; // переходим к следующему ключу
+      }
+
+      // Если одно значение null, а другое нет - не равны
+      if (value1 === null || value2 === null) {
+        return false;
+      }
+
+      // Если оба не null - сравниваем как обычно
+      if (value1 !== value2) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+  const arraysEqualIgnore = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+
+    // Создаем копии и сортируем по key для consistent comparison
+    const sorted1 = [...arr1].sort((a, b) => a.key - b.key);
+    const sorted2 = [...arr2].sort((a, b) => a.key - b.key);
+
+    // Сравниваем каждый объект
+    for (let i = 0; i < sorted1.length; i++) {
+      if (sorted1[i].key !== sorted2[i].key || sorted1[i].order !== sorted2[i].order) {
+        return false;
+      }
+    }
+
+    return true;
   };
   const makeFilterMenu = () => {
     let clearItems = [];
@@ -527,13 +577,15 @@ const BidListPage = (props) => {
   };
 
   const handleUpdateOrderBox = (newOrderBox) => {
-    setOrderBox(newOrderBox);
-    handleSearchParamsSortChange(newOrderBox);
+    if (!arraysEqualIgnore(orderBox, newOrderBox)) {
+      setOrderBox(newOrderBox);
+      handleSearchParamsSortChange(newOrderBox);
+    }
   };
 
   const handleClearAllFilterBox = ()=> {
     setFilterBox(initialFilterBox);
-    handleSearchParamsZeroing(initialFilterBox);
+    setTimeout(() => handleSearchParamsZeroing(initialFilterBox), 1000)
   };
 
   const handleClearOrderBox = ()=> {
@@ -554,6 +606,18 @@ const BidListPage = (props) => {
           newParams.delete(key);
         }
       }
+
+      /*const arr = [
+          "bid_id", "company_name", "type", "protect_status",
+          "stage_status", "dates", "manager", "bill_number", "comment",
+          "object_name", "target_company", "pay_status", "admin_accept", "package", "price", "bid_currency",
+          "nds", "complete"
+      ];
+      arr.forEach(key => {
+        newParams.delete(key);
+      });*/
+      setTimeout(() => console.log(newParams), 1000);
+
       return newParams;
     });
   };
@@ -585,7 +649,6 @@ const BidListPage = (props) => {
       return newParams;
     });
   };
-
   const backUrl = () => {
     return `/${fromPage}` + (fromView === 'modal' ? `?show=${fromId}&` : fromView === 'full' ? `/${fromId}?` : '') + `tab=${fromTab}`;
   };
