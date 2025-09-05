@@ -28,8 +28,8 @@
     transition: 1s;
 }
 .sa-bid-page {
-    width: 100vw;
-    height: calc(100vh - 34px);
+    width: 100%;
+    min-height: calc(100vh - 34px);
     display: flex;
     align-items: center;
     justify-content: center;
