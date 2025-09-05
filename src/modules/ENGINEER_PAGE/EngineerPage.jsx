@@ -27,7 +27,7 @@ const EngineerPage = (props) => {
 
   useEffect(() => {
     if (!isMounted) {
-      fetchInfo().then(() => {setIsMounted(true);});
+      fetchInfo().then(() => setIsMounted(true));
     }
   }, []);
 
