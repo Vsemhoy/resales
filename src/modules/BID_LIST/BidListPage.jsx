@@ -601,13 +601,13 @@ const BidListPage = (props) => {
   const handleSearchParamsZeroing = (obj) => {
     setSearchParams(prevParams => {
       const newParams = new URLSearchParams(prevParams);
-      /*for (const key in obj) {
+      for (const key in obj) {
         if (obj[key] === null){} {
           newParams.delete(key);
         }
-      }*/
+      }
 
-      const arr = [
+      /*const arr = [
           "bid_id", "company_name", "type", "protect_status",
           "stage_status", "dates", "manager", "bill_number", "comment",
           "object_name", "target_company", "pay_status", "admin_accept", "package", "price", "bid_currency",
@@ -615,7 +615,7 @@ const BidListPage = (props) => {
       ];
       arr.forEach(key => {
         newParams.delete(key);
-      });
+      });*/
       setTimeout(() => console.log(newParams), 1000);
 
       return newParams;
