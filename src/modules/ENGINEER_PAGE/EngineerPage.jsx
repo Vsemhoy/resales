@@ -66,7 +66,7 @@ const EngineerPage = (props) => {
 
   const fetchUpdate = async () => {
     if (PRODMODE){
-      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/' + item_id, {
+      let response = await PROD_AXIOS_INSTANCE.put('/api/sales/engineer/' + item_id, {
         _token: CSRF_TOKEN,
         data: {
           models: models,
