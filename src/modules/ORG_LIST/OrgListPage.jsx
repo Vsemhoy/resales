@@ -34,7 +34,7 @@ const OrgListPage = (props) => {
   const [baseFiltersData, setBaseFilterstData] = useState(null); 
 
   const [openedFilters, setOpenedFilters] = useState(false);
-  const [sortOrders, setSortOrders] = useState({});
+
 
 
   const [orgList, setOrgList] = useState([]);
@@ -97,6 +97,7 @@ const OrgListPage = (props) => {
       // TODO: логика для dev режима
       setBaseFilterstData(OM_ORG_FILTERDATA);
       setOrgList(OM_COMP_LIST);
+      setBaseCompanies(OM_ORG_FILTERDATA?.companies);
     };
     if (showGetItem !== null){
       handlePreviewOpen(showGetItem);
@@ -172,11 +173,7 @@ const OrgListPage = (props) => {
   }, [onPage, currentPage, orgList, total]);
 
 
-  useEffect(() => {
-    if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
-      setBaseCompanies(userdata.companies);
-    };
-  }, [userdata]);
+
 
 
 
@@ -348,7 +345,7 @@ const OrgListPage = (props) => {
                 });
                 console.log('me2: ', response);
                 setBaseFilterstData(response.data.filters);
-
+                setBaseCompanies(response.data.filters?.companies);
             } catch (e) {
                 console.log(e)
             } finally {
@@ -742,8 +739,8 @@ const OrgListPage = (props) => {
               setIsPreviewOpen(false);
               setPreviewItem(null);
             }}
-            selects_data={baseFiltersData}
-            on_change_tab={(tab)=>{setCurrentTab(tab)}}
+              selects_data={baseFiltersData}
+              on_change_tab={(tab)=>{setCurrentTab(tab)}}
             />
     </div>
   );
