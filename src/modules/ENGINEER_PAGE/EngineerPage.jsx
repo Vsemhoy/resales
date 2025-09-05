@@ -69,34 +69,34 @@ const EngineerPage = (props) => {
     }
   }
 
-  const fetchUpdate = async () => {
-    console.log("commentEngineer: ", commentEngineer);
+  const fetchUpdate = async (model, comment) => {
+    console.log("commentEngineer: ", comment);
 
     if (PRODMODE){
       let response = await PROD_AXIOS_INSTANCE.put('/api/sales/engineer/' + item_id, {
         _token: CSRF_TOKEN,
         data: {
-          models: models,
-          comment: commentEngineer
+          models: model,
+          comment: comment
         }
       })
     } else {
-      console.log("commentEngineer: ", commentEngineer);
+      console.log("commentEngineer: ", comment);
     }
   }
 
-  useEffect(() => {
-    if (isMounted) {
-      const timer = setTimeout(() => {
-        setIsLoading(true);
-        fetchUpdate().then(() => {
-          setIsLoading(false);
-        });
-      }, 200);
-
-      return () => clearTimeout(timer);
-    }
-  }, [models, commentEngineer]);
+  // useEffect(() => {
+  //   if (isMounted) {
+  //     const timer = setTimeout(() => {
+  //       setIsLoading(true);
+  //       fetchUpdate().then(() => {
+  //         setIsLoading(false);
+  //       });
+  //     }, 200);
+  //
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [models, commentEngineer]);
 
   const update_local_state = (type, value, index) => {
     const modelsUpdate = JSON.parse(JSON.stringify(models));
@@ -110,6 +110,7 @@ const EngineerPage = (props) => {
           model_name: value.label,
           model_count: value.count,
         }
+        fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
         break;
 
       case "count":
@@ -118,16 +119,27 @@ const EngineerPage = (props) => {
           model_count: value,
         }
 
+        fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
         break;
 
       case "delete":
         if (!editMode){
           modelsUpdate.splice(index, 1);
+          fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
         }
         break;
 
       case "comment":
         commentEngineerUpdate = value;
+        fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
+        break;
+
+      case "new":
+        modelsUpdate.push({
+          model_id: value.value,
+          model_name: value.label,
+          model_count: value.count
+        });
         break;
     }
 

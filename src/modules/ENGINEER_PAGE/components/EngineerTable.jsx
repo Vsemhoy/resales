@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import EngineerRow from "./EngineerRow";
-import {Spin} from "antd";
+import {Button, Spin} from "antd";
 
 const EngineerListTable = (props) => {
     const [models, setModels] = useState([]);
@@ -48,6 +48,9 @@ const EngineerListTable = (props) => {
                       key={index + "_" + model.model_id}
                   />
               ))}
+              <Button style={{marginTop: "20px", width: "30%"}} type="primary" onClick={() => props.update_local_state("new", 0, 0)}>
+                  Добавить
+              </Button>
           </div>
 
       </div>
