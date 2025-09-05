@@ -20,7 +20,7 @@ import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
 import {c} from "react/compiler-runtime";
 
 
-const EngineerPage = (props) => {
+const EngineerListPage = (props) => {
   const { userdata } = props;
 
   const [isMounted, setIsMounted] = useState(false);
@@ -73,9 +73,6 @@ const EngineerPage = (props) => {
 
   const [sortOrders, setSortOrders] = useState([]);
 
-  const [activeRole, setActiveRole] = useState(89);
-
-
   const [searchParams, setSearchParams] = useSearchParams();
   const [baseCompanies, setBaseCompanies] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -83,6 +80,7 @@ const EngineerPage = (props) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
   const showGetItem = searchParams.get('show');
+  const [activeRole, setActiveRole] = useState(2);
 
 
   useEffect(() => {
@@ -119,8 +117,12 @@ const EngineerPage = (props) => {
       console.log('found', found.length);
       setIsOneRole(found.length === 1);
     }
-    if (userdata !== null && userdata.user && userdata.user.sales_role) {
-      setActiveRole(userdata.user.sales_role);
+    if (userdata !== null && userdata.user && userdata.user.id_departament) {
+      // if ([7,8,20].includes(userdata.user.id_departament)) {
+      //   setActiveRole(1);
+      // } else {
+      //   setActiveRole(2);
+      // }
     }
   }, [userdata]);
 
@@ -395,7 +397,7 @@ const EngineerPage = (props) => {
                 >Всего найдено: {total}</Tag>
               </div>
               <div style={{display: 'flex', alignItems: 'end'}}>
-                {userdata?.user?.sales_role === 1 && (
+                {activeRole === 1 && (
                     <Button type={'primary'} icon={<PlusOutlined/>} onClick={addNewSpec} disabled={blockNewSpec}>Добавить</Button>
                 )}
               </div>
@@ -462,7 +464,7 @@ const EngineerPage = (props) => {
 
             <Spin spinning={isLoading}>
               <EngineerListTable
-                  activeRol={activeRole}
+                  activeRole={activeRole}
                   companies={companies}
                   specs={specs}
                   filter_steps={prepareSelectOptions(filterStep)}
@@ -483,4 +485,4 @@ const EngineerPage = (props) => {
   );
 };
 
-export default EngineerPage;
+export default EngineerListPage;

@@ -1,0 +1,4 @@
+.sa-table-box-engineer {
+    display: grid;
+    grid-template-columns: 100px 1fr 200px 1fr;
+}
