@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {Button, Col, Layout, Row} from 'antd';
 import {Content, Header} from 'antd/es/layout/layout';
@@ -25,12 +25,9 @@ const EngineerPage = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [commentEngineer, setCommentEngineer] = useState("");
 
-  const isMountedRef = useRef(false);
-
   useEffect(() => {
-    if (!isMountedRef.current) {
-      isMountedRef.current = true;
-      fetchInfo();
+    if (!isMounted) {
+      fetchInfo().then(() => setIsMounted(true));
     }
   }, []);
 
