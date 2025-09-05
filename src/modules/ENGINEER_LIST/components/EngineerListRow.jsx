@@ -34,6 +34,8 @@ const EngineerListRow = (props) => {
     }
   }
 
+  console.log(props.activeRole);
+
   return (
     <Dropdown trigger={['contextMenu']}>
       <div className={`sa-table-box-engineers sa-table-box-row ${active ? 'active' : ''}`} key={props.key}
@@ -72,7 +74,7 @@ const EngineerListRow = (props) => {
         <div className={'sa-table-box-cell'} style={{display: "inline-block"}}>
           <div>
             <div style={{display: "flex", gap: "8px"}}>
-              {![89, 90, 91].includes(props.activeRole) ? (
+              {props.activeRole === 1 ? (
                   <>
                     <Button type={"primary"} style={{width: "100px"}}>
                       Копировать

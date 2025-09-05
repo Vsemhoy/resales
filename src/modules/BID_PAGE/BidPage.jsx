@@ -1,41 +1,55 @@
 import React, {useEffect, useState} from 'react';
-import {Spin} from "antd";
+import {Select, Spin} from "antd";
 import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import {DeleteOutlined} from "@ant-design/icons";
+import './components/style/bidPage.css'
 
 const BidPage = (props) => {
     const {bidId} = useParams();
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const [bidActions, setBidActions] = useState({});
-    const [bidComments, setBidComments] = useState({});
-    const [bidFinance, setBidFinance] = useState({});
-    const [bidIdCompany, setBidIdCompany] = useState(null);
-    const [bidPlace, setBidPlace] = useState(null);
-    const [bidProject, setBidProject] = useState(null);
-    const [bidProperties, setBidProperties] = useState({});
-    const [bidStatuses, setBidStatuses] = useState({});
+
+    /* ШАПКА СТРАНИЦЫ */
     const [bidType, setBidType] = useState(null);
-
-
-    const [bidModels, setBidModels] = useState([]);
-
-    const [bidExtra, setBidExtra] = useState({});
-
-    const [openMode, setOpenMode] = useState({});
-    const [openMods, setOpenMods] = useState({});
-
-
-    const [typeSelect, setTypeSelect] = useState([]);
-
+    const [bidIdCompany, setBidIdCompany] = useState(null);
+    const [bidOrg, setBidOrg] = useState(null);
+    const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
+    const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
     const [companyCurrency, setCompanyCurrency] = useState(null);
     const [bankCurrency, setBankCurrency] = useState(null);
-
-    const [garbage, setGarbage] = useState([]);
+    /* БАЗОВЫЙ БЛОК */
+    const [bidOrgUser, setBidOrgUser] = useState('');
+    const [bidProtectionProject, setBidProtectionProject] = useState('');
+    const [bidObject, setBidObject] = useState('');
+    const [bidSellBy, setBidSellBy] = useState(''); // срок реализации
+    /* БЛОК КОММЕНТАРИЕВ */
+    const [bidCommentEngineer, setBidCommentEngineer] = useState('');
+    const [bidCommentManager, setBidCommentManager] = useState('');
+    const [bidCommentAdmin, setBidCommentAdmin] = useState('');
+    const [bidCommentAccountant, setBidCommentAccountant] = useState('');
+    const [bidCommentAddEquipment, setBidCommentAddEquipment] = useState('');
+    /* ФИНАНСОВЫЙ БЛОК */
+    const [bidCurrency, setBidCurrency] = useState(0);
+    const [bidPriceStatus, setBidPriceStatus] = useState(0);
+    const [bidPercent, setBidPercent] = useState(0);
+    const [bidNds, setBidNds] = useState(0);
+    /* ЛОГИ */
+    const [bidActionsLogs, setBidActionsLogs] = useState({});
+    /* ПРОЕКТ */
+    const [bidProject, setBidProject] = useState(null); // проект из карточки организации
+    /* МОДЕЛИ */
+    const [bidModels, setBidModels] = useState([]);
+    const [amounts, setAmounts] = useState({});
+    const [engineerParameters, setEngineerParameters] = useState({});
+    /* СЕЛЕКТ ПО МОДЕЛЯМ */
     const [modelsSelect, setModelsSelect] = useState([]);
+    const [garbage, setGarbage] = useState([]);
+    /* ВСЕ ОСТАЛЬНЫЕ СЕЛЕКТЫ */
+    const [typeSelect, setTypeSelect] = useState([]);
+
 
     useEffect(() => {
         if (!isMounted) {
@@ -48,9 +62,9 @@ const BidPage = (props) => {
         setIsLoading(true);
         await fetchBidInfo();
         await fetchSelects();
-        await fetchCurrencySelects();
         await fetchBidModels();
-        setTimeout(() => setIsLoading(false), 500);
+        await fetchCurrencySelects();
+        setTimeout(() => setIsLoading(false), 1000);
     };
     const fetchBidInfo = async () => {
         if (PRODMODE) {
@@ -61,21 +75,7 @@ const BidPage = (props) => {
                 });
                 if (response.data) {
                     const data = response.data;
-                    setBidActions(data.actions);
-                    setBidComments(data.comments);
-                    setBidFinance(data.finance);
-                    setBidIdCompany(data.id_company);
-                    setBidPlace(data.place);
-                    setBidProject(data.project);
-                    setBidProperties(data.properties);
-                    setBidStatuses(data.statuses);
-                    setBidType(data.type);
 
-                    setBidModels(data.bid_models);
-
-                    setBidExtra(data.extra);
-                    setOpenMode(data.openmode);
-                    setOpenMods(data._openmods);
                 }
             } catch (e) {
                 console.log(e);
@@ -87,7 +87,7 @@ const BidPage = (props) => {
     const fetchSelects = async () => {
         if (PRODMODE) {
             try {
-                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bidselects', {
+                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
                     data: {},
                     _token: CSRF_TOKEN
                 });
@@ -141,11 +141,13 @@ const BidPage = (props) => {
     };
 
     return (
-        <Spin spinning={isLoading}>
-            <div style={{width:'100vw',height:'calc(100vh - 34px)', display:'flex',alignItems:'center',justifyContent:'center'}}>
-                <DeleteOutlined />
-            </div>
-        </Spin>
+        <div className={'sa-bid-page-container'}>
+            <Spin size="large" spinning={isLoading}>
+                <div className={'sa-bid-page'}>
+
+                </div>
+            </Spin>
+        </div>
     );
 }
 

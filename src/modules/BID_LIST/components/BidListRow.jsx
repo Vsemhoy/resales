@@ -50,7 +50,7 @@ const BidListRow = (props) => {
   const handleDoubleClick = () => {
     if (props.on_double_click){
       props.on_double_click(data);
-      navigate(`/bods/${data.id}`, { relative: 'path' });
+      navigate(`/bids/${data.id}`, { relative: 'path' });
     }
   }
 
