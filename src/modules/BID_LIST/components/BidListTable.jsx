@@ -94,12 +94,12 @@ const BidListTable = (props) => {
   }, [sortOrders]);
 
   useEffect(() => {
-    if (!arraysEqualIgnoreOrder(props.order_box, sortOrders)) {
+    if (!arraysEqualIgnore(props.order_box, sortOrders)) {
       setSortOrders(props.order_box);
     }
   }, [props.order_box]);
 
-  const arraysEqualIgnoreOrder = (arr1, arr2) => {
+  const arraysEqualIgnore = (arr1, arr2) => {
     if (arr1.length !== arr2.length) {
       return false;
     }
@@ -116,7 +116,7 @@ const BidListTable = (props) => {
     }
 
     return true;
-  }
+  };
 
   const handlePreviewOpen = (item, state) => {
       console.log('Hello');
