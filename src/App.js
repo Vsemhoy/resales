@@ -43,7 +43,6 @@ import Price from "./modules/PRICE/Price";
 import CuratorPage from "./modules/CURATOR/CuratorPage";
 import EngineerListPage from "./modules/ENGINEER_LIST/EngineerListPage";
 import EngineerPage from "./modules/ENGINEER_PAGE/EngineerPage";
-import EngineerPage from "./modules/ENGINEER/EngineerPage";
 import BidPage from "./modules/BID_PAGE/BidPage";
 
 function App() {
