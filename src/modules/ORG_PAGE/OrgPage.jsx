@@ -47,7 +47,9 @@ const OrgPage = (props) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
-    const [orgId, setOrgId] = useState(246);
+    const { item_id } = useParams();
+
+
     // m - main
     // b - bills
     // o - offers
@@ -57,17 +59,14 @@ const OrgPage = (props) => {
     // h - history
     const [activeTab, setActiveTab] = useState('m');
 
+    
 
     const [baseCompanies, setBaseCompanies] = useState([]);
     const location = useLocation();
     const [editMode, setEditMode] = useState(false);
     // const [companies, setCompanies] = useState([]);
 
-    let {item_id} = useParams();
-    let {tab_id} = useParams();
-
     const [itemId, setItemId] = useState(item_id? item_id : 'new');
-    const [tabId, setTabId] = useState(tab_id !== undefined ? tab_id : tabNames[0].link);
 
     const [test, setTest] = useState('hello');
 
@@ -94,6 +93,15 @@ const OrgPage = (props) => {
     }, []);
 
 
+      // Патч для фиксирования хедера в модалке, ибо модалка рендерится в body
+      useEffect(() => {
+        if (open){
+          document.body.classList.add('sa-org-page-open');
+        } else {
+          document.body.classList.remove('sa-org-page-open');
+        }
+        document.body.classList.remove('sa-org-modal-open');
+      }, [open]);
 
 
     useEffect(() => {
@@ -265,9 +273,9 @@ const OrgPage = (props) => {
                 //     item_id={itemId}
                 // />
                 <OrgListModalOffersTab
-                    data={{id: orgId}}
-
-                    />
+                    data={{id: itemId}}
+                    environment={'editor'}
+                />
             )}
 
             {activeTab === 'b' && (
@@ -276,7 +284,8 @@ const OrgPage = (props) => {
                 //     item_id={itemId}
                 //  />
                 <OrgListModalBillsTab
-                    data={{id: orgId}}
+                    data={{id: itemId}}
+                    environment={'editor'}
                     // selects_data={selectsData}
                     // org_name={orgName}
                     // on_load={handleChangeName}
@@ -289,7 +298,7 @@ const OrgPage = (props) => {
                 //     item_id={itemId}
                 //  />
                 <OrgListModalBillsTab
-                    data={{id: orgId}}
+                    data={{id: itemId}}
 
                     />
             )}
@@ -305,6 +314,7 @@ const OrgPage = (props) => {
                 <NotesTabPage
                     edit_mode={editMode}
                     item_id={itemId}
+                    environment={'editor'}
                  />
             )}
 
@@ -314,7 +324,8 @@ const OrgPage = (props) => {
                 //     item_id={itemId}
                 //  />
                 <OrgListModalHistoryTab
-                    data={{id: orgId}}
+                    data={{id: itemId}}
+                    environment={'editor'}
                 />
             )}
             

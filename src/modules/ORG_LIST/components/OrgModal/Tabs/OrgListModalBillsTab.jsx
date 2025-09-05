@@ -24,6 +24,8 @@ const OrgListModalBillsTab = (props) => {
 
   const [dataList, setDataList] = useState([]);
 
+  const [navigateLink, setNavigateLink] = useState('/bids?');
+
   useEffect(() => {
     if (baseOrgData?.name && props.on_load){
       props.on_load(baseOrgData.name);
@@ -101,7 +103,14 @@ const OrgListModalBillsTab = (props) => {
 
 
 
-  
+  // Ссылка "назад" меняется в зависимости от того, где отрендерился компонент
+  useEffect(() => {
+    if (props.environment === 'modal'){
+      setNavigateLink('/bids?type=2&company_name=' + orgName + '&frompage=orgs&fromtab=b&fromview=modal&fromid=' + orgId);
+    } else {
+      setNavigateLink('/bids?type=2&company_name=' + orgName + '&frompage=org&fromtab=b&fromid=' + orgId);
+    }
+  }, [orgName]);
 
   
 
@@ -135,7 +144,7 @@ const OrgListModalBillsTab = (props) => {
           </div>
           <div>
             {/* Здесь будут фильтры */}
-            <NavLink to={'/bids?type=2&company_name=' + orgName + '&frompage=orgs&fromtab=b&fromview=modal&fromid=' + orgId}>
+            <NavLink to={navigateLink}>
             <Button size={'small'} >
               Открыть в полном списке
             </Button></NavLink>
