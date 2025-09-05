@@ -26,8 +26,9 @@ const EngineerPage = (props) => {
   const [commentEngineer, setCommentEngineer] = useState("");
 
   useEffect(() => {
-    fetchInfo().then();
-    setIsMounted(true);
+    if (!isMounted) {
+      fetchInfo().then(() => {setIsMounted(true);});
+    }
   }, []);
 
   const fetchInfo = async () => {
