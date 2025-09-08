@@ -54,3 +54,67 @@
     width: 500px;
     text-align: left;
 }
+
+
+
+
+
+.custom-small-steps-container {
+    padding: 10px;
+    border: 1px solid var(--row-main-bg-color-second);
+    border-radius: 5px;
+    background-color: var(--row-main-bg-color);
+}
+.custom-small-steps {
+    width: 310px !important;
+    max-width: 310px !important;
+    min-width: 310px !important;
+}
+
+/* Супер компактные линии */
+.custom-small-steps .ant-steps-item-process, .ant-steps-item-wait {
+    width: 80px;
+    max-width: 80px;
+}
+.custom-small-steps .ant-steps-dot .ant-steps-item-tail {
+    margin: 0 4px 0 6px !important;
+    top: 10px !important;
+    padding: 0 1px !important;
+}
+
+.custom-small-steps .ant-steps-item {
+    width: 80px !important;
+    max-width: 80px !important;
+}
+.custom-small-steps .ant-steps-item-content {
+    width: 80px !important;
+}
+.custom-small-steps .ant-steps-item-tail {
+    margin-inline-start: calc(40px + 16px ) !important;
+}
+.custom-small-steps .ant-steps-item-icon {
+    margin-inline-start: calc(40px - 4px ) !important;
+}
+.custom-small-steps  .ant-steps-item-tail::after {
+   /* height: 1px !important;
+    margin-left: -6px !important;
+    margin-right: -6px !important;*/
+    width: 50px !important;
+    margin-left: 0 !important;
+}
+
+/* Минимальный текст */
+.custom-small-steps .ant-steps-item-title {
+    font-size: 10px !important;
+    line-height: 1 !important;
+    padding-right: 1px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.custom-small-steps .ant-steps-item-description {
+    font-size: 8px !important;
+    margin-top: 1px !important;
+    line-height: 1 !important;
+}

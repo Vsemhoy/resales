@@ -604,8 +604,8 @@ export const CUR_CURRENCY = [
 export const BID = {
     "id": 120837,
     "type": 1,
-    "place": 1,
-    "id_company": 3,
+    "place": 4,
+    "id_company": 2,
     "project": null,
     "comments": {
         "manager": "",
