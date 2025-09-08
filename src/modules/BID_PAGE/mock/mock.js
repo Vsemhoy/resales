@@ -554,7 +554,24 @@ export const SELECTS = {
             "value": 13,
             "label": "Обновец"
         }
-    ]
+    ],
+    "companies": [
+        {
+            "id": 1,
+            "name": "FreeCompany",
+            "color": "#8d8d8d"
+        },
+        {
+            "id": 2,
+            "name": "Arstel",
+            "color": "#ff7700"
+        },
+        {
+            "id": 3,
+            "name": "Rondo",
+            "color": "#229922"
+        }
+    ],
 };
 export const CUR_COMPANY = [
     {
@@ -588,7 +605,7 @@ export const BID = {
     "id": 120837,
     "type": 1,
     "place": 1,
-    "id_company": 2,
+    "id_company": 3,
     "project": null,
     "comments": {
         "manager": "",

@@ -67,6 +67,7 @@ const BidPage = (props) => {
     const [protectionSelect, setProtectionSelect] = useState([]);
     const [stageSelect, setStageSelect] = useState([]);
     const [templateWordSelect, setTemplateWordSelect] = useState([]);
+    const [companies, setCompanies] = useState([]);
 
 
     useEffect(() => {
@@ -172,6 +173,7 @@ const BidPage = (props) => {
                     setProtectionSelect(selects.protection_select);
                     setStageSelect(selects.stage_select);
                     setTemplateWordSelect(selects.template_word_select);
+                    setCompanies(selects.companies);
                 }
             } catch (e) {
                 console.log(e);
@@ -193,6 +195,7 @@ const BidPage = (props) => {
             setProtectionSelect(SELECTS.protection_select);
             setStageSelect(SELECTS.stage_select);
             setTemplateWordSelect(SELECTS.template_word_select);
+            setCompanies(SELECTS.companies);
         }
     };
     const fetchCurrencySelects = async () => {
@@ -261,8 +264,8 @@ const BidPage = (props) => {
                                                     textAlign: 'center',
                                                     fontSize: '14px',
                                                 }}
-                                                color="geekblue"
-                                            >ARSTEL</Tag>
+                                                color={companies.find(comp => comp.id === bidIdCompany)?.color}
+                                            >{companies.find(comp => comp.id === bidIdCompany)?.name}</Tag>
                                             для
                                             <Tag
                                                 style={{
@@ -270,7 +273,7 @@ const BidPage = (props) => {
                                                     fontSize: '14px',
                                                 }}
                                                 color="geekblue"
-                                            >Тестовая карточка</Tag>
+                                            >{bidOrg.name}</Tag>
                                         </div>
                                         <div style={{display: 'flex', alignItems: 'end'}}>
                                             <ConfigProvider
