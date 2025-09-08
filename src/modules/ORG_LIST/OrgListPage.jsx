@@ -645,7 +645,7 @@ const OrgListPage = (props) => {
               onChange={(ev, val)=>{
                 setCurrentPage(ev); setOnPage(val)}}
               showTotal={false}
-              onShowSizeChange={setOnPage}
+              // onShowSizeChange={setOnPage}
               pageSizeOptions={[10, 30, 50, 100]}
               showQuickJumper
               locale={ANTD_PAGINATION_LOCALE}
