@@ -191,7 +191,9 @@ export const useURLParams = () => {
 
   // Функция для получения текущих параметров в виде строки
   const getCurrentParamsString = () => {
-    return searchParams.toString();
+    let str = searchParams.toString();
+    str = str.replace(/&tab=[a-zA-Z](?=&|$)/, '');
+    return str;
   };
 
   // Функция для получения полного URL с параметрами
