@@ -6,9 +6,11 @@ import { ShortName } from '../../../components/helpers/TextHelpers';
 import { BriefcaseIcon, GlobeAltIcon, InboxStackIcon, MusicalNoteIcon, PhoneArrowUpRightIcon } from '@heroicons/react/24/solid';
 import { getBidsItems, getCallsItems, getMeetingsItems } from './hooks/AlansOrgHooks';
 import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
+import { useURLParams } from '../../../components/helpers/UriHelpers';
 
 
 const OrgListRow = (props) => {
+  const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
   const navigate = useNavigate();
   const [active, setActive] = useState(false);
   const [compColor, setCompColor] = useState("#00000000");
@@ -104,6 +106,8 @@ const wrapLink = (text) => {
     });
   }
 
+
+
   return (
     <Dropdown menu={{items: menuItems}} trigger={['contextMenu']} key={`orgrow_${orgData.id}`}>
       <div className={`sa-table-box-orgs sa-table-box-row ${active ? 'active':''}`}
@@ -117,14 +121,14 @@ const wrapLink = (text) => {
         <div
         
         >
-        <NavLink to={'/orgs/' + orgData.id + '?frompage=orgs'} state={'hello'}>
+        <NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()} state={'hello'}>
           {orgData.id}
         </NavLink>
           </div>
         </div>
         <div className={'sa-table-box-cell'}>
          <div className={'sa-align-left'}>
-            <NavLink to={'/orgs/' + orgData.id + '?frompage=orgs'}>
+            <NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()} >
               {orgData.name}
             </NavLink>
           </div>

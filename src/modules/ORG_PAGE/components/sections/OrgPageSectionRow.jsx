@@ -131,7 +131,7 @@ const OrgPageSectionRow = (props) => {
   // Рендер одного поля
   const renderField = (field, value, onChange) => {
     const isRequired = field.required && !field.nullable;
-    console.log('field', field)
+
     if (!editMode) {
       if (field.type === 'checkbox') {
         return <div className="sk-omt-content-formatted">{value ? 'Да' : 'Нет'}</div>;

@@ -35,7 +35,7 @@ const OrgListPage = (props) => {
 
   const [openedFilters, setOpenedFilters] = useState(false);
 
-
+  const [urlParamsText, setUrlParamsText] = useState("");
 
   const [orgList, setOrgList] = useState([]);
 
