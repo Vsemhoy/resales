@@ -27,6 +27,10 @@ import OrgListModalOffersTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListM
 import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalHistoryTab';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { useURLParams } from '../../components/helpers/UriHelpers';
+import { ORGLIST_MODAL_MOCK_MAINTAB } from '../ORG_LIST/components/mock/ORGLISTMODALMOCK';
+import { MODAL_NOTES_LIST } from '../ORG_LIST/components/mock/MODALNOTESTABMOCK';
+import { MODAL_PROJECTS_LIST } from '../ORG_LIST/components/mock/MODALPROJECTSTABMOCK';
+import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 
 
     const tabNames = [{ 
@@ -141,6 +145,19 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
           setSearchParams({tab: 'm'});
           setActiveTab('m');
         }
+
+      if (PRODMODE){
+        get_main_data_action();
+        get_notes_data_action();
+        get_org_calls_action();
+        get_projects_data_action();
+      } else {
+        setBaseMainData(ORGLIST_MODAL_MOCK_MAINTAB);
+        setBaseNotesData(MODAL_NOTES_LIST);
+        setBaseProjectsData(MODAL_PROJECTS_LIST);
+        setBaseCallsData(MODAL_CALLS_LIST);
+      }
+
     }, []);
 
 
@@ -174,11 +191,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
         // }
         // console.log('first', dayjs().millisecond())
 
-      if (PRODMODE){
 
-      } else {
-
-      }
 
     }, []);
 
@@ -388,28 +401,40 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
   }
 
 
+  useEffect(() => {
+    get_notes_data_action();
+  }, [pageNotes]);
+
+    useEffect(() => {
+    get_org_calls_action();
+  }, [pageCalls]);
+
+    useEffect(() => {
+    get_projects_data_action();
+  }, [pageProject]);
+
+
+
+
+
 
   return (
     <>
     <br />
     <div className='app-page'>
-        
-
 
     <div className='sa-orgpage-body sa-mw-1400'>
         <div className='sa-orgpage-header'>
             <div className={'sa-flex-space'}>
                 <div className={'sa-flex-space'}>
+                    {backeReturnPath && (
                     <div className={'sa-orgpage-header-button'}
                         onClick={goBack}
                     >   
-                        {backeReturnPath ? (
                             <ArrowSmallLeftIcon height={'30px'} />
-                        ) : (
-                            <CloseOutlined />
-                        )}
                     </div>
-                    <div className={'sa-orgpage-header-title'}>
+                        )}
+                    <div className={'sa-orgpage-header-title'} style={{paddingLeft: '12px'}}>
                         Паспорт организации ({itemId})
                     </div>
                 </div>
@@ -432,7 +457,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
         <div className={'sa-outlet-body'}>
                 <div className={'sa-orgpage-sub-header sa-flex-space'}>
                     <div className={'sa-orgpage-sub-name'}>
-                        Компния Рога и компания
+                        {baseMainData?.name}
                     </div>
                     <div className={'sa-flex sa-orgpage-sub-control'}>
                         {editMode && (
@@ -499,6 +524,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 on_save={handleDataChangeApprove}
                 active_page={pageCalls}
                 on_change_page={(p)=> {setPageCalls(p)}}
+                current_page={pageCalls}
             />
 
             <ProjectsTabPage
@@ -510,6 +536,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 on_save={handleDataChangeApprove}
                 active_page={pageProject}
                 on_change_page={(p)=> {setPageProject(p)}}
+                current_page={pageProject}
                 />
 
             <NotesTabPage
@@ -521,6 +548,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 on_save={handleDataChangeApprove}
                 active_page={pageNotes}
                 on_change_page={(p)=> {setPageNotes(p)}}
+                current_page={pageNotes}
                 />
 
             {activeTab === 'h' && (

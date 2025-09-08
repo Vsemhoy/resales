@@ -80,3 +80,11 @@
     color: var(--modal-header-text-color-hover);
     font-weight: 600;
 }
+
+.sa-orgpage-blank-section-item {
+    border-left: 6px solid #2196F3;
+}
+
+.sa-orgpage-updated-section-item {
+    border-left: 6px solid #f36421;
+}
