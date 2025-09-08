@@ -258,7 +258,8 @@ const BidPage = (props) => {
                                         </div>
                                     </div>
                                     <div className={'sa-header-label-container-small'}>
-                                        <div className={'sa-vertical-flex'} style={{alignItems: 'baseline'}}>
+                                        { (bidIdCompany && companies && companies.find(comp => comp.id === bidIdCompany) && bidOrg && bidOrg.name) && (
+                                            <div className={'sa-vertical-flex'} style={{alignItems: 'baseline'}}>
                                             От компании
                                             <Tag
                                                 style={{
@@ -275,62 +276,33 @@ const BidPage = (props) => {
                                                 }}
                                                 color="geekblue"
                                             >{bidOrg.name}</Tag>
-                                        </div>
-                                        <div style={{display: 'flex', alignItems: 'end'}}>
-                                            <ConfigProvider
-                                                theme={{
-                                                    components: {
-                                                        Steps: {
-                                                            titleLineHeight: 1.2,
-                                                            descriptionLineHeight: 1.1,
-                                                            fontSize: 12,
-                                                            fontSizeSm: 10,
-                                                            iconSize: 20,
-                                                            iconSizeSM: 16,
-
-                                                            // Добавляем настройки для отступов
-                                                            stepsItemActiveBefore: {
-                                                                fontSize: 12,
-                                                            },
-                                                            stepsItemPadding: '0 8px', // уменьшаем горизонтальные отступы
-                                                            stepsIconSize: 20,
-                                                            stepsIconMargin: '0 4px 0 0', // уменьшаем отступы иконок
-                                                            stepsTitleLineHeight: 20,
-                                                            stepsDescriptionMaxWidth: 140,
-                                                            stepsNavContentMaxWidth: 120,
-                                                            stepsNavArrowColor: 'rgba(0, 0, 0, 0.25)',
-
-                                                            // Отступы между шагами
-                                                            stepsHorizontalItemGutter: 16, // уменьшаем расстояние между шагами
-                                                            stepsVerticalItemGutter: 12,
-                                                        },
+                                            </div>
+                                        )}
+                                        <div className={'custom-small-steps-container'}>
+                                            <Steps
+                                                className="sa-custom-steps custom-small-steps"
+                                                progressDot
+                                                size="small"
+                                                current={+bidPlace - 1}
+                                                items={[
+                                                    {
+                                                        title: 'Менеджер',
+                                                        description: +bidPlace === 1 ? 'Текущий этап' : '',
                                                     },
-                                                }}
-                                            >
-                                                <Steps className="sa-custom-steps"
-                                                        progressDot
-                                                        size="small"
-                                                        current={+bidPlace - 1}
-                                                        items={[
-                                                            {
-                                                                title: 'Менеджер',
-                                                                description: +bidPlace === 1 ? 'Текущий этап' : '',
-                                                            },
-                                                            {
-                                                                title: 'Администратор',
-                                                                description: +bidPlace === 2 ? 'Текущий этап' : '',
-                                                            },
-                                                            {
-                                                                title: 'Бухгалтер',
-                                                                description: +bidPlace === 3 ? 'Текущий этап' : '',
-                                                            },
-                                                            {
-                                                                title: 'Завершено',
-                                                                description: +bidPlace === 4 ? 'Текущий этап' : '',
-                                                            },
-                                                        ]}
-                                                />
-                                            </ConfigProvider>
+                                                    {
+                                                        title: 'Администратор',
+                                                        description: +bidPlace === 2 ? 'Текущий этап' : '',
+                                                    },
+                                                    {
+                                                        title: 'Бухгалтер',
+                                                        description: +bidPlace === 3 ? 'Текущий этап' : '',
+                                                    },
+                                                    {
+                                                        title: 'Завершено',
+                                                        description: +bidPlace === 4 ? 'Текущий этап' : '',
+                                                    },
+                                                ]}
+                                            />
                                         </div>
                                     </div>
                                 </div>
