@@ -61,19 +61,12 @@
     align-items: center;
     justify-content: center;
     grid-gap: 8px;
-    padding: 6px 12px;
     border-left: #8c95a1 1px solid;
     cursor: pointer;
     color: var(--modal-header-text-color-hover);
     transition: all 0.3s;
 }
-.sa-orgpage-sub-control > div:hover {
-    color: var(--modal-header-text-color-active);
-}
-.sa-orgpage-sub-control > div:active {
-    background-color: var(--modal-header-text-color-hover);
-    color: white;
-}
+
 .sa-orgpage-header-title {
     padding: 4px;
     font-size: 16px;

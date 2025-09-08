@@ -459,28 +459,49 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                     <div className={'sa-orgpage-sub-name'}>
                         {baseMainData?.name}
                     </div>
-                    <div className={'sa-flex sa-orgpage-sub-control'}>
-                        {editMode && (
+                    <div className={'sa-flex sa-orgpage-sub-control'}
+                        style={{padding: '6px'}}
+                    >
+                        {/* {editMode && (
                             <div onClick={triggerEditMode}>
                                 <XMarkIcon height={'22px'}/> Просмотр
                             </div>
-                        )}
+                        )} */}
 
 
                         {editMode ? (
                             <div>
-                               <ClipboardDocumentCheckIcon  height={'22px'}/> Сохранить
+                            <Button
+                                icon={<ClipboardDocumentCheckIcon  height={'16px'}/>}
+
+                                color="danger" variant="solid">
+                                Сохранить
+                            </Button>
+                            <Button
+                                type={'dashed'}
+                                onClick={triggerEditMode}
+                                icon={<PencilIcon height={'16px'}/>}
+                                >
+                                Просмотр
+                            </Button>
                             </div>
                         ) : (
-                            <div onClick={triggerEditMode}>
-                                <PencilIcon height={'22px'}/> Редактировать
-                            </div>
+                            <Button
+                            type={'dashed'}
+                             onClick={triggerEditMode}
+                            icon={<PencilIcon height={'16px'}/>}
+                            >
+                                Редактировать
+                            </Button>
+
                         )}
 
                     </div>
                 </div>
 
-
+                            {/* <div onClick={triggerEditMode}>
+                                <PencilIcon height={'22px'}/> Редактировать
+                            </div> */}
 
 
 

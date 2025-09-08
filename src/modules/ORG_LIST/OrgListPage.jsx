@@ -7,7 +7,7 @@ import { Affix, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select,
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { DocumentPlusIcon } from '@heroicons/react/16/solid';
-import { CaretDownFilled, CaretUpFilled, CloseOutlined, CloseSquareOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { CaretDownFilled, CaretUpFilled, CloseOutlined, CloseSquareOutlined, FilterOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import OrgListRow from './components/OrgListRow';
@@ -64,7 +64,7 @@ const OrgListPage = (props) => {
   // Список кураторов меняется в зависимости от выбранной компании
   const [selectCuratorList, setSelectCuratorList] = useState([]);
 
-
+  const [filterAwaiter, setFilerAwaiter] = useState(null);
 
 
   useEffect(() => {
@@ -124,6 +124,7 @@ const OrgListPage = (props) => {
    useEffect(() => {
         const timer = setTimeout(() => {
             updateURL(filterBox, orderBox, currentPage, onPage, previewItem, currentTab);
+            setFilerAwaiter(null);
         }, 200);
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
@@ -386,6 +387,7 @@ const OrgListPage = (props) => {
 
     const setShowParam = (value) => {
       updateURL(filterBox,orderBox,currentPage,onPage,value,currentTab);
+      setFilerAwaiter(null);
       // if (value !== null){
       //   se
       //   searchParams.set('show', value);
@@ -523,6 +525,10 @@ const OrgListPage = (props) => {
       console.log(evt);
     }
 
+    const handleOnChangeProcessFilter = (key) => {
+      setFilerAwaiter(key);
+    }
+
 
     // const handleModalTabChange = (tab) => {
     //   updateURL(filterBox,orderBox,currentPage,onPage,previewItem,tab);
@@ -555,14 +561,14 @@ const OrgListPage = (props) => {
                   >
                     Доп Фильтры
                   </Button>
-                  {filterSortClearMenu.length > 0 && (
+                  {(filterSortClearMenu.length > 0 || filterAwaiter) && (
                       <Tooltip title={'Очистить фильтры'} placement={'right'}>
                         <Dropdown menu={{items: filterSortClearMenu}}>
                           <Button
                             title='Очистить фильтры'
                             color={'danger'}
                             variant={'solid'}
-                            icon={<CloseOutlined />}
+                            icon={ filterAwaiter ? <LoadingOutlined /> : <CloseOutlined />}
                             onClick={handleClearAllBoxes}
                           >
 
@@ -612,7 +618,6 @@ const OrgListPage = (props) => {
           collapsedWidth={0}
           width={'300px'}
           style={{ backgroundColor: '#ffffff' }}
-          
         >
           <div className={'sa-sider'}>
             {openedFilters && (
@@ -623,6 +628,7 @@ const OrgListPage = (props) => {
               on_change_filters={handleFilterChange}
               base_filters={baseFiltersData}
               filters_data={filterBox}
+              on_change_proc={handleOnChangeProcessFilter}
 
             />
 
@@ -705,6 +711,7 @@ const OrgListPage = (props) => {
               curator_list={selectCuratorList}
               selected_item={previewItem}
               on_select_change={handleSelectedItemChange}
+              on_change_proc={handleOnChangeProcessFilter}
           /></Spin>
 
           {/* {baseOrgs.length > 20 && (

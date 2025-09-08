@@ -47,6 +47,9 @@ const OrgListSiderFilter = (props) => {
     }, [filterCompany]);
 
     useEffect(() => {
+        if (props.on_change_proc){
+            props.on_change_proc(dayjs().unix());
+        };
         // Создаём отложенную отправку через setTimeout
         const timer = setTimeout(() => {
             let filterBox = props.filterBox ?? {};
