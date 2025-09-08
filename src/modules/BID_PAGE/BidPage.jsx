@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Spin} from "antd";
+import {Affix, Button, ConfigProvider, Dropdown, Select, Spin, Steps, Tag, Tooltip} from "antd";
 import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import './components/style/bidPage.css'
 import {BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, SELECTS} from "./mock/mock";
 import MODELS from './mock/mock_models';
+import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
+import {CloseOutlined, FilterOutlined} from "@ant-design/icons";
+import TimeBid from "./components/TimeBid";
 
 const BidPage = (props) => {
     const {bidId} = useParams();
@@ -64,6 +67,7 @@ const BidPage = (props) => {
     const [protectionSelect, setProtectionSelect] = useState([]);
     const [stageSelect, setStageSelect] = useState([]);
     const [templateWordSelect, setTemplateWordSelect] = useState([]);
+    const [companies, setCompanies] = useState([]);
 
 
     useEffect(() => {
@@ -88,7 +92,8 @@ const BidPage = (props) => {
                     data: {},
                     _token: CSRF_TOKEN
                 });
-                if (response.data && response.data.bid && response.data.models) {
+                console.log(response);
+                if (response.data && response.data.bid && response.data.bid_models) {
                     const openMode = response.data.openmode;
                     setOpenMode(openMode);
 
@@ -169,6 +174,7 @@ const BidPage = (props) => {
                     setProtectionSelect(selects.protection_select);
                     setStageSelect(selects.stage_select);
                     setTemplateWordSelect(selects.template_word_select);
+                    setCompanies(selects.companies);
                 }
             } catch (e) {
                 console.log(e);
@@ -190,6 +196,7 @@ const BidPage = (props) => {
             setProtectionSelect(SELECTS.protection_select);
             setStageSelect(SELECTS.stage_select);
             setTemplateWordSelect(SELECTS.template_word_select);
+            setCompanies(SELECTS.companies);
         }
     };
     const fetchCurrencySelects = async () => {
@@ -235,7 +242,101 @@ const BidPage = (props) => {
         <div className={'sa-bid-page-container'}>
             <Spin size="large" spinning={isLoading}>
                 <div className={'sa-bid-page'}>
+                    <Affix>
+                        <div style={{paddingTop: '10px', backgroundColor: '#b4c9e1'}}>
+                            <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
+                                <div className={'sa-header-label-container'}>
+                                    <div className={'sa-header-label-container-small'}>
+                                        <h1 className={'sa-header-label'}>
+                                            {
+                                                +bidType === 1 ? 'Коммерческое предложение' :
+                                                +bidType === 2 ? 'Счет' : ''
+                                            }
+                                        </h1>
+                                        <div>
+                                            <CurrencyMonitorBar/>
+                                        </div>
+                                    </div>
+                                    <div className={'sa-header-label-container-small'}>
+                                        <div className={'sa-vertical-flex'} style={{alignItems: 'baseline'}}>
+                                            От компании
+                                            <Tag
+                                                style={{
+                                                    textAlign: 'center',
+                                                    fontSize: '14px',
+                                                }}
+                                                color={companies.find(comp => comp.id === bidIdCompany)?.color}
+                                            >{companies.find(comp => comp.id === bidIdCompany)?.name}</Tag>
+                                            для
+                                            <Tag
+                                                style={{
+                                                    textAlign: 'center',
+                                                    fontSize: '14px',
+                                                }}
+                                                color="geekblue"
+                                            >{bidOrg.name}</Tag>
+                                        </div>
+                                        <div style={{display: 'flex', alignItems: 'end'}}>
+                                            <ConfigProvider
+                                                theme={{
+                                                    components: {
+                                                        Steps: {
+                                                            titleLineHeight: 1.2,
+                                                            descriptionLineHeight: 1.1,
+                                                            fontSize: 12,
+                                                            fontSizeSm: 10,
+                                                            iconSize: 20,
+                                                            iconSizeSM: 16,
 
+                                                            // Добавляем настройки для отступов
+                                                            stepsItemActiveBefore: {
+                                                                fontSize: 12,
+                                                            },
+                                                            stepsItemPadding: '0 8px', // уменьшаем горизонтальные отступы
+                                                            stepsIconSize: 20,
+                                                            stepsIconMargin: '0 4px 0 0', // уменьшаем отступы иконок
+                                                            stepsTitleLineHeight: 20,
+                                                            stepsDescriptionMaxWidth: 140,
+                                                            stepsNavContentMaxWidth: 120,
+                                                            stepsNavArrowColor: 'rgba(0, 0, 0, 0.25)',
+
+                                                            // Отступы между шагами
+                                                            stepsHorizontalItemGutter: 16, // уменьшаем расстояние между шагами
+                                                            stepsVerticalItemGutter: 12,
+                                                        },
+                                                    },
+                                                }}
+                                            >
+                                                <Steps className="sa-custom-steps"
+                                                        progressDot
+                                                        size="small"
+                                                        current={+bidPlace - 1}
+                                                        items={[
+                                                            {
+                                                                title: 'Менеджер',
+                                                                description: +bidPlace === 1 ? 'Текущий этап' : '',
+                                                            },
+                                                            {
+                                                                title: 'Администратор',
+                                                                description: +bidPlace === 2 ? 'Текущий этап' : '',
+                                                            },
+                                                            {
+                                                                title: 'Бухгалтер',
+                                                                description: +bidPlace === 3 ? 'Текущий этап' : '',
+                                                            },
+                                                            {
+                                                                title: 'Завершено',
+                                                                description: +bidPlace === 4 ? 'Текущий этап' : '',
+                                                            },
+                                                        ]}
+                                                />
+                                            </ConfigProvider>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </Affix>
                 </div>
             </Spin>
         </div>

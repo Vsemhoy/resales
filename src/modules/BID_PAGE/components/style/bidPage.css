@@ -27,10 +27,30 @@
 .ant-spin-nested-loading {
     transition: 1s;
 }
+
+.sa-custom-steps .ant-steps-item-title {
+    font-size: 12px !important;
+}
+
+.sa-custom-steps .ant-steps-item-description {
+    font-size: 10px !important;
+}
+
+.sa-custom-steps .ant-steps-item-content {
+    /*width: 120px !important;*/
+    /*height: 20px !important;*/
+    line-height: 10px !important;
+}
+
+
+
+
 .sa-bid-page {
     width: 100%;
     min-height: calc(100vh - 34px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+.sa-bid-page-container .sa-header-label {
+    width: 500px;
+    text-align: left;
 }
