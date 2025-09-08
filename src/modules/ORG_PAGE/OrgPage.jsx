@@ -5,8 +5,8 @@ import { NavLink, Outlet, useLocation, useNavigate, useParams, useSearchParams }
 import { Button, DatePicker, Input, Layout, Pagination, Select } from 'antd';
 
 import { ArrowSmallLeftIcon } from '@heroicons/react/24/solid';
-import { ArrowLeftCircleIcon, ClipboardDocumentCheckIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { CloseOutlined } from '@ant-design/icons';
+import { ArrowLeftCircleIcon, ClipboardDocumentCheckIcon, PencilIcon, PhoneXMarkIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 
 
@@ -124,6 +124,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
     const [blockOnSave, setBlockOnSave] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const [saveProcess, setSaveProcess] = useState(0);
 
     useEffect(() => {
         setLoading(true);
@@ -416,11 +417,21 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
 
 
+  const handleSaveData = () => {
+    setSaveProcess(5);
+    setBlockOnSave(true);
+    setTimeout(() => {
+
+        setSaveProcess(100);
+        setBlockOnSave(false);
+
+    }, 2000);
+  }
+
 
 
   return (
     <>
-    <br />
     <div className='app-page'>
 
     <div className='sa-orgpage-body sa-mw-1400'>
@@ -459,28 +470,66 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                     <div className={'sa-orgpage-sub-name'}>
                         {baseMainData?.name}
                     </div>
-                    <div className={'sa-flex sa-orgpage-sub-control'}>
-                        {editMode && (
+                    <div className={'sa-flex sa-orgpage-sub-control'}
+                        style={{padding: '6px'}}
+                    >
+                        {/* {editMode && (
                             <div onClick={triggerEditMode}>
                                 <XMarkIcon height={'22px'}/> Просмотр
                             </div>
-                        )}
+                        )} */}
 
 
                         {editMode ? (
                             <div>
-                               <ClipboardDocumentCheckIcon  height={'22px'}/> Сохранить
+                            {blockOnSave ? (
+                            <Button
+                                icon={<LoadingOutlined />}
+                                color="danger" variant="solid">
+                                Сохраняю...
+                            </Button>
+                            ):(
+                            <Button
+                                icon={<ClipboardDocumentCheckIcon  height={'16px'}/>}
+                                disabled={blockOnSave}
+                                onClick={handleSaveData}
+                                color="danger" variant="solid">
+                                Сохранить
+                            </Button>
+                            )}
+
+                            <Button
+                                type={'dashed'}
+                                onClick={triggerEditMode}
+                                icon={<XMarkIcon height={'16px'}/>}
+                                >
+                                Отменить
+                            </Button>
                             </div>
                         ) : (
-                            <div onClick={triggerEditMode}>
-                                <PencilIcon height={'22px'}/> Редактировать
-                            </div>
+                            <Button
+                            type={'dashed'}
+                             onClick={triggerEditMode}
+                            icon={<PencilIcon height={'16px'}/>}
+                            >
+                                Редактировать
+                            </Button>
+
                         )}
 
                     </div>
                 </div>
+                {blockOnSave && (
+                    <div className={'sa-orgpage-loader'}>
+                        <div className='sa-orgpage-loader-chunk'
+                            style={{width: saveProcess + "%"}}
+                        ></div>
+                    </div>
+                )}
 
-
+                            {/* <div onClick={triggerEditMode}>
+                                <PencilIcon height={'22px'}/> Редактировать
+                            </div> */}
 
 
 

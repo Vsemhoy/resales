@@ -2,6 +2,7 @@ import { Affix, DatePicker, Input, Select, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import OrgListRow from './OrgListRow';
+import dayjs from 'dayjs';
 
 
 const OrgListTable = (props) => {
@@ -44,6 +45,9 @@ const OrgListTable = (props) => {
 
 
     useEffect(() => {
+      if (props.on_change_proc){
+        props.on_change_proc(dayjs().unix());
+      };
     // Создаём отложенную отправку через setTimeout
     const timer = setTimeout(() => {
         let filterBox = props.base_filters ?? {};
@@ -61,7 +65,7 @@ const OrgListTable = (props) => {
         if (props.on_change_filters) {
             props.on_change_filters(filterBox);
         }
-    }, 700); // ⏱️ 1 секунда задержки
+    }, 500);
 
     // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
     return () => clearTimeout(timer);

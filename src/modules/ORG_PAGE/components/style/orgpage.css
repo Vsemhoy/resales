@@ -61,6 +61,105 @@
     align-items: center;
     justify-content: center;
     grid-gap: 8px;
+    border-left: #8c95a1 1px solid;
+    cursor: pointer;
+    color: var(--modal-header-text-color-hover);
+    transition: all 0.3s;
+}
+
+.sa-orgpage-header-title {
+    padding: 4px;
+    font-size: 16px;
+    color: var(--modal-header-text-color-hover);
+    font-weight: 600;
+}
+
+.sa-orgpage-blank-section-item {
+    border-left: 6px solid #2196F3;
+}
+
+.sa-orgpage-updated-section-item {
+    border-left: 6px solid #f36421;
+}
+
+
+.sa-orgpage-loader {
+    display: none;
+    margin-top: -6px;
+    width: 100%;
+    backdrop-filter: blur(6px);
+    height: 6px;
+}
+.sa-orgpage-loader-chunk {
+    /* background-color: #ff4d4f; */
+    background-color: #ff4d5097;
+    height: 100%;
+    transition: all 0.1s;
+}
+
+
+/* .sa-orgpage-header {
+    background-color: var(--section-header-color);
+    width: 100%;
+}
+.sa-orgpage-body {
+    width: 100%;
+}
+
+.sa-orp-menu {
+    display: flex;
+    grid-gap: 3px;
+    font-weight: 500;
+}
+
+.sa-orp-menu > * {
+    text-decoration: none !important;
+    color: var(--table-text-color);
+}
+.sa-orp-menu > *.active:not(.not-active) {
+    color: var(--current-color) !important;
+}
+.sa-orp-menu-button {
+    padding: 3px 6px;
+    cursor: pointer;
+}
+
+.sa-orgpage-header-button {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    border-right: 1px solid var(--modal-header-text-color-hover);
+    color: var(--modal-header-text-color-hover);
+    transition: all 0.3s;
+}
+.sa-orgpage-header-button:hover {
+    color: var(--modal-header-text-color-active);
+}
+.sa-orgpage-header-button:active {
+    background-color: var(--modal-header-text-color-hover);
+    color: white;
+}
+.sa-orgpage-sub-header {
+    background-color: #d9dee4;
+    border-top: 1px solid rgba(0, 0, 0, 0.114);
+}
+.sa-orgpage-sub-header > div {
+    font-weight: 600;
+}
+.sa-orgpage-sub-name {
+    font-size: 18px;
+    padding: 6px 12px;
+}
+.sa-orgpage-sub-control {
+    grid-gap: 0px !important;
+}
+.sa-orgpage-sub-control > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-gap: 8px;
     padding: 6px 12px;
     border-left: #8c95a1 1px solid;
     cursor: pointer;
@@ -79,12 +178,4 @@
     font-size: 16px;
     color: var(--modal-header-text-color-hover);
     font-weight: 600;
-}
-
-.sa-orgpage-blank-section-item {
-    border-left: 6px solid #2196F3;
-}
-
-.sa-orgpage-updated-section-item {
-    border-left: 6px solid #f36421;
-}
+} */
