@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Affix, Button, ConfigProvider, Dropdown, Select, Spin, Steps, Tag, Tooltip} from "antd";
+import {Affix, Spin, Steps, Tag} from "antd";
 import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
@@ -7,13 +7,13 @@ import './components/style/bidPage.css'
 import {BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, SELECTS} from "./mock/mock";
 import MODELS from './mock/mock_models';
 import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
-import {CloseOutlined, FilterOutlined} from "@ant-design/icons";
-import TimeBid from "./components/TimeBid";
 
 const BidPage = (props) => {
     const {bidId} = useParams();
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [userData, setUserData] = useState(null);
 
     const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
     /* ШАПКА СТРАНИЦЫ */
@@ -76,6 +76,11 @@ const BidPage = (props) => {
             setIsMounted(true);
         }
     }, []);
+    useEffect(() => {
+        if (props.userdata) {
+            setUserData(props.userdata);
+        }
+    }, [props.userdata]);
 
     const fetchInfo = async () => {
         setIsLoading(true);
@@ -260,22 +265,35 @@ const BidPage = (props) => {
                                     <div className={'sa-header-label-container-small'}>
                                         { (bidIdCompany && companies && companies.find(comp => comp.id === bidIdCompany) && bidOrg && bidOrg.name) && (
                                             <div className={'sa-vertical-flex'} style={{alignItems: 'baseline'}}>
-                                            От компании
-                                            <Tag
-                                                style={{
-                                                    textAlign: 'center',
-                                                    fontSize: '14px',
-                                                }}
-                                                color={companies.find(comp => comp.id === bidIdCompany)?.color}
-                                            >{companies.find(comp => comp.id === bidIdCompany)?.name}</Tag>
-                                            для
-                                            <Tag
-                                                style={{
-                                                    textAlign: 'center',
-                                                    fontSize: '14px',
-                                                }}
-                                                color="geekblue"
-                                            >{bidOrg.name}</Tag>
+                                                От компании
+                                                <Tag
+                                                    style={{
+                                                        textAlign: 'center',
+                                                        fontSize: '14px',
+                                                    }}
+                                                    color={companies.find(comp => comp.id === bidIdCompany)?.color}
+                                                >{companies.find(comp => comp.id === bidIdCompany)?.name}</Tag>
+                                                для
+                                                <Tag
+                                                    style={{
+                                                        textAlign: 'center',
+                                                        fontSize: '14px',
+                                                    }}
+                                                    color="geekblue"
+                                                >{bidOrg.name}</Tag>
+                                                Ваша роль:
+                                                {userData && userData?.user?.sales_role === 1 && (
+                                                    <Tag color={'blue'}>менеджер</Tag>
+                                                )}
+                                                {userData && userData?.user?.sales_role === 2 && (
+                                                    <Tag color={'volcano'}>администратор</Tag>
+                                                )}
+                                                {userData && userData?.user?.sales_role === 3 && (
+                                                    <Tag color={'magenta'}>бухгалтер</Tag>
+                                                )}
+                                                {userData && userData?.user?.sales_role === 4 && (
+                                                    <Tag color={'gold'}>завершено</Tag>
+                                                )}
                                             </div>
                                         )}
                                         <div className={'custom-small-steps-container'}>
@@ -309,6 +327,16 @@ const BidPage = (props) => {
                             </div>
                         </div>
                     </Affix>
+                    <div className={'sa-bid-page-info-container'}>
+                        <Affix offsetTop={20 + 145}>
+                            <div className={'sa-bid-page-info-wrapper'}>
+                                <div className={'sa-info-models-header'}>Основные данные</div>
+                            </div>
+                        </Affix>
+                        <div className={'sa-bid-page-models-wrapper'}>
+                            <div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
+                        </div>
+                    </div>
                 </div>
             </Spin>
         </div>
