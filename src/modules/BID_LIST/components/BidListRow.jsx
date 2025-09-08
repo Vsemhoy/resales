@@ -50,7 +50,8 @@ const BidListRow = (props) => {
   const handleDoubleClick = () => {
     if (props.on_double_click){
       props.on_double_click(data);
-      navigate(`/bids/${data.id}`, { relative: 'path' });
+      //navigate(`/bids/${data.id}`, { relative: 'path' });
+      window.open(`/bids/${data.id}`, '_blank');
     }
   }
 
@@ -66,7 +67,7 @@ const BidListRow = (props) => {
           <div
 
           >
-            <NavLink to={`/bids/${data.id}`}>
+            <NavLink to={`/bids/${data.id}`} target={'_blank'}>
               {data.id}
             </NavLink>
           </div>
