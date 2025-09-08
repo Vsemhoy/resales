@@ -92,7 +92,8 @@ const BidPage = (props) => {
                     data: {},
                     _token: CSRF_TOKEN
                 });
-                if (response.data && response.data.bid && response.data.models) {
+                console.log(response);
+                if (response.data && response.data.bid && response.data.bid_models) {
                     const openMode = response.data.openmode;
                     setOpenMode(openMode);
 
