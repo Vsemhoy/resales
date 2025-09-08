@@ -147,10 +147,10 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
         }
 
       if (PRODMODE){
-        get_main_data_action();
-        get_notes_data_action();
-        get_org_calls_action();
-        get_projects_data_action();
+        get_main_data_action(item_id);
+        get_notes_data_action(item_id);
+        get_org_calls_action(item_id);
+        get_projects_data_action(item_id);
       } else {
         setBaseMainData(ORGLIST_MODAL_MOCK_MAINTAB);
         setBaseNotesData(MODAL_NOTES_LIST);

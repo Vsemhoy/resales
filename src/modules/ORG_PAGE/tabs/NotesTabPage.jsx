@@ -23,7 +23,7 @@ const NotesTabPage = (props) => {
     // Новые юниты
     const [temporaryUnits, setTemporaryUnits] = useState([]);
 
-
+    const [editedItemsIds, setEditedItemsIds] = useState([]);
 
   
     useEffect(() => {
@@ -45,6 +45,11 @@ const NotesTabPage = (props) => {
       if (props.current_page && props.current_page !== currentPage)
         setCurrentPage(props.current_page);
     }, [props.current_page]);
+
+
+    useEffect(() => {
+      setEditMode(props.edit_mode)
+    }, [props.edit_mode]);
 
 
       useEffect(() => {
@@ -131,7 +136,7 @@ const NotesTabPage = (props) => {
 
          <Spin spinning={loading}>
             <div className={'sa-orgtab-container'}>
-                <div className={'sa-pa-6 sa-flex-space'}>
+                <div className={'sa-pa-6 sa-flex-space'} style={{paddingTop: '9px'}}>
                   <div>
                     <Pagination
                       size={'small'}
@@ -153,12 +158,14 @@ const NotesTabPage = (props) => {
                     />
                     </div>
                     <div>
-                      <Button 
-                        icon={<PlusOutlined />}
-                        onClick={handleAddUnitBlank}
-                      >
-                        Cоздать заметку
-                      </Button>
+                      {editModa && (
+                        <Button type={'primary'} 
+                          icon={<PlusOutlined/>} 
+                          onClick={handleAddUnitBlank}
+                        >
+                          Cоздать заметку
+                        </Button>
+                      )}
                     </div>
                 </div>
                 <div>
