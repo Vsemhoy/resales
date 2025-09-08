@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { PRODMODE } from '../../config/config';
+import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { NavLink, Outlet, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Button, DatePicker, Input, Layout, Pagination, Select } from 'antd';
 
@@ -15,17 +15,18 @@ import './components/style/orgpage.css';
 import '../ORG_LIST/components/style/orgmodal.css';
 
 
-import OffersTabPage from './tabs/OffersTabPage';
-import BillsTabPage from './tabs/BillsTabPage';
+
 import MainTabPage from './tabs/MainTabPage';
 import MeetingsTabPage from './tabs/MeetingsTabPage';
 import NotesTabPage from './tabs/NotesTabPage';
-import HistoryTabPage from './tabs/HistoryTabPage';
-import ProjectsTabPage from './tabs/OffersTabPage';
+import ProjectsTabPage from './tabs/ProjectsTabPage';
+
+
 import OrgListModalBillsTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalBillsTab';
 import OrgListModalOffersTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalOffersTab';
 import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalHistoryTab';
-
+import { PROD_AXIOS_INSTANCE } from '../../config/Api';
+import { useURLParams } from '../../components/helpers/UriHelpers';
 
 
     const tabNames = [{ 
@@ -38,17 +39,36 @@ import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgList
         { link: 'h', name: "История"}];
 
 
+/**
+ * 
+ * Пайплайн:
+ * 1. Загрузить все данные для вкладок - разные фетчи в разные контейнеры?
+ * - Основная информация
+ * - Проекты
+ * - Всетречи\Звонки
+ * - Заметки
+ * 2. Смонтировать компоненты вышеуказанных данных независимо от таба
+ * 3. Передать данные 
+ * 4. Отрендерить данные
+ * 5. Сделать один центр обновления данных
+ * 6. Сделать механику получения только измененных данных
+ * 7. Отправлять на обновление только измененные данные
+ * 8. Сделать мултисекционные компоненты
+ * 9. Сделать мультистроковые компоненты
+ * 10. Раскидать данные, собрать данные
+ */
+
 
 const OrgPage = (props) => {
     const {userdata} = props;
-
+const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
     const [open, setOpen] = useState(false);
     //   const [openResponsive, setOpenResponsive] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const { item_id } = useParams();
-
+    const onPage = 30;
 
     // m - main
     // b - bills
@@ -59,7 +79,9 @@ const OrgPage = (props) => {
     // h - history
     const [activeTab, setActiveTab] = useState('m');
 
-    
+    const [pageProject, setPageProject] = useState(1);
+    const [pageNotes, setPageNotes] = useState(1);
+    const [pageCalls, setPageCalls] = useState(1);
 
     const [baseCompanies, setBaseCompanies] = useState([]);
     const location = useLocation();
@@ -68,7 +90,6 @@ const OrgPage = (props) => {
 
     const [itemId, setItemId] = useState(item_id? item_id : 'new');
 
-    const [test, setTest] = useState('hello');
 
     const [backeReturnPath, setBackeReturnPath] = useState(null);
 
@@ -81,13 +102,43 @@ const OrgPage = (props) => {
     const [baseOrgs, setBaseOrgs] = useState([1,2,3,4,5,6,7,8,9,0]);
 
 
+    const [baseMainData,     setBaseMainData]     = useState(null);
+    const [baseProjectsData, setBaseProjectsData] = useState(null);
+    const [baseCallsData,    setBaseCallsData]    = useState(null);
+    const [baseNotesData,    setBaseNotesData]    = useState(null);
+
+    // Контейнеры, куда сохраняются данные из вкладок при нажатии кнопки сохранить
+    // Далее дебаунс вызывает фильтрацию данных и отправку на сервер
+    const [tempMainData,     setTempMainData]     = useState(null);
+    const [tempProjectsData, setTempProjectsData] = useState(null);
+    const [tempCallsData,    setTempCallsData]    = useState(null);
+    const [tempNotesData,    setTempNotesData]    = useState(null);
+
+
+    // При нажатии кнопочки сохранить - сюда вставляется Timestamp, слушатели в компонентах видят изменение, отправляею данные в сохранятор
+    const [callToSaveAction, setCallToSaveAction] = useState(null);
+    const [blockOnSave, setBlockOnSave] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+
     useEffect(() => {
+        setLoading(true);
+        let rp = getCurrentParamsString();
+        console.log(rp);
+
+        if (rp.includes('frompage=orgs')){
+            rp.replace('frompage=orgs&', '');
+            rp.replace('frompage=orgs', '');
+            rp = "/orgs?" +  rp;
+            setBackeReturnPath(rp);
+        }
         let t = searchParams.get('tab');
         if (t && ['m','b','o', 'p','c','n','h'].includes(t)) {
-          setActiveTab(t);
+            setSearchParams({tab: t});
+            setActiveTab(t);
         } else {
-          searchParams.set('tab', "m");
-          setSearchParams(searchParams);
+        //   searchParams.set('tab', "m");
+          setSearchParams({tab: 'm'});
           setActiveTab('m');
         }
     }, []);
@@ -105,20 +156,23 @@ const OrgPage = (props) => {
 
 
     useEffect(() => {
-        let returnPath = location.state?.from;
-        if (!returnPath){
-            if (window.history.length > 1){
-                returnPath = "/orgs";
-            };
-        };
-        setBackeReturnPath(returnPath);
-        console.log('returnPath', searchParams.get('mode'))
 
-        if (searchParams.get('mode')){
-            setEditMode(searchParams.get('mode') === 'edit');
+        // if (window.history.length < 3){
+        //     console.log('HELLLOO');
+        //     setBackeReturnPath("/orgs");
+        // };
+
+
+    
+
+        // setBackeReturnPath(returnPath);
+        // console.log('returnPath', searchParams.get('mode'))
+
+        // if (searchParams.get('mode')){
+        //     setEditMode(searchParams.get('mode') === 'edit');
             
-        }
-        console.log('first', dayjs().millisecond())
+        // }
+        // console.log('first', dayjs().millisecond())
 
       if (PRODMODE){
 
@@ -192,6 +246,149 @@ const OrgPage = (props) => {
     }
 
 
+
+  /** ----------------------- FETCHES -------------------- */
+
+
+  const get_main_data_action = async (id) => {
+      try {
+          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/m', {
+            data: {},
+            _token: CSRF_TOKEN
+          });
+          console.log('response', response);
+          if (response.data){
+              // if (props.changed_user_data){
+              //     props.changed_user_data(response.data);
+              // }
+              setBaseMainData(response.data.content);
+              setLoading(false);
+          }
+      } catch (e) {
+          console.log(e)
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
+  }
+
+
+  const get_org_calls_action = async (id) => {
+      try {
+          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
+            data: {
+              page: pageCalls,
+              limit: onPage,
+            },
+            _token: CSRF_TOKEN
+          });
+          console.log('response', response);
+          if (response.data){
+              // if (props.changed_user_data){
+              //     props.changed_user_data(response.data);
+              // }
+              setBaseCallsData(response.data.content);
+              setLoading(false);
+          }
+      } catch (e) {
+          console.log(e)
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
+    }
+
+
+  const get_projects_data_action = async (id) => {
+      try {
+          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/p', {
+             data: {
+              page: pageProject,
+              limit: onPage,
+            },
+            _token: CSRF_TOKEN
+          });
+          console.log('response', response);
+          if (response.data){
+              // if (props.changed_user_data){
+              //     props.changed_user_data(response.data);
+              // }
+              setBaseProjectsData(response.data.content);
+              setLoading(false);
+          }
+      } catch (e) {
+          console.log(e)
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
+  }
+  
+  const get_notes_data_action = async (id) => {
+        try {
+            let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/n', {
+                data: {
+                page: pageNotes,
+                limit: onPage,
+                },
+                _token: CSRF_TOKEN
+            });
+            console.log('response', response);
+            if (response.data){
+                // if (props.changed_user_data){
+                //     props.changed_user_data(response.data);
+                // }
+                setBaseNotesData(response.data.content);
+                setLoading(false);
+            }
+        } catch (e) {
+            console.log(e)
+        } finally {
+            setTimeout(() => {
+            setLoading(false);
+            }, 1000);
+        }
+
+    }
+
+
+  /** ----------------------- FETCHES -------------------- */
+
+
+  /**
+   * Коллбэк при нажатии сохранить данные - находит разницу и отправляет на сервер, обновляет стейты
+   * @param {*} data 
+   * @param {*} section 
+   */
+  const handleDataChangeApprove = (data, section) => {
+    console.log(data, section);
+    setBlockOnSave(true);
+      const timer = setTimeout(() => {
+         switch (section) {
+            case "main":
+                setTempMainData(data);
+                break;
+                        case "calls":
+                setTempCallsData(data);
+                break;
+                            case "projects":
+                setTempProjectsData(data);
+                break;
+                            case "notes":
+                setTempCallsData(data);
+                break;
+         }
+        
+      }, 400);
+
+      return () => clearTimeout(timer);
+  }
+
+
+
   return (
     <>
     <br />
@@ -222,9 +419,9 @@ const OrgPage = (props) => {
                        
 
                         
-                        <div className={`sa-orp-menu-button  ${activeTab === tab.link ? "active" : ""}`} onClick={()=>{handleChangeTab(tab.link)}}>
-                            {tab.name}
-                        </div>
+                    <div className={`sa-orp-menu-button  ${activeTab === tab.link ? "active" : ""}`} onClick={()=>{handleChangeTab(tab.link)}}>
+                        {tab.name}
+                    </div>
                         
 
                     ))}
@@ -259,12 +456,7 @@ const OrgPage = (props) => {
                 </div>
 
 
-            {activeTab === 'm' && (
-                <MainTabPage
-                    edit_mode={editMode}
-                    item_id={itemId}
-                 />
-            )}
+
 
 
             {activeTab === 'o' && (
@@ -279,10 +471,6 @@ const OrgPage = (props) => {
             )}
 
             {activeTab === 'b' && (
-                // <BillsTabPage
-                //     edit_mode={editMode}
-                //     item_id={itemId}
-                //  />
                 <OrgListModalBillsTab
                     data={{id: itemId}}
                     environment={'editor'}
@@ -292,31 +480,48 @@ const OrgPage = (props) => {
                     />
             )}
 
-            {activeTab === 'c' && (
-                // <MeetingsTabPage
-                //     edit_mode={editMode}
-                //     item_id={itemId}
-                //  />
-                <OrgListModalBillsTab
-                    data={{id: itemId}}
 
-                    />
-            )}
+            <MainTabPage
+                show={activeTab === 'm'}
+                edit_mode={editMode}
+                item_id={itemId}
+                call_to_save={callToSaveAction}
+                base_data={baseMainData}
+                on_save={handleDataChangeApprove}
+            />
 
-            {activeTab === 'p' && (
-                <ProjectsTabPage
-                    edit_mode={editMode}
-                    item_id={itemId}
-                 />
-            )}
+            <MeetingsTabPage
+                show={activeTab === 'c'}
+                edit_mode={editMode}
+                item_id={itemId}
+                call_to_save={callToSaveAction}
+                base_data={baseCallsData}
+                on_save={handleDataChangeApprove}
+                active_page={pageCalls}
+                on_change_page={(p)=> {setPageCalls(p)}}
+            />
 
-            {activeTab === 'n' && (
-                <NotesTabPage
-                    edit_mode={editMode}
-                    item_id={itemId}
-                    environment={'editor'}
-                 />
-            )}
+            <ProjectsTabPage
+                show={activeTab === 'p'}
+                edit_mode={editMode}
+                item_id={itemId}
+                call_to_save={callToSaveAction}
+                base_data={baseProjectsData}
+                on_save={handleDataChangeApprove}
+                active_page={pageProject}
+                on_change_page={(p)=> {setPageProject(p)}}
+                />
+
+            <NotesTabPage
+                show={activeTab === 'n'}
+                edit_mode={editMode}
+                item_id={itemId}
+                call_to_save={callToSaveAction}
+                base_data={baseNotesData}
+                on_save={handleDataChangeApprove}
+                active_page={pageNotes}
+                on_change_page={(p)=> {setPageNotes(p)}}
+                />
 
             {activeTab === 'h' && (
                 // <HistoryTabPage
@@ -326,6 +531,7 @@ const OrgPage = (props) => {
                 <OrgListModalHistoryTab
                     data={{id: itemId}}
                     environment={'editor'}
+
                 />
             )}
             

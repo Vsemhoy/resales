@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from 'react';
 
 
-const OffersOutlet = (props) => {
+const ProjectsTabPage = (props) => {
+    const [show, setShow] = useState(false);
+  
+    useEffect(() => {
+      setShow(props.show);
+    }, [props.show]);
+
 
   return (
-    <h1>Hello Wolf from OfferOutlet</h1>
+    <div>
+      {show && (
+        <div>HELLO PROJECTS</div>
+      )}
+    </div>
   );
 };
 
-export default OffersOutlet;
+export default ProjectsTabPage;

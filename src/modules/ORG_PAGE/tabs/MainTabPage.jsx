@@ -10,35 +10,44 @@ import OrgPageMainTabPayersSection from '../components/sections/MainTabSections/
 
 const MainTabPage = (props) => {
   const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(props.show);
+  }, [props.show]);
 
   useEffect(() => {
     seteditMode(props.edit_mode);
   }, [props.edit_mode]);
 
   return (
-     <div className={'sk-omt-stack'}
-    style={{borderLeft: '4px solid seagreen'}}
-    >
-      <OrgPageMainTabCommonSection
-        edit_mode={editMode}
-      />
+    <div>
+      {show && (
+      <div className={'sk-omt-stack'}
+      style={{borderLeft: '4px solid seagreen'}}
+      >
+        <OrgPageMainTabCommonSection
+          edit_mode={editMode}
+        />
 
-      <OrgPageMainTabDepartSection
-        edit_mode={editMode}
-      />
+        <OrgPageMainTabDepartSection
+          edit_mode={editMode}
+        />
 
-            <OrgPageMainTabContactinfoSection
-        edit_mode={editMode}
-      />
+              <OrgPageMainTabContactinfoSection
+          edit_mode={editMode}
+        />
 
-            <OrgPageMainTabContactsSection
-        edit_mode={editMode}
-      />
+              <OrgPageMainTabContactsSection
+          edit_mode={editMode}
+        />
 
-            <OrgPageMainTabPayersSection
-        edit_mode={editMode}
-      />
+              <OrgPageMainTabPayersSection
+          edit_mode={editMode}
+        />
 
+      </div>
+      )}
     </div>
   );
 };
