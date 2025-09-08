@@ -19,6 +19,7 @@ import { filterSortClearMenu, OM_COMP_LIST, OM_ORG_FILTERDATA } from './componen
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { readOrgURL, updateURL, useURLParams } from '../../components/helpers/UriHelpers';
+import dayjs from 'dayjs';
 
 
 
@@ -40,7 +41,7 @@ const OrgListPage = (props) => {
   const [orgList, setOrgList] = useState([]);
 
   const [total, setTotal] = useState(0);
-  const [onPage, setOnPage] = useState(50);
+  const [onPage, setOnPage] = useState(30);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentTab, setCurrentTab] = useState('m');
   const [previousPage, setPreviousPage] = useState(1);
@@ -66,6 +67,9 @@ const OrgListPage = (props) => {
 
   const [filterAwaiter, setFilerAwaiter] = useState(null);
 
+
+
+  const [SKIPPER, setSKIPPER] = useState(3);
 
   useEffect(() => {
     setShowLoader(true);
@@ -110,7 +114,6 @@ const OrgListPage = (props) => {
     }
     setTimeout(() => {
       if (targetRowId){
-          console.log('targetRowId', targetRowId)
           let drow = document.querySelector('#orgrow_' + targetRowId);
           if (drow){
             drow.scrollIntoView( {behavior: "auto", block: "center", inline: "start"})
@@ -125,7 +128,7 @@ const OrgListPage = (props) => {
         const timer = setTimeout(() => {
             updateURL(filterBox, orderBox, currentPage, onPage, previewItem, currentTab);
             setFilerAwaiter(null);
-        }, 200);
+        }, 150);
     
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
@@ -218,9 +221,7 @@ const OrgListPage = (props) => {
   }, [filterBox, baseFiltersData]);
 
 
-  useEffect(() => {
-    get_orglist();
-  }, [filterBox, orderBox, currentPage, onPage]);
+
 
 
   /** При смене страницы, если открыт модал, меняем ИД открытой компании */
@@ -245,22 +246,47 @@ const OrgListPage = (props) => {
       }
       setPreviousPage(currentPage);
     }
-    console.log('CHANGE PAGE');
   }, [orgList]);
 
 
 
 
+  useEffect(() => {
+    console.log('SKIPPER', SKIPPER)
+    if (SKIPPER === 0){
+      const timer = setTimeout(() => {
+        console.log('first GETTER')
+        get_orglist_async();
+      }, 250);
+    
+        // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
+        return () => clearTimeout(timer);
+    } else {
+
+      setSKIPPER(SKIPPER - 1);
+    }
+  }, [filterBox, orderBox, currentPage, onPage]);
+
   /** ------------------ FETCHES ---------------- */
+
+    // const get_orglist = () => {
+    //       const timer = setTimeout(() => {
+    //         console.log('GETTER', dayjs().unix())
+    //         get_orglist_async();
+    //       }, 400);
+    
+    //     // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
+    //     return () => clearTimeout(timer);
+    // }
+
     /**
      * Получение списка клиентов-компаний
      * @param {*} req 
      * @param {*} res 
      */
-    const get_orglist = async () => {
-        if (PRODMODE) {
+    const get_orglist_async = async () => {
+      if (PRODMODE) {
           setShowLoader(true);
-          console.log('filterBox', filterBox, orderBox)
           let sortBox = orderBox && orderBox.length > 0 ? orderBox.map((item)=>({
             field: item.key,
             order: item.order === 2 ? 'DESC' : 'ASC'
@@ -325,6 +351,7 @@ const OrgListPage = (props) => {
                 // setLoadingOrgs(false)
                 setShowLoader(false);
             }
+
         } else {
             //setUserAct(USDA);
             setShowLoader(false);
@@ -422,7 +449,6 @@ const OrgListPage = (props) => {
 
       return updated;
     });
-    setShowLoader(true);
   };
 
   const triggerMyCompaniesFilterButton = () => {
@@ -552,6 +578,9 @@ const OrgListPage = (props) => {
                 <Button.Group>
                   <Button
                     onClick={() => {
+                      if (openedFilters){
+                        setSKIPPER(1);
+                      };
                       setOpenedFilters(!openedFilters);
                     }}
                     className={`${openedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'}`}
@@ -561,7 +590,7 @@ const OrgListPage = (props) => {
                   >
                     Доп Фильтры
                   </Button>
-                  {(filterSortClearMenu.length > 0 || filterAwaiter) && (
+                  {(filterSortClearMenu.length > 0) && (
                       <Tooltip title={'Очистить фильтры'} placement={'right'}>
                         <Dropdown menu={{items: filterSortClearMenu}}>
                           <Button

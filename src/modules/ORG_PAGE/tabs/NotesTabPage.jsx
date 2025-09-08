@@ -14,7 +14,8 @@ const NotesTabPage = (props) => {
     const [total, setTotal] = useState(1);
     const [onPage, setOnPage] = useState(30);
     const [loading, setLoading] = useState(false);
-    const [editModa, setEditMode] = useState(false);
+    const [editMode, setEditMode] = useState(false);
+    
 
     // Структурированные в коллапсы юниты
     const [structureItems, setStructureItems] = useState([]);
@@ -158,7 +159,7 @@ const NotesTabPage = (props) => {
                     />
                     </div>
                     <div>
-                      {editModa && (
+                      {editMode && (
                         <Button type={'primary'} 
                           icon={<PlusOutlined/>} 
                           onClick={handleAddUnitBlank}

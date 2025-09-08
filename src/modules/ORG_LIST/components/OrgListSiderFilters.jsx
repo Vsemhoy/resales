@@ -78,8 +78,7 @@ const OrgListSiderFilter = (props) => {
             if (props.on_change_filters) {
                 props.on_change_filters(filterBox);
             }
-        }, 700); // ⏱️ 1 секунда задержки
-    
+        }, 500); 
         // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
         return () => clearTimeout(timer);
         }, [ filterCompany,
