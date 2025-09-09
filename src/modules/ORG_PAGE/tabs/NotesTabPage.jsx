@@ -64,7 +64,10 @@ const NotesTabPage = (props) => {
           } else {
             alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
           }
+        } else {
+          setEditMode(props.edit_mode);
         }
+
       } else {
         setEditMode(props.edit_mode);
       }
@@ -94,6 +97,7 @@ const NotesTabPage = (props) => {
                     >Удалить</Button>
                     </div>,
                 children: <OrgNoteEditorSectionBox
+                  color={null}
                   data={item}
                   on_delete={handleDeleteRealUnit}
                   on_change={handleUpdateRealUnit}
@@ -106,6 +110,7 @@ const NotesTabPage = (props) => {
           setOriginalData(strdata);
           setStructureItems(strdata);
       } else {
+        setOriginalData([]);
         setStructureItems([]);
       }
       setLoading(false);
@@ -135,6 +140,7 @@ const NotesTabPage = (props) => {
                     >Удалить</Button>
                     </div>,
                 children: <OrgNoteEditorSectionBox
+                  color={'#2196F3'}
                   data={item}
                   on_delete={handleDeleteBlankUnit}
                   on_change={handleUpdateBlankUnit}
