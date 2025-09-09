@@ -356,7 +356,7 @@ const EngineerListPage = (props) => {
 
   const fetchNewOrder = async () => {
     if (PRODMODE){
-      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/new', {
+      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', {
         _token: CSRF_TOKEN,
       })
       success("Заявка успешно сформирована")
