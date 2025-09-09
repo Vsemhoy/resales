@@ -20,3 +20,67 @@
     /*box-shadow: -4px 0 0 -1px #fdfdfd;*/
     box-shadow: none;
 }
+
+.sider-body-orders {
+    border: none;
+    border-radius: 6px;
+    background-color: var(--sider-bg-color);
+    height: calc(100vh - 109px - 34px - 10px - 9px - 9px);
+}
+.sider-unit-control {
+    max-height: 80vh;
+    /*max-height: calc(100vh - 109px - 34px - 10px - 9px - 9px);*/
+
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Стилизация скроллбара для Webkit-браузеров */
+.sider-unit-control::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sider-unit-control::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.sider-unit-control::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.sider-unit-control::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Стилизация для Firefox */
+.sider-unit-control {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.sider-order-list {
+    margin-bottom: 16px;
+    padding: 16px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+.dates-container {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
