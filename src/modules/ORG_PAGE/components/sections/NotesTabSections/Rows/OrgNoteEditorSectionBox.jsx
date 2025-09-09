@@ -90,7 +90,7 @@ const OrgNoteEditorSectionBox = (props) => {
 
   return (
     <div className={'sk-omt-stack'}
-    style={{borderLeft: '4px solid #2196F3'}}
+    style={{borderLeft: '4px solid ' + props.color}}
     >
 
       
