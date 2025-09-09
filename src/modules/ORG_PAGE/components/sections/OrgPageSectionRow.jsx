@@ -156,6 +156,12 @@ const OrgPageSectionRow = (props) => {
       >
         {String(value ?? (field.nullable ? '(не задано)' : ''))}
       </Typography.Paragraph>;
+      } else if (field.type === 'date'){
+        return <div className="sk-omt-content-formatted">{dayjs(value).format("DD.MM.YYYY")}</div>;
+      } else if (field.type === 'datetime'){
+        return <div className="sk-omt-content-formatted">{dayjs(value).format("DD.MM.YYYY HH:mm:ss")}</div>;
+      } else if (field.type === 'time'){
+        return <div className="sk-omt-content-formatted">{dayjs(value).format("HH:mm:ss")}</div>;
       }
       return <div className="sk-omt-content-formatted">{String(value ?? (field.nullable ? '(не задано)' : ''))}</div>;
     }
