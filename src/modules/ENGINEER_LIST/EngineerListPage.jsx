@@ -371,11 +371,11 @@ const EngineerListPage = (props) => {
   const fetchOrders = async () => {
     if (PRODMODE) {
       try {
-        let response = PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/show', {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/show', {
           _token: CSRF_TOKEN,
           data: {}
         })
-        console.log(response.data);
+        console.log(response);
 
         setOrders(response.data.content.orders);
         setOrdersStatus(response.data.content.order_status);
@@ -397,6 +397,10 @@ const EngineerListPage = (props) => {
     setBlockNewSpec(true);
     fetchNewOrder().then(r => setBlockNewSpec(false));
   }
+
+  useEffect(() => {
+    console.log(orders)
+  }, [orders]);
 
   return (
     <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
