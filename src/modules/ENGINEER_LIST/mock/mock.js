@@ -219,3 +219,48 @@ export const FILTERS = {
         }
     ],
 };
+
+export const ORDERS = [
+    {
+        id: 1,
+        manager: "Коляскина А.К.",
+        created_at: 1740396288,
+        updated_at: 1740396288,
+        approve: false,
+    },
+    {
+        id: 1,
+        manager: "Коляскина А.К.",
+        created_at: 1740396288,
+        updated_at: 1740396288,
+        approve: false,
+    },
+    {
+        id: 1,
+        manager: "Коляскина А.К.",
+        created_at: 1740396288,
+        updated_at: 1740396288,
+        approve: false,
+    },
+    {
+        id: 1,
+        manager: "Коляскина А.К.",
+        created_at: 1740396288,
+        updated_at: 1740396288,
+        approve: false,
+    },
+    {
+        id: 1,
+        manager: "Коляскина А.К.",
+        created_at: 1740396288,
+        updated_at: 1740396288,
+        approve: false,
+    },
+    {
+        id: 1,
+        manager: "Коляскина А.К.",
+        created_at: 1740396288,
+        updated_at: 1740396288,
+        approve: false,
+    },
+];

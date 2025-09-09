@@ -110,7 +110,7 @@ const EngineerPage = (props) => {
           model_name: value.label,
           model_count: value.count,
         }
-        fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
+        // fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
         break;
 
       case "count":
@@ -119,19 +119,19 @@ const EngineerPage = (props) => {
           model_count: value,
         }
 
-        fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
+        // fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
         break;
 
       case "delete":
         if (!editMode){
           modelsUpdate.splice(index, 1);
-          fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
+          // fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
         }
         break;
 
       case "comment":
         commentEngineerUpdate = value;
-        fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
+        // fetchUpdate(modelsUpdate, commentEngineerUpdate).then()
         break;
 
       case "new":
@@ -140,6 +140,10 @@ const EngineerPage = (props) => {
           model_name: value.label,
           model_count: value.count
         });
+        break;
+
+      case "save":
+        console.log(modelsUpdate, commentEngineerUpdate)
         break;
     }
 
@@ -193,8 +197,14 @@ const EngineerPage = (props) => {
             </Row>
           </Content>
           <Content>
-            <Button> Закрыть </Button>
-            <Button> Сохранить </Button>
+            <Row>
+              <Col span={9}>
+                <Button> Закрыть </Button>
+              </Col>
+              <Col span={15}>
+                <Button type={"primary"} style={{width: "100%"}} onClick={(e) => update_local_state("save", 1, 1)}> Сохранить </Button>
+              </Col>
+            </Row>
           </Content>
         </Layout>
       </Layout>
