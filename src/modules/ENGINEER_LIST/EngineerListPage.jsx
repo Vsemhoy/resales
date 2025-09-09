@@ -128,11 +128,11 @@ const EngineerListPage = (props) => {
       setIsOneRole(found.length === 1);
     }
     if (userdata !== null && userdata.user && userdata.user.id_departament) {
-      // if ([7,8,20].includes(userdata.user.id_departament)) {
-      //   setActiveRole(1);
-      // } else {
-      //   setActiveRole(2);
-      // }
+      if ([7,8,20].includes(userdata.user.id_departament)) {
+        setActiveRole(1);
+      } else {
+        setActiveRole(2);
+      }
     }
   }, [userdata]);
 
