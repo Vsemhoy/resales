@@ -77,11 +77,11 @@ const OrgListPage = (props) => {
       const { _filters, _sorts, _page, _onPage, _show, _tab } = readOrgURL();
 
       // Устанавливаем стейт фильтров, сортировок, страницы
-      setFilterBox(prev => ({ ...prev, ..._filters }));
+      setFilterBox(_filters );
       // (_filters);
-      setOrderBox(_sorts);
       setCurrentPage(_page);
       setOnPage(_onPage);
+      setOrderBox(_sorts);
       if (_show){
           setPreviewItem(_show);
           setIsPreviewOpen(true);
@@ -94,14 +94,15 @@ const OrgListPage = (props) => {
 
     if (PRODMODE) {
       // TODO: логика для PRODMODE
-      // get_org_filters();
+      get_org_filters();
       // get_orglist();
-
+      
     } else {
       // TODO: логика для dev режима
       setBaseFilterstData(OM_ORG_FILTERDATA);
       setOrgList(OM_COMP_LIST);
       setBaseCompanies(OM_ORG_FILTERDATA?.companies);
+      setShowLoader(false);
     };
     if (showGetItem !== null){
       handlePreviewOpen(showGetItem);
@@ -658,7 +659,7 @@ const OrgListPage = (props) => {
               base_filters={baseFiltersData}
               filters_data={filterBox}
               on_change_proc={handleOnChangeProcessFilter}
-
+              open={openedFilters}
             />
 
             )}
