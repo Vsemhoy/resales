@@ -5,9 +5,12 @@ import OrgNoteModalRow from '../../ORG_LIST/components/OrgModal/Tabs/TabComponen
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../components/helpers/TextHelpers';
 import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons';
+import OrgNoteEditorSectionBox from '../components/sections/NotesTabSections/Rows/OrgNoteEditorSectionBox';
 
 
 const NotesTabPage = (props) => {
+    const {userdata} = props;
+
     const [orgId, setOrgId] = useState(null);
     const [show, setShow] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -23,9 +26,10 @@ const NotesTabPage = (props) => {
 
     // Новые юниты
     const [temporaryUnits, setTemporaryUnits] = useState([]);
+    const [newStructureItems, setNewStructureItems] = useState([]);
 
     const [editedItemsIds, setEditedItemsIds] = useState([]);
-
+    const [openedNewSections, setOpenedNewSections] = useState([]);
   
     useEffect(() => {
       setShow(props.show);
@@ -55,10 +59,11 @@ const NotesTabPage = (props) => {
 
       useEffect(() => {
       if (props.base_data?.notes !== null && props.base_data?.notes?.length > 0){
+        let secids = [];
         // setDataList(baseOrgData.projects);
           setOriginalData(props.base_data?.notes);
           setStructureItems(props.base_data?.notes.map((item)=>{
-            
+            secids.push('norprow_' + item.id);
             return {
                 key: 'norprow_' + item.id,
                 label: <div className='sa-flex'><div>{item.theme}<span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month()) + " " + dayjs(item.date).format("YYYY"): ""}</span> <span className={'sa-text-phantom'}>({item.id})</span></div></div>,
@@ -78,6 +83,40 @@ const NotesTabPage = (props) => {
     }, [props.base_data]);
 
 
+
+    useEffect(() => {
+      let secids = [];
+      setNewStructureItems(temporaryUnits.map((item)=>{
+        secids.push('new_norprow_' + item.id);
+            return {
+                key: 'new_norprow_' + item.id,
+                label: <div className='sa-flex-space'>
+                  <div>{item.theme}
+                    <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span> 
+                    <span className={'sa-text-phantom'}>({item.id})</span></div>
+                    <Button size='small' 
+                      onClick={(ev)=>{
+                        ev.stopPropagation();
+                        console.log(item.id);
+                        handleDeleteBlankUnit(item.id);
+                      }}
+                    >Удалить</Button>
+                    </div>,
+                children: <OrgNoteEditorSectionBox
+                  data={item}
+                  on_delete={handleDeleteBlankUnit}
+                  on_change={handleUpdateBlankUnit}
+                  edit_mode={editMode}
+                  // selects_data={props.selects_data}
+                />
+            }
+          })
+        )
+        console.log(secids);
+        setOpenedNewSections(secids);
+    }, [temporaryUnits, editMode]);
+
+
     const get_org_data_action = (org_id, ev, on) => {
       if (props.on_change_page && ev !== currentPage){
         props.on_change_page(ev);
@@ -87,14 +126,27 @@ const NotesTabPage = (props) => {
 
     const handleAddUnitBlank = () => {
       let spawn = {
-        command: 'create',
-        id: null,
-        name: "name"
-      };
+            "id": 'new_' + dayjs().unix() + temporaryUnits.length,
+            "id_orgs": props.item_id,
+            "id8staff_list": userdata.user.id,
+            "theme": "Обзвон 2016",
+            "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
+            "notes": "До компании дозвониться не удалось. В ФНС данных о ликвидации нет. Сайт работает. Инф. письмо выслано на zszniiep@zniiep.com для Тихомирова Александра Васильевича [Генеральный Директор].",
+            "deleted": 0,
+            "creator": {
+                "id": 230,
+                "surname": userdata?.user.surname,
+                "name": userdata?.user.name,
+                "secondname": userdata?.user.secondname,
+            }
+          };
+          setTemporaryUnits(prevItems => [spawn, ...prevItems]);
+          console.log(spawn);
+
     }
 
     const handleDeleteBlankUnit = (id) => {
-      setTemporaryUnits(temporaryUnits.filter((item) => item !== id));
+      setTemporaryUnits(temporaryUnits.filter((item) => item.id !== id));
     }
 
     const handleDeleteRealUnit = (id) => {
@@ -163,6 +215,7 @@ const NotesTabPage = (props) => {
                         <Button type={'primary'} 
                           icon={<PlusOutlined/>} 
                           onClick={handleAddUnitBlank}
+                          disabled={newStructureItems.length > 7}
                         >
                           Cоздать заметку
                         </Button>
@@ -170,6 +223,18 @@ const NotesTabPage = (props) => {
                     </div>
                 </div>
                 <div>
+                {newStructureItems.length > 0 && (
+                  <div className={'sa-org-temp-stack-collapse'}>
+                    <div className={'sa-org-temp-stack-collapse-header'}>Новые заметки</div>
+                    <Collapse 
+                    size={'small'}
+                    items={newStructureItems}
+                      activeKey={openedNewSections}
+                    />
+                   </div>
+
+                )}
+
                 <Collapse
                     // defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
                     // activeKey={modalSectionsOpened}
