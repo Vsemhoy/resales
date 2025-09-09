@@ -15,7 +15,6 @@ import {
     PlusOutlined,
     SaveOutlined
 } from "@ant-design/icons";
-import {value} from "lodash/seq";
 
 const BidPage = (props) => {
     const {bidId} = useParams();
@@ -78,6 +77,7 @@ const BidPage = (props) => {
     const [stageSelect, setStageSelect] = useState([]);
     const [templateWordSelect, setTemplateWordSelect] = useState([]);
     const [companies, setCompanies] = useState([]);
+    const [orgUsersSelect, setOrgUsersSelect] = useState([]);
 
 
     useEffect(() => {
@@ -86,6 +86,11 @@ const BidPage = (props) => {
             setIsMounted(true);
         }
     }, []);
+    useEffect(() => {
+        if (bidType) {
+            document.title = `${+bidType === 1 ? 'КП' : +bidType === 2 ? 'Счет' : ''} | ${bidId}`;
+        }
+    }, [bidType]);
     useEffect(() => {
         if (props.userdata) {
             setUserData(props.userdata);
@@ -158,6 +163,8 @@ const BidPage = (props) => {
                 console.log(e);
             }
         } else {
+            setOpenMode(BID.openmode);
+
             setBidType(BID.type);
             setBidIdCompany(BID.id_company);
             setBidOrg(BID.properties.org);
@@ -289,18 +296,18 @@ const BidPage = (props) => {
             <Spin size="large" spinning={isLoading}>
                 <div className={'sa-bid-page'}>
                     <Affix>
-                        <div style={{paddingTop: '10px', backgroundColor: '#b4c9e1'}}>
-                            <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
+                        <div style={{padding: '10px 12px 0 12px', backgroundColor: '#b4c9e1'}}>
+                            <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'} style={{margin:0}}>
                                 <div className={'sa-header-label-container'}>
                                     <div className={'sa-header-label-container-small'}>
-                                        <h1 className={'sa-header-label'}>
+                                        <h1 className={`sa-header-label`}>
                                             {
                                                 +bidType === 1 ? 'Коммерческое предложение' :
                                                 +bidType === 2 ? 'Счет' : ''
                                             }
                                         </h1>
                                         <div className={'sa-bid-steps-currency'}>
-                                            {+bidType === 2 && (
+                                            {/*{+bidType === 2 && (
                                                 <div className={'custom-small-steps-container'}>
                                                     <Steps
                                                         className="sa-custom-steps custom-small-steps"
@@ -327,7 +334,7 @@ const BidPage = (props) => {
                                                         ]}
                                                     />
                                                 </div>
-                                            )}
+                                            )}*/}
                                             <div>
                                                 <CurrencyMonitorBar/>
                                             </div>
@@ -365,6 +372,7 @@ const BidPage = (props) => {
                                                 {userData && userData?.user?.sales_role === 4 && (
                                                     <Tag color={'gold'}>завершено</Tag>
                                                 )}
+                                                Режим: <Tooltip title={openMode.description}><Tag color={openMode.color}>{openMode.tagtext}</Tag></Tooltip>
                                             </div>
                                         )}
                                         <Button type={'primary'}
@@ -401,13 +409,15 @@ const BidPage = (props) => {
                                         icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'}/>}
                                 ></Button>
                             </Tooltip>
-                            <Tooltip title={'Сохранить в WORD'} placement={'right'}>
-                                <Button className={'sa-bid-page-btn'}
-                                        color="primary"
-                                        variant="outlined"
-                                        icon={<FileWordOutlined className={'sa-bid-page-btn-icon'}/>}
-                                ></Button>
-                            </Tooltip>
+                            {+bidType !== 2 && (
+                                <Tooltip title={'Сохранить в WORD'} placement={'right'}>
+                                    <Button className={'sa-bid-page-btn'}
+                                            color="primary"
+                                            variant="outlined"
+                                            icon={<FileWordOutlined className={'sa-bid-page-btn-icon'}/>}
+                                    ></Button>
+                                </Tooltip>
+                            )}
                             <Tooltip title={'Файлы'} placement={'right'}>
                                 <Button className={'sa-bid-page-btn'}
                                         color="primary"
@@ -415,16 +425,119 @@ const BidPage = (props) => {
                                         icon={<DownloadOutlined className={'sa-bid-page-btn-icon'}/>}
                                 ></Button>
                             </Tooltip>
-                            <Tooltip title={'Создать счет'} placement={'right'}>
-                                <Button className={'sa-bid-page-btn'}
-                                        color="primary"
-                                        variant="outlined"
-                                        icon={<DollarOutlined className={'sa-bid-page-btn-icon'}/>}
-                                ></Button>
-                            </Tooltip>
+                            {+bidType !== 2 && (
+                                <Tooltip title={'Создать счет'} placement={'right'}>
+                                    <Button className={'sa-bid-page-btn'}
+                                            color="primary"
+                                            variant="outlined"
+                                            icon={<DollarOutlined className={'sa-bid-page-btn-icon'}/>}
+                                    ></Button>
+                                </Tooltip>
+                            )}
                         </div>
                         <div className={'sa-bid-page-info-wrapper'}>
                             <div className={'sa-info-models-header'}>Основные данные</div>
+                            {+bidType === 2 && (
+                                <div className={'custom-small-steps-container'}>
+                                    <Steps
+                                        className="sa-custom-steps custom-small-steps"
+                                        progressDot
+                                        size="small"
+                                        current={+bidPlace - 1}
+                                        items={[
+                                            {
+                                                title: 'Менеджер',
+                                                description: +bidPlace === 1 ? 'Текущий этап' : '',
+                                            },
+                                            {
+                                                title: 'Администратор',
+                                                description: +bidPlace === 2 ? 'Текущий этап' : '',
+                                            },
+                                            {
+                                                title: 'Бухгалтер',
+                                                description: +bidPlace === 3 ? 'Текущий этап' : '',
+                                            },
+                                            {
+                                                title: 'Завершено',
+                                                description: +bidPlace === 4 ? 'Текущий этап' : '',
+                                            },
+                                        ]}
+                                    />
+                                </div>
+                            )}
+                            <div className={'sa-info-list'}>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Контактное лицо</p></div>
+                                    <Select style={{width: '100%', textAlign: 'left'}}
+                                            // bordered={false}
+                                            value={bidOrgUser}
+                                            options={orgUsersSelect}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Защита проекта</p></div>
+                                    <Select style={{width: '100%', textAlign: 'left'}}
+                                            // bordered={false}
+                                            value={bidProtectionProject}
+                                            options={protectionSelect}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Объект</p></div>
+                                    <Input style={{width: '100%'}}
+                                            // bordered={false}
+                                           value={bidObject}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Срок реализации</p></div>
+                                    <Input style={{width: '100%'}}
+                                            // bordered={false}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Связанный проект</p></div>
+                                    <Input style={{width: '100%'}}
+                                            // bordered={false}
+                                           value={bidProject}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Комментарий инженера</p></div>
+                                    <Input style={{width: '100%'}}
+                                            // bordered={false}
+                                           value={bidCommentEngineer}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Комментарий менеджера</p></div>
+                                    <Input style={{width: '100%'}}
+                                            // bordered={false}
+                                           value={bidCommentManager}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Комментарий администратора</p></div>
+                                    <Input style={{width: '100%'}}
+                                            // bordered={false}
+                                           value={bidCommentAdmin}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Комментарий бухгалтера</p></div>
+                                    <Input style={{width: '100%'}}
+                                            // bordered={false}
+                                           value={bidCommentAccountant}
+                                    />
+                                </div>
+                                <div className={'sa-info-list-row'}>
+                                    <div className={'sa-list-row-label'}><p>Дополнительное оборудование</p></div>
+                                    <Input style={{width: '100%'}}
+                                            // bordered={false}
+                                           value={bidCommentAddEquipment}
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div className={'sa-bid-page-models-wrapper'}>
                             <div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
@@ -450,6 +563,10 @@ const BidPage = (props) => {
                                                     value={bidModel.model_id}
                                                     options={modelsSelect.map(model => ({value: model.id, label: model.name}))}
                                                     showSearch
+                                                    optionFilterProp="label"
+                                                    filterOption={(input, option) =>
+                                                        option.label.toLowerCase().includes(input.toLowerCase())
+                                                    }
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
@@ -481,6 +598,10 @@ const BidPage = (props) => {
                                                     options={presenceSelect}
                                                     // options={presenceSelect.map(presence => ({value: presence.id, label: presence.name}))}
                                                     showSearch
+                                                    optionFilterProp="label"
+                                                    filterOption={(input, option) =>
+                                                        option.label.toLowerCase().includes(input.toLowerCase())
+                                                    }
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'} style={{padding: 0, boxShadow: 'none'}}>
