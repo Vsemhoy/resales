@@ -462,8 +462,35 @@ const BidPage = (props) => {
                                             icon={<BlockOutlined/>}>Похожие</Button>
                                 </div>
                                 <div className={'sa-footer-table-amounts'}>
-                                    <div className={'sa-footer-table'}></div>
-                                    <div className={'sa-footer-amounts'}></div>
+                                    <div className={'sa-footer-table'}>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}><p>Высота оборудования: 25U</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Высота шкафа: 23U</p></div>
+                                        </div>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}><p>Потр. мощность: 1.29кВт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Вых. мощность: 360Вт</p></div>
+                                        </div>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}><p>Мощность АС: 368Вт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Масса: 196.2кг</p></div>
+                                        </div>
+                                        <div className={'sa-footer-table-col'}>
+                                            <p>Объем: 633.09 m3</p>
+                                        </div>
+                                    </div>
+                                    <div className={'sa-footer-amounts'}>
+                                        <div className={'sa-footer-amounts-col'}>
+                                            <div className={'sa-footer-amounts-cell'}><p>Сумма в долларах</p></div>
+                                            <div className={'sa-footer-amounts-cell'}><p>Сумма в евро</p></div>
+                                            <div className={'sa-footer-amounts-cell'}><p>Сумма в рублях</p></div>
+                                        </div>
+                                        <div className={'sa-footer-amounts-col'}>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>14 276,79 $</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>13 710,251 €</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>1 727 491,59 ₽</p></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
