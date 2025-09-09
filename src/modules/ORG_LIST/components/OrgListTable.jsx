@@ -41,7 +41,6 @@ const OrgListTable = (props) => {
     };
 
     useEffect(() => {
-        console.log('props.curator_list', props.curator_list)
         setCuratorList(props.curator_list);
     }, [props.curator_list]);
 
@@ -87,7 +86,10 @@ const OrgListTable = (props) => {
 
 
     useEffect(() => {
-
+      // if (props.curator_list){
+        
+      //   setCuratorList(props.curator_list);
+      // }
       console.log(props.base_filters);
       if (props.base_filters?.towns   !== null){
         setFilterTown(props.base_filters.towns);
@@ -122,7 +124,7 @@ const OrgListTable = (props) => {
       } else {
         setFilterCurator(null);
       }
-    }, [props.base_filters]);
+    }, [props.base_filters, props.curator_list]);
 
 
     const handlePreviewOpen = (item, state) => {

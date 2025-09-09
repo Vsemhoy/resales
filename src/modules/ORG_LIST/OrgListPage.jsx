@@ -69,7 +69,7 @@ const OrgListPage = (props) => {
 
 
 
-  const [SKIPPER, setSKIPPER] = useState(3);
+  const [SKIPPER, setSKIPPER] = useState(0);
 
   useEffect(() => {
     setShowLoader(true);
@@ -201,7 +201,6 @@ const OrgListPage = (props) => {
   useEffect(() => {
     if (baseFiltersData && baseFiltersData.curators)
     {
-
         let asetCurators = [];
         if (!filterBox || !filterBox.companies || filterBox.companies === null){
           asetCurators = baseFiltersData.curators.map((item)=>({
@@ -210,7 +209,8 @@ const OrgListPage = (props) => {
             value: item.id
           }));
         } else {
-          asetCurators = baseFiltersData.curators.filter((item)=>item.id_company === filterBox.companies)
+          console.log('ELSE', filterBox.companies, baseFiltersData.curators);
+          asetCurators = baseFiltersData.curators.filter((item)=> parseInt(item.id_company) === parseInt(filterBox.companies))
             .map((item)=>({
               key: 'curacu_' + item.id,
               label: item.fullname,
@@ -219,7 +219,7 @@ const OrgListPage = (props) => {
         }
         setSelectCuratorList(asetCurators);
       }
-  }, [filterBox, baseFiltersData]);
+  }, [filterBox, baseFiltersData?.curators]);
 
 
 
