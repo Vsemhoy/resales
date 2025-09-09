@@ -15,7 +15,7 @@ import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/Curren
 import EngineerListTable from './components/EngineerListTable';
 import EngineerListSiderFilters from './components/EngineerListSiderFilters';
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
-import {BID_LIST, FILTERS, ORDERS, SPECS_LIST} from "./mock/mock";
+import {BID_LIST, FILTERS, ORDERS, ORDERSSTATUS, SPECS_LIST} from "./mock/mock";
 import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
 import {c} from "react/compiler-runtime";
 import OrderListSider from "./components/OrderListSider";
@@ -85,6 +85,7 @@ const EngineerListPage = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [orders, setOrders] = useState([]);
+  const [ordersStatus, setOrdersStatus] = useState([]);
 
   const success = (content) => {
     messageApi.open({
@@ -374,13 +375,16 @@ const EngineerListPage = (props) => {
           _token: CSRF_TOKEN,
           data: {}
         })
+        console.log(response.data);
 
         setOrders(response.data.content.orders);
+        setOrdersStatus(response.data.content.order_status);
       } catch (e) {
         console.log(e)
       }
     } else {
       setOrders(ORDERS);
+      setOrdersStatus(ORDERSSTATUS);
     }
   }
 
