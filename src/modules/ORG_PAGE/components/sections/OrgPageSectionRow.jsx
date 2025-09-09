@@ -117,9 +117,22 @@ const OrgPageSectionRow = (props) => {
 
     // Форматируем значение
     const formattedValue = formatValue(newValue, field.type);
-    const finalValue = field.nullable === false && (formattedValue === '' || formattedValue == null)
-      ? null
-      : formattedValue;
+    // const finalValue = field.nullable === false && (formattedValue === '' || formattedValue == null)
+    //   ? null
+    //   : formattedValue;
+    let finalValue = formattedValue;
+    if (field.nullable === false) {
+      // Если поле не nullable, то пустая строка должна оставаться пустой строкой
+      if (formattedValue === '' || formattedValue == null) {
+        finalValue = ''; // возвращаем пустую строку вместо null
+      }
+    } else {
+      // Если поле nullable, то можно возвращать null
+      if (formattedValue === '' || formattedValue == null) {
+        finalValue = null;
+      }
+    }
+
 
     setLocalValues((prev) => {
       const updated = { ...prev, [fieldName]: finalValue };
@@ -151,7 +164,10 @@ const OrgPageSectionRow = (props) => {
       value,
       onChange: (e) => {
         const val = e?.target?.value ?? e;
-        onChange(field.name, val, field);
+        onChange(
+            field.name,
+            val,
+            field);
       },
       disabled: false,
       style: { width: '100%' },
@@ -166,6 +182,7 @@ const OrgPageSectionRow = (props) => {
             {...commonProps}
             type={field.type}
             placeholder={isRequired ? 'Обязательно' : ''}
+            nullable={field.nullable}
           />
         );
 
@@ -192,7 +209,7 @@ const OrgPageSectionRow = (props) => {
           <DatePicker
             variant="underlined"
             value={value ? dayjs(value) : null}
-            format="DD.MM.YYYY"
+            format={"DD.MM.YYYY"}
             onChange={(date, dateString) => onChange(field.name, dateString, field)}
             style={{ width: '100%' }}
           />
@@ -203,7 +220,7 @@ const OrgPageSectionRow = (props) => {
           <TimePicker
             variant="underlined"
             value={value ? dayjs(value, 'HH:mm') : null}
-            format="HH:mm"
+            format={"HH:mm"}
             onChange={(time, timeString) => onChange(field.name, timeString, field)}
           />
         );
@@ -213,7 +230,7 @@ const OrgPageSectionRow = (props) => {
           <DatePicker
             variant="underlined"
             showTime
-            format="DD.MM.YYYY HH:mm"
+            format={"DD.MM.YYYY HH:mm"}
             value={value ? dayjs(value) : null}
             onChange={(date, dateString) => onChange(field.name, dateString, field)}
             style={{ width: '100%' }}

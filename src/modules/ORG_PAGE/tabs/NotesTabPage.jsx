@@ -19,6 +19,7 @@ const NotesTabPage = (props) => {
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     
+    const [newLoading, setNewLoading] = useState(false);
 
     // Структурированные в коллапсы юниты
     const [structureItems, setStructureItems] = useState([]);
@@ -53,47 +54,78 @@ const NotesTabPage = (props) => {
 
 
     useEffect(() => {
-      setEditMode(props.edit_mode)
+      
+      if (props.edit_mode === false){
+        if (editedItemsIds.length > 0 || newStructureItems.length > 0){
+          if (window.confirm("У вас есть несохраненные заметки! Отменить изменения?")){
+            setEditMode(props.edit_mode);
+            setTemporaryUnits([]);
+            setStructureItems(originalData);
+          } else {
+            alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
+          }
+        }
+      } else {
+        setEditMode(props.edit_mode);
+      }
     }, [props.edit_mode]);
+
+
+
 
 
       useEffect(() => {
       if (props.base_data?.notes !== null && props.base_data?.notes?.length > 0){
         let secids = [];
         // setDataList(baseOrgData.projects);
-          setOriginalData(props.base_data?.notes);
-          setStructureItems(props.base_data?.notes.map((item)=>{
+        let strdata = props.base_data?.notes.map((item)=>{
             secids.push('norprow_' + item.id);
             return {
                 key: 'norprow_' + item.id,
-                label: <div className='sa-flex'><div>{item.theme}<span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month()) + " " + dayjs(item.date).format("YYYY"): ""}</span> <span className={'sa-text-phantom'}>({item.id})</span></div></div>,
-                children: <OrgNoteModalRow
+                label: <div className='sa-flex-space'>
+                  <div>{item.theme}
+                    <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span>  <span className={'sa-text-phantom'}>({item.id})</span></div>
+                    <Button size='small' 
+                      onClick={(ev)=>{
+                        ev.stopPropagation();
+                        console.log(item.id);
+                        handleDeleteRealUnit(item.id);
+                      }}
+                    >Удалить</Button>
+                    </div>,
+                children: <OrgNoteEditorSectionBox
                   data={item}
                   on_delete={handleDeleteRealUnit}
                   on_change={handleUpdateRealUnit}
+                  edit_mode={editMode}
                   // selects_data={props.selects_data}
                 />
             }
-          })
-        )
+          });
+
+          setOriginalData(strdata);
+          setStructureItems(strdata);
       } else {
         setStructureItems([]);
       }
       setLoading(false);
-    }, [props.base_data]);
+    }, [props.base_data, editMode]);
+
+
+
 
 
 
     useEffect(() => {
       let secids = [];
       setNewStructureItems(temporaryUnits.map((item)=>{
-        secids.push('new_norprow_' + item.id);
+        let nkey = 'new_norprow_' + item.id;
+        secids.push(nkey);
             return {
-                key: 'new_norprow_' + item.id,
+                key: nkey,
                 label: <div className='sa-flex-space'>
                   <div>{item.theme}
-                    <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span> 
-                    <span className={'sa-text-phantom'}>({item.id})</span></div>
+                    <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span>  <span className={'sa-text-phantom'}>({item.id})</span></div>
                     <Button size='small' 
                       onClick={(ev)=>{
                         ev.stopPropagation();
@@ -111,10 +143,15 @@ const NotesTabPage = (props) => {
                 />
             }
           })
-        )
+        );
+        // secids.reverse();
         console.log(secids);
         setOpenedNewSections(secids);
+        setNewLoading(false);
     }, [temporaryUnits, editMode]);
+
+
+
 
 
     const get_org_data_action = (org_id, ev, on) => {
@@ -125,29 +162,37 @@ const NotesTabPage = (props) => {
 
 
     const handleAddUnitBlank = () => {
-      let spawn = {
-            "id": 'new_' + dayjs().unix() + temporaryUnits.length,
-            "id_orgs": props.item_id,
-            "id8staff_list": userdata.user.id,
-            "theme": "Обзвон 2016",
-            "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
-            "notes": "До компании дозвониться не удалось. В ФНС данных о ликвидации нет. Сайт работает. Инф. письмо выслано на zszniiep@zniiep.com для Тихомирова Александра Васильевича [Генеральный Директор].",
-            "deleted": 0,
-            "creator": {
-                "id": 230,
-                "surname": userdata?.user.surname,
-                "name": userdata?.user.name,
-                "secondname": userdata?.user.secondname,
-            }
-          };
-          setTemporaryUnits(prevItems => [spawn, ...prevItems]);
-          console.log(spawn);
-
+      setNewLoading(true);
+      console.log('ADDED NEW DDDDDDDDDD')
+      setTimeout(() => {
+        let spawn = {
+              "command": "create",
+              "id": 'new_' + dayjs().unix() + dayjs().millisecond() + temporaryUnits.length,
+              "id_orgs": props.item_id,
+              "id8staff_list": userdata.user.id,
+              "theme": "Обзвон 2016",
+              "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
+              "notes": "До компании дозвониться не удалось. В ФНС данных о ликвидации нет. Сайт работает. Инф. письмо выслано на zszniiep@zniiep.com для Тихомирова Александра Васильевича [Генеральный Директор].",
+              "deleted": 0,
+              "creator": {
+                  "id": userdata.user.id,
+                  "surname": userdata?.user.surname,
+                  "name": userdata?.user.name,
+                  "secondname": userdata?.user.secondname,
+              }
+            };
+  
+            setTemporaryUnits(prevItems => [spawn, ...prevItems]);
+            console.log(spawn);
+        
+      }, 760);
     }
+
 
     const handleDeleteBlankUnit = (id) => {
       setTemporaryUnits(temporaryUnits.filter((item) => item.id !== id));
     }
+
 
     const handleDeleteRealUnit = (id) => {
       // const updata = {command: 'delete', id: id, deleted: 1};
@@ -155,20 +200,24 @@ const NotesTabPage = (props) => {
       if (uitem){
         uitem.deleted = 1;
         uitem.command = 'delete';
-        let udata = originalData.filter(temporaryUnits.filter((item) => item !== id));
+        let udata = originalData.filter((item) => item.id !== id);
         udata.push(uitem);
         setOriginalData(udata);
       };
     }
 
+
     const handleUpdateBlankUnit = (id, data) => {
-      let udata = temporaryUnits.filter(temporaryUnits.filter((item) => item !== id));
+      console.log('id, data', id, data, temporaryUnits);
+      let udata = temporaryUnits.filter((item) => item.id !== id);
+      console.log('udata', udata)
       udata.push(data);
       setTemporaryUnits(udata);
     }
+    
 
     const handleUpdateRealUnit = (id, data) => {
-      let udata = originalData.filter(temporaryUnits.filter((item) => item !== id));
+      let udata = originalData.filter((item) => item.id !== id);
       udata.push(data);
       setOriginalData(udata);
     }
@@ -176,6 +225,7 @@ const NotesTabPage = (props) => {
 
     // если в call_to_save не null, а timestamp, отправляем данные на обновление
     useEffect(() => {
+      console.log('originalData', originalData, temporaryUnits);
       if (props.call_to_save !== null && props.on_save !== null){
         props.on_save(originalData, temporaryUnits);
       }
@@ -192,6 +242,7 @@ const NotesTabPage = (props) => {
                 <div className={'sa-pa-6 sa-flex-space'} style={{paddingTop: '9px'}}>
                   <div>
                     <Pagination
+                      disabled={editMode}
                       size={'small'}
                       current={currentPage}
                       pageSizeOptions={[10, 30, 50, 100]}
@@ -215,7 +266,7 @@ const NotesTabPage = (props) => {
                         <Button type={'primary'} 
                           icon={<PlusOutlined/>} 
                           onClick={handleAddUnitBlank}
-                          disabled={newStructureItems.length > 7}
+                          disabled={newStructureItems.length > 7 || newLoading}
                         >
                           Cоздать заметку
                         </Button>
@@ -226,11 +277,12 @@ const NotesTabPage = (props) => {
                 {newStructureItems.length > 0 && (
                   <div className={'sa-org-temp-stack-collapse'}>
                     <div className={'sa-org-temp-stack-collapse-header'}>Новые заметки</div>
+                    <Spin spinning={newLoading} delay={500}>
                     <Collapse 
                     size={'small'}
                     items={newStructureItems}
                       activeKey={openedNewSections}
-                    />
+                    /></Spin>
                    </div>
 
                 )}

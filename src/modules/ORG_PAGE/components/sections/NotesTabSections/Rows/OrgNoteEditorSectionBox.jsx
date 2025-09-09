@@ -13,6 +13,36 @@ const OrgNoteEditorSectionBox = (props) => {
     const [filterData, setFilterData] = useState([]);
 
 
+    // DATA    // DATA      // DATA      // DATA  
+    
+    const [id, setId] = useState(null);
+    const [org, setOrg] = useState(0);
+    const [theme, setTheme] = useState("");
+    const [notes, setNotes] = useState("");
+    const [date, setDate] = useState(dayjs().format('DD-MM-YYYY HH:mm:ss'));
+    const [creator, setCreator] = useState(0); // id8staff_list
+    const [deleted, setDeleted] = useState(0);
+
+
+    const [objectResult, setObjectResult] = useState({});
+
+    // DATA    // DATA      // DATA      // DATA  
+
+    useEffect(() => {
+      if (props.data?.id){
+        setObjectResult(props.data);
+
+        setId(props.data.id);
+        // if (props.data.id_orgs !== org){
+        setOrg(props.data.id_orgs);
+        setTheme(props.data.theme);
+        setNotes(props.data.notes);
+        setCreator(props.data.id8staff_list);
+        setDeleted(props.data.deleted);
+      }
+    }, [props.data]);
+
+    
     useEffect(() => {
     seteditMode(props.edit_mode);
     }, [props.edit_mode]);
@@ -28,102 +58,51 @@ const OrgNoteEditorSectionBox = (props) => {
     }, []);
 
 
+    // useEffect(() => {
+    //     console.log(props.data);
+    // }, [props.data]);
+
+
+    const handleChangeData = (changed_data) => {
+        
+        if (changed_data.theme){
+            setTheme(changed_data.theme);
+        } else if (changed_data.notes){
+            setNotes(changed_data.notes);
+        };
+    }
+
     useEffect(() => {
-        console.log(props.data);
-    }, [props.data]);;
+        const timer = setTimeout(() => {
+            let result = objectResult;
+            result.theme = theme;
+            result.notes = notes;
+
+            console.log('result', result)
+
+            if (props.on_change){
+                props.on_change(id, result);
+            }
+      }, 250);
+      return () => clearTimeout(timer);
+    }, [theme, notes]);
+
 
   return (
     <div className={'sk-omt-stack'}
     style={{borderLeft: '4px solid #2196F3'}}
     >
 
-        {/* <OrgPageSectionRow
-            edit_mode={editMode}
-            key={'fklasdjl'}
-            titles={['Название организации']}
-            datas={['Тестовая карточка организации']}
-            comment={"Здесь будет длинный комментарий ли очень длинный"}
-        /> */}
-
-        {/* <OrgPageSectionRow
-            edit_mode={editMode}
-            columns={2}
-            titles={['Имя', 'Возраст', 'Дата рождения']}
-            datas={[
-                {
-                type: 'string',
-                value: 'Иван',
-                max: 50,
-                required: true,
-                nullable: false,
-                placeholder: '',
-                name: 'username',
-                },
-                {
-                type: 'uinteger',
-                value: 25,
-                min: 0,
-                max: 120,
-                placeholder: '',
-                name: 'userbirth',
-                },
-                {
-                type: 'date',
-                value: '1999-03-15',
-                placeholder: '',
-                name: 'userage',
-                },
-            ]}
-            comment={{
-                type: 'textarea',
-                value: `Иван Это важный клиент
-B ybjfkldsajklf fajsdlk fjlaksjdfklajs kdlfjaksljdfkasj dklfjas kldfa
-asdklfjaskld jfkasjdfas dfkjaslkdfjklasjdfas
-d
-faskdjfklasj dkfljsdklfjsakl`,
-                max: 500,
-                required: false,
-                nullable: true,
-                placeholder: '',
-                name: 'usercomment',
-                }}
-            on_change={(data) => console.log('Изменения:', data)}
-        /> */}
-
-        {/* <OrgPageSectionRow
-            key={'fklasddjl'}
-            edit_mode={editMode}
-            titles={['Форма собственности', 'ИНН']}
-            datas={[
-                {
-                type: 'select',
-                value: 9,
-                options: filterData.profiles,
-                max: 50,
-                required: true,
-                nullable: false,
-                placeholder: '',
-                name: 'username',
-                },
-                {
-                type: 'uinteger',
-                value: 25,
-                min: 0,
-                max: 120,
-                placeholder: '',
-                name: 'userbirth',
-                }
-            ]}
-        /> */}
+      
 
         <OrgPageSectionRow
-            key={'fklasdd1jl' + props.data.id}
+            key={'fklasdd1jl' + id}
             edit_mode={editMode}
             titles={['Тема']}
             datas={[
                 {
                 type: 'text',
-                value: props.data.theme,
+                value: theme,
                 max: 250,
                 required: true,
                 nullable: false,
@@ -131,10 +110,11 @@ faskdjfklasj dkfljsdklfjsakl`,
                 name: 'theme',
                 },
             ]}
+            on_change={handleChangeData}
         />
 
         <OrgPageSectionRow
-            key={'fkl43asdjl' + props.data.id}
+            key={'fkl43asdjl' + id}
             titles={['Автор', 'Дата']}
 
             datas={[
@@ -148,8 +128,8 @@ faskdjfklasj dkfljsdklfjsakl`,
                 name: '_creator.name',
                 },
                 {
-                type: 'date',
-                value: props.data.date,
+                type: 'datetime',
+                value: date,
                 max: 250,
                 required: true,
                 nullable: false,
@@ -157,16 +137,17 @@ faskdjfklasj dkfljsdklfjsakl`,
                 name: '_date',
                 },
             ]}
+            on_change={handleChangeData}
         />
 
         <OrgPageSectionRow
-            key={'fklasddjl3' + props.data.id}
+            key={'fklasddjl3' + id}
             edit_mode={editMode}
             titles={['Заметка']}
             datas={[
                 {
                 type: 'textarea',
-                value: props.data.notes,
+                value: notes,
                 max: 250,
                 required: true,
                 nullable: false,
@@ -174,6 +155,7 @@ faskdjfklasj dkfljsdklfjsakl`,
                 name: 'notes',
                 },
             ]}
+            on_change={handleChangeData}
         />
 
         
