@@ -41,12 +41,24 @@ const OrgListSiderFilter = (props) => {
     const [listRegions, setListRegions] = useState([]);
     const [listClientStatuses, setListClientStatuses] = useState([]);
 
+      const [SKIPPER, setSKIPPER] = useState(2);
+
 
     useEffect(() => {
         console.log('filterCompany', filterCompany)
     }, [filterCompany]);
 
     useEffect(() => {
+            // if (SKIPPER !== 0){
+            //     console.log('SKIPPER LEFT',SKIPPER);
+            //     setSKIPPER(SKIPPER - 1);
+            //     return;
+            // }
+            
+        if (!props.open){
+            console.log('SKIPPER LEFT',SKIPPER);
+            return;
+        }
         if (props.on_change_proc){
             props.on_change_proc(dayjs().unix());
         };
@@ -103,6 +115,7 @@ const OrgListSiderFilter = (props) => {
 
 
         useEffect(() => {
+
             console.log('props.filters_data', props.filters_data)
             if (props.filters_data){
                 if (props.filters_data.companies){

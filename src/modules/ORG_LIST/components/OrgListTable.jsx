@@ -28,6 +28,8 @@ const OrgListTable = (props) => {
     /** Выделенная строка */
     const [selectedItem, setSelectedItem] = useState(null);
 
+      const [SKIPPER, setSKIPPER] = useState(2);
+
     useEffect(() => {
         setSelectedItem(props.selected_item);
     }, [props.selected_item]);
@@ -45,6 +47,10 @@ const OrgListTable = (props) => {
 
 
     useEffect(() => {
+      if (SKIPPER !== 0){
+        setSKIPPER(SKIPPER - 1);
+        return;
+      }
       if (props.on_change_proc){
         props.on_change_proc(dayjs().unix());
       };
@@ -52,7 +58,7 @@ const OrgListTable = (props) => {
     const timer = setTimeout(() => {
         let filterBox = props.base_filters ?? {};
 
-      console.log(props.base_filters);
+      console.log('MOUNT TOP FILTERS', props.base_filters);
 
         filterBox.towns   = toNullable(filterTown);
         filterBox.id      = toNullable(filterId);
@@ -64,8 +70,9 @@ const OrgListTable = (props) => {
         console.log(filterBox);
         if (props.on_change_filters) {
             props.on_change_filters(filterBox);
+            console.log('CALLBACK');
         }
-    }, 500);
+    }, 400);
 
     // Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
     return () => clearTimeout(timer);
