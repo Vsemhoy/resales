@@ -52,7 +52,7 @@ const EngineerListTable = (props) => {
     }, [sortOrders]);
 
   return (
-    <div className={'sa-table-box'} style={{width:'80%', marginRight: "auto "}} >
+    <div className={'sa-table-box'} style={{marginRight: "auto "}} >
           <Affix offsetTop={156}>
             <div className={'sa-table-box-header'}>
                 <div className={'sa-table-box-engineers sa-table-box-row'}>

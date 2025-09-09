@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './components/style/engineerlistpage.css';
 import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
-import {Affix, Button, Dropdown, Layout, Pagination, Select, Spin, Tag, Tooltip} from 'antd';
+import {Affix, Button, Dropdown, Layout, Pagination, message, Spin, Tag, Tooltip} from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import {
@@ -15,9 +15,10 @@ import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/Curren
 import EngineerListTable from './components/EngineerListTable';
 import EngineerListSiderFilters from './components/EngineerListSiderFilters';
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
-import {BID_LIST, FILTERS, SPECS_LIST} from "./mock/mock";
+import {BID_LIST, FILTERS, ORDERS, ORDERSSTATUS, SPECS_LIST} from "./mock/mock";
 import {ANTD_PAGINATION_LOCALE} from "../../config/Localization";
 import {c} from "react/compiler-runtime";
+import OrderListSider from "./components/OrderListSider";
 
 
 const EngineerListPage = (props) => {
@@ -80,8 +81,18 @@ const EngineerListPage = (props) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewItem, setPreviewItem] = useState(null);
   const showGetItem = searchParams.get('show');
-  const [activeRole, setActiveRole] = useState(2);
+  const [activeRole, setActiveRole] = useState(1);
+  const [messageApi, contextHolder] = message.useMessage();
 
+  const [orders, setOrders] = useState([]);
+  const [ordersStatus, setOrdersStatus] = useState([]);
+
+  const success = (content) => {
+    messageApi.open({
+      type: 'success',
+      content: content,
+    });
+  };
 
   useEffect(() => {
     fetchInfo().then();
@@ -118,11 +129,11 @@ const EngineerListPage = (props) => {
       setIsOneRole(found.length === 1);
     }
     if (userdata !== null && userdata.user && userdata.user.id_departament) {
-      // if ([7,8,20].includes(userdata.user.id_departament)) {
-      //   setActiveRole(1);
-      // } else {
-      //   setActiveRole(2);
-      // }
+      if ([7,8,20].includes(userdata.user.id_departament)) {
+        setActiveRole(1);
+      } else {
+        setActiveRole(2);
+      }
     }
   }, [userdata]);
 
@@ -150,6 +161,7 @@ const EngineerListPage = (props) => {
     setIsLoading(true);
     await fetchFilterSelects();
     await fetchBids();
+    await fetchOrders();
     setIsLoading(false);
   };
 
@@ -343,13 +355,56 @@ const EngineerListPage = (props) => {
     }
   }
 
+  const fetchNewOrder = async () => {
+    if (PRODMODE){
+      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', {
+        _token: CSRF_TOKEN,
+      })
+
+      await fetchOrders()
+      success("Заявка успешно сформирована")
+    } else {
+      success("Заявка успешно сформирована")
+    }
+  }
+
+  const fetchOrders = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/show', {
+          _token: CSRF_TOKEN,
+          data: {}
+        })
+        console.log(response);
+
+        setOrders(response.data.content.orders);
+        setOrdersStatus(response.data.content.order_status);
+      } catch (e) {
+        console.log(e)
+      }
+    } else {
+      setOrders(ORDERS);
+      setOrdersStatus(ORDERSSTATUS);
+    }
+  }
+
   const addNewSpec = () => {
     setBlockNewSpec(true);
     fetchNewSpec().then(r => setBlockNewSpec(false));
   }
 
+  const addNewOrder = () => {
+    setBlockNewSpec(true);
+    fetchNewOrder().then(r => setBlockNewSpec(false));
+  }
+
+  useEffect(() => {
+    console.log(orders)
+  }, [orders]);
+
   return (
     <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
+      {contextHolder}
       <Affix>
         <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
           <div className={'sa-header-label-container'}>
@@ -398,7 +453,10 @@ const EngineerListPage = (props) => {
               </div>
               <div style={{display: 'flex', alignItems: 'end'}}>
                 {activeRole === 1 && (
-                    <Button type={'primary'} icon={<PlusOutlined/>} onClick={addNewSpec} disabled={blockNewSpec}>Добавить</Button>
+                    <Button type={'primary'} icon={<PlusOutlined/>} onClick={addNewSpec} disabled={blockNewSpec}>Новая спецификация</Button>
+                )}
+                {activeRole === 2 && (
+                    <Button type={'primary'} icon={<PlusOutlined/>} onClick={addNewOrder} disabled={blockNewSpec}>Новая заявка</Button>
                 )}
               </div>
             </div>
@@ -479,7 +537,30 @@ const EngineerListPage = (props) => {
             <div className={'sa-space-panel sa-pa-12'}></div>
           </div>
         </Content>
-
+        <Sider
+            collapsed={!isOpenedFilters}
+            collapsedWidth={0}
+            width={'350px'}
+            style={{backgroundColor: '#ffffff'}}
+        >
+          <div className={'sa-sider'}>
+            {isOpenedFilters && (
+                <OrderListSider
+                    orders={orders}
+                    activeRole={activeRole}
+                    // filter_pay_select={prepareSelectOptions(filterPaySelect)}
+                    // filter_admin_accept_select={prepareSelectOptions(filterAdminAcceptSelect)}
+                    // filter_package_select={prepareSelectOptions(filterPackageSelect)}
+                    // filter_price_select={prepareSelectOptions(filterPriceSelect)}
+                    // filter_bid_currency_select={prepareSelectOptions(filterBidCurrencySelect)}
+                    // filter_nds_select={prepareSelectOptions(filterNdsSelect)}
+                    // filter_complete_select={prepareSelectOptions(filterCompleteSelect)}
+                    // filter_companies_select={prepareSelectOptions(filterCompaniesSelect)}
+                    // on_change_filter_box={handleUpdateFilterBox}
+                />
+            )}
+          </div>
+        </Sider>
       </Layout>
     </div>
   );

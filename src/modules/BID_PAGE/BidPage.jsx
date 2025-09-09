@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Affix, Spin, Steps, Tag} from "antd";
+import {Affix, Button, Input, Select, Spin, Steps, Tag, Tooltip} from "antd";
 import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
@@ -7,11 +7,21 @@ import './components/style/bidPage.css'
 import {BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, SELECTS} from "./mock/mock";
 import MODELS from './mock/mock_models';
 import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
+import {
+    BlockOutlined,
+    CopyOutlined, DeleteOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
+    FileSearchOutlined, FileWordOutlined,
+    HistoryOutlined, InfoCircleOutlined,
+    PlusOutlined,
+    SaveOutlined
+} from "@ant-design/icons";
+import {value} from "lodash/seq";
 
 const BidPage = (props) => {
     const {bidId} = useParams();
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isSavingInfo, setIsSavingInfo] = useState(false);
 
     const [userData, setUserData] = useState(null);
 
@@ -81,6 +91,21 @@ const BidPage = (props) => {
             setUserData(props.userdata);
         }
     }, [props.userdata]);
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                if (!isSavingInfo) {
+                    fetchUpdates().then();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isSavingInfo]);
 
     const fetchInfo = async () => {
         setIsLoading(true);
@@ -243,6 +268,22 @@ const BidPage = (props) => {
         }
     };
 
+    const fetchUpdates = async () => {
+        if (PRODMODE) {
+            try {
+                setIsSavingInfo(true);
+
+                setTimeout(() => setIsSavingInfo(false), 500);
+            } catch (e) {
+                console.log(e);
+                setTimeout(() => setIsSavingInfo(false), 500);
+            }
+        } else {
+            setIsSavingInfo(true);
+            setTimeout(() => setIsSavingInfo(false), 500);
+        }
+    };
+
     return (
         <div className={'sa-bid-page-container'}>
             <Spin size="large" spinning={isLoading}>
@@ -258,12 +299,42 @@ const BidPage = (props) => {
                                                 +bidType === 2 ? 'Счет' : ''
                                             }
                                         </h1>
-                                        <div>
-                                            <CurrencyMonitorBar/>
+                                        <div className={'sa-bid-steps-currency'}>
+                                            {+bidType === 2 && (
+                                                <div className={'custom-small-steps-container'}>
+                                                    <Steps
+                                                        className="sa-custom-steps custom-small-steps"
+                                                        progressDot
+                                                        size="small"
+                                                        current={+bidPlace - 1}
+                                                        items={[
+                                                            {
+                                                                title: 'Менеджер',
+                                                                description: +bidPlace === 1 ? 'Текущий этап' : '',
+                                                            },
+                                                            {
+                                                                title: 'Администратор',
+                                                                description: +bidPlace === 2 ? 'Текущий этап' : '',
+                                                            },
+                                                            {
+                                                                title: 'Бухгалтер',
+                                                                description: +bidPlace === 3 ? 'Текущий этап' : '',
+                                                            },
+                                                            {
+                                                                title: 'Завершено',
+                                                                description: +bidPlace === 4 ? 'Текущий этап' : '',
+                                                            },
+                                                        ]}
+                                                    />
+                                                </div>
+                                            )}
+                                            <div>
+                                                <CurrencyMonitorBar/>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className={'sa-header-label-container-small'}>
-                                        { (bidIdCompany && companies && companies.find(comp => comp.id === bidIdCompany) && bidOrg && bidOrg.name) && (
+                                        {(bidIdCompany && companies && companies.find(comp => comp.id === bidIdCompany) && bidOrg && bidOrg.name) && (
                                             <div className={'sa-vertical-flex'} style={{alignItems: 'baseline'}}>
                                                 От компании
                                                 <Tag
@@ -296,265 +367,174 @@ const BidPage = (props) => {
                                                 )}
                                             </div>
                                         )}
-                                        <div className={'custom-small-steps-container'}>
-                                            <Steps
-                                                className="sa-custom-steps custom-small-steps"
-                                                progressDot
-                                                size="small"
-                                                current={+bidPlace - 1}
-                                                items={[
-                                                    {
-                                                        title: 'Менеджер',
-                                                        description: +bidPlace === 1 ? 'Текущий этап' : '',
-                                                    },
-                                                    {
-                                                        title: 'Администратор',
-                                                        description: +bidPlace === 2 ? 'Текущий этап' : '',
-                                                    },
-                                                    {
-                                                        title: 'Бухгалтер',
-                                                        description: +bidPlace === 3 ? 'Текущий этап' : '',
-                                                    },
-                                                    {
-                                                        title: 'Завершено',
-                                                        description: +bidPlace === 4 ? 'Текущий этап' : '',
-                                                    },
-                                                ]}
-                                            />
-                                        </div>
+                                        <Button type={'primary'}
+                                                style={{width: '150px'}}
+                                                icon={<SaveOutlined />}
+                                                loading={isSavingInfo}
+                                                onClick={fetchUpdates}
+                                        >{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}</Button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </Affix>
                     <div className={'sa-bid-page-info-container'}>
+                        <div className={'sa-bid-page-btns-wrapper'}>
+                            <Tooltip title={'Дублировать'} placement={'right'}>
+                                <Button className={'sa-bid-page-btn'}
+                                        color="primary"
+                                        variant="outlined"
+                                        icon={<CopyOutlined className={'sa-bid-page-btn-icon'}/>}
+                                ></Button>
+                            </Tooltip>
+                            <Tooltip title={'История'} placement={'right'}>
+                                <Button className={'sa-bid-page-btn'}
+                                        color="primary"
+                                        variant="outlined"
+                                        icon={<HistoryOutlined className={'sa-bid-page-btn-icon'}/>}
+                                ></Button>
+                            </Tooltip>
+                            <Tooltip title={'Сохранить в PDF'} placement={'right'}>
+                                <Button className={'sa-bid-page-btn'}
+                                        color="primary"
+                                        variant="outlined"
+                                        icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'}/>}
+                                ></Button>
+                            </Tooltip>
+                            <Tooltip title={'Сохранить в WORD'} placement={'right'}>
+                                <Button className={'sa-bid-page-btn'}
+                                        color="primary"
+                                        variant="outlined"
+                                        icon={<FileWordOutlined className={'sa-bid-page-btn-icon'}/>}
+                                ></Button>
+                            </Tooltip>
+                            <Tooltip title={'Файлы'} placement={'right'}>
+                                <Button className={'sa-bid-page-btn'}
+                                        color="primary"
+                                        variant="outlined"
+                                        icon={<DownloadOutlined className={'sa-bid-page-btn-icon'}/>}
+                                ></Button>
+                            </Tooltip>
+                            <Tooltip title={'Создать счет'} placement={'right'}>
+                                <Button className={'sa-bid-page-btn'}
+                                        color="primary"
+                                        variant="outlined"
+                                        icon={<DollarOutlined className={'sa-bid-page-btn-icon'}/>}
+                                ></Button>
+                            </Tooltip>
+                        </div>
                         <div className={'sa-bid-page-info-wrapper'}>
                             <div className={'sa-info-models-header'}>Основные данные</div>
                         </div>
                         <div className={'sa-bid-page-models-wrapper'}>
                             <div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
-                            <div className={'sa-models-table-header-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
+                            <div className={'sa-models-table-row sa-header-row'}>
+                                <div className={'sa-models-table-cell'}><p>№</p></div>
+                                <div className={'sa-models-table-cell'}><p className={'align-left'}>Название</p></div>
+                                <div className={'sa-models-table-cell'}><p className={'align-left'}>Кол-во</p></div>
+                                <div className={'sa-models-table-cell'}><p className={'align-left'}>Процент</p></div>
                                 <div className={'sa-models-table-cell'}><p>Цена</p></div>
                                 <div className={'sa-models-table-cell'}><p>Сумма</p></div>
                                 <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
+                                <div className={'sa-models-table-cell'} style={{boxShadow: 'none'}}></div>
                                 <div className={'sa-models-table-cell'}></div>
                             </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
+                            <div className={'sa-models-table'}>
+                                {bidModels.map((bidModel, idx) => (
+                                    <div className={'sa-models-table-row'}
+                                         key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}`}>
+                                        <div className={'sa-models-table-cell'}><p>{idx + 1}</p></div>
+                                        <div className={'sa-models-table-cell align-left'}>
+                                            <Select style={{width: '100%'}}
+                                                    bordered={false}
+                                                    value={bidModel.model_id}
+                                                    options={modelsSelect.map(model => ({value: model.id, label: model.name}))}
+                                                    showSearch
+                                            />
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            <Input style={{width: '100%'}}
+                                                   // bordered={false}
+                                                   type="number"
+                                                   value={bidModel.model_count}
+                                            />
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            <Input style={{width: '100%'}}
+                                                   // bordered={false}
+                                                   type="number"
+                                                   value={bidModel.percent}
+                                            />
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            {/*<p>{bidModel.price}</p>*/}
+                                            <p>{bidModel.model_id} {+bidCurrency === 1 ? '$' : +bidCurrency === 2 ? '₽' : ''}</p>
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            {/*<p>{bidModel.amount}</p>*/}
+                                            <p>{bidModel.model_id * 2} {+bidCurrency === 1 ? '$' : +bidCurrency === 2 ? '₽' : ''}</p>
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            <Select style={{width: '100%'}}
+                                                    bordered={false}
+                                                    value={bidModel.presence}
+                                                    options={presenceSelect}
+                                                    // options={presenceSelect.map(presence => ({value: presence.id, label: presence.name}))}
+                                                    showSearch
+                                            />
+                                        </div>
+                                        <div className={'sa-models-table-cell'} style={{padding: 0, boxShadow: 'none'}}>
+                                            <Button color="primary" variant="filled" icon={<InfoCircleOutlined />}></Button>
+                                        </div>
+                                        <div className={'sa-models-table-cell'} style={{padding: 0}}>
+                                            <Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
+                            <div className={'sa-bid-models-footer'}>
+                                <div className={'sa-footer-btns'}>
+                                    <Button style={{width: '30%'}} color="primary" variant="outlined"
+                                            icon={<PlusOutlined/>}>Добавить модель</Button>
+                                    <Button style={{width: '30%'}} color="primary" variant="filled"
+                                            icon={<FileSearchOutlined/>}>Анализ сырых данных</Button>
+                                    <Button style={{width: '30%'}} color="primary" variant="filled"
+                                            icon={<BlockOutlined/>}>Похожие</Button>
+                                </div>
+                                <div className={'sa-footer-table-amounts'}>
+                                    <div className={'sa-footer-table'}>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}><p>Высота об-ния: 25U</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Высота шкафа: 23U</p></div>
+                                        </div>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}><p>Потр. мощ.: 1.29кВт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Вых. мощность: 360Вт</p></div>
+                                        </div>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}><p>Мощность АС: 368Вт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Масса: 196.2кг</p></div>
+                                        </div>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}>
+                                                <p>Объем: 633.09 m3</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className={'sa-footer-amounts'}>
+                                        <div className={'sa-footer-amounts-col'}>
+                                            <div className={'sa-footer-amounts-cell'}><p>Сумма в долларах</p></div>
+                                            <div className={'sa-footer-amounts-cell'}><p>Сумма в евро</p></div>
+                                            <div className={'sa-footer-amounts-cell'}><p>Сумма в рублях</p></div>
+                                        </div>
+                                        <div className={'sa-footer-amounts-col'}>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>14 276,79 $</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>13 710,251 €</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>1 727 491,59 ₽</p></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-                            <div className={'sa-models-table-row'}>
-                                <div className={'sa-models-table-cell'}><p>N</p></div>
-                                <div className={'sa-models-table-cell align-left'}><p>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'}></div>
-                                <div className={'sa-models-table-cell'}></div>
-                            </div>
-
-
                         </div>
                     </div>
                 </div>

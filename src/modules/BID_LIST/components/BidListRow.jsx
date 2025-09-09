@@ -51,7 +51,7 @@ const BidListRow = (props) => {
     if (props.on_double_click){
       props.on_double_click(data);
       //navigate(`/bids/${data.id}`, { relative: 'path' });
-      window.open(`/bids/${data.id}`, '_blank');
+      window.open(`/resales/bids/${data.id}`, '_blank');
     }
   }
 

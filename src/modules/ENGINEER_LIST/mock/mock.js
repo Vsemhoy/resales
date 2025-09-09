@@ -4,7 +4,7 @@ export const SPECS_LIST = [
         "engineer": "Турелькин М. Г.",
         "specs_count": 5,
         "comment": "РП Котострофов 7%",
-        "created_at": 1740396288,
+        "created_at": 1757429497,
         'id_company': 2,
     },
     {
@@ -12,7 +12,7 @@ export const SPECS_LIST = [
         "engineer": "Турелькин М. Г.",
         "specs_count": 5,
         "comment": "РП Котострофов 7%",
-        "created_at": 1740396288,
+        "created_at": 1757429497,
         'id_company': 2,
     },
     {
@@ -20,7 +20,7 @@ export const SPECS_LIST = [
         "engineer": "Турелькин М. Г.",
         "specs_count": 5,
         "comment": "РП Котострофов 7%",
-        "created_at": 1740396288,
+        "created_at": 1757429497,
         'id_company': 2,
     },
     {
@@ -28,7 +28,7 @@ export const SPECS_LIST = [
         "engineer": "Турелькин М. Г.",
         "specs_count": 5,
         "comment": "РП Котострофов 7%",
-        "created_at": 1740396288,
+        "created_at": 1757429497,
         'id_company': 2,
     },
     {
@@ -36,7 +36,7 @@ export const SPECS_LIST = [
         "engineer": "Турелькин М. Г.",
         "specs_count": 5,
         "comment": "РП Котострофов 7%",
-        "created_at": 1740396288,
+        "created_at": 1757429497,
         'id_company': 2,
     },
     {
@@ -44,7 +44,7 @@ export const SPECS_LIST = [
         "engineer": "Турелькин М. Г.",
         "specs_count": 5,
         "comment": "РП Котострофов 7%",
-        "created_at": 1740396288,
+        "created_at": 1757429497,
         'id_company': 2,
     },
 ];
@@ -219,3 +219,55 @@ export const FILTERS = {
         }
     ],
 };
+
+export const ORDERS = [
+    {
+        id: 1,
+        manager: "Коляскина А.К.",
+        created_at: 1757429497,
+        updated_at: 1757429497,
+        status: 1,
+    },
+    {
+        id: 2,
+        manager: "Коляскина А.К.",
+        created_at: 1757429497,
+        updated_at: 1757429497,
+        status: 2,
+    },
+    {
+        id: 3,
+        manager: "Коляскина А.К.",
+        created_at: 1757429497,
+        updated_at: 1757429497,
+        status: 0,
+    },
+    {
+        id: 4,
+        manager: "Коляскина А.К.",
+        created_at: 1757429497,
+        updated_at: 1757429497,
+        status: 2,
+    },
+    {
+        id: 5,
+        manager: "Коляскина А.К.",
+        created_at: 1757429497,
+        updated_at: 1757429497,
+        status: false,
+    },
+    {
+        id: 6,
+        manager: "Коляскина А.К.",
+        created_at: 1757429497,
+        updated_at: 1757429497,
+        status: false,
+    },
+];
+
+export const ORDERSSTATUS = [
+    "\u041e\u0442\u043a\u043b\u043e\u043d\u0435\u043d",
+    "\u041d\u043e\u0432\u044b\u0439",
+    "\u041f\u0440\u0438\u043d\u044f\u0442 \u0432 \u0440\u0430\u0431\u043e\u0442\u0443",
+    "\u0421\u0444\u043e\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0430 \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f"
+]
