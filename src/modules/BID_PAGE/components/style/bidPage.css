@@ -199,6 +199,7 @@
 .sa-models-table {
     overflow-y: scroll;
     scrollbar-width: thin;
+    scrollbar-color: #2178fa #fff; /* ползунок дорожка */
 }
 .sa-models-table-row {
     width: 100%;
@@ -207,10 +208,14 @@
     grid-auto-rows: 40px;
     border-bottom: 1px solid #99bad3 /*var(--column-divider-color)*/;
 }
+.sa-models-table-row:last-child {
+    border-bottom: none;
+}
 .sa-bid-models-footer {
     padding: 10px;
+    border-top: 1px solid #99bad3;
 }
-.sa-footer-btns {
+.sa-footer-btns, .sa-footer-table-amounts {
     display: flex;
     justify-content: space-between;
     align-items: center;
