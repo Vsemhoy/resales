@@ -176,9 +176,9 @@ const NotesTabPage = (props) => {
               "id": 'new_' + dayjs().unix() + dayjs().millisecond() + temporaryUnits.length,
               "id_orgs": props.item_id,
               "id8staff_list": userdata.user.id,
-              "theme": "Обзвон 2016",
+              "theme": "",
               "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
-              "notes": "До компании дозвониться не удалось. В ФНС данных о ликвидации нет. Сайт работает. Инф. письмо выслано на zszniiep@zniiep.com для Тихомирова Александра Васильевича [Генеральный Директор].",
+              "notes": "",
               "deleted": 0,
               "creator": {
                   "id": userdata.user.id,
