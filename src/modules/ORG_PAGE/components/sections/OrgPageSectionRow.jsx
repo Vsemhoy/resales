@@ -141,7 +141,7 @@ const OrgPageSectionRow = (props) => {
         style={{ whiteSpace: 'pre-line', display: 'block' }}
         ellipsis={false}
       >
-        {String(value ?? (field.nullable ? '(не задано)' : ''))}____________________
+        {String(value ?? (field.nullable ? '(не задано)' : ''))}
       </Typography.Paragraph>;
       }
       return <div className="sk-omt-content-formatted">{String(value ?? (field.nullable ? '(не задано)' : ''))}</div>;

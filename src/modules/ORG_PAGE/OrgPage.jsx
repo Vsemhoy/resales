@@ -149,9 +149,9 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
       if (PRODMODE){
         get_main_data_action(item_id);
-        get_notes_data_action(item_id);
-        get_org_calls_action(item_id);
-        get_projects_data_action(item_id);
+        // get_notes_data_action(item_id);
+        // get_org_calls_action(item_id);
+        // get_projects_data_action(item_id);
       } else {
         setBaseMainData(ORGLIST_MODAL_MOCK_MAINTAB);
         setBaseNotesData(MODAL_NOTES_LIST);
@@ -403,15 +403,15 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
 
   useEffect(() => {
-    get_notes_data_action();
+    get_notes_data_action(item_id);
   }, [pageNotes]);
 
     useEffect(() => {
-    get_org_calls_action();
+    get_org_calls_action(item_id);
   }, [pageCalls]);
 
     useEffect(() => {
-    get_projects_data_action();
+    get_projects_data_action(item_id);
   }, [pageProject]);
 
 
@@ -562,6 +562,8 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 call_to_save={callToSaveAction}
                 base_data={baseMainData}
                 on_save={handleDataChangeApprove}
+
+                userdata={userdata}
             />
 
             <MeetingsTabPage
@@ -574,6 +576,8 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 active_page={pageCalls}
                 on_change_page={(p)=> {setPageCalls(p)}}
                 current_page={pageCalls}
+
+                userdata={userdata}
             />
 
             <ProjectsTabPage
@@ -586,6 +590,8 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 active_page={pageProject}
                 on_change_page={(p)=> {setPageProject(p)}}
                 current_page={pageProject}
+
+                userdata={userdata}
                 />
 
             <NotesTabPage
@@ -598,6 +604,8 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 active_page={pageNotes}
                 on_change_page={(p)=> {setPageNotes(p)}}
                 current_page={pageNotes}
+
+                userdata={userdata}
                 />
 
             {activeTab === 'h' && (
