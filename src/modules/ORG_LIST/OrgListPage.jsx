@@ -94,7 +94,7 @@ const OrgListPage = (props) => {
 
     if (PRODMODE) {
       // TODO: логика для PRODMODE
-      get_org_filters();
+      // get_org_filters();
       // get_orglist();
 
     } else {
