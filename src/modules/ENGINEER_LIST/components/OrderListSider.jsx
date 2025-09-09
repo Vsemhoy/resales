@@ -2,6 +2,7 @@ import { PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import {Affix, Button, Input, List, Select} from 'antd';
 import React, { useEffect, useState } from 'react';
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
+import dayjs from "dayjs";
 
 const useWindowSize = () => {
     const [windowSize, setWindowSize] = useState({
@@ -30,6 +31,7 @@ const OrderListSider = (props) => {
 
     useEffect(() => {
         setOrdersP(props.orders);
+        console.log(props.orders);
     }, [props.orders]);
 
     const { height: windowHeight } = useWindowSize();
@@ -71,11 +73,13 @@ const OrderListSider = (props) => {
                                         <div className="dates-container">
                                             <div className="date-row">
                                                 <span className="date-label">Создан:</span>
-                                                <span>{order.created_at || '12.04.2023 14:30'}</span>
+                                                <span>
+                                                  {order.created_at ? dayjs.unix(order.created_at).format('DD.MM.YYYY') : null}
+                                                </span>
                                             </div>
                                             <div className="date-row">
-                                                <span className="date-label">Обновлен:</span>
-                                                <span>{order.updated_at || '13.04.2023 09:15'}</span>
+                                            <span className="date-label">Обновлен:</span>
+                                                <span>{order.updated_at ? dayjs.unix(order.updated_at).format('DD.MM.YYYY') : null}</span>
                                             </div>
                                         </div>
                                     </div>
