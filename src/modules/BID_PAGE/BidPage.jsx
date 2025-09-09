@@ -90,6 +90,21 @@ const BidPage = (props) => {
             setUserData(props.userdata);
         }
     }, [props.userdata]);
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                if (!isSavingInfo) {
+                    fetchUpdates().then();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isSavingInfo]);
 
     const fetchInfo = async () => {
         setIsLoading(true);
@@ -252,6 +267,22 @@ const BidPage = (props) => {
         }
     };
 
+    const fetchUpdates = async () => {
+        if (PRODMODE) {
+            try {
+                setIsSavingInfo(true);
+
+                setTimeout(() => setIsSavingInfo(false), 500);
+            } catch (e) {
+                console.log(e);
+                setTimeout(() => setIsSavingInfo(false), 500);
+            }
+        } else {
+            setIsSavingInfo(true);
+            setTimeout(() => setIsSavingInfo(false), 500);
+        }
+    };
+
     return (
         <div className={'sa-bid-page-container'}>
             <Spin size="large" spinning={isLoading}>
@@ -337,6 +368,7 @@ const BidPage = (props) => {
                                                 style={{width: '150px'}}
                                                 icon={<SaveOutlined />}
                                                 loading={isSavingInfo}
+                                                onClick={fetchUpdates}
                                         >{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}</Button>
                                     </div>
                                 </div>
@@ -428,6 +460,10 @@ const BidPage = (props) => {
                                             icon={<FileSearchOutlined/>}>Анализ сырых данных</Button>
                                     <Button style={{width: '30%'}} color="primary" variant="filled"
                                             icon={<BlockOutlined/>}>Похожие</Button>
+                                </div>
+                                <div className={'sa-footer-table-amounts'}>
+                                    <div className={'sa-footer-table'}></div>
+                                    <div className={'sa-footer-amounts'}></div>
                                 </div>
                             </div>
                         </div>
