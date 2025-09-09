@@ -368,7 +368,7 @@ const EngineerListPage = (props) => {
   const fetchOrders = async () => {
     if (PRODMODE) {
       try {
-        let response = PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders', {
+        let response = PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/show', {
           _token: CSRF_TOKEN,
           data: {}
         })
