@@ -603,7 +603,7 @@ export const CUR_CURRENCY = [
 ];
 export const BID = {
     "id": 120837,
-    "type": 1,
+    "type": 2,
     "place": 1,
     "id_company": 2,
     "project": null,
@@ -669,6 +669,12 @@ export const BID = {
             "user_id": 46,
             "username": "Кошелев Александр Станиславович"
         }
+    },
+    "openmode": {
+        "status": 2,
+        "description": "Полные права на редактирование",
+        "tagtext": "Редактирование",
+        "color": "green"
     }
 };
 export const BID_MODELS = [
