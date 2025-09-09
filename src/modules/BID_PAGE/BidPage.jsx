@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Affix, Button, Spin, Steps, Tag, Tooltip} from "antd";
+import {Affix, Button, Input, Select, Spin, Steps, Tag, Tooltip} from "antd";
 import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
@@ -9,12 +9,13 @@ import MODELS from './mock/mock_models';
 import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
 import {
     BlockOutlined,
-    CopyOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
+    CopyOutlined, DeleteOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
     FileSearchOutlined, FileWordOutlined,
-    HistoryOutlined,
+    HistoryOutlined, InfoCircleOutlined,
     PlusOutlined,
     SaveOutlined
 } from "@ant-design/icons";
+import {value} from "lodash/seq";
 
 const BidPage = (props) => {
     const {bidId} = useParams();
@@ -327,7 +328,9 @@ const BidPage = (props) => {
                                                     />
                                                 </div>
                                             )}
-                                            <CurrencyMonitorBar/>
+                                            <div>
+                                                <CurrencyMonitorBar/>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className={'sa-header-label-container-small'}>
@@ -428,8 +431,8 @@ const BidPage = (props) => {
                             <div className={'sa-models-table-row sa-header-row'}>
                                 <div className={'sa-models-table-cell'}><p>№</p></div>
                                 <div className={'sa-models-table-cell'}><p className={'align-left'}>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p>Процент</p></div>
+                                <div className={'sa-models-table-cell'}><p className={'align-left'}>Кол-во</p></div>
+                                <div className={'sa-models-table-cell'}><p className={'align-left'}>Процент</p></div>
                                 <div className={'sa-models-table-cell'}><p>Цена</p></div>
                                 <div className={'sa-models-table-cell'}><p>Сумма</p></div>
                                 <div className={'sa-models-table-cell'}><p>Наличие</p></div>
@@ -441,14 +444,51 @@ const BidPage = (props) => {
                                     <div className={'sa-models-table-row'}
                                          key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}`}>
                                         <div className={'sa-models-table-cell'}><p>{idx + 1}</p></div>
-                                        <div className={'sa-models-table-cell align-left'}><p>{bidModel.name}</p></div>
-                                        <div className={'sa-models-table-cell'}><p>{bidModel.model_count}</p></div>
-                                        <div className={'sa-models-table-cell'}><p>{bidModel.percent}</p></div>
-                                        <div className={'sa-models-table-cell'}><p>{bidModel.price}</p></div>
-                                        <div className={'sa-models-table-cell'}><p>{bidModel.amount}</p></div>
-                                        <div className={'sa-models-table-cell'}><p>{bidModel.presence}</p></div>
-                                        <div className={'sa-models-table-cell'} style={{boxShadow: 'none'}}></div>
-                                        <div className={'sa-models-table-cell'}></div>
+                                        <div className={'sa-models-table-cell align-left'}>
+                                            <Select style={{width: '100%'}}
+                                                    bordered={false}
+                                                    value={bidModel.model_id}
+                                                    options={modelsSelect.map(model => ({value: model.id, label: model.name}))}
+                                                    showSearch
+                                            />
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            <Input style={{width: '100%'}}
+                                                   // bordered={false}
+                                                   type="number"
+                                                   value={bidModel.model_count}
+                                            />
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            <Input style={{width: '100%'}}
+                                                   // bordered={false}
+                                                   type="number"
+                                                   value={bidModel.percent}
+                                            />
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            {/*<p>{bidModel.price}</p>*/}
+                                            <p>{bidModel.model_id} {+bidCurrency === 1 ? '$' : +bidCurrency === 2 ? '₽' : ''}</p>
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            {/*<p>{bidModel.amount}</p>*/}
+                                            <p>{bidModel.model_id * 2} {+bidCurrency === 1 ? '$' : +bidCurrency === 2 ? '₽' : ''}</p>
+                                        </div>
+                                        <div className={'sa-models-table-cell'}>
+                                            <Select style={{width: '100%'}}
+                                                    bordered={false}
+                                                    value={bidModel.presence}
+                                                    options={presenceSelect}
+                                                    // options={presenceSelect.map(presence => ({value: presence.id, label: presence.name}))}
+                                                    showSearch
+                                            />
+                                        </div>
+                                        <div className={'sa-models-table-cell'} style={{padding: 0, boxShadow: 'none'}}>
+                                            <Button color="primary" variant="filled" icon={<InfoCircleOutlined />}></Button>
+                                        </div>
+                                        <div className={'sa-models-table-cell'} style={{padding: 0}}>
+                                            <Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
