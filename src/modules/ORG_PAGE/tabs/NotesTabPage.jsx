@@ -62,8 +62,8 @@ const NotesTabPage = (props) => {
             setEditMode(props.edit_mode);
             setTemporaryUnits([]);
             setBaseData([]);
-            // setBaseData(originalData);
             console.log(originalData);
+            setBaseData(originalData);
           } else {
             // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
             if (props.on_break_discard){
