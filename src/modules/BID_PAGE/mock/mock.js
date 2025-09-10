@@ -837,3 +837,17 @@ export const BID_MODELS = [
         "currency": 0
     }
 ];
+export const MODELS_DATA = {
+    "unit": '21',
+    "power_consumption": '1498.4',
+    "rated_power_speaker": '561',
+    "max_power": '1200',
+    "mass": '359.09999999999997',
+    "size": '1619.4189',
+    "box_size": '0'
+};
+export const AMOUNT = {
+    "usd": '546254.5454545454',
+    "eur": '524577.7777777778',
+    "rub": '66096800'
+};

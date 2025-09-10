@@ -4,7 +4,7 @@ import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import './components/style/bidPage.css'
-import {BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, SELECTS} from "./mock/mock";
+import {AMOUNT, BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, MODELS_DATA, SELECTS} from "./mock/mock";
 import MODELS from './mock/mock_models';
 import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
 import {
@@ -164,11 +164,8 @@ const BidPage = (props) => {
 
                     const models = response.data.bid_models;
                     setBidModels(models);
-                    // Надо будет так
-                    //const models = response.data.models;
-                    //setBidModels(models.bid_models);
-                    //setAmounts(models.amounts);
-                    //setEngineerParameters(models.engineer_parameters);
+                    setEngineerParameters(bid.models_data);
+                    setAmounts(response.data.amount);
                 }
             } catch (e) {
                 console.log(e);
@@ -197,6 +194,8 @@ const BidPage = (props) => {
             setBidFilesCount(BID.files_count);
 
             setBidModels(BID_MODELS);
+            setEngineerParameters(MODELS_DATA);
+            setAmounts(AMOUNT);
         }
     };
     const fetchSelects = async () => {
@@ -334,6 +333,20 @@ const BidPage = (props) => {
             bidCommentAddEquipment
         ].filter(comment => comment).length;
     };
+    const prepareEngineerParameter = (engineerParameter) => {
+        const rounded = (+engineerParameter).toFixed(2);
+        return rounded % 1 === 0 ? Math.round(rounded) : rounded;
+    };
+    const prepareAmount = (amount) => {
+        const rounded = (+amount / 100).toFixed(2);
+        return formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
+    };
+    const formatNumberWithSpaces = (number) => {
+        return new Intl.NumberFormat('ru-RU', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        }).format(number);
+    }
 
     return (
         <div className={'sa-bid-page-container'}>
@@ -710,7 +723,7 @@ const BidPage = (props) => {
                                 />*/}
                                 <Collapse onChange={(val) => console.log(val)}
                                           size={'small'}
-                                          defaultActiveKey={[1,4]}
+                                          defaultActiveKey={[2]}
                                           items={[
                                               {
                                                   key: 1,
@@ -976,18 +989,17 @@ const BidPage = (props) => {
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             {/*<p>{bidModel.price}</p>*/}
-                                            <p>{bidModel.model_id} {+bidCurrency === 1 ? '$' : +bidCurrency === 2 ? '₽' : ''}</p>
+                                            <p>{bidModel.model_id} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             {/*<p>{bidModel.amount}</p>*/}
-                                            <p>{bidModel.model_id * 2} {+bidCurrency === 1 ? '$' : +bidCurrency === 2 ? '₽' : ''}</p>
+                                            <p>{bidModel.model_id * 2} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Select style={{width: '100%'}}
                                                     bordered={false}
                                                     value={bidModel.presence}
                                                     options={prepareSelect(presenceSelect)}
-                                                    // options={presenceSelect.map(presence => ({value: presence.id, label: presence.name}))}
                                                     showSearch
                                                     optionFilterProp="label"
                                                     filterOption={(input, option) =>
@@ -1016,20 +1028,20 @@ const BidPage = (props) => {
                                 <div className={'sa-footer-table-amounts'}>
                                     <div className={'sa-footer-table'}>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Высота об-ния: 25U</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Высота шкафа: 23U</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Высота об-ния: <span>{prepareEngineerParameter(engineerParameters.unit)}</span> U</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Высота шкафа: <span>{prepareEngineerParameter(engineerParameters.box_size)}</span> U</p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Потр. мощ.: 1.29кВт</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Вых. мощность: 360Вт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Потр. мощ.: <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span> кВт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Вых. мощность: <span>{prepareEngineerParameter(engineerParameters.max_power)}</span> Вт</p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Мощность АС: 368Вт</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Масса: 196.2кг</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Мощность АС: <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span> Вт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Масса: <span>{prepareEngineerParameter(engineerParameters.mass)}</span> кг</p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
                                             <div className={'sa-footer-table-cell'}>
-                                                <p>Объем: 633.09 m3</p>
+                                                <p>Объем: <span>{prepareEngineerParameter(engineerParameters.size)}</span> m3</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1040,9 +1052,9 @@ const BidPage = (props) => {
                                             <div className={'sa-footer-amounts-cell'}><p>Сумма в рублях</p></div>
                                         </div>
                                         <div className={'sa-footer-amounts-col'}>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>14 276,79 $</p></div>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>13 710,251 €</p></div>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>1 727 491,59 ₽</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.usd)} $</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.eur)} €</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.rub)} ₽</p></div>
                                         </div>
                                     </div>
                                 </div>
