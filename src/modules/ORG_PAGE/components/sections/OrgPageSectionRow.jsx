@@ -177,6 +177,17 @@ const OrgPageSectionRow = (props) => {
       },
       disabled: false,
       style: { width: '100%' },
+      onBlur : (e) => {
+        console.log("BLUR");
+
+        if (props.on_blur){
+          const val = e?.target?.value ?? e;
+          console.log(val);
+          let obj = {};
+          obj[field.name] = val;
+          props.on_blur(obj);
+        }
+      }
     };
 
     switch (field.type) {
@@ -204,6 +215,7 @@ const OrgPageSectionRow = (props) => {
             max={field.max}
             precision={field.type.includes('float') ? 2 : 0}
             style={{ width: '100%' }}
+
           />
         );
 

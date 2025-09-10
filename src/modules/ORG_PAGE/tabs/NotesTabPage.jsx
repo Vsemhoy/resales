@@ -24,6 +24,7 @@ const NotesTabPage = (props) => {
     // Структурированные в коллапсы юниты
     const [structureItems, setStructureItems] = useState([]);
     const [originalData, setOriginalData] = useState([]);
+    const [baseData, setBaseData] = useState([]);
 
     // Новые юниты
     const [temporaryUnits, setTemporaryUnits] = useState([]);
@@ -62,7 +63,10 @@ const NotesTabPage = (props) => {
             setTemporaryUnits([]);
             setStructureItems(originalData);
           } else {
-            alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
+            // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
+            if (props.on_break_discard){
+              props.on_break_discard();
+            }
           }
         } else {
           setEditMode(props.edit_mode);
@@ -81,7 +85,7 @@ const NotesTabPage = (props) => {
       if (props.base_data?.notes !== null && props.base_data?.notes?.length > 0){
         let secids = [];
         // setDataList(baseOrgData.projects);
-        let strdata = props.base_data?.notes.map((item)=>{
+        let strdata = baseData.map((item)=>{
             secids.push('norprow_' + item.id);
             return {
                 key: 'norprow_' + item.id,
@@ -114,22 +118,25 @@ const NotesTabPage = (props) => {
         setStructureItems([]);
       }
       setLoading(false);
-    }, [props.base_data, editMode]);
+    }, [baseData, editMode]);
 
 
-
+    useEffect(() => {
+      setBaseData(props.base_data?.notes ? props.base_data?.notes : []);
+    }, [props.base_data]);
 
 
 
     useEffect(() => {
       let secids = [];
       setNewStructureItems(temporaryUnits.map((item)=>{
+        console.log(item);
         let nkey = 'new_norprow_' + item.id;
         secids.push(nkey);
             return {
                 key: nkey,
                 label: <div className='sa-flex-space'>
-                  <div>{item.theme}
+                  <div>{item.theme ? item.theme : "..."}
                     <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span>  <span className={'sa-text-phantom'}>({item.id})</span></div>
                     <Button size='small' 
                       onClick={(ev)=>{
@@ -144,6 +151,7 @@ const NotesTabPage = (props) => {
                   data={item}
                   on_delete={handleDeleteBlankUnit}
                   on_change={handleUpdateBlankUnit}
+                  on_blur={handleUpdateBlankUnit}
                   edit_mode={editMode}
                   // selects_data={props.selects_data}
                 />
@@ -152,7 +160,9 @@ const NotesTabPage = (props) => {
         );
         // secids.reverse();
         console.log(secids);
-        setOpenedNewSections(secids);
+        if (JSON.stringify(openedNewSections) !== JSON.stringify(secids)){
+          setOpenedNewSections(secids);
+        }
         setNewLoading(false);
     }, [temporaryUnits, editMode]);
 
@@ -215,18 +225,43 @@ const NotesTabPage = (props) => {
 
     const handleUpdateBlankUnit = (id, data) => {
       console.log('id, data', id, data, temporaryUnits);
-      let udata = temporaryUnits.filter((item) => item.id !== id);
-      console.log('udata', udata)
-      udata.push(data);
-      setTemporaryUnits(udata);
+      setTemporaryUnits(prevUnits => {
+        const exists = prevUnits.some(item => item.id === id);
+        
+        if (!exists) {
+          // Добавляем новый элемент
+          return [...prevUnits, data];
+        } else {
+          // Обновляем существующий
+          return prevUnits.map(item => 
+            item.id === id ? data : item
+          );
+        }
+      });
     }
     
 
     const handleUpdateRealUnit = (id, data) => {
-      let udata = originalData.filter((item) => item.id !== id);
-      udata.push(data);
-      setOriginalData(udata);
+      // let udata = originalData.filter((item) => item.id !== id);
+      // udata.push(data);
+      setBaseData(
+        prevUnits => {
+          const exists = prevUnits.some(item => item.id === id);
+          if (!exists) {
+            return[...prevUnits, data];
+          } else {
+            return prevUnits.map(item => 
+              item.id === id ? data : item
+            );
+          }
+        }
+      );
     }
+
+
+    useEffect(() => {
+      console.log(structureItems);
+    }, [structureItems]);
 
 
     // если в call_to_save не null, а timestamp, отправляем данные на обновление
