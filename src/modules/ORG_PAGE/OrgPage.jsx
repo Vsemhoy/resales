@@ -564,6 +564,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 on_save={handleDataChangeApprove}
 
                 userdata={userdata}
+                on_break_discard={()=> {setEditMode(true)}}
             />
 
             <MeetingsTabPage
@@ -578,6 +579,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 current_page={pageCalls}
 
                 userdata={userdata}
+                on_break_discard={()=> {setEditMode(true)}}
             />
 
             <ProjectsTabPage
@@ -592,6 +594,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 current_page={pageProject}
 
                 userdata={userdata}
+                on_break_discard={()=> {setEditMode(true)}}
                 />
 
             <NotesTabPage
@@ -606,6 +609,8 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 current_page={pageNotes}
 
                 userdata={userdata}
+
+                on_break_discard={()=> {setEditMode(true)}}
                 />
 
             {activeTab === 'h' && (

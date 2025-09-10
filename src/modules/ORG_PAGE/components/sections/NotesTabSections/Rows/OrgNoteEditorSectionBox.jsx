@@ -26,6 +26,8 @@ const OrgNoteEditorSectionBox = (props) => {
 
     const [objectResult, setObjectResult] = useState({});
 
+    const [SKIPPER, setSKIPPER] = useState(1);
+
     // DATA    // DATA      // DATA      // DATA  
 
     useEffect(() => {
@@ -65,15 +67,20 @@ const OrgNoteEditorSectionBox = (props) => {
 
     const handleChangeData = (changed_data) => {
         
-        if (changed_data.theme){
+        if (changed_data.theme !== undefined){
             setTheme(changed_data.theme);
-        } else if (changed_data.notes){
+        } else if (changed_data.notes !== undefined){
             setNotes(changed_data.notes);
         };
     }
 
+
     useEffect(() => {
-        const timer = setTimeout(() => {
+      const timer = setTimeout(() => {
+          if (objectResult.id == null){
+            // Объект ещё не смонтировался. воизбежание гонок
+              return;
+          };
             let result = objectResult;
             result.theme = theme;
             result.notes = notes;
@@ -83,7 +90,7 @@ const OrgNoteEditorSectionBox = (props) => {
             if (props.on_change){
                 props.on_change(id, result);
             }
-      }, 250);
+      }, 120);
       return () => clearTimeout(timer);
     }, [theme, notes]);
 
@@ -110,7 +117,8 @@ const OrgNoteEditorSectionBox = (props) => {
                 name: 'theme',
                 },
             ]}
-            on_change={handleChangeData}
+            // on_change={handleChangeData}
+            on_blur={handleChangeData}
         />
 
         <OrgPageSectionRow
@@ -137,7 +145,8 @@ const OrgNoteEditorSectionBox = (props) => {
                 name: '_date',
                 },
             ]}
-            on_change={handleChangeData}
+            // on_change={handleChangeData}
+            on_blur={handleChangeData}
         />
 
         <OrgPageSectionRow
@@ -155,7 +164,8 @@ const OrgNoteEditorSectionBox = (props) => {
                 name: 'notes',
                 },
             ]}
-            on_change={handleChangeData}
+            // on_change={handleChangeData}
+            on_blur={handleChangeData}
         />
 
         

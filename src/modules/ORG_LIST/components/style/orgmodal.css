@@ -129,7 +129,7 @@ background-color: #dae9fb;
 
 .sa-orgtab-container {
     background-color: #e7ebef;
-    min-height: 900px;
+    min-height: 600px;
 }
 
 
@@ -166,6 +166,7 @@ background-color: #dae9fb;
     border-top: 1px solid white;
     border-bottom: 1px solid rgb(175, 175, 175);
     min-height: 100px;
+    display: none;
 }
 .sa-org-modal-body {
     display: grid;
