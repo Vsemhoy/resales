@@ -723,7 +723,7 @@ const BidPage = (props) => {
                                 />*/}
                                 <Collapse onChange={(val) => console.log(val)}
                                           size={'small'}
-                                          defaultActiveKey={[2]}
+                                          defaultActiveKey={[1,4]}
                                           items={[
                                               {
                                                   key: 1,
