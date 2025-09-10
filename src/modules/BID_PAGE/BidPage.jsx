@@ -58,8 +58,20 @@ const BidPage = (props) => {
     const [bidProject, setBidProject] = useState(null); // проект из карточки организации
     /* МОДЕЛИ */
     const [bidModels, setBidModels] = useState([]);
-    const [amounts, setAmounts] = useState({});
-    const [engineerParameters, setEngineerParameters] = useState({});
+    const [amounts, setAmounts] = useState({
+        usd: 0,
+        eur: 0,
+        rub: 0
+    });
+    const [engineerParameters, setEngineerParameters] = useState({
+        unit: 0,
+        box_size: 0,
+        power_consumption: 0,
+        max_power: 0,
+        rated_power_speaker: 0,
+        mass: 0,
+        size: 0
+    });
     /* СЕЛЕКТ ПО МОДЕЛЯМ */
     const [modelsSelect, setModelsSelect] = useState([]);
     const [garbage, setGarbage] = useState([]);
