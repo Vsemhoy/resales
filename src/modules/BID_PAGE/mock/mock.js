@@ -10,455 +10,374 @@ export const SELECTS = {
     ],
     "complete_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "В работе"
+            "id": 1,
+            "name": "В работе"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Реализовано"
+            "id": 2,
+            "name": "Реализовано"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "Не  реализовано"
+            "id": 3,
+            "name": "Не  реализовано"
         }
     ],
     "pay_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "Нет",
+            "id": 0,
+            "name": "Нет",
             "color": null
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "Есть",
+            "id": 1,
+            "name": "Есть",
             "color": null
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Оплачен",
+            "id": 2,
+            "name": "Оплачен",
             "color": null
         }
     ],
     "protection_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "нет",
+            "id": 0,
+            "name": "нет",
             "icon": null
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "ЗП",
+            "id": 1,
+            "name": "ЗП",
             "icon": null
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "РП",
+            "id": 2,
+            "name": "РП",
             "icon": null
         }
     ],
     "conveyance_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "Самовывоз"
+            "id": 1,
+            "name": "Самовывоз"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "На склад в Москву"
+            "id": 2,
+            "name": "На склад в Москву"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "Деловые линии"
+            "id": 3,
+            "name": "Деловые линии"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "Желдорэкспедиция"
+            "id": 4,
+            "name": "Желдорэкспедиция"
         },
         {
-            "key": 5,
-            "value": 5,
-            "label": "Автотрейдинг"
+            "id": 5,
+            "name": "Автотрейдинг"
         },
         {
-            "key": 6,
-            "value": 6,
-            "label": "Курьер"
+            "id": 6,
+            "name": "Курьер"
         },
         {
-            "key": 7,
-            "value": 7,
-            "label": "ПЭК"
+            "id": 7,
+            "name": "ПЭК"
         },
         {
-            "key": 8,
-            "value": 8,
-            "label": "Байкал сервис"
+            "id": 8,
+            "name": "Байкал сервис"
         },
         {
-            "key": 9,
-            "value": 9,
-            "label": "Тайсу-Экспресс"
+            "id": 9,
+            "name": "Тайсу-Экспресс"
         },
         {
-            "key": 10,
-            "value": 10,
-            "label": "ТрансЭксРегион"
+            "id": 10,
+            "name": "ТрансЭксРегион"
         },
         {
-            "key": 11,
-            "value": 11,
-            "label": "Удобная транспортная служба (УралТрансСервис)"
+            "id": 11,
+            "name": "Удобная транспортная служба (УралТрансСервис)"
         },
         {
-            "key": 12,
-            "value": 12,
-            "label": "Трансавиатур"
+            "id": 12,
+            "name": "Трансавиатур"
         },
         {
-            "key": 13,
-            "value": 13,
-            "label": "Уточнить транспортную компанию"
+            "id": 13,
+            "name": "Уточнить транспортную компанию"
         },
         {
-            "key": 14,
-            "value": 14,
-            "label": "ЦАП"
+            "id": 14,
+            "name": "ЦАП"
         },
         {
-            "key": 15,
-            "value": 15,
-            "label": "Мега Транс Сервис"
+            "id": 15,
+            "name": "Мега Транс Сервис"
         },
         {
-            "key": 16,
-            "value": 16,
-            "label": "КИТ (www.tk-kit.ru)"
+            "id": 16,
+            "name": "КИТ (www.tk-kit.ru)"
         },
         {
-            "key": 17,
-            "value": 17,
-            "label": "Экспресс-Авто"
+            "id": 17,
+            "name": "Экспресс-Авто"
         },
         {
-            "key": 18,
-            "value": 18,
-            "label": "Атента"
+            "id": 18,
+            "name": "Атента"
         },
         {
-            "key": 19,
-            "value": 19,
-            "label": "Энергия"
+            "id": 19,
+            "name": "Энергия"
         },
         {
-            "key": 20,
-            "value": 20,
-            "label": "Мейджик Транс"
+            "id": 20,
+            "name": "Мейджик Транс"
         },
         {
-            "key": 21,
-            "value": 21,
-            "label": "ТК Карго"
+            "id": 21,
+            "name": "ТК Карго"
         },
         {
-            "key": 22,
-            "value": 22,
-            "label": "Ратэк"
+            "id": 22,
+            "name": "Ратэк"
         },
         {
-            "key": 23,
-            "value": 23,
-            "label": "ТК ТАТ"
+            "id": 23,
+            "name": "ТК ТАТ"
         },
         {
-            "key": 24,
-            "value": 24,
-            "label": "GROUPST"
+            "id": 24,
+            "name": "GROUPST"
         },
         {
-            "key": 25,
-            "value": 25,
-            "label": "отгрузка по команде"
+            "id": 25,
+            "name": "отгрузка по команде"
         },
         {
-            "key": 26,
-            "value": 26,
-            "label": "ТК Транс-Вектор"
+            "id": 26,
+            "name": "ТК Транс-Вектор"
         },
         {
-            "key": 27,
-            "value": 27,
-            "label": "Главдоставка"
+            "id": 27,
+            "name": "Главдоставка"
         },
         {
-            "key": 28,
-            "value": 28,
-            "label": "Караван Транс"
+            "id": 28,
+            "name": "Караван Транс"
         },
         {
-            "key": 29,
-            "value": 29,
-            "label": "СДЭК"
+            "id": 29,
+            "name": "СДЭК"
         },
         {
-            "key": 30,
-            "value": 30,
-            "label": "DPD"
+            "id": 30,
+            "name": "DPD"
         }
     ],
     "admin_accept_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "рассматривается"
+            "id": 1,
+            "name": "Рассматривается"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "согласовано"
+            "id": 2,
+            "name": "Согласовано"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "не согласовано"
+            "id": 3,
+            "name": "Не согласовано"
         }
     ],
     "package_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "нет"
+            "id": 0,
+            "name": "Нет"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "стандартная упаковка"
+            "id": 1,
+            "name": "Стандартная упаковка"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "жесткая упаковка"
+            "id": 2,
+            "name": "Жесткая упаковка"
         }
     ],
     "price_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "розница"
+            "id": 1,
+            "name": "розница"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "10000"
+            "id": 2,
+            "name": "10000"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "20000"
+            "id": 3,
+            "name": "20000"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "30000"
+            "id": 4,
+            "name": "30000"
         }
     ],
     "type_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "КП",
-            "shortname": "КП"
+            "id": 1,
+            "name": "КП"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Счет",
-            "shortname": "СЧ"
+            "id": 2,
+            "name": "Cчет"
         }
     ],
     "bid_currency_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "Валюта"
+            "id": 0,
+            "name": "Валюта",
+            "shortname": "$"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "Рубли"
+            "id": 1,
+            "name": "Рубли",
+            "shortname": "Руб."
         }
     ],
     "nds_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "нет"
+            "id": 0,
+            "name": "Нет"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "да"
+            "id": 1,
+            "name": "Да"
         }
     ],
     "action_enum": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "все",
+            "id": 1,
+            "name": "Все",
             "icon": "faBorderAll"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "просмотр",
+            "id": 2,
+            "name": "Просмотр",
             "icon": "faEye"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "создание",
+            "id": 3,
+            "name": "Создание",
             "icon": "faSquarePlus"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "изменение",
+            "id": 4,
+            "name": "Изменение",
             "icon": "faPenToSquare"
         },
         {
-            "key": 5,
-            "value": 5,
-            "label": "удаление",
+            "id": 5,
+            "name": "Удаление",
             "icon": "faSquareMinus"
         },
         {
-            "key": 6,
-            "value": 6,
-            "label": "дублирование",
+            "id": 6,
+            "name": "Дублирование",
             "icon": "faClone"
         }
     ],
     "stage_select": [
         {
-            "key": 1,
-            "value": 1,
-            "label": "Менеджер",
+            "id": 1,
+            "name": "Менеджер",
             "wherename": "у менеджера",
             "color": "blue"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Администратор",
+            "id": 2,
+            "name": "Администратор",
             "wherename": "у администратора",
             "color": "volcano"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "Бухгалтер",
+            "id": 3,
+            "name": "Бухгалтер",
             "wherename": "у бухгалтера",
             "color": "purple"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "Завершено",
+            "id": 4,
+            "name": "Завершено",
             "wherename": "закрыто",
             "color": "gold"
         }
     ],
     "presence": [
         {
-            "key": -2,
-            "value": -2,
-            "label": "+"
+            "id": -2,
+            "name": "+"
         },
         {
-            "key": -1,
-            "value": -1,
-            "label": "Заказ"
+            "id": -1,
+            "name": "Заказ"
         },
         {
-            "key": 0,
-            "value": 0,
-            "label": "-"
+            "id": 0,
+            "name": "-"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "Январь"
+            "id": 1,
+            "name": "Январь"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Февраль"
+            "id": 2,
+            "name": "Февраль"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "Март"
+            "id": 3,
+            "name": "Март"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "Апрель"
+            "id": 4,
+            "name": "Апрель"
         },
         {
-            "key": 5,
-            "value": 5,
-            "label": "Май"
+            "id": 5,
+            "name": "Май"
         },
         {
-            "key": 6,
-            "value": 6,
-            "label": "Июнь"
+            "id": 6,
+            "name": "Июнь"
         },
         {
-            "key": 7,
-            "value": 7,
-            "label": "Июль"
+            "id": 7,
+            "name": "Июль"
         },
         {
-            "key": 8,
-            "value": 8,
-            "label": "Август"
+            "id": 8,
+            "name": "Август"
         },
         {
-            "key": 9,
-            "value": 9,
-            "label": "Сентябрь"
+            "id": 9,
+            "name": "Сентябрь"
         },
         {
-            "key": 10,
-            "value": 10,
-            "label": "Октябрь"
+            "id": 10,
+            "name": "Октябрь"
         },
         {
-            "key": 11,
-            "value": 11,
-            "label": "Ноябрь"
+            "id": 11,
+            "name": "Ноябрь"
         },
         {
-            "key": 12,
-            "value": 12,
-            "label": "Декабрь"
+            "id": 12,
+            "name": "Декабрь"
         },
         {
-            "key": 13,
-            "value": 13,
-            "label": "Обновец"
+            "id": 13,
+            "name": "Обновец"
         }
     ],
     "insurance_select": [
@@ -475,84 +394,68 @@ export const SELECTS = {
     ],
     "bid_presence_select": [
         {
-            "key": -2,
-            "value": -2,
-            "label": "+"
+            "id": -2,
+            "name": "+"
         },
         {
-            "key": -1,
-            "value": -1,
-            "label": "Заказ"
+            "id": -1,
+            "name": "Заказ"
         },
         {
-            "key": 0,
-            "value": 0,
-            "label": "-"
+            "id": 0,
+            "name": "-"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "Январь"
+            "id": 1,
+            "name": "Январь"
         },
         {
-            "key": 2,
-            "value": 2,
-            "label": "Февраль"
+            "id": 2,
+            "name": "Февраль"
         },
         {
-            "key": 3,
-            "value": 3,
-            "label": "Март"
+            "id": 3,
+            "name": "Март"
         },
         {
-            "key": 4,
-            "value": 4,
-            "label": "Апрель"
+            "id": 4,
+            "name": "Апрель"
         },
         {
-            "key": 5,
-            "value": 5,
-            "label": "Май"
+            "id": 5,
+            "name": "Май"
         },
         {
-            "key": 6,
-            "value": 6,
-            "label": "Июнь"
+            "id": 6,
+            "name": "Июнь"
         },
         {
-            "key": 7,
-            "value": 7,
-            "label": "Июль"
+            "id": 7,
+            "name": "Июль"
         },
         {
-            "key": 8,
-            "value": 8,
-            "label": "Август"
+            "id": 8,
+            "name": "Август"
         },
         {
-            "key": 9,
-            "value": 9,
-            "label": "Сентябрь"
+            "id": 9,
+            "name": "Сентябрь"
         },
         {
-            "key": 10,
-            "value": 10,
-            "label": "Октябрь"
+            "id": 10,
+            "name": "Октябрь"
         },
         {
-            "key": 11,
-            "value": 11,
-            "label": "Ноябрь"
+            "id": 11,
+            "name": "Ноябрь"
         },
         {
-            "key": 12,
-            "value": 12,
-            "label": "Декабрь"
+            "id": 12,
+            "name": "Декабрь"
         },
         {
-            "key": 13,
-            "value": 13,
-            "label": "Обновец"
+            "id": 13,
+            "name": "Обновец"
         }
     ],
     "companies": [
@@ -570,6 +473,13 @@ export const SELECTS = {
             "id": 3,
             "name": "Rondo",
             "color": "#229922"
+        }
+    ],
+    "orgusers_select" : [
+        {
+            "id": 90506,
+            "name": "Козулин Алексей Анатольевич",
+            "occupy": "Генеральный директор"
         }
     ],
 };
@@ -602,70 +512,70 @@ export const CUR_CURRENCY = [
     }
 ];
 export const BID = {
-    "id": 120837,
+    "id": 120828,
     "type": 2,
     "place": 1,
     "id_company": 2,
     "project": null,
     "comments": {
-        "manager": "",
-        "admin": "",
-        "accountant": "",
-        "engineer": "",
+        "manager": "менеджер",
+        "admin": "админ",
+        "accountant": "бухгалтер",
+        "engineer": "инженер",
         "add_equipment": ""
     },
     "properties": {
-        "object": "замена Jedia и Volta",
+        "object": "Нагатинская 16. стр. 1-6 ",
         "consignee": "",
         "sellby": "",
         "other_equipment": "",
         "org": {
-            "id": 3644,
-            "name": "Торговый дом 'Русичи'",
-            "id8staff_list": 405,
-            "address": "Сибирский ФО Красноярск",
+            "id": 35536,
+            "name": "К-Серверс",
+            "id8staff_list": 339,
+            "address": "Санкт-Петербург и Лен.обл. Санкт-Петербург",
             "curator": {
-                "id": 405,
-                "name": "Турлов Максим Георгиевич"
+                "id": 339,
+                "name": "Горяева Ксения Викторовна"
             }
         }
     },
     "finance": {
-        "bid_currency": 1,
+        "bid_currency": 0,
         "nds": 0,
         "percent": 0
     },
     "statuses": {
-        "type": 1,
+        "type": 2,
         "stage": 1,
         "pay": 0,
-        "orguser": 88993,
+        "orguser": 90506,
         "protection": 0,
         "price": 2,
         "template_pdf": 0,
         "complete": 1,
         "admin_accept": 0,
-        "conveyance": 3,
+        "conveyance": 13,
         "contact_email": 0,
         "insurance": 0,
         "package": 0,
-        "fact_address": null,
-        "org_phone": null,
-        "requisite": 0
+        "fact_address": 41554,
+        "org_phone": 81231,
+        "requisite": 6961
     },
     "actions": {
         "create": {
-            "date": 1740398020,
-            "user_id": 405,
-            "username": "Турлов Максим Георгиевич"
+            "date": 1740387786,
+            "user_id": 339,
+            "username": "Горяева Ксения Викторовна"
         },
         "update": {
-            "date": 1740398720,
+            "date": 1740392599,
             "user_id": null,
             "username": ""
         },
         "view": {
-            "date": 1757066834,
+            "date": 1757502397,
             "user_id": 46,
             "username": "Кошелев Александр Станиславович"
         }
@@ -675,266 +585,254 @@ export const BID = {
         "description": "Полные права на редактирование",
         "tagtext": "Редактирование",
         "color": "green"
-    }
+    },
+    "files_count": 14,
 };
 export const BID_MODELS = [
     {
-        "id": 978065,
-        "bid_id": 120846,
-        "model_id": 1140,
-        "model_count": 1,
-        "not_available": 0,
-        "percent": 0,
-        "presence": 3,
-        "sort": 0,
-        "name": "RM-6024",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978066,
-        "bid_id": 120846,
-        "model_id": 1139,
-        "model_count": 1,
-        "not_available": 0,
-        "percent": 0,
-        "presence": -2,
-        "sort": 1,
-        "name": "DIB-6000",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978067,
-        "bid_id": 120846,
-        "model_id": 1524,
-        "model_count": 1,
-        "not_available": 0,
-        "percent": 0,
-        "presence": -2,
-        "sort": 2,
-        "name": "PF-6302",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978068,
-        "bid_id": 120846,
-        "model_id": 2496,
-        "model_count": 1,
-        "not_available": 0,
-        "percent": 0,
-        "presence": -2,
-        "sort": 3,
-        "name": "RIM-20",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978069,
-        "bid_id": 120846,
-        "model_id": 2009,
-        "model_count": 1,
-        "not_available": 0,
-        "percent": 0,
-        "presence": -2,
-        "sort": 4,
-        "name": "PV-6232A",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978070,
-        "bid_id": 120846,
+        "id": 977889,
+        "bid_id": 120828,
         "model_id": 1516,
         "model_count": 1,
         "not_available": 0,
         "percent": 0,
         "presence": 3,
-        "sort": 5,
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 44200,
         "name": "EP-6216",
         "type_model": 0,
         "currency": 0
     },
     {
-        "id": 978071,
-        "bid_id": 120846,
-        "model_id": 1410,
-        "model_count": 1,
+        "id": 977890,
+        "bid_id": 120828,
+        "model_id": 33,
+        "model_count": 187,
         "not_available": 0,
         "percent": 0,
         "presence": -2,
-        "sort": 6,
-        "name": "PX-6216",
+        "sklad_at_spb": 187,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 2600,
+        "name": "SWS-03 ( i )",
         "type_model": 0,
         "currency": 0
     },
     {
-        "id": 978072,
-        "bid_id": 120846,
-        "model_id": 1433,
-        "model_count": 1,
-        "not_available": 0,
-        "percent": 0,
-        "presence": -2,
-        "sort": 7,
-        "name": "ECS-6216MS",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978073,
-        "bid_id": 120846,
-        "model_id": 1438,
-        "model_count": 1,
-        "not_available": 0,
-        "percent": 0,
-        "presence": 3,
-        "sort": 8,
-        "name": "SC-6224",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978074,
-        "bid_id": 120846,
-        "model_id": 2385,
-        "model_count": 2,
-        "not_available": 0,
-        "percent": 0,
-        "presence": -2,
-        "sort": 9,
-        "name": "RDA-500S",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978075,
-        "bid_id": 120846,
-        "model_id": 1441,
-        "model_count": 1,
-        "not_available": 0,
-        "percent": 30,
-        "presence": 3,
-        "sort": 10,
-        "name": "PD-6359",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978076,
-        "bid_id": 120846,
+        "id": 977891,
+        "bid_id": 120828,
         "model_id": 1437,
         "model_count": 1,
         "not_available": 0,
-        "percent": 30,
+        "percent": 0,
         "presence": 3,
-        "sort": 11,
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 46800,
         "name": "PB-6207",
         "type_model": 0,
         "currency": 0
     },
     {
-        "id": 978077,
-        "bid_id": 120846,
-        "model_id": 43,
+        "id": 977892,
+        "bid_id": 120828,
+        "model_id": 1143,
         "model_count": 1,
         "not_available": 0,
         "percent": 0,
-        "presence": -2,
-        "sort": 12,
-        "name": "PA-271 D",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978078,
-        "bid_id": 120846,
-        "model_id": 1521,
-        "model_count": 2,
-        "not_available": 0,
-        "percent": 30,
         "presence": 3,
-        "sort": 13,
-        "name": "BP-6300",
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 62400,
+        "name": "RME-6108",
         "type_model": 0,
         "currency": 0
     },
     {
-        "id": 978079,
-        "bid_id": 120846,
-        "model_id": 1519,
+        "id": 977893,
+        "bid_id": 120828,
+        "model_id": 1526,
         "model_count": 1,
         "not_available": 0,
-        "percent": 30,
+        "percent": 0,
+        "presence": -2,
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 66600,
+        "name": "PO-6106",
+        "type_model": 0,
+        "currency": 0
+    },
+    {
+        "id": 977894,
+        "bid_id": 120828,
+        "model_id": 1527,
+        "model_count": 1,
+        "not_available": 0,
+        "percent": 0,
+        "presence": -2,
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 78000,
+        "name": "PP-6213",
+        "type_model": 0,
+        "currency": 0
+    },
+    {
+        "id": 977895,
+        "bid_id": 120828,
+        "model_id": 2009,
+        "model_count": 1,
+        "not_available": 0,
+        "percent": 0,
+        "presence": -2,
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 93600,
+        "name": "PV-6232A",
+        "type_model": 0,
+        "currency": 0
+    },
+    {
+        "id": 977896,
+        "bid_id": 120828,
+        "model_id": 1438,
+        "model_count": 1,
+        "not_available": 0,
+        "percent": 0,
         "presence": 3,
-        "sort": 14,
-        "name": "BP-6100",
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 97500,
+        "name": "SC-6224",
         "type_model": 0,
         "currency": 0
     },
     {
-        "id": 978080,
-        "bid_id": 120846,
-        "model_id": 474,
-        "model_count": 3,
-        "not_available": 0,
-        "percent": 0,
-        "presence": -2,
-        "sort": 16,
-        "name": "AT-KM-093-1",
-        "type_model": 0,
-        "currency": 0
-    },
-    {
-        "id": 978081,
-        "bid_id": 120846,
-        "model_id": 475,
+        "id": 977897,
+        "bid_id": 120828,
+        "model_id": 1439,
         "model_count": 1,
         "not_available": 0,
         "percent": 0,
         "presence": -2,
-        "sort": 17,
-        "name": "AT-KM-093-10",
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 99400,
+        "name": "AFD-6218",
         "type_model": 0,
         "currency": 0
     },
     {
-        "id": 978082,
-        "bid_id": 120846,
-        "model_id": 1152,
-        "model_count": 91,
+        "id": 977898,
+        "bid_id": 120828,
+        "model_id": 1441,
+        "model_count": 1,
         "not_available": 0,
         "percent": 0,
-        "presence": -2,
-        "sort": 18,
-        "name": "WS-210 (I)",
+        "presence": 3,
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 109000,
+        "name": "PD-6359",
         "type_model": 0,
         "currency": 0
     },
     {
-        "id": 978083,
-        "bid_id": 120846,
-        "model_id": 2288,
-        "model_count": 14,
+        "id": 977899,
+        "bid_id": 120828,
+        "model_id": 1142,
+        "model_count": 1,
         "not_available": 0,
         "percent": 0,
         "presence": -2,
-        "sort": 19,
-        "name": "EOL-20",
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 109000,
+        "name": "ECS-6216P",
         "type_model": 0,
         "currency": 0
     },
     {
-        "id": 978084,
-        "bid_id": 120846,
-        "model_id": 2497,
-        "model_count": 14,
+        "id": 977900,
+        "bid_id": 120828,
+        "model_id": 1140,
+        "model_count": 1,
         "not_available": 0,
         "percent": 0,
-        "presence": -2,
-        "sort": 20,
-        "name": "RIT-01",
+        "presence": 3,
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 137200,
+        "name": "RM-6024",
+        "type_model": 0,
+        "currency": 0
+    },
+    {
+        "id": 977901,
+        "bid_id": 120828,
+        "model_id": 1740,
+        "model_count": 1,
+        "not_available": 0,
+        "percent": 0,
+        "presence": 3,
+        "sklad_at_spb": 1,
+        "sklad_gst_spb": 0,
+        "sklad_progress_spb": 0,
+        "sklad_at_msk": 0,
+        "sklad_gst_msk": 0,
+        "sklad_progress_msk": 0,
+        "price_cent": 241500,
+        "name": "DPA- 600D",
         "type_model": 0,
         "currency": 0
     }
