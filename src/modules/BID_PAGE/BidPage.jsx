@@ -39,6 +39,16 @@ const BidPage = (props) => {
     const [bidProtectionProject, setBidProtectionProject] = useState('');
     const [bidObject, setBidObject] = useState('');
     const [bidSellBy, setBidSellBy] = useState(''); // срок реализации
+    /* БЛОК ПЛАТЕЛЬЩИКА */
+    const [requisite, setRequisite] = useState(null);
+    const [conveyance, setConveyance] = useState(null);
+    const [factAddress, setFactAddress] = useState(null);
+    const [phone, setPhone] = useState(null);
+    const [email, setEmail] = useState(null);
+    const [insurance, setInsurance] = useState(null);
+    const [bidPackage, setBidPackage] = useState(null);
+    const [consignee, setConsignee] = useState('');
+    const [otherEquipment, setOtherEquipment] = useState('');
     /* БЛОК КОММЕНТАРИЕВ */
     const [bidCommentEngineer, setBidCommentEngineer] = useState('');
     const [bidCommentManager, setBidCommentManager] = useState('');
@@ -94,7 +104,6 @@ const BidPage = (props) => {
     const [templateWordSelect, setTemplateWordSelect] = useState([]);
     const [companies, setCompanies] = useState([]);
     const [orgUsersSelect, setOrgUsersSelect] = useState([]);
-
 
     useEffect(() => {
         if (!isMounted) {
@@ -162,11 +171,23 @@ const BidPage = (props) => {
                     setBidProtectionProject(bid.statuses.protection);
                     setBidObject(bid.properties.object);
                     setBidSellBy(bid.properties.sellby);
+
+                    setRequisite(bid.statuses.requisite);
+                    setConveyance(bid.statuses.conveyance);
+                    setFactAddress(bid.statuses.fact_address);
+                    setPhone(bid.statuses.org_phone);
+                    setEmail(bid.statuses.contact_email);
+                    setInsurance(bid.statuses.insurance);
+                    setBidPackage(bid.statuses.package);
+                    setConsignee(bid.properties.consignee);
+                    setOtherEquipment(bid.properties.other_equipment);
+
                     setBidCommentEngineer(bid.comments.engineer);
                     setBidCommentManager(bid.comments.manager);
                     setBidCommentAdmin(bid.comments.admin);
                     setBidCommentAccountant(bid.comments.accountant);
                     setBidCommentAddEquipment(bid.comments.add_equipment);
+
                     setBidCurrency(bid.finance.bid_currency);
                     setBidPriceStatus(bid.statuses.price);
                     setBidPercent(bid.finance.percent);
@@ -193,11 +214,23 @@ const BidPage = (props) => {
             setBidProtectionProject(BID.statuses.protection);
             setBidObject(BID.properties.object);
             setBidSellBy(BID.properties.sellby);
+
+            setRequisite(BID.statuses.requisite);
+            setConveyance(BID.statuses.conveyance);
+            setFactAddress(BID.statuses.fact_address);
+            setPhone(BID.statuses.org_phone);
+            setEmail(BID.statuses.contact_email);
+            setInsurance(BID.statuses.insurance);
+            setBidPackage(BID.statuses.package);
+            setConsignee(BID.properties.consignee);
+            setOtherEquipment(BID.properties.other_equipment);
+
             setBidCommentEngineer(BID.comments.engineer);
             setBidCommentManager(BID.comments.manager);
             setBidCommentAdmin(BID.comments.admin);
             setBidCommentAccountant(BID.comments.accountant);
             setBidCommentAddEquipment(BID.comments.add_equipment);
+
             setBidCurrency(BID.finance.bid_currency);
             setBidPriceStatus(BID.statuses.price);
             setBidPercent(BID.finance.percent);
@@ -358,7 +391,225 @@ const BidPage = (props) => {
             minimumFractionDigits: 0,
             maximumFractionDigits: 2
         }).format(number);
-    }
+    };
+
+    const collapseItems = [
+        {
+            key: 1,
+            label: (
+                <div style={{display: 'flex'}}>Основная информация</div>
+            ),
+            children: (
+                <div className={'sa-info-list-hide-wrapper'}>
+                    <div className={'sa-info-list-row'}>
+                        <div className={'sa-list-row-label'}><p>Контактное лицо</p>
+                        </div>
+                        <Select style={{width: '100%', textAlign: 'left'}}
+                                value={bidOrgUser}
+                                options={prepareSelect(orgUsersSelect)}
+                        />
+                    </div>
+                    <div className={'sa-info-list-row'}>
+                        <div className={'sa-list-row-label'}><p>Защита проекта</p>
+                        </div>
+                        <Select style={{width: '100%', textAlign: 'left'}}
+                                value={bidProtectionProject}
+                                options={prepareSelect(protectionSelect)}
+                        />
+                    </div>
+                    <div className={'sa-info-list-row'}>
+                        <div className={'sa-list-row-label'}><p>Объект</p></div>
+                        <Input style={{width: '100%', height: '32px'}}
+                               value={bidObject}
+                        />
+                    </div>
+                    <div className={'sa-info-list-row'}>
+                        <div className={'sa-list-row-label'}><p>Срок реализации</p>
+                        </div>
+                        <Input style={{width: '100%', height: '32px'}}
+                               value={bidSellBy}
+                        />
+                    </div>
+                    <div className={'sa-info-list-row'}>
+                        <div className={'sa-list-row-label'}><p>Связанный проект</p>
+                        </div>
+                        <Input style={{width: '100%', height: '32px'}}
+                               value={bidProject}
+                        />
+                    </div>
+                </div>
+            )
+        },
+        {
+            key: 2,
+            label: (
+                <div style={{display: 'flex'}}>
+                    Плательщик
+                </div>
+            ),
+            children: <div className={'sa-info-list-hide-wrapper'}>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Плательщик</p>
+                    </div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={requisite}
+                            options={prepareSelect(protectionSelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Способ
+                        транспортировки</p></div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={conveyance}
+                            options={prepareSelect(protectionSelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Фактический
+                        адрес</p></div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={factAddress}
+                            options={prepareSelect(protectionSelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Телефон</p></div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={phone}
+                            options={prepareSelect(protectionSelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Email</p></div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={email}
+                            options={prepareSelect(protectionSelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Страховка</p>
+                    </div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={insurance}
+                            options={prepareSelect(protectionSelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Упаковка</p></div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={bidPackage}
+                            options={prepareSelect(protectionSelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}>
+                        <p>Грузополучатель</p></div>
+                    <Input style={{width: '100%', height: '32px'}}
+                           value={consignee}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Доп.
+                        оборудование</p></div>
+                    <Input style={{width: '100%', height: '32px'}}
+                           value={otherEquipment}
+                    />
+                </div>
+            </div>,
+        },
+        {
+            key: 3,
+            label: (
+                <div style={{display: 'flex'}}>
+                    Комментарии
+                    <Badge
+                        count={countOfComments()}
+                        color={'geekblue'}
+                        style={{ marginLeft: '8px', width: '20px' }}
+                    />
+                </div>
+            ),
+            children: <div className={'sa-info-list-hide-wrapper'}>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Комментарий
+                        инженера</p></div>
+                    <TextArea
+                        value={bidCommentEngineer}
+                        autoSize={{minRows: 2, maxRows: 6}}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Комментарий
+                        менеджера</p></div>
+                    <TextArea
+                        value={bidCommentManager}
+                        autoSize={{minRows: 2, maxRows: 6}}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Комментарий
+                        администратора</p></div>
+                    <TextArea
+                        value={bidCommentAdmin}
+                        autoSize={{minRows: 2, maxRows: 6}}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Комментарий
+                        бухгалтера</p></div>
+                    <TextArea
+                        value={bidCommentAccountant}
+                        autoSize={{minRows: 2, maxRows: 6}}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Дополнительное
+                        оборудование</p></div>
+                    <TextArea
+                        value={bidCommentAddEquipment}
+                        autoSize={{minRows: 2, maxRows: 6}}
+                    />
+                </div>
+            </div>
+        },
+        {
+            key: 4,
+            label: (
+                <div style={{display: 'flex'}}>Финансовый блок</div>
+            ),
+            children: <div className={'sa-info-list-hide-wrapper'}>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Валюта</p></div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={bidCurrency}
+                            options={prepareSelect(bidCurrencySelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Статус</p></div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={bidPriceStatus}
+                            options={prepareSelect(priceSelect)}
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Добавить процент</p>
+                    </div>
+                    <Input style={{width: '100%', height: '32px'}}
+                           value={bidPercent}
+                           type="number"
+                    />
+                </div>
+                <div className={'sa-info-list-row'}>
+                    <div className={'sa-list-row-label'}><p>Вычесть НДС?</p></div>
+                    <Select style={{width: '100%', textAlign: 'left'}}
+                            value={bidNds}
+                            options={prepareSelect(ndsSelect)}
+                    />
+                </div>
+            </div>
+        }
+    ];
 
     return (
         <div className={'sa-bid-page-container'}>
@@ -540,222 +791,9 @@ const BidPage = (props) => {
                                 <Collapse onChange={(val) => console.log(val)}
                                           size={'small'}
                                           defaultActiveKey={[1,4]}
-                                          items={[
-                                              {
-                                                  key: 1,
-                                                  label: (
-                                                      <div style={{display: 'flex'}}>Основная информация</div>
-                                                  ),
-                                                  children: (
-                                                      <div className={'sa-info-list-hide-wrapper'}>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Контактное лицо</p>
-                                                              </div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidOrgUser}
-                                                                      options={prepareSelect(orgUsersSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Защита проекта</p>
-                                                              </div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidProtectionProject}
-                                                                      options={prepareSelect(protectionSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Объект</p></div>
-                                                              <Input style={{width: '100%', height: '32px'}}
-                                                                     value={bidObject}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Срок реализации</p>
-                                                              </div>
-                                                              <Input style={{width: '100%', height: '32px'}}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Связанный проект</p>
-                                                              </div>
-                                                              <Input style={{width: '100%', height: '32px'}}
-                                                                     value={bidProject}
-                                                              />
-                                                          </div>
-                                                      </div>
-                                                  )
-                                              },
-                                              {
-                                                  key: 2,
-                                                  label: (
-                                                      <div style={{display: 'flex'}}>
-                                                          Плательщик
-                                                      </div>
-                                                  ),
-                                                  children: <div className={'sa-info-list-hide-wrapper'}>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Плательщик</p>
-                                                          </div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidProtectionProject}
-                                                                  options={prepareSelect(protectionSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Способ
-                                                              транспортировки</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidProtectionProject}
-                                                                  options={prepareSelect(protectionSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Фактический
-                                                              адрес</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidProtectionProject}
-                                                                  options={prepareSelect(protectionSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Телефон</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidProtectionProject}
-                                                                  options={prepareSelect(protectionSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Email</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidProtectionProject}
-                                                                  options={prepareSelect(protectionSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Страховка</p>
-                                                          </div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidProtectionProject}
-                                                                  options={prepareSelect(protectionSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Упаковка</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidProtectionProject}
-                                                                  options={prepareSelect(protectionSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}>
-                                                              <p>Грузополучатель</p></div>
-                                                          <Input style={{width: '100%', height: '32px'}}
-                                                                 value={bidCommentAddEquipment}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Доп.
-                                                              оборудование</p></div>
-                                                          <Input style={{width: '100%', height: '32px'}}
-                                                                 value={bidCommentAddEquipment}
-                                                          />
-                                                      </div>
-                                                  </div>,
-                                              },
-                                              {
-                                                  key: 3,
-                                                  label: (
-                                                      <div style={{display: 'flex'}}>
-                                                          Комментарии
-                                                          <Badge
-                                                              count={countOfComments()}
-                                                              color={'geekblue'}
-                                                              style={{ marginLeft: '8px', width: '20px' }}
-                                                          />
-                                                      </div>
-                                                  ),
-                                                  children: <div className={'sa-info-list-hide-wrapper'}>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Комментарий
-                                                              инженера</p></div>
-                                                          <TextArea
-                                                              value={bidCommentEngineer}
-                                                              autoSize={{minRows: 2, maxRows: 6}}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Комментарий
-                                                              менеджера</p></div>
-                                                          <TextArea
-                                                              value={bidCommentManager}
-                                                              autoSize={{minRows: 2, maxRows: 6}}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Комментарий
-                                                              администратора</p></div>
-                                                          <TextArea
-                                                              value={bidCommentAdmin}
-                                                              autoSize={{minRows: 2, maxRows: 6}}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Комментарий
-                                                              бухгалтера</p></div>
-                                                          <TextArea
-                                                              value={bidCommentAccountant}
-                                                              autoSize={{minRows: 2, maxRows: 6}}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Дополнительное
-                                                              оборудование</p></div>
-                                                          <TextArea
-                                                              value={bidCommentAddEquipment}
-                                                              autoSize={{minRows: 2, maxRows: 6}}
-                                                          />
-                                                      </div>
-                                                  </div>
-                                              },
-                                              {
-                                                  key: 4,
-                                                  label: (
-                                                      <div style={{display: 'flex'}}>Финансовый блок</div>
-                                                  ),
-                                                  children: <div className={'sa-info-list-hide-wrapper'}>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Валюта</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidCurrency}
-                                                                  options={prepareSelect(bidCurrencySelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Статус</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidPriceStatus}
-                                                                  options={prepareSelect(priceSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Добавить процент</p>
-                                                          </div>
-                                                          <Input style={{width: '100%', height: '32px'}}
-                                                                 value={bidPercent}
-                                                                 type="number"
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Вычесть НДС?</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidNds}
-                                                                  options={prepareSelect(ndsSelect)}
-                                                          />
-                                                      </div>
-                                                  </div>
-                                              }
-                                          ]}
+                                          items={collapseItems.filter(item => {
+                                              return !(bidType === 1 && item.key === 2);
+                                          })}
                                 />
                             </div>
                         </div>
