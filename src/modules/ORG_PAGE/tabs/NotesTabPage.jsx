@@ -32,6 +32,8 @@ const NotesTabPage = (props) => {
 
     const [editedItemsIds, setEditedItemsIds] = useState([]);
     const [openedNewSections, setOpenedNewSections] = useState([]);
+
+
   
     useEffect(() => {
       setShow(props.show);
@@ -59,11 +61,18 @@ const NotesTabPage = (props) => {
       if (props.edit_mode === false){
         if (editedItemsIds.length > 0 || newStructureItems.length > 0){
           if (window.confirm("У вас есть несохраненные заметки! Отменить изменения?")){
+            setLoading(true);
             setEditMode(props.edit_mode);
             setTemporaryUnits([]);
+            setTimeout(() => {
+              setBaseData(originalData);
+            }, 1000);
             setBaseData([]);
-            console.log(originalData);
-            setBaseData(originalData);
+            console.log("---------- 65 ---------",  originalData);
+            setTimeout(() => {
+              setBaseData(originalData);
+              
+            }, 1000);
           } else {
             // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
             if (props.on_break_discard){
@@ -277,6 +286,9 @@ const NotesTabPage = (props) => {
 
 
     const handleUpdateBlankUnit = (id, data) => {
+      if (!editMode){
+        return;
+      }
       console.log('id, data', id, data, temporaryUnits);
       setTemporaryUnits(prevUnits => {
         const exists = prevUnits.some(item => item.id === id);
@@ -297,6 +309,10 @@ const NotesTabPage = (props) => {
     const handleUpdateRealUnit = (id, data) => {
       // let udata = originalData.filter((item) => item.id !== id);
       // udata.push(data);
+      console.log('CALL TU REAL UPDATE');
+      if (!editMode){
+        return;
+      }
       if (!editedItemsIds?.includes(id)){
         setEditedItemsIds([...editedItemsIds, id]);
       };
@@ -317,9 +333,7 @@ const NotesTabPage = (props) => {
     }
 
 
-    useEffect(() => {
-      console.log(baseData);
-    }, [baseData]);
+
 
 
     // если в call_to_save не null, а timestamp, отправляем данные на обновление
