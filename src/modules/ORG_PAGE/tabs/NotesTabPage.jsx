@@ -61,7 +61,9 @@ const NotesTabPage = (props) => {
           if (window.confirm("У вас есть несохраненные заметки! Отменить изменения?")){
             setEditMode(props.edit_mode);
             setTemporaryUnits([]);
-            setStructureItems(originalData);
+            setBaseData([]);
+            // setBaseData(originalData);
+            console.log(originalData);
           } else {
             // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
             if (props.on_break_discard){
@@ -89,16 +91,31 @@ const NotesTabPage = (props) => {
             secids.push('norprow_' + item.id);
             return {
                 key: 'norprow_' + item.id,
-                label: <div className='sa-flex-space'>
+                label: <div className={`sa-flex-space ${item.deleted === 1 && editMode ? "sa-orgrow-deleted" : ""}`}>
                   <div>{item.theme}
                     <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span>  <span className={'sa-text-phantom'}>({item.id})</span></div>
-                    <Button size='small' 
+                    {editMode && (
+                    <>
+                    { item.deleted === 1 ? (
+                      <Button size='small'
+                         color="danger" variant="filled"
+                        onClick={(ev)=>{
+                          ev.stopPropagation();
+                          console.log(item.id);
+                          handleDeleteRealUnit(item.id, 0);
+                        }}
+                      >ВЕРНУТЬ</Button>
+                    ) : (
+                      <Button size='small' 
+                      color="danger" variant="outlined"
                       onClick={(ev)=>{
                         ev.stopPropagation();
                         console.log(item.id);
-                        handleDeleteRealUnit(item.id);
+                        handleDeleteRealUnit(item.id, 1);
                       }}
                     >Удалить</Button>
+                    )}
+                    </>)}
                     </div>,
                 children: <OrgNoteEditorSectionBox
                   color={null}
@@ -111,10 +128,10 @@ const NotesTabPage = (props) => {
             }
           });
 
-          setOriginalData(strdata);
+          
           setStructureItems(strdata);
       } else {
-        setOriginalData([]);
+        
         setStructureItems([]);
       }
       setLoading(false);
@@ -122,9 +139,16 @@ const NotesTabPage = (props) => {
 
 
     useEffect(() => {
-      setBaseData(props.base_data?.notes ? props.base_data?.notes : []);
+      console.log('original' , baseData, originalData);
+      console.log("BASE SETTER NNN");
+      setOriginalData(props.base_data?.notes ? props.base_data.notes : []);
+      setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
     }, [props.base_data]);
 
+    useEffect(() => {
+      console.log("ORIGINAL DATA", originalData);
+      console.log("BASE DATA",  baseData);
+    }, [originalData, baseData]);
 
 
     useEffect(() => {
@@ -210,16 +234,45 @@ const NotesTabPage = (props) => {
     }
 
 
-    const handleDeleteRealUnit = (id) => {
+    const handleDeleteRealUnit = (id, value) => {
       // const updata = {command: 'delete', id: id, deleted: 1};
-      const uitem = originalData.find((item)=> item.id === id);
-      if (uitem){
-        uitem.deleted = 1;
-        uitem.command = 'delete';
-        let udata = originalData.filter((item) => item.id !== id);
-        udata.push(uitem);
-        setOriginalData(udata);
+      if (!editedItemsIds.includes(id)){
+        setEditedItemsIds([...editedItemsIds, id]);
       };
+      // const uitem = baseData.find((item)=> item.id === id);
+      // if (uitem){
+      //   uitem.deleted = value;
+      //   uitem.command =  value === 1 ? 'delete' : 'update';
+      //   let udata = originalData.filter((item) => item.id !== id);
+      //   udata.push(uitem);
+      //   setBaseData(udata);
+      // };
+      setBaseData(prevData => {
+        // Удаляем элемент
+        const filtered = prevData.filter(item => item.id !== id);
+        
+        // Находим элемент для обновления
+        const uitem = prevData.find(item => item.id === id);
+        if (uitem) {
+          // Создаем обновленную версию
+          const updatedItem = {
+            ...uitem,
+            deleted: value,
+            command: value === 1 ? 'delete' : 'update'
+          };
+          
+          // Находим индекс оригинального элемента
+          const originalIndex = prevData.findIndex(item => item.id === id);
+          
+          // Вставляем на ту же позицию
+          const newData = [...filtered];
+          newData.splice(originalIndex, 0, updatedItem);
+          
+          return newData;
+        }
+        
+        return filtered;
+      });
     }
 
 
@@ -244,6 +297,11 @@ const NotesTabPage = (props) => {
     const handleUpdateRealUnit = (id, data) => {
       // let udata = originalData.filter((item) => item.id !== id);
       // udata.push(data);
+      if (!editedItemsIds?.includes(id)){
+        setEditedItemsIds([...editedItemsIds, id]);
+      };
+      console.log(data);
+      data.command = 'update';
       setBaseData(
         prevUnits => {
           const exists = prevUnits.some(item => item.id === id);
@@ -260,15 +318,15 @@ const NotesTabPage = (props) => {
 
 
     useEffect(() => {
-      console.log(structureItems);
-    }, [structureItems]);
+      console.log(baseData);
+    }, [baseData]);
 
 
     // если в call_to_save не null, а timestamp, отправляем данные на обновление
     useEffect(() => {
-      console.log('originalData', originalData, temporaryUnits);
+      console.log('basedata', baseData, temporaryUnits);
       if (props.call_to_save !== null && props.on_save !== null){
-        props.on_save(originalData, temporaryUnits);
+        props.on_save(baseData, temporaryUnits);
       }
     }, [props.call_to_save]);
 

@@ -108,3 +108,16 @@
     font-weight: 500;
     padding-bottom: 3px;
 }
+
+.sa-orgpage-body {
+    min-height: calc(100vh - 46px);
+    background-color: #e7ebef;
+}
+.sa-orgpage-body .sa-orgtab-container {
+    padding-bottom: 30vh;
+
+}
+.sa-orgrow-deleted {
+    /* background-color: rgba(255, 0, 0, 0.13); */
+    color: red;
+}
