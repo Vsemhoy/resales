@@ -308,10 +308,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 13px;
 }
 .sa-footer-table-cell p {
     margin: 0;
+}
+.sa-footer-table-cell p span {
+    color: #2C6DA7;
+    font-weight: bold;
 }
 .sa-footer-table-cell:first-child {
     border-top: none;

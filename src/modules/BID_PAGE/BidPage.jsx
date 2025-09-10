@@ -4,7 +4,7 @@ import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import './components/style/bidPage.css'
-import {BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, SELECTS} from "./mock/mock";
+import {AMOUNT, BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, MODELS_DATA, SELECTS} from "./mock/mock";
 import MODELS from './mock/mock_models';
 import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
 import {
@@ -58,8 +58,20 @@ const BidPage = (props) => {
     const [bidProject, setBidProject] = useState(null); // проект из карточки организации
     /* МОДЕЛИ */
     const [bidModels, setBidModels] = useState([]);
-    const [amounts, setAmounts] = useState({});
-    const [engineerParameters, setEngineerParameters] = useState({});
+    const [amounts, setAmounts] = useState({
+        usd: 0,
+        eur: 0,
+        rub: 0
+    });
+    const [engineerParameters, setEngineerParameters] = useState({
+        unit: 0,
+        box_size: 0,
+        power_consumption: 0,
+        max_power: 0,
+        rated_power_speaker: 0,
+        mass: 0,
+        size: 0
+    });
     /* СЕЛЕКТ ПО МОДЕЛЯМ */
     const [modelsSelect, setModelsSelect] = useState([]);
     const [garbage, setGarbage] = useState([]);
@@ -164,11 +176,8 @@ const BidPage = (props) => {
 
                     const models = response.data.bid_models;
                     setBidModels(models);
-                    // Надо будет так
-                    //const models = response.data.models;
-                    //setBidModels(models.bid_models);
-                    //setAmounts(models.amounts);
-                    //setEngineerParameters(models.engineer_parameters);
+                    setEngineerParameters(response.data.models_data);
+                    setAmounts(response.data.amount);
                 }
             } catch (e) {
                 console.log(e);
@@ -197,6 +206,8 @@ const BidPage = (props) => {
             setBidFilesCount(BID.files_count);
 
             setBidModels(BID_MODELS);
+            setEngineerParameters(MODELS_DATA);
+            setAmounts(AMOUNT);
         }
     };
     const fetchSelects = async () => {
@@ -334,6 +345,20 @@ const BidPage = (props) => {
             bidCommentAddEquipment
         ].filter(comment => comment).length;
     };
+    const prepareEngineerParameter = (engineerParameter) => {
+        const rounded = (+engineerParameter).toFixed(2);
+        return rounded % 1 === 0 ? Math.round(rounded) : rounded;
+    };
+    const prepareAmount = (amount) => {
+        const rounded = (+amount / 100).toFixed(2);
+        return formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
+    };
+    const formatNumberWithSpaces = (number) => {
+        return new Intl.NumberFormat('ru-RU', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        }).format(number);
+    }
 
     return (
         <div className={'sa-bid-page-container'}>
@@ -512,202 +537,6 @@ const BidPage = (props) => {
                                 </div>
                             )}
                             <div className={'sa-info-list'}>
-
-                                {/*<br/>*/}
-
-                                {/*{+bidType === 2 && (
-                                    <Collapse onChange={(val) => console.log(val)}
-                                              size={'small'}
-                                              items={[
-                                                  {
-                                                      key: '1',
-                                                      label: (
-                                                          <div style={{display: 'flex'}}>
-                                                              Плательщик
-                                                          </div>
-                                                      ),
-                                                      children: <div className={'sa-info-list-hide-wrapper'}>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Плательщик</p>
-                                                              </div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidProtectionProject}
-                                                                      options={prepareSelect(protectionSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Способ
-                                                                  транспортировки</p></div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidProtectionProject}
-                                                                      options={prepareSelect(protectionSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Фактический
-                                                                  адрес</p></div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidProtectionProject}
-                                                                      options={prepareSelect(protectionSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Телефон</p></div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidProtectionProject}
-                                                                      options={prepareSelect(protectionSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Email</p></div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidProtectionProject}
-                                                                      options={prepareSelect(protectionSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Страховка</p>
-                                                              </div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidProtectionProject}
-                                                                      options={prepareSelect(protectionSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Упаковка</p></div>
-                                                              <Select style={{width: '100%', textAlign: 'left'}}
-                                                                      value={bidProtectionProject}
-                                                                      options={prepareSelect(protectionSelect)}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}>
-                                                                  <p>Грузополучатель</p></div>
-                                                              <Input style={{width: '100%', height: '32px'}}
-                                                                     value={bidCommentAddEquipment}
-                                                              />
-                                                          </div>
-                                                          <div className={'sa-info-list-row'}>
-                                                              <div className={'sa-list-row-label'}><p>Доп.
-                                                                  оборудование</p></div>
-                                                              <Input style={{width: '100%', height: '32px'}}
-                                                                     value={bidCommentAddEquipment}
-                                                              />
-                                                          </div>
-                                                      </div>,
-                                                  }
-                                              ]}
-                                    />
-                                )}*/}
-
-                                {/*<br/>*/}
-
-                                {/*<Collapse onChange={(val) => console.log(val)}
-                                          size={'small'}
-                                          items={[
-                                              {
-                                                  key: 1,
-                                                  label: (
-                                                      <div style={{display: 'flex'}}>
-                                                            Комментарии
-                                                            <Badge
-                                                                count={countOfComments()}
-                                                                color={'geekblue'}
-                                                                style={{ marginLeft: '8px', width: '20px' }}
-                                                            />
-                                                      </div>
-                                                  ),
-                                                  children: <div className={'sa-info-list-hide-wrapper'}>
-                                                              <div className={'sa-info-list-row'}>
-                                                                  <div className={'sa-list-row-label'}><p>Комментарий
-                                                                      инженера</p></div>
-                                                                  <TextArea
-                                                                      value={bidCommentEngineer}
-                                                                      autoSize={{minRows: 2, maxRows: 6}}
-                                                                  />
-                                                              </div>
-                                                              <div className={'sa-info-list-row'}>
-                                                                  <div className={'sa-list-row-label'}><p>Комментарий
-                                                                      менеджера</p></div>
-                                                                  <TextArea
-                                                                      value={bidCommentManager}
-                                                                      autoSize={{minRows: 2, maxRows: 6}}
-                                                                  />
-                                                              </div>
-                                                              <div className={'sa-info-list-row'}>
-                                                                  <div className={'sa-list-row-label'}><p>Комментарий
-                                                                      администратора</p></div>
-                                                                  <TextArea
-                                                                      value={bidCommentAdmin}
-                                                                      autoSize={{minRows: 2, maxRows: 6}}
-                                                                  />
-                                                              </div>
-                                                              <div className={'sa-info-list-row'}>
-                                                                  <div className={'sa-list-row-label'}><p>Комментарий
-                                                                      бухгалтера</p></div>
-                                                                  <TextArea
-                                                                      value={bidCommentAccountant}
-                                                                      autoSize={{minRows: 2, maxRows: 6}}
-                                                                  />
-                                                              </div>
-                                                              <div className={'sa-info-list-row'}>
-                                                                  <div className={'sa-list-row-label'}><p>Дополнительное
-                                                                      оборудование</p></div>
-                                                                  <TextArea
-                                                                      value={bidCommentAddEquipment}
-                                                                      autoSize={{minRows: 2, maxRows: 6}}
-                                                                  />
-                                                              </div>
-                                                          </div>
-                                              }
-                                          ]}
-                                />*/}
-
-                                {/*<br/>*/}
-
-                                {/*<Collapse onChange={(val) => console.log(val)}
-                                          size={'small'}
-                                          defaultActiveKey={[1]}
-                                          items={[
-                                              {
-                                                  key: 1,
-                                                  label: (
-                                                      <div style={{display: 'flex'}}>Финансовый блок</div>
-                                                  ),
-                                                  children: <div className={'sa-info-list-hide-wrapper'}>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Валюта</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidCurrency}
-                                                                  options={prepareSelect(bidCurrencySelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Статус</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidPriceStatus}
-                                                                  options={prepareSelect(priceSelect)}
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Добавить процент</p>
-                                                          </div>
-                                                          <Input style={{width: '100%', height: '32px'}}
-                                                                 value={bidPercent}
-                                                                 type="number"
-                                                          />
-                                                      </div>
-                                                      <div className={'sa-info-list-row'}>
-                                                          <div className={'sa-list-row-label'}><p>Вычесть НДС?</p></div>
-                                                          <Select style={{width: '100%', textAlign: 'left'}}
-                                                                  value={bidNds}
-                                                                  options={prepareSelect(ndsSelect)}
-                                                          />
-                                                      </div>
-                                                  </div>
-                                              }
-                                          ]}
-                                />*/}
                                 <Collapse onChange={(val) => console.log(val)}
                                           size={'small'}
                                           defaultActiveKey={[1,4]}
@@ -976,18 +805,17 @@ const BidPage = (props) => {
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             {/*<p>{bidModel.price}</p>*/}
-                                            <p>{bidModel.model_id} {+bidCurrency === 1 ? '$' : +bidCurrency === 2 ? '₽' : ''}</p>
+                                            <p>{prepareAmount(bidModel.bo_price_0)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             {/*<p>{bidModel.amount}</p>*/}
-                                            <p>{bidModel.model_id * 2} {+bidCurrency === 1 ? '$' : +bidCurrency === 2 ? '₽' : ''}</p>
+                                            <p>{prepareAmount(bidModel.bo_price_0 * bidModel.model_count)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Select style={{width: '100%'}}
                                                     bordered={false}
                                                     value={bidModel.presence}
                                                     options={prepareSelect(presenceSelect)}
-                                                    // options={presenceSelect.map(presence => ({value: presence.id, label: presence.name}))}
                                                     showSearch
                                                     optionFilterProp="label"
                                                     filterOption={(input, option) =>
@@ -1016,20 +844,20 @@ const BidPage = (props) => {
                                 <div className={'sa-footer-table-amounts'}>
                                     <div className={'sa-footer-table'}>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Высота об-ния: 25U</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Высота шкафа: 23U</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Высота об-ния: <span>{prepareEngineerParameter(engineerParameters.unit)}</span> U</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Высота шкафа: <span>{prepareEngineerParameter(engineerParameters.box_size)}</span> U</p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Потр. мощ.: 1.29кВт</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Вых. мощность: 360Вт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Потр. мощ.: <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span> кВт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Вых. мощность: <span>{prepareEngineerParameter(engineerParameters.max_power)}</span> Вт</p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Мощность АС: 368Вт</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Масса: 196.2кг</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Мощность АС: <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span> Вт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>Масса: <span>{prepareEngineerParameter(engineerParameters.mass)}</span> кг</p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
                                             <div className={'sa-footer-table-cell'}>
-                                                <p>Объем: 633.09 m3</p>
+                                                <p>Объем: <span>{prepareEngineerParameter(engineerParameters.size)}</span> m3</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1040,9 +868,9 @@ const BidPage = (props) => {
                                             <div className={'sa-footer-amounts-cell'}><p>Сумма в рублях</p></div>
                                         </div>
                                         <div className={'sa-footer-amounts-col'}>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>14 276,79 $</p></div>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>13 710,251 €</p></div>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>1 727 491,59 ₽</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.usd)} $</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.eur)} €</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.rub)} ₽</p></div>
                                         </div>
                                     </div>
                                 </div>
