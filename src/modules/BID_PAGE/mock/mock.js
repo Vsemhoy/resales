@@ -608,11 +608,11 @@ export const BID = {
     "id_company": 2,
     "project": null,
     "comments": {
-        "manager": "",
-        "admin": "",
-        "accountant": "",
-        "engineer": "",
-        "add_equipment": ""
+        "manager": "менеджер",
+        "admin": "админ",
+        "accountant": "бухгалтер",
+        "engineer": "инженер",
+        "add_equipment": "дополнительное оборудование"
     },
     "properties": {
         "object": "замена Jedia и Volta",
