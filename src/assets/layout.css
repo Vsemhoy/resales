@@ -558,10 +558,6 @@ font-size: smaller;
     text-align: center;
 }
 
-.sa-outlet-body {
-    min-height: 80vh;
-}
-
 .ant-modal-header {
     margin-bottom: 0px !important;
 }
