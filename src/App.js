@@ -44,6 +44,7 @@ import CuratorPage from "./modules/CURATOR/CuratorPage";
 import EngineerListPage from "./modules/ENGINEER_LIST/EngineerListPage";
 import EngineerPage from "./modules/ENGINEER_PAGE/EngineerPage";
 import BidPage from "./modules/BID_PAGE/BidPage";
+import WinShellMessanger from './modules/DEV/COM/WINSHELL/WinShellMessanger';
 
 function App() {
   const [userdata, setUserdata] = useState([]);
@@ -111,6 +112,7 @@ function App() {
           />
       
       {/* <MyIcon /> */}
+        <WinShellMessanger />
 
         <div>
           <Routes>
@@ -157,7 +159,11 @@ function App() {
               <Route path={'/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
 
           </Routes>
+
+          
         </div>
+
+
 
       </BrowserRouter>
     </div>

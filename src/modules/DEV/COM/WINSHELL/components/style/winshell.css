@@ -1,0 +1,202 @@
+
+
+
+.win-shell {
+  background: rgba(186, 186, 186, 0.255);
+  /* border: 1px solid #ccc; */
+  border-radius: 8px;
+  box-shadow: 0 4px 22px rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  position: fixed !important; /* важно — поверх всего */
+  overflow: hidden;
+  transition: all 0.3s;
+  border-radius: 8px;
+}
+
+.win-header {
+transition: all 0.3s;
+  background: #007bff7c;
+  color: white;
+  font-weight: bold;
+  user-select: none;
+  border-radius: 8px;
+  backdrop-filter: blur(22px);
+}
+.win-shell:hover .win-header {
+    background: #007bffa8;
+}
+
+.win-content {
+  padding: 12px;
+  background: #f9f9f931;
+  backdrop-filter: blur(22px);
+}
+
+.resizer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  background: #ddd;
+  cursor: nwse-resize;
+  border-bottom-right-radius: 8px;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-size: 12px;
+  cursor: move;
+  opacity: 0.6;
+  pointer-events: auto;
+}
+
+/* ============ Стили прилипания ============ */
+
+/* Свободное плавание */
+.win-shell.snap-none {
+  /* ничего не делаем — позиция из стилей */
+}
+
+/* Прилипание слева */
+.win-shell.snap-left {
+  left: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 40px !important;
+  height: 200px !important;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Прилипание справа */
+.win-shell.snap-right {
+  right: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 40px !important;
+  height: 200px !important;
+  border-radius: 8px 0 0 8px;
+}
+
+/* Прилипание снизу */
+.win-shell.snap-bottom {
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  /* width: 200px !important; */
+  border-radius: 8px 8px 0 0;
+}
+.win-shell.snap-bottom .win-header {
+    height: 40px !important;
+    
+}
+
+/* Состояние свернуто */
+.win-shell.collapsed.snap-left,
+.win-shell.collapsed.snap-right,
+.win-shell.collapsed.snap-bottom {
+  /* Можно добавить анимацию или тень при наведении */
+}
+
+.win-shell.collapsed:hover {
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+}
+
+.win-header {
+    padding: 3px;
+}
+.snap-left .win-header,
+.snap-left .win-header > div,
+.snap-right .win-header,
+.snap-right .win-header > div
+{
+    display: flex;
+    flex-direction: column;
+}
+.snap-left .win-header > div,
+.snap-right .win-header > div {
+    flex-direction: column-reverse;
+}
+.snap-left .win-header > span,
+.snap-right .win-header > span {
+    display: none;
+}
+
+
+
+.snap-bottom {
+    display: flex;
+    flex-direction: column-reverse;
+}
+.snap-bottom .win-header,
+.snap-bottom .win-header > div
+{
+    display: flex;
+    flex-direction: row;
+}
+
+.win-shell.snap-left:hover{
+    height: 600px;
+}
+.snap-bottom {
+    height: 38px;
+}
+.snap-bottom:hover {
+    height: 600px;
+}
+.snap-none.hovercollapsed {
+    height: 38px;
+}
+.snap-none.hovercollapsed .resizer{
+    display: none;
+}
+.snap-none.hovercollapsed:hover {
+    height: 600px;
+}
+
+.winshell-stack {
+    display: flex;
+    flex-direction: column;
+    grid-gap: 6px;
+}
+
+.winshell-stack-top {
+        position: sticky;
+    top: -12px;
+    z-index: 999;
+}
+
+
+
+
+
+
+.chat-m-card {
+    width: 70%;
+    text-align: left;
+    padding: 6px;
+    border-radius: 9px;
+}
+.msg-self {
+    display: flex;
+    flex-direction: row-reverse;
+}
+.msg-other {
+    display: flex;
+    flex-direction: row;
+}
+.msg-self .chat-m-card {
+    background: #e2ffd1; 
+}
+.msg-other .chat-m-card {
+    background: #ffffff;
+}
+
+.winshell-message-area {
+    position: sticky;
+    bottom: 0px;
+    
+}
