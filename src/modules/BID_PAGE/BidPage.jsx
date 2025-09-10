@@ -176,7 +176,7 @@ const BidPage = (props) => {
 
                     const models = response.data.bid_models;
                     setBidModels(models);
-                    setEngineerParameters(bid.models_data);
+                    setEngineerParameters(models_data);
                     setAmounts(response.data.amount);
                 }
             } catch (e) {
