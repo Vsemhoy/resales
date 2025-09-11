@@ -384,7 +384,7 @@
 }
 .sa-info-list-row {
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
+    grid-template-columns: minmax(50px, 1fr) minmax(50px, 1.5fr);
     grid-template-rows: minmax(35px, 1fr);
     border-bottom: 1px solid #99bad3;
     padding-bottom: 2px;

@@ -22,6 +22,7 @@ const BidPage = (props) => {
     const {bidId} = useParams();
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingSmall, setIsLoadingSmall] = useState(false);
     const [isSavingInfo, setIsSavingInfo] = useState(false);
 
     const [userData, setUserData] = useState(null);
@@ -141,6 +142,15 @@ const BidPage = (props) => {
             window.removeEventListener('keydown', handleKeyDown);
         };
     }, [isSavingInfo]);
+    useEffect(() => {
+        if (isMounted) { // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
+            const timer = setTimeout(() => {
+                fetchCalcModels().then();
+            }, 700);
+
+            return () => clearTimeout(timer);
+        }
+    }, [bidCurrency, bidPriceStatus, bidPercent, bidNds, bidModels]);
 
     const fetchInfo = async () => {
         setIsLoading(true);
@@ -366,6 +376,39 @@ const BidPage = (props) => {
         }
     };
 
+    const fetchCalcModels = async () => {
+        console.log('fetchCalcModels')
+        if (PRODMODE) {
+            try {
+                setIsLoadingSmall(true);
+                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/calcmodels', {
+                    data: {
+                        bid_info: {
+                            bidCurrency,
+                            bidPriceStatus,
+                            bidPercent,
+                            bidNds
+                        },
+                        bid_models: bidModels
+                        //bid_models: bidModels.map(model => ({model_id: model.id, sort: model.sort, model_count: model.model_count, percent: model.percent}))
+                    },
+                    _token: CSRF_TOKEN
+                });
+                if (response.data.content) {
+                    setBidModels(response.data.content.models);
+                    //setAmounts(response.data.content.amounts);
+                }
+                setTimeout(() => setIsLoadingSmall(false), 500);
+            } catch (e) {
+                console.log(e);
+                setTimeout(() => setIsLoadingSmall(false), 500);
+            }
+        } else {
+            setIsSavingInfo(true);
+            setTimeout(() => setIsLoadingSmall(false), 500);
+        }
+    };
+
     const prepareSelect = (select) => {
         return select.map((item) => ({value: item.id, label: item.name}));
     };
@@ -392,6 +435,63 @@ const BidPage = (props) => {
             maximumFractionDigits: 2
         }).format(number);
     };
+    const handleChangeModel = (newId, oldId) => {
+        const newModel = modelsSelect.find(model => model.id === newId);
+        const oldModel = bidModels.find(model => model.id === oldId);
+        const oldModelIdx = bidModels.findIndex(model => model.id === oldId);
+        const newModelObj = {
+            "id": 'new',
+            "bid_id": bidId,
+            "model_id": newId,
+            "model_count": 1,
+            "not_available": 0,
+            "percent": 0,
+            "presence": -2,
+            "sort": oldModel.sort,
+            "name": newModel.name,
+            "type_model": newModel.type_model,
+            "currency": newModel.currency,
+        };
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd[oldModelIdx] = newModelObj;
+        setBidModels(bidModelsUpd);
+    }
+    const handleChangeModelCount = (value, modelId) => {
+        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd[modelIdx].model_count = value;
+        setBidModels(bidModelsUpd);
+    };
+    const handleChangeModelPercent = (value, modelId) => {
+        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd[modelIdx].percent = value;
+        setBidModels(bidModelsUpd);
+    };
+    const handleChangeModelPresence = (value, modelId) => {
+        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd[modelIdx].presence = value;
+        setBidModels(bidModelsUpd);
+    };
+    const handleAddModel = () => {
+        const lastModel = bidModels[bidModels.length - 1];
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd.push({
+            "id": 'new',
+            "bid_id": bidId,
+            "model_id": null,
+            "model_count": null,
+            "not_available": 0,
+            "percent": null,
+            "presence": null,
+            "sort": lastModel.sort + 1,
+            "name": "",
+            "type_model": 0,
+            "currency": 0,
+        });
+        setBidModels(bidModelsUpd);
+    };
 
     const collapseItems = [
         {
@@ -407,6 +507,7 @@ const BidPage = (props) => {
                         <Select style={{width: '100%', textAlign: 'left'}}
                                 value={bidOrgUser}
                                 options={prepareSelect(orgUsersSelect)}
+                                onChange={(val) => setBidOrgUser(val)}
                         />
                     </div>
                     <div className={'sa-info-list-row'}>
@@ -415,12 +516,14 @@ const BidPage = (props) => {
                         <Select style={{width: '100%', textAlign: 'left'}}
                                 value={bidProtectionProject}
                                 options={prepareSelect(protectionSelect)}
+                                onChange={(val) => setBidProtectionProject(val)}
                         />
                     </div>
                     <div className={'sa-info-list-row'}>
                         <div className={'sa-list-row-label'}><p>Объект</p></div>
                         <Input style={{width: '100%', height: '32px'}}
                                value={bidObject}
+                               onChange={(e) => setBidObject(e.target.value)}
                         />
                     </div>
                     <div className={'sa-info-list-row'}>
@@ -428,6 +531,7 @@ const BidPage = (props) => {
                         </div>
                         <Input style={{width: '100%', height: '32px'}}
                                value={bidSellBy}
+                               onChange={(e) => setBidSellBy(e.target.value)}
                         />
                     </div>
                     <div className={'sa-info-list-row'}>
@@ -435,6 +539,7 @@ const BidPage = (props) => {
                         </div>
                         <Input style={{width: '100%', height: '32px'}}
                                value={bidProject}
+                               onChange={(e) => setBidProject(e.target.value)}
                         />
                     </div>
                 </div>
@@ -536,6 +641,7 @@ const BidPage = (props) => {
                     <TextArea
                         value={bidCommentEngineer}
                         autoSize={{minRows: 2, maxRows: 6}}
+                        onChange={(e) => setBidCommentEngineer(e.target.value)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -544,6 +650,7 @@ const BidPage = (props) => {
                     <TextArea
                         value={bidCommentManager}
                         autoSize={{minRows: 2, maxRows: 6}}
+                        onChange={(e) => setBidCommentManager(e.target.value)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -552,6 +659,7 @@ const BidPage = (props) => {
                     <TextArea
                         value={bidCommentAdmin}
                         autoSize={{minRows: 2, maxRows: 6}}
+                        onChange={(e) => setBidCommentAdmin(e.target.value)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -560,6 +668,7 @@ const BidPage = (props) => {
                     <TextArea
                         value={bidCommentAccountant}
                         autoSize={{minRows: 2, maxRows: 6}}
+                        onChange={(e) => setBidCommentAccountant(e.target.value)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -568,6 +677,7 @@ const BidPage = (props) => {
                     <TextArea
                         value={bidCommentAddEquipment}
                         autoSize={{minRows: 2, maxRows: 6}}
+                        onChange={(e) => setBidCommentAddEquipment(e.target.value)}
                     />
                 </div>
             </div>
@@ -583,6 +693,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidCurrency}
                             options={prepareSelect(bidCurrencySelect)}
+                            onChange={(val) => setBidCurrency(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -590,6 +701,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidPriceStatus}
                             options={prepareSelect(priceSelect)}
+                            onChange={(val) => setBidPriceStatus(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -598,6 +710,7 @@ const BidPage = (props) => {
                     <Input style={{width: '100%', height: '32px'}}
                            value={bidPercent}
                            type="number"
+                           onChange={(e) => setBidPercent(e.target.value)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -605,6 +718,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidNds}
                             options={prepareSelect(ndsSelect)}
+                            onChange={(val) => setBidNds(val)}
                     />
                 </div>
             </div>
@@ -627,34 +741,6 @@ const BidPage = (props) => {
                                             }
                                         </h1>
                                         <div className={'sa-bid-steps-currency'}>
-                                            {/*{+bidType === 2 && (
-                                                <div className={'custom-small-steps-container'}>
-                                                    <Steps
-                                                        className="sa-custom-steps custom-small-steps"
-                                                        progressDot
-                                                        size="small"
-                                                        current={+bidPlace - 1}
-                                                        items={[
-                                                            {
-                                                                title: 'Менеджер',
-                                                                description: +bidPlace === 1 ? 'Текущий этап' : '',
-                                                            },
-                                                            {
-                                                                title: 'Администратор',
-                                                                description: +bidPlace === 2 ? 'Текущий этап' : '',
-                                                            },
-                                                            {
-                                                                title: 'Бухгалтер',
-                                                                description: +bidPlace === 3 ? 'Текущий этап' : '',
-                                                            },
-                                                            {
-                                                                title: 'Завершено',
-                                                                description: +bidPlace === 4 ? 'Текущий этап' : '',
-                                                            },
-                                                        ]}
-                                                    />
-                                                </div>
-                                            )}*/}
                                             <div>
                                                 <CurrencyMonitorBar/>
                                             </div>
@@ -825,29 +911,28 @@ const BidPage = (props) => {
                                                     filterOption={(input, option) =>
                                                         option.label.toLowerCase().includes(input.toLowerCase())
                                                     }
+                                                    onChange={(val) => handleChangeModel(val, bidModel.id)}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Input style={{width: '100%'}}
-                                                // bordered={false}
                                                    type="number"
                                                    value={bidModel.model_count}
+                                                   onChange={(e) => handleChangeModelCount(e.target.value, bidModel.id)}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Input style={{width: '100%'}}
-                                                // bordered={false}
                                                    type="number"
                                                    value={bidModel.percent}
+                                                   onChange={(e) => handleChangeModelPercent(e.target.value, bidModel.id)}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            {/*<p>{bidModel.price}</p>*/}
-                                            <p>{prepareAmount(bidModel.bo_price_0)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
+                                            <p>{prepareAmount(+bidModel?.moneyOne / 100)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            {/*<p>{bidModel.amount}</p>*/}
-                                            <p>{prepareAmount(bidModel.bo_price_0 * bidModel.model_count)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
+                                            <p>{prepareAmount(+bidModel?.moneyCount / 100)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Select style={{width: '100%'}}
@@ -859,6 +944,7 @@ const BidPage = (props) => {
                                                     filterOption={(input, option) =>
                                                         option.label.toLowerCase().includes(input.toLowerCase())
                                                     }
+                                                    onChange={(val) => handleChangeModelPresence(val, bidModel.id)}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'} style={{padding: 0, boxShadow: 'none'}}>
@@ -872,8 +958,12 @@ const BidPage = (props) => {
                             </div>
                             <div className={'sa-bid-models-footer'}>
                                 <div className={'sa-footer-btns'}>
-                                    <Button style={{width: '30%'}} color="primary" variant="outlined"
-                                            icon={<PlusOutlined/>}>Добавить модель</Button>
+                                    <Button style={{width: '30%'}}
+                                            color="primary"
+                                            variant="outlined"
+                                            icon={<PlusOutlined/>}
+                                            onClick={handleAddModel}
+                                    >Добавить модель</Button>
                                     <Button style={{width: '30%'}} color="primary" variant="filled"
                                             icon={<FileSearchOutlined/>}>Анализ сырых данных</Button>
                                     <Button style={{width: '30%'}} color="primary" variant="filled"
