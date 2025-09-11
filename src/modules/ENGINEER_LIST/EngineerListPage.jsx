@@ -86,6 +86,9 @@ const EngineerListPage = (props) => {
 
   const [orders, setOrders] = useState([]);
   const [ordersStatus, setOrdersStatus] = useState([]);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [modalOrderID, setModalOrderID] = useState(0);
+  const [modalReason, setModalReason] = useState("");
 
   const success = (content) => {
     messageApi.open({
@@ -129,11 +132,11 @@ const EngineerListPage = (props) => {
       setIsOneRole(found.length === 1);
     }
     if (userdata !== null && userdata.user && userdata.user.id_departament) {
-      if ([7,8,20].includes(userdata.user.id_departament)) {
-        setActiveRole(1);
-      } else {
-        setActiveRole(2);
-      }
+      // if ([7,8,20].includes(userdata.user.id_departament)) {
+      //   setActiveRole(1);
+      // } else {
+      //   setActiveRole(2);
+      // }
     }
   }, [userdata]);
 
@@ -402,6 +405,56 @@ const EngineerListPage = (props) => {
     console.log(orders)
   }, [orders]);
 
+  const returnOrderToSpec = (order_id, who) => {
+    console.log(order_id);
+    console.log(who);
+    if (PRODMODE) {
+      if (who === "engineer"){
+        setIsOpenModal(true);
+        setModalOrderID(order_id);
+      } else {
+        let response = PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/delete/' + order_id, {
+          _token: CSRF_TOKEN,
+          data: {
+            reason: modalReason
+          }
+        })
+
+        const updatedOrders = orders.filter(order => order.id !== order_id);
+        setOrders(updatedOrders);
+        success("Заявка успешно отозвана")
+      }
+    } else {
+      if (who === "engineer"){
+        setIsOpenModal(true);
+        setModalOrderID(order_id);
+      } else {
+        const updatedOrders = orders.filter(order => order.id !== order_id);
+        setOrders(updatedOrders);
+
+        success("Заявка успешно отозвана")
+      }
+    }
+  }
+
+  const handleCancel = () => {
+    setIsOpenModal(false);
+    setModalReason("");
+  }
+  const handleOk = () => {
+    setIsOpenModal(false);
+    console.log("HERE: ", modalReason);
+
+    const updatedOrders = orders.filter(order => order.id !== modalOrderID);
+    setOrders(updatedOrders);
+    setModalReason("");
+  }
+
+  const handleSetText = (text) => {
+    setModalReason(text)
+  }
+  // handleOk={handleOk}
+  // handleCancel={handleCancel}
   return (
     <div className={`app-page sa-app-page ${isOpenedFilters ? "sa-filer-opened":''}`}>
       {contextHolder}
@@ -547,7 +600,14 @@ const EngineerListPage = (props) => {
             {isOpenedFilters && (
                 <OrderListSider
                     orders={orders}
+                    returnOrderToSpec={returnOrderToSpec}
                     activeRole={activeRole}
+                    isOpenModal={isOpenModal}
+                    modalOrderID={modalOrderID}
+                    modalReason={modalReason}
+                    handleOk={handleOk}
+                    handleCancel={handleCancel}
+                    handleSetText={handleSetText}
                     // filter_pay_select={prepareSelectOptions(filterPaySelect)}
                     // filter_admin_accept_select={prepareSelectOptions(filterAdminAcceptSelect)}
                     // filter_package_select={prepareSelectOptions(filterPackageSelect)}
