@@ -8,10 +8,12 @@ import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons';
 import OrgNoteEditorSectionBox from '../components/sections/NotesTabSections/Rows/OrgNoteEditorSectionBox';
 import { compareObjects } from '../../../components/helpers/CompareHelpers';
 import OrgCallEditorSectionBox from '../components/sections/NotesTabSections/Rows/OrgCallEditorSectionBox';
+import { BriefcaseIcon, PhoneIcon } from '@heroicons/react/24/solid';
 
 
-const MeetingsTabPage = (props) => {
+const CallsTabPage = (props) => {
     const {userdata} = props;
+
 
     const [orgId, setOrgId] = useState(null);
     const [show, setShow] = useState(false);
@@ -35,8 +37,13 @@ const MeetingsTabPage = (props) => {
     const [editedItemsIds, setEditedItemsIds] = useState([]);
     const [openedNewSections, setOpenedNewSections] = useState([]);
 
-
+    // const [departs, setDeparts] = useState(selects.)
   
+
+    useEffect(() => {
+      console.log('props.selects', props.selects);
+    }, [props.selects]);
+
     useEffect(() => {
       setShow(props.show);
     }, [props.show]);
@@ -69,22 +76,22 @@ const MeetingsTabPage = (props) => {
             setTemporaryUnits([]);
             setEditedItemsIds([]);
             setTimeout(() => {
-              setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
+              setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
             }, 1000);
 
             setBaseData([]);
             console.log("---------- 65 ---------",  originalData);
 
             setTimeout(() => {
-              setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
+              setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
               
             }, 1000);
 
           } else {
             // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
             if (props.on_break_discard){
-              // setBaseData(props.base_data?.notes);
-              setOriginalData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
+              // setBaseData(props.base_data?.calls);
+              setOriginalData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
               props.on_break_discard();
             }
           }
@@ -98,11 +105,30 @@ const MeetingsTabPage = (props) => {
     }, [props.edit_mode]);
 
 
+    const joinCallsAndMeetings = (calls, meetings) => {
+      let result = [];
+      if (calls && calls.length > 0){
+        for (let i = 0; i < calls.length; i++) {
+          const element = calls[i];
+          element._type = "call";
+          result.push(element);
+        }
+      }
+      if (meetings && meetings.length > 0){
+        for (let i = 0; i < meetings.length; i++) {
+          const element = meetings[i];
+          element._type = "meeting";
+          result.push(element);
+        }
+      }
 
+      result.sort((a, b) => dayjs(a).isAfter(dayjs(b)));
+      return result;
+    }
 
 
       useEffect(() => {
-      if (props.base_data?.notes !== null && props.base_data?.notes?.length > 0){
+      if (props.base_data?.calls !== null && props.base_data?.calls?.length > 0){
         let secids = [];
         // setDataList(baseOrgData.projects);
         let strdata = baseData.map((item)=>{
@@ -110,7 +136,16 @@ const MeetingsTabPage = (props) => {
             return {
                 key: 'callrow_' + item.id,
                 label: <div className={`sa-flex-space ${item.deleted === 1 && editMode ? "sa-orgrow-deleted" : ""}`}>
-                  <div>{item.theme}
+                  <div>
+                    {item._type === 'call' ? (
+                      <span title='Звонок' style={{paddingRight: '9px', marginBottom: '-12px'}}>
+                      <PhoneIcon height={'18px'}/></span>
+                    ):(
+                      <span title='Встреча' style={{paddingRight: '9px', marginBottom: '-12px'}}>
+                      <BriefcaseIcon height={'18px'}/></span>
+                    )}
+                  
+                  {item.theme}
                     <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span>  <span className={'sa-text-phantom'}>({item.id})</span></div>
                     {editMode && (
                     <>
@@ -136,7 +171,7 @@ const MeetingsTabPage = (props) => {
                     </>)}
                     </div>,
                 children: <OrgCallEditorSectionBox
-                  color={null}
+                  color={item?._type === "call" ? "#a6a6a6ff":"#5a5a5aff"}
                   data={item}
                   on_delete={handleDeleteRealUnit}
                   on_change={handleUpdateRealUnit}
@@ -159,8 +194,8 @@ const MeetingsTabPage = (props) => {
     useEffect(() => {
       console.log('original' , baseData, originalData);
       console.log("BASE SETTER NNN");
-      setOriginalData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
-      setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
+      setOriginalData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
+      setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
     }, [props.base_data]);
 
     useEffect(() => {
@@ -178,7 +213,16 @@ const MeetingsTabPage = (props) => {
             return {
                 key: nkey,
                 label: <div className='sa-flex-space'>
-                  <div>{item.theme ? item.theme : "..."}
+
+                  <div>
+                  {item._type === 'call' ? (
+                      <span title='Звонок' style={{paddingRight: '9px', marginBottom: '-12px'}}>
+                      <PhoneIcon height={'18px'}/></span>
+                    ):(
+                      <span title='Встреча' style={{paddingRight: '9px', marginBottom: '-12px'}}>
+                      <BriefcaseIcon height={'18px'}/></span>
+                    )}
+                  {item.theme ? item.theme : "..."}
                     <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span>  <span className={'sa-text-phantom'}>({item.id})</span></div>
                     <Button size='small' 
                       onClick={(ev)=>{
@@ -219,25 +263,40 @@ const MeetingsTabPage = (props) => {
     }
 
 
-    const handleAddUnitBlank = () => {
+    const handleAddUnitBlank = (type) => {
       setNewLoading(true);
       console.log('ADDED NEW DDDDDDDDDD')
       setTimeout(() => {
         let spawn = {
+              "_type" : type,
               "command": "create",
               "id": 'new_' + dayjs().unix() + dayjs().millisecond() + temporaryUnits.length,
               "id_orgs": props.item_id,
               "id8staff_list": userdata.user.id,
+              "id8ref_departaments": 5,
               "theme": "",
               "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
-              "notes": "",
+              "post": "",
+              "phone": "",
+              "note": "",
+              "result": "",
+              "subscriber": "",
               "deleted": 0,
               "creator": {
                   "id": userdata.user.id,
                   "surname": userdata?.user.surname,
                   "name": userdata?.user.name,
                   "secondname": userdata?.user.secondname,
-              }
+              },
+              "departament": {
+                "id": 5,
+                "name": "Отдел оптовых продаж",
+                "rang": 50,
+                "visible": true,
+                "deleted": false,
+                "position": null,
+                "icon": null
+            },
             };
   
             setTemporaryUnits(prevItems => [spawn, ...prevItems]);
@@ -317,7 +376,7 @@ const MeetingsTabPage = (props) => {
       }
 
 
-      const excluders = ['command', 'date'];
+      const excluders = ['command', 'date', 'departament', 'creator', '_type'];
       let is_original = false;
 
       originalData.forEach(element => {
@@ -401,7 +460,7 @@ const MeetingsTabPage = (props) => {
                       {editMode && (
                         <Button type={'primary'} 
                           icon={<PlusOutlined/>} 
-                          onClick={handleAddUnitBlank}
+                          onClick={()=>{handleAddUnitBlank('call')}}
                           disabled={newStructureItems.length > 7 || newLoading}
                         >
                           Cоздать звонок
@@ -410,7 +469,7 @@ const MeetingsTabPage = (props) => {
                       {editMode && (
                         <Button type={'primary'} 
                           icon={<PlusOutlined/>} 
-                          onClick={handleAddUnitBlank}
+                          onClick={()=>{handleAddUnitBlank('meeting')}}
                           disabled={newStructureItems.length > 7 || newLoading}
                         >
                           Cоздать встречу
@@ -449,4 +508,4 @@ const MeetingsTabPage = (props) => {
   );
 };
 
-export default MeetingsTabPage;
+export default CallsTabPage;

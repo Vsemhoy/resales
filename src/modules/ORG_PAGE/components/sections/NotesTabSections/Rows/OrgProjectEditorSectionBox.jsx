@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import { PRODMODE } from '../../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../../ORG_LIST/components/mock/ORGLISTMOCK';
-import OrgPageSectionRow from '../../OrgPageSectionRow';
+import OrgPageSectionRow, { OPS_TYPE } from '../../OrgPageSectionRow';
 import dayjs from 'dayjs';
+import { ORG_PROJECT_DEFENSES, ORG_PROJECT_STATES } from '../../../../../../components/definitions/SALESDEF';
 
 
 
@@ -168,6 +169,25 @@ const handleChangeData = (changed_data) => {
             let result = objectResult;
             result.name = name;
             result.equipment = equipment;
+            result.customer = customer;
+            result.address = address;
+            result.stage = stage;
+            result.contactperson = contactperson;
+            result.id8staff_list = curator; // id8staff_list → curator
+            result.date = date;
+            result.cost = cost;
+            result.bonus = bonus;
+            result.comment = comment;
+            result.typepaec = typeEac; // typepaec → typeEac
+            result.date_end = dateEnd;
+            result.erector_id = erector; // erector_id → erector
+            result.linkbid_id = linkbidId; // linkbid_id → linkbidId
+            result.date_create = dateCreate;
+            result.id_company = idCompany; // id_company → idCompany
+            result.author_id = authorId; // author_id → authorId
+            result.author = author;
+            result.id8an_projecttype = projType;
+
 
             console.log('result', result)
 
@@ -316,7 +336,7 @@ const handleChangeData = (changed_data) => {
           <OrgPageSectionRow
             key={'orpprow5_' + id}
             edit_mode={editMode}
-            titles={['Контактное лицо','Состояние']}
+            titles={['Контактное лицо','Дата завершения']}
             datas={[
                 {
                 type: 'text',
@@ -327,14 +347,14 @@ const handleChangeData = (changed_data) => {
                 placeholder: '',
                 name: 'contactperson',
                 },
+
                 {
-                type: 'text',
-                value: projType,
-                max: 250,
-                required: true,
-                nullable: false,
-                placeholder: '',
-                name: 'id8an_projecttype',
+                type: OPS_TYPE.DATE,
+                value: dateEnd,
+                required: false,
+                nullable: true,
+                placeholder: 'Когда реализован',
+                name: 'date_end',
                 },
             ]}
             // on_change={handleChangeData}
@@ -350,7 +370,7 @@ const handleChangeData = (changed_data) => {
                 {
                 type: 'text',
                 value: cost,
-                max: 250,
+                max: 100,
                 required: true,
                 nullable: false,
                 placeholder: '',
@@ -374,20 +394,31 @@ const handleChangeData = (changed_data) => {
         <OrgPageSectionRow
             key={'orpprow7_' + id}
             edit_mode={editMode}
-            titles={['Защита проекта/тип']}
+            titles={['Защита проекта/тип','Состояние']}
             datas={[
                 {
-                type: 'text',
-                value: name,
+                type: OPS_TYPE.SELECT,
+                value: projType,
+                max: 3,
+                required: true,
+                nullable: false,
+                placeholder: '',
+                name: 'id8an_projecttype',
+                options: ORG_PROJECT_DEFENSES
+                },
+                {
+                type: OPS_TYPE.SELECT,
+                value: projType,
                 max: 250,
                 required: true,
                 nullable: false,
                 placeholder: '',
-                name: 'name',
+                name: 'id8an_projecttype',
+                options: ORG_PROJECT_STATES
                 },
             ]}
-            // on_change={handleChangeData}
-            on_blur={handleChangeData}
+            on_change={handleChangeData}
+            // on_blur={handleChangeData}
         />
 
 
@@ -397,12 +428,12 @@ const handleChangeData = (changed_data) => {
             titles={['Монтажная организация']}
             datas={[
                 {
-                type: 'text',
+                type: OPS_TYPE.UINTEGER,
                 value: erector,
-                max: 250,
+                max: Number.MAX_SAFE_INTEGER,
                 required: true,
-                nullable: false,
-                placeholder: '',
+                nullable: true,
+                placeholder: 'ID организации',
                 name: 'erector_id',
                 },
             ]}
@@ -416,18 +447,20 @@ const handleChangeData = (changed_data) => {
             titles={['Связанное КП']}
             datas={[
                 {
-                type: 'text',
-                value: name,
-                max: 250,
-                required: true,
-                nullable: false,
-                placeholder: '',
-                name: 'name',
+                type: OPS_TYPE.UINTEGER,
+                value: linkbidId,
+                max: Number.MAX_SAFE_INTEGER,
+                required: false,
+                nullable: true,
+                placeholder: 'ID коммерческого предложения',
+                name: 'linkbid_id',
                 },
             ]}
             // on_change={handleChangeData}
             on_blur={handleChangeData}
         />
+
+
 
         <OrgPageSectionRow
             key={'orpprow10_' + id}
@@ -435,13 +468,13 @@ const handleChangeData = (changed_data) => {
             titles={['Комментарий']}
             datas={[
                 {
-                type: 'text',
-                value: name,
-                max: 250,
+                type: OPS_TYPE.TEXTAREA,
+                value: comment,
+                max: null,
                 required: true,
-                nullable: false,
+                nullable: true,
                 placeholder: '',
-                name: 'name',
+                name: 'comment',
                 },
             ]}
             // on_change={handleChangeData}

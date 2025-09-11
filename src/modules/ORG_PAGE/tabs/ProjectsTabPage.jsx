@@ -119,7 +119,7 @@ const ProjectsTabPage = (props) => {
               }`}
             >
               <div>
-                {item.theme}
+                {item.name && item.name !== "" ? item.name : item.address}
                 <span className="sa-date-text">
                   {item?.date
                     ? " - " +
@@ -220,7 +220,7 @@ const ProjectsTabPage = (props) => {
           label: (
             <div className="sa-flex-space">
               <div>
-                {item.theme ? item.theme : "..."}
+                {item.name && item.name !== "" ? item.name : item.address}
                 <span className="sa-date-text">
                   {item?.date
                     ? " - " +
@@ -288,11 +288,27 @@ const ProjectsTabPage = (props) => {
           temporaryUnits.length,
         id_orgs: props.item_id,
         id8staff_list: userdata.user.id,
-        theme: "",
         date: dayjs().format("YYYY-MM-DD HH:mm:ss"), //"2016-09-04T21:00:00.000000Z",
-        notes: "",
-        deleted: 0,
-        creator: {
+        id8an_projecttype: 0,
+        name: "",
+        equipment: "",
+        customer: "",
+        address: "",
+        stage: "",
+        contactperson: "",
+        cost: "",
+        bonus: "",
+        comment: "",
+        typepaec: "",
+        deleted: 1,
+        date_end: null,
+        erector_id: null,
+        linkbid_id: null,
+        date_create: dayjs().unix(),
+        id_company: userdata.user.active_company,
+        created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        author_id: userdata.user.id,  
+        curator: {
           id: userdata.user.id,
           surname: userdata?.user.surname,
           name: userdata?.user.name,
@@ -366,12 +382,13 @@ const ProjectsTabPage = (props) => {
   const handleUpdateRealUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
+    console.log('data', data)
     console.log("CALL TU REAL UPDATE");
     if (!editMode) {
       return;
     }
 
-    const excluders = ["command", "date"];
+    const excluders = ["command", "date", "created_at", "date_create", "curator"];
     let is_original = false;
 
     originalData.forEach((element) => {
@@ -414,6 +431,16 @@ const ProjectsTabPage = (props) => {
     if (props.call_to_save !== null && props.on_save !== null) {
       props.on_save(baseData, temporaryUnits);
     }
+      console.log(`
+    ██████╗ ██╗   ██╗██████╗ ██████╗ 
+    ██╔══██╗██║   ██║██╔══██╗██╔══██╗
+    ██████╔╝██║   ██║██████╔╝██████╔╝
+    ██╔══██╗██║   ██║██╔══██╗██╔═══╝ 
+    ██████╔╝╚██████╔╝██║  ██║██║     
+    ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝     
+ 
+    Разработчики обречены.
+  `);
   }, [props.call_to_save]);
 
 

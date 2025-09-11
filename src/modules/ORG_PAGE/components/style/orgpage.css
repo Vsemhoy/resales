@@ -23,6 +23,11 @@
 .sa-orp-menu-button {
     padding: 3px 6px;
     cursor: pointer;
+    user-select: none;
+    transition: all 0.2s;
+}
+.sa-orp-menu-button:hover {
+    color: var(--menu-button-active-color);
 }
 
 .sa-orgpage-header-button {

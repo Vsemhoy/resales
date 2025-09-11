@@ -162,9 +162,15 @@ const OrgPageSectionRow = (props) => {
         return <div className="sk-omt-content-formatted">{dayjs(value).format("DD.MM.YYYY HH:mm:ss")}</div>;
       } else if (field.type === 'time'){
         return <div className="sk-omt-content-formatted">{dayjs(value).format("HH:mm:ss")}</div>;
+      } else if (field.type === 'select'){
+        let lab = field.options?.find((item)=> item.value === field.value)?.label;
+
+        return <div className="sk-omt-content-formatted">{lab}</div>;
       }
       return <div className="sk-omt-content-formatted">{String(value ?? (field.nullable ? '(не задано)' : ''))}</div>;
     }
+
+
 
     const commonProps = {
       value,
@@ -195,11 +201,14 @@ const OrgPageSectionRow = (props) => {
       case 'email':
         return (
           <Input
-            variant="underlined"
+            variant="borderless"
+            size='small'
             {...commonProps}
             type={field.type}
-            placeholder={isRequired ? 'Обязательно' : ''}
+            placeholder={field.placeholder ? field.placeholder : (isRequired ? 'Обязательно' : '')}
             nullable={field.nullable}
+            maxLength={field.max}
+            
           />
         );
 
@@ -209,49 +218,90 @@ const OrgPageSectionRow = (props) => {
       case 'ufloat':
         return (
           <InputNumber
-            variant="underlined"
+            variant="borderless"
+            size='small'
             {...commonProps}
             min={field.type.startsWith('u') ? 0 : field.min}
             max={field.max}
             precision={field.type.includes('float') ? 2 : 0}
             style={{ width: '100%' }}
-
+            allowClear={field.nullable}
+            placeholder={field.placeholder}
           />
         );
 
       case 'textarea':
-        return <TextArea variant="underlined" {...commonProps} rows={3} />;
+        return <TextArea variant="borderless" 
+        size='small'
+        allowClear={field.nullable}
+        maxLength={field.max}
+        placeholder={field.placeholder}
+        {...commonProps} rows={3} />;
 
       case 'date':
         return (
           <DatePicker
-            variant="underlined"
+          size='small'
+            variant="borderless"
             value={value ? dayjs(value) : null}
             format={"DD.MM.YYYY"}
-            onChange={(date, dateString) => onChange(field.name, dateString, field)}
+            onChange={(date, dateString) => {
+              let a = {};
+              a[field.name] = date ? date.format("YYYY-MM-DD") : null;
+              if (!props.on_blur && props.on_change){
+                props.on_change(a);
+              };
+              if (props.on_blur){
+                props.on_blur(a);
+              }
+            }}
             style={{ width: '100%' }}
+            placeholder={field.placeholder}
+            
           />
         );
 
       case 'time':
         return (
           <TimePicker
-            variant="underlined"
+          size='small'
+            variant="borderless"
             value={value ? dayjs(value, 'HH:mm') : null}
             format={"HH:mm"}
-            onChange={(time, timeString) => onChange(field.name, timeString, field)}
+            placeholder={field.placeholder}
+            onChange={(date, dateString) => {
+              let a = {};
+              a[field.name] = date ? date.format("YYYY-MM-DD") : null;
+              if (!props.on_blur && props.on_change){
+                props.on_change(a);
+              };
+              if (props.on_blur){
+                props.on_blur(a);
+              }
+            }}
           />
         );
 
       case 'datetime':
         return (
           <DatePicker
-            variant="underlined"
+            variant="borderless"
+            size='small'
             showTime
             format={"DD.MM.YYYY HH:mm"}
             value={value ? dayjs(value) : null}
-            onChange={(date, dateString) => onChange(field.name, dateString, field)}
             style={{ width: '100%' }}
+            placeholder={field.placeholder}
+            onChange={(date, dateString) => {
+              let a = {};
+              a[field.name] = date ? date.format("YYYY-MM-DD") : null;
+              if (!props.on_blur && props.on_change){
+                props.on_change(a);
+              };
+              if (props.on_blur){
+                props.on_blur(a);
+              }
+            }}
           />
         );
 
@@ -268,10 +318,21 @@ const OrgPageSectionRow = (props) => {
       case 'select':
         return (
           <Select
-            variant="underlined"
+          size='small'
+            variant="borderless"
             value={value}
             onChange={(val) => onChange(field.name, val, field)}
             style={{ width: '100%' }}
+            onBlur={ (e) => {
+              console.log("BLUR");
+              if (props.on_blur){
+                const val = e?.target?.value ?? e;
+                console.log(val);
+                let obj = {};
+                obj[field.name] = val;
+                props.on_blur(obj);
+              }
+            }}
           >
             {field.options?.map((opt) => (
               <Option key={opt.value} value={opt.value}>
@@ -284,13 +345,17 @@ const OrgPageSectionRow = (props) => {
       case 'color':
         return (
           <ColorPicker
+            size='small'
+            placeholder={field.placeholder}
             value={value}
             onChange={(color) => onChange(field.name, color.toHexString(), field)}
           />
         );
 
       default:
-        return <Input variant="underlined" {...commonProps} />;
+        return <Input
+        size='small'
+         variant="borderless" {...commonProps} />;
     }
   };
 
@@ -406,3 +471,20 @@ const OrgPageSectionRow = (props) => {
 };
 
 export default OrgPageSectionRow;
+
+
+export const OPS_TYPE = {
+  STRING : 'string',
+  EMAIL  : 'email',
+  INTEGER: 'integer',
+  UINTEGER: 'uinteger',
+  FLOAT:   'float',
+  UFLOAT:   'ufloat',
+  TEXTAREA: 'textarea',
+  DATE     : 'date',
+  TIME     : 'time',
+  DATETIME : 'datetime',
+  CHECKBOX : 'checkbox',
+  SELECT   : 'select',
+  COLOR    : 'color'
+};
