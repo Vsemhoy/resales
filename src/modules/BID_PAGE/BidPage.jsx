@@ -381,7 +381,7 @@ const BidPage = (props) => {
         if (PRODMODE) {
             try {
                 setIsLoadingSmall(true);
-                let response = await PROD_AXIOS_INSTANCE.get('/api/sales/calcmodels', {
+                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/calcmodels', {
                     data: {
                         bid_info: {
                             bidCurrency,
