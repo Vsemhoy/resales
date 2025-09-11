@@ -17,7 +17,7 @@ import '../ORG_LIST/components/style/orgmodal.css';
 
 
 import MainTabPage from './tabs/MainTabPage';
-import MeetingsTabPage from './tabs/MeetingsTabPage';
+import CallsTabPage from './tabs/CallsTabPage';
 import NotesTabPage from './tabs/NotesTabPage';
 import ProjectsTabPage from './tabs/ProjectsTabPage';
 
@@ -31,6 +31,7 @@ import { ORGLIST_MODAL_MOCK_MAINTAB } from '../ORG_LIST/components/mock/ORGLISTM
 import { MODAL_NOTES_LIST } from '../ORG_LIST/components/mock/MODALNOTESTABMOCK';
 import { MODAL_PROJECTS_LIST } from '../ORG_LIST/components/mock/MODALPROJECTSTABMOCK';
 import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK';
+import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 
 
     const tabNames = [{ 
@@ -126,6 +127,8 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
     const [saveProcess, setSaveProcess] = useState(0);
 
+  const [baseFiltersData, setBaseFilterstData] = useState(null); 
+
     useEffect(() => {
         setLoading(true);
         let rp = getCurrentParamsString();
@@ -148,11 +151,15 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
         }
 
       if (PRODMODE){
+        get_org_filters();
+
         get_main_data_action(item_id);
-        // get_notes_data_action(item_id);
-        // get_org_calls_action(item_id);
-        // get_projects_data_action(item_id);
+        get_notes_data_action(item_id);
+        get_org_calls_action(item_id);
+        get_projects_data_action(item_id);
       } else {
+        setBaseFilterstData(OM_ORG_FILTERDATA);
+
         setBaseMainData(ORGLIST_MODAL_MOCK_MAINTAB);
         setBaseNotesData(MODAL_NOTES_LIST);
         setBaseProjectsData(MODAL_PROJECTS_LIST);
@@ -241,17 +248,15 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
     const triggerEditMode = ()=> {
         let newMode = !editMode;
-        setTimeout(() => {
-            setEditMode(newMode);
-            if (newMode){
-                searchParams.set('mode', "edit");
-                setSearchParams(searchParams);
-    
-            } else {
-                searchParams.delete('mode');
-                setSearchParams(searchParams);
-            }
-        }, 500);
+        setEditMode(newMode);
+        if (newMode){
+            searchParams.set('mode', "edit");
+            setSearchParams(searchParams);
+
+        } else {
+            searchParams.delete('mode');
+            setSearchParams(searchParams);
+        }
     };
 
 
@@ -370,6 +375,33 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
     }
 
+         /**
+         * Получение списка select data
+         * @param {*} req 
+         * @param {*} res 
+         */
+        const get_org_filters = async () => {
+            if (PRODMODE) {
+                try {
+                    let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+                      data: {},
+                      _token: CSRF_TOKEN
+                    });
+                    console.log('me2: ', response);
+                    setBaseFilterstData(response.data.filters);
+                    setBaseCompanies(response.data.filters?.companies);
+                } catch (e) {
+                    console.log(e)
+                } finally {
+                    // setLoadingOrgs(false)
+                    
+                }
+            } else {
+                //setUserAct(USDA);
+                
+            }
+        }
+
 
   /** ----------------------- FETCHES -------------------- */
 
@@ -405,31 +437,31 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
 
   useEffect(() => {
-    get_notes_data_action(item_id);
+    get_notes_data_action();
   }, [pageNotes]);
 
     useEffect(() => {
-    get_org_calls_action(item_id);
+    get_org_calls_action();
   }, [pageCalls]);
 
     useEffect(() => {
-    get_projects_data_action(item_id);
+    get_projects_data_action();
   }, [pageProject]);
 
 
 
 
   const handleSaveData = () => {
+    setSaveProcess(5);
+    setBlockOnSave(true);
+    setTimeout(() => {
 
-        setSaveProcess(5);
-        setBlockOnSave(true);
-        setTimeout(() => {
-    
-            setSaveProcess(100);
-            setBlockOnSave(false);
-    
-        }, 2200);
+        setSaveProcess(100);
+        setBlockOnSave(false);
 
+    }, 2000);
+
+    
   }
 
 
@@ -439,7 +471,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
     <div className='app-page'>
 
     <div className='sa-orgpage-body sa-mw-1400'>
-        <div className='sa-orgpage-header'>
+        <div className='sa-orgpage-header' style={{paddingTop: '4px', paddingBottom: '4px'}}>
             <div className={'sa-flex-space'}>
                 <div className={'sa-flex-space'}>
                     {backeReturnPath && (
@@ -450,7 +482,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                     </div>
                         )}
                     <div className={'sa-orgpage-header-title'} style={{paddingLeft: '12px'}}>
-                        Паспорт организации ({itemId})
+                        Паспорт организации ({itemId}) / {tabNames.find(item => item.link === activeTab)?.name}
                     </div>
                 </div>
                 <div></div>
@@ -566,12 +598,10 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 call_to_save={callToSaveAction}
                 base_data={baseMainData}
                 on_save={handleDataChangeApprove}
-
                 userdata={userdata}
-                on_break_discard={()=> {setEditMode(true)}}
             />
 
-            <MeetingsTabPage
+            <CallsTabPage
                 show={activeTab === 'c'}
                 edit_mode={editMode}
                 item_id={itemId}
@@ -581,9 +611,9 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 active_page={pageCalls}
                 on_change_page={(p)=> {setPageCalls(p)}}
                 current_page={pageCalls}
-
                 userdata={userdata}
-                on_break_discard={()=> {setEditMode(true)}}
+
+                selects={baseFiltersData}
             />
 
             <ProjectsTabPage
@@ -596,9 +626,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 active_page={pageProject}
                 on_change_page={(p)=> {setPageProject(p)}}
                 current_page={pageProject}
-
                 userdata={userdata}
-                on_break_discard={()=> {setEditMode(true)}}
                 />
 
             <NotesTabPage
@@ -611,10 +639,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 active_page={pageNotes}
                 on_change_page={(p)=> {setPageNotes(p)}}
                 current_page={pageNotes}
-
                 userdata={userdata}
-
-                on_break_discard={()=> {setEditMode(true)}}
                 />
 
             {activeTab === 'h' && (

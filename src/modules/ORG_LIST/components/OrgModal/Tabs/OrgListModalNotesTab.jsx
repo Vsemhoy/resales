@@ -47,9 +47,6 @@ const OrgListModalNotesTab = (props) => {
 
 
     useEffect(() => {
-        if (baseOrgData?.name && props.on_load){
-          props.on_load(baseOrgData.name);
-        }
       if (baseOrgData?.notes !== null && baseOrgData?.notes?.length > 0){
         // setDataList(baseOrgData.projects);
           setStructureItems(baseOrgData?.notes.map((item)=>{
@@ -59,7 +56,6 @@ const OrgListModalNotesTab = (props) => {
                 label: <div className='sa-flex'><div>{item.theme}<span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month()) + " " + dayjs(item.date).format("YYYY"): ""}</span> <span className={'sa-text-phantom'}>({item.id})</span></div></div>,
                 children: <OrgNoteModalRow
                   data={item}
-                  // selects_data={props.selects_data}
                 />
             }
           })

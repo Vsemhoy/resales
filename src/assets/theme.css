@@ -43,7 +43,8 @@
 
     --table-background-color: #ffffff;
     --table-second-row-color: #00000011;
-    --table-hovered-row-color: #458db127;
+    --table-hovered-row-color:  #458db127;
+    /* #00aaff14; */
     --table-header-row-color: #ffffff;
     --table-header-color: #e6edf5;
     --table-row-active-color: #fda26b;
@@ -57,7 +58,7 @@
     
     --button-color: #7399bd;
 
-    --current-color: #cb531f;
+    --current-color: #d32f2f;
     --menu-buttons-color: #4f8fcf;
     --menu-button-active-color: #33638b;
     --menu-bg-color: #e7f0f7;

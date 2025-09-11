@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { PRODMODE } from '../../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../../ORG_LIST/components/mock/ORGLISTMOCK';
-import OrgPageSectionRow from '../../OrgPageSectionRow';
+import OrgPageSectionRow, { OPS_TYPE } from '../../OrgPageSectionRow';
 import dayjs from 'dayjs';
 
 
@@ -18,10 +18,17 @@ const OrgCallEditorSectionBox = (props) => {
     const [id, setId] = useState(null);
     const [org, setOrg] = useState(0);
     const [theme, setTheme] = useState("");
-    const [notes, setNotes] = useState("");
+    const [note, setNote] = useState("");
     const [date, setDate] = useState(dayjs().format('DD-MM-YYYY HH:mm:ss'));
     const [creator, setCreator] = useState(0); // id8staff_list
     const [deleted, setDeleted] = useState(0);
+
+    const [depart, setDepart] = useState(5);
+    const [subscriber, setSubscriber] = useState("");
+    const [post, setPost] = useState("");
+    const [phone, setPhone] = useState("");
+    const [result, setResult] = useState("");
+
 
 
     const [objectResult, setObjectResult] = useState({});
@@ -38,9 +45,14 @@ const OrgCallEditorSectionBox = (props) => {
         // if (props.data.id_orgs !== org){
         setOrg(props.data.id_orgs);
         setTheme(props.data.theme);
-        setNotes(props.data.notes);
+        setNote(props.data.note);
         setCreator(props.data.id8staff_list);
         setDeleted(props.data.deleted);
+        setDepart(props.data.id8ref_departaments);
+        setSubscriber(props.data.subscriber);
+        setPost(props.data.post);
+        setPhone(props.data.phone);
+        setResult(props.data.result);
       }
     }, [props.data]);
 
@@ -69,9 +81,21 @@ const OrgCallEditorSectionBox = (props) => {
         
         if (changed_data.theme !== undefined){
             setTheme(changed_data.theme);
-        } else if (changed_data.notes !== undefined){
-            setNotes(changed_data.notes);
-        };
+        } else if (changed_data.note !== undefined){
+            setNote(changed_data.note);
+        } else if (changed_data.id8staff_list !== undefined){
+            setCreator(changed_data.id8staff_list);
+        } else if (changed_data.id8ref_departaments !== undefined){
+            setDepart(changed_data.id8ref_departaments);
+        } else if (changed_data.subscriber !== undefined){
+            setSubscriber(changed_data.subscriber);
+        } else if (changed_data.post !== undefined){
+            setPost(changed_data.post);
+        } else if (changed_data.phone !== undefined){
+            setPhone(changed_data.phone);
+        } else if (changed_data.result !== undefined){
+            setResult(changed_data.result);
+        }
     }
 
 
@@ -83,7 +107,7 @@ const OrgCallEditorSectionBox = (props) => {
           };
             let result = objectResult;
             result.theme = theme;
-            result.notes = notes;
+            result.note = note;
 
             console.log('result', result)
 
@@ -92,7 +116,7 @@ const OrgCallEditorSectionBox = (props) => {
             }
       }, 120);
       return () => clearTimeout(timer);
-    }, [theme, notes]);
+    }, [theme, note]);
 
 
   return (
@@ -101,28 +125,8 @@ const OrgCallEditorSectionBox = (props) => {
     >
 
       
-
         <OrgPageSectionRow
-            key={'fklasdd1jl' + id}
-            edit_mode={editMode}
-            titles={['Тема']}
-            datas={[
-                {
-                type: 'text',
-                value: theme,
-                max: 250,
-                required: true,
-                nullable: false,
-                placeholder: '',
-                name: 'theme',
-                },
-            ]}
-            // on_change={handleChangeData}
-            on_blur={handleChangeData}
-        />
-
-        <OrgPageSectionRow
-            key={'fkl43asdjl' + id}
+            key={'calmet2' + id + props.data._type}
             titles={['Автор', 'Дата']}
 
             datas={[
@@ -150,14 +154,91 @@ const OrgCallEditorSectionBox = (props) => {
         />
 
         <OrgPageSectionRow
-            key={'fklasddjl3' + id}
+            key={'calmet1' + id + props.data._type}
+            edit_mode={editMode}
+            titles={['Тема','Отдел']}
+            datas={[
+                {
+                type: 'text',
+                value: theme,
+                max: 250,
+                required: true,
+                nullable: false,
+                placeholder: '',
+                name: 'theme',
+                },
+                {
+                type: OPS_TYPE.SELECT,
+                value: depart,
+                max: 250,
+                required: true,
+                nullable: false,
+                placeholder: '',
+                name: 'id8ref_departaments',
+                options: []
+                },
+            ]}
+            // on_change={handleChangeData}
+            on_blur={handleChangeData}
+        />
+
+
+        <OrgPageSectionRow
+            key={'calmet6' + id + props.data._type}
+            titles={['Контактное лицо', 'Должность']}
+            edit_mode={editMode}
+            datas={[
+                {
+                type: 'text',
+                value: subscriber,
+                max: 250,
+                required: true,
+                nullable: false,
+                placeholder: '',
+                name: 'subscriber',
+                },
+                {
+                type: 'text',
+                value: post,
+                max: 250,
+                required: true,
+                nullable: false,
+                placeholder: '',
+                name: 'post',
+                },
+            ]}
+            // on_change={handleChangeData}
+            on_blur={handleChangeData}
+        />
+
+        <OrgPageSectionRow
+            key={'calmet7' + id + props.data._type}
+            titles={['Телефон']}
+            edit_mode={editMode}
+            datas={[
+                {
+                type: 'text',
+                value: phone,
+                max: 150,
+                required: true,
+                nullable: false,
+                placeholder: '',
+                name: 'phone',
+                }
+            ]}
+            // on_change={handleChangeData}
+            on_blur={handleChangeData}
+        />
+
+        <OrgPageSectionRow
+            key={'calmet3' + id + props.data._type}
             edit_mode={editMode}
             titles={['Заметка']}
             datas={[
                 {
-                type: 'textarea',
-                value: notes,
-                max: 250,
+                type: OPS_TYPE.TEXTAREA,
+                value: note,
+                max: null,
                 required: true,
                 nullable: false,
                 placeholder: '',
@@ -168,7 +249,24 @@ const OrgCallEditorSectionBox = (props) => {
             on_blur={handleChangeData}
         />
 
-        
+          <OrgPageSectionRow
+            key={'calmet4' + id + props.data._type}
+            edit_mode={editMode}
+            titles={['Результат']}
+            datas={[
+                {
+                type: OPS_TYPE.TEXTAREA,
+                value: result,
+                max: null,
+                required: true,
+                nullable: false,
+                placeholder: '',
+                name: 'result',
+                },
+            ]}
+            // on_change={handleChangeData}
+            on_blur={handleChangeData}
+        />
 
     </div>
   );
