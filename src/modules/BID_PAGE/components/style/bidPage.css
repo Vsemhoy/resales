@@ -311,12 +311,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
     font-size: 13px;
 }
 .sa-footer-table-cell p {
     margin: 0;
 }
-.sa-footer-table-cell p span {
+.sa-footer-table-cell span {
     color: #2C6DA7;
     font-weight: bold;
 }
