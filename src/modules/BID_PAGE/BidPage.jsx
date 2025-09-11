@@ -23,6 +23,7 @@ const BidPage = (props) => {
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingSmall, setIsLoadingSmall] = useState(false);
+    const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
     const [isSavingInfo, setIsSavingInfo] = useState(false);
 
     const [userData, setUserData] = useState(null);
@@ -108,7 +109,9 @@ const BidPage = (props) => {
 
     useEffect(() => {
         if (!isMounted) {
-            fetchInfo().then();
+            fetchInfo().then(() => {
+                setIsNeedCalcMoney(true);
+            });
             setIsMounted(true);
         }
     }, []);
@@ -143,14 +146,16 @@ const BidPage = (props) => {
         };
     }, [isSavingInfo]);
     useEffect(() => {
-        if (isMounted) { // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
+        if (isMounted && isNeedCalcMoney) { // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
             const timer = setTimeout(() => {
-                fetchCalcModels().then();
+                fetchCalcModels().then(() => {
+                    setIsNeedCalcMoney(false);
+                });
             }, 700);
 
             return () => clearTimeout(timer);
         }
-    }, [bidCurrency, bidPriceStatus, bidPercent, bidNds, bidModels]);
+    }, [isNeedCalcMoney]);
 
     const fetchInfo = async () => {
         setIsLoading(true);
@@ -455,18 +460,21 @@ const BidPage = (props) => {
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd[oldModelIdx] = newModelObj;
         setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
     }
     const handleChangeModelCount = (value, modelId) => {
         const modelIdx = bidModels.findIndex(model => model.id === modelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd[modelIdx].model_count = value;
         setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
     };
     const handleChangeModelPercent = (value, modelId) => {
         const modelIdx = bidModels.findIndex(model => model.id === modelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd[modelIdx].percent = value;
         setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
     };
     const handleChangeModelPresence = (value, modelId) => {
         const modelIdx = bidModels.findIndex(model => model.id === modelId);
@@ -693,7 +701,10 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidCurrency}
                             options={prepareSelect(bidCurrencySelect)}
-                            onChange={(val) => setBidCurrency(val)}
+                            onChange={(val) => {
+                                setBidCurrency(val);
+                                setIsNeedCalcMoney(true);
+                            }}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -701,7 +712,10 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidPriceStatus}
                             options={prepareSelect(priceSelect)}
-                            onChange={(val) => setBidPriceStatus(val)}
+                            onChange={(val) => {
+                                setBidPriceStatus(val);
+                                setIsNeedCalcMoney(true);
+                            }}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -710,7 +724,10 @@ const BidPage = (props) => {
                     <Input style={{width: '100%', height: '32px'}}
                            value={bidPercent}
                            type="number"
-                           onChange={(e) => setBidPercent(e.target.value)}
+                           onChange={(e) => {
+                               setBidPercent(e.target.value);
+                               setIsNeedCalcMoney(true);
+                           }}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -718,7 +735,10 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidNds}
                             options={prepareSelect(ndsSelect)}
-                            onChange={(val) => setBidNds(val)}
+                            onChange={(val) => {
+                                setBidNds(val);
+                                setIsNeedCalcMoney(true);
+                            }}
                     />
                 </div>
             </div>
@@ -929,10 +949,10 @@ const BidPage = (props) => {
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            <p>{prepareAmount(+bidModel?.moneyOne / 100)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
+                                            <p>{prepareAmount(+bidModel?.moneyOne)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            <p>{prepareAmount(+bidModel?.moneyCount / 100)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
+                                            <p>{prepareAmount(+bidModel?.moneyCount)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Select style={{width: '100%'}}
