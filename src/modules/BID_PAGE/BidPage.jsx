@@ -377,7 +377,7 @@ const BidPage = (props) => {
     };
 
     const fetchCalcModels = async () => {
-        console.log(2222)
+        console.log('fetchCalcModels')
         if (PRODMODE) {
             try {
                 setIsLoadingSmall(true);
@@ -394,9 +394,9 @@ const BidPage = (props) => {
                     },
                     _token: CSRF_TOKEN
                 });
-                if (response.data) {
-                    setModelsSelect(response.data.models);
-                    setAmounts(response.data.amounts);
+                if (response.data.content) {
+                    setBidModels(response.data.content.models);
+                    //setAmounts(response.data.content.amounts);
                 }
                 setTimeout(() => setIsLoadingSmall(false), 500);
             } catch (e) {
@@ -406,7 +406,6 @@ const BidPage = (props) => {
         } else {
             setIsSavingInfo(true);
             setTimeout(() => setIsLoadingSmall(false), 500);
-            console.log(111)
         }
     };
 
@@ -930,12 +929,10 @@ const BidPage = (props) => {
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            {/*<p>{bidModel.price}</p>*/}
-                                            <p>{/*{prepareAmount(bidModel.bo_price_0)}*/} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
+                                            <p>{prepareAmount(+bidModel?.moneyOne / 100)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            {/*<p>{bidModel.amount}</p>*/}
-                                            <p>{/*{prepareAmount(bidModel.bo_price_0 * bidModel.model_count)}*/} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
+                                            <p>{prepareAmount(+bidModel?.moneyCount / 100)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Select style={{width: '100%'}}
