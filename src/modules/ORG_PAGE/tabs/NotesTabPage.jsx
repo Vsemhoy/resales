@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { getMonthName } from '../../../components/helpers/TextHelpers';
 import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons';
 import OrgNoteEditorSectionBox from '../components/sections/NotesTabSections/Rows/OrgNoteEditorSectionBox';
+import { compareObjects } from '../../../components/helpers/CompareHelpers';
 
 
 const NotesTabPage = (props) => {
@@ -61,21 +62,28 @@ const NotesTabPage = (props) => {
       if (props.edit_mode === false){
         if (editedItemsIds.length > 0 || newStructureItems.length > 0){
           if (window.confirm("У вас есть несохраненные заметки! Отменить изменения?")){
+            setOriginalData([]);
             setLoading(true);
             setEditMode(props.edit_mode);
             setTemporaryUnits([]);
+            setEditedItemsIds([]);
             setTimeout(() => {
-              setBaseData(originalData);
+              setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
             }, 1000);
+
             setBaseData([]);
             console.log("---------- 65 ---------",  originalData);
+
             setTimeout(() => {
-              setBaseData(originalData);
+              setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
               
             }, 1000);
+
           } else {
             // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
             if (props.on_break_discard){
+              // setBaseData(props.base_data?.notes);
+              setOriginalData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
               props.on_break_discard();
             }
           }
@@ -150,7 +158,7 @@ const NotesTabPage = (props) => {
     useEffect(() => {
       console.log('original' , baseData, originalData);
       console.log("BASE SETTER NNN");
-      setOriginalData(props.base_data?.notes ? props.base_data.notes : []);
+      setOriginalData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
       setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
     }, [props.base_data]);
 
@@ -313,11 +321,32 @@ const NotesTabPage = (props) => {
       if (!editMode){
         return;
       }
-      if (!editedItemsIds?.includes(id)){
-        setEditedItemsIds([...editedItemsIds, id]);
-      };
+
+
+      const excluders = ['command', 'date'];
+      let is_original = false;
+
+      originalData.forEach(element => {
+        if (element.id === id){
+          is_original = compareObjects(element, data, {excludeFields: excluders, compareArraysDeep: false, ignoreNullUndefined: true});
+        }
+      });
+
+
+      if (is_original === false){
+        if (!editedItemsIds?.includes(id)){
+          setEditedItemsIds([...editedItemsIds, id]);
+          data.command = 'update';
+        };
+      } else {
+        if (editedItemsIds?.includes(id)){
+          setEditedItemsIds(editedItemsIds.filter((item)=> item !== id));
+          data.command = '';
+        };
+      }
+
       console.log(data);
-      data.command = 'update';
+      
       setBaseData(
         prevUnits => {
           const exists = prevUnits.some(item => item.id === id);
