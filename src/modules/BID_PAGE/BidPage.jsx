@@ -1030,9 +1030,27 @@ const BidPage = (props) => {
                                             <div className={'sa-footer-amounts-cell'}><p>Сумма в рублях</p></div>
                                         </div>
                                         <div className={'sa-footer-amounts-col'}>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.usd)} $</p></div>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.eur)} €</p></div>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.rub)} ₽</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}>
+                                                {!isLoadingSmall ? (
+                                                    <p>{prepareAmount(amounts.usd)} $</p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}>
+                                                {!isLoadingSmall ? (
+                                                    <p>{prepareAmount(amounts.eur)} €</p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}>
+                                                {!isLoadingSmall ? (
+                                                    <p>{prepareAmount(amounts.rub)} ₽</p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
