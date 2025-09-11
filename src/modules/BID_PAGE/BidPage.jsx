@@ -11,7 +11,7 @@ import {
     BlockOutlined,
     CopyOutlined, DeleteOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
     FileSearchOutlined, FileWordOutlined,
-    HistoryOutlined, InfoCircleOutlined,
+    HistoryOutlined, InfoCircleOutlined, LoadingOutlined,
     PlusOutlined,
     SaveOutlined
 } from "@ant-design/icons";
@@ -23,7 +23,11 @@ const BidPage = (props) => {
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingSmall, setIsLoadingSmall] = useState(false);
+    const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
     const [isSavingInfo, setIsSavingInfo] = useState(false);
+
+    const [lastUpdModel, setLastUpdModel] = useState(null);
+    const [isUpdateAll, setIsUpdateAll] = useState(false);
 
     const [userData, setUserData] = useState(null);
 
@@ -108,7 +112,9 @@ const BidPage = (props) => {
 
     useEffect(() => {
         if (!isMounted) {
-            fetchInfo().then();
+            fetchInfo().then(() => {
+                setIsNeedCalcMoney(true);
+            });
             setIsMounted(true);
         }
     }, []);
@@ -121,6 +127,7 @@ const BidPage = (props) => {
         if (bidType) {
             document.title = `${+bidType === 1 ? 'КП' : +bidType === 2 ? 'Счет' : ''} | ${bidId}`;
         }
+        return () => document.title = 'Отдел продаж';
     }, [bidType]);
     useEffect(() => {
         if (props.userdata) {
@@ -143,14 +150,18 @@ const BidPage = (props) => {
         };
     }, [isSavingInfo]);
     useEffect(() => {
-        if (isMounted) { // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
+        if (isMounted && isNeedCalcMoney) { // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
             const timer = setTimeout(() => {
-                fetchCalcModels().then();
+                fetchCalcModels().then(() => {
+                    setIsNeedCalcMoney(false);
+                    setLastUpdModel(null);
+                    setIsUpdateAll(false);
+                });
             }, 700);
 
             return () => clearTimeout(timer);
         }
-    }, [bidCurrency, bidPriceStatus, bidPercent, bidNds, bidModels]);
+    }, [isNeedCalcMoney]);
 
     const fetchInfo = async () => {
         setIsLoading(true);
@@ -361,6 +372,7 @@ const BidPage = (props) => {
     };
 
     const fetchUpdates = async () => {
+        console.log('fetchUpdates')
         if (PRODMODE) {
             try {
                 setIsSavingInfo(true);
@@ -390,13 +402,14 @@ const BidPage = (props) => {
                             bidNds
                         },
                         bid_models: bidModels
-                        //bid_models: bidModels.map(model => ({model_id: model.id, sort: model.sort, model_count: model.model_count, percent: model.percent}))
                     },
                     _token: CSRF_TOKEN
                 });
                 if (response.data.content) {
-                    setBidModels(response.data.content.models);
-                    //setAmounts(response.data.content.amounts);
+                    const content = response.data.content;
+                    if (content.models) setBidModels(content.models);
+                    if (content.amounts) setAmounts(content.amounts);
+                    if (content.models_data) setEngineerParameters(content.models_data);
                 }
                 setTimeout(() => setIsLoadingSmall(false), 500);
             } catch (e) {
@@ -425,10 +438,14 @@ const BidPage = (props) => {
         const rounded = (+engineerParameter).toFixed(2);
         return rounded % 1 === 0 ? Math.round(rounded) : rounded;
     };
-    const prepareAmount = (amount) => {
+    const prepareAmount = (amount, symbol) => {
         const rounded = (+amount / 100).toFixed(2);
-        return formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
+        let formatted =  formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
+        return formatted === `не число` ? <LoadingOutlined /> : formatted + (symbol ? symbol : '');
     };
+    const currencySymbol = (bidModel) => {
+        return +bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
+    }
     const formatNumberWithSpaces = (number) => {
         return new Intl.NumberFormat('ru-RU', {
             minimumFractionDigits: 0,
@@ -440,7 +457,7 @@ const BidPage = (props) => {
         const oldModel = bidModels.find(model => model.id === oldId);
         const oldModelIdx = bidModels.findIndex(model => model.id === oldId);
         const newModelObj = {
-            "id": 'new',
+            "id": 'new_model-' + Math.random(),
             "bid_id": bidId,
             "model_id": newId,
             "model_count": 1,
@@ -455,30 +472,36 @@ const BidPage = (props) => {
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd[oldModelIdx] = newModelObj;
         setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
+        setLastUpdModel(newId);
     }
-    const handleChangeModelCount = (value, modelId) => {
-        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+    const handleChangeModelCount = (value, bidModelId) => {
+        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[modelIdx].model_count = value;
+        bidModelsUpd[bidModelIdx].model_count = value;
         setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
+        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
     };
-    const handleChangeModelPercent = (value, modelId) => {
-        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+    const handleChangeModelPercent = (value, bidModelId) => {
+        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[modelIdx].percent = value;
+        bidModelsUpd[bidModelIdx].percent = value;
         setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
+        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
     };
-    const handleChangeModelPresence = (value, modelId) => {
-        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+    const handleChangeModelPresence = (value, bidModelId) => {
+        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[modelIdx].presence = value;
+        bidModelsUpd[bidModelIdx].presence = value;
         setBidModels(bidModelsUpd);
     };
     const handleAddModel = () => {
         const lastModel = bidModels[bidModels.length - 1];
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd.push({
-            "id": 'new',
+            "id": 'new_model-' + Math.random(),
             "bid_id": bidId,
             "model_id": null,
             "model_count": null,
@@ -693,7 +716,11 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidCurrency}
                             options={prepareSelect(bidCurrencySelect)}
-                            onChange={(val) => setBidCurrency(val)}
+                            onChange={(val) => {
+                                setBidCurrency(val);
+                                setIsNeedCalcMoney(true);
+                                setIsUpdateAll(true);
+                            }}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -701,7 +728,11 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidPriceStatus}
                             options={prepareSelect(priceSelect)}
-                            onChange={(val) => setBidPriceStatus(val)}
+                            onChange={(val) => {
+                                setBidPriceStatus(val);
+                                setIsNeedCalcMoney(true);
+                                setIsUpdateAll(true);
+                            }}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -710,7 +741,11 @@ const BidPage = (props) => {
                     <Input style={{width: '100%', height: '32px'}}
                            value={bidPercent}
                            type="number"
-                           onChange={(e) => setBidPercent(e.target.value)}
+                           onChange={(e) => {
+                               setBidPercent(e.target.value);
+                               setIsNeedCalcMoney(true);
+                               setIsUpdateAll(true);
+                           }}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -718,7 +753,11 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidNds}
                             options={prepareSelect(ndsSelect)}
-                            onChange={(val) => setBidNds(val)}
+                            onChange={(val) => {
+                                setBidNds(val);
+                                setIsNeedCalcMoney(true);
+                                setIsUpdateAll(true);
+                            }}
                     />
                 </div>
             </div>
@@ -886,15 +925,15 @@ const BidPage = (props) => {
                         <div className={'sa-bid-page-models-wrapper'}>
                             <div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
                             <div className={'sa-models-table-row sa-header-row'}>
-                                <div className={'sa-models-table-cell'}><p>№</p></div>
-                                <div className={'sa-models-table-cell'}><p className={'align-left'}>Название</p></div>
-                                <div className={'sa-models-table-cell'}><p className={'align-left'}>Кол-во</p></div>
-                                <div className={'sa-models-table-cell'}><p className={'align-left'}>Процент</p></div>
-                                <div className={'sa-models-table-cell'}><p>Цена</p></div>
-                                <div className={'sa-models-table-cell'}><p>Сумма</p></div>
-                                <div className={'sa-models-table-cell'}><p>Наличие</p></div>
-                                <div className={'sa-models-table-cell'} style={{boxShadow: 'none'}}></div>
-                                <div className={'sa-models-table-cell'}></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'}><p>№</p></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'}><p className={'align-left'}>Название</p></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'}><p className={'align-left'}>Кол-во</p></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'}><p className={'align-left'}>Процент</p></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'}><p>Цена</p></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'}><p>Сумма</p></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'}><p>Наличие</p></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'} style={{boxShadow: 'none'}}></div>
+                                <div className={'sa-models-table-cell sa-models-table-cell-header'}></div>
                             </div>
                             <div className={'sa-models-table'}>
                                 {bidModels.map((bidModel, idx) => (
@@ -929,10 +968,18 @@ const BidPage = (props) => {
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            <p>{prepareAmount(+bidModel?.moneyOne / 100)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
+                                            {((isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll) ? (
+                                                <LoadingOutlined/>
+                                            ) : (
+                                                <p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
+                                            )}
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            <p>{prepareAmount(+bidModel?.moneyCount / 100)} {+bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''}</p>
+                                            {((isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll) ? (
+                                                <LoadingOutlined/>
+                                            ) : (
+                                                <p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
+                                            )}
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Select style={{width: '100%'}}
@@ -972,20 +1019,76 @@ const BidPage = (props) => {
                                 <div className={'sa-footer-table-amounts'}>
                                     <div className={'sa-footer-table'}>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Высота об-ния: <span>{prepareEngineerParameter(engineerParameters.unit)}</span> U</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Высота шкафа: <span>{prepareEngineerParameter(engineerParameters.box_size)}</span> U</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Высота об-ния:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.unit)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                U
+                                            </p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Высота шкафа:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.box_size)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                U
+                                            </p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Потр. мощ.: <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span> кВт</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Вых. мощность: <span>{prepareEngineerParameter(engineerParameters.max_power)}</span> Вт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Потр. мощ.:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                кВт
+                                            </p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Вых. мощность:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.max_power)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                Вт
+                                            </p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Мощность АС: <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span> Вт</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Масса: <span>{prepareEngineerParameter(engineerParameters.mass)}</span> кг</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Мощность АС:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                Вт
+                                            </p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Масса:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.mass)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                кг
+                                            </p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
                                             <div className={'sa-footer-table-cell'}>
-                                                <p>Объем: <span>{prepareEngineerParameter(engineerParameters.size)}</span> m3</p>
+                                                <p>
+                                                    Объем: {' '}
+                                                    {!isLoadingSmall ? (
+                                                        <span>{prepareEngineerParameter(engineerParameters.size)}</span>
+                                                    ) : (
+                                                        <LoadingOutlined/>
+                                                    )}{' '}
+                                                    m3
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -996,9 +1099,27 @@ const BidPage = (props) => {
                                             <div className={'sa-footer-amounts-cell'}><p>Сумма в рублях</p></div>
                                         </div>
                                         <div className={'sa-footer-amounts-col'}>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.usd)} $</p></div>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.eur)} €</p></div>
-                                            <div className={'sa-footer-amounts-cell cell-amount'}><p>{prepareAmount(amounts.rub)} ₽</p></div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}>
+                                                {!isLoadingSmall ? (
+                                                    <p>{prepareAmount(amounts.usd)} $</p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}>
+                                                {!isLoadingSmall ? (
+                                                    <p>{prepareAmount(amounts.eur)} €</p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
+                                            <div className={'sa-footer-amounts-cell cell-amount'}>
+                                                {!isLoadingSmall ? (
+                                                    <p>{prepareAmount(amounts.rub)} ₽</p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

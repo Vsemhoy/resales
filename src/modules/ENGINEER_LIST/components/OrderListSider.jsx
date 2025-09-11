@@ -1,8 +1,9 @@
 import { PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
-import {Affix, Button, Input, List, Select} from 'antd';
+import {Affix, Button, Input, List, Modal, Select} from 'antd';
 import React, { useEffect, useState } from 'react';
 import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
+import DeclineEngineer from "./DeclineEngineer";
 
 const useWindowSize = () => {
     const [windowSize, setWindowSize] = useState({
@@ -26,13 +27,19 @@ const useWindowSize = () => {
 };
 
 const OrderListSider = (props) => {
-
     const [ordersP, setOrdersP] = useState([]);
+    const [role, setRole] = useState(0);
+    const [isOpen, setIsOpen] = useState(false);
+    const [orderID, setOrderID] = useState(0);
+    const [reason, setReason] = useState("");
 
     useEffect(() => {
         setOrdersP(props.orders);
-        console.log(props.orders);
-    }, [props.orders]);
+        setRole(props.activeRole);
+        setIsOpen(props.isOpenModal);
+        setOrderID(props.modalOrderID);
+        setReason(props.modalReason);
+    }, [props.orders, props.activeRole, props.isOpenModal, props.modalOrderID, props.modalReason]);
 
     const { height: windowHeight } = useWindowSize();
     const affixTop = 115;
@@ -61,14 +68,22 @@ const OrderListSider = (props) => {
                                             <span>{order.manager || 'Иванов И.И.'}</span>
                                         </div>
 
-                                        <div className="buttons-container">
-                                            <Button type="primary" icon={<CheckOutlined/>} size="small">
-                                                Принять
-                                            </Button>
-                                            <Button type="primary" danger icon={<CloseOutlined/>} size="small">
-                                                Отклонить
-                                            </Button>
-                                        </div>
+                                        {role && role === 1 ?(
+                                            <div className="buttons-container" >
+                                                <Button type="primary" icon={<CheckOutlined/>} size="small">
+                                                    Принять
+                                                </Button>
+                                                <Button type="primary" danger icon={<CloseOutlined/>} size="small" onClick={(e) => props.returnOrderToSpec(order.id, "engineer")}>
+                                                    Отклонить
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <div className="buttons-container">
+                                                <Button type="primary" danger icon={<CloseOutlined/>} size="small" style={{width:'100%'}} onClick={(e) => props.returnOrderToSpec(order.id, "myself")}>
+                                                    Отозвать
+                                                </Button>
+                                            </div>
+                                        )}
 
                                         <div className="dates-container">
                                             <div className="date-row">
@@ -89,6 +104,18 @@ const OrderListSider = (props) => {
                     </div>
                 </div>
             </div>
+
+            {isOpen && (
+                <DeclineEngineer
+                    orderID={orderID}
+                    reason={reason}
+                    open={isOpen}
+                    handleOk={props.handleOk}
+                    handleCancel={props.handleCancel}
+                    handleSetText={props.handleSetText}
+                />
+            )}
+
         </Affix>
     );
 };
