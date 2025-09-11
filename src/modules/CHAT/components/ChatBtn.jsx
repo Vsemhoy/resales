@@ -6,7 +6,7 @@ import { MOCK } from '../mock/mock.js';
 // import { UserPic } from './UserPic';
 import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api'; // Подключаем свой экземпляр axios
-
+import { ChatLayout } from './ChatLayout';
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -157,7 +157,7 @@ export const ChatBtn = () => {
 				keyboard={true}
 				maskClosable={true}
 			>
-				<p>Это содержимое модального окна.</p>
+				<ChatLayout />
 				{smsData?.hasSms && <p>У вас есть {smsData.messages.length} непрочитанных сообщений</p>}
 			</Modal>
 		</Space>
