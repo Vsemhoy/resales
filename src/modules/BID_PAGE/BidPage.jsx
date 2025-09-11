@@ -97,8 +97,6 @@ const BidPage = (props) => {
     const [bidCurrencySelect, setBidCurrencySelect] = useState([]);
     const [bidPresenceSelect, setBidPresenceSelect] = useState([]);
     const [completeSelect, setCompleteSelect] = useState([]);
-    const [conveyanceSelect, setConveyanceSelect] = useState([]);
-    const [insuranceSelect, setInsuranceSelect] = useState([]);
     const [ndsSelect, setNdsSelect] = useState([]);
     const [packageSelect, setPackageSelect] = useState([]);
     const [paySelect, setPaySelect] = useState([]);
@@ -108,7 +106,15 @@ const BidPage = (props) => {
     const [stageSelect, setStageSelect] = useState([]);
     const [templateWordSelect, setTemplateWordSelect] = useState([]);
     const [companies, setCompanies] = useState([]);
+    const [conveyanceSelect, setConveyanceSelect] = useState([]);
+    const [insuranceSelect, setInsuranceSelect] = useState([]);
+    /* ЭКСТРА СЕЛЕКТЫ */
     const [orgUsersSelect, setOrgUsersSelect] = useState([]);
+    const [requisiteSelect, setRequisiteSelect] = useState([]);
+    const [factAddressSelect, setFactAddressSelect] = useState([]);
+    const [phoneSelect, setPhoneSelect] = useState([]);
+    const [emailSelect, setEmailSelect] = useState([]);
+    const [bidPackageSelect, setBidPackageSelect] = useState([]);
 
     useEffect(() => {
         if (!isMounted) {
@@ -324,12 +330,22 @@ const BidPage = (props) => {
                 if (response.data && response.data.selects) {
                     const selects = response.data.selects;
                     setOrgUsersSelect(selects.orgusers_select);
+                    setRequisiteSelect(selects.requisite_select);
+                    setFactAddressSelect(selects.fact_address_select);
+                    setPhoneSelect(selects.phone_select);
+                    setEmailSelect(selects.email_select);
+                    setBidPackageSelect(selects.package_select);
                 }
             } catch (e) {
                 console.log(e);
             }
         } else {
             setOrgUsersSelect(SELECTS.orgusers_select);
+            setRequisiteSelect(SELECTS?.requisite_select);
+            setFactAddressSelect(SELECTS?.fact_address_select);
+            setPhoneSelect(SELECTS?.phone_select);
+            setEmailSelect(SELECTS?.email_select);
+            setBidPackageSelect(SELECTS?.package_select);
         }
     };
     const fetchCurrencySelects = async () => {
@@ -370,7 +386,6 @@ const BidPage = (props) => {
             setModelsSelect(MODELS);
         }
     };
-
     const fetchUpdates = async () => {
         console.log('fetchUpdates')
         if (PRODMODE) {
@@ -387,7 +402,6 @@ const BidPage = (props) => {
             setTimeout(() => setIsSavingInfo(false), 500);
         }
     };
-
     const fetchCalcModels = async () => {
         console.log('fetchCalcModels')
         if (PRODMODE) {
@@ -423,7 +437,11 @@ const BidPage = (props) => {
     };
 
     const prepareSelect = (select) => {
-        return select.map((item) => ({value: item.id, label: item.name}));
+        if (select) {
+            return select.map((item) => ({value: item.id, label: item.name}));
+        } else {
+            return [];
+        }
     };
     const countOfComments = () => {
         return [
@@ -581,7 +599,7 @@ const BidPage = (props) => {
                     </div>
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={requisite}
-                            options={prepareSelect(protectionSelect)}
+                            options={prepareSelect(requisiteSelect)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -589,7 +607,7 @@ const BidPage = (props) => {
                         транспортировки</p></div>
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={conveyance}
-                            options={prepareSelect(protectionSelect)}
+                            options={prepareSelect(conveyanceSelect)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -597,21 +615,21 @@ const BidPage = (props) => {
                         адрес</p></div>
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={factAddress}
-                            options={prepareSelect(protectionSelect)}
+                            options={prepareSelect(factAddressSelect)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
                     <div className={'sa-list-row-label'}><p>Телефон</p></div>
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={phone}
-                            options={prepareSelect(protectionSelect)}
+                            options={prepareSelect(phoneSelect)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
                     <div className={'sa-list-row-label'}><p>Email</p></div>
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={email}
-                            options={prepareSelect(protectionSelect)}
+                            options={prepareSelect(emailSelect)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -619,14 +637,14 @@ const BidPage = (props) => {
                     </div>
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={insurance}
-                            options={prepareSelect(protectionSelect)}
+                            options={prepareSelect(insuranceSelect)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
                     <div className={'sa-list-row-label'}><p>Упаковка</p></div>
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidPackage}
-                            options={prepareSelect(protectionSelect)}
+                            options={prepareSelect(bidPackageSelect)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -1019,76 +1037,77 @@ const BidPage = (props) => {
                                 <div className={'sa-footer-table-amounts'}>
                                     <div className={'sa-footer-table'}>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>
-                                                Высота об-ния:{' '}
+                                            <div className={'sa-footer-table-cell'}>
+                                                <p>Высота об-ния:{' '}</p>
                                                 {!isLoadingSmall ? (
-                                                    <span>{prepareEngineerParameter(engineerParameters.unit)}</span>
+                                                    <p>
+                                                        <span>{prepareEngineerParameter(engineerParameters.unit)}</span>{' '}U
+                                                    </p>
                                                 ) : (
                                                     <LoadingOutlined/>
-                                                )}{' '}
-                                                U
-                                            </p></div>
-                                            <div className={'sa-footer-table-cell'}><p>
-                                                Высота шкафа:{' '}
+                                                )}
+                                            </div>
+                                            <div className={'sa-footer-table-cell'}>
+                                                <p>Высота шкафа:{' '}</p>
                                                 {!isLoadingSmall ? (
-                                                    <span>{prepareEngineerParameter(engineerParameters.box_size)}</span>
+                                                    <p>
+                                                        <span>{prepareEngineerParameter(engineerParameters.box_size)}</span>{' '}U
+                                                    </p>
                                                 ) : (
                                                     <LoadingOutlined/>
-                                                )}{' '}
-                                                U
-                                            </p></div>
-                                        </div>
-                                        <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>
-                                                Потр. мощ.:{' '}
-                                                {!isLoadingSmall ? (
-                                                    <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span>
-                                                ) : (
-                                                    <LoadingOutlined/>
-                                                )}{' '}
-                                                кВт
-                                            </p></div>
-                                            <div className={'sa-footer-table-cell'}><p>
-                                                Вых. мощность:{' '}
-                                                {!isLoadingSmall ? (
-                                                    <span>{prepareEngineerParameter(engineerParameters.max_power)}</span>
-                                                ) : (
-                                                    <LoadingOutlined/>
-                                                )}{' '}
-                                                Вт
-                                            </p></div>
-                                        </div>
-                                        <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>
-                                                Мощность АС:{' '}
-                                                {!isLoadingSmall ? (
-                                                    <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span>
-                                                ) : (
-                                                    <LoadingOutlined/>
-                                                )}{' '}
-                                                Вт
-                                            </p></div>
-                                            <div className={'sa-footer-table-cell'}><p>
-                                                Масса:{' '}
-                                                {!isLoadingSmall ? (
-                                                    <span>{prepareEngineerParameter(engineerParameters.mass)}</span>
-                                                ) : (
-                                                    <LoadingOutlined/>
-                                                )}{' '}
-                                                кг
-                                            </p></div>
+                                                )}
+                                            </div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
                                             <div className={'sa-footer-table-cell'}>
-                                                <p>
-                                                    Объем: {' '}
-                                                    {!isLoadingSmall ? (
-                                                        <span>{prepareEngineerParameter(engineerParameters.size)}</span>
-                                                    ) : (
-                                                        <LoadingOutlined/>
-                                                    )}{' '}
-                                                    m3
-                                                </p>
+                                                <p>Потр. мощ.:{' '}</p>
+                                                {!isLoadingSmall ? (
+                                                    <p>
+                                                        <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span>{' '}кВт
+                                                    </p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
+                                            <div className={'sa-footer-table-cell'}>
+                                                <p>Вых. мощность:{' '}</p>
+                                                {!isLoadingSmall ? (
+                                                    <p>
+                                                        <span>{prepareEngineerParameter(engineerParameters.max_power)}</span>{' '}Вт
+                                                    </p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}>
+                                                <p>Мощность АС:{' '}</p>
+                                                {!isLoadingSmall ? (
+                                                    <p>
+                                                        <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span>{' '}Вт
+                                                    </p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
+                                            <div className={'sa-footer-table-cell'}>
+                                                <p>Масса:{' '}</p>
+                                                {!isLoadingSmall ? (
+                                                    <p><span>{prepareEngineerParameter(engineerParameters.mass)}</span>{' '}кг</p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className={'sa-footer-table-col'}>
+                                            <div className={'sa-footer-table-cell'}>
+                                                <p>Объем:</p>
+                                                {!isLoadingSmall ? (
+                                                    <p><span>{prepareEngineerParameter(engineerParameters.size)}</span>{' '}m3</p>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
