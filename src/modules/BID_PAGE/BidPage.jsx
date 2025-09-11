@@ -26,6 +26,8 @@ const BidPage = (props) => {
     const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
     const [isSavingInfo, setIsSavingInfo] = useState(false);
 
+    const [lastUpdModel, setLastUpdModel] = useState(null);
+
     const [userData, setUserData] = useState(null);
 
     const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
@@ -151,6 +153,7 @@ const BidPage = (props) => {
             const timer = setTimeout(() => {
                 fetchCalcModels().then(() => {
                     setIsNeedCalcMoney(false);
+                    setLastUpdModel(null);
                 });
             }, 700);
 
@@ -451,7 +454,7 @@ const BidPage = (props) => {
         const oldModel = bidModels.find(model => model.id === oldId);
         const oldModelIdx = bidModels.findIndex(model => model.id === oldId);
         const newModelObj = {
-            "id": 'new',
+            "id": 'new_model-' + Math.random(),
             "bid_id": bidId,
             "model_id": newId,
             "model_count": 1,
@@ -467,32 +470,35 @@ const BidPage = (props) => {
         bidModelsUpd[oldModelIdx] = newModelObj;
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
+        setLastUpdModel(newId);
     }
-    const handleChangeModelCount = (value, modelId) => {
-        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+    const handleChangeModelCount = (value, bidModelId) => {
+        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[modelIdx].model_count = value;
+        bidModelsUpd[bidModelIdx].model_count = value;
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
+        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
     };
-    const handleChangeModelPercent = (value, modelId) => {
-        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+    const handleChangeModelPercent = (value, bidModelId) => {
+        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[modelIdx].percent = value;
+        bidModelsUpd[bidModelIdx].percent = value;
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
+        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
     };
-    const handleChangeModelPresence = (value, modelId) => {
-        const modelIdx = bidModels.findIndex(model => model.id === modelId);
+    const handleChangeModelPresence = (value, bidModelId) => {
+        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[modelIdx].presence = value;
+        bidModelsUpd[bidModelIdx].presence = value;
         setBidModels(bidModelsUpd);
     };
     const handleAddModel = () => {
         const lastModel = bidModels[bidModels.length - 1];
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd.push({
-            "id": 'new',
+            "id": 'new_model-' + Math.random(),
             "bid_id": bidId,
             "model_id": null,
             "model_count": null,
@@ -955,17 +961,17 @@ const BidPage = (props) => {
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            {!isLoadingSmall ? (
-                                                <p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
-                                            ) : (
+                                            {(isLoadingSmall && +lastUpdModel === +bidModel.model_id) ? (
                                                 <LoadingOutlined/>
+                                            ) : (
+                                                <p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
                                             )}
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            {!isLoadingSmall ? (
-                                                <p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
-                                            ) : (
+                                            {(isLoadingSmall && +lastUpdModel === +bidModel.model_id) ? (
                                                 <LoadingOutlined/>
+                                            ) : (
+                                                <p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
                                             )}
                                         </div>
                                         <div className={'sa-models-table-cell'}>
