@@ -1,41 +1,43 @@
 .sa-top-menu {
-    /* background-color: var(--menu-bg-color); */
-    background: linear-gradient(178deg, rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%);
+	/* background-color: var(--menu-bg-color); */
+	background: linear-gradient(178deg, rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%);
 }
 .sa-topmenu-button {
-    color: white;
-    /* background-color: var(--menu-buttons-color); */
-    padding: 6px 12px;
-    text-decoration: none;
-    font-size: medium;
-    font-weight: 600;
+	color: white;
+	/* background-color: var(--menu-buttons-color); */
+	padding: 6px 12px;
+	text-decoration: none;
+	font-size: medium;
+	font-weight: 600;
 }
 .sa-top-menu-buttons > * {
-    transition: all 0.2s;
-
+	transition: all 0.2s;
 }
 .sa-top-menu-buttons {
-    /* background-color: var(--menu-buttons-color);
+	/* background-color: var(--menu-buttons-color);
     background: linear-gradient(178deg,rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%); */
-    display: flex;
+	display: flex;
 }
 .sa-top-menu-buttons a {
-    text-decoration: none !important;
-
+	text-decoration: none !important;
 }
 .sa-top-menu-buttons > *:hover {
-    background-color: rgba(0, 0, 0, 0.285);
+	background-color: rgba(0, 0, 0, 0.285);
 }
 .sa-top-menu-buttons > *.active {
-    background-color: rgba(255, 255, 255, 0.181);
+	background-color: rgba(255, 255, 255, 0.181);
 }
 
 .sa-topmenu-userbox {
-    display: flex;
-    color: white;
-    align-items: center;
-    justify-content: center;
+	display: flex;
+	color: white;
+	align-items: center;
+	justify-content: center;
 }
 .sa-topmenu-userbox > div {
-    padding: 6px 12px;
+	padding: 6px 12px;
+}
+
+div.sa-topmenu-button {
+	margin: auto 0;
 }
