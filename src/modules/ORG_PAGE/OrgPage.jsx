@@ -241,15 +241,17 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
     const triggerEditMode = ()=> {
         let newMode = !editMode;
-        setEditMode(newMode);
-        if (newMode){
-            searchParams.set('mode', "edit");
-            setSearchParams(searchParams);
-
-        } else {
-            searchParams.delete('mode');
-            setSearchParams(searchParams);
-        }
+        setTimeout(() => {
+            setEditMode(newMode);
+            if (newMode){
+                searchParams.set('mode', "edit");
+                setSearchParams(searchParams);
+    
+            } else {
+                searchParams.delete('mode');
+                setSearchParams(searchParams);
+            }
+        }, 500);
     };
 
 
@@ -418,14 +420,16 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
 
   const handleSaveData = () => {
-    setSaveProcess(5);
-    setBlockOnSave(true);
-    setTimeout(() => {
 
-        setSaveProcess(100);
-        setBlockOnSave(false);
+        setSaveProcess(5);
+        setBlockOnSave(true);
+        setTimeout(() => {
+    
+            setSaveProcess(100);
+            setBlockOnSave(false);
+    
+        }, 2200);
 
-    }, 2000);
   }
 
 
