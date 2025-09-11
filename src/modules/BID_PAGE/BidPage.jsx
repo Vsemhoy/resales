@@ -27,6 +27,7 @@ const BidPage = (props) => {
     const [isSavingInfo, setIsSavingInfo] = useState(false);
 
     const [lastUpdModel, setLastUpdModel] = useState(null);
+    const [isUpdateAll, setIsUpdateAll] = useState(false);
 
     const [userData, setUserData] = useState(null);
 
@@ -154,6 +155,7 @@ const BidPage = (props) => {
                 fetchCalcModels().then(() => {
                     setIsNeedCalcMoney(false);
                     setLastUpdModel(null);
+                    setIsUpdateAll(false);
                 });
             }, 700);
 
@@ -400,13 +402,14 @@ const BidPage = (props) => {
                             bidNds
                         },
                         bid_models: bidModels
-                        //bid_models: bidModels.map(model => ({model_id: model.id, sort: model.sort, model_count: model.model_count, percent: model.percent}))
                     },
                     _token: CSRF_TOKEN
                 });
                 if (response.data.content) {
-                    setBidModels(response.data.content.models);
-                    //setAmounts(response.data.content.amounts);
+                    const content = response.data.content;
+                    if (content.models) setBidModels(content.models);
+                    if (content.amounts) setAmounts(content.amounts);
+                    if (content.models_data) setEngineerParameters(content.models_data);
                 }
                 setTimeout(() => setIsLoadingSmall(false), 500);
             } catch (e) {
@@ -716,6 +719,7 @@ const BidPage = (props) => {
                             onChange={(val) => {
                                 setBidCurrency(val);
                                 setIsNeedCalcMoney(true);
+                                setIsUpdateAll(true);
                             }}
                     />
                 </div>
@@ -727,6 +731,7 @@ const BidPage = (props) => {
                             onChange={(val) => {
                                 setBidPriceStatus(val);
                                 setIsNeedCalcMoney(true);
+                                setIsUpdateAll(true);
                             }}
                     />
                 </div>
@@ -739,6 +744,7 @@ const BidPage = (props) => {
                            onChange={(e) => {
                                setBidPercent(e.target.value);
                                setIsNeedCalcMoney(true);
+                               setIsUpdateAll(true);
                            }}
                     />
                 </div>
@@ -750,6 +756,7 @@ const BidPage = (props) => {
                             onChange={(val) => {
                                 setBidNds(val);
                                 setIsNeedCalcMoney(true);
+                                setIsUpdateAll(true);
                             }}
                     />
                 </div>
@@ -961,14 +968,14 @@ const BidPage = (props) => {
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            {(isLoadingSmall && +lastUpdModel === +bidModel.model_id) ? (
+                                            {((isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll) ? (
                                                 <LoadingOutlined/>
                                             ) : (
                                                 <p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
                                             )}
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            {(isLoadingSmall && +lastUpdModel === +bidModel.model_id) ? (
+                                            {((isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll) ? (
                                                 <LoadingOutlined/>
                                             ) : (
                                                 <p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
@@ -1012,20 +1019,76 @@ const BidPage = (props) => {
                                 <div className={'sa-footer-table-amounts'}>
                                     <div className={'sa-footer-table'}>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Высота об-ния: <span>{prepareEngineerParameter(engineerParameters.unit)}</span> U</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Высота шкафа: <span>{prepareEngineerParameter(engineerParameters.box_size)}</span> U</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Высота об-ния:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.unit)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                U
+                                            </p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Высота шкафа:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.box_size)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                U
+                                            </p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Потр. мощ.: <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span> кВт</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Вых. мощность: <span>{prepareEngineerParameter(engineerParameters.max_power)}</span> Вт</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Потр. мощ.:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                кВт
+                                            </p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Вых. мощность:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.max_power)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                Вт
+                                            </p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
-                                            <div className={'sa-footer-table-cell'}><p>Мощность АС: <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span> Вт</p></div>
-                                            <div className={'sa-footer-table-cell'}><p>Масса: <span>{prepareEngineerParameter(engineerParameters.mass)}</span> кг</p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Мощность АС:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                Вт
+                                            </p></div>
+                                            <div className={'sa-footer-table-cell'}><p>
+                                                Масса:{' '}
+                                                {!isLoadingSmall ? (
+                                                    <span>{prepareEngineerParameter(engineerParameters.mass)}</span>
+                                                ) : (
+                                                    <LoadingOutlined/>
+                                                )}{' '}
+                                                кг
+                                            </p></div>
                                         </div>
                                         <div className={'sa-footer-table-col'}>
                                             <div className={'sa-footer-table-cell'}>
-                                                <p>Объем: <span>{prepareEngineerParameter(engineerParameters.size)}</span> m3</p>
+                                                <p>
+                                                    Объем: {' '}
+                                                    {!isLoadingSmall ? (
+                                                        <span>{prepareEngineerParameter(engineerParameters.size)}</span>
+                                                    ) : (
+                                                        <LoadingOutlined/>
+                                                    )}{' '}
+                                                    m3
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
