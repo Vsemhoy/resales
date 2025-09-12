@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Affix, Badge, Button, Collapse, Input, Select, Spin, Steps, Tag, Tooltip} from "antd";
+import {Affix, Alert, Badge, Button, Collapse, Input, Select, Spin, Steps, Tag, Tooltip} from "antd";
 import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
@@ -30,11 +30,16 @@ const BidPage = (props) => {
     const [isLoadingSmall, setIsLoadingSmall] = useState(false);
     const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
     const [isSavingInfo, setIsSavingInfo] = useState(false);
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
 
     const [lastUpdModel, setLastUpdModel] = useState(null);
     const [isUpdateAll, setIsUpdateAll] = useState(false);
 
     const [userData, setUserData] = useState(null);
+
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertDescription, setAlertDescription] = useState('');
+    const [alertType, setAlertType] = useState('');
 
     const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
     /* ШАПКА СТРАНИЦЫ */
@@ -492,8 +497,18 @@ const BidPage = (props) => {
                     data,
                     _token: CSRF_TOKEN
                 });
+                if (response.data.message) {
+                    setIsAlertVisible(true);
+                    setAlertMessage(response.data.message);
+                    setAlertDescription('');
+                    setAlertType('success');
+                }
             } catch (e) {
                 console.log(e);
+                setIsAlertVisible(true);
+                setAlertMessage(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                setAlertDescription('');
+                setAlertType('error');
             }
         } else {
 
@@ -712,6 +727,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={requisite}
                             options={prepareSelect(requisiteSelect)}
+                            onChange={(val) => setRequisite(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -720,6 +736,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={conveyance}
                             options={prepareSelect(conveyanceSelect)}
+                            onChange={(val) => setConveyance(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -728,6 +745,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={factAddress}
                             options={prepareSelect(factAddressSelect)}
+                            onChange={(val) => setFactAddress(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -735,6 +753,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={phone}
                             options={prepareSelect(phoneSelect)}
+                            onChange={(val) => setPhone(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -742,6 +761,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={email}
                             options={prepareSelect(emailSelect)}
+                            onChange={(val) => setEmail(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -750,6 +770,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={insurance}
                             options={prepareSelect(insuranceSelect)}
+                            onChange={(val) => setInsurance(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -757,6 +778,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidPackage}
                             options={prepareSelect(packageSelect)}
+                            onChange={(val) => setBidPackage(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -764,6 +786,7 @@ const BidPage = (props) => {
                         <p>Грузополучатель</p></div>
                     <Input style={{width: '100%', height: '32px'}}
                            value={consignee}
+                           onChange={(e) => setConsignee(e.target.value)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -771,6 +794,7 @@ const BidPage = (props) => {
                         оборудование</p></div>
                     <Input style={{width: '100%', height: '32px'}}
                            value={otherEquipment}
+                           onChange={(e) => setOtherEquipment(e.target.value)}
                     />
                 </div>
             </div>,
@@ -1265,6 +1289,23 @@ const BidPage = (props) => {
                     </div>
                 </div>
             </Spin>
+            {isAlertVisible && (
+                <Alert
+                    message={alertMessage}
+                    description={alertDescription}
+                    type={alertType}
+                    showIcon
+                    closable
+                    style={{
+                        position: 'fixed',
+                        top: 20,
+                        right: 20,
+                        zIndex: 9999,
+                        width: 350
+                    }}
+                    onClose={() => setIsAlertVisible(false)}
+                />
+            )}
         </div>
     );
 }
