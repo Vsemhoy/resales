@@ -38,11 +38,11 @@ import BidListPage from './modules/BID_LIST/BidListPage';
 import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor';
 import { PROD_AXIOS_INSTANCE } from './config/Api';
 import { MS_USER } from './mock/MAINSTATE';
-import Price from './modules/PRICE/Price';
-import CuratorPage from './modules/CURATOR/CuratorPage';
-import EngineerListPage from './modules/ENGINEER_LIST/EngineerListPage';
-import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
-import BidPage from './modules/BID_PAGE/BidPage';
+import Price from "./modules/PRICE/Price";
+import CuratorPage from "./modules/CURATOR/CuratorPage";
+import EngineerListPage from "./modules/ENGINEER_LIST/EngineerListPage";
+import EngineerPage from "./modules/ENGINEER_PAGE/EngineerPage";
+import BidPage from "./modules/BID_PAGE/BidPage";
 import WinShellMessanger from './modules/DEV/COM/WINSHELL/WinShellMessanger';
 
 function App() {
@@ -90,12 +90,18 @@ function App() {
 
 	/** ------------------ FETCHES END ---------------- */
 
-	return (
-		<div className="App">
-			<BrowserRouter basename={BASE_NAME}>
-				<TopMenu userdata={userdata} changed_user_data={setUserdata} />
+  return (
+    <div className="App">
+      <BrowserRouter basename={BASE_NAME}>
 
-				{/* <WinShellMessanger /> */}
+        <TopMenu
+          userdata={userdata}
+          changed_user_data={setUserdata}
+
+          />
+      
+ 
+        {/* <WinShellMessanger /> */}
 
 				<div>
 					<Routes>
@@ -168,16 +174,19 @@ function App() {
 						/>
 						<Route path={'/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0} />} />
 
-						<Route
-							path={BASE_ROUTE + '/dev/icons/customicons'}
-							element={<CustomIconPage userdata={0} />}
-						/>
-						<Route path={'/dev/icons/customicons'} element={<CustomIconPage userdata={0} />} />
-					</Routes>
-				</div>
-			</BrowserRouter>
-		</div>
-	);
+              <Route path={BASE_ROUTE + '/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
+              <Route path={'/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
+
+          </Routes>
+
+          
+        </div>
+
+
+
+      </BrowserRouter>
+    </div>
+  );
 }
 
 export default App;
