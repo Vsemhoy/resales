@@ -385,7 +385,7 @@ const CallsTabPage = (props) => {
       if (!editMode){
         return;
       }
-
+      console.log('data', data)
 
       const excluders = ['command', 'date', 'departament', 'creator', '_type'];
       let is_original = false;
