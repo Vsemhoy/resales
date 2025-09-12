@@ -36,6 +36,7 @@ const BidPage = (props) => {
     const [bidType, setBidType] = useState(null);
     const [bidIdCompany, setBidIdCompany] = useState(null);
     const [bidOrg, setBidOrg] = useState({});
+    const [bidCurator, setBidCurator] = useState({});
     const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
     const [companyCurrency, setCompanyCurrency] = useState(null);
     const [bankCurrency, setBankCurrency] = useState(null);
@@ -184,47 +185,59 @@ const BidPage = (props) => {
                     _token: CSRF_TOKEN
                 });
                 console.log(response);
-                if (response.data && response.data.bid && response.data.bid_models) {
-                    const openMode = response.data.openmode;
+                if (response.data.content) {
+                    const content = response.data.content;
+                    const openMode = content?.openmode;
                     setOpenMode(openMode);
+                    if (content.bid) {
+                        const bid = content?.bid;
 
-                    const bid = response.data.bid;
-                    setBidType(bid.type);
-                    setBidIdCompany(bid.id_company);
-                    setBidOrg(bid.properties.org);
-                    setBidPlace(bid.place);
-                    setBidOrgUser(bid.statuses.orguser); // пока что у меня есть только id, надо еще телефон и почту
-                    setBidProtectionProject(bid.statuses.protection);
-                    setBidObject(bid.properties.object);
-                    setBidSellBy(bid.properties.sellby);
+                        setBidIdCompany(bid.id_company);
+                        setBidType(bid.type);
+                        setBidPlace(bid.place);
+                        setBidFilesCount(bid.files_count);
 
-                    setRequisite(bid.statuses.requisite);
-                    setConveyance(bid.statuses.conveyance);
-                    setFactAddress(bid.statuses.fact_address);
-                    setPhone(bid.statuses.org_phone);
-                    setEmail(bid.statuses.contact_email);
-                    setInsurance(bid.statuses.insurance);
-                    setBidPackage(bid.statuses.package);
-                    setConsignee(bid.properties.consignee);
-                    setOtherEquipment(bid.properties.other_equipment);
-
-                    setBidCommentEngineer(bid.comments.engineer);
-                    setBidCommentManager(bid.comments.manager);
-                    setBidCommentAdmin(bid.comments.admin);
-                    setBidCommentAccountant(bid.comments.accountant);
-                    setBidCommentAddEquipment(bid.comments.add_equipment);
-
-                    setBidCurrency(bid.finance.bid_currency);
-                    setBidPriceStatus(bid.statuses.price);
-                    setBidPercent(bid.finance.percent);
-                    setBidNds(bid.finance.nds);
-
-                    setBidFilesCount(bid.files_count);
-
-                    const models = response.data.bid_models;
-                    setBidModels(models);
-                    setEngineerParameters(response.data.models_data);
-                    setAmounts(response.data.amount);
+                        if (bid.base_info) {
+                            const baseInfo = bid.base_info;
+                            setBidOrg(baseInfo.org);
+                            setBidCurator(baseInfo.curator);
+                            setBidOrgUser(baseInfo.orguser);
+                            setBidProtectionProject(baseInfo.protection);
+                            setBidObject(baseInfo.object);
+                            setBidSellBy(baseInfo.sellby);
+                            setBidProject(baseInfo.project)
+                        }
+                        if (bid.bill) {
+                            const bill = bid.bill;
+                            setRequisite(bill.requisite);
+                            setConveyance(bill.conveyance);
+                            setFactAddress(bill.fact_address);
+                            setPhone(bill.org_phone);
+                            setEmail(bill.contact_email);
+                            setInsurance(bill.insurance);
+                            setBidPackage(bill.package);
+                            setConsignee(bill.consignee);
+                            setOtherEquipment(bill.other_equipment);
+                        }
+                        if (bid.comments) {
+                            const comments = bid.comments;
+                            setBidCommentEngineer(comments.engineer);
+                            setBidCommentManager(comments.manager);
+                            setBidCommentAdmin(comments.admin);
+                            setBidCommentAccountant(comments.accountant);
+                            setBidCommentAddEquipment(comments.add_equipment);
+                        }
+                        if (bid.finance) {
+                            const finance = bid.finance;
+                            setBidCurrency(finance.bid_currency);
+                            setBidPriceStatus(finance.status);
+                            setBidPercent(finance.percent);
+                            setBidNds(finance.nds);
+                        }
+                    }
+                    if (content.bid_models) {
+                        setBidModels(content.bid_models);
+                    }
                 }
             } catch (e) {
                 console.log(e);
@@ -411,7 +424,7 @@ const BidPage = (props) => {
                         bid_info: {
                             bidCurrency,
                             bidPriceStatus,
-                            bidPercent,
+                            bidPercent: +bidPercent,
                             bidNds
                         },
                         bid_models: bidModels
