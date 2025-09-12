@@ -137,9 +137,14 @@ const BidPage = (props) => {
     }, []);
     useEffect(() => {
         if (isMounted && bidOrg && bidOrg.id) {
-            fetchExtraSelects().then();
+            fetchOrgSelects().then();
         }
     }, [bidOrg]);
+    useEffect(() => {
+        if (isMounted && bidOrgUser) {
+            fetchOrgUserSelects().then();
+        }
+    }, [bidOrgUser]);
     useEffect(() => {
         if (bidType) {
             document.title = `${+bidType === 1 ? 'КП' : +bidType === 2 ? 'Счет' : ''} | ${bidId}`;
