@@ -3,7 +3,18 @@ import React, { useEffect, useState } from 'react';
 import './components/style/bidlistpage.css';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
-import { Affix, Button, Dropdown, Layout, Pagination, Select, Spin, Tag, Tooltip } from 'antd';
+import {
+	Affix,
+	Space,
+	Button,
+	Dropdown,
+	Layout,
+	Pagination,
+	Select,
+	Spin,
+	Tag,
+	Tooltip,
+} from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { CaretLeftFilled, CloseOutlined, FilterOutlined } from '@ant-design/icons';
@@ -667,12 +678,16 @@ const BidListPage = (props) => {
 							</div>
 							<div className={'sa-header-label-container-small'}>
 								<div className={'sa-vertical-flex'}>
-									<Button.Group>
+									<Space.Compact>
 										<Button
 											onClick={() => {
 												setIsOpenedFilters(!isOpenedFilters);
 											}}
-											className={`${isOpenedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'}`}
+											className={`${
+												isOpenedFilters
+													? 'sa-default-solid-btn-color'
+													: 'sa-default-outlined-btn-color'
+											}`}
 											color={'default'}
 											variant={isOpenedFilters ? 'solid' : 'outlined'}
 											icon={<FilterOutlined />}
@@ -691,7 +706,7 @@ const BidListPage = (props) => {
 												</Dropdown>
 											</Tooltip>
 										)}
-									</Button.Group>
+									</Space.Compact>
 									<Tag
 										style={{
 											width: '160px',

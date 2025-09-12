@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dropdown, Modal, Space } from 'antd';
-import { DownOutlined, CloseOutlined, MessageOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Space } from 'antd';
+import { MessageOutlined } from '@ant-design/icons';
+
 import { MOCK } from '../mock/mock.js';
-// import { ShortName } from '../../../components/helpers/TextHelpers';
-// import { UserPic } from './UserPic';
 import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
-import { PROD_AXIOS_INSTANCE } from '../../../config/Api'; // Подключаем свой экземпляр axios
-import { ChatLayout } from './ChatLayout';
+import { PROD_AXIOS_INSTANCE } from '../../../config/Api.js';
+import { ChatModal } from './ChatModal';
+
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -15,7 +15,7 @@ export const ChatBtn = () => {
 
 	useEffect(() => {
 		const fetchSmsData = async () => {
-			if (PRODMODE) {
+			if (!PRODMODE) {
 				try {
 					const response = await PROD_AXIOS_INSTANCE.post('/api/sms', { _token: CSRF_TOKEN });
 					if (response.data?.content?.sms) {
@@ -34,10 +34,9 @@ export const ChatBtn = () => {
 					console.error('Ошибка при загрузке sms:', error);
 					setSmsData({ hasSms: false, messages: [] });
 				} finally {
-					setLoading(false); // Завершаем загрузку
+					setLoading(false);
 				}
 			} else {
-				// Если не в продакшн-режиме, используем мок
 				const smsArray = MOCK.reduce((acc, obj) => [...acc, ...obj.content.sms], []);
 				const messages = smsArray.map((sms) => ({
 					id: sms.id,
@@ -46,12 +45,12 @@ export const ChatBtn = () => {
 					content: sms.text || '(без текста)',
 				}));
 				setSmsData({ hasSms: smsArray.length > 0, messages });
-				setLoading(false); // Завершаем загрузку
+				setLoading(false);
 			}
 		};
 
 		fetchSmsData();
-	}, []); // Хук выполнится один раз при монтировании компонента
+	}, []);
 
 	const menuItems = [
 		...(smsData?.hasSms
@@ -64,8 +63,6 @@ export const ChatBtn = () => {
 									<Space size={4} />
 									<Space size={2} wrap>
 										{(() => {
-											// smsData.messages.length===0 ?
-
 											switch (smsData.messages.length) {
 												case 1:
 													return (
@@ -74,7 +71,7 @@ export const ChatBtn = () => {
 												case 2:
 													return (
 														<>
-															{`${smsData.messages[0].name} ${smsData.messages[0].surname}	и ${smsData.messages[1].name} ${smsData.messages[1].surname}`}
+															{`${smsData.messages[0].name} ${smsData.messages[0].surname} и ${smsData.messages[1].name} ${smsData.messages[1].surname}`}
 														</>
 													);
 												default:
@@ -126,7 +123,7 @@ export const ChatBtn = () => {
 			>
 				<div>
 					<Button
-						style={{ background: 'transparent', maxHeight: 'auto' }}
+						style={{ background: 'transparent' }}
 						type="primary"
 						onClick={showModal}
 						className="sa-flex-gap chat"
@@ -138,28 +135,8 @@ export const ChatBtn = () => {
 					</Button>
 				</div>
 			</Dropdown>
-			<Modal
-				title="Детальная информация"
-				open={isModalOpen}
-				onOk={handleOk}
-				onCancel={handleCancel}
-				footer={[
-					<Button key="submit" type="primary" onClick={handleOk}>
-						Отправить
-					</Button>,
-					<Button key="cancel" onClick={handleCancel}>
-						Отмена
-					</Button>,
-					<ChatLayout />,
-				]}
-				closeIcon={<CloseOutlined />}
-				focusTriggerAfterClose={false}
-				autoFocusButton="cancel"
-				keyboard={true}
-				maskClosable={true}
-			>
-				{smsData?.hasSms && <p>У вас есть {smsData.messages.length} непрочитанных сообщений</p>}
-			</Modal>
+
+			<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData} />
 		</Space>
 	);
 };
