@@ -4,6 +4,7 @@ import { PRODMODE } from '../../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../../ORG_LIST/components/mock/ORGLISTMOCK';
 import OrgPageSectionRow, { OPS_TYPE } from '../../OrgPageSectionRow';
 import dayjs from 'dayjs';
+import { AutoComplete, Input } from 'antd';
 
 
 
@@ -36,6 +37,8 @@ const OrgCallEditorSectionBox = (props) => {
     const [objectResult, setObjectResult] = useState({});
 
     const [SKIPPER, setSKIPPER] = useState(1);
+
+    const [orgUsers, setOrgUsers] = useState([]);
 
     // DATA    // DATA      // DATA      // DATA  
 
@@ -73,6 +76,10 @@ const OrgCallEditorSectionBox = (props) => {
       }
     }, []);
 
+    useEffect(() => {
+      setOrgUsers(props.org_users);
+    }, [props.org_users]);
+
 
     useEffect(() => {
         if (props.departaments){
@@ -85,6 +92,11 @@ const OrgCallEditorSectionBox = (props) => {
         };
 
     }, [props.departaments]);
+
+
+
+
+
 
 
     const handleChangeData = (changed_data) => {
@@ -221,6 +233,8 @@ const OrgCallEditorSectionBox = (props) => {
             on_blur={handleChangeData}
         />
 
+        <UserAutoComplete users={orgUsers}/>
+
         <OrgPageSectionRow
             key={'calmet7' + id + props.data._type}
             titles={['Телефон']}
@@ -283,3 +297,57 @@ const OrgCallEditorSectionBox = (props) => {
 };
 
 export default OrgCallEditorSectionBox;
+
+
+
+
+const UserAutoComplete = (props) => {
+  const [options, setOptions] = useState([]);
+  const [value, setValue] = useState('');
+  
+  // Ваш массив с именами пользователей
+//   const userNames = ['Иван', 'Петр', 'Мария', 'Анна', 'Сергей'];
+//   const [userNames, setUserNames] = useState([]);
+
+//   useEffect(() => {
+//     setUserNames((item)=>(
+//         item.surname + " " + item.name + " " + item.middlename
+//     ))
+//   }, [props.users]);
+const userNames = ['Иван', 'Петр', 'Мария', 'Анна', 'Сергей'];
+
+  console.log(props.user);
+  const handleSearch = (searchText) => {
+    // Фильтруем имена по введенному тексту
+    const filteredOptions = userNames.filter(name =>
+      name.toLowerCase().includes(searchText.toLowerCase())
+    );
+    
+    // Форматируем для AntD AutoComplete
+    setOptions(
+      filteredOptions.map(name => ({
+        value: name,
+        label: name,
+      }))
+    );
+  };
+  
+  const handleChange = (data) => {
+    setValue(data);
+  };
+  
+  return (
+    <AutoComplete
+      options={options}
+      style={{ width: 200 }}
+      onSearch={handleSearch}
+      onChange={handleChange}
+      value={value}
+      placeholder="Введите имя"
+      allowClear
+      notFoundContent="Имя не найдено"
+    >
+      <Input />
+    </AutoComplete>
+  );
+};
