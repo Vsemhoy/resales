@@ -40,6 +40,7 @@ const CallsTabPage = (props) => {
 
     // const [departs, setDeparts] = useState(selects.)
   
+    const [orgusers, setOrgUsers] = useState([]);
 
     useEffect(() => {
       console.log('props.selects', props.selects);
@@ -69,6 +70,15 @@ const CallsTabPage = (props) => {
     useEffect(() => {
       setDepartamentList(props.departaments);
     }, [props.departaments]);
+
+    useEffect(() => {
+      console.log(props.main_data);
+      if (props.main_data && props.main_data.contacts){
+        setOrgUsers(props.main_data.contacts);
+      } else {
+        setOrgUsers([]);
+      }
+    }, [props.main_data]);
 
     useEffect(() => {
       
@@ -180,6 +190,7 @@ const CallsTabPage = (props) => {
                   edit_mode={editMode}
 
                   departaments={departamentList}
+                  org_users={orgusers}
                   // selects_data={props.selects_data}
                 />
             }
@@ -239,6 +250,7 @@ const CallsTabPage = (props) => {
                   edit_mode={editMode}
 
                   departaments={departamentList}
+                  org_users={orgusers}
                   // selects_data={props.selects_data}
                 />
             }

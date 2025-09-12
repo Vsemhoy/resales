@@ -28,6 +28,7 @@ const OrgCallEditorSectionBox = (props) => {
     const [post, setPost] = useState("");
     const [phone, setPhone] = useState("");
     const [result, setResult] = useState("");
+    
 
 
     const [departList, setDepartList] = useState([]);
@@ -74,8 +75,14 @@ const OrgCallEditorSectionBox = (props) => {
 
 
     useEffect(() => {
-        console.log('DEEEEEEPP ', props.departaments);
+        if (props.departaments){
 
+            setDepartList(props.departaments.map((item)=> ({
+                key: `departa_${item.id}s`,
+                value: item.id,
+                label: item.name
+            })));
+        };
 
     }, [props.departaments]);
 
@@ -172,13 +179,13 @@ const OrgCallEditorSectionBox = (props) => {
                 },
                 {
                 type: OPS_TYPE.SELECT,
-                value: depart,
-                max: 250,
+                value: depart ? parseInt(depart) : null,
+                max: 9999,
                 required: true,
                 nullable: false,
                 placeholder: '',
                 name: 'id8ref_departaments',
-                options: []
+                options: departList
                 },
             ]}
             // on_change={handleChangeData}
