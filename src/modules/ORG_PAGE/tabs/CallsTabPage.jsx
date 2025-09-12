@@ -13,7 +13,8 @@ import { BriefcaseIcon, PhoneIcon } from '@heroicons/react/24/solid';
 
 const CallsTabPage = (props) => {
     const {userdata} = props;
-
+    
+    const [departamentList, setDepartamentList] = useState([]);
 
     const [orgId, setOrgId] = useState(null);
     const [show, setShow] = useState(false);
@@ -66,6 +67,10 @@ const CallsTabPage = (props) => {
 
 
     useEffect(() => {
+      setDepartamentList(props.departaments);
+    }, [props.departaments]);
+
+    useEffect(() => {
       
       if (props.edit_mode === false){
         if (editedItemsIds.length > 0 || newStructureItems.length > 0){
@@ -80,7 +85,6 @@ const CallsTabPage = (props) => {
             }, 1000);
 
             setBaseData([]);
-            console.log("---------- 65 ---------",  originalData);
 
             setTimeout(() => {
               setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
@@ -154,7 +158,6 @@ const CallsTabPage = (props) => {
                          color="danger" variant="filled"
                         onClick={(ev)=>{
                           ev.stopPropagation();
-                          console.log(item.id);
                           handleDeleteRealUnit(item.id, 0);
                         }}
                       >ВЕРНУТЬ</Button>
@@ -163,7 +166,6 @@ const CallsTabPage = (props) => {
                       color="danger" variant="outlined"
                       onClick={(ev)=>{
                         ev.stopPropagation();
-                        console.log(item.id);
                         handleDeleteRealUnit(item.id, 1);
                       }}
                     >Удалить</Button>
@@ -176,6 +178,8 @@ const CallsTabPage = (props) => {
                   on_delete={handleDeleteRealUnit}
                   on_change={handleUpdateRealUnit}
                   edit_mode={editMode}
+
+                  departaments={departamentList}
                   // selects_data={props.selects_data}
                 />
             }
@@ -192,22 +196,17 @@ const CallsTabPage = (props) => {
 
 
     useEffect(() => {
-      console.log('original' , baseData, originalData);
-      console.log("BASE SETTER NNN");
       setOriginalData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
       setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
     }, [props.base_data]);
 
     useEffect(() => {
-      console.log("ORIGINAL DATA", originalData);
-      console.log("BASE DATA",  baseData);
     }, [originalData, baseData]);
 
 
     useEffect(() => {
       let secids = [];
       setNewStructureItems(temporaryUnits.map((item)=>{
-        console.log(item);
         let nkey = 'new_callrow_' + item.id;
         secids.push(nkey);
             return {
@@ -227,7 +226,6 @@ const CallsTabPage = (props) => {
                     <Button size='small' 
                       onClick={(ev)=>{
                         ev.stopPropagation();
-                        console.log(item.id);
                         handleDeleteBlankUnit(item.id);
                       }}
                     >Удалить</Button>
@@ -239,13 +237,14 @@ const CallsTabPage = (props) => {
                   on_change={handleUpdateBlankUnit}
                   on_blur={handleUpdateBlankUnit}
                   edit_mode={editMode}
+
+                  departaments={departamentList}
                   // selects_data={props.selects_data}
                 />
             }
           })
         );
         // secids.reverse();
-        console.log(secids);
         if (JSON.stringify(openedNewSections) !== JSON.stringify(secids)){
           setOpenedNewSections(secids);
         }

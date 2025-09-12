@@ -30,6 +30,7 @@ const OrgCallEditorSectionBox = (props) => {
     const [result, setResult] = useState("");
 
 
+    const [departList, setDepartList] = useState([]);
 
     const [objectResult, setObjectResult] = useState({});
 
@@ -72,9 +73,11 @@ const OrgCallEditorSectionBox = (props) => {
     }, []);
 
 
-    // useEffect(() => {
-    //     console.log(props.data);
-    // }, [props.data]);
+    useEffect(() => {
+        console.log('DEEEEEEPP ', props.departaments);
+
+
+    }, [props.departaments]);
 
 
     const handleChangeData = (changed_data) => {
