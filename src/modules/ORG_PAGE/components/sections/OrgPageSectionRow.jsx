@@ -404,7 +404,7 @@ const OrgPageSectionRow = (props) => {
             value={value}
             placeholder={field.placeholder}
             // allowClear
-            notFoundContent="Имя не найдено"
+            notFoundContent="Ничего не найдено :("
             // {...commonProps}
           >
             <Input            

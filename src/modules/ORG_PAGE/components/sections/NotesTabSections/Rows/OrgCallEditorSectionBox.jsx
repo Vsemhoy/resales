@@ -5,6 +5,7 @@ import { OM_ORG_FILTERDATA } from '../../../../../ORG_LIST/components/mock/ORGLI
 import OrgPageSectionRow, { OPS_TYPE } from '../../OrgPageSectionRow';
 import dayjs from 'dayjs';
 import { AutoComplete, Input } from 'antd';
+import useToken from 'antd/es/theme/useToken';
 
 
 
@@ -39,6 +40,9 @@ const OrgCallEditorSectionBox = (props) => {
   const [SKIPPER, setSKIPPER] = useState(1);
 
   const [orgUsers, setOrgUsers] = useState([]);
+  const [orgPhones, setOrgPhones] = useState([]);
+
+  const [targetOrgUserId, setTargetOrgUserId] = useState(0);
 
   // DATA    // DATA      // DATA      // DATA  
 
@@ -97,9 +101,66 @@ const OrgCallEditorSectionBox = (props) => {
 
   }, [props.departaments]);
 
-  // useEffect(() => {
-  //   setOrgUsers(props.users);
-  // }, [props.users]);
+
+
+  /**
+   * Этот злой стейт отвечает за поиск телефонов для выбранного гуся
+   */
+  useEffect(() => {
+    let id = null;
+    let of = [];
+    if (!props.org_users || !subscriber.trim()) {
+      setOrgPhones([]);
+      return; // ничего не ищем, если нет данных или пустой ввод
+    }
+
+    const searchWords = subscriber
+      .toLowerCase()
+      .split(' ')
+      .filter(word => word.length > 0); // убираем пустые строки
+
+    if (searchWords.length === 0) return;
+
+    const foundUser = props.org_users.find(user => {
+      const fullName = `${user.lastname} ${user.name} ${user.middlename}`.toLowerCase();
+
+      // Проверяем, что КАЖДОЕ слово из ввода есть в ФИО
+      return searchWords.every(word => fullName.includes(word));
+    });
+
+    if (foundUser) {
+      console.log('Найден пользователь:', foundUser);
+      id = foundUser.id;
+      // 👇 Тут можешь сохранить ID или весь объект
+      // Например: setSelectedUserId(foundUser.id);
+    } else {
+      console.log('Пользователь не найден');
+      setOrgPhones([]);
+      return;
+      // setSelectedUserId(null);
+    }
+    if (foundUser.occupy){
+      setPost(foundUser.occupy.trim());
+    }
+
+    if (foundUser.contactstelephones.length){
+      for (let index = 0; index < foundUser.contactstelephones.length; index++) {
+        const element = foundUser.contactstelephones[index];
+        of.push(element.number);
+      }
+    }
+
+    if (foundUser.contactmobiles.length){
+      for (let index = 0; index < foundUser.contactmobiles.length; index++) {
+        const element = foundUser.contactmobiles[index];
+        of.push(element.number);
+      }
+    }
+    setOrgPhones(of);
+  }, [subscriber, props.org_users]);
+
+
+
 
 
   useEffect(() => {
@@ -251,13 +312,14 @@ const OrgCallEditorSectionBox = (props) => {
         edit_mode={editMode}
         datas={[
           {
-            type: 'text',
+            type: OPS_TYPE.AUTOCOMPLETE,
             value: phone,
             max: 150,
             required: true,
             nullable: false,
             placeholder: '',
             name: 'phone',
+            options: orgPhones,
           }
         ]}
         // on_change={handleChangeData}
