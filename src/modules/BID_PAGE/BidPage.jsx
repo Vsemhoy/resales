@@ -396,13 +396,13 @@ const BidPage = (props) => {
                 });
                 if (response.data && response.data.selects) {
                     const selects = response.data.selects;
-                    setEmailSelect(selects.email_select);
+                    setEmailSelect(selects.contact_email_select);
                 }
             } catch (e) {
                 console.log(e);
             }
         } else {
-            setEmailSelect(SELECTS?.email_select);
+            setEmailSelect(SELECTS?.contact_email_select);
         }
     };
     const fetchCurrencySelects = async () => {
@@ -704,7 +704,7 @@ const BidPage = (props) => {
                     <div className={'sa-list-row-label'}><p>Упаковка</p></div>
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidPackage}
-                            options={prepareSelect(bidPackageSelect)}
+                            options={prepareSelect(packageSelect)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>

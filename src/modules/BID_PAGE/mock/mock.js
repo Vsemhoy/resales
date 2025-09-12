@@ -382,14 +382,12 @@ export const SELECTS = {
     ],
     "insurance_select": [
         {
-            "key": 0,
-            "value": 0,
-            "label": "нет"
+            "id": 0,
+            "name": "нет"
         },
         {
-            "key": 1,
-            "value": 1,
-            "label": "да"
+            "id": 1,
+            "name": "да"
         }
     ],
     "bid_presence_select": [
@@ -482,6 +480,29 @@ export const SELECTS = {
             "occupy": "Генеральный директор"
         }
     ],
+    "fact_address_select": [
+        {
+            "id": 41554,
+            "name": "пр. Маршала Блюхера 57 корп.1 кв 135"
+        }
+    ],
+    "org_phones_select": [
+        {
+            "id": 81231,
+            "name": "+7-812-725-10-01"
+        }
+    ],
+    "requisite_select": [
+        {
+            "name": "К-Серверс (ИНН: 7838052553, КПП: 780601001)",
+            "id": 6911
+        },
+        {
+            "name": "Ситилайт (ИНН: 7816277680, КПП: 781001001)",
+            "id": 6961
+        }
+    ],
+    "contact_email_select": [],
 };
 export const CUR_COMPANY = [
     {
@@ -517,7 +538,7 @@ export const BID_INFO = {
         "id": 120828,
         "id_company": 2,
         "place": 1,
-        "type": 1,
+        "type": 2,
         "files_count": 0,
         "comments": {
             "accountant": "",
