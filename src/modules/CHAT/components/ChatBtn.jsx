@@ -6,7 +6,7 @@ import { MOCK } from '../mock/mock.js';
 // import { UserPic } from './UserPic';
 import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api'; // Подключаем свой экземпляр axios
-// import { ChatLayout } from './ChatLayout';
+import { ChatLayout } from './ChatLayout';
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -150,7 +150,7 @@ export const ChatBtn = () => {
 					<Button key="cancel" onClick={handleCancel}>
 						Отмена
 					</Button>,
-					// <ChatLayout />,
+					<ChatLayout />,
 				]}
 				closeIcon={<CloseOutlined />}
 				focusTriggerAfterClose={false}
