@@ -180,8 +180,7 @@ const BidPage = (props) => {
     const fetchBidInfo = async () => {
         if (PRODMODE) {
             try {
-                let response = await PROD_AXIOS_INSTANCE.get(`/api/sales/offers/${bidId}?_token=${CSRF_TOKEN}&from_socket=false`, {
-                    data: {},
+                let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/v2/offers/${bidId}`, {
                     _token: CSRF_TOKEN
                 });
                 console.log(response);
