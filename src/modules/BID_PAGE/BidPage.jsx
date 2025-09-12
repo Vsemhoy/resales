@@ -122,6 +122,13 @@ const BidPage = (props) => {
     const [emailSelect, setEmailSelect] = useState([]);
     const [bidPackageSelect, setBidPackageSelect] = useState([]);
 
+    const handleKeyDown = (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            event.preventDefault();
+            setIsSavingInfo(true);
+        }
+    };
+
     useEffect(() => {
         if (!isMounted) {
             fetchInfo().then(() => {
@@ -152,15 +159,11 @@ const BidPage = (props) => {
         }
     }, [props.userdata]);
     useEffect(() => {
-        const handleKeyDown = (event) => {
-            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-                event.preventDefault();
-                if (!isSavingInfo) {
-                    fetchUpdates().then();
-                }
-            }
-        };
-
+        if (isSavingInfo) {
+            fetchUpdates().then(() => {
+                setTimeout(() => setIsSavingInfo(false), 500);
+            });
+        }
         window.addEventListener('keydown', handleKeyDown);
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
@@ -440,64 +443,61 @@ const BidPage = (props) => {
     };
     const fetchUpdates = async () => {
         console.log('fetchUpdates')
+        const data = {
+            bid: {
+                id: bidId,
+                id_company: bidIdCompany,
+                place: bidPlace,
+                type: bidType,
+                files_count: bidFilesCount,
+                base_info: {
+                    org: bidOrg,
+                    curator: bidCurator,
+                    orguser: bidOrgUser,
+                    protection: bidProtectionProject,
+                    object: bidObject,
+                    sellby: bidSellBy,
+                    project: bidProject,
+                },
+                bill: +bidType === 2 ? {
+                    requisite: requisite,
+                    conveyance: conveyance,
+                    fact_address: factAddress,
+                    org_phone: phone,
+                    contact_email: email,
+                    insurance: insurance,
+                    package: bidPackage,
+                    consignee: consignee,
+                    other_equipment: otherEquipment,
+                } : null,
+                comments: {
+                    engineer: bidCommentEngineer,
+                    manager: bidCommentManager,
+                    admin: bidCommentAdmin,
+                    accountant: bidCommentAccountant,
+                    add_equipment: bidCommentAddEquipment,
+                },
+                finance: {
+                    bid_currency: bidCurrency,
+                    status: bidPriceStatus,
+                    percent: bidPercent,
+                    nds: bidNds,
+                }
+            },
+            bid_models: bidModels,
+        };
+        console.log(data)
         if (PRODMODE) {
             try {
-                setIsSavingInfo(true);
-                const data = {
-                    bid: {
-                        id: bidId,
-                        id_company: bidIdCompany,
-                        place: bidPlace,
-                        type: bidType,
-                        files_count: bidFilesCount,
-                        base_info: {
-                            org: bidOrg,
-                            curator: bidCurator,
-                            orguser: bidOrgUser,
-                            protection: bidProtectionProject,
-                            object: bidObject,
-                            sellby: bidSellBy,
-                            project: bidProject,
-                        },
-                        bill: +bidType === 2 ? {
-                            requisite: requisite,
-                            conveyance: conveyance,
-                            fact_address: factAddress,
-                            org_phone: phone,
-                            contact_email: email,
-                            insurance: insurance,
-                            package: bidPackage,
-                            consignee: consignee,
-                            other_equipment: otherEquipment,
-                        } : null,
-                        comments: {
-                            engineer: bidCommentEngineer,
-                            manager: bidCommentManager,
-                            admin: bidCommentAdmin,
-                            accountant: bidCommentAccountant,
-                            add_equipment: bidCommentAddEquipment,
-                        },
-                        finance: {
-                            bid_currency: bidCurrency,
-                            status: bidPriceStatus,
-                            percent: bidPercent,
-                            nds: bidNds,
-                        }
-                    },
-                    bid_models: bidModels,
-                };
                 let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/updatebid/${bidId}`, {
                     data,
                     _token: CSRF_TOKEN
                 });
-                setTimeout(() => setIsSavingInfo(false), 500);
             } catch (e) {
                 console.log(e);
-                setTimeout(() => setIsSavingInfo(false), 500);
             }
         } else {
-            setIsSavingInfo(true);
-            setTimeout(() => setIsSavingInfo(false), 500);
+
         }
     };
     const fetchCalcModels = async () => {
@@ -954,7 +954,7 @@ const BidPage = (props) => {
                                                 style={{width: '150px'}}
                                                 icon={<SaveOutlined />}
                                                 loading={isSavingInfo}
-                                                onClick={fetchUpdates}
+                                                onClick={() => setIsSavingInfo(true)}
                                         >{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}</Button>
                                     </div>
                                 </div>
