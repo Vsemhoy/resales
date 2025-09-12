@@ -562,7 +562,7 @@ export const BID_INFO = {
             "protection": 0,
             "object": "Нагатинская 16. стр. 1-6 ",
             "sellby": "",
-            "project": null
+            "project": 1
         },
         "bill": null
     },

@@ -457,7 +457,6 @@ const BidPage = (props) => {
                     protection: bidProtectionProject,
                     object: bidObject,
                     sellby: bidSellBy,
-                    project: bidProject,
                 },
                 bill: +bidType === 2 ? {
                     requisite: requisite,
@@ -690,10 +689,11 @@ const BidPage = (props) => {
                     <div className={'sa-info-list-row'}>
                         <div className={'sa-list-row-label'}><p>Связанный проект</p>
                         </div>
-                        <Input style={{width: '100%', height: '32px'}}
-                               value={bidProject}
-                               onChange={(e) => setBidProject(e.target.value)}
-                        />
+                        {bidProject ?
+                            (<Tag style={{width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'}}
+                                  color={'cyan'}>{+bidProject}</Tag>) :
+                            <MinusOutlined/>
+                        }
                     </div>
                 </div>
             )
