@@ -75,7 +75,6 @@ const ProjectsTabPage = (props) => {
           }, 1000);
 
           setBaseData([]);
-          console.log("---------- 65 ---------", originalData);
 
           setTimeout(() => {
             setBaseData(
@@ -139,7 +138,6 @@ const ProjectsTabPage = (props) => {
                       variant="filled"
                       onClick={(ev) => {
                         ev.stopPropagation();
-                        console.log(item.id);
                         handleDeleteRealUnit(item.id, 0);
                       }}
                     >
@@ -152,7 +150,6 @@ const ProjectsTabPage = (props) => {
                       variant="outlined"
                       onClick={(ev) => {
                         ev.stopPropagation();
-                        console.log(item.id);
                         handleDeleteRealUnit(item.id, 1);
                       }}
                     >
@@ -185,8 +182,6 @@ const ProjectsTabPage = (props) => {
 
 
   useEffect(() => {
-    console.log("original", baseData, originalData);
-    console.log("BASE SETTER NNN");
     setOriginalData(
       props.base_data?.projects
         ? JSON.parse(JSON.stringify(props.base_data.projects))
@@ -201,10 +196,7 @@ const ProjectsTabPage = (props) => {
 
 
 
-  useEffect(() => {
-    console.log("ORIGINAL DATA", originalData);
-    console.log("BASE DATA", baseData);
-  }, [originalData, baseData]);
+
 
 
 
@@ -212,7 +204,6 @@ const ProjectsTabPage = (props) => {
     let secids = [];
     setNewStructureItems(
       temporaryUnits.map((item) => {
-        console.log(item);
         let nkey = "new_projrow_" + item.id;
         secids.push(nkey);
         return {
@@ -235,7 +226,6 @@ const ProjectsTabPage = (props) => {
                 size="small"
                 onClick={(ev) => {
                   ev.stopPropagation();
-                  console.log(item.id);
                   handleDeleteBlankUnit(item.id);
                 }}
               >
@@ -258,7 +248,6 @@ const ProjectsTabPage = (props) => {
       })
     );
     // secids.reverse();
-    console.log(secids);
     if (JSON.stringify(openedNewSections) !== JSON.stringify(secids)) {
       setOpenedNewSections(secids);
     }
@@ -277,7 +266,6 @@ const ProjectsTabPage = (props) => {
 
   const handleAddUnitBlank = () => {
     setNewLoading(true);
-    console.log("ADDED NEW DDDDDDDDDD");
     setTimeout(() => {
       let spawn = {
         command: "create",
@@ -317,7 +305,6 @@ const ProjectsTabPage = (props) => {
       };
 
       setTemporaryUnits((prevItems) => [spawn, ...prevItems]);
-      console.log(spawn);
     }, 760);
   };
 

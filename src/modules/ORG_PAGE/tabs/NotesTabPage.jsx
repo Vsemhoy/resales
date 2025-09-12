@@ -72,7 +72,6 @@ const NotesTabPage = (props) => {
             }, 1000);
 
             setBaseData([]);
-            console.log("---------- 65 ---------",  originalData);
 
             setTimeout(() => {
               setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
@@ -118,7 +117,6 @@ const NotesTabPage = (props) => {
                          color="danger" variant="filled"
                         onClick={(ev)=>{
                           ev.stopPropagation();
-                          console.log(item.id);
                           handleDeleteRealUnit(item.id, 0);
                         }}
                       >ВЕРНУТЬ</Button>
@@ -127,7 +125,6 @@ const NotesTabPage = (props) => {
                       color="danger" variant="outlined"
                       onClick={(ev)=>{
                         ev.stopPropagation();
-                        console.log(item.id);
                         handleDeleteRealUnit(item.id, 1);
                       }}
                     >Удалить</Button>
@@ -156,22 +153,22 @@ const NotesTabPage = (props) => {
 
 
     useEffect(() => {
-      console.log('original' , baseData, originalData);
-      console.log("BASE SETTER NNN");
+      // console.log('original' , baseData, originalData);
+      // console.log("BASE SETTER NNN");
       setOriginalData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
       setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
     }, [props.base_data]);
 
-    useEffect(() => {
-      console.log("ORIGINAL DATA", originalData);
-      console.log("BASE DATA",  baseData);
-    }, [originalData, baseData]);
+    // useEffect(() => {
+    //   console.log("ORIGINAL DATA", originalData);
+    //   console.log("BASE DATA",  baseData);
+    // }, [originalData, baseData]);
 
 
     useEffect(() => {
       let secids = [];
       setNewStructureItems(temporaryUnits.map((item)=>{
-        console.log(item);
+        // console.log(item);
         let nkey = 'new_norprow_' + item.id;
         secids.push(nkey);
             return {
@@ -220,7 +217,7 @@ const NotesTabPage = (props) => {
 
     const handleAddUnitBlank = () => {
       setNewLoading(true);
-      console.log('ADDED NEW DDDDDDDDDD')
+      // console.log('ADDED NEW DDDDDDDDDD')
       setTimeout(() => {
         let spawn = {
               "command": "create",
@@ -240,7 +237,7 @@ const NotesTabPage = (props) => {
             };
   
             setTemporaryUnits(prevItems => [spawn, ...prevItems]);
-            console.log(spawn);
+            // console.log(spawn);
         
       }, 760);
     }
@@ -297,7 +294,7 @@ const NotesTabPage = (props) => {
       if (!editMode){
         return;
       }
-      console.log('id, data', id, data, temporaryUnits);
+      // console.log('id, data', id, data, temporaryUnits);
       setTemporaryUnits(prevUnits => {
         const exists = prevUnits.some(item => item.id === id);
         
@@ -317,7 +314,7 @@ const NotesTabPage = (props) => {
     const handleUpdateRealUnit = (id, data) => {
       // let udata = originalData.filter((item) => item.id !== id);
       // udata.push(data);
-      console.log('CALL TU REAL UPDATE');
+      // console.log('CALL TU REAL UPDATE');
       if (!editMode){
         return;
       }
@@ -345,7 +342,6 @@ const NotesTabPage = (props) => {
         };
       }
 
-      console.log(data);
       
       setBaseData(
         prevUnits => {
@@ -367,7 +363,6 @@ const NotesTabPage = (props) => {
 
     // если в call_to_save не null, а timestamp, отправляем данные на обновление
     useEffect(() => {
-      console.log('basedata', baseData, temporaryUnits);
       if (props.call_to_save !== null && props.on_save !== null){
         props.on_save(baseData, temporaryUnits);
       }

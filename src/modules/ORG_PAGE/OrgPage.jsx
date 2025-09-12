@@ -32,6 +32,7 @@ import { MODAL_NOTES_LIST } from '../ORG_LIST/components/mock/MODALNOTESTABMOCK'
 import { MODAL_PROJECTS_LIST } from '../ORG_LIST/components/mock/MODALPROJECTSTABMOCK';
 import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
+import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
 
 
     const tabNames = [{ 
@@ -92,26 +93,27 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
     const location = useLocation();
     const [editMode, setEditMode] = useState(false);
     // const [companies, setCompanies] = useState([]);
-
+    
     const [itemId, setItemId] = useState(item_id? item_id : 'new');
-
+    
 
     const [backeReturnPath, setBackeReturnPath] = useState(null);
-
+    
     // /** Пачка данных компании, но не все данные */
     // const [baseOrgData, setBaseOrgDate] = useState(null);
-
-
+    
+    
     const [openedFilters, setOpenedFilters] = useState(false);
-
+    
     const [baseOrgs, setBaseOrgs] = useState([1,2,3,4,5,6,7,8,9,0]);
-
+    
 
     const [baseMainData,     setBaseMainData]     = useState(null);
     const [baseProjectsData, setBaseProjectsData] = useState(null);
     const [baseCallsData,    setBaseCallsData]    = useState(null);
     const [baseNotesData,    setBaseNotesData]    = useState(null);
-
+    
+    const [departList, setDepartList] = useState([]);
     // Контейнеры, куда сохраняются данные из вкладок при нажатии кнопки сохранить
     // Далее дебаунс вызывает фильтрацию данных и отправку на сервер
     const [tempMainData,     setTempMainData]     = useState(null);
@@ -132,7 +134,6 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
     useEffect(() => {
         setLoading(true);
         let rp = getCurrentParamsString();
-        console.log(rp);
 
         if (rp.includes('frompage=orgs')){
             rp.replace('frompage=orgs&', '');
@@ -151,15 +152,18 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
         }
 
       if (PRODMODE){
-        get_org_filters();
+        // get_org_filters();
+        get_org_departaments();
 
         get_main_data_action(item_id);
         get_notes_data_action(item_id);
         get_org_calls_action(item_id);
         get_projects_data_action(item_id);
       } else {
-        setBaseFilterstData(OM_ORG_FILTERDATA);
+        // setBaseFilterstData(OM_ORG_FILTERDATA);
 
+        setDepartList(DEPARTAMENTS_MOCK);
+        console.log(DEPARTAMENTS_MOCK);
         setBaseMainData(ORGLIST_MODAL_MOCK_MAINTAB);
         setBaseNotesData(MODAL_NOTES_LIST);
         setBaseProjectsData(MODAL_PROJECTS_LIST);
@@ -277,7 +281,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
             data: {},
             _token: CSRF_TOKEN
           });
-          console.log('response', response);
+        //   console.log('response', response);
           if (response.data){
               // if (props.changed_user_data){
               //     props.changed_user_data(response.data);
@@ -304,7 +308,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
             },
             _token: CSRF_TOKEN
           });
-          console.log('response', response);
+        //   console.log('response', response);
           if (response.data){
               // if (props.changed_user_data){
               //     props.changed_user_data(response.data);
@@ -331,7 +335,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
             },
             _token: CSRF_TOKEN
           });
-          console.log('response', response);
+        //   console.log('response', response);
           if (response.data){
               // if (props.changed_user_data){
               //     props.changed_user_data(response.data);
@@ -357,7 +361,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 },
                 _token: CSRF_TOKEN
             });
-            console.log('response', response);
+            // console.log('response', response);
             if (response.data){
                 // if (props.changed_user_data){
                 //     props.changed_user_data(response.data);
@@ -383,13 +387,40 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
         const get_org_filters = async () => {
             if (PRODMODE) {
                 try {
-                    let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+                    let response = await PROD_AXIOS_INSTANCE.post('/api/sales/orgfilterlist', {
                       data: {},
                       _token: CSRF_TOKEN
                     });
-                    console.log('me2: ', response);
+                    // console.log('me2: ', response);
                     setBaseFilterstData(response.data.filters);
                     setBaseCompanies(response.data.filters?.companies);
+                } catch (e) {
+                    console.log(e)
+                } finally {
+                    // setLoadingOrgs(false)
+                    
+                }
+            } else {
+                //setUserAct(USDA);
+                
+            }
+        }
+
+
+        /**
+         * Получение списка select data
+         * @param {*} req 
+         * @param {*} res 
+         */
+        const get_org_departaments = async () => {
+            if (PRODMODE) {
+                try {
+                    let response = await PROD_AXIOS_INSTANCE.post('/admin/staff/data/getdepartments', {
+                      data: {},
+                      _token: CSRF_TOKEN
+                    });
+                    // console.log('me2: ', response);
+                    setDepartList(response.data.data.departments);
                 } catch (e) {
                     console.log(e)
                 } finally {
@@ -614,6 +645,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
                 userdata={userdata}
 
                 selects={baseFiltersData}
+                departaments={departList}
             />
 
             <ProjectsTabPage
