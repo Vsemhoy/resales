@@ -6,6 +6,7 @@ import OrgPageSectionRow, { OPS_TYPE } from '../../OrgPageSectionRow';
 import dayjs from 'dayjs';
 import { AutoComplete, Input } from 'antd';
 import useToken from 'antd/es/theme/useToken';
+import { FaceFrownIcon } from '@heroicons/react/24/solid';
 
 
 
@@ -18,19 +19,21 @@ const OrgCallEditorSectionBox = (props) => {
   // DATA    // DATA      // DATA      // DATA  
 
   const [id, setId] = useState(null);
-  const [org, setOrg] = useState(0);
-  const [theme, setTheme] = useState("");
-  const [note, setNote] = useState("");
-  const [date, setDate] = useState(dayjs().format('DD-MM-YYYY HH:mm:ss'));
-  const [creator, setCreator] = useState(0); // id8staff_list
-  const [deleted, setDeleted] = useState(0);
+  const [org,         setOrg] = useState(0);
+  const [theme,       setTheme] = useState("");
+  const [note,        setNote] = useState("");
+  const [date,        setDate] = useState(dayjs().format('DD-MM-YYYY HH:mm:ss'));
+  const [creator,     setCreator] = useState(0); // id8staff_list
+  const [deleted,     setDeleted] = useState(0);
 
-  const [depart, setDepart] = useState(5);
+  const [depart,      setDepart] = useState(5);
   const [subscriber, setSubscriber] = useState("");
-  const [post, setPost] = useState("");
-  const [phone, setPhone] = useState("");
-  const [result, setResult] = useState("");
+  const [post,       setPost] = useState("");
+  const [phone,      setPhone] = useState("");
+  const [result,     setResult] = useState("");
+  const [nexCallDate, setNextCallDate] = useState(null);
 
+  const [saveContact, setSaveContact] = useState(false);
 
 
   const [departList, setDepartList] = useState([]);
@@ -43,6 +46,7 @@ const OrgCallEditorSectionBox = (props) => {
   const [orgPhones, setOrgPhones] = useState([]);
 
   const [targetOrgUserId, setTargetOrgUserId] = useState(0);
+
 
   // DATA    // DATA      // DATA      // DATA  
 
@@ -62,6 +66,7 @@ const OrgCallEditorSectionBox = (props) => {
       setPost(props.data.post);
       setPhone(props.data.phone);
       setResult(props.data.result);
+      setNextCallDate(props.data?.next_call_date);
     }
   }, [props.data]);
 
@@ -109,6 +114,7 @@ const OrgCallEditorSectionBox = (props) => {
   useEffect(() => {
     let id = null;
     let of = [];
+    setTargetOrgUserId(null);
     if (!props.org_users || !subscriber.trim()) {
       setOrgPhones([]);
       return; // ничего не ищем, если нет данных или пустой ввод
@@ -131,6 +137,7 @@ const OrgCallEditorSectionBox = (props) => {
     if (foundUser) {
       console.log('Найден пользователь:', foundUser);
       id = foundUser.id;
+      setTargetOrgUserId(id);
       // 👇 Тут можешь сохранить ID или весь объект
       // Например: setSelectedUserId(foundUser.id);
     } else {
@@ -186,7 +193,11 @@ const OrgCallEditorSectionBox = (props) => {
       setPhone(changed_data.phone);
     } else if (changed_data.result !== undefined) {
       setResult(changed_data.result);
-    } 
+    }  else if (changed_data._savecontact !== undefined) {
+      setSaveContact(changed_data._savecontact);
+    } else if (changed_data.next_call_date !== undefined) {
+      setNextCallDate(changed_data.next_call_date);
+    }
   }
 
 
@@ -196,18 +207,36 @@ const OrgCallEditorSectionBox = (props) => {
         // Объект ещё не смонтировался. воизбежание гонок
         return;
       };
-      let result = objectResult;
-      result.theme = theme;
-      result.note = note;
+      let resultObject = objectResult;
+      resultObject.theme = theme;
+      resultObject.post = post;
+      resultObject.subscriber = subscriber;
+      resultObject.result = result;
+      resultObject.id8ref_departaments = depart;
+      resultObject._savecontact = saveContact;
+      resultObject.phone = phone;
+      resultObject.next_call_date = nexCallDate;
 
-      console.log('result', result)
+      console.log('result', resultObject)
 
       if (props.on_change) {
-        props.on_change(id, result);
+        props.on_change(id, resultObject);
       }
     }, 120);
     return () => clearTimeout(timer);
-  }, [theme, note]);
+  }, [
+      org,        
+      theme,      
+      note,       
+      creator,    
+      depart,     
+      subscriber, 
+      post,       
+      phone,      
+      result,     
+      saveContact,
+      nexCallDate,
+  ]);
 
 
   return (
@@ -326,6 +355,24 @@ const OrgCallEditorSectionBox = (props) => {
         on_blur={handleChangeData}
       />
 
+      {(editMode && subscriber.length > 3 && !targetOrgUserId && phone.length > 3) && (
+        <OrgPageSectionRow
+          key={'calmet33' + id + props.data._type}
+          edit_mode={editMode}
+          titles={['Сохранить новый контакт?']}
+          datas={[
+            {
+              type: OPS_TYPE.CHECKBOX,
+              value: false,
+              placeholder: '',
+              name: '_savecontact',
+            },
+          ]}
+          on_change={handleChangeData}
+          // on_blur={handleChangeData}
+        />
+      )}
+
       <OrgPageSectionRow
         key={'calmet3' + id + props.data._type}
         edit_mode={editMode}
@@ -364,6 +411,25 @@ const OrgCallEditorSectionBox = (props) => {
         on_blur={handleChangeData}
       />
 
+      <OrgPageSectionRow
+        key={'calmet44' + id + props.data._type}
+        edit_mode={editMode}
+        titles={['Дата следующего звонка']}
+        datas={[
+          {
+            type: OPS_TYPE.DATE,
+            value: nexCallDate,
+            max: null,
+            required: false,
+            nullable: true,
+            placeholder: '',
+            name: 'next_call_date',
+          },
+        ]}
+        on_change={handleChangeData}
+        // on_blur={handleChangeData}
+      />
+
     </div>
   );
 };
@@ -372,64 +438,3 @@ export default OrgCallEditorSectionBox;
 
 
 
-
-const UserAutoComplete = (props) => {
-  const [options, setOptions] = useState([]);
-  const [value, setValue] = useState('');
-
-  // Ваш массив с именами пользователей
-  // const userNames = ['Иван', 'Петр', 'Мария', 'Анна', 'Сергей'];
-  const [userNames, setUserNames] = useState([]);
-
-  useEffect(() => {
-    console.log('props.users', props.users);
-    if (props.users) {
-
-      setUserNames(props.users.map((item) => (
-        item.lastname + " " + item.name + " " + item.middlename
-      )))
-
-    }
-  }, [props.users]);
-  // const userNames = ['Иван', 'Петр', 'Мария', 'Анна', 'Сергей'];
-
-  console.log(props.user);
-
-  const handleSearch = (searchText, context) => {
-    // Фильтруем имена по введенному тексту
-    let filteredOptions = [];
-    if (context) {
-      console.log('HAS DATA', context)
-      filteredOptions = context.filter(name =>
-        name.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-
-    // Форматируем для AntD AutoComplete
-    setOptions(
-      filteredOptions.map(name => ({
-        value: name,
-        label: name,
-      }))
-    );
-  };
-
-  const handleChange = (data) => {
-    setValue(data);
-  };
-
-  return (
-    <AutoComplete
-      options={options}
-      style={{ width: 200 }}
-      onSearch={(text) => { handleSearch(text, userNames) }}
-      onChange={handleChange}
-      value={value}
-      placeholder="Введите имя"
-      allowClear
-      notFoundContent="Имя не найдено"
-    >
-      <Input />
-    </AutoComplete>
-  );
-};
