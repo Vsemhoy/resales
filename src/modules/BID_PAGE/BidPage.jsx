@@ -424,7 +424,7 @@ const BidPage = (props) => {
                         bid_info: {
                             bidCurrency,
                             bidPriceStatus,
-                            bidPercent: +bidPercent,
+                            bidPercent,
                             bidNds
                         },
                         bid_models: bidModels
