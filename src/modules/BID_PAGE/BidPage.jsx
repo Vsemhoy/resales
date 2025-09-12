@@ -17,7 +17,7 @@ import {
     BlockOutlined,
     CopyOutlined, DeleteOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
     FileSearchOutlined, FileWordOutlined,
-    HistoryOutlined, InfoCircleOutlined, LoadingOutlined,
+    HistoryOutlined, InfoCircleOutlined, LoadingOutlined, MinusOutlined,
     PlusOutlined,
     SaveOutlined
 } from "@ant-design/icons";
@@ -443,7 +443,52 @@ const BidPage = (props) => {
         if (PRODMODE) {
             try {
                 setIsSavingInfo(true);
-
+                const data = {
+                    bid: {
+                        id: bidId,
+                        id_company: bidIdCompany,
+                        place: bidPlace,
+                        type: bidType,
+                        files_count: bidFilesCount,
+                        base_info: {
+                            org: bidOrg,
+                            curator: bidCurator,
+                            orguser: bidOrgUser,
+                            protection: bidProtectionProject,
+                            object: bidObject,
+                            sellby: bidSellBy,
+                            project: bidProject,
+                        },
+                        bill: +bidType === 2 ? {
+                            requisite: requisite,
+                            conveyance: conveyance,
+                            fact_address: factAddress,
+                            org_phone: phone,
+                            contact_email: email,
+                            insurance: insurance,
+                            package: bidPackage,
+                            consignee: consignee,
+                            other_equipment: otherEquipment,
+                        } : null,
+                        comments: {
+                            engineer: bidCommentEngineer,
+                            manager: bidCommentManager,
+                            admin: bidCommentAdmin,
+                            accountant: bidCommentAccountant,
+                            add_equipment: bidCommentAddEquipment,
+                        },
+                        finance: {
+                            bid_currency: bidCurrency,
+                            status: bidPriceStatus,
+                            percent: bidPercent,
+                            nds: bidNds,
+                        }
+                    }
+                };
+                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/saveupdates', {
+                    data,
+                    _token: CSRF_TOKEN
+                });
                 setTimeout(() => setIsSavingInfo(false), 500);
             } catch (e) {
                 console.log(e);
@@ -514,7 +559,7 @@ const BidPage = (props) => {
     const prepareAmount = (amount, symbol) => {
         const rounded = (+amount / 100).toFixed(2);
         let formatted =  formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
-        return formatted === `не число` ? <LoadingOutlined /> : formatted + (symbol ? symbol : '');
+        return formatted === `не число` ? <MinusOutlined /> : formatted + (symbol ? symbol : '');
     };
     const currencySymbol = (bidModel) => {
         return +bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
@@ -548,6 +593,13 @@ const BidPage = (props) => {
         setIsNeedCalcMoney(true);
         setLastUpdModel(newId);
         console.log(newModelObj)
+    };
+    const handleDeleteModelFromBid = (bidModelId) => {
+        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd.splice(bidModelIdx, 1);
+        setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
     }
     const handleChangeModelCount = (value, bidModelId) => {
         const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
@@ -588,6 +640,9 @@ const BidPage = (props) => {
             "currency": 0,
         });
         setBidModels(bidModelsUpd);
+    };
+    const handleOpenModelInfo = (modelId) => {
+
     };
 
     const collapseItems = [
@@ -1067,10 +1122,18 @@ const BidPage = (props) => {
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'} style={{padding: 0, boxShadow: 'none'}}>
-                                            <Button color="primary" variant="filled" icon={<InfoCircleOutlined />}></Button>
+                                            <Button color="primary"
+                                                    variant="filled"
+                                                    icon={<InfoCircleOutlined />}
+                                                    onClick={() => handleOpenModelInfo(bidModel.model_id)}
+                                            ></Button>
                                         </div>
                                         <div className={'sa-models-table-cell'} style={{padding: 0}}>
-                                            <Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
+                                            <Button color="danger"
+                                                    variant="filled"
+                                                    icon={<DeleteOutlined />}
+                                                    onClick={() => handleDeleteModelFromBid(bidModel.id)}
+                                            ></Button>
                                         </div>
                                     </div>
                                 ))}
