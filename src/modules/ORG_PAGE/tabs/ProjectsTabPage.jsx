@@ -418,16 +418,7 @@ const ProjectsTabPage = (props) => {
     if (props.call_to_save !== null && props.on_save !== null) {
       props.on_save(baseData, temporaryUnits);
     }
-      console.log(`
-    ██████╗ ██╗   ██╗██████╗ ██████╗ 
-    ██╔══██╗██║   ██║██╔══██╗██╔══██╗
-    ██████╔╝██║   ██║██████╔╝██████╔╝
-    ██╔══██╗██║   ██║██╔══██╗██╔═══╝ 
-    ██████╔╝╚██████╔╝██║  ██║██║     
-    ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝     
- 
-    Разработчики обречены.
-  `);
+
   }, [props.call_to_save]);
 
 
