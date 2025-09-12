@@ -4,7 +4,17 @@ import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import './components/style/bidPage.css'
-import {AMOUNT, BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, MODELS_DATA, SELECTS} from "./mock/mock";
+import {
+    AMOUNT,
+    BID,
+    BID_INFO,
+    BID_MODELS,
+    CALC_INFO,
+    CUR_COMPANY,
+    CUR_CURRENCY,
+    MODELS_DATA,
+    SELECTS
+} from "./mock/mock";
 import MODELS from './mock/mock_models';
 import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
 import {
@@ -243,43 +253,57 @@ const BidPage = (props) => {
                 console.log(e);
             }
         } else {
-            setOpenMode(BID.openmode);
+            const openMode = BID_INFO?.openmode;
+            setOpenMode(openMode);
+            if (BID_INFO.bid) {
+                const bid = BID_INFO?.bid;
 
-            setBidType(BID.type);
-            setBidIdCompany(BID.id_company);
-            setBidOrg(BID.properties.org);
-            setBidPlace(BID.place);
-            setBidOrgUser(BID.statuses.orguser);
-            setBidProtectionProject(BID.statuses.protection);
-            setBidObject(BID.properties.object);
-            setBidSellBy(BID.properties.sellby);
+                setBidIdCompany(bid.id_company);
+                setBidType(bid.type);
+                setBidPlace(bid.place);
+                setBidFilesCount(bid.files_count);
 
-            setRequisite(BID.statuses.requisite);
-            setConveyance(BID.statuses.conveyance);
-            setFactAddress(BID.statuses.fact_address);
-            setPhone(BID.statuses.org_phone);
-            setEmail(BID.statuses.contact_email);
-            setInsurance(BID.statuses.insurance);
-            setBidPackage(BID.statuses.package);
-            setConsignee(BID.properties.consignee);
-            setOtherEquipment(BID.properties.other_equipment);
-
-            setBidCommentEngineer(BID.comments.engineer);
-            setBidCommentManager(BID.comments.manager);
-            setBidCommentAdmin(BID.comments.admin);
-            setBidCommentAccountant(BID.comments.accountant);
-            setBidCommentAddEquipment(BID.comments.add_equipment);
-
-            setBidCurrency(BID.finance.bid_currency);
-            setBidPriceStatus(BID.statuses.price);
-            setBidPercent(BID.finance.percent);
-            setBidNds(BID.finance.nds);
-
-            setBidFilesCount(BID.files_count);
-
-            setBidModels(BID_MODELS);
-            setEngineerParameters(MODELS_DATA);
-            setAmounts(AMOUNT);
+                if (bid.base_info) {
+                    const baseInfo = bid.base_info;
+                    setBidOrg(baseInfo.org);
+                    setBidCurator(baseInfo.curator);
+                    setBidOrgUser(baseInfo.orguser);
+                    setBidProtectionProject(baseInfo.protection);
+                    setBidObject(baseInfo.object);
+                    setBidSellBy(baseInfo.sellby);
+                    setBidProject(baseInfo.project)
+                }
+                if (bid.bill) {
+                    const bill = bid.bill;
+                    setRequisite(bill.requisite);
+                    setConveyance(bill.conveyance);
+                    setFactAddress(bill.fact_address);
+                    setPhone(bill.org_phone);
+                    setEmail(bill.contact_email);
+                    setInsurance(bill.insurance);
+                    setBidPackage(bill.package);
+                    setConsignee(bill.consignee);
+                    setOtherEquipment(bill.other_equipment);
+                }
+                if (bid.comments) {
+                    const comments = bid.comments;
+                    setBidCommentEngineer(comments.engineer);
+                    setBidCommentManager(comments.manager);
+                    setBidCommentAdmin(comments.admin);
+                    setBidCommentAccountant(comments.accountant);
+                    setBidCommentAddEquipment(comments.add_equipment);
+                }
+                if (bid.finance) {
+                    const finance = bid.finance;
+                    setBidCurrency(finance.bid_currency);
+                    setBidPriceStatus(finance.status);
+                    setBidPercent(finance.percent);
+                    setBidNds(finance.nds);
+                }
+            }
+            if (BID_INFO.bid_models) {
+                setBidModels(BID_INFO.bid_models);
+            }
         }
     };
     const fetchSelects = async () => {
@@ -332,7 +356,7 @@ const BidPage = (props) => {
             setCompanies(SELECTS.companies);
         }
     };
-    const fetchExtraSelects = async () => {
+    const fetchOrgSelects = async () => {
         if (PRODMODE) {
             try {
                 let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
@@ -344,8 +368,7 @@ const BidPage = (props) => {
                     setOrgUsersSelect(selects.orgusers_select);
                     setRequisiteSelect(selects.requisite_select);
                     setFactAddressSelect(selects.fact_address_select);
-                    setPhoneSelect(selects.phone_select);
-                    setEmailSelect(selects.email_select);
+                    setPhoneSelect(selects.org_phones_select);
                     setBidPackageSelect(selects.package_select);
                 }
             } catch (e) {
@@ -355,9 +378,26 @@ const BidPage = (props) => {
             setOrgUsersSelect(SELECTS.orgusers_select);
             setRequisiteSelect(SELECTS?.requisite_select);
             setFactAddressSelect(SELECTS?.fact_address_select);
-            setPhoneSelect(SELECTS?.phone_select);
-            setEmailSelect(SELECTS?.email_select);
+            setPhoneSelect(SELECTS?.org_phones_select);
             setBidPackageSelect(SELECTS?.package_select);
+        }
+    };
+    const fetchOrgUserSelects = async () => {
+        if (PRODMODE) {
+            try {
+                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
+                    data: {orgUserId: bidOrgUser},
+                    _token: CSRF_TOKEN
+                });
+                if (response.data && response.data.selects) {
+                    const selects = response.data.selects;
+                    setEmailSelect(selects.email_select);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        } else {
+            setEmailSelect(SELECTS?.email_select);
         }
     };
     const fetchCurrencySelects = async () => {
@@ -443,7 +483,10 @@ const BidPage = (props) => {
                 setTimeout(() => setIsLoadingSmall(false), 500);
             }
         } else {
-            setIsSavingInfo(true);
+            setIsLoadingSmall(true);
+            setBidModels(CALC_INFO.models);
+            setAmounts(CALC_INFO.amounts);
+            setEngineerParameters(CALC_INFO.models_data);
             setTimeout(() => setIsLoadingSmall(false), 500);
         }
     };
