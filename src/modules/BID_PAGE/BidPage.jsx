@@ -5,14 +5,10 @@ import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import './components/style/bidPage.css'
 import {
-    AMOUNT,
-    BID,
     BID_INFO,
-    BID_MODELS,
     CALC_INFO,
     CUR_COMPANY,
     CUR_CURRENCY,
-    MODELS_DATA,
     SELECTS
 } from "./mock/mock";
 import MODELS from './mock/mock_models';
@@ -25,7 +21,6 @@ import {
     PlusOutlined,
     SaveOutlined
 } from "@ant-design/icons";
-import Panel from "antd/es/splitter/Panel";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -552,6 +547,7 @@ const BidPage = (props) => {
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
         setLastUpdModel(newId);
+        console.log(newModelObj)
     }
     const handleChangeModelCount = (value, bidModelId) => {
         const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
@@ -1014,13 +1010,12 @@ const BidPage = (props) => {
                                 <div className={'sa-models-table-cell sa-models-table-cell-header'}></div>
                             </div>
                             <div className={'sa-models-table'}>
-                                {bidModels.map((bidModel, idx) => (
+                                {bidModels.sort((a, b) => +a.sort - +b.sort).map((bidModel, idx) => (
                                     <div className={'sa-models-table-row'}
                                          key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}`}>
                                         <div className={'sa-models-table-cell'}><p>{idx + 1}</p></div>
                                         <div className={'sa-models-table-cell align-left'}>
                                             <Select style={{width: '100%'}}
-                                                    bordered={false}
                                                     value={bidModel.model_id}
                                                     options={prepareSelect(modelsSelect)}
                                                     showSearch
@@ -1061,7 +1056,6 @@ const BidPage = (props) => {
                                         </div>
                                         <div className={'sa-models-table-cell'}>
                                             <Select style={{width: '100%'}}
-                                                    bordered={false}
                                                     value={bidModel.presence}
                                                     options={prepareSelect(presenceSelect)}
                                                     showSearch

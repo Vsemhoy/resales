@@ -532,7 +532,6 @@ export const CUR_CURRENCY = [
         "sign": "$"
     }
 ];
-
 export const BID_INFO = {
     "bid": {
         "id": 120828,
