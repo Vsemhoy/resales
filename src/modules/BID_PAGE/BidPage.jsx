@@ -483,9 +483,10 @@ const BidPage = (props) => {
                             percent: bidPercent,
                             nds: bidNds,
                         }
-                    }
+                    },
+                    bid_models: bidModels,
                 };
-                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/saveupdates', {
+                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/updatebid', {
                     data,
                     _token: CSRF_TOKEN
                 });
