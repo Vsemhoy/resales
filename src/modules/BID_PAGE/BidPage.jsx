@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Affix, Badge, Button, Collapse, Input, Select, Spin, Steps, Tag, Tooltip} from "antd";
+import {Affix, Alert, Badge, Button, Collapse, Input, Select, Spin, Steps, Tag, Tooltip} from "antd";
 import {useParams} from "react-router-dom";
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
@@ -30,11 +30,16 @@ const BidPage = (props) => {
     const [isLoadingSmall, setIsLoadingSmall] = useState(false);
     const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
     const [isSavingInfo, setIsSavingInfo] = useState(false);
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
 
     const [lastUpdModel, setLastUpdModel] = useState(null);
     const [isUpdateAll, setIsUpdateAll] = useState(false);
 
     const [userData, setUserData] = useState(null);
+
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertDescription, setAlertDescription] = useState('');
+    const [alertType, setAlertType] = useState('');
 
     const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
     /* ШАПКА СТРАНИЦЫ */
@@ -122,6 +127,13 @@ const BidPage = (props) => {
     const [emailSelect, setEmailSelect] = useState([]);
     const [bidPackageSelect, setBidPackageSelect] = useState([]);
 
+    const handleKeyDown = (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            event.preventDefault();
+            setIsSavingInfo(true);
+        }
+    };
+
     useEffect(() => {
         if (!isMounted) {
             fetchInfo().then(() => {
@@ -152,15 +164,11 @@ const BidPage = (props) => {
         }
     }, [props.userdata]);
     useEffect(() => {
-        const handleKeyDown = (event) => {
-            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-                event.preventDefault();
-                if (!isSavingInfo) {
-                    fetchUpdates().then();
-                }
-            }
-        };
-
+        if (isSavingInfo) {
+            fetchUpdates().then(() => {
+                setTimeout(() => setIsSavingInfo(false), 500);
+            });
+        }
         window.addEventListener('keydown', handleKeyDown);
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
@@ -179,6 +187,15 @@ const BidPage = (props) => {
             return () => clearTimeout(timer);
         }
     }, [isNeedCalcMoney]);
+    useEffect(() => {
+        if (isAlertVisible && alertType !== 'error') {
+            const timer = setTimeout(() => {
+                setIsAlertVisible(false);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [isAlertVisible]);
 
     const fetchInfo = async () => {
         setIsLoading(true);
@@ -440,64 +457,70 @@ const BidPage = (props) => {
     };
     const fetchUpdates = async () => {
         console.log('fetchUpdates')
+        const data = {
+            bid: {
+                id: bidId,
+                id_company: bidIdCompany,
+                place: bidPlace,
+                type: bidType,
+                files_count: bidFilesCount,
+                base_info: {
+                    org: bidOrg,
+                    curator: bidCurator,
+                    orguser: bidOrgUser,
+                    protection: bidProtectionProject,
+                    object: bidObject,
+                    sellby: bidSellBy,
+                },
+                bill: +bidType === 2 ? {
+                    requisite: requisite,
+                    conveyance: conveyance,
+                    fact_address: factAddress,
+                    org_phone: phone,
+                    contact_email: email,
+                    insurance: insurance,
+                    package: bidPackage,
+                    consignee: consignee,
+                    other_equipment: otherEquipment,
+                } : null,
+                comments: {
+                    engineer: bidCommentEngineer,
+                    manager: bidCommentManager,
+                    admin: bidCommentAdmin,
+                    accountant: bidCommentAccountant,
+                    add_equipment: bidCommentAddEquipment,
+                },
+                finance: {
+                    bid_currency: bidCurrency,
+                    status: bidPriceStatus,
+                    percent: bidPercent,
+                    nds: bidNds,
+                }
+            },
+            bid_models: bidModels,
+        };
+        console.log(data)
         if (PRODMODE) {
             try {
-                setIsSavingInfo(true);
-                const data = {
-                    bid: {
-                        id: bidId,
-                        id_company: bidIdCompany,
-                        place: bidPlace,
-                        type: bidType,
-                        files_count: bidFilesCount,
-                        base_info: {
-                            org: bidOrg,
-                            curator: bidCurator,
-                            orguser: bidOrgUser,
-                            protection: bidProtectionProject,
-                            object: bidObject,
-                            sellby: bidSellBy,
-                            project: bidProject,
-                        },
-                        bill: +bidType === 2 ? {
-                            requisite: requisite,
-                            conveyance: conveyance,
-                            fact_address: factAddress,
-                            org_phone: phone,
-                            contact_email: email,
-                            insurance: insurance,
-                            package: bidPackage,
-                            consignee: consignee,
-                            other_equipment: otherEquipment,
-                        } : null,
-                        comments: {
-                            engineer: bidCommentEngineer,
-                            manager: bidCommentManager,
-                            admin: bidCommentAdmin,
-                            accountant: bidCommentAccountant,
-                            add_equipment: bidCommentAddEquipment,
-                        },
-                        finance: {
-                            bid_currency: bidCurrency,
-                            status: bidPriceStatus,
-                            percent: bidPercent,
-                            nds: bidNds,
-                        }
-                    },
-                    bid_models: bidModels,
-                };
                 let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/updatebid/${bidId}`, {
                     data,
                     _token: CSRF_TOKEN
                 });
-                setTimeout(() => setIsSavingInfo(false), 500);
+                if (response.data.message) {
+                    setIsAlertVisible(true);
+                    setAlertMessage(response.data.message);
+                    setAlertDescription('');
+                    setAlertType('success');
+                }
             } catch (e) {
                 console.log(e);
-                setTimeout(() => setIsSavingInfo(false), 500);
+                setIsAlertVisible(true);
+                setAlertMessage(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                setAlertDescription('');
+                setAlertType('error');
             }
         } else {
-            setIsSavingInfo(true);
-            setTimeout(() => setIsSavingInfo(false), 500);
+
         }
     };
     const fetchCalcModels = async () => {
@@ -576,7 +599,7 @@ const BidPage = (props) => {
         const oldModel = bidModels.find(model => model.id === oldId);
         const oldModelIdx = bidModels.findIndex(model => model.id === oldId);
         const newModelObj = {
-            "id": 'new_model-' + Math.random(),
+            "id": oldId,
             "bid_id": bidId,
             "model_id": newId,
             "model_count": 1,
@@ -628,7 +651,7 @@ const BidPage = (props) => {
         const lastModel = bidModels[bidModels.length - 1];
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd.push({
-            "id": 'new_model-' + Math.random(),
+            "id": 0,
             "bid_id": bidId,
             "model_id": null,
             "model_count": null,
@@ -690,10 +713,11 @@ const BidPage = (props) => {
                     <div className={'sa-info-list-row'}>
                         <div className={'sa-list-row-label'}><p>Связанный проект</p>
                         </div>
-                        <Input style={{width: '100%', height: '32px'}}
-                               value={bidProject}
-                               onChange={(e) => setBidProject(e.target.value)}
-                        />
+                        {bidProject ?
+                            (<Tag style={{width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'}}
+                                  color={'cyan'}>{+bidProject}</Tag>) :
+                            <MinusOutlined/>
+                        }
                     </div>
                 </div>
             )
@@ -712,6 +736,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={requisite}
                             options={prepareSelect(requisiteSelect)}
+                            onChange={(val) => setRequisite(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -720,6 +745,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={conveyance}
                             options={prepareSelect(conveyanceSelect)}
+                            onChange={(val) => setConveyance(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -728,6 +754,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={factAddress}
                             options={prepareSelect(factAddressSelect)}
+                            onChange={(val) => setFactAddress(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -735,6 +762,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={phone}
                             options={prepareSelect(phoneSelect)}
+                            onChange={(val) => setPhone(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -742,6 +770,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={email}
                             options={prepareSelect(emailSelect)}
+                            onChange={(val) => setEmail(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -750,6 +779,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={insurance}
                             options={prepareSelect(insuranceSelect)}
+                            onChange={(val) => setInsurance(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -757,6 +787,7 @@ const BidPage = (props) => {
                     <Select style={{width: '100%', textAlign: 'left'}}
                             value={bidPackage}
                             options={prepareSelect(packageSelect)}
+                            onChange={(val) => setBidPackage(val)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -764,6 +795,7 @@ const BidPage = (props) => {
                         <p>Грузополучатель</p></div>
                     <Input style={{width: '100%', height: '32px'}}
                            value={consignee}
+                           onChange={(e) => setConsignee(e.target.value)}
                     />
                 </div>
                 <div className={'sa-info-list-row'}>
@@ -771,6 +803,7 @@ const BidPage = (props) => {
                         оборудование</p></div>
                     <Input style={{width: '100%', height: '32px'}}
                            value={otherEquipment}
+                           onChange={(e) => setOtherEquipment(e.target.value)}
                     />
                 </div>
             </div>,
@@ -954,7 +987,7 @@ const BidPage = (props) => {
                                                 style={{width: '150px'}}
                                                 icon={<SaveOutlined />}
                                                 loading={isSavingInfo}
-                                                onClick={fetchUpdates}
+                                                onClick={() => setIsSavingInfo(true)}
                                         >{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}</Button>
                                     </div>
                                 </div>
@@ -1265,6 +1298,23 @@ const BidPage = (props) => {
                     </div>
                 </div>
             </Spin>
+            {isAlertVisible && (
+                <Alert
+                    message={alertMessage}
+                    description={alertDescription}
+                    type={alertType}
+                    showIcon
+                    closable
+                    style={{
+                        position: 'fixed',
+                        top: 20,
+                        right: 20,
+                        zIndex: 9999,
+                        width: 350
+                    }}
+                    onClose={() => setIsAlertVisible(false)}
+                />
+            )}
         </div>
     );
 }
