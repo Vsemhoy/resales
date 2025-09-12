@@ -187,6 +187,15 @@ const BidPage = (props) => {
             return () => clearTimeout(timer);
         }
     }, [isNeedCalcMoney]);
+    useEffect(() => {
+        if (isAlertVisible && alertType !== 'error') {
+            const timer = setTimeout(() => {
+                setIsAlertVisible(false);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [isAlertVisible]);
 
     const fetchInfo = async () => {
         setIsLoading(true);
