@@ -599,7 +599,7 @@ const BidPage = (props) => {
         const oldModel = bidModels.find(model => model.id === oldId);
         const oldModelIdx = bidModels.findIndex(model => model.id === oldId);
         const newModelObj = {
-            "id": 'new_model-' + Math.random(),
+            "id": oldId,
             "bid_id": bidId,
             "model_id": newId,
             "model_count": 1,
@@ -651,7 +651,7 @@ const BidPage = (props) => {
         const lastModel = bidModels[bidModels.length - 1];
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd.push({
-            "id": 'new_model-' + Math.random(),
+            "id": 0,
             "bid_id": bidId,
             "model_id": null,
             "model_count": null,
