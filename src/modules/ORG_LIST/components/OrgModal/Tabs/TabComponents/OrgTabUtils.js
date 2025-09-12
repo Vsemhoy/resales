@@ -1,66 +1,65 @@
 export const getOrgTabName = (t) => {
-    var targetTab = '';
-    
-      switch (t) {
-        case 'b':
-          targetTab = 'счета';
-          break;
-        case 'o':
-          targetTab = 'кп';
-          break;
-      
-        case 'c':
-          targetTab = 'встречи/звонки';
-          break;
+	var targetTab = '';
 
-        case 'n':
-          targetTab = 'заметки';
-          break;
+	switch (t) {
+		case 'b':
+			targetTab = 'счета';
+			break;
+		case 'o':
+			targetTab = 'кп';
+			break;
 
-        case 'h':
-          targetTab = 'история';
-          break;
+		case 'c':
+			targetTab = 'встречи/звонки';
+			break;
 
-        case 'p':
-          targetTab = 'проекты';
-          break;
+		case 'n':
+			targetTab = 'заметки';
+			break;
 
-        default:
-          break;
-      }
-    return targetTab;
-}
+		case 'h':
+			targetTab = 'история';
+			break;
 
+		case 'p':
+			targetTab = 'проекты';
+			break;
+
+		default:
+			break;
+	}
+	return targetTab;
+};
 
 export const getOrgTabLink = (t) => {
-    var targetTab = '';
-    
-      switch (t) {
-        case 'b':
-          targetTab = '/bills';
-          break;
-        case 'o':
-          targetTab = '/offers';
-          break;
-      
-        case 'c':
-          targetTab = '/meetings';
-          break;
+	var targetTab = '';
 
-        case 'n':
-          targetTab = '/notes';
-          break;
+	switch (t) {
+		case 'b':
+			targetTab = '/bills';
+			break;
+		case 'o':
+			targetTab = '/offers';
+			break;
 
-        case 'h':
-          targetTab = '/history';
-          break;
+		case 'c':
+			targetTab = '/meetings';
+			break;
 
-        case 'p':
-          targetTab = '/projects';
-          break;
+		case 'n':
+			targetTab = '/notes';
+			break;
 
-        default:
-          break;
-      }
-    return targetTab;
-}
+		case 'h':
+			targetTab = '/history';
+			break;
+
+		case 'p':
+			targetTab = '/projects';
+			break;
+
+		default:
+			break;
+	}
+	return targetTab;
+};

@@ -99,7 +99,7 @@ export const ChatBtn = () => {
 						),
 						onClick: () => console.log('Переход к сообщениям'),
 					},
-			  ]
+				]
 			: []),
 	];
 

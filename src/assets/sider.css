@@ -1,71 +1,68 @@
 .sider-body {
-    /* background-color: rgb(255, 255, 255); */
-    border: 1px solid white;
-    border-radius: 6px;
+	/* background-color: rgb(255, 255, 255); */
+	border: 1px solid white;
+	border-radius: 6px;
 }
 .ant-layout-sider {
-    background-color: rgba(255, 255, 255, 0) !important;
-    padding: 0px;
-    transition: all 0.2s;
+	background-color: rgba(255, 255, 255, 0) !important;
+	padding: 0px;
+	transition: all 0.2s;
 }
 .sa-filer-opened .ant-layout-sider {
-    padding: 9px;
+	padding: 9px;
 }
 
 .sider-unit {
-    padding: 9px;
-    text-align: left;
-
+	padding: 9px;
+	text-align: left;
 }
 .sider-unit-title {
-    color: var(--section-tab-text-color);
-    margin-bottom: 6px;
-    font-weight: 500;
+	color: var(--section-tab-text-color);
+	margin-bottom: 6px;
+	font-weight: 500;
 }
 .sider-unit-wrapper-title {
-    text-align: left;
-    font-size: medium;
-    font-weight: 600;
-    padding: 9px;
-    color: var(--section-tab-text-color);
+	text-align: left;
+	font-size: medium;
+	font-weight: 600;
+	padding: 9px;
+	color: var(--section-tab-text-color);
 }
 .sider-unit-wrapper-title span {
-    border-bottom: 1px solid var(--section-tab-text-color);
-    width: 100%;
-    display: block;
+	border-bottom: 1px solid var(--section-tab-text-color);
+	width: 100%;
+	display: block;
 }
 .sider-unit-control {
-
 }
 .sider-unit-wrapper {
-    background-color: rgba(255, 255, 255, 0.541);
+	background-color: rgba(255, 255, 255, 0.541);
 }
-
 
 .filter-preset-item {
-    padding: 3px 12px;
-    color: rgb(10, 60, 106);
-    background-color: rgba(255, 255, 255, 0);
-    transition: all 0.3s;
-    border-radius: 3px;
+	padding: 3px 12px;
+	color: rgb(10, 60, 106);
+	background-color: rgba(255, 255, 255, 0);
+	transition: all 0.3s;
+	border-radius: 3px;
 }
 .filter-preset-item:hover {
-    color: rgb(0, 28, 55);
+	color: rgb(0, 28, 55);
 }
 .filter-preset-item-label {
-    cursor: pointer;
-    user-select: none;
+	cursor: pointer;
+	user-select: none;
 }
 .filter-preset-item-remover:hover {
-    color: red;
-    cursor: pointer;
+	color: red;
+	cursor: pointer;
 }
 .filter-preset-item:active {
-background-color: rgba(0, 146, 250, 0.486);
+	background-color: rgba(0, 146, 250, 0.486);
 }
 .sider-body-filters {
-    border: none;
-    border-radius: 6px;
-    background-color: var(--sider-bg-color);;
-    height: calc(100vh - 109px - 34px - 10px - 9px - 9px);
+	border: none;
+	border-radius: 6px;
+	background-color: var(--sider-bg-color);
+	height: calc(100vh - 109px - 34px - 10px - 9px - 9px);
 }

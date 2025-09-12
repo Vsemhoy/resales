@@ -15,7 +15,6 @@ import { BuildingLibraryIcon } from '@heroicons/react/24/solid';
 import AntdIconsPage from './modules/DEV/Icons/AntdIconsPage';
 import { ApiOutlined } from '@ant-design/icons';
 
-
 import './assets/theme.css';
 import './assets/layout.css';
 import './assets/table.css';
@@ -39,129 +38,146 @@ import BidListPage from './modules/BID_LIST/BidListPage';
 import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor';
 import { PROD_AXIOS_INSTANCE } from './config/Api';
 import { MS_USER } from './mock/MAINSTATE';
-import Price from "./modules/PRICE/Price";
-import CuratorPage from "./modules/CURATOR/CuratorPage";
-import EngineerListPage from "./modules/ENGINEER_LIST/EngineerListPage";
-import EngineerPage from "./modules/ENGINEER_PAGE/EngineerPage";
-import BidPage from "./modules/BID_PAGE/BidPage";
+import Price from './modules/PRICE/Price';
+import CuratorPage from './modules/CURATOR/CuratorPage';
+import EngineerListPage from './modules/ENGINEER_LIST/EngineerListPage';
+import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
+import BidPage from './modules/BID_PAGE/BidPage';
+import WinShellMessanger from './modules/DEV/COM/WINSHELL/WinShellMessanger';
 
 function App() {
-  const [userdata, setUserdata] = useState([]);
-  const [pageLoaded, setPageLoaded] = useState(false);
-  
-  useEffect(() => {
-    if (PRODMODE){
-      get_userdata();
-    } else {
-      setUserdata(MS_USER)
-    }
-  }, []);
+	const [userdata, setUserdata] = useState([]);
+	const [pageLoaded, setPageLoaded] = useState(false);
 
+	useEffect(() => {
+		if (PRODMODE) {
+			get_userdata();
+		} else {
+			setUserdata(MS_USER);
+		}
+	}, []);
 
-  /** ------------------ FETCHES ---------------- */
-    /**
-     * Получение списка отделов
-     * @param {*} req 
-     * @param {*} res 
-     */
-    const get_userdata = async () => {
-        if (PRODMODE) {
-            try {
-                // setLoadingOrgs(true)
-                const format_data = {
-                    CSRF_TOKEN,
-                    data: {
-                      
-                    }
-                }
-                let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
-                console.log('me: ', response);
-                // setOrganizations(organizations_response.data.org_list)
-                // setTotal(organizations_response.data.total_count)
-                setUserdata(response.data);
-            } catch (e) {
-                console.log(e)
-            } finally {
-                // setLoadingOrgs(false)
-                setPageLoaded(true);
-            }
-        } else {
-            //setUserAct(USDA);
-            setPageLoaded(true);
-        }
-  }
+	/** ------------------ FETCHES ---------------- */
+	/**
+	 * Получение списка отделов
+	 * @param {*} req
+	 * @param {*} res
+	 */
+	const get_userdata = async () => {
+		if (PRODMODE) {
+			try {
+				// setLoadingOrgs(true)
+				const format_data = {
+					CSRF_TOKEN,
+					data: {},
+				};
+				let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
+				console.log('me: ', response);
+				// setOrganizations(organizations_response.data.org_list)
+				// setTotal(organizations_response.data.total_count)
+				setUserdata(response.data);
+			} catch (e) {
+				console.log(e);
+			} finally {
+				// setLoadingOrgs(false)
+				setPageLoaded(true);
+			}
+		} else {
+			//setUserAct(USDA);
+			setPageLoaded(true);
+		}
+	};
 
+	/** ------------------ FETCHES END ---------------- */
 
+	return (
+		<div className="App">
+			<BrowserRouter basename={BASE_NAME}>
+				<TopMenu userdata={userdata} changed_user_data={setUserdata} />
 
+				{/* <WinShellMessanger /> */}
 
-  /** ------------------ FETCHES END ---------------- */
+				<div>
+					<Routes>
+						{/* Редирект с корня на /orgs */}
+						<Route path="/" element={<Navigate to="/orgs" replace />} />
+						<Route path={BASE_ROUTE + '/'} element={<Navigate to="/orgs" replace />} />
 
+						<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata} />} />
+						<Route path={'/orgs'} element={<OrgListPage userdata={userdata} />} />
 
+						<Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata} />} />
+						<Route path={'/orgs/:item_id'} element={<OrgPage userdata={userdata} />} />
+						<Route path={'/orgs/:item_id'} element={<OrgPage userdata={userdata} />} />
+						<Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata} />} />
 
+						<Route
+							path={BASE_ROUTE + '/bids'}
+							element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
+						/>
+						<Route
+							path={'/bids'}
+							element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
+						/>
 
+						<Route
+							path={BASE_ROUTE + '/bids/:bidId'}
+							element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
+						/>
+						<Route
+							path={'/bids/:bidId'}
+							element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
+						/>
 
-  return (
-    <div className="App">
-      <BrowserRouter basename={BASE_NAME}>
+						<Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />
+						<Route path={'/price'} element={<Price userdata={userdata} />} />
 
-        <TopMenu
-          userdata={userdata}
-          changed_user_data={setUserdata}
+						<Route
+							path={BASE_ROUTE + '/curator/exmonitor'}
+							element={<CuratorExpiredMonitor userdata={userdata} />}
+						/>
+						<Route
+							path={'/curator/exmonitor'}
+							element={<CuratorExpiredMonitor userdata={userdata} />}
+						/>
 
-          />
-      
-      {/* <MyIcon /> */}
+						<Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata} />} />
+						<Route path={'/curator'} element={<CuratorPage userdata={userdata} />} />
 
-        <div>
-          <Routes>
-              {/* Редирект с корня на /orgs */}
-              <Route path="/"                element={<Navigate to="/orgs" replace />} />
-              <Route path={BASE_ROUTE + "/"} element={<Navigate to="/orgs" replace />} />
+						<Route
+							path={BASE_ROUTE + '/engineer'}
+							element={<EngineerListPage userdata={userdata} />}
+						/>
+						<Route path={'/engineer'} element={<EngineerListPage userdata={userdata} />} />
 
-              <Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata}/>} />
-              <Route path={'/orgs'} element={<OrgListPage              userdata={userdata}/>} />
+						<Route
+							path={BASE_ROUTE + '/engineer/:item_id'}
+							element={<EngineerPage userdata={userdata} />}
+						/>
+						<Route path={'/engineer/:item_id'} element={<EngineerPage userdata={userdata} />} />
 
-              <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
-              <Route path={'/orgs/:item_id'}              element={<OrgPage userdata={userdata}/>} />
-              <Route path={'/orgs/:item_id'}              element={<OrgPage userdata={userdata}/>} />
-              <Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage userdata={userdata}/>} />
+						<Route
+							path={BASE_ROUTE + '/dev/icons/antdicons'}
+							element={<AntdIconsPage userdata={0} />}
+						/>
+						<Route path={'/dev/icons/antdicons'} element={<AntdIconsPage userdata={0} />} />
 
-              <Route path={BASE_ROUTE + '/bids'} element={<BidListPage userdata={userdata} changed_user_data={setUserdata}/>} />
-              <Route path={'/bids'} element={<BidListPage userdata={userdata} changed_user_data={setUserdata}/>} />
+						<Route
+							path={BASE_ROUTE + '/dev/icons/heroicons24'}
+							element={<HeroIconsPage24 userdata={0} />}
+						/>
+						<Route path={'/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0} />} />
 
-              <Route path={BASE_ROUTE + '/bids/:bidId'} element={<BidPage userdata={userdata} changed_user_data={setUserdata}/>} />
-              <Route path={'/bids/:bidId'} element={<BidPage userdata={userdata} changed_user_data={setUserdata}/>} />
-
-              <Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata}/>} />
-              <Route path={'/price'} element={<Price userdata={userdata}/>} />
-
-              <Route path={BASE_ROUTE + '/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
-              <Route path={'/curator/exmonitor'} element={<CuratorExpiredMonitor userdata={userdata}/>} />
-
-              <Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata}/>} />
-              <Route path={'/curator'} element={<CuratorPage userdata={userdata}/>} />
-
-              <Route path={BASE_ROUTE + '/engineer'} element={<EngineerListPage userdata={userdata}/>} />
-              <Route path={'/engineer'} element={<EngineerListPage userdata={userdata}/>} />
-
-              <Route path={BASE_ROUTE + '/engineer/:item_id'} element={<EngineerPage userdata={userdata}/>} />
-              <Route path={'/engineer/:item_id'} element={<EngineerPage userdata={userdata}/>} />
-
-              <Route path={BASE_ROUTE + '/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
-              <Route path={'/dev/icons/antdicons'} element={<AntdIconsPage userdata={0}/>} />
-
-              <Route path={BASE_ROUTE + '/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
-              <Route path={'/dev/icons/heroicons24'} element={<HeroIconsPage24 userdata={0}/>} />
-
-              <Route path={BASE_ROUTE + '/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
-              <Route path={'/dev/icons/customicons'} element={<CustomIconPage userdata={0}/>} />
-
-          </Routes>
-        </div>
-
-      </BrowserRouter>
-    </div>
-  );
+						<Route
+							path={BASE_ROUTE + '/dev/icons/customicons'}
+							element={<CustomIconPage userdata={0} />}
+						/>
+						<Route path={'/dev/icons/customicons'} element={<CustomIconPage userdata={0} />} />
+					</Routes>
+				</div>
+			</BrowserRouter>
+		</div>
+	);
 }
 
 export default App;

@@ -1,10 +1,7 @@
 export const MOCK = [
 	{
 		content: {
-			sms: [
-
-
-			],
+			sms: [],
 		},
 		message: 'OK!',
 	},
