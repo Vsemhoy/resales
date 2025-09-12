@@ -646,6 +646,7 @@ const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams
 
                 selects={baseFiltersData}
                 departaments={departList}
+                main_data={baseMainData}
             />
 
             <ProjectsTabPage
