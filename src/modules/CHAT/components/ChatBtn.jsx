@@ -6,7 +6,7 @@ import { MOCK } from '../mock/mock.js';
 // import { UserPic } from './UserPic';
 import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api'; // Подключаем свой экземпляр axios
-import { ChatLayout } from './ChatLayout';
+// import { ChatLayout } from './ChatLayout';
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -99,7 +99,7 @@ export const ChatBtn = () => {
 						),
 						onClick: () => console.log('Переход к сообщениям'),
 					},
-				]
+			  ]
 			: []),
 	];
 
@@ -145,11 +145,12 @@ export const ChatBtn = () => {
 				onCancel={handleCancel}
 				footer={[
 					<Button key="submit" type="primary" onClick={handleOk}>
-						Подтвердить
+						Отправить
 					</Button>,
 					<Button key="cancel" onClick={handleCancel}>
 						Отмена
 					</Button>,
+					// <ChatLayout />,
 				]}
 				closeIcon={<CloseOutlined />}
 				focusTriggerAfterClose={false}
@@ -157,7 +158,6 @@ export const ChatBtn = () => {
 				keyboard={true}
 				maskClosable={true}
 			>
-				<ChatLayout />
 				{smsData?.hasSms && <p>У вас есть {smsData.messages.length} непрочитанных сообщений</p>}
 			</Modal>
 		</Space>
