@@ -1,3 +1,8 @@
+import { UserPic } from './UserPic';
 export default function ChatHeader() {
-	return <div>ChatHeader</div>;
+	return (
+		<div>
+			<UserPic />
+		</div>
+	);
 }

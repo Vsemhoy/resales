@@ -1,153 +1,21 @@
-/* Стили для сайдбара */
-.sidebar-toggle {
-	color: white;
-	margin-right: 16px;
+.chat-layout {
+	max-height: 40vh;
+	background: #fff;
+	border: 1px solid #e6e6e6;
+	overflow-y: scroll;
+}
+.chat-layout::-webkit-scrollbar,
+.ant-layout-content::-webkit-scrollbar {
+	display: none;
 }
 
-.header-left {
+.chat-sidebar {
+	border-right: 1px solid #e6e6e6;
+	background: #f9f9f9;
+}
+.chat-content {
 	display: flex;
-	align-items: center;
-}
-
-/* HEADER */
-.sidebar-header {
-	background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
-	padding: 20px 16px;
-	color: white;
-}
-
-.sidebar-header-content {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-}
-
-.sidebar-user-info {
-	flex: 1;
-	min-width: 0;
-}
-
-/* SECTIONS */
-.sidebar-section {
-	padding: 16px;
-}
-
-.section-title {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin-bottom: 12px;
-	font-weight: 600;
-	color: #262626;
-}
-
-.section-title span {
-	flex: 1;
-}
-
-/* CHATS */
-.chats-menu {
-	border: none;
-	background: transparent;
-	max-height: 400px;
-	overflow-y: auto;
-}
-
-.chats-menu .ant-menu-item {
-	margin: 2px 0;
-	padding: 8px 12px;
-	height: auto;
-	border-radius: 8px;
-}
-
-.chats-menu .ant-menu-item.active-chat {
-	background-color: #e6f7ff;
-	border: 1px solid #91d5ff;
-}
-
-.chats-menu .ant-menu-item:hover {
-	background-color: #f5f5f5;
-}
-
-.chat-item {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	width: 100%;
-}
-
-.chat-info {
-	flex: 1;
-	min-width: 0;
-}
-
-.chat-info .ant-typography {
-	display: block;
-	margin: 0;
-	line-height: 1.4;
-}
-
-.chat-info .ant-typography:first-child {
-	margin-bottom: 2px;
-	font-size: 14px;
-}
-
-.chat-info .ant-typography:last-child {
-	font-size: 12px;
-}
-
-/* SETTINGS */
-.sidebar-footer {
-	margin-top: auto;
-}
-
-.setting-item {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 10px 0;
-	gap: 12px;
-}
-
-.setting-item span {
-	flex: 1;
-	font-size: 14px;
-}
-
-.sidebar-version {
-	text-align: center;
-	padding: 8px 0;
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-	.sidebar-header {
-		padding: 16px 12px;
-	}
-
-	.sidebar-section {
-		padding: 12px;
-	}
-
-	.chat-item {
-		gap: 8px;
-	}
-}
-
-/* Scrollbar styling */
-.chats-menu::-webkit-scrollbar {
-	width: 4px;
-}
-
-.chats-menu::-webkit-scrollbar-track {
-	background: #f1f1f1;
-}
-
-.chats-menu::-webkit-scrollbar-thumb {
-	background: #c1c1c1;
-	border-radius: 4px;
-}
-
-.chats-menu::-webkit-scrollbar-thumb:hover {
-	background: #a8a8a8;
+	flex-direction: column;
+	background: #fff;
+	--webkit-scrollbar: none !important;
 }

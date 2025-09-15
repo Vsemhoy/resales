@@ -3,6 +3,7 @@ import { Modal } from 'antd';
 import Draggable from 'react-draggable';
 import { CloseOutlined } from '@ant-design/icons';
 import ChatLayout from './ChatLayout';
+import './style/ChatModal.css';
 
 export const ChatModal = ({ open, onOk, onCancel, smsData }) => {
 	const dragRef = useRef(null);
@@ -10,31 +11,43 @@ export const ChatModal = ({ open, onOk, onCancel, smsData }) => {
 	const [dragging, setDragging] = useState(false);
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 
+	// clamp ограничивает позицию в пределах границ
+	const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
 	useEffect(() => {
 		if (open) {
-			// При открытии модалки сбрасываем позицию
-			setPosition({ x: 0, y: 0 });
-
-			// Перерасчитываем границы
-			if (dragRef.current) {
-				const clientWidth = window.innerWidth;
-				const clientHeight = window.innerHeight;
-				const rect = dragRef.current.getBoundingClientRect();
-
-				boundsRef.current = {
-					left: -rect.left + 10,
-					top: -rect.top + 10,
-					right: clientWidth - rect.right - 10,
-					bottom: clientHeight - rect.bottom - 10,
-				};
-			}
+			setPosition({ x: 0, y: 0 }); // сбрасываем позицию при открытии
 		}
 	}, [open]);
 
-	const onStart = () => setDragging(true);
+	const onStart = () => {
+		setDragging(true);
+
+		if (dragRef.current) {
+			const clientWidth = window.innerWidth;
+			const clientHeight = window.innerHeight;
+			const rect = dragRef.current.getBoundingClientRect();
+
+			boundsRef.current = {
+				left: -rect.left + 10,
+				top: -rect.top + 10,
+				right: clientWidth - rect.right - 10,
+				bottom: clientHeight - rect.bottom - 10,
+			};
+		}
+	};
+
 	const onStop = (e, data) => {
 		setDragging(false);
-		setPosition({ x: data.x, y: data.y }); // сохраняем новую позицию
+
+		if (boundsRef.current) {
+			setPosition({
+				x: clamp(data.x, boundsRef.current.left, boundsRef.current.right),
+				y: clamp(data.y, boundsRef.current.top, boundsRef.current.bottom),
+			});
+		} else {
+			setPosition({ x: data.x, y: data.y });
+		}
 	};
 
 	return (
@@ -43,7 +56,6 @@ export const ChatModal = ({ open, onOk, onCancel, smsData }) => {
 				<h3
 					className="ant-modal-title"
 					style={{
-						cursor: dragging ? 'grabbing' : 'grab',
 						userSelect: dragging ? 'none' : 'auto',
 					}}
 				>
@@ -58,13 +70,7 @@ export const ChatModal = ({ open, onOk, onCancel, smsData }) => {
 			maskClosable={true}
 			keyboard={true}
 			mask={false}
-			bodyStyle={{
-				minWidth: 400,
-				minHeight: 300,
-				maxWidth: '90vw',
-				maxHeight: '80vh',
-				overflow: 'auto',
-			}}
+			className="chat-modal"
 			modalRender={(modal) => (
 				<Draggable
 					handle=".ant-modal-title"
@@ -72,7 +78,7 @@ export const ChatModal = ({ open, onOk, onCancel, smsData }) => {
 					onStart={onStart}
 					onStop={onStop}
 					nodeRef={dragRef}
-					position={position} // позиция управляется явно
+					position={position}
 				>
 					<div ref={dragRef}>{modal}</div>
 				</Draggable>
@@ -80,18 +86,8 @@ export const ChatModal = ({ open, onOk, onCancel, smsData }) => {
 		>
 			<ChatLayout />
 			{smsData?.hasSms && (
-				<p style={{ marginTop: 16 }}>
-					У вас есть {smsData.messages.length} непрочитанных сообщений
-				</p>
+				<p className="unread-msg">У вас есть {smsData.messages.length} непрочитанных сообщений</p>
 			)}
-
-			<style>
-				{`
-          .ant-modal-title:active {
-            cursor: grabbing !important;
-          }
-        `}
-			</style>
 		</Modal>
 	);
 };
