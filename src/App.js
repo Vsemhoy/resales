@@ -151,10 +151,10 @@ function App() {
 						<Route path={'/engineer'} element={<EngineerListPage userdata={userdata} />} />
 
 						<Route
-							path={BASE_ROUTE + '/engineer/:item_id'}
+							path={BASE_ROUTE + '/engineer/:bidId'}
 							element={<EngineerPage userdata={userdata} />}
 						/>
-						<Route path={'/engineer/:item_id'} element={<EngineerPage userdata={userdata} />} />
+						<Route path={'/engineer/:bidId'} element={<EngineerPage userdata={userdata} />} />
 
 						<Route
 							path={BASE_ROUTE + '/dev/icons/antdicons'}
