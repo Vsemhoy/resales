@@ -21,6 +21,9 @@ import {
     PlusOutlined,
     SaveOutlined
 } from "@ant-design/icons";
+import NameSelect from "./components/NameSelect";
+import ModelInput from "./components/ModelInput";
+import ModelSelect from "./components/ModelSelect";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -610,20 +613,14 @@ const BidPage = (props) => {
             "type_model": 0,
             "currency": 0,
         });
-        console.log({
-            "id": 0,
-            "bid_id": bidId,
-            "model_id": null,
-            "model_count": null,
-            "not_available": 0,
-            "percent": null,
-            "presence": null,
-            "sort": lastModel.sort + 1,
-            "name": "",
-            "type_model": 0,
-            "currency": 0,
-        })
         setBidModels(bidModelsUpd);
+    };
+    const handleDeleteModelFromBid = (bidModelId) => {
+        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd.splice(bidModelIdx, 1);
+        setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
     };
     const handleChangeModel = (newId, oldId, oldSort) => {
         const newModel = modelsSelect.find(model => model.id === newId);
@@ -644,43 +641,31 @@ const BidPage = (props) => {
         };
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd[oldModelIdx] = newModelObj;
-        console.log(bidModelsUpd)
-        console.log(bidModels)
-        console.log(oldSort)
-        console.log(oldId)
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
         setLastUpdModel(newId);
-        console.log(newModelObj)
     };
-    const handleDeleteModelFromBid = (bidModelId) => {
+    const handleChangeModelInfo = (type, value, bidModelId) => {
         const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd.splice(bidModelIdx, 1);
-        setBidModels(bidModelsUpd);
-        setIsNeedCalcMoney(true);
-    }
-    const handleChangeModelCount = (value, bidModelId) => {
-        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
-        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[bidModelIdx].model_count = value;
-        setBidModels(bidModelsUpd);
-        setIsNeedCalcMoney(true);
-        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
-    };
-    const handleChangeModelPercent = (value, bidModelId) => {
-        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
-        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[bidModelIdx].percent = value;
-        setBidModels(bidModelsUpd);
-        setIsNeedCalcMoney(true);
-        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
-    };
-    const handleChangeModelPresence = (value, bidModelId) => {
-        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
-        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd[bidModelIdx].presence = value;
-        setBidModels(bidModelsUpd);
+        switch (type) {
+            case 'model_count':
+                bidModelsUpd[bidModelIdx].model_count = value;
+                setBidModels(bidModelsUpd);
+                setIsNeedCalcMoney(true);
+                setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+                break;
+            case 'percent':
+                bidModelsUpd[bidModelIdx].percent = value;
+                setBidModels(bidModelsUpd);
+                setIsNeedCalcMoney(true);
+                setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+                break;
+            case 'presence':
+                bidModelsUpd[bidModelIdx].presence = value;
+                setBidModels(bidModelsUpd);
+                break;
+        }
     };
     const handleOpenModelInfo = (modelId) => {
 
@@ -1121,29 +1106,23 @@ const BidPage = (props) => {
                                          key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}>
                                         <div className={'sa-models-table-cell'}><p>{idx + 1}</p></div>
                                         <div className={'sa-models-table-cell align-left'}>
-                                            <Select style={{width: '100%'}}
-                                                    value={bidModel.model_id}
-                                                    options={prepareSelect(modelsSelect)}
-                                                    showSearch
-                                                    optionFilterProp="label"
-                                                    filterOption={(input, option) =>
-                                                        option.label.toLowerCase().includes(input.toLowerCase())
-                                                    }
-                                                    onChange={(val) => handleChangeModel(val, bidModel.id, bidModel.sort)}
+                                            <NameSelect options={prepareSelect(modelsSelect)}
+                                                        model={bidModel}
+                                                        onUpdateModelName={handleChangeModel}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            <Input style={{width: '100%'}}
-                                                   type="number"
-                                                   value={bidModel.model_count}
-                                                   onChange={(e) => handleChangeModelCount(e.target.value, bidModel.id)}
+                                            <ModelInput value={bidModel.model_count}
+                                                        bidModelId={bidModel.id}
+                                                        type={'model_count'}
+                                                        onChangeModel={handleChangeModelInfo}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            <Input style={{width: '100%'}}
-                                                   type="number"
-                                                   value={bidModel.percent}
-                                                   onChange={(e) => handleChangeModelPercent(e.target.value, bidModel.id)}
+                                            <ModelInput value={bidModel.percent}
+                                                        bidModelId={bidModel.id}
+                                                        type={'percent'}
+                                                        onChangeModel={handleChangeModelInfo}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
@@ -1161,15 +1140,11 @@ const BidPage = (props) => {
                                             )}
                                         </div>
                                         <div className={'sa-models-table-cell'}>
-                                            <Select style={{width: '100%'}}
-                                                    value={bidModel.presence}
-                                                    options={prepareSelect(presenceSelect)}
-                                                    showSearch
-                                                    optionFilterProp="label"
-                                                    filterOption={(input, option) =>
-                                                        option.label.toLowerCase().includes(input.toLowerCase())
-                                                    }
-                                                    onChange={(val) => handleChangeModelPresence(val, bidModel.id)}
+                                            <ModelSelect options={prepareSelect(presenceSelect)}
+                                                         value={bidModel.presence}
+                                                         bidModelId={bidModel.id}
+                                                         type={'presence'}
+                                                         onChangeModel={handleChangeModelInfo}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'} style={{padding: 0, boxShadow: 'none'}}>
