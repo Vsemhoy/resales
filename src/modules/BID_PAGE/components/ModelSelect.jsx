@@ -4,7 +4,8 @@ import {Select} from "antd";
 const ModelSelect = (props) => {
     const [options, setOptions] = useState([]);
     const [value, setValue] = useState(null);
-    const [bidModelId, setBidModelId] = useState(null);
+    const [bidModelId, setBidModelId] = useState(0);
+    const [bidModelSort, setBidModelSort] = useState(null);
     const [type, setType] = useState('');
 
     useEffect(() => {
@@ -24,6 +25,10 @@ const ModelSelect = (props) => {
     }, [props.bidModelId]);
 
     useEffect(() => {
+        setBidModelSort(props.bidModelSort);
+    }, [props.bidModelSort]);
+
+    useEffect(() => {
         if (props.type) {
             setType(props.type);
         }
@@ -31,7 +36,7 @@ const ModelSelect = (props) => {
 
     const handleChangeSelect = (newValue) => {
         setValue(newValue);
-        props.onChangeModel(type, newValue, bidModelId);
+        props.onChangeModel(type, newValue, bidModelId, bidModelSort);
     };
 
     return (
