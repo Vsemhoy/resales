@@ -2,14 +2,15 @@ import React, { useEffect, useState, useMemo } from 'react';
 
 import { CaretDownOutlined, CaretUpOutlined, EnterOutlined } from '@ant-design/icons';
 import {
-	Input,
-	InputNumber,
-	DatePicker,
-	TimePicker,
-	Checkbox,
-	Select,
-	ColorPicker,
-	Form,
+  Input,
+  InputNumber,
+  DatePicker,
+  TimePicker,
+  Checkbox,
+  Select,
+  ColorPicker,
+  Form,
+  AutoComplete,
 } from 'antd';
 
 import 'dayjs/locale/ru';
@@ -37,8 +38,11 @@ const OrgPageSectionRow = (props) => {
 	const [opened, setOpened] = useState(false);
 	const [editMode, setEditMode] = useState(props.edit_mode ?? false);
 
-	const [localValues, setLocalValues] = useState({}); // теперь ключи — это `name`
-	const [errors, setErrors] = useState({});
+  const [localValues, setLocalValues] = useState({}); // теперь ключи — это `name`
+  const [errors, setErrors] = useState({});
+
+
+  const [transContainer, setTransContainer] = useState({});
 
 	// Дебаунс для отправки изменений
 	const debouncedOnChange = useMemo(() => {
@@ -180,15 +184,14 @@ const OrgPageSectionRow = (props) => {
 			onBlur: (e) => {
 				console.log('BLUR');
 
-				if (props.on_blur) {
-					const val = e?.target?.value ?? e;
-					console.log(val);
-					let obj = {};
-					obj[field.name] = val;
-					props.on_blur(obj);
-				}
-			},
-		};
+        if (props.on_blur){
+          const val = e?.target?.value ?? e;
+          let obj = {};
+          obj[field.name] = val;
+          props.on_blur(obj);
+        }
+      }
+    };
 
 		switch (field.type) {
 			case 'string':
@@ -312,32 +315,32 @@ const OrgPageSectionRow = (props) => {
 					</Checkbox>
 				);
 
-			case 'select':
-				return (
-					<Select
-						size="small"
-						variant="borderless"
-						value={value}
-						onChange={(val) => onChange(field.name, val, field)}
-						style={{ width: '100%' }}
-						onBlur={(e) => {
-							console.log('BLUR');
-							if (props.on_blur) {
-								const val = e?.target?.value ?? e;
-								console.log(val);
-								let obj = {};
-								obj[field.name] = val;
-								props.on_blur(obj);
-							}
-						}}
-					>
-						{field.options?.map((opt) => (
-							<Option key={opt.value} value={opt.value}>
-								{opt.label}
-							</Option>
-						))}
-					</Select>
-				);
+      case 'select':
+        return (
+          <Select
+            size='small'
+            variant="borderless"
+            value={value}
+            onChange={(val) => onChange(field.name, val, field)}
+            style={{ width: '100%' }}
+            onBlur={ (e) => {
+              console.log("BLUR");
+              if (props.on_blur){
+                const val = e?.target?.value ?? e;
+                console.log(val);
+                let obj = {};
+                obj[field.name] = val;
+                props.on_blur(obj);
+              }
+            }}
+          >
+            {field.options?.map((opt) => (
+              <Option key={opt.value} value={opt.value}>
+                {opt.label}
+              </Option>
+            ))}
+          </Select>
+        );
 
 			case 'color':
 				return (
@@ -349,10 +352,77 @@ const OrgPageSectionRow = (props) => {
 					/>
 				);
 
-			default:
-				return <Input size="small" variant="borderless" {...commonProps} />;
-		}
-	};
+      case 'autocomplete' :
+        return (
+          <AutoComplete
+            options={transContainer[field.name]}
+            style={{ width: '100%' }}
+            size='small'
+            variant="borderless"
+            onSearch={(text)=> {
+              let filteredOptions = [];
+              let cmod = transContainer;
+              if (field.options){
+                filteredOptions = field.options.filter(name =>
+                  name.toLowerCase().includes(text.toLowerCase())
+                );
+
+                cmod[field.name] = filteredOptions.map(name => ({
+                    value: name,
+                    label: name,
+                  }));
+                  setTransContainer(cmod);
+                } else {
+                    cmod[field.name] = []
+                  setTransContainer(cmod);
+                }
+              }}
+            // onChange={handleChange}
+            onChange={(e)=>{
+              // console.log(e);
+              const val = e?.target?.value ?? e;
+                let obj = {};
+                obj[field.name] = val;
+                if (props.on_blur && !props.on_change){
+                  props.on_blur(obj);
+                }
+                if (props.on_change){
+                  props.on_change(obj);
+                }
+           
+            }}
+            onBlur={(e)=>{
+              console.log(e);
+              const val = e?.target?.value ?? e;
+              let obj = {};
+              obj[field.name] = val.trim();
+              if (props.on_blur){
+                console.log("BLURER");
+                props.on_blur(obj);
+              }
+            }}
+            value={value}
+            placeholder={field.placeholder}
+            // allowClear
+            notFoundContent="Ничего не найдено :("
+            // {...commonProps}
+          >
+            <Input            
+             size='small'
+              variant="borderless"
+              onChange={()=>{
+                console.log("HELLOW")
+              }}
+               />
+          </AutoComplete>
+        )
+
+      default:
+        return <Input
+        size='small'
+         variant="borderless" {...commonProps} />;
+    }
+  };
 
 	return (
 		<div className={`sk-omt-row-wrapper ${editMode ? 'sk-omt-row-editor' : ''}`}>
@@ -448,17 +518,18 @@ const OrgPageSectionRow = (props) => {
 export default OrgPageSectionRow;
 
 export const OPS_TYPE = {
-	STRING: 'string',
-	EMAIL: 'email',
-	INTEGER: 'integer',
-	UINTEGER: 'uinteger',
-	FLOAT: 'float',
-	UFLOAT: 'ufloat',
-	TEXTAREA: 'textarea',
-	DATE: 'date',
-	TIME: 'time',
-	DATETIME: 'datetime',
-	CHECKBOX: 'checkbox',
-	SELECT: 'select',
-	COLOR: 'color',
+  STRING : 'string',
+  EMAIL  : 'email',
+  INTEGER: 'integer',
+  UINTEGER: 'uinteger',
+  FLOAT:   'float',
+  UFLOAT:   'ufloat',
+  TEXTAREA: 'textarea',
+  DATE     : 'date',
+  TIME     : 'time',
+  DATETIME : 'datetime',
+  CHECKBOX : 'checkbox',
+  SELECT   : 'select',
+  COLOR    : 'color',
+  AUTOCOMPLETE : 'autocomplete',
 };

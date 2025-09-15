@@ -140,6 +140,11 @@
 	z-index: 10 !important;
 }
 
+.sa-models-table .ant-select-selector {
+    border: none !important;
+}
+
+
 /* NO ANTD */
 
 .sa-bid-page {

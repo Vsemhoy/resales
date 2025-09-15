@@ -247,31 +247,34 @@ const NotesTabPage = (props) => {
 		}
 	};
 
-	const handleAddUnitBlank = () => {
-		setNewLoading(true);
-		console.log('ADDED NEW DDDDDDDDDD');
-		setTimeout(() => {
-			let spawn = {
-				command: 'create',
-				id: 'new_' + dayjs().unix() + dayjs().millisecond() + temporaryUnits.length,
-				id_orgs: props.item_id,
-				id8staff_list: userdata.user.id,
-				theme: '',
-				date: dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
-				notes: '',
-				deleted: 0,
-				creator: {
-					id: userdata.user.id,
-					surname: userdata?.user.surname,
-					name: userdata?.user.name,
-					secondname: userdata?.user.secondname,
-				},
-			};
+    const handleAddUnitBlank = () => {
+      setNewLoading(true);
+      // console.log('ADDED NEW DDDDDDDDDD')
+      setTimeout(() => {
+        let spawn = {
+              "command": "create",
+              "id": 'new_' + dayjs().unix() + dayjs().millisecond() + temporaryUnits.length,
+              "id_orgs": props.item_id,
+              "id8staff_list": userdata.user.id,
+              "theme": "",
+              "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
+              "notes": "",
+              "deleted": 0,
+              "next_call_date" : null,
+              "creator": {
+                  "id": userdata.user.id,
+                  "surname": userdata?.user.surname,
+                  "name": userdata?.user.name,
+                  "secondname": userdata?.user.secondname,
+              }
+            };
+  
+            setTemporaryUnits(prevItems => [spawn, ...prevItems]);
+            // console.log(spawn);
+        
+      }, 760);
+    }
 
-			setTemporaryUnits((prevItems) => [spawn, ...prevItems]);
-			console.log(spawn);
-		}, 760);
-	};
 
 	const handleDeleteBlankUnit = (id) => {
 		setTemporaryUnits(temporaryUnits.filter((item) => item.id !== id));

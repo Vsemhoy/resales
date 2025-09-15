@@ -550,21 +550,22 @@ const OrgPage = (props) => {
 							userdata={userdata}
 						/>
 
-						<CallsTabPage
-							show={activeTab === 'c'}
-							edit_mode={editMode}
-							item_id={itemId}
-							call_to_save={callToSaveAction}
-							base_data={baseCallsData}
-							on_save={handleDataChangeApprove}
-							active_page={pageCalls}
-							on_change_page={(p) => {
-								setPageCalls(p);
-							}}
-							current_page={pageCalls}
-							userdata={userdata}
-							selects={baseFiltersData}
-						/>
+            <CallsTabPage
+                show={activeTab === 'c'}
+                edit_mode={editMode}
+                item_id={itemId}
+                call_to_save={callToSaveAction}
+                base_data={baseCallsData}
+                on_save={handleDataChangeApprove}
+                active_page={pageCalls}
+                on_change_page={(p)=> {setPageCalls(p)}}
+                current_page={pageCalls}
+                userdata={userdata}
+
+                selects={baseFiltersData}
+                departaments={departList}
+                main_data={baseMainData}
+            />
 
 						<ProjectsTabPage
 							show={activeTab === 'p'}
