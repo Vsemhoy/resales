@@ -10,62 +10,57 @@ import { compareObjects } from '../../../components/helpers/CompareHelpers';
 import OrgCallEditorSectionBox from '../components/sections/NotesTabSections/Rows/OrgCallEditorSectionBox';
 import { BriefcaseIcon, PhoneIcon } from '@heroicons/react/24/solid';
 
-
 const CallsTabPage = (props) => {
-    const {userdata} = props;
-    
-    const [departamentList, setDepartamentList] = useState([]);
+	const { userdata } = props;
 
-    const [orgId, setOrgId] = useState(null);
-    const [show, setShow] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [total, setTotal] = useState(1);
-    const [onPage, setOnPage] = useState(30);
-    const [loading, setLoading] = useState(false);
-    const [editMode, setEditMode] = useState(false);
-    
-    const [newLoading, setNewLoading] = useState(false);
+	const [orgId, setOrgId] = useState(null);
+	const [show, setShow] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [total, setTotal] = useState(1);
+	const [onPage, setOnPage] = useState(30);
+	const [loading, setLoading] = useState(false);
+	const [editMode, setEditMode] = useState(false);
 
-    // Структурированные в коллапсы юниты
-    const [structureItems, setStructureItems] = useState([]);
-    const [originalData, setOriginalData] = useState([]);
-    const [baseData, setBaseData] = useState([]);
+	const [newLoading, setNewLoading] = useState(false);
 
-    // Новые юниты
-    const [temporaryUnits, setTemporaryUnits] = useState([]);
-    const [newStructureItems, setNewStructureItems] = useState([]);
+	// Структурированные в коллапсы юниты
+	const [structureItems, setStructureItems] = useState([]);
+	const [originalData, setOriginalData] = useState([]);
+	const [baseData, setBaseData] = useState([]);
 
-    const [editedItemsIds, setEditedItemsIds] = useState([]);
-    const [openedNewSections, setOpenedNewSections] = useState([]);
+	// Новые юниты
+	const [temporaryUnits, setTemporaryUnits] = useState([]);
+	const [newStructureItems, setNewStructureItems] = useState([]);
+
+	const [editedItemsIds, setEditedItemsIds] = useState([]);
+	const [openedNewSections, setOpenedNewSections] = useState([]);
 
     // const [departs, setDeparts] = useState(selects.)
   
     const [orgusers, setOrgUsers] = useState([]);
 
-    useEffect(() => {
-      console.log('props.selects', props.selects);
-    }, [props.selects]);
+	useEffect(() => {
+		console.log('props.selects', props.selects);
+	}, [props.selects]);
 
-    useEffect(() => {
-      setShow(props.show);
-    }, [props.show]);
+	useEffect(() => {
+		setShow(props.show);
+	}, [props.show]);
 
-    useEffect(() => {
-      setCurrentPage(props.current_page);
-    }, [props.current_page]);
+	useEffect(() => {
+		setCurrentPage(props.current_page);
+	}, [props.current_page]);
 
-    useEffect(() => {
-        if (props.item_id){
-          setOrgId(props.item_id);
-        }
-    }, [props.item_id]);
+	useEffect(() => {
+		if (props.item_id) {
+			setOrgId(props.item_id);
+		}
+	}, [props.item_id]);
 
-
-    useEffect(() => {
-      if (props.current_page && props.current_page !== currentPage)
-        setCurrentPage(props.current_page);
-    }, [props.current_page]);
-
+	useEffect(() => {
+		if (props.current_page && props.current_page !== currentPage)
+			setCurrentPage(props.current_page);
+	}, [props.current_page]);
 
     useEffect(() => {
       setDepartamentList(props.departaments);
@@ -94,52 +89,50 @@ const CallsTabPage = (props) => {
               setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
             }, 1000);
 
-            setBaseData([]);
+					setBaseData([]);
+					console.log('---------- 65 ---------', originalData);
 
-            setTimeout(() => {
-              setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
-              
-            }, 1000);
+					setTimeout(() => {
+						setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
+					}, 1000);
+				} else {
+					// alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
+					if (props.on_break_discard) {
+						// setBaseData(props.base_data?.calls);
+						setOriginalData(
+							joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings)
+						);
+						props.on_break_discard();
+					}
+				}
+			} else {
+				setEditMode(props.edit_mode);
+			}
+		} else {
+			setEditMode(props.edit_mode);
+		}
+	}, [props.edit_mode]);
 
-          } else {
-            // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
-            if (props.on_break_discard){
-              // setBaseData(props.base_data?.calls);
-              setOriginalData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
-              props.on_break_discard();
-            }
-          }
-        } else {
-          setEditMode(props.edit_mode);
-        }
+	const joinCallsAndMeetings = (calls, meetings) => {
+		let result = [];
+		if (calls && calls.length > 0) {
+			for (let i = 0; i < calls.length; i++) {
+				const element = calls[i];
+				element._type = 'call';
+				result.push(element);
+			}
+		}
+		if (meetings && meetings.length > 0) {
+			for (let i = 0; i < meetings.length; i++) {
+				const element = meetings[i];
+				element._type = 'meeting';
+				result.push(element);
+			}
+		}
 
-      } else {
-        setEditMode(props.edit_mode);
-      }
-    }, [props.edit_mode]);
-
-
-    const joinCallsAndMeetings = (calls, meetings) => {
-      let result = [];
-      if (calls && calls.length > 0){
-        for (let i = 0; i < calls.length; i++) {
-          const element = calls[i];
-          element._type = "call";
-          result.push(element);
-        }
-      }
-      if (meetings && meetings.length > 0){
-        for (let i = 0; i < meetings.length; i++) {
-          const element = meetings[i];
-          element._type = "meeting";
-          result.push(element);
-        }
-      }
-
-      result.sort((a, b) => dayjs(a).isAfter(dayjs(b)));
-      return result;
-    }
-
+		result.sort((a, b) => dayjs(a).isAfter(dayjs(b)));
+		return result;
+	};
 
       useEffect(() => {
       if (props.base_data?.calls !== null && props.base_data?.calls?.length > 0){
@@ -206,14 +199,17 @@ const CallsTabPage = (props) => {
     }, [baseData, editMode]);
 
 
-    useEffect(() => {
-      setOriginalData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
-      setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
-    }, [props.base_data]);
+	useEffect(() => {
+		console.log('original', baseData, originalData);
+		console.log('BASE SETTER NNN');
+		setOriginalData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
+		setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
+	}, [props.base_data]);
 
-    useEffect(() => {
-    }, [originalData, baseData]);
-
+	useEffect(() => {
+		console.log('ORIGINAL DATA', originalData);
+		console.log('BASE DATA', baseData);
+	}, [originalData, baseData]);
 
     useEffect(() => {
       let secids = [];
@@ -267,116 +263,108 @@ const CallsTabPage = (props) => {
 
 
 
-    const get_org_data_action = (org_id, ev, on) => {
-      if (props.on_change_page && ev !== currentPage){
-        props.on_change_page(ev);
-      };
-    }
+	const get_org_data_action = (org_id, ev, on) => {
+		if (props.on_change_page && ev !== currentPage) {
+			props.on_change_page(ev);
+		}
+	};
 
+	const handleAddUnitBlank = (type) => {
+		setNewLoading(true);
+		console.log('ADDED NEW DDDDDDDDDD');
+		setTimeout(() => {
+			let spawn = {
+				_type: type,
+				command: 'create',
+				id: 'new_' + dayjs().unix() + dayjs().millisecond() + temporaryUnits.length,
+				id_orgs: props.item_id,
+				id8staff_list: userdata.user.id,
+				id8ref_departaments: 5,
+				theme: '',
+				date: dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
+				post: '',
+				phone: '',
+				note: '',
+				result: '',
+				subscriber: '',
+				deleted: 0,
+				creator: {
+					id: userdata.user.id,
+					surname: userdata?.user.surname,
+					name: userdata?.user.name,
+					secondname: userdata?.user.secondname,
+				},
+				departament: {
+					id: 5,
+					name: 'Отдел оптовых продаж',
+					rang: 50,
+					visible: true,
+					deleted: false,
+					position: null,
+					icon: null,
+				},
+			};
 
-    const handleAddUnitBlank = (type) => {
-      setNewLoading(true);
-      console.log('ADDED NEW DDDDDDDDDD')
-      setTimeout(() => {
-        let spawn = {
-              "_type" : type,
-              "command": "create",
-              "id": 'new_' + dayjs().unix() + dayjs().millisecond() + temporaryUnits.length,
-              "id_orgs": props.item_id,
-              "id8staff_list": userdata.user.id,
-              "id8ref_departaments": 5,
-              "theme": "",
-              "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
-              "post": "",
-              "phone": "",
-              "note": "",
-              "result": "",
-              "subscriber": "",
-              "deleted": 0,
-              "creator": {
-                  "id": userdata.user.id,
-                  "surname": userdata?.user.surname,
-                  "name": userdata?.user.name,
-                  "secondname": userdata?.user.secondname,
-              },
-              "departament": {
-                "id": 5,
-                "name": "Отдел оптовых продаж",
-                "rang": 50,
-                "visible": true,
-                "deleted": false,
-                "position": null,
-                "icon": null
-            },
-            };
-  
-            setTemporaryUnits(prevItems => [spawn, ...prevItems]);
-            console.log(spawn);
-        
-      }, 760);
-    }
+			setTemporaryUnits((prevItems) => [spawn, ...prevItems]);
+			console.log(spawn);
+		}, 760);
+	};
 
+	const handleDeleteBlankUnit = (id) => {
+		setTemporaryUnits(temporaryUnits.filter((item) => item.id !== id));
+	};
 
-    const handleDeleteBlankUnit = (id) => {
-      setTemporaryUnits(temporaryUnits.filter((item) => item.id !== id));
-    }
+	const handleDeleteRealUnit = (id, value) => {
+		// const updata = {command: 'delete', id: id, deleted: 1};
+		if (!editedItemsIds.includes(id)) {
+			setEditedItemsIds([...editedItemsIds, id]);
+		}
 
+		setBaseData((prevData) => {
+			// Удаляем элемент
+			const filtered = prevData.filter((item) => item.id !== id);
 
-    const handleDeleteRealUnit = (id, value) => {
-      // const updata = {command: 'delete', id: id, deleted: 1};
-      if (!editedItemsIds.includes(id)){
-        setEditedItemsIds([...editedItemsIds, id]);
-      };
+			// Находим элемент для обновления
+			const uitem = prevData.find((item) => item.id === id);
+			if (uitem) {
+				// Создаем обновленную версию
+				const updatedItem = {
+					...uitem,
+					deleted: value,
+					command: value === 1 ? 'delete' : 'update',
+				};
 
-      setBaseData(prevData => {
-        // Удаляем элемент
-        const filtered = prevData.filter(item => item.id !== id);
-        
-        // Находим элемент для обновления
-        const uitem = prevData.find(item => item.id === id);
-        if (uitem) {
-          // Создаем обновленную версию
-          const updatedItem = {
-            ...uitem,
-            deleted: value,
-            command: value === 1 ? 'delete' : 'update'
-          };
-          
-          // Находим индекс оригинального элемента
-          const originalIndex = prevData.findIndex(item => item.id === id);
-          
-          // Вставляем на ту же позицию
-          const newData = [...filtered];
-          newData.splice(originalIndex, 0, updatedItem);
-          
-          return newData;
-        }
-        
-        return filtered;
-      });
-    }
+				// Находим индекс оригинального элемента
+				const originalIndex = prevData.findIndex((item) => item.id === id);
 
+				// Вставляем на ту же позицию
+				const newData = [...filtered];
+				newData.splice(originalIndex, 0, updatedItem);
 
-    const handleUpdateBlankUnit = (id, data) => {
-      if (!editMode){
-        return;
-      }
-      console.log('id, data', id, data, temporaryUnits);
-      setTemporaryUnits(prevUnits => {
-        const exists = prevUnits.some(item => item.id === id);
-        
-        if (!exists) {
-          // Добавляем новый элемент
-          return [...prevUnits, data];
-        } else {
-          // Обновляем существующий
-          return prevUnits.map(item => 
-            item.id === id ? data : item
-          );
-        }
-      });
-    }
-    
+				return newData;
+			}
+
+			return filtered;
+		});
+	};
+
+	const handleUpdateBlankUnit = (id, data) => {
+		if (!editMode) {
+			return;
+		}
+		console.log('id, data', id, data, temporaryUnits);
+		setTemporaryUnits((prevUnits) => {
+			const exists = prevUnits.some((item) => item.id === id);
+
+			if (!exists) {
+				// Добавляем новый элемент
+				return [...prevUnits, data];
+			} else {
+				// Обновляем существующий
+				return prevUnits.map((item) => (item.id === id ? data : item));
+			}
+		});
+	};
 
     const handleUpdateRealUnit = (id, data) => {
       // let udata = originalData.filter((item) => item.id !== id);
@@ -387,136 +375,133 @@ const CallsTabPage = (props) => {
       }
       console.log('data', data)
 
-      const excluders = ['command', 'date', 'departament', 'creator', '_type'];
-      let is_original = false;
+		const excluders = ['command', 'date', 'departament', 'creator', '_type'];
+		let is_original = false;
 
-      originalData.forEach(element => {
-        if (element.id === id){
-          is_original = compareObjects(element, data, {excludeFields: excluders, compareArraysDeep: false, ignoreNullUndefined: true});
-        }
-      });
+		originalData.forEach((element) => {
+			if (element.id === id) {
+				is_original = compareObjects(element, data, {
+					excludeFields: excluders,
+					compareArraysDeep: false,
+					ignoreNullUndefined: true,
+				});
+			}
+		});
 
+		if (is_original === false) {
+			if (!editedItemsIds?.includes(id)) {
+				setEditedItemsIds([...editedItemsIds, id]);
+				data.command = 'update';
+			}
+		} else {
+			if (editedItemsIds?.includes(id)) {
+				setEditedItemsIds(editedItemsIds.filter((item) => item !== id));
+				data.command = '';
+			}
+		}
 
-      if (is_original === false){
-        if (!editedItemsIds?.includes(id)){
-          setEditedItemsIds([...editedItemsIds, id]);
-          data.command = 'update';
-        };
-      } else {
-        if (editedItemsIds?.includes(id)){
-          setEditedItemsIds(editedItemsIds.filter((item)=> item !== id));
-          data.command = '';
-        };
-      }
+		console.log(data);
 
-      console.log(data);
-      
-      setBaseData(
-        prevUnits => {
-          const exists = prevUnits.some(item => item.id === id);
-          if (!exists) {
-            return[...prevUnits, data];
-          } else {
-            return prevUnits.map(item => 
-              item.id === id ? data : item
-            );
-          }
-        }
-      );
-    }
+		setBaseData((prevUnits) => {
+			const exists = prevUnits.some((item) => item.id === id);
+			if (!exists) {
+				return [...prevUnits, data];
+			} else {
+				return prevUnits.map((item) => (item.id === id ? data : item));
+			}
+		});
+	};
 
+	// если в call_to_save не null, а timestamp, отправляем данные на обновление
+	useEffect(() => {
+		console.log('basedata', baseData, temporaryUnits);
+		if (props.call_to_save !== null && props.on_save !== null) {
+			props.on_save(baseData, temporaryUnits);
+		}
+	}, [props.call_to_save]);
 
+	return (
+		<div>
+			{show && (
+				<Spin spinning={loading}>
+					<div className={'sa-orgtab-container'}>
+						<div className={'sa-pa-6 sa-flex-space'} style={{ paddingTop: '9px' }}>
+							<div>
+								<Pagination
+									disabled={editMode}
+									size={'small'}
+									current={currentPage}
+									pageSizeOptions={[10, 30, 50, 100]}
+									defaultPageSize={onPage}
+									locale={ANTD_PAGINATION_LOCALE}
+									showQuickJumper
+									total={total}
+									onChange={(ev, on) => {
+										if (ev !== currentPage) {
+											setCurrentPage(ev);
+										}
+										if (on !== onPage) {
+											setOnPage(on);
+										}
+										get_org_data_action(orgId, ev, on);
+									}}
+								/>
+							</div>
+							<div className={'sa-flex-gap'}>
+								{editMode && (
+									<Button
+										type={'primary'}
+										icon={<PlusOutlined />}
+										onClick={() => {
+											handleAddUnitBlank('call');
+										}}
+										disabled={newStructureItems.length > 7 || newLoading}
+									>
+										Cоздать звонок
+									</Button>
+								)}
+								{editMode && (
+									<Button
+										type={'primary'}
+										icon={<PlusOutlined />}
+										onClick={() => {
+											handleAddUnitBlank('meeting');
+										}}
+										disabled={newStructureItems.length > 7 || newLoading}
+									>
+										Cоздать встречу
+									</Button>
+								)}
+							</div>
+						</div>
+						<div>
+							{newStructureItems.length > 0 && (
+								<div className={'sa-org-temp-stack-collapse'}>
+									<div className={'sa-org-temp-stack-collapse-header'}>Новые встречи / звонки</div>
+									<Spin spinning={newLoading} delay={500}>
+										<Collapse
+											size={'small'}
+											items={newStructureItems}
+											activeKey={openedNewSections}
+										/>
+									</Spin>
+								</div>
+							)}
 
-
-
-    // если в call_to_save не null, а timestamp, отправляем данные на обновление
-    useEffect(() => {
-      console.log('basedata', baseData, temporaryUnits);
-      if (props.call_to_save !== null && props.on_save !== null){
-        props.on_save(baseData, temporaryUnits);
-      }
-    }, [props.call_to_save]);
-
-
-
-  return (
-    <div>
-      {show && (
-
-         <Spin spinning={loading}>
-            <div className={'sa-orgtab-container'}>
-                <div className={'sa-pa-6 sa-flex-space'} style={{paddingTop: '9px'}}>
-                  <div>
-                    <Pagination
-                      disabled={editMode}
-                      size={'small'}
-                      current={currentPage}
-                      pageSizeOptions={[10, 30, 50, 100]}
-                      defaultPageSize={onPage}
-                      locale={ANTD_PAGINATION_LOCALE}
-                      showQuickJumper
-                      total={total}
-                      onChange={(ev, on)=>{
-                        if (ev !== currentPage){
-                          setCurrentPage(ev);
-                        };
-                        if (on !== onPage){
-                          setOnPage(on);
-                        };
-                        get_org_data_action(orgId, ev, on);
-                      }}
-                    />
-                    </div>
-                    <div className={'sa-flex-gap'}>
-                      {editMode && (
-                        <Button type={'primary'} 
-                          icon={<PlusOutlined/>} 
-                          onClick={()=>{handleAddUnitBlank('call')}}
-                          disabled={newStructureItems.length > 7 || newLoading}
-                        >
-                          Cоздать звонок
-                        </Button>
-                      )}
-                      {editMode && (
-                        <Button type={'primary'} 
-                          icon={<PlusOutlined/>} 
-                          onClick={()=>{handleAddUnitBlank('meeting')}}
-                          disabled={newStructureItems.length > 7 || newLoading}
-                        >
-                          Cоздать встречу
-                        </Button>
-                      )}
-                    </div>
-                </div>
-                <div>
-                {newStructureItems.length > 0 && (
-                  <div className={'sa-org-temp-stack-collapse'}>
-                    <div className={'sa-org-temp-stack-collapse-header'}>Новые встречи / звонки</div>
-                    <Spin spinning={newLoading} delay={500}>
-                    <Collapse 
-                    size={'small'}
-                    items={newStructureItems}
-                      activeKey={openedNewSections}
-                    /></Spin>
-                   </div>
-
-                )}
-
-                <Collapse
-                    // defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
-                    // activeKey={modalSectionsOpened}
-                    size={'small'}
-                    // onChange={handleSectionChange}
-                    // onMouseDown={handleSectionClick}
-                    items={structureItems} />
-                    
-
-                </div>
-            </div>
-            </Spin>
-      )}
-    </div>
-  );
+							<Collapse
+								// defaultActiveKey={['st_commoninfo', 'st_departinfo', 'st_contactinfo']}
+								// activeKey={modalSectionsOpened}
+								size={'small'}
+								// onChange={handleSectionChange}
+								// onMouseDown={handleSectionClick}
+								items={structureItems}
+							/>
+						</div>
+					</div>
+				</Spin>
+			)}
+		</div>
+	);
 };
 
 export default CallsTabPage;

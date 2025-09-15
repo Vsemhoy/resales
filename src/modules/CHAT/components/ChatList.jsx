@@ -60,7 +60,8 @@ export default function ChatList() {
 			<ul>
 				{chats.map((chat) => (
 					<li key={chat.chat_id}>
-						{chat.from.surname} {chat.from.name} — Chat ID: {chat.chat_id}
+						{chat.from.surname} {chat.from.name}
+						{/* <span>— Chat ID: {chat.chat_id}</span> */}
 					</li>
 				))}
 			</ul>

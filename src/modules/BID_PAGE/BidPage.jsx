@@ -12,7 +12,7 @@ import {
     SELECTS
 } from "./mock/mock";
 import MODELS from './mock/mock_models';
-import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
+import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import {
     BlockOutlined,
     CopyOutlined, DeleteOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
@@ -32,8 +32,8 @@ const BidPage = (props) => {
     const [isSavingInfo, setIsSavingInfo] = useState(false);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
 
-    const [lastUpdModel, setLastUpdModel] = useState(null);
-    const [isUpdateAll, setIsUpdateAll] = useState(false);
+	const [lastUpdModel, setLastUpdModel] = useState(null);
+	const [isUpdateAll, setIsUpdateAll] = useState(false);
 
     const [userData, setUserData] = useState(null);
 

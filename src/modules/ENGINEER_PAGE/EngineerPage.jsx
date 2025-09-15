@@ -13,7 +13,7 @@ import {
   CopyOutlined, DeleteOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
   FileSearchOutlined, FileWordOutlined,
   HistoryOutlined, InfoCircleOutlined, LoadingOutlined,
-  PlusOutlined,
+  PlusOutlined, ProfileOutlined,
   SaveOutlined
 } from "@ant-design/icons";
 import Panel from "antd/es/splitter/Panel";
@@ -112,8 +112,8 @@ const EngineerPage = (props) => {
   const [orgUsersSelect, setOrgUsersSelect] = useState([]);
 
   /*  PREBINFO */
-  const [manager, setManager] = useState({});
-  const [engineer, setEngineer] = useState({});
+  const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0});
+  const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0});
 
   useEffect(() => {
     if (!isMounted) {
@@ -231,7 +231,8 @@ const EngineerPage = (props) => {
       }
     } else {
       console.log("HERE: 1");
-      // console.log(PREBID.manager)
+      // console.log(PREBID.manager);
+      // console.log(PREBID.engineer);
       setManager(PREBID.manager);
       setEngineer(PREBID.engineer);
       // setOpenMode(BID.openmode);
@@ -800,8 +801,7 @@ const EngineerPage = (props) => {
                                 }}
                                 color="geekblue"
                             >
-                              Привет 1
-                              {/*{engineer && (`${engineer.surname} ${engineer.name.substring(0, 1)}.${engineer.middlename.substring(0, 1)}.`)}*/}
+                              {engineer && (`${engineer.surname} ${engineer.name.substring(0, 1)}.${engineer.middlename.substring(0, 1)}.`)}
                             </Tag>
                             для
                             <Tag
@@ -811,8 +811,7 @@ const EngineerPage = (props) => {
                                 }}
                                 color={companies.find(comp => comp.id === manager.id_company)?.color}
                             >
-                              Привет 2
-                              {/*{manager && (`${manager.surname} ${manager.name.substring(0, 1)}.${manager.middlename.substring(0, 1)}.`)}*/}
+                              {manager && (`${manager.surname} ${manager.name.substring(0, 1)}.${manager.middlename.substring(0, 1)}.`)}
                             </Tag>
                             Ваша роль:
                             {userData && userData?.user?.sales_role === 1 && (
@@ -827,43 +826,9 @@ const EngineerPage = (props) => {
                             {userData && userData?.user?.sales_role === 4 && (
                                 <Tag color={'gold'}>Завершено</Tag>
                             )}
-                            Режим: <Tooltip title={openMode.description}><Tag color={openMode.color}>{openMode.tagtext}</Tag></Tooltip>
+                            {/*Режим: <Tooltip title={openMode.description}><Tag color={openMode.color}>{openMode.tagtext}</Tag></Tooltip>*/}
                           </div>
                       )}
-                      {/*{(userData.id_company && companies && companies.find(comp => comp.id === userData.id_company) && bidOrg && bidOrg.name) && (*/}
-                      {/*    <div className={'sa-vertical-flex'} style={{alignItems: 'baseline'}}>*/}
-                      {/*      От инженера*/}
-                      {/*      <Tag*/}
-                      {/*          style={{*/}
-                      {/*            textAlign: 'center',*/}
-                      {/*            fontSize: '14px',*/}
-                      {/*          }}*/}
-                      {/*          color={companies.find(comp => comp.id === userData.id_company)?.color}*/}
-                      {/*      >{companies.find(comp => comp.id === userData.id_company)?.name}</Tag>*/}
-                      {/*      для*/}
-                      {/*      <Tag*/}
-                      {/*          style={{*/}
-                      {/*            textAlign: 'center',*/}
-                      {/*            fontSize: '14px',*/}
-                      {/*          }}*/}
-                      {/*          color="geekblue"*/}
-                      {/*      >{bidOrg.name}</Tag>*/}
-                      {/*      Ваша роль:*/}
-                      {/*      {userData && userData?.user?.sales_role === 1 && (*/}
-                      {/*          <Tag color={'blue'}>менеджер</Tag>*/}
-                      {/*      )}*/}
-                      {/*      {userData && userData?.user?.sales_role === 2 && (*/}
-                      {/*          <Tag color={'volcano'}>администратор</Tag>*/}
-                      {/*      )}*/}
-                      {/*      {userData && userData?.user?.sales_role === 3 && (*/}
-                      {/*          <Tag color={'magenta'}>бухгалтер</Tag>*/}
-                      {/*      )}*/}
-                      {/*      {userData && userData?.user?.sales_role === 4 && (*/}
-                      {/*          <Tag color={'gold'}>завершено</Tag>*/}
-                      {/*      )}*/}
-                      {/*      Режим: <Tooltip title={openMode.description}><Tag color={openMode.color}>{openMode.tagtext}</Tag></Tooltip>*/}
-                      {/*    </div>*/}
-                      {/*)}*/}
                       <Button type={'primary'}
                               style={{width: '150px'}}
                               icon={<SaveOutlined />}
@@ -875,57 +840,32 @@ const EngineerPage = (props) => {
                 </div>
               </div>
             </Affix>
-          {/*  <div className={'sa-bid-page-info-container'}>*/}
-          {/*    <div className={'sa-bid-page-btns-wrapper'}>*/}
-          {/*      <Tooltip title={'Дублировать'} placement={'right'}>*/}
-          {/*        <Button className={'sa-bid-page-btn'}*/}
-          {/*                color="primary"*/}
-          {/*                variant="outlined"*/}
-          {/*                icon={<CopyOutlined className={'sa-bid-page-btn-icon'}/>}*/}
-          {/*        ></Button>*/}
-          {/*      </Tooltip>*/}
-          {/*      <Tooltip title={'История'} placement={'right'}>*/}
-          {/*        <Button className={'sa-bid-page-btn'}*/}
-          {/*                color="primary"*/}
-          {/*                variant="outlined"*/}
-          {/*                icon={<HistoryOutlined className={'sa-bid-page-btn-icon'}/>}*/}
-          {/*        ></Button>*/}
-          {/*      </Tooltip>*/}
-          {/*      <Tooltip title={'Сохранить в PDF'} placement={'right'}>*/}
-          {/*        <Button className={'sa-bid-page-btn'}*/}
-          {/*                color="primary"*/}
-          {/*                variant="outlined"*/}
-          {/*                icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'}/>}*/}
-          {/*        ></Button>*/}
-          {/*      </Tooltip>*/}
-          {/*      {+bidType !== 2 && (*/}
-          {/*          <Tooltip title={'Сохранить в WORD'} placement={'right'}>*/}
-          {/*            <Button className={'sa-bid-page-btn'}*/}
-          {/*                    color="primary"*/}
-          {/*                    variant="outlined"*/}
-          {/*                    icon={<FileWordOutlined className={'sa-bid-page-btn-icon'}/>}*/}
-          {/*            ></Button>*/}
-          {/*          </Tooltip>*/}
-          {/*      )}*/}
-          {/*      <Tooltip title={'Файлы'} placement={'right'}>*/}
-          {/*        <Badge count={bidFilesCount} color={'geekblue'}>*/}
-          {/*          <Button className={'sa-bid-page-btn'}*/}
-          {/*                  color="primary"*/}
-          {/*                  variant="outlined"*/}
-          {/*                  icon={<DownloadOutlined className={'sa-bid-page-btn-icon'}/>}*/}
-          {/*          ></Button>*/}
-          {/*        </Badge>*/}
-          {/*      </Tooltip>*/}
-          {/*      {+bidType !== 2 && (*/}
-          {/*          <Tooltip title={'Создать счет'} placement={'right'}>*/}
-          {/*            <Button className={'sa-bid-page-btn'}*/}
-          {/*                    color="primary"*/}
-          {/*                    variant="outlined"*/}
-          {/*                    icon={<DollarOutlined className={'sa-bid-page-btn-icon'}/>}*/}
-          {/*            ></Button>*/}
-          {/*          </Tooltip>*/}
-          {/*      )}*/}
-          {/*    </div>*/}
+            <div className={'sa-engineer-page-info-container'}>
+              <div className={'sa-engineer-page-btns-wrapper'}>
+                <Tooltip title={'Файлы'} placement={'right'}>
+                  <Badge count={bidFilesCount} color={'geekblue'}>
+                    <Button className={'sa-engineer-page-btn'}
+                            color="primary"
+                            variant="outlined"
+                            icon={<DownloadOutlined className={'sa-engineer-page-btn-icon'}/>}
+                    ></Button>
+                  </Badge>
+                </Tooltip>
+                <Tooltip title={'Создать КП'} placement={'right'}>
+                  <Button className={'sa-engineer-page-btn'}
+                          color="primary"
+                          variant="outlined"
+                          icon={<ProfileOutlined  className={'sa-engineer-page-btn-icon'}/>}
+                  ></Button>
+                </Tooltip>
+                <Tooltip title={'Создать счет'} placement={'right'}>
+                  <Button className={'sa-engineer-page-btn'}
+                          color="primary"
+                          variant="outlined"
+                          icon={<DollarOutlined className={'sa-engineer-page-btn-icon'}/>}
+                  ></Button>
+                </Tooltip>
+              </div>
           {/*    <div className={'sa-bid-page-info-wrapper'}>*/}
           {/*      <div className={'sa-info-models-header'}>Основные данные</div>*/}
           {/*      {+bidType === 2 && (*/}
@@ -1169,7 +1109,7 @@ const EngineerPage = (props) => {
           {/*        </div>*/}
           {/*      </div>*/}
           {/*    </div>*/}
-          {/*  </div>*/}
+            </div>
           </div>
         </Spin>
       </div>

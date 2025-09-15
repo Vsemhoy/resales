@@ -505,32 +505,32 @@ export const SELECTS = {
     "contact_email_select": [],
 };
 export const CUR_COMPANY = [
-    {
-        "id_company": 2,
-        "value": 126,
-        "name_ru": "Евро",
-        "charcode": "EUR"
-    },
-    {
-        "id_company": 2,
-        "value": 121,
-        "name_ru": "Доллар США",
-        "charcode": "USD"
-    }
+	{
+		id_company: 2,
+		value: 126,
+		name_ru: 'Евро',
+		charcode: 'EUR',
+	},
+	{
+		id_company: 2,
+		value: 121,
+		name_ru: 'Доллар США',
+		charcode: 'USD',
+	},
 ];
 export const CUR_CURRENCY = [
-    {
-        "charcode": "EUR",
-        "name_ru": "Евро",
-        "value": 90.9007,
-        "sign": "€"
-    },
-    {
-        "charcode": "USD",
-        "name_ru": "Доллар США",
-        "value": 79.6176,
-        "sign": "$"
-    }
+	{
+		charcode: 'EUR',
+		name_ru: 'Евро',
+		value: 90.9007,
+		sign: '€',
+	},
+	{
+		charcode: 'USD',
+		name_ru: 'Доллар США',
+		value: 79.6176,
+		sign: '$',
+	},
 ];
 export const BID_INFO = {
     "bid": {

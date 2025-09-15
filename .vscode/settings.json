@@ -1,0 +1,79 @@
+{
+	"prettier.singleQuote": true,
+	"workbench.startupEditor": "none",
+	"workbench.iconTheme": "material-icon-theme",
+	"editor.stickyScroll.enabled": false,
+	"code-runner.clearPreviousOutput": true,
+	"code-runner.showExecutionMessage": false,
+	"code-runner.saveFileBeforeRun": true,
+	"security.workspace.trust.untrustedFiles": "open",
+	"workbench.editor.showTabs": "single",
+	"editor.minimap.enabled": false,
+	"editor.tabSize": 2,
+	"git.openRepositoryInParentFolders": "never",
+	"workbench.editor.enablePreview": false,
+	"[javascript]": {
+		"files.autoSave": "afterDelay",
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.unicodeHighlight.allowedCharacters": {
+			"×": true
+		},
+		"editor.detectIndentation": false
+	},
+	"[typescriptreact]": {
+		"files.autoSave": "afterDelay",
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"explorer.confirmDelete": false,
+	"workbench.editorAssociations": {
+		"*.copilotmd": "vscode.markdown.preview.editor",
+		"*.docx": "default",
+		"*.png": "default",
+		"*.jar": "default"
+	},
+	"workbench.sideBar.location": "right",
+	"diffEditor.ignoreTrimWhitespace": false,
+	"javascript.updateImportsOnFileMove.enabled": "always",
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"editor.inlayHints.fontFamily": "JetBrains Mono",
+	"editor.fontFamily": "JetBrains Mono",
+	"editor.fontLigatures": true,
+	"react-native-tools.showUserTips": false,
+	"emmet.preferences": {},
+	"emmet.includeLanguages": {
+		"javascript": "javascriptreact"
+	},
+	"[scss]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"workbench.tree.stickyScrollMaxItemCount": 10,
+	"editor.indentSize": "tabSize",
+	"pugFormatter.tabSize": 2,
+	"[vue]": {
+		"editor.defaultFormatter": "Vue.volar"
+	},
+	"liveServer.settings.donotShowInfoMsg": true,
+	"lldb.suppressUpdateNotifications": true,
+	"editor.linkedEditing": true,
+	"php.linkedEditing.variables": true,
+	"files.autoSave": "afterDelay",
+	"settingsSync.ignoredExtensions": []
+}
