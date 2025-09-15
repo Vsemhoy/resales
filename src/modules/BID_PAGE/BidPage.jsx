@@ -553,9 +553,9 @@ const BidPage = (props) => {
             }
         } else {
             setIsLoadingSmall(true);
-            setBidModels(CALC_INFO.models);
-            setAmounts(CALC_INFO.amounts);
-            setEngineerParameters(CALC_INFO.models_data);
+            //setBidModels(CALC_INFO.models);
+            //setAmounts(CALC_INFO.amounts);
+            //setEngineerParameters(CALC_INFO.models_data);
             setTimeout(() => setIsLoadingSmall(false), 500);
         }
     };
@@ -594,10 +594,41 @@ const BidPage = (props) => {
             maximumFractionDigits: 2
         }).format(number);
     };
-    const handleChangeModel = (newId, oldId) => {
+    const handleAddModel = () => {
+        const lastModel = bidModels.sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd.push({
+            "id": 0,
+            "bid_id": bidId,
+            "model_id": null,
+            "model_count": null,
+            "not_available": 0,
+            "percent": null,
+            "presence": null,
+            "sort": lastModel.sort + 1,
+            "name": "",
+            "type_model": 0,
+            "currency": 0,
+        });
+        console.log({
+            "id": 0,
+            "bid_id": bidId,
+            "model_id": null,
+            "model_count": null,
+            "not_available": 0,
+            "percent": null,
+            "presence": null,
+            "sort": lastModel.sort + 1,
+            "name": "",
+            "type_model": 0,
+            "currency": 0,
+        })
+        setBidModels(bidModelsUpd);
+    };
+    const handleChangeModel = (newId, oldId, oldSort) => {
         const newModel = modelsSelect.find(model => model.id === newId);
-        const oldModel = bidModels.find(model => model.id === oldId);
-        const oldModelIdx = bidModels.findIndex(model => model.id === oldId);
+        const oldModel = bidModels.find(model => (model.id === oldId && model.sort === oldSort));
+        const oldModelIdx = bidModels.findIndex(model => (model.id === oldId && model.sort === oldSort));
         const newModelObj = {
             "id": oldId,
             "bid_id": bidId,
@@ -613,6 +644,10 @@ const BidPage = (props) => {
         };
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd[oldModelIdx] = newModelObj;
+        console.log(bidModelsUpd)
+        console.log(bidModels)
+        console.log(oldSort)
+        console.log(oldId)
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
         setLastUpdModel(newId);
@@ -645,24 +680,6 @@ const BidPage = (props) => {
         const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd[bidModelIdx].presence = value;
-        setBidModels(bidModelsUpd);
-    };
-    const handleAddModel = () => {
-        const lastModel = bidModels[bidModels.length - 1];
-        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-        bidModelsUpd.push({
-            "id": 0,
-            "bid_id": bidId,
-            "model_id": null,
-            "model_count": null,
-            "not_available": 0,
-            "percent": null,
-            "presence": null,
-            "sort": lastModel.sort + 1,
-            "name": "",
-            "type_model": 0,
-            "currency": 0,
-        });
         setBidModels(bidModelsUpd);
     };
     const handleOpenModelInfo = (modelId) => {
@@ -1101,7 +1118,7 @@ const BidPage = (props) => {
                             <div className={'sa-models-table'}>
                                 {bidModels.sort((a, b) => +a.sort - +b.sort).map((bidModel, idx) => (
                                     <div className={'sa-models-table-row'}
-                                         key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}`}>
+                                         key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}>
                                         <div className={'sa-models-table-cell'}><p>{idx + 1}</p></div>
                                         <div className={'sa-models-table-cell align-left'}>
                                             <Select style={{width: '100%'}}
@@ -1112,7 +1129,7 @@ const BidPage = (props) => {
                                                     filterOption={(input, option) =>
                                                         option.label.toLowerCase().includes(input.toLowerCase())
                                                     }
-                                                    onChange={(val) => handleChangeModel(val, bidModel.id)}
+                                                    onChange={(val) => handleChangeModel(val, bidModel.id, bidModel.sort)}
                                             />
                                         </div>
                                         <div className={'sa-models-table-cell'}>
