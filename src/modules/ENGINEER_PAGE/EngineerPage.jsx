@@ -116,6 +116,7 @@ const EngineerPage = (props) => {
   const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0});
 
   useEffect(() => {
+    console.log(bidId);
     if (!isMounted) {
       fetchInfo().then(() => {
         // setIsNeedCalcMoney(true);
@@ -170,7 +171,7 @@ const EngineerPage = (props) => {
   const fetchBidInfo = async () => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.get(`/api/sales/engineer/` + bidId, {
+        let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/engineer/` + bidId, {
           data: {},
           _token: CSRF_TOKEN
         });
