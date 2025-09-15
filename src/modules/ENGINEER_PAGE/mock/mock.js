@@ -1,13 +1,17 @@
 export const MODELS_LIST = [
     {
+        "id": 1,
         "model_id": 456,
         "model_count": 1,
-        "model_name": "\u0412\u043e\u043b\u044c\u0442\u043c\u0435\u0442\u0440 50\u0412\/1,5"
+        "model_name": "\u0412\u043e\u043b\u044c\u0442\u043c\u0435\u0442\u0440 50\u0412\/1,5",
+        "sort": 1,
     },
     {
+        "id": 1,
         "model_id": 345,
         "model_count": 3,
-        "model_name": "\u0422\u0440\u0430\u043d\u0437\u0438\u0441\u0442\u043e\u0440 2SA1546"
+        "model_name": "\u0422\u0440\u0430\u043d\u0437\u0438\u0441\u0442\u043e\u0440 2SA1546",   
+        "sort": 2,
     }
 ];
 
@@ -31,6 +35,9 @@ export const PREBID = {
     },
     engineer_id: 2,
     engineer_name: "Степанченко А.Н.",
+    comment_engineer: "Нужно сделать хорошо",
+    comment_manager:  "Нужно сделать хорошо1",
+
 };
 
 export const ALLMODELS_LIST = [
@@ -19101,7 +19108,6 @@ export const ALLMODELS_LIST = [
     }
 ];
 
-
 export const SELECTS = {
     "template_word_select": [
         {
@@ -19588,4 +19594,178 @@ export const SELECTS = {
     ],
 };
 
+export const CALC_INFO = {
+    "models": [
+        {
+            "id": 977890,
+            "model_id": 33,
+            "model_count": 187,
+            "model_name": "SWS-03 ( i )",
+            "currency": 0,
+            "sort": 1,
+            "presence": -2,
+            "percent": 0,
+            "moneyOne": 2600,
+            "moneyCount": 486200
+        },
+        {
+            "id": 977900,
+            "model_id": 1140,
+            "model_count": 1,
+            "model_name": "RM-6024",
+            "currency": 0,
+            "sort": 11,
+            "presence": 3,
+            "percent": 0,
+            "moneyOne": 137200,
+            "moneyCount": 137200
+        },
+        {
+            "id": 977899,
+            "model_id": 1142,
+            "model_count": 1,
+            "model_name": "ECS-6216P",
+            "currency": 0,
+            "sort": 10,
+            "presence": -2,
+            "percent": 0,
+            "moneyOne": 109000,
+            "moneyCount": 109000
+        },
+        {
+            "id": 977892,
+            "model_id": 1143,
+            "model_count": 1,
+            "model_name": "RME-6108",
+            "currency": 0,
+            "sort": 3,
+            "presence": 3,
+            "percent": 0,
+            "moneyOne": 62400,
+            "moneyCount": 62400
+        },
+        {
+            "id": 977891,
+            "model_id": 1437,
+            "model_count": 1,
+            "model_name": "PB-6207",
+            "currency": 0,
+            "sort": 2,
+            "presence": 3,
+            "percent": 0,
+            "moneyOne": 46800,
+            "moneyCount": 46800
+        },
+        {
+            "id": 977896,
+            "model_id": 1438,
+            "model_count": 1,
+            "model_name": "SC-6224",
+            "currency": 0,
+            "sort": 7,
+            "presence": 3,
+            "percent": 0,
+            "moneyOne": 97500,
+            "moneyCount": 97500
+        },
+        {
+            "id": 977897,
+            "model_id": 1439,
+            "model_count": 1,
+            "model_name": "AFD-6218",
+            "currency": 0,
+            "sort": 8,
+            "presence": -2,
+            "percent": 0,
+            "moneyOne": 99400,
+            "moneyCount": 99400
+        },
+        {
+            "id": 977898,
+            "model_id": 1441,
+            "model_count": 1,
+            "model_name": "PD-6359",
+            "currency": 0,
+            "sort": 9,
+            "presence": 3,
+            "percent": 0,
+            "moneyOne": 109000,
+            "moneyCount": 109000
+        },
+        {
+            "id": 977889,
+            "model_id": 1516,
+            "model_count": 1,
+            "model_name": "EP-6216",
+            "currency": 0,
+            "sort": 0,
+            "presence": 3,
+            "percent": 0,
+            "moneyOne": 44200,
+            "moneyCount": 44200
+        },
+        {
+            "id": 977893,
+            "model_id": 1526,
+            "model_count": 1,
+            "model_name": "PO-6106",
+            "currency": 0,
+            "sort": 4,
+            "presence": -2,
+            "percent": 0,
+            "moneyOne": 66600,
+            "moneyCount": 66600
+        },
+        {
+            "id": 977894,
+            "model_id": 1527,
+            "model_count": 1,
+            "model_name": "PP-6213",
+            "currency": 0,
+            "sort": 5,
+            "presence": -2,
+            "percent": 0,
+            "moneyOne": 78000,
+            "moneyCount": 78000
+        },
+        {
+            "id": 977901,
+            "model_id": 1740,
+            "model_count": 1,
+            "model_name": "DPA- 600D",
+            "currency": 0,
+            "sort": 12,
+            "presence": 3,
+            "percent": 0,
+            "moneyOne": 241500,
+            "moneyCount": 241500
+        },
+        {
+            "id": 977895,
+            "model_id": 2009,
+            "model_count": 1,
+            "model_name": "PV-6232A",
+            "currency": 0,
+            "sort": 6,
+            "presence": -2,
+            "percent": 0,
+            "moneyOne": 93600,
+            "moneyCount": 93600
+        }
+    ],
+    "amounts": {
+        "usd": 1671400,
+        "eur": 1605074.6031746035,
+        "rub": 202239400
+    },
+    "models_data": {
+        "unit": 21,
+        "power_consumption": 1498.4,
+        "rated_power_speaker": 561,
+        "max_power": 1200,
+        "mass": 359.09999999999997,
+        "size": 1619.4189,
+        "box_size": 0
+    }
+};
 

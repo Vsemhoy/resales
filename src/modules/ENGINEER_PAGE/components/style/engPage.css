@@ -254,11 +254,7 @@
             minmax(50px, 3fr)
             minmax(70px, 1fr)
             minmax(70px, 1fr)
-            minmax(70px, 2fr)
-            minmax(70px, 2fr)
-            minmax(50px, 1.5fr)
-            45px
-            45px;
+            minmax(70px, 2fr);
     grid-auto-rows: 40px;
     border-bottom: 1px solid #99bad3 /*var(--column-divider-color)*/;
 }
