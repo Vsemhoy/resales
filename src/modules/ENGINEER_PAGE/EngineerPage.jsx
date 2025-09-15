@@ -112,8 +112,8 @@ const EngineerPage = (props) => {
   const [orgUsersSelect, setOrgUsersSelect] = useState([]);
 
   /*  PREBINFO */
-  const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0});
-  const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0});
+  const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, manager_name: ""});
+  const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, engineer_name: ""});
 
   useEffect(() => {
     console.log(bidId);
@@ -177,6 +177,7 @@ const EngineerPage = (props) => {
         });
         console.log(response);
         if (response.data && response.data.content.models) {
+          console.log(response.data.content);
           const content = response.data.content;
           setManager(content.manager);
           setEngineer(content.engineer);
@@ -519,7 +520,7 @@ const EngineerPage = (props) => {
                                 }}
                                 color="geekblue"
                             >
-                              {engineer && (`${engineer.surname} ${engineer.name.substring(0, 1)}.${engineer.middlename.substring(0, 1)}.`)}
+                              {engineer && (`${engineer.engineer_name}`)}
                             </Tag>
                             для
                             <Tag
@@ -529,7 +530,7 @@ const EngineerPage = (props) => {
                                 }}
                                 color={companies.find(comp => comp.id === manager.id_company)?.color}
                             >
-                              {manager && (`${manager.surname} ${manager.name.substring(0, 1)}.${manager.middlename.substring(0, 1)}.`)}
+                              {manager && (`${manager.manager_name}`)}
                             </Tag>
                             {/*Ваша роль:*/}
                             {/*{userData && userData?.user?.sales_role === 1 && (*/}
