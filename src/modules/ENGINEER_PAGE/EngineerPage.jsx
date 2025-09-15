@@ -176,6 +176,25 @@ const EngineerPage = (props) => {
           _token: CSRF_TOKEN
         });
         console.log(response);
+        if (response.data && response.data.content.models) {
+          const content = response.data.content;
+          setManager(content.manager);
+          setEngineer(content.engineer);
+
+          setBidCommentEngineer(content.comment_engineer);
+          setBidCommentManager(content.comment_manager);
+
+          setBidModels(content.models);
+          setEngineerParameters({
+            unit: 0,
+            box_size: 0,
+            power_consumption: 0,
+            max_power: 0,
+            rated_power_speaker: 0,
+            mass: 0,
+            size: 0
+          });
+        }
         // if (response.data && response.data.bid && response.data.bid_models) {
         //   const openMode = response.data.openmode;
         //   setOpenMode(openMode);
