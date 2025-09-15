@@ -45,7 +45,7 @@
 .custom-small-steps-container {
 	/*height: 40px;*/
 	padding: 10px;
-	margin: 0 10px;
+	margin: 0 10px 10px 10px;
 	border: 1px solid #99bad3;
 	border-radius: 5px;
 	background-color: var(--row-main-bg-color);
@@ -386,7 +386,7 @@
 }
 
 .sa-info-list {
-	margin: 10px 0 10px 10px;
+	margin: 0 0 10px 10px;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	scrollbar-width: thin;

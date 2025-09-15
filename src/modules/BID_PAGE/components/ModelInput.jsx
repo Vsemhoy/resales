@@ -3,7 +3,8 @@ import {Input} from "antd";
 
 const ModelInput = (props) => {
     const [value, setValue] = useState(0);
-    const [bidModelId, setBidModelId] = useState(null);
+    const [bidModelId, setBidModelId] = useState(0);
+    const [bidModelSort, setBidModelSort] = useState(null);
     const [type, setType] = useState('');
     const [timeoutId, setTimeoutId] = useState(null);
 
@@ -18,6 +19,10 @@ const ModelInput = (props) => {
             setBidModelId(props.bidModelId);
         }
     }, [props.bidModelId]);
+
+    useEffect(() => {
+        setBidModelSort(props.bidModelSort);
+    }, [props.bidModelSort]);
 
     useEffect(() => {
         if (props.type) {
@@ -39,7 +44,7 @@ const ModelInput = (props) => {
             clearTimeout(timeoutId);
         }
         const newTimeoutId = setTimeout(() => {
-            props.onChangeModel(type, newValue, bidModelId);
+            props.onChangeModel(type, newValue, bidModelId, bidModelSort);
         }, 300);
         setTimeoutId(newTimeoutId);
     };

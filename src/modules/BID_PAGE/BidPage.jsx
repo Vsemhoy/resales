@@ -523,7 +523,6 @@ const BidPage = (props) => {
                 setAlertType('error');
             }
         } else {
-            console.log('save');
             setIsAlertVisible(true);
             setAlertMessage('Успех!');
             setAlertDescription('Успешное обновление');
@@ -649,8 +648,8 @@ const BidPage = (props) => {
         setIsNeedCalcMoney(true);
         setLastUpdModel(newId);
     };
-    const handleChangeModelInfo = (type, value, bidModelId) => {
-        const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
+    const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
+        const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         switch (type) {
             case 'model_count':
@@ -1118,6 +1117,7 @@ const BidPage = (props) => {
                                         <div className={'sa-models-table-cell'}>
                                             <ModelInput value={bidModel.model_count}
                                                         bidModelId={bidModel.id}
+                                                        bidModelSort={bidModel.sort}
                                                         type={'model_count'}
                                                         onChangeModel={handleChangeModelInfo}
                                             />
@@ -1125,6 +1125,7 @@ const BidPage = (props) => {
                                         <div className={'sa-models-table-cell'}>
                                             <ModelInput value={bidModel.percent}
                                                         bidModelId={bidModel.id}
+                                                        bidModelSort={bidModel.sort}
                                                         type={'percent'}
                                                         onChangeModel={handleChangeModelInfo}
                                             />
@@ -1147,6 +1148,7 @@ const BidPage = (props) => {
                                             <ModelSelect options={prepareSelect(presenceSelect)}
                                                          value={bidModel.presence}
                                                          bidModelId={bidModel.id}
+                                                         bidModelSort={bidModel.sort}
                                                          type={'presence'}
                                                          onChangeModel={handleChangeModelInfo}
                                             />
