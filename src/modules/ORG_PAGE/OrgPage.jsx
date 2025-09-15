@@ -563,7 +563,7 @@ const OrgPage = (props) => {
                 userdata={userdata}
 
                 selects={baseFiltersData}
-                departaments={departList}
+                departaments={[]} //departList
                 main_data={baseMainData}
             />
 

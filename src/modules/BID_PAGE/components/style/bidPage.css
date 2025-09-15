@@ -144,6 +144,12 @@
     border: none !important;
 }
 
+.sa-bid-page-container .ant-alert-message {
+	text-align: left !important;
+}
+.sa-bid-page-container .ant-alert-description {
+	text-align: justify !important;
+}
 
 /* NO ANTD */
 

@@ -511,19 +511,23 @@ const BidPage = (props) => {
                 });
                 if (response.data.message) {
                     setIsAlertVisible(true);
-                    setAlertMessage(response.data.message);
-                    setAlertDescription('');
+                    setAlertMessage('Успех!');
+                    setAlertDescription(response.data.message);
                     setAlertType('success');
                 }
             } catch (e) {
                 console.log(e);
                 setIsAlertVisible(true);
-                setAlertMessage(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-                setAlertDescription('');
+                setAlertMessage('Произошла ошибка!');
+                setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
                 setAlertType('error');
             }
         } else {
-
+            console.log('save');
+            setIsAlertVisible(true);
+            setAlertMessage('Успех!');
+            setAlertDescription('Успешное обновление');
+            setAlertType('success');
         }
     };
     const fetchCalcModels = async () => {
