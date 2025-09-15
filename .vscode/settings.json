@@ -7,13 +7,13 @@
 	"code-runner.showExecutionMessage": false,
 	"code-runner.saveFileBeforeRun": true,
 	"security.workspace.trust.untrustedFiles": "open",
-	"workbench.editor.showTabs": "single",
 	"editor.minimap.enabled": false,
 	"editor.tabSize": 2,
 	"git.openRepositoryInParentFolders": "never",
 	"workbench.editor.enablePreview": false,
 	"[javascript]": {
-		"files.autoSave": "afterDelay",
+		"files.autoSave": "off",
+		"files.autoSaveWhenNoErrors": false,
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
 		"editor.unicodeHighlight.allowedCharacters": {
 			"×": true
@@ -49,7 +49,7 @@
 		"*.png": "default",
 		"*.jar": "default"
 	},
-	"workbench.sideBar.location": "right",
+	"workbench.sideBar.location": "left",
 	"diffEditor.ignoreTrimWhitespace": false,
 	"javascript.updateImportsOnFileMove.enabled": "always",
 	"typescript.updateImportsOnFileMove.enabled": "always",
@@ -76,4 +76,5 @@
 	"php.linkedEditing.variables": true,
 	"files.autoSave": "afterDelay",
 	"settingsSync.ignoredExtensions": []
-}
+},
+
