@@ -228,6 +228,7 @@ const NotesTabPage = (props) => {
               "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
               "notes": "",
               "deleted": 0,
+              "next_call_date" : null,
               "creator": {
                   "id": userdata.user.id,
                   "surname": userdata?.user.surname,

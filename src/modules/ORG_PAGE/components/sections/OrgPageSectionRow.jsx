@@ -15,6 +15,7 @@ import {
   Select,
   ColorPicker,
   Form,
+  AutoComplete,
 } from 'antd';
 
 import 'dayjs/locale/ru';
@@ -48,7 +49,7 @@ const OrgPageSectionRow = (props) => {
   const [errors, setErrors] = useState({});
 
 
-
+  const [transContainer, setTransContainer] = useState({});
 
   // Дебаунс для отправки изменений
   const debouncedOnChange = useMemo(() => {
@@ -188,7 +189,6 @@ const OrgPageSectionRow = (props) => {
 
         if (props.on_blur){
           const val = e?.target?.value ?? e;
-          console.log(val);
           let obj = {};
           obj[field.name] = val;
           props.on_blur(obj);
@@ -318,7 +318,7 @@ const OrgPageSectionRow = (props) => {
       case 'select':
         return (
           <Select
-          size='small'
+            size='small'
             variant="borderless"
             value={value}
             onChange={(val) => onChange(field.name, val, field)}
@@ -351,6 +351,71 @@ const OrgPageSectionRow = (props) => {
             onChange={(color) => onChange(field.name, color.toHexString(), field)}
           />
         );
+
+      case 'autocomplete' :
+        return (
+          <AutoComplete
+            options={transContainer[field.name]}
+            style={{ width: '100%' }}
+            size='small'
+            variant="borderless"
+            onSearch={(text)=> {
+              let filteredOptions = [];
+              let cmod = transContainer;
+              if (field.options){
+                filteredOptions = field.options.filter(name =>
+                  name.toLowerCase().includes(text.toLowerCase())
+                );
+
+                cmod[field.name] = filteredOptions.map(name => ({
+                    value: name,
+                    label: name,
+                  }));
+                  setTransContainer(cmod);
+                } else {
+                    cmod[field.name] = []
+                  setTransContainer(cmod);
+                }
+              }}
+            // onChange={handleChange}
+            onChange={(e)=>{
+              // console.log(e);
+              const val = e?.target?.value ?? e;
+                let obj = {};
+                obj[field.name] = val;
+                if (props.on_blur && !props.on_change){
+                  props.on_blur(obj);
+                }
+                if (props.on_change){
+                  props.on_change(obj);
+                }
+           
+            }}
+            onBlur={(e)=>{
+              console.log(e);
+              const val = e?.target?.value ?? e;
+              let obj = {};
+              obj[field.name] = val.trim();
+              if (props.on_blur){
+                console.log("BLURER");
+                props.on_blur(obj);
+              }
+            }}
+            value={value}
+            placeholder={field.placeholder}
+            // allowClear
+            notFoundContent="Ничего не найдено :("
+            // {...commonProps}
+          >
+            <Input            
+             size='small'
+              variant="borderless"
+              onChange={()=>{
+                console.log("HELLOW")
+              }}
+               />
+          </AutoComplete>
+        )
 
       default:
         return <Input
@@ -486,5 +551,6 @@ export const OPS_TYPE = {
   DATETIME : 'datetime',
   CHECKBOX : 'checkbox',
   SELECT   : 'select',
-  COLOR    : 'color'
+  COLOR    : 'color',
+  AUTOCOMPLETE : 'autocomplete',
 };
