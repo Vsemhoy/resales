@@ -1,0 +1,69 @@
+.chatcontent-layout {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.messages {
+	flex: 1;
+	overflow-y: auto;
+	padding: 16px;
+	background: #eaeaea;
+}
+
+.message {
+	display: flex;
+	margin-bottom: 8px;
+}
+
+.message .bubble {
+	max-width: 70%;
+	padding: 8px 12px;
+	border-radius: 12px;
+	position: relative;
+}
+
+.message .bubble .time {
+	font-size: 11px;
+	color: #666;
+	text-align: right;
+	margin-top: 2px;
+}
+
+/* Сообщения от меня */
+.message.my-message {
+	justify-content: flex-end;
+}
+
+.message.my-message .bubble {
+	background: #dafdd3;
+	align-self: flex-end;
+}
+
+/* Сообщения от собеседника */
+.message.other-message {
+	justify-content: flex-start;
+}
+
+.message.other-message .bubble {
+	background: #fff;
+	border: 1px solid #e6e6e6;
+}
+
+.chat-input-footer {
+	border-top: 1px solid #e6e6e6;
+	background: #fff;
+	padding: 5px;
+	display: flex;
+	gap: 8px;
+}
+
+.chat-input-footer .ant-input {
+	border-radius: 20px;
+}
+
+.chat-input-footer .ant-btn {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+}
