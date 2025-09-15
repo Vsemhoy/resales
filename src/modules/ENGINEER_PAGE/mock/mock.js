@@ -37,7 +37,6 @@ export const PREBID = {
     engineer_name: "Степанченко А.Н.",
     comment_engineer: "Нужно сделать хорошо",
     comment_manager:  "Нужно сделать хорошо1",
-
 };
 
 export const ALLMODELS_LIST = [
