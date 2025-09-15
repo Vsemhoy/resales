@@ -35,9 +35,9 @@ const CallsTabPage = (props) => {
 	const [editedItemsIds, setEditedItemsIds] = useState([]);
 	const [openedNewSections, setOpenedNewSections] = useState([]);
 
-    // const [departs, setDeparts] = useState(selects.)
-  
-    const [orgusers, setOrgUsers] = useState([]);
+	// const [departs, setDeparts] = useState(selects.)
+
+	const [orgusers, setOrgUsers] = useState([]);
 
 	useEffect(() => {
 		console.log('props.selects', props.selects);
@@ -62,32 +62,35 @@ const CallsTabPage = (props) => {
 			setCurrentPage(props.current_page);
 	}, [props.current_page]);
 
-    useEffect(() => {
-      setDepartamentList(props.departaments);
-    }, [props.departaments]);
+	// Максиму: заглушка
+	const [departList, setDepartList] = useState(null);
+	
+	
+	useEffect(() => {
+		setDepartList(props.departaments);
+	}, [props.departaments]);
 
-    useEffect(() => {
-      console.log(props.main_data);
-      if (props.main_data && props.main_data.contacts){
-        setOrgUsers(props.main_data.contacts);
-      } else {
-        setOrgUsers([]);
-      }
-    }, [props.main_data]);
+	useEffect(() => {
+		console.log(props.main_data);
+		if (props.main_data && props.main_data.contacts) {
+			setOrgUsers(props.main_data.contacts);
+		} else {
+			setOrgUsers([]);
+		}
+	}, [props.main_data]);
 
-    useEffect(() => {
-      
-      if (props.edit_mode === false){
-        if (editedItemsIds.length > 0 || newStructureItems.length > 0){
-          if (window.confirm("У вас есть несохраненные заметки! Отменить изменения?")){
-            setOriginalData([]);
-            setLoading(true);
-            setEditMode(props.edit_mode);
-            setTemporaryUnits([]);
-            setEditedItemsIds([]);
-            setTimeout(() => {
-              setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
-            }, 1000);
+	useEffect(() => {
+		if (props.edit_mode === false) {
+			if (editedItemsIds.length > 0 || newStructureItems.length > 0) {
+				if (window.confirm('У вас есть несохраненные заметки! Отменить изменения?')) {
+					setOriginalData([]);
+					setLoading(true);
+					setEditMode(props.edit_mode);
+					setTemporaryUnits([]);
+					setEditedItemsIds([]);
+					setTimeout(() => {
+						setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
+					}, 1000);
 
 					setBaseData([]);
 					console.log('---------- 65 ---------', originalData);
@@ -134,70 +137,93 @@ const CallsTabPage = (props) => {
 		return result;
 	};
 
-      useEffect(() => {
-      if (props.base_data?.calls !== null && props.base_data?.calls?.length > 0){
-        let secids = [];
-        // setDataList(baseOrgData.projects);
-        let strdata = baseData.map((item)=>{
-            secids.push('callrow_' + item.id);
-            return {
-                key: 'callrow_' + item.id,
-                label: <div className={`sa-flex-space ${item.deleted === 1 && editMode ? "sa-orgrow-deleted" : ""}`}>
-                  <div>
-                    {item._type === 'call' ? (
-                      <span title='Звонок' style={{paddingRight: '9px', marginBottom: '-12px'}}>
-                      <PhoneIcon height={'18px'}/></span>
-                    ):(
-                      <span title='Встреча' style={{paddingRight: '9px', marginBottom: '-12px'}}>
-                      <BriefcaseIcon height={'18px'}/></span>
-                    )}
-                  
-                  {item.theme}
-                    <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span>  <span className={'sa-text-phantom'}>({item.id})</span></div>
-                    {editMode && (
-                    <>
-                    { item.deleted === 1 ? (
-                      <Button size='small'
-                         color="danger" variant="filled"
-                        onClick={(ev)=>{
-                          ev.stopPropagation();
-                          handleDeleteRealUnit(item.id, 0);
-                        }}
-                      >ВЕРНУТЬ</Button>
-                    ) : (
-                      <Button size='small' 
-                      color="danger" variant="outlined"
-                      onClick={(ev)=>{
-                        ev.stopPropagation();
-                        handleDeleteRealUnit(item.id, 1);
-                      }}
-                    >Удалить</Button>
-                    )}
-                    </>)}
-                    </div>,
-                children: <OrgCallEditorSectionBox
-                  color={item?._type === "call" ? "#a6a6a6ff":"#5a5a5aff"}
-                  data={item}
-                  on_delete={handleDeleteRealUnit}
-                  on_change={handleUpdateRealUnit}
-                  edit_mode={editMode}
+	useEffect(() => {
+		if (props.base_data?.calls !== null && props.base_data?.calls?.length > 0) {
+			let secids = [];
+			// setDataList(baseOrgData.projects);
+			let strdata = baseData.map((item) => {
+				secids.push('callrow_' + item.id);
+				return {
+					key: 'callrow_' + item.id,
+					label: (
+						<div
+							className={`sa-flex-space ${
+								item.deleted === 1 && editMode ? 'sa-orgrow-deleted' : ''
+							}`}
+						>
+							<div>
+								{item._type === 'call' ? (
+									<span title="Звонок" style={{ paddingRight: '9px', marginBottom: '-12px' }}>
+										<PhoneIcon height={'18px'} />
+									</span>
+								) : (
+									<span title="Встреча" style={{ paddingRight: '9px', marginBottom: '-12px' }}>
+										<BriefcaseIcon height={'18px'} />
+									</span>
+								)}
+								{item.theme}
+								<span className="sa-date-text">
+									{item?.date
+										? ' - ' +
+										  getMonthName(dayjs(item.date).month() + 1) +
+										  ' ' +
+										  dayjs(item.date).format('YYYY')
+										: ''}
+								</span>{' '}
+								<span className={'sa-text-phantom'}>({item.id})</span>
+							</div>
+							{editMode && (
+								<>
+									{item.deleted === 1 ? (
+										<Button
+											size="small"
+											color="danger"
+											variant="filled"
+											onClick={(ev) => {
+												ev.stopPropagation();
+												handleDeleteRealUnit(item.id, 0);
+											}}
+										>
+											ВЕРНУТЬ
+										</Button>
+									) : (
+										<Button
+											size="small"
+											color="danger"
+											variant="outlined"
+											onClick={(ev) => {
+												ev.stopPropagation();
+												handleDeleteRealUnit(item.id, 1);
+											}}
+										>
+											Удалить
+										</Button>
+									)}
+								</>
+							)}
+						</div>
+					),
+					children: (
+						<OrgCallEditorSectionBox
+							color={item?._type === 'call' ? '#a6a6a6ff' : '#5a5a5aff'}
+							data={item}
+							on_delete={handleDeleteRealUnit}
+							on_change={handleUpdateRealUnit}
+							edit_mode={editMode}
+							departaments={departList}
+							org_users={orgusers}
+							// selects_data={props.selects_data}
+						/>
+					),
+				};
+			});
 
-                  departaments={departamentList}
-                  org_users={orgusers}
-                  // selects_data={props.selects_data}
-                />
-            }
-          });
-
-          
-          setStructureItems(strdata);
-      } else {
-        
-        setStructureItems([]);
-      }
-      setLoading(false);
-    }, [baseData, editMode]);
-
+			setStructureItems(strdata);
+		} else {
+			setStructureItems([]);
+		}
+		setLoading(false);
+	}, [baseData, editMode]);
 
 	useEffect(() => {
 		console.log('original', baseData, originalData);
@@ -211,57 +237,70 @@ const CallsTabPage = (props) => {
 		console.log('BASE DATA', baseData);
 	}, [originalData, baseData]);
 
-    useEffect(() => {
-      let secids = [];
-      setNewStructureItems(temporaryUnits.map((item)=>{
-        let nkey = 'new_callrow_' + item.id;
-        secids.push(nkey);
-            return {
-                key: nkey,
-                label: <div className='sa-flex-space'>
-
-                  <div>
-                  {item._type === 'call' ? (
-                      <span title='Звонок' style={{paddingRight: '9px', marginBottom: '-12px'}}>
-                      <PhoneIcon height={'18px'}/></span>
-                    ):(
-                      <span title='Встреча' style={{paddingRight: '9px', marginBottom: '-12px'}}>
-                      <BriefcaseIcon height={'18px'}/></span>
-                    )}
-                  {item.theme ? item.theme : "..."}
-                    <span className='sa-date-text'>{item?.date ? " - " + getMonthName(dayjs(item.date).month() + 1) + " " + dayjs(item.date).format("YYYY"): ""}</span>  <span className={'sa-text-phantom'}>({item.id})</span></div>
-                    <Button size='small' 
-                      onClick={(ev)=>{
-                        ev.stopPropagation();
-                        handleDeleteBlankUnit(item.id);
-                      }}
-                    >Удалить</Button>
-                    </div>,
-                children: <OrgCallEditorSectionBox
-                  color={'#5b37dfff'}
-                  data={item}
-                  on_delete={handleDeleteBlankUnit}
-                  on_change={handleUpdateBlankUnit}
-                  on_blur={handleUpdateBlankUnit}
-                  edit_mode={editMode}
-
-                  departaments={departamentList}
-                  org_users={orgusers}
-                  // selects_data={props.selects_data}
-                />
-            }
-          })
-        );
-        // secids.reverse();
-        if (JSON.stringify(openedNewSections) !== JSON.stringify(secids)){
-          setOpenedNewSections(secids);
-        }
-        setNewLoading(false);
-    }, [temporaryUnits, editMode]);
-
-
-
-
+	useEffect(() => {
+		let secids = [];
+		setNewStructureItems(
+			temporaryUnits.map((item) => {
+				let nkey = 'new_callrow_' + item.id;
+				secids.push(nkey);
+				return {
+					key: nkey,
+					label: (
+						<div className="sa-flex-space">
+							<div>
+								{item._type === 'call' ? (
+									<span title="Звонок" style={{ paddingRight: '9px', marginBottom: '-12px' }}>
+										<PhoneIcon height={'18px'} />
+									</span>
+								) : (
+									<span title="Встреча" style={{ paddingRight: '9px', marginBottom: '-12px' }}>
+										<BriefcaseIcon height={'18px'} />
+									</span>
+								)}
+								{item.theme ? item.theme : '...'}
+								<span className="sa-date-text">
+									{item?.date
+										? ' - ' +
+										  getMonthName(dayjs(item.date).month() + 1) +
+										  ' ' +
+										  dayjs(item.date).format('YYYY')
+										: ''}
+								</span>{' '}
+								<span className={'sa-text-phantom'}>({item.id})</span>
+							</div>
+							<Button
+								size="small"
+								onClick={(ev) => {
+									ev.stopPropagation();
+									handleDeleteBlankUnit(item.id);
+								}}
+							>
+								Удалить
+							</Button>
+						</div>
+					),
+					children: (
+						<OrgCallEditorSectionBox
+							color={'#5b37dfff'}
+							data={item}
+							on_delete={handleDeleteBlankUnit}
+							on_change={handleUpdateBlankUnit}
+							on_blur={handleUpdateBlankUnit}
+							edit_mode={editMode}
+							departaments={departList}
+							org_users={orgusers}
+							// selects_data={props.selects_data}
+						/>
+					),
+				};
+			})
+		);
+		// secids.reverse();
+		if (JSON.stringify(openedNewSections) !== JSON.stringify(secids)) {
+			setOpenedNewSections(secids);
+		}
+		setNewLoading(false);
+	}, [temporaryUnits, editMode]);
 
 	const get_org_data_action = (org_id, ev, on) => {
 		if (props.on_change_page && ev !== currentPage) {
@@ -366,14 +405,14 @@ const CallsTabPage = (props) => {
 		});
 	};
 
-    const handleUpdateRealUnit = (id, data) => {
-      // let udata = originalData.filter((item) => item.id !== id);
-      // udata.push(data);
-      console.log('CALL TU REAL UPDATE');
-      if (!editMode){
-        return;
-      }
-      console.log('data', data)
+	const handleUpdateRealUnit = (id, data) => {
+		// let udata = originalData.filter((item) => item.id !== id);
+		// udata.push(data);
+		console.log('CALL TU REAL UPDATE');
+		if (!editMode) {
+			return;
+		}
+		console.log('data', data);
 
 		const excluders = ['command', 'date', 'departament', 'creator', '_type'];
 		let is_original = false;

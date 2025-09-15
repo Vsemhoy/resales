@@ -53,6 +53,8 @@ const tabNames = [
 	{ link: 'n', name: 'Заметки' },
 	{ link: 'h', name: 'История' },
 ];
+// Максиму: Я поставил заглушку, departList чтобы сбилдить проект
+// let departList = [];
 
 /**
  *
@@ -76,6 +78,7 @@ const tabNames = [
 const OrgPage = (props) => {
 	const { userdata } = props;
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
+	const [departList, setDepartList] = useState(null);
 	const [open, setOpen] = useState(false);
 	//   const [openResponsive, setOpenResponsive] = useState(false);
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -550,22 +553,23 @@ const OrgPage = (props) => {
 							userdata={userdata}
 						/>
 
-            <CallsTabPage
-                show={activeTab === 'c'}
-                edit_mode={editMode}
-                item_id={itemId}
-                call_to_save={callToSaveAction}
-                base_data={baseCallsData}
-                on_save={handleDataChangeApprove}
-                active_page={pageCalls}
-                on_change_page={(p)=> {setPageCalls(p)}}
-                current_page={pageCalls}
-                userdata={userdata}
-
-                selects={baseFiltersData}
-                departaments={[]} //departList
-                main_data={baseMainData}
-            />
+						<CallsTabPage
+							show={activeTab === 'c'}
+							edit_mode={editMode}
+							item_id={itemId}
+							call_to_save={callToSaveAction}
+							base_data={baseCallsData}
+							on_save={handleDataChangeApprove}
+							active_page={pageCalls}
+							on_change_page={(p) => {
+								setPageCalls(p);
+							}}
+							current_page={pageCalls}
+							userdata={userdata}
+							selects={baseFiltersData}
+							departaments={departList}
+							main_data={baseMainData}
+						/>
 
 						<ProjectsTabPage
 							show={activeTab === 'p'}
