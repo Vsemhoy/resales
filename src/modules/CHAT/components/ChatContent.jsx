@@ -10,12 +10,12 @@ const initialMessages = [
 	{ id: 1, from: 'me', text: 'Привет 👋', time: '12:00' },
 	{ id: 2, from: 'other', text: 'Привет! Как дела?', time: '12:01' },
 	{ id: 3, from: 'me', text: 'Всё супер 🚀', time: '12:02' },
-	{ id: 1, from: 'me', text: 'Привет 👋', time: '12:00' },
-	{ id: 2, from: 'other', text: 'Привет! Как дела?', time: '12:01' },
-	{ id: 3, from: 'me', text: 'Всё супер 🚀', time: '12:02' },
-	{ id: 1, from: 'me', text: 'Привет 👋', time: '12:00' },
-	{ id: 2, from: 'other', text: 'Привет! Как дела?', time: '12:01' },
-	{ id: 3, from: 'me', text: 'Всё супер 🚀', time: '12:02' },
+	{ id: 1, from: 'me', text: 'Привет 👋', time: '13:05' },
+	{ id: 2, from: 'other', text: 'Привет! Как дела?', time: '13:06' },
+	{ id: 3, from: 'me', text: 'Всё супер 🚀', time: '14:02' },
+	{ id: 1, from: 'me', text: 'Привет 👋', time: '15:00' },
+	{ id: 2, from: 'other', text: 'Привет! Как дела?', time: '16:11' },
+	{ id: 3, from: 'me', text: 'Всё супер 🚀', time: '17:42' },
 ];
 
 export default function ChatContent() {
