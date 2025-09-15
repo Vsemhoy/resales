@@ -85,9 +85,6 @@ export const ChatModal = ({ open, onOk, onCancel, smsData }) => {
 			)}
 		>
 			<ChatLayout />
-			{smsData?.hasSms && (
-				<p className="unread-msg">У вас есть {smsData.messages.length} непрочитанных сообщений</p>
-			)}
 		</Modal>
 	);
 };
