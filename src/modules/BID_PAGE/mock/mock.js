@@ -677,7 +677,7 @@ export const BID_INFO = {
             "presence": -2,
             "percent": 0
         },
-        {
+        /*{
             "id": 977900,
             "model_id": 1140,
             "model_count": 1,
@@ -686,8 +686,8 @@ export const BID_INFO = {
             "sort": 11,
             "presence": 3,
             "percent": 0
-        },
-        {
+        },*/
+        /*{
             "id": 977901,
             "model_id": 1740,
             "model_count": 1,
@@ -696,7 +696,7 @@ export const BID_INFO = {
             "sort": 12,
             "presence": 3,
             "percent": 0
-        }
+        }*/
     ],
     "openmode": {
         "status": 1,
