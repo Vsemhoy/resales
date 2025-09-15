@@ -11,6 +11,7 @@ import {
   ColorPicker,
   Form,
   AutoComplete,
+  Tag,
 } from 'antd';
 
 import 'dayjs/locale/ru';
@@ -18,6 +19,7 @@ import debounce from 'lodash/debounce';
 import dayjs, { Dayjs } from 'dayjs';
 
 import { Typography } from 'antd';
+import { NavLink } from 'react-router-dom';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -141,8 +143,10 @@ const OrgPageSectionRow = (props) => {
 
 		if (!editMode) {
 			if (field.type === 'checkbox') {
+        /** ---------------------------------------------------------------- */
 				return <div className="sk-omt-content-formatted">{value ? 'Да' : 'Нет'}</div>;
 			} else if (field.type === 'textarea') {
+        /** ---------------------------------------------------------------- */
 				return (
 					<Typography.Paragraph
 						style={{ whiteSpace: 'pre-line', display: 'block' }}
@@ -152,21 +156,47 @@ const OrgPageSectionRow = (props) => {
 					</Typography.Paragraph>
 				);
 			} else if (field.type === 'date') {
+        /** ---------------------------------------------------------------- */
 				return <div className="sk-omt-content-formatted">{dayjs(value).format('DD.MM.YYYY')}</div>;
 			} else if (field.type === 'datetime') {
+        /** ---------------------------------------------------------------- */
+        console.log('field.value TTT', field, value)
 				return (
 					<div className="sk-omt-content-formatted">
 						{dayjs(value).format('DD.MM.YYYY HH:mm:ss')}
 					</div>
 				);
 			} else if (field.type === 'time') {
+        /** ---------------------------------------------------------------- */
 				return <div className="sk-omt-content-formatted">{dayjs(value).format('HH:mm:ss')}</div>;
+        
 			} else if (field.type === 'select') {
+        /** ---------------------------------------------------------------- */
+        
 				let lab = field.options?.find((item) => item.value === field.value)?.label;
-
-				return <div className="sk-omt-content-formatted">{lab}</div>;
+        if (field.link){
+          return <NavLink target='blank' to={field.link + field.value}><div className="sk-omt-content-formatted"> {lab}</div></NavLink>;
+        } else {
+          return <div className="sk-omt-content-formatted">{lab}</div>;
+        }
+        
+			} else if (field.type === 'multiselect') {
+        /** ---------------------------------------------------------------- */
+        if (field.link){
+          return field.value.map((item, index)=>(
+            <NavLink target='blank' key={'fkljasdkfass_' + item + index}
+             to={field.link + item}> <Tag color="#3b5999">{item} </Tag></NavLink>
+          ));
+        } else {
+          
+          return field.value.map((item, index)=>(
+            <Tag key={'fkljasdkfasds_' + item + index} color="#3b5999">{item} </Tag>
+          ));
+        }
+        
 			}
 			return (
+        /** ---------------------------------------------------------------- */
 				<div className="sk-omt-content-formatted">
 					{String(value ?? (field.nullable ? '(не задано)' : ''))}
 				</div>
@@ -318,13 +348,20 @@ const OrgPageSectionRow = (props) => {
       case 'select':
         return (
           <Select
+            allowClear={field.alloWclear ? field.alloWclear : false}
+            showSearch={field.showSearch ? field.showSearch : false}
+            optionFilterProp="children"
+            // optionFilterProp="label"
+            //     filterSort={(optionA, optionB) =>
+            //       (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+            //     }
+
             size='small'
             variant="borderless"
             value={value}
             onChange={(val) => onChange(field.name, val, field)}
             style={{ width: '100%' }}
             onBlur={ (e) => {
-              console.log("BLUR");
               if (props.on_blur){
                 const val = e?.target?.value ?? e;
                 console.log(val);
@@ -342,6 +379,40 @@ const OrgPageSectionRow = (props) => {
           </Select>
         );
 
+      case 'multiselect':
+        return (
+          <Select
+            allowClear={field.alloWclear ? field.alloWclear : false}
+            showSearch={field.showSearch ? field.showSearch : false}
+            optionFilterProp="children"
+            // optionFilterProp="label"
+            //     filterSort={(optionA, optionB) =>
+            //       (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+            //     }
+            mode="multiple"
+            size='small'
+            variant="borderless"
+            value={value}
+            onChange={(val) => onChange(field.name, val, field)}
+            style={{ width: '100%' }}
+            onBlur={ (e) => {
+              if (props.on_blur){
+                const val = e?.target?.value ?? e;
+                console.log(val);
+                let obj = {};
+                obj[field.name] = val;
+                props.on_blur(obj);
+              }
+            }}
+          >
+            {field.options?.map((opt) => (
+              <Option key={opt.value} value={opt.value}>
+                {opt.label}
+              </Option>
+            ))}
+          </Select>
+        );
+      
 			case 'color':
 				return (
 					<ColorPicker
@@ -530,6 +601,7 @@ export const OPS_TYPE = {
   DATETIME : 'datetime',
   CHECKBOX : 'checkbox',
   SELECT   : 'select',
+  MSELECT   : 'multiselect',
   COLOR    : 'color',
   AUTOCOMPLETE : 'autocomplete',
 };

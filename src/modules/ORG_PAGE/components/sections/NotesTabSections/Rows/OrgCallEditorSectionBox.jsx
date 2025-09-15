@@ -59,6 +59,7 @@ const OrgCallEditorSectionBox = (props) => {
       setOrg(props.data.id_orgs);
       setTheme(props.data.theme);
       setNote(props.data.note);
+      setDate(props.data.date);
       setCreator(props.data.id8staff_list);
       setDeleted(props.data.deleted);
       setDepart(props.data.id8ref_departaments);
@@ -189,6 +190,8 @@ const OrgCallEditorSectionBox = (props) => {
       setSubscriber(changed_data.subscriber);
     } else if (changed_data.post !== undefined) {
       setPost(changed_data.post);
+      } else if (changed_data.date !== undefined) {
+      setDate(changed_data.date);
     } else if (changed_data.phone !== undefined) {
       setPhone(changed_data.phone);
     } else if (changed_data.result !== undefined) {
@@ -260,7 +263,7 @@ const OrgCallEditorSectionBox = (props) => {
             name: '_creator.name',
           },
           {
-            type: 'datetime',
+            type: 'date',
             value: date,
             max: 250,
             required: true,

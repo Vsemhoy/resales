@@ -225,6 +225,9 @@ const CallsTabPage = (props) => {
 		setLoading(false);
 	}, [baseData, editMode]);
 
+
+
+    /* ------------------------------------------------------- */
 	useEffect(() => {
 		console.log('original', baseData, originalData);
 		console.log('BASE SETTER NNN');
@@ -232,11 +235,18 @@ const CallsTabPage = (props) => {
 		setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
 	}, [props.base_data]);
 
+
+
+    /* ------------------------------------------------------- */
 	useEffect(() => {
 		console.log('ORIGINAL DATA', originalData);
 		console.log('BASE DATA', baseData);
 	}, [originalData, baseData]);
 
+
+
+
+    /* ------------------------------------------------------- */
 	useEffect(() => {
 		let secids = [];
 		setNewStructureItems(
@@ -349,10 +359,12 @@ const CallsTabPage = (props) => {
 		}, 760);
 	};
 
+    /* ------------------------------------------------------- */
 	const handleDeleteBlankUnit = (id) => {
 		setTemporaryUnits(temporaryUnits.filter((item) => item.id !== id));
 	};
 
+    /* ------------------------------------------------------- */
 	const handleDeleteRealUnit = (id, value) => {
 		// const updata = {command: 'delete', id: id, deleted: 1};
 		if (!editedItemsIds.includes(id)) {
@@ -387,6 +399,7 @@ const CallsTabPage = (props) => {
 		});
 	};
 
+    /* ------------------------------------------------------- */
 	const handleUpdateBlankUnit = (id, data) => {
 		if (!editMode) {
 			return;
@@ -405,6 +418,7 @@ const CallsTabPage = (props) => {
 		});
 	};
 
+  /* ------------------------------------------------------- */
 	const handleUpdateRealUnit = (id, data) => {
 		// let udata = originalData.filter((item) => item.id !== id);
 		// udata.push(data);
