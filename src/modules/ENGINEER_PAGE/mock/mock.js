@@ -11,6 +11,27 @@ export const MODELS_LIST = [
     }
 ];
 
+export const PREBID = {
+    id: 1,
+    manager: {
+        id: 1,
+        name: "Анастасия",
+        surname: "Коляскина",
+        middlename: "Константиновна",
+        id_company: 3,
+    },
+    manager_id: 1,
+    manager_name: "Коляскина А.К.",
+    engineer: {
+        id: 2,
+        name: "Александр",
+        surname: "Степанченко",
+        middlename: "Николаевич",
+        id_company: 2,
+    },
+    engineer_id: 2,
+    engineer_name: "Степанченко А.Н.",
+};
 
 export const ALLMODELS_LIST = [
     {
@@ -19079,3 +19100,492 @@ export const ALLMODELS_LIST = [
         "isBox": 0
     }
 ];
+
+
+export const SELECTS = {
+    "template_word_select": [
+        {
+            "id": 1,
+            "name": "arsteL",
+            "id_company": 2,
+            "shortname": "Основной",
+            "deleted": false
+        }
+    ],
+    "complete_select": [
+        {
+            "id": 1,
+            "name": "В работе"
+        },
+        {
+            "id": 2,
+            "name": "Реализовано"
+        },
+        {
+            "id": 3,
+            "name": "Не  реализовано"
+        }
+    ],
+    "pay_select": [
+        {
+            "id": 0,
+            "name": "Нет",
+            "color": null
+        },
+        {
+            "id": 1,
+            "name": "Есть",
+            "color": null
+        },
+        {
+            "id": 2,
+            "name": "Оплачен",
+            "color": null
+        }
+    ],
+    "protection_select": [
+        {
+            "id": 0,
+            "name": "нет",
+            "icon": null
+        },
+        {
+            "id": 1,
+            "name": "ЗП",
+            "icon": null
+        },
+        {
+            "id": 2,
+            "name": "РП",
+            "icon": null
+        }
+    ],
+    "conveyance_select": [
+        {
+            "id": 1,
+            "name": "Самовывоз"
+        },
+        {
+            "id": 2,
+            "name": "На склад в Москву"
+        },
+        {
+            "id": 3,
+            "name": "Деловые линии"
+        },
+        {
+            "id": 4,
+            "name": "Желдорэкспедиция"
+        },
+        {
+            "id": 5,
+            "name": "Автотрейдинг"
+        },
+        {
+            "id": 6,
+            "name": "Курьер"
+        },
+        {
+            "id": 7,
+            "name": "ПЭК"
+        },
+        {
+            "id": 8,
+            "name": "Байкал сервис"
+        },
+        {
+            "id": 9,
+            "name": "Тайсу-Экспресс"
+        },
+        {
+            "id": 10,
+            "name": "ТрансЭксРегион"
+        },
+        {
+            "id": 11,
+            "name": "Удобная транспортная служба (УралТрансСервис)"
+        },
+        {
+            "id": 12,
+            "name": "Трансавиатур"
+        },
+        {
+            "id": 13,
+            "name": "Уточнить транспортную компанию"
+        },
+        {
+            "id": 14,
+            "name": "ЦАП"
+        },
+        {
+            "id": 15,
+            "name": "Мега Транс Сервис"
+        },
+        {
+            "id": 16,
+            "name": "КИТ (www.tk-kit.ru)"
+        },
+        {
+            "id": 17,
+            "name": "Экспресс-Авто"
+        },
+        {
+            "id": 18,
+            "name": "Атента"
+        },
+        {
+            "id": 19,
+            "name": "Энергия"
+        },
+        {
+            "id": 20,
+            "name": "Мейджик Транс"
+        },
+        {
+            "id": 21,
+            "name": "ТК Карго"
+        },
+        {
+            "id": 22,
+            "name": "Ратэк"
+        },
+        {
+            "id": 23,
+            "name": "ТК ТАТ"
+        },
+        {
+            "id": 24,
+            "name": "GROUPST"
+        },
+        {
+            "id": 25,
+            "name": "отгрузка по команде"
+        },
+        {
+            "id": 26,
+            "name": "ТК Транс-Вектор"
+        },
+        {
+            "id": 27,
+            "name": "Главдоставка"
+        },
+        {
+            "id": 28,
+            "name": "Караван Транс"
+        },
+        {
+            "id": 29,
+            "name": "СДЭК"
+        },
+        {
+            "id": 30,
+            "name": "DPD"
+        }
+    ],
+    "admin_accept_select": [
+        {
+            "id": 1,
+            "name": "Рассматривается"
+        },
+        {
+            "id": 2,
+            "name": "Согласовано"
+        },
+        {
+            "id": 3,
+            "name": "Не согласовано"
+        }
+    ],
+    "package_select": [
+        {
+            "id": 0,
+            "name": "Нет"
+        },
+        {
+            "id": 1,
+            "name": "Стандартная упаковка"
+        },
+        {
+            "id": 2,
+            "name": "Жесткая упаковка"
+        }
+    ],
+    "price_select": [
+        {
+            "id": 1,
+            "name": "розница"
+        },
+        {
+            "id": 2,
+            "name": "10000"
+        },
+        {
+            "id": 3,
+            "name": "20000"
+        },
+        {
+            "id": 4,
+            "name": "30000"
+        }
+    ],
+    "type_select": [
+        {
+            "id": 1,
+            "name": "КП"
+        },
+        {
+            "id": 2,
+            "name": "Cчет"
+        }
+    ],
+    "bid_currency_select": [
+        {
+            "id": 0,
+            "name": "Валюта",
+            "shortname": "$"
+        },
+        {
+            "id": 1,
+            "name": "Рубли",
+            "shortname": "Руб."
+        }
+    ],
+    "nds_select": [
+        {
+            "id": 0,
+            "name": "Нет"
+        },
+        {
+            "id": 1,
+            "name": "Да"
+        }
+    ],
+    "action_enum": [
+        {
+            "id": 1,
+            "name": "Все",
+            "icon": "faBorderAll"
+        },
+        {
+            "id": 2,
+            "name": "Просмотр",
+            "icon": "faEye"
+        },
+        {
+            "id": 3,
+            "name": "Создание",
+            "icon": "faSquarePlus"
+        },
+        {
+            "id": 4,
+            "name": "Изменение",
+            "icon": "faPenToSquare"
+        },
+        {
+            "id": 5,
+            "name": "Удаление",
+            "icon": "faSquareMinus"
+        },
+        {
+            "id": 6,
+            "name": "Дублирование",
+            "icon": "faClone"
+        }
+    ],
+    "stage_select": [
+        {
+            "id": 1,
+            "name": "Менеджер",
+            "wherename": "у менеджера",
+            "color": "blue"
+        },
+        {
+            "id": 2,
+            "name": "Администратор",
+            "wherename": "у администратора",
+            "color": "volcano"
+        },
+        {
+            "id": 3,
+            "name": "Бухгалтер",
+            "wherename": "у бухгалтера",
+            "color": "purple"
+        },
+        {
+            "id": 4,
+            "name": "Завершено",
+            "wherename": "закрыто",
+            "color": "gold"
+        }
+    ],
+    "presence": [
+        {
+            "id": -2,
+            "name": "+"
+        },
+        {
+            "id": -1,
+            "name": "Заказ"
+        },
+        {
+            "id": 0,
+            "name": "-"
+        },
+        {
+            "id": 1,
+            "name": "Январь"
+        },
+        {
+            "id": 2,
+            "name": "Февраль"
+        },
+        {
+            "id": 3,
+            "name": "Март"
+        },
+        {
+            "id": 4,
+            "name": "Апрель"
+        },
+        {
+            "id": 5,
+            "name": "Май"
+        },
+        {
+            "id": 6,
+            "name": "Июнь"
+        },
+        {
+            "id": 7,
+            "name": "Июль"
+        },
+        {
+            "id": 8,
+            "name": "Август"
+        },
+        {
+            "id": 9,
+            "name": "Сентябрь"
+        },
+        {
+            "id": 10,
+            "name": "Октябрь"
+        },
+        {
+            "id": 11,
+            "name": "Ноябрь"
+        },
+        {
+            "id": 12,
+            "name": "Декабрь"
+        },
+        {
+            "id": 13,
+            "name": "Обновец"
+        }
+    ],
+    "insurance_select": [
+        {
+            "key": 0,
+            "value": 0,
+            "label": "нет"
+        },
+        {
+            "key": 1,
+            "value": 1,
+            "label": "да"
+        }
+    ],
+    "bid_presence_select": [
+        {
+            "id": -2,
+            "name": "+"
+        },
+        {
+            "id": -1,
+            "name": "Заказ"
+        },
+        {
+            "id": 0,
+            "name": "-"
+        },
+        {
+            "id": 1,
+            "name": "Январь"
+        },
+        {
+            "id": 2,
+            "name": "Февраль"
+        },
+        {
+            "id": 3,
+            "name": "Март"
+        },
+        {
+            "id": 4,
+            "name": "Апрель"
+        },
+        {
+            "id": 5,
+            "name": "Май"
+        },
+        {
+            "id": 6,
+            "name": "Июнь"
+        },
+        {
+            "id": 7,
+            "name": "Июль"
+        },
+        {
+            "id": 8,
+            "name": "Август"
+        },
+        {
+            "id": 9,
+            "name": "Сентябрь"
+        },
+        {
+            "id": 10,
+            "name": "Октябрь"
+        },
+        {
+            "id": 11,
+            "name": "Ноябрь"
+        },
+        {
+            "id": 12,
+            "name": "Декабрь"
+        },
+        {
+            "id": 13,
+            "name": "Обновец"
+        }
+    ],
+    "companies": [
+        {
+            "id": 1,
+            "name": "FreeCompany",
+            "color": "#8d8d8d"
+        },
+        {
+            "id": 2,
+            "name": "Arstel",
+            "color": "#ff7700"
+        },
+        {
+            "id": 3,
+            "name": "Rondo",
+            "color": "#229922"
+        }
+    ],
+    "orgusers_select" : [
+        {
+            "id": 90506,
+            "name": "Козулин Алексей Анатольевич",
+            "occupy": "Генеральный директор"
+        }
+    ],
+};
+
+
