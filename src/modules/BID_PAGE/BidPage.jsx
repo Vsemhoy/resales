@@ -38,6 +38,7 @@ import {
 import NameSelect from './components/NameSelect';
 import ModelInput from './components/ModelInput';
 import ModelSelect from './components/ModelSelect';
+import ModelInfoExtra from "./components/ModelInfoExtra";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -143,6 +144,9 @@ const BidPage = (props) => {
 	const [phoneSelect, setPhoneSelect] = useState([]);
 	const [emailSelect, setEmailSelect] = useState([]);
 	const [bidPackageSelect, setBidPackageSelect] = useState([]);
+	/* ОСТАЛЬНОЕ */
+	const [isOpenExtraInfo, setIsOpenExtraInfo] = useState(false);
+	const [modelIdExtra, setModelIdExtra] = useState(false);
 
 	const handleKeyDown = (event) => {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -584,115 +588,123 @@ const BidPage = (props) => {
 		}
 	};
 
-  const prepareSelect = (select) => {
-      if (select) {
-          return select.map((item) => ({value: item.id, label: item.name}));
-      } else {
-          return [];
-      }
-  };
-  const countOfComments = () => {
-      return [
-          bidCommentEngineer,
-          bidCommentManager,
-          bidCommentAdmin,
-          bidCommentAccountant,
-          bidCommentAddEquipment
-      ].filter(comment => comment).length;
-  };
-  const prepareEngineerParameter = (engineerParameter) => {
-      const rounded = (+engineerParameter).toFixed(2);
-      return rounded % 1 === 0 ? Math.round(rounded) : rounded;
-  };
-  const prepareAmount = (amount, symbol) => {
-      const rounded = (+amount / 100).toFixed(2);
-      let formatted =  formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
-      return formatted === `не число` ? <MinusOutlined /> : formatted + (symbol ? symbol : '');
-  };
-  const currencySymbol = (bidModel) => {
-      return +bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
-  }
-  const formatNumberWithSpaces = (number) => {
-      return new Intl.NumberFormat('ru-RU', {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 2
-      }).format(number);
-  };
-  const handleAddModel = () => {
-      let sort = 0;
-      if (bidModels && bidModels.length > 0) {
-          const lastModel = bidModels.sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
-          sort = lastModel.sort + 1;
-      }
-      const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-      bidModelsUpd.push({
-          "id": 0,
-          "bid_id": bidId,
-          "model_id": null,
-          "model_count": null,
-          "not_available": 0,
-          "percent": null,
-          "presence": null,
-          "sort": sort,
-          "name": "",
-          "type_model": 0,
-          "currency": 0,
-      });
-      setBidModels(bidModelsUpd);
-  };
-  const handleDeleteModelFromBid = (bidModelId) => {
-      const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
-      const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-      bidModelsUpd.splice(bidModelIdx, 1);
-      setBidModels(bidModelsUpd);
-      setIsNeedCalcMoney(true);
-  };
-  const handleChangeModel = (newId, oldId, oldSort) => {
-      const newModel = modelsSelect.find(model => model.id === newId);
-      const oldModel = bidModels.find(model => (model.id === oldId && model.sort === oldSort));
-      const oldModelIdx = bidModels.findIndex(model => (model.id === oldId && model.sort === oldSort));
-      const newModelObj = {
-          "id": oldId,
-          "bid_id": bidId,
-          "model_id": newId,
-          "model_count": 1,
-          "not_available": 0,
-          "percent": 0,
-          "presence": -2,
-          "sort": oldModel.sort,
-          "name": newModel.name,
-          "type_model": newModel.type_model,
-          "currency": newModel.currency,
-      };
-      const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-      bidModelsUpd[oldModelIdx] = newModelObj;
-      setBidModels(bidModelsUpd);
-      setIsNeedCalcMoney(true);
-      setLastUpdModel(newId);
-  };
-  const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
-      const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
-      const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-      switch (type) {
-          case 'model_count':
-              bidModelsUpd[bidModelIdx].model_count = value;
-              setBidModels(bidModelsUpd);
-              setIsNeedCalcMoney(true);
-              setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
-              break;
-          case 'percent':
-              bidModelsUpd[bidModelIdx].percent = value;
-              setBidModels(bidModelsUpd);
-              setIsNeedCalcMoney(true);
-              setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
-              break;
-          case 'presence':
-              bidModelsUpd[bidModelIdx].presence = value;
-              setBidModels(bidModelsUpd);
-              break;
-      }
-  };
-  const handleOpenModelInfo = (modelId) => {};
+	const prepareSelect = (select) => {
+	  if (select) {
+		  return select.map((item) => ({value: item.id, label: item.name}));
+	  } else {
+		  return [];
+	  }
+	};
+	const countOfComments = () => {
+	  return [
+		  bidCommentEngineer,
+		  bidCommentManager,
+		  bidCommentAdmin,
+		  bidCommentAccountant,
+		  bidCommentAddEquipment
+	  ].filter(comment => comment).length;
+	};
+	const prepareEngineerParameter = (engineerParameter) => {
+	  const rounded = (+engineerParameter).toFixed(2);
+	  return rounded % 1 === 0 ? Math.round(rounded) : rounded;
+	};
+	const prepareAmount = (amount, symbol) => {
+	  const rounded = (+amount / 100).toFixed(2);
+	  let formatted =  formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
+	  return formatted === `не число` ? <MinusOutlined /> : formatted + (symbol ? symbol : '');
+	};
+	const currencySymbol = (bidModel) => {
+	  return +bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
+	}
+	const formatNumberWithSpaces = (number) => {
+	  return new Intl.NumberFormat('ru-RU', {
+		  minimumFractionDigits: 0,
+		  maximumFractionDigits: 2
+	  }).format(number);
+	};
+	const handleAddModel = () => {
+	  let sort = 0;
+	  if (bidModels && bidModels.length > 0) {
+		  const lastModel = bidModels.sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
+		  sort = lastModel.sort + 1;
+	  }
+	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+	  bidModelsUpd.push({
+		  "id": 0,
+		  "bid_id": bidId,
+		  "model_id": null,
+		  "model_count": null,
+		  "not_available": 0,
+		  "percent": null,
+		  "presence": null,
+		  "sort": sort,
+		  "name": "",
+		  "type_model": 0,
+		  "currency": 0,
+	  });
+	  setBidModels(bidModelsUpd);
+	};
+	const handleDeleteModelFromBid = (bidModelId) => {
+	  const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
+	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+	  bidModelsUpd.splice(bidModelIdx, 1);
+	  setBidModels(bidModelsUpd);
+	  setIsNeedCalcMoney(true);
+	};
+	const handleChangeModel = (newId, oldId, oldSort) => {
+	  const newModel = modelsSelect.find(model => model.id === newId);
+	  const oldModel = bidModels.find(model => (model.id === oldId && model.sort === oldSort));
+	  const oldModelIdx = bidModels.findIndex(model => (model.id === oldId && model.sort === oldSort));
+	  const newModelObj = {
+		  "id": oldId,
+		  "bid_id": bidId,
+		  "model_id": newId,
+		  "model_count": 1,
+		  "not_available": 0,
+		  "percent": 0,
+		  "presence": -2,
+		  "sort": oldModel.sort,
+		  "name": newModel.name,
+		  "type_model": newModel.type_model,
+		  "currency": newModel.currency,
+	  };
+	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+	  bidModelsUpd[oldModelIdx] = newModelObj;
+	  setBidModels(bidModelsUpd);
+	  setIsNeedCalcMoney(true);
+	  setLastUpdModel(newId);
+	};
+	const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
+	  const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
+	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+	  switch (type) {
+		  case 'model_count':
+			  bidModelsUpd[bidModelIdx].model_count = value;
+			  setBidModels(bidModelsUpd);
+			  setIsNeedCalcMoney(true);
+			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+			  break;
+		  case 'percent':
+			  bidModelsUpd[bidModelIdx].percent = value;
+			  setBidModels(bidModelsUpd);
+			  setIsNeedCalcMoney(true);
+			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+			  break;
+		  case 'presence':
+			  bidModelsUpd[bidModelIdx].presence = value;
+			  setBidModels(bidModelsUpd);
+			  break;
+	  }
+	};
+	const handleOpenModelInfo = (modelId) => {
+		setIsOpenExtraInfo(true);
+		setModelIdExtra(modelId);
+	};
+
+	const handleCloseDrawer = () => {
+		setIsOpenExtraInfo(false);
+		setModelIdExtra(null);
+	};
 
 	const collapseItems = [
 		{
@@ -1474,6 +1486,7 @@ const BidPage = (props) => {
 					onClose={() => setIsAlertVisible(false)}
 				/>
 			)}
+			<ModelInfoExtra closeDrawer={handleCloseDrawer} model_id={modelIdExtra}/>
 		</div>
 	);
 };
