@@ -1,42 +1,69 @@
-import React, {useEffect, useState} from 'react';
-import {Affix, Badge, Button, Collapse, Input, Select, Spin, Steps, Tag, Tooltip} from "antd";
-import {useParams} from "react-router-dom";
-import {CSRF_TOKEN, PRODMODE} from "../../config/config";
-import {PROD_AXIOS_INSTANCE} from "../../config/Api";
+import React, { useEffect, useState } from 'react';
+import {
+  Affix,
+  Alert,
+  Badge,
+  Button,
+  Collapse,
+  Input,
+  Select,
+  Spin,
+  Steps,
+  Tag,
+  Tooltip,
+} from 'antd';
+import { useParams } from 'react-router-dom';
+import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/engPage.css'
-// import {AMOUNT, BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, MODELS_DATA, SELECTS} from "./mock/mock";
-import {PREBID, SELECTS, ALLMODELS_LIST, MODELS_LIST, CALC_INFO} from "./mock/mock";
-// import MODELS from './mock/mock_models';
-import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
+// import { BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, SELECTS, ALLMODELS_LIST } from './mock/mock';
+import {SELECTS, ALLMODELS_LIST, CALC_INFO, MODELS_LIST, PREBID} from './mock/mock';
+import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import {
   BlockOutlined,
-  CopyOutlined, DeleteOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
-  FileSearchOutlined, FileWordOutlined,
-  HistoryOutlined, InfoCircleOutlined, LoadingOutlined,
+  CopyOutlined,
+  DeleteOutlined,
+  DollarOutlined,
+  DownloadOutlined,
+  FilePdfOutlined,
+  FileSearchOutlined,
+  FileWordOutlined,
+  HistoryOutlined,
+  InfoCircleOutlined,
+  LoadingOutlined,
+  MinusOutlined,
   PlusOutlined, ProfileOutlined,
-  SaveOutlined
-} from "@ant-design/icons";
-import Panel from "antd/es/splitter/Panel";
+  SaveOutlined,
+} from '@ant-design/icons';
+import NameSelect from './components/alan/NameSelect';
+import ModelInput from './components/alan/ModelInput';
+import ModelSelect from './components/alan/ModelSelect';
 const { TextArea } = Input;
 
 const EngineerPage = (props) => {
-  const {bidId} = useParams();
+  const { bidId } = useParams();
   const [isMounted, setIsMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSmall, setIsLoadingSmall] = useState(false);
   const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
   const [isSavingInfo, setIsSavingInfo] = useState(false);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
 
   const [lastUpdModel, setLastUpdModel] = useState(null);
   const [isUpdateAll, setIsUpdateAll] = useState(false);
 
   const [userData, setUserData] = useState(null);
 
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertDescription, setAlertDescription] = useState('');
+  const [alertType, setAlertType] = useState('');
+
   const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
   /* ШАПКА СТРАНИЦЫ */
   const [bidType, setBidType] = useState(null);
   const [bidIdCompany, setBidIdCompany] = useState(null);
   const [bidOrg, setBidOrg] = useState({});
+  const [bidCurator, setBidCurator] = useState({});
   const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
   const [companyCurrency, setCompanyCurrency] = useState(null);
   const [bankCurrency, setBankCurrency] = useState(null);
@@ -77,7 +104,7 @@ const EngineerPage = (props) => {
   const [amounts, setAmounts] = useState({
     usd: 0,
     eur: 0,
-    rub: 0
+    rub: 0,
   });
   const [engineerParameters, setEngineerParameters] = useState({
     unit: 0,
@@ -86,7 +113,7 @@ const EngineerPage = (props) => {
     max_power: 0,
     rated_power_speaker: 0,
     mass: 0,
-    size: 0
+    size: 0,
   });
   /* СЕЛЕКТ ПО МОДЕЛЯМ */
   const [modelsSelect, setModelsSelect] = useState([]);
@@ -98,8 +125,6 @@ const EngineerPage = (props) => {
   const [bidCurrencySelect, setBidCurrencySelect] = useState([]);
   const [bidPresenceSelect, setBidPresenceSelect] = useState([]);
   const [completeSelect, setCompleteSelect] = useState([]);
-  const [conveyanceSelect, setConveyanceSelect] = useState([]);
-  const [insuranceSelect, setInsuranceSelect] = useState([]);
   const [ndsSelect, setNdsSelect] = useState([]);
   const [packageSelect, setPackageSelect] = useState([]);
   const [paySelect, setPaySelect] = useState([]);
@@ -109,45 +134,69 @@ const EngineerPage = (props) => {
   const [stageSelect, setStageSelect] = useState([]);
   const [templateWordSelect, setTemplateWordSelect] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [conveyanceSelect, setConveyanceSelect] = useState([]);
+  const [insuranceSelect, setInsuranceSelect] = useState([]);
+  /* ЭКСТРА СЕЛЕКТЫ */
   const [orgUsersSelect, setOrgUsersSelect] = useState([]);
+  const [requisiteSelect, setRequisiteSelect] = useState([]);
+  const [factAddressSelect, setFactAddressSelect] = useState([]);
+  const [phoneSelect, setPhoneSelect] = useState([]);
+  const [emailSelect, setEmailSelect] = useState([]);
+  const [bidPackageSelect, setBidPackageSelect] = useState([]);
 
-  /*  PREBINFO */
   const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, manager_name: ""});
   const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, engineer_name: ""});
 
+  const handleKeyDown = (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+      event.preventDefault();
+      setIsSavingInfo(true);
+    }
+  };
+
   useEffect(() => {
-    console.log(bidId);
     if (!isMounted) {
       fetchInfo().then(() => {
-        // setIsNeedCalcMoney(true);
+        setIsNeedCalcMoney(true);
       });
       setIsMounted(true);
     }
   }, []);
-
+  useEffect(() => {
+    if (isMounted && bidOrg && bidOrg.id) {
+      fetchOrgSelects().then();
+    }
+  }, [bidOrg]);
+  useEffect(() => {
+    if (isMounted && bidOrgUser) {
+      fetchOrgUserSelects().then();
+    }
+  }, [bidOrgUser]);
+  useEffect(() => {
+    if (bidType) {
+      document.title = `${+bidType === 1 ? 'КП' : +bidType === 2 ? 'Счет' : ''} | ${bidId}`;
+    }
+    return () => (document.title = 'Отдел продаж');
+  }, [bidType]);
   useEffect(() => {
     if (props.userdata) {
       setUserData(props.userdata);
     }
   }, [props.userdata]);
-
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-        event.preventDefault();
-        if (!isSavingInfo) {
-          fetchUpdates().then();
-        }
-      }
-    };
-
+    if (isSavingInfo) {
+      fetchUpdates().then(() => {
+        setTimeout(() => setIsSavingInfo(false), 500);
+      });
+    }
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isSavingInfo]);
   useEffect(() => {
-    if (isMounted && isNeedCalcMoney) { // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
+    if (isMounted && isNeedCalcMoney) {
+      // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
       const timer = setTimeout(() => {
         fetchCalcModels().then(() => {
           setIsNeedCalcMoney(false);
@@ -159,6 +208,15 @@ const EngineerPage = (props) => {
       return () => clearTimeout(timer);
     }
   }, [isNeedCalcMoney]);
+  useEffect(() => {
+    if (isAlertVisible && alertType !== 'error') {
+      const timer = setTimeout(() => {
+        setIsAlertVisible(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isAlertVisible]);
 
   const fetchInfo = async () => {
     setIsLoading(true);
@@ -166,7 +224,7 @@ const EngineerPage = (props) => {
     await fetchBidModels();
     setTimeout(() => setIsLoading(false), 1000);
     await fetchSelects();
-    // await fetchCurrencySelects();
+    await fetchCurrencySelects();
   };
   const fetchBidInfo = async () => {
     if (PRODMODE) {
@@ -284,79 +342,105 @@ const EngineerPage = (props) => {
     }
   };
   const fetchSelects = async () => {
-    if (PRODMODE) {
-      try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
-          data: {},
-          _token: CSRF_TOKEN
-        });
-        if (response.data && response.data.selects) {
-          const selects = response.data.selects;
-          // setTypeSelect(selects.type_select);
-          // setActionEnumSelect(selects.action_enum);
-          // setAdminAcceptSelect(selects.admin_accept_select);
-          // setBidCurrencySelect(selects.bid_currency_select);
-          // setBidPresenceSelect(selects.bid_presence_select);
-          // setCompleteSelect(selects.complete_select);
-          // setConveyanceSelect(selects.conveyance_select);
-          // setInsuranceSelect(selects.insurance_select);
-          // setNdsSelect(selects.nds_select);
-          // setPackageSelect(selects.package_select);
-          // setPaySelect(selects.pay_select);
-          // setPresenceSelect(selects.presence);
-          // setPriceSelect(selects.price_select);
-          // setProtectionSelect(selects.protection_select);
-          // setStageSelect(selects.stage_select);
-          // setTemplateWordSelect(selects.template_word_select);
-          setCompanies(selects.companies);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      // setTypeSelect(SELECTS.type_select);
-      // setActionEnumSelect(SELECTS.action_enum);
-      // setAdminAcceptSelect(SELECTS.admin_accept_select);
-      // setBidCurrencySelect(SELECTS.bid_currency_select);
-      // setBidPresenceSelect(SELECTS.bid_presence_select);
-      // setCompleteSelect(SELECTS.complete_select);
-      // setConveyanceSelect(SELECTS.conveyance_select);
-      // setInsuranceSelect(SELECTS.insurance_select);
-      // setNdsSelect(SELECTS.nds_select);
-      // setPackageSelect(SELECTS.package_select);
-      // setPaySelect(SELECTS.pay_select);
-      // setPresenceSelect(SELECTS.presence);
-      // setPriceSelect(SELECTS.price_select);
-      // setProtectionSelect(SELECTS.protection_select);
-      // setStageSelect(SELECTS.stage_select);
-      // setTemplateWordSelect(SELECTS.template_word_select);
-      setCompanies(SELECTS.companies);
-    }
-  };
-  // const fetchExtraSelects = async () => {
   //   if (PRODMODE) {
   //     try {
   //       let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
-  //         data: {orgId: bidOrg.id},
-  //         _token: CSRF_TOKEN
+  //         data: {},
+  //         _token: CSRF_TOKEN,
+  //       });
+  //       if (response.data && response.data.selects) {
+  //         const selects = response.data.selects;
+  //         setTypeSelect(selects.type_select);
+  //         setActionEnumSelect(selects.action_enum);
+  //         setAdminAcceptSelect(selects.admin_accept_select);
+  //         setBidCurrencySelect(selects.bid_currency_select);
+  //         setBidPresenceSelect(selects.bid_presence_select);
+  //         setCompleteSelect(selects.complete_select);
+  //         setConveyanceSelect(selects.conveyance_select);
+  //         setInsuranceSelect(selects.insurance_select);
+  //         setNdsSelect(selects.nds_select);
+  //         setPackageSelect(selects.package_select);
+  //         setPaySelect(selects.pay_select);
+  //         setPresenceSelect(selects.presence);
+  //         setPriceSelect(selects.price_select);
+  //         setProtectionSelect(selects.protection_select);
+  //         setStageSelect(selects.stage_select);
+  //         setTemplateWordSelect(selects.template_word_select);
+  //         setCompanies(selects.companies);
+  //       }
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   } else {
+  //     setTypeSelect(SELECTS.type_select);
+  //     setActionEnumSelect(SELECTS.action_enum);
+  //     setAdminAcceptSelect(SELECTS.admin_accept_select);
+  //     setBidCurrencySelect(SELECTS.bid_currency_select);
+  //     setBidPresenceSelect(SELECTS.bid_presence_select);
+  //     setCompleteSelect(SELECTS.complete_select);
+  //     setConveyanceSelect(SELECTS.conveyance_select);
+  //     setInsuranceSelect(SELECTS.insurance_select);
+  //     setNdsSelect(SELECTS.nds_select);
+  //     setPackageSelect(SELECTS.package_select);
+  //     setPaySelect(SELECTS.pay_select);
+  //     setPresenceSelect(SELECTS.presence);
+  //     setPriceSelect(SELECTS.price_select);
+  //     setProtectionSelect(SELECTS.protection_select);
+  //     setStageSelect(SELECTS.stage_select);
+  //     setTemplateWordSelect(SELECTS.template_word_select);
+  //     setCompanies(SELECTS.companies);
+  //   }
+  };
+  const fetchOrgSelects = async () => {
+  //   if (PRODMODE) {
+  //     try {
+  //       let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
+  //         data: { orgId: bidOrg.id },
+  //         _token: CSRF_TOKEN,
   //       });
   //       if (response.data && response.data.selects) {
   //         const selects = response.data.selects;
   //         setOrgUsersSelect(selects.orgusers_select);
+  //         setRequisiteSelect(selects.requisite_select);
+  //         setFactAddressSelect(selects.fact_address_select);
+  //         setPhoneSelect(selects.org_phones_select);
+  //         setBidPackageSelect(selects.package_select);
   //       }
   //     } catch (e) {
   //       console.log(e);
   //     }
   //   } else {
   //     setOrgUsersSelect(SELECTS.orgusers_select);
+  //     setRequisiteSelect(SELECTS?.requisite_select);
+  //     setFactAddressSelect(SELECTS?.fact_address_select);
+  //     setPhoneSelect(SELECTS?.org_phones_select);
+  //     setBidPackageSelect(SELECTS?.package_select);
   //   }
-  // };
-  // const fetchCurrencySelects = async () => {
+  };
+  const fetchOrgUserSelects = async () => {
+  //   if (PRODMODE) {
+  //     try {
+  //       let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
+  //         data: { orgUserId: bidOrgUser },
+  //         _token: CSRF_TOKEN,
+  //       });
+  //       if (response.data && response.data.selects) {
+  //         const selects = response.data.selects;
+  //         setEmailSelect(selects.contact_email_select);
+  //       }
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   } else {
+  //     setEmailSelect(SELECTS?.contact_email_select);
+  //   }
+  };
+  const fetchCurrencySelects = async () => {
   //   if (PRODMODE) {
   //     try {
   //       let response = await PROD_AXIOS_INSTANCE.post('/api/currency/getcurrency', {
   //         data: {},
-  //         _token: CSRF_TOKEN
+  //         _token: CSRF_TOKEN,
   //       });
   //       if (response.data) {
   //         setCompanyCurrency(response.data.company);
@@ -369,13 +453,13 @@ const EngineerPage = (props) => {
   //     setCompanyCurrency(CUR_COMPANY);
   //     setBankCurrency(CUR_CURRENCY);
   //   }
-  // };
+  };
   const fetchBidModels = async () => {
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.get('/api/sales/getmodels', {
           data: {},
-          _token: CSRF_TOKEN
+          _token: CSRF_TOKEN,
         });
         if (response.data) {
           setGarbage(response.data.info);
@@ -389,26 +473,82 @@ const EngineerPage = (props) => {
       setModelsSelect(ALLMODELS_LIST);
     }
   };
-
   const fetchUpdates = async () => {
-    console.log('fetchUpdates')
-    if (PRODMODE) {
-      try {
-        setIsSavingInfo(true);
-
-        setTimeout(() => setIsSavingInfo(false), 500);
-      } catch (e) {
-        console.log(e);
-        setTimeout(() => setIsSavingInfo(false), 500);
-      }
-    } else {
-      setIsSavingInfo(true);
-      setTimeout(() => setIsSavingInfo(false), 500);
-    }
+  //   console.log('fetchUpdates');
+  //   const data = {
+  //     bid: {
+  //       id: bidId,
+  //       id_company: bidIdCompany,
+  //       place: bidPlace,
+  //       type: bidType,
+  //       files_count: bidFilesCount,
+  //       base_info: {
+  //         org: bidOrg,
+  //         curator: bidCurator,
+  //         orguser: bidOrgUser,
+  //         protection: bidProtectionProject,
+  //         object: bidObject,
+  //         sellby: bidSellBy,
+  //       },
+  //       bill:
+  //           +bidType === 2
+  //               ? {
+  //                 requisite: requisite,
+  //                 conveyance: conveyance,
+  //                 fact_address: factAddress,
+  //                 org_phone: phone,
+  //                 contact_email: email,
+  //                 insurance: insurance,
+  //                 package: bidPackage,
+  //                 consignee: consignee,
+  //                 other_equipment: otherEquipment,
+  //               }
+  //               : null,
+  //       comments: {
+  //         engineer: bidCommentEngineer,
+  //         manager: bidCommentManager,
+  //         admin: bidCommentAdmin,
+  //         accountant: bidCommentAccountant,
+  //         add_equipment: bidCommentAddEquipment,
+  //       },
+  //       finance: {
+  //         bid_currency: bidCurrency,
+  //         status: bidPriceStatus,
+  //         percent: bidPercent,
+  //         nds: bidNds,
+  //       },
+  //     },
+  //     bid_models: bidModels,
+  //   };
+  //   console.log(data);
+  //   if (PRODMODE) {
+  //     try {
+  //       let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/updatebid/${bidId}`, {
+  //         data,
+  //         _token: CSRF_TOKEN,
+  //       });
+  //       if (response.data.message) {
+  //         setIsAlertVisible(true);
+  //         setAlertMessage('Успех!');
+  //         setAlertDescription(response.data.message);
+  //         setAlertType('success');
+  //       }
+  //     } catch (e) {
+  //       console.log(e);
+  //       setIsAlertVisible(true);
+  //       setAlertMessage('Произошла ошибка!');
+  //       setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+  //       setAlertType('error');
+  //     }
+  //   } else {
+  //     setIsAlertVisible(true);
+  //     setAlertMessage('Успех!');
+  //     setAlertDescription('Успешное обновление');
+  //     setAlertType('success');
+  //   }
   };
-
   const fetchCalcModels = async () => {
-    console.log('fetchCalcModels')
+    console.log('fetchCalcModels');
     if (PRODMODE) {
       try {
         setIsLoadingSmall(true);
@@ -418,11 +558,12 @@ const EngineerPage = (props) => {
               bidCurrency,
               bidPriceStatus,
               bidPercent,
-              bidNds
+              bidNds,
             },
-            bid_models: bidModels
+            engineer: true,
+            bid_models: bidModels,
           },
-          _token: CSRF_TOKEN
+          _token: CSRF_TOKEN,
         });
         if (response.data.content) {
           const content = response.data.content;
@@ -436,78 +577,142 @@ const EngineerPage = (props) => {
         setTimeout(() => setIsLoadingSmall(false), 500);
       }
     } else {
-      setIsSavingInfo(true);
+      setIsLoadingSmall(true);
+      //setBidModels(CALC_INFO.models);
+      //setAmounts(CALC_INFO.amounts);
+      //setEngineerParameters(CALC_INFO.models_data);
       setTimeout(() => setIsLoadingSmall(false), 500);
     }
   };
 
   const prepareSelect = (select) => {
-    return select.map((item) => ({value: item.id, label: item.name}));
+    if (select) {
+      return select.map((item) => ({value: item.id, label: item.name}));
+    } else {
+      return [];
+    }
   };
-
+  const countOfComments = () => {
+    return [
+      bidCommentEngineer,
+      bidCommentManager,
+      bidCommentAdmin,
+      bidCommentAccountant,
+      bidCommentAddEquipment
+    ].filter(comment => comment).length;
+  };
   const prepareEngineerParameter = (engineerParameter) => {
     const rounded = (+engineerParameter).toFixed(2);
     return rounded % 1 === 0 ? Math.round(rounded) : rounded;
   };
-
-  const handleChangeModel = (newId, oldId, sort) => {
-    const newModel = modelsSelect.find(model => model.id === newId);
-    const oldModel = bidModels.find(model => (model.id === oldId && model.sort === sort));
-    console.log(oldModel);
-    console.log(newModel);
-    const oldModelIdx = bidModels.findIndex(model => (model.id === oldId && model.sort === sort));
-    const newModelObj = {
+  const prepareAmount = (amount, symbol) => {
+    const rounded = (+amount / 100).toFixed(2);
+    let formatted =  formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
+    return formatted === `не число` ? <MinusOutlined /> : formatted + (symbol ? symbol : '');
+  };
+  const currencySymbol = (bidModel) => {
+    return +bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
+  }
+  const formatNumberWithSpaces = (number) => {
+    return new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(number);
+  };
+  const handleAddModel = () => {
+    let sort = 0;
+    if (bidModels && bidModels.length > 0) {
+      const lastModel = bidModels.sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
+      sort = lastModel.sort + 1;
+    }
+    const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+    bidModelsUpd.push({
       "id": 0,
+      "bid_id": bidId,
+      "model_id": null,
+      "model_count": null,
+      "not_available": 0,
+      "percent": null,
+      "presence": null,
+      "sort": sort,
+      "name": "",
+      "type_model": 0,
+      "currency": 0,
+    });
+    setBidModels(bidModelsUpd);
+  };
+  const handleDeleteModelFromBid = (bidModelId) => {
+    const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
+    const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+    bidModelsUpd.splice(bidModelIdx, 1);
+    setBidModels(bidModelsUpd);
+    setIsNeedCalcMoney(true);
+  };
+  const handleChangeModel = (newId, oldId, oldSort) => {
+    const newModel = modelsSelect.find(model => model.id === newId);
+    const oldModel = bidModels.find(model => (model.id === oldId && model.sort === oldSort));
+    const oldModelIdx = bidModels.findIndex(model => (model.id === oldId && model.sort === oldSort));
+    const newModelObj = {
+      "id": oldId,
+      "bid_id": bidId,
       "model_id": newId,
       "model_count": 1,
-      "model_name": newModel.name,
-      "sort": oldModel.sort,
+      "not_available": 0,
       "percent": 0,
+      "presence": -2,
+      "sort": oldModel.sort,
+      "name": newModel.name,
+      "type_model": newModel.type_model,
+      "currency": newModel.currency,
     };
     const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
     bidModelsUpd[oldModelIdx] = newModelObj;
     setBidModels(bidModelsUpd);
     setIsNeedCalcMoney(true);
     setLastUpdModel(newId);
-  }
-  const handleChangeModelCount = (value, bidModelId, sort) => {
-    const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === sort));
-    const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-    // console.log(bidModelsUpd[sort-1]);
-    bidModelsUpd[bidModelIdx].model_count = parseInt(value);
-    setBidModels(bidModelsUpd);
-    setIsNeedCalcMoney(true);
-    setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
   };
-
-  const handleAddModel = () => {
-    const lastModel = bidModels[bidModels.length - 1];
+  const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
+    const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
     const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-    bidModelsUpd.push({
-      "id": 0,
-      "model_id": null,
-      "model_count": null,
-      "model_name": "",
-      "sort": lastModel.sort + 1,
-      "percent": 0,
-    });
-    setBidModels(bidModelsUpd);
+    switch (type) {
+      case 'model_count':
+        bidModelsUpd[bidModelIdx].model_count = value;
+        setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
+        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+        break;
+      case 'percent':
+        bidModelsUpd[bidModelIdx].percent = value;
+        setBidModels(bidModelsUpd);
+        setIsNeedCalcMoney(true);
+        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+        break;
+      case 'presence':
+        bidModelsUpd[bidModelIdx].presence = value;
+        setBidModels(bidModelsUpd);
+        break;
+    }
   };
-
+  const handleOpenModelInfo = (modelId) => {};
 
   return (
       <div className={'sa-engineer-page-container'}>
         <Spin size="large" spinning={isLoading}>
           <div className={'sa-engineer-page'}>
             <Affix>
-              <div style={{padding: '10px 12px 0 12px', backgroundColor: '#b4c9e1'}}>
-                <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'} style={{margin:0}}>
+              <div style={{ padding: '10px 12px 0 12px', backgroundColor: '#b4c9e1' }}>
+                <div
+                    className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}
+                    style={{ margin: 0 }}
+                >
                   <div className={'sa-header-label-container'}>
                     <div className={'sa-header-label-container-small'}>
-                      <h1 className={`sa-header-label`}>Спецификация</h1>
-                      <div className={'sa-bid-steps-currency'}>
+                      <h1 className={`sa-header-label`}>
+                       Спецификация
+                      </h1>
+                      <div className={'sa-engineer-steps-currency'}>
                         <div>
-                          <CurrencyMonitorBar/>
+                          <CurrencyMonitorBar />
                         </div>
                       </div>
                     </div>
@@ -534,27 +739,17 @@ const EngineerPage = (props) => {
                             >
                               {manager && (`${manager.manager_name}`)}
                             </Tag>
-                            {/*Ваша роль:*/}
-                            {/*{userData && userData?.user?.sales_role === 1 && (*/}
-                            {/*    <Tag color={'blue'}>Менеджер</Tag>*/}
-                            {/*)}*/}
-                            {/*{userData && userData?.user?.sales_role === 2 && (*/}
-                            {/*    <Tag color={'volcano'}>Администратор</Tag>*/}
-                            {/*)}*/}
-                            {/*{userData && userData?.user?.sales_role === 3 && (*/}
-                            {/*    <Tag color={'magenta'}>Бухгалтер</Tag>*/}
-                            {/*)}*/}
-                            {/*{userData && userData?.user?.sales_role === 4 && (*/}
-                            {/*    <Tag color={'gold'}>Завершено</Tag>*/}
-                            {/*)}*/}
                           </div>
                       )}
-                      <Button type={'primary'}
-                              style={{width: '150px'}}
-                              icon={<SaveOutlined />}
-                              loading={isSavingInfo}
-                              onClick={fetchUpdates}
-                      >{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}</Button>
+                      <Button
+                          type={'primary'}
+                          style={{ width: '150px' }}
+                          icon={<SaveOutlined />}
+                          loading={isSavingInfo}
+                          onClick={() => setIsSavingInfo(true)}
+                      >
+                        {isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -586,12 +781,11 @@ const EngineerPage = (props) => {
                   ></Button>
                 </Tooltip>
               </div>
-              <div className={'sa-bid-page-info-wrapper'}>
+              <div className={'sa-engineer-page-info-wrapper'}>
                 <div className={'sa-info-models-header'}>Основные данные</div>
                 <div className={'sa-info-list'}>
                   <div className={'sa-info-list-row'}>
-                    <div className={'sa-list-row-label'}><p>Комментарий
-                      инженера</p></div>
+                    <div className={'sa-list-row-label'}><p>Комментарий инженера</p></div>
                     <TextArea
                         value={bidCommentEngineer}
                         autoSize={{minRows: 5, maxRows: 6}}
@@ -600,146 +794,181 @@ const EngineerPage = (props) => {
                     />
                   </div>
                   <div className={'sa-info-list-row'}>
-                    <div className={'sa-list-row-label'}><p>Комментарий
-                      менеджера</p></div>
+                    <div className={'sa-list-row-label'}><p>Комментарий менеджера</p></div>
                     <TextArea
                         value={bidCommentManager}
                         autoSize={{minRows: 5, maxRows: 6}}
                         style={{fontSize: '18px'}}
                         onChange={(e) => setBidCommentManager(e.target.value)}
                     />
-                  </div>
+                    </div>
                 </div>
               </div>
-              <div className={'sa-bid-page-models-wrapper'}>
+              <div className={'sa-engineer-page-models-wrapper'}>
                 <div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
                 <div className={'sa-models-table-row sa-header-row'}>
-                  <div className={'sa-models-table-cell sa-models-table-cell-header'}><p>№</p></div>
-                  <div className={'sa-models-table-cell sa-models-table-cell-header'}><p
-                      className={'align-left'}>Название</p></div>
-                  <div className={'sa-models-table-cell sa-models-table-cell-header'}><p
-                      className={'align-left'}>Кол-во</p></div>
-                  <div className={'sa-models-table-cell sa-models-table-cell-header'} style={{boxShadow: 'none'}}></div>
-                  {/*<div className={'sa-models-table-cell sa-models-table-cell-header'}></div>*/}
+                  <div className={'sa-models-table-cell sa-models-table-cell-header'}>
+                    <p>№</p>
+                  </div>
+                  <div className={'sa-models-table-cell sa-models-table-cell-header'}>
+                    <p className={'align-left'}>Название</p>
+                  </div>
+                  <div className={'sa-models-table-cell sa-models-table-cell-header'}>
+                    <p className={'align-left'}>Кол-во</p>
+                  </div>
+
+                  <div
+                      className={'sa-models-table-cell sa-models-table-cell-header'}
+                      style={{ boxShadow: 'none' }}
+                  >
+                  </div>
                 </div>
                 <div className={'sa-models-table'}>
-                  {bidModels.map((bidModel, idx) => (
-                      <div className={'sa-models-table-row'}
-                           key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}>
-                        <div className={'sa-models-table-cell'}><p>{idx + 1}</p></div>
-                        <div className={'sa-models-table-cell align-left'}>
-                          <Select style={{width: '100%'}}
-                                  bordered={false}
-                                  value={bidModel.model_id}
+                  {bidModels
+                      .sort((a, b) => +a.sort - +b.sort)
+                      .map((bidModel, idx) => (
+                          <div
+                              className={'sa-models-table-row'}
+                              key={`engineer-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
+                          >
+                            <div className={'sa-models-table-cell'}>
+                              <p>{idx + 1}</p>
+                            </div>
+                            <div className={'sa-models-table-cell align-left'}>
+                              <NameSelect
                                   options={prepareSelect(modelsSelect)}
-                                  showSearch
-                                  optionFilterProp="label"
-                                  filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
-                                  onChange={(val) => handleChangeModel(val, bidModel.id, bidModel.sort)}
-                          />
-                        </div>
-                        <div className={'sa-models-table-cell'}>
-                          <Input style={{width: '100%'}}
-                                 type="number"
-                                 value={bidModel.model_count}
-                                 onChange={(e) => handleChangeModelCount(e.target.value, bidModel.id, bidModel.sort)}
-                          />
-                        </div>
-                        <div className={'sa-models-table-cell'} style={{padding: 0, boxShadow: 'none'}}>
-                          <Button color="primary" variant="filled" icon={<InfoCircleOutlined />}></Button>
-                        </div>
-                        <div className={'sa-models-table-cell'} style={{padding: 0}}>
-                          <Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
-                        </div>
-                      </div>
-                  ))}
+                                  model={bidModel}
+                                  onUpdateModelName={handleChangeModel}
+                              />
+                            </div>
+                            <div className={'sa-models-table-cell'}>
+                              <ModelInput
+                                  value={bidModel.model_count}
+                                  bidModelId={bidModel.id}
+                                  bidModelSort={bidModel.sort}
+                                  type={'model_count'}
+                                  onChangeModel={handleChangeModelInfo}
+                              />
+                            </div>
+
+                            <div
+                                className={'sa-models-table-cell'}
+                                style={{ padding: 0, boxShadow: 'none' }}
+                            >
+                              <Button
+                                  color="primary"
+                                  variant="filled"
+                                  icon={<InfoCircleOutlined />}
+                                  onClick={() => handleOpenModelInfo(bidModel.model_id)}
+                              ></Button>
+                            </div>
+                            <div className={'sa-models-table-cell'} style={{ padding: 0 }}>
+                              <Button
+                                  color="danger"
+                                  variant="filled"
+                                  icon={<DeleteOutlined />}
+                                  onClick={() => handleDeleteModelFromBid(bidModel.id)}
+                              ></Button>
+                            </div>
+                          </div>
+                      ))}
                 </div>
-                <div className={'sa-bid-models-footer'}>
+                <div className={'sa-engineer-models-footer'}>
                   <div className={'sa-footer-btns'}>
-                    <Button style={{width: '30%'}}
-                            color="primary"
-                            variant="outlined"
-                            icon={<PlusOutlined/>}
-                            onClick={handleAddModel}
-                    >Добавить модель</Button>
-                    {/*<Button style={{width: '30%'}} color="primary" variant="filled"*/}
-                    {/*        icon={<FileSearchOutlined/>}>Анализ сырых данных</Button>*/}
-                    {/*<Button style={{width: '30%'}} color="primary" variant="filled"*/}
-                    {/*        icon={<BlockOutlined/>}>Похожие</Button>*/}
+                    <Button
+                        style={{ width: '30%' }}
+                        color="primary"
+                        variant="outlined"
+                        icon={<PlusOutlined />}
+                        onClick={handleAddModel}
+                    >
+                      Добавить модель
+                    </Button>
                   </div>
                   <div className={'sa-footer-table-amounts'}>
                     <div className={'sa-footer-table'}>
                       <div className={'sa-footer-table-col'}>
-                        <div className={'sa-footer-table-cell'}><p>
-                          Высота об-ния:{' '}
+                        <div className={'sa-footer-table-cell'}>
+                          <p>Высота об-ния: </p>
                           {!isLoadingSmall ? (
-                                  <span>{prepareEngineerParameter(engineerParameters.unit)}</span>
+                              <p>
+                                <span>{prepareEngineerParameter(engineerParameters.unit)}</span> U
+                              </p>
                           ) : (
-                              <LoadingOutlined/>
-                          )}{' '}
-                          U
-                        </p></div>
-                        <div className={'sa-footer-table-cell'}><p>
-                          Высота шкафа:{' '}
+                              <LoadingOutlined />
+                          )}
+                        </div>
+                        <div className={'sa-footer-table-cell'}>
+                          <p>Высота шкафа: </p>
                           {!isLoadingSmall ? (
-                                  <span>{prepareEngineerParameter(engineerParameters.box_size)}</span>
+                              <p>
+                                <span>{prepareEngineerParameter(engineerParameters.box_size)}</span> U
+                              </p>
                           ) : (
-                              <LoadingOutlined/>
-                          )}{' '}
-                          U
-                        </p></div>
-                      </div>
-                      <div className={'sa-footer-table-col'}>
-                        <div className={'sa-footer-table-cell'}><p>
-                          Потр. мощ.:{' '}
-                          {!isLoadingSmall ? (
-                                  <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span>
-                          ) : (
-                              <LoadingOutlined/>
-                          )}{' '}
-                          кВт
-                        </p></div>
-                        <div className={'sa-footer-table-cell'}><p>
-                          Вых. мощность:{' '}
-                          {!isLoadingSmall ? (
-                                  <span>{prepareEngineerParameter(engineerParameters.max_power)}</span>
-                          ) : (
-                              <LoadingOutlined/>
-                          )}{' '}
-                          Вт
-                        </p></div>
-                      </div>
-                      <div className={'sa-footer-table-col'}>
-                        <div className={'sa-footer-table-cell'}><p>
-                          Мощность АС:{' '}
-                          {!isLoadingSmall ? (
-                                  <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span>
-                          ) : (
-                              <LoadingOutlined/>
-                          )}{' '}
-                          Вт
-                        </p></div>
-                        <div className={'sa-footer-table-cell'}><p>
-                          Масса:{' '}
-                          {!isLoadingSmall ? (
-                                  <span>{prepareEngineerParameter(engineerParameters.mass)}</span>
-                          ) : (
-                              <LoadingOutlined/>
-                          )}{' '}
-                          кг
-                        </p></div>
+                              <LoadingOutlined />
+                          )}
+                        </div>
                       </div>
                       <div className={'sa-footer-table-col'}>
                         <div className={'sa-footer-table-cell'}>
-                          <p>
-                            Объем: {' '}
-                            {!isLoadingSmall ? (
-                                    <span>{prepareEngineerParameter(engineerParameters.size)}</span>
-                            ) : (
-                                <LoadingOutlined/>
-                            )}{' '}
-                            m3
-                          </p>
+                          <p>Потр. мощ.: </p>
+                          {!isLoadingSmall ? (
+                              <p>
+														<span>
+															{prepareEngineerParameter(engineerParameters.power_consumption)}
+														</span>{' '}
+                                кВт
+                              </p>
+                          ) : (
+                              <LoadingOutlined />
+                          )}
+                        </div>
+                        <div className={'sa-footer-table-cell'}>
+                          <p>Вых. мощность: </p>
+                          {!isLoadingSmall ? (
+                              <p>
+                                <span>{prepareEngineerParameter(engineerParameters.max_power)}</span> Вт
+                              </p>
+                          ) : (
+                              <LoadingOutlined />
+                          )}
+                        </div>
+                      </div>
+                      <div className={'sa-footer-table-col'}>
+                        <div className={'sa-footer-table-cell'}>
+                          <p>Мощность АС: </p>
+                          {!isLoadingSmall ? (
+                              <p>
+														<span>
+															{prepareEngineerParameter(engineerParameters.rated_power_speaker)}
+														</span>{' '}
+                                Вт
+                              </p>
+                          ) : (
+                              <LoadingOutlined />
+                          )}
+                        </div>
+                        <div className={'sa-footer-table-cell'}>
+                          <p>Масса: </p>
+                          {!isLoadingSmall ? (
+                              <p>
+                                <span>{prepareEngineerParameter(engineerParameters.mass)}</span> кг
+                              </p>
+                          ) : (
+                              <LoadingOutlined />
+                          )}
+                        </div>
+                      </div>
+                      <div className={'sa-footer-table-col'}>
+                        <div className={'sa-footer-table-cell'}>
+                          <p>Объем:</p>
+                          {!isLoadingSmall ? (
+                              <p>
+                                <span>{prepareEngineerParameter(engineerParameters.size)}</span> m3
+                              </p>
+                          ) : (
+                              <LoadingOutlined />
+                          )}
                         </div>
                       </div>
                     </div>
@@ -749,11 +978,649 @@ const EngineerPage = (props) => {
             </div>
           </div>
         </Spin>
+        {isAlertVisible && (
+            <Alert
+                message={alertMessage}
+                description={alertDescription}
+                type={alertType}
+                showIcon
+                closable
+                style={{
+                  position: 'fixed',
+                  top: 20,
+                  right: 20,
+                  zIndex: 9999,
+                  width: 350,
+                }}
+                onClose={() => setIsAlertVisible(false)}
+            />
+        )}
       </div>
   );
-}
+};
 
 export default EngineerPage;
+
+// import React, {useEffect, useState} from 'react';
+// import {Affix, Badge, Button, Collapse, Input, Select, Spin, Steps, Tag, Tooltip} from "antd";
+// import {useParams} from "react-router-dom";
+// import {CSRF_TOKEN, PRODMODE} from "../../config/config";
+// import {PROD_AXIOS_INSTANCE} from "../../config/Api";
+// import './components/style/engPage.css'
+// // import {AMOUNT, BID, BID_MODELS, CUR_COMPANY, CUR_CURRENCY, MODELS_DATA, SELECTS} from "./mock/mock";
+// import {PREBID, SELECTS, ALLMODELS_LIST, MODELS_LIST, CALC_INFO} from "./mock/mock";
+// // import MODELS from './mock/mock_models';
+// import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
+// import {
+//   BlockOutlined,
+//   CopyOutlined, DeleteOutlined, DollarOutlined, DownloadOutlined, FilePdfOutlined,
+//   FileSearchOutlined, FileWordOutlined,
+//   HistoryOutlined, InfoCircleOutlined, LoadingOutlined,
+//   PlusOutlined, ProfileOutlined,
+//   SaveOutlined
+// } from "@ant-design/icons";
+// import Panel from "antd/es/splitter/Panel";
+// const { TextArea } = Input;
+//
+// const EngineerPage = (props) => {
+//   const {bidId} = useParams();
+//   const [isMounted, setIsMounted] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [isLoadingSmall, setIsLoadingSmall] = useState(false);
+//   const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
+//   const [isSavingInfo, setIsSavingInfo] = useState(false);
+//
+//   const [lastUpdModel, setLastUpdModel] = useState(null);
+//   const [isUpdateAll, setIsUpdateAll] = useState(false);
+//
+//   const [userData, setUserData] = useState(null);
+//
+//   const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
+//   /* ШАПКА СТРАНИЦЫ */
+//   const [bidType, setBidType] = useState(null);
+//   const [bidIdCompany, setBidIdCompany] = useState(null);
+//   const [bidOrg, setBidOrg] = useState({});
+//   const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
+//   const [companyCurrency, setCompanyCurrency] = useState(null);
+//   const [bankCurrency, setBankCurrency] = useState(null);
+//   /* БАЗОВЫЙ БЛОК */
+//   const [bidOrgUser, setBidOrgUser] = useState('');
+//   const [bidProtectionProject, setBidProtectionProject] = useState('');
+//   const [bidObject, setBidObject] = useState('');
+//   const [bidSellBy, setBidSellBy] = useState(''); // срок реализации
+//   /* БЛОК ПЛАТЕЛЬЩИКА */
+//   const [requisite, setRequisite] = useState(null);
+//   const [conveyance, setConveyance] = useState(null);
+//   const [factAddress, setFactAddress] = useState(null);
+//   const [phone, setPhone] = useState(null);
+//   const [email, setEmail] = useState(null);
+//   const [insurance, setInsurance] = useState(null);
+//   const [bidPackage, setBidPackage] = useState(null);
+//   const [consignee, setConsignee] = useState('');
+//   const [otherEquipment, setOtherEquipment] = useState('');
+//   /* БЛОК КОММЕНТАРИЕВ */
+//   const [bidCommentEngineer, setBidCommentEngineer] = useState('');
+//   const [bidCommentManager, setBidCommentManager] = useState('');
+//   const [bidCommentAdmin, setBidCommentAdmin] = useState('');
+//   const [bidCommentAccountant, setBidCommentAccountant] = useState('');
+//   const [bidCommentAddEquipment, setBidCommentAddEquipment] = useState('');
+//   /* ФИНАНСОВЫЙ БЛОК */
+//   const [bidCurrency, setBidCurrency] = useState(0);
+//   const [bidPriceStatus, setBidPriceStatus] = useState(0);
+//   const [bidPercent, setBidPercent] = useState(0);
+//   const [bidNds, setBidNds] = useState(0);
+//   /* ЛОГИ */
+//   const [bidActionsLogs, setBidActionsLogs] = useState({});
+//   /* ФАЙЛЫ */
+//   const [bidFilesCount, setBidFilesCount] = useState(0);
+//   /* ПРОЕКТ */
+//   const [bidProject, setBidProject] = useState(null); // проект из карточки организации
+//   /* МОДЕЛИ */
+//   const [bidModels, setBidModels] = useState([]);
+//   const [amounts, setAmounts] = useState({
+//     usd: 0,
+//     eur: 0,
+//     rub: 0
+//   });
+//   const [engineerParameters, setEngineerParameters] = useState({
+//     unit: 0,
+//     box_size: 0,
+//     power_consumption: 0,
+//     max_power: 0,
+//     rated_power_speaker: 0,
+//     mass: 0,
+//     size: 0
+//   });
+//   /* СЕЛЕКТ ПО МОДЕЛЯМ */
+//   const [modelsSelect, setModelsSelect] = useState([]);
+//   const [garbage, setGarbage] = useState([]);
+//   /* ВСЕ ОСТАЛЬНЫЕ СЕЛЕКТЫ */
+//   const [typeSelect, setTypeSelect] = useState([]);
+//   const [actionEnumSelect, setActionEnumSelect] = useState([]);
+//   const [adminAcceptSelect, setAdminAcceptSelect] = useState([]);
+//   const [bidCurrencySelect, setBidCurrencySelect] = useState([]);
+//   const [bidPresenceSelect, setBidPresenceSelect] = useState([]);
+//   const [completeSelect, setCompleteSelect] = useState([]);
+//   const [conveyanceSelect, setConveyanceSelect] = useState([]);
+//   const [insuranceSelect, setInsuranceSelect] = useState([]);
+//   const [ndsSelect, setNdsSelect] = useState([]);
+//   const [packageSelect, setPackageSelect] = useState([]);
+//   const [paySelect, setPaySelect] = useState([]);
+//   const [presenceSelect, setPresenceSelect] = useState([]);
+//   const [priceSelect, setPriceSelect] = useState([]);
+//   const [protectionSelect, setProtectionSelect] = useState([]);
+//   const [stageSelect, setStageSelect] = useState([]);
+//   const [templateWordSelect, setTemplateWordSelect] = useState([]);
+//   const [companies, setCompanies] = useState([]);
+//   const [orgUsersSelect, setOrgUsersSelect] = useState([]);
+//
+//   /*  PREBINFO */
+//   const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, manager_name: ""});
+//   const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, engineer_name: ""});
+//
+//   useEffect(() => {
+//     console.log(bidId);
+//     if (!isMounted) {
+//       fetchInfo().then(() => {
+//         // setIsNeedCalcMoney(true);
+//       });
+//       setIsMounted(true);
+//     }
+//   }, []);
+//
+//   useEffect(() => {
+//     if (props.userdata) {
+//       setUserData(props.userdata);
+//     }
+//   }, [props.userdata]);
+//
+//   useEffect(() => {
+//     const handleKeyDown = (event) => {
+//       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+//         event.preventDefault();
+//         if (!isSavingInfo) {
+//           fetchUpdates().then();
+//         }
+//       }
+//     };
+//
+//     window.addEventListener('keydown', handleKeyDown);
+//     return () => {
+//       window.removeEventListener('keydown', handleKeyDown);
+//     };
+//   }, [isSavingInfo]);
+//   useEffect(() => {
+//     if (isMounted && isNeedCalcMoney) { // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
+//       const timer = setTimeout(() => {
+//         fetchCalcModels().then(() => {
+//           setIsNeedCalcMoney(false);
+//           setLastUpdModel(null);
+//           setIsUpdateAll(false);
+//         });
+//       }, 700);
+//
+//       return () => clearTimeout(timer);
+//     }
+//   }, [isNeedCalcMoney]);
+//
+//   const fetchInfo = async () => {
+//     setIsLoading(true);
+//     await fetchBidInfo();
+//     await fetchBidModels();
+//     setTimeout(() => setIsLoading(false), 1000);
+//     await fetchSelects();
+//     // await fetchCurrencySelects();
+//   };
+//   const fetchSelects = async () => {
+//     if (PRODMODE) {
+//       try {
+//         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
+//           data: {},
+//           _token: CSRF_TOKEN
+//         });
+//         if (response.data && response.data.selects) {
+//           const selects = response.data.selects;
+//           // setTypeSelect(selects.type_select);
+//           // setActionEnumSelect(selects.action_enum);
+//           // setAdminAcceptSelect(selects.admin_accept_select);
+//           // setBidCurrencySelect(selects.bid_currency_select);
+//           // setBidPresenceSelect(selects.bid_presence_select);
+//           // setCompleteSelect(selects.complete_select);
+//           // setConveyanceSelect(selects.conveyance_select);
+//           // setInsuranceSelect(selects.insurance_select);
+//           // setNdsSelect(selects.nds_select);
+//           // setPackageSelect(selects.package_select);
+//           // setPaySelect(selects.pay_select);
+//           // setPresenceSelect(selects.presence);
+//           // setPriceSelect(selects.price_select);
+//           // setProtectionSelect(selects.protection_select);
+//           // setStageSelect(selects.stage_select);
+//           // setTemplateWordSelect(selects.template_word_select);
+//           setCompanies(selects.companies);
+//         }
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     } else {
+//       // setTypeSelect(SELECTS.type_select);
+//       // setActionEnumSelect(SELECTS.action_enum);
+//       // setAdminAcceptSelect(SELECTS.admin_accept_select);
+//       // setBidCurrencySelect(SELECTS.bid_currency_select);
+//       // setBidPresenceSelect(SELECTS.bid_presence_select);
+//       // setCompleteSelect(SELECTS.complete_select);
+//       // setConveyanceSelect(SELECTS.conveyance_select);
+//       // setInsuranceSelect(SELECTS.insurance_select);
+//       // setNdsSelect(SELECTS.nds_select);
+//       // setPackageSelect(SELECTS.package_select);
+//       // setPaySelect(SELECTS.pay_select);
+//       // setPresenceSelect(SELECTS.presence);
+//       // setPriceSelect(SELECTS.price_select);
+//       // setProtectionSelect(SELECTS.protection_select);
+//       // setStageSelect(SELECTS.stage_select);
+//       // setTemplateWordSelect(SELECTS.template_word_select);
+//       setCompanies(SELECTS.companies);
+//     }
+//   };
+//   // const fetchExtraSelects = async () => {
+//   //   if (PRODMODE) {
+//   //     try {
+//   //       let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
+//   //         data: {orgId: bidOrg.id},
+//   //         _token: CSRF_TOKEN
+//   //       });
+//   //       if (response.data && response.data.selects) {
+//   //         const selects = response.data.selects;
+//   //         setOrgUsersSelect(selects.orgusers_select);
+//   //       }
+//   //     } catch (e) {
+//   //       console.log(e);
+//   //     }
+//   //   } else {
+//   //     setOrgUsersSelect(SELECTS.orgusers_select);
+//   //   }
+//   // };
+//   // const fetchCurrencySelects = async () => {
+//   //   if (PRODMODE) {
+//   //     try {
+//   //       let response = await PROD_AXIOS_INSTANCE.post('/api/currency/getcurrency', {
+//   //         data: {},
+//   //         _token: CSRF_TOKEN
+//   //       });
+//   //       if (response.data) {
+//   //         setCompanyCurrency(response.data.company);
+//   //         setBankCurrency(response.data.currency);
+//   //       }
+//   //     } catch (e) {
+//   //       console.log(e);
+//   //     }
+//   //   } else {
+//   //     setCompanyCurrency(CUR_COMPANY);
+//   //     setBankCurrency(CUR_CURRENCY);
+//   //   }
+//   // };
+//   const fetchBidModels = async () => {
+//     if (PRODMODE) {
+//       try {
+//         let response = await PROD_AXIOS_INSTANCE.get('/api/sales/getmodels', {
+//           data: {},
+//           _token: CSRF_TOKEN
+//         });
+//         if (response.data) {
+//           setGarbage(response.data.info);
+//           setModelsSelect(response.data.models);
+//         }
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     } else {
+//       setGarbage([]);
+//       setModelsSelect(ALLMODELS_LIST);
+//     }
+//   };
+//
+//   const fetchUpdates = async () => {
+//     console.log('fetchUpdates')
+//     if (PRODMODE) {
+//       try {
+//         setIsSavingInfo(true);
+//
+//         setTimeout(() => setIsSavingInfo(false), 500);
+//       } catch (e) {
+//         console.log(e);
+//         setTimeout(() => setIsSavingInfo(false), 500);
+//       }
+//     } else {
+//       setIsSavingInfo(true);
+//       setTimeout(() => setIsSavingInfo(false), 500);
+//     }
+//   };
+//
+//   const fetchCalcModels = async () => {
+//     console.log('fetchCalcModels')
+//     if (PRODMODE) {
+//       try {
+//         setIsLoadingSmall(true);
+//         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/calcmodels', {
+//           data: {
+//             bid_info: {
+//               bidCurrency,
+//               bidPriceStatus,
+//               bidPercent,
+//               bidNds
+//             },
+//             bid_models: bidModels
+//           },
+//           engineer: true,
+//           _token: CSRF_TOKEN
+//         });
+//         if (response.data.content) {
+//           const content = response.data.content;
+//           if (content.models) setBidModels(content.models);
+//           if (content.amounts) setAmounts(content.amounts);
+//           if (content.models_data) setEngineerParameters(content.models_data);
+//         }
+//         setTimeout(() => setIsLoadingSmall(false), 500);
+//       } catch (e) {
+//         console.log(e);
+//         setTimeout(() => setIsLoadingSmall(false), 500);
+//       }
+//     } else {
+//       setIsSavingInfo(true);
+//       setTimeout(() => setIsLoadingSmall(false), 500);
+//     }
+//   };
+//
+//   const prepareSelect = (select) => {
+//     return select.map((item) => ({value: item.id, label: item.name}));
+//   };
+//
+//   const prepareEngineerParameter = (engineerParameter) => {
+//     const rounded = (+engineerParameter).toFixed(2);
+//     return rounded % 1 === 0 ? Math.round(rounded) : rounded;
+//   };
+//
+//   const handleChangeModel = (newId, oldId, sort) => {
+//     const newModel = modelsSelect.find(model => model.id === newId);
+//     const oldModel = bidModels.find(model => (model.id === oldId && model.sort === sort));
+//     console.log(oldModel);
+//     console.log(newModel);
+//     const oldModelIdx = bidModels.findIndex(model => (model.id === oldId && model.sort === sort));
+//     const newModelObj = {
+//       "id": 0,
+//       "model_id": newId,
+//       "model_count": 1,
+//       "model_name": newModel.name,
+//       "sort": oldModel.sort,
+//       "percent": 0,
+//     };
+//     const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+//     bidModelsUpd[oldModelIdx] = newModelObj;
+//     setBidModels(bidModelsUpd);
+//     setIsNeedCalcMoney(true);
+//     setLastUpdModel(newId);
+//   }
+//   const handleChangeModelCount = (value, bidModelId, sort) => {
+//     const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === sort));
+//     const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+//     // console.log(bidModelsUpd[sort-1]);
+//     bidModelsUpd[bidModelIdx].model_count = parseInt(value);
+//     setBidModels(bidModelsUpd);
+//     setIsNeedCalcMoney(true);
+//     setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+//   };
+//
+//   const handleAddModel = () => {
+//     const lastModel = bidModels[bidModels.length - 1];
+//     const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+//     bidModelsUpd.push({
+//       "id": 0,
+//       "model_id": null,
+//       "model_count": null,
+//       "model_name": "",
+//       "sort": lastModel.sort + 1,
+//       "percent": 0,
+//     });
+//     setBidModels(bidModelsUpd);
+//   };
+//
+//
+//   return (
+//       <div className={'sa-engineer-page-container'}>
+//         <Spin size="large" spinning={isLoading}>
+//           <div className={'sa-engineer-page'}>
+//             <Affix>
+//               <div style={{padding: '10px 12px 0 12px', backgroundColor: '#b4c9e1'}}>
+//                 <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'} style={{margin:0}}>
+//                   <div className={'sa-header-label-container'}>
+//                     <div className={'sa-header-label-container-small'}>
+//                       <h1 className={`sa-header-label`}>Спецификация</h1>
+//                       <div className={'sa-bid-steps-currency'}>
+//                         <div>
+//                           <CurrencyMonitorBar/>
+//                         </div>
+//                       </div>
+//                     </div>
+//                     <div className={'sa-header-label-container-small'}>
+//                       {manager && (
+//                           <div className={'sa-vertical-flex'} style={{alignItems: 'baseline'}}>
+//                             От инженера
+//                             <Tag
+//                                 style={{
+//                                   textAlign: 'center',
+//                                   fontSize: '14px',
+//                                 }}
+//                                 color="geekblue"
+//                             >
+//                               {engineer && (`${engineer.engineer_name}`)}
+//                             </Tag>
+//                             для
+//                             <Tag
+//                                 style={{
+//                                   textAlign: 'center',
+//                                   fontSize: '14px',
+//                                 }}
+//                                 color={companies.find(comp => comp.id === manager.id_company)?.color}
+//                             >
+//                               {manager && (`${manager.manager_name}`)}
+//                             </Tag>
+//                             {/*Ваша роль:*/}
+//                             {/*{userData && userData?.user?.sales_role === 1 && (*/}
+//                             {/*    <Tag color={'blue'}>Менеджер</Tag>*/}
+//                             {/*)}*/}
+//                             {/*{userData && userData?.user?.sales_role === 2 && (*/}
+//                             {/*    <Tag color={'volcano'}>Администратор</Tag>*/}
+//                             {/*)}*/}
+//                             {/*{userData && userData?.user?.sales_role === 3 && (*/}
+//                             {/*    <Tag color={'magenta'}>Бухгалтер</Tag>*/}
+//                             {/*)}*/}
+//                             {/*{userData && userData?.user?.sales_role === 4 && (*/}
+//                             {/*    <Tag color={'gold'}>Завершено</Tag>*/}
+//                             {/*)}*/}
+//                           </div>
+//                       )}
+//                       <Button type={'primary'}
+//                               style={{width: '150px'}}
+//                               icon={<SaveOutlined />}
+//                               loading={isSavingInfo}
+//                               onClick={fetchUpdates}
+//                       >{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}</Button>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </Affix>
+//             <div className={'sa-engineer-page-info-container'}>
+//               <div className={'sa-engineer-page-btns-wrapper'}>
+
+//               </div>
+//               <div className={'sa-bid-page-info-wrapper'}>
+//                 <div className={'sa-info-models-header'}>Основные данные</div>
+//                 <div className={'sa-info-list'}>
+//                   <div className={'sa-info-list-row'}>
+//                     <div className={'sa-list-row-label'}><p>Комментарий
+//                       инженера</p></div>
+//                     <TextArea
+//                         value={bidCommentEngineer}
+//                         autoSize={{minRows: 5, maxRows: 6}}
+//                         style={{fontSize: '18px'}}
+//                         onChange={(e) => setBidCommentEngineer(e.target.value)}
+//                     />
+//                   </div>
+//                   <div className={'sa-info-list-row'}>
+//                     <div className={'sa-list-row-label'}><p>Комментарий
+//                       менеджера</p></div>
+//                     <TextArea
+//                         value={bidCommentManager}
+//                         autoSize={{minRows: 5, maxRows: 6}}
+//                         style={{fontSize: '18px'}}
+//                         onChange={(e) => setBidCommentManager(e.target.value)}
+//                     />
+//                   </div>
+//                 </div>
+//               </div>
+//               <div className={'sa-bid-page-models-wrapper'}>
+//                 <div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
+//                 <div className={'sa-models-table-row sa-header-row'}>
+//                   <div className={'sa-models-table-cell sa-models-table-cell-header'}><p>№</p></div>
+//                   <div className={'sa-models-table-cell sa-models-table-cell-header'}><p
+//                       className={'align-left'}>Название</p></div>
+//                   <div className={'sa-models-table-cell sa-models-table-cell-header'}><p
+//                       className={'align-left'}>Кол-во</p></div>
+//                   <div className={'sa-models-table-cell sa-models-table-cell-header'} style={{boxShadow: 'none'}}></div>
+//                   {/*<div className={'sa-models-table-cell sa-models-table-cell-header'}></div>*/}
+//                 </div>
+//                 <div className={'sa-models-table'}>
+//                   {bidModels.map((bidModel, idx) => (
+//                       <div className={'sa-models-table-row'}
+//                            key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}>
+//                         <div className={'sa-models-table-cell'}><p>{idx + 1}</p></div>
+//                         <div className={'sa-models-table-cell align-left'}>
+//                           <Select style={{width: '100%'}}
+//                                   bordered={false}
+//                                   value={bidModel.model_id}
+//                                   options={prepareSelect(modelsSelect)}
+//                                   showSearch
+//                                   optionFilterProp="label"
+//                                   filterOption={(input, option) => option.label.toLowerCase().includes(input.toLowerCase())}
+//                                   onChange={(val) => handleChangeModel(val, bidModel.id, bidModel.sort)}
+//                           />
+//                         </div>
+//                         <div className={'sa-models-table-cell'}>
+//                           <Input style={{width: '100%'}}
+//                                  type="number"
+//                                  value={bidModel.model_count}
+//                                  onChange={(e) => handleChangeModelCount(e.target.value, bidModel.id, bidModel.sort)}
+//                           />
+//                         </div>
+//                         <div className={'sa-models-table-cell'} style={{padding: 0, boxShadow: 'none'}}>
+//                           <Button color="primary" variant="filled" icon={<InfoCircleOutlined />}></Button>
+//                         </div>
+//                         <div className={'sa-models-table-cell'} style={{padding: 0}}>
+//                           <Button color="danger" variant="filled" icon={<DeleteOutlined />}></Button>
+//                         </div>
+//                       </div>
+//                   ))}
+//                 </div>
+//                 <div className={'sa-bid-models-footer'}>
+//                   <div className={'sa-footer-btns'}>
+//                     <Button style={{width: '30%'}}
+//                             color="primary"
+//                             variant="outlined"
+//                             icon={<PlusOutlined/>}
+//                             onClick={handleAddModel}
+//                     >Добавить модель</Button>
+//                     {/*<Button style={{width: '30%'}} color="primary" variant="filled"*/}
+//                     {/*        icon={<FileSearchOutlined/>}>Анализ сырых данных</Button>*/}
+//                     {/*<Button style={{width: '30%'}} color="primary" variant="filled"*/}
+//                     {/*        icon={<BlockOutlined/>}>Похожие</Button>*/}
+//                   </div>
+//                   <div className={'sa-footer-table-amounts'}>
+//                     <div className={'sa-footer-table'}>
+//                       <div className={'sa-footer-table-col'}>
+//                         <div className={'sa-footer-table-cell'}><p>
+//                           Высота об-ния:{' '}
+//                           {!isLoadingSmall ? (
+//                                   <span>{prepareEngineerParameter(engineerParameters.unit)}</span>
+//                           ) : (
+//                               <LoadingOutlined/>
+//                           )}{' '}
+//                           U
+//                         </p></div>
+//                         <div className={'sa-footer-table-cell'}><p>
+//                           Высота шкафа:{' '}
+//                           {!isLoadingSmall ? (
+//                                   <span>{prepareEngineerParameter(engineerParameters.box_size)}</span>
+//                           ) : (
+//                               <LoadingOutlined/>
+//                           )}{' '}
+//                           U
+//                         </p></div>
+//                       </div>
+//                       <div className={'sa-footer-table-col'}>
+//                         <div className={'sa-footer-table-cell'}><p>
+//                           Потр. мощ.:{' '}
+//                           {!isLoadingSmall ? (
+//                                   <span>{prepareEngineerParameter(engineerParameters.power_consumption)}</span>
+//                           ) : (
+//                               <LoadingOutlined/>
+//                           )}{' '}
+//                           кВт
+//                         </p></div>
+//                         <div className={'sa-footer-table-cell'}><p>
+//                           Вых. мощность:{' '}
+//                           {!isLoadingSmall ? (
+//                                   <span>{prepareEngineerParameter(engineerParameters.max_power)}</span>
+//                           ) : (
+//                               <LoadingOutlined/>
+//                           )}{' '}
+//                           Вт
+//                         </p></div>
+//                       </div>
+//                       <div className={'sa-footer-table-col'}>
+//                         <div className={'sa-footer-table-cell'}><p>
+//                           Мощность АС:{' '}
+//                           {!isLoadingSmall ? (
+//                                   <span>{prepareEngineerParameter(engineerParameters.rated_power_speaker)}</span>
+//                           ) : (
+//                               <LoadingOutlined/>
+//                           )}{' '}
+//                           Вт
+//                         </p></div>
+//                         <div className={'sa-footer-table-cell'}><p>
+//                           Масса:{' '}
+//                           {!isLoadingSmall ? (
+//                                   <span>{prepareEngineerParameter(engineerParameters.mass)}</span>
+//                           ) : (
+//                               <LoadingOutlined/>
+//                           )}{' '}
+//                           кг
+//                         </p></div>
+//                       </div>
+//                       <div className={'sa-footer-table-col'}>
+//                         <div className={'sa-footer-table-cell'}>
+//                           <p>
+//                             Объем: {' '}
+//                             {!isLoadingSmall ? (
+//                                     <span>{prepareEngineerParameter(engineerParameters.size)}</span>
+//                             ) : (
+//                                 <LoadingOutlined/>
+//                             )}{' '}
+//                             m3
+//                           </p>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </Spin>
+//       </div>
+//   );
+// }
+//
+// export default EngineerPage;
 
 
 
