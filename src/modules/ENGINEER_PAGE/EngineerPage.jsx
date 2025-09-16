@@ -214,7 +214,6 @@ const EngineerPage = (props) => {
     await fetchBidInfo();
     await fetchBidModels();
     setTimeout(() => setIsLoading(false), 1000);
-    await fetchSelects();
     await fetchCurrencySelects();
   };
   const fetchBidInfo = async () => {
