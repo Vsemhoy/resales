@@ -9,20 +9,25 @@ export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
 
-	const { data: rawSmsData, loading } = useSms({
+	const {
+		data: rawSmsData,
+		loading,
+		error,
+	} = useSms({
 		url: '/api/sms',
 		mock: MOCK,
 	});
 
+	// Обработка полученных SMS
 	const smsData = useMemo(() => {
-		if (!rawSmsData || rawSmsData.length === 0) {
+		if (!Array.isArray(rawSmsData) || rawSmsData.length === 0) {
 			return { hasSms: false, messages: [] };
 		}
 
 		const messages = rawSmsData.map((sms) => ({
 			id: sms.id,
-			name: sms.from.name,
-			surname: sms.from.surname,
+			name: sms.from?.name || 'Без имени',
+			surname: sms.from?.surname || 'Без фамилии',
 			content: sms.text || '(без текста)',
 		}));
 
@@ -32,14 +37,15 @@ export const ChatBtn = () => {
 		};
 	}, [rawSmsData]);
 
+	// Генерация текста в dropdown
 	const menuItems = useMemo(() => {
 		if (!smsData.hasSms) return [];
 
 		const { messages } = smsData;
-		const messageCount = messages.length;
+		const count = messages.length;
 
 		const label = (() => {
-			switch (messageCount) {
+			switch (count) {
 				case 1:
 					return `${messages[0].name} ${messages[0].surname}`;
 				case 2:
@@ -47,7 +53,7 @@ export const ChatBtn = () => {
 				default:
 					return `${messages[0].surname} ${messages[0].name}, ${messages[1].surname} ${
 						messages[1].name
-					} и ещё +${messageCount - 2}`;
+					} и ещё +${count - 2}`;
 			}
 		})();
 
@@ -68,6 +74,7 @@ export const ChatBtn = () => {
 		];
 	}, [smsData]);
 
+	// Обработчики модального окна
 	const showModal = () => {
 		setIsModalOpen(true);
 		setDropdownVisible(false);
@@ -105,6 +112,8 @@ export const ChatBtn = () => {
 			</Dropdown>
 
 			<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData} />
+
+			{error && <span style={{ color: 'red', fontSize: '12px' }}>Ошибка загрузки сообщений</span>}
 		</Space>
 	);
 };

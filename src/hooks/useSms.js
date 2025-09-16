@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../config/Api.js';
 
-export const useSms = ({ url, mock, axiosOptions = {} }) => {
+export const useSms = ({ url, mock = {} }) => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -16,26 +16,48 @@ export const useSms = ({ url, mock, axiosOptions = {} }) => {
 				let responseData = [];
 
 				if (PRODMODE) {
-					const response = await PROD_AXIOS_INSTANCE.get(url, {
-						headers: {
-							'X-CSRF-TOKEN': CSRF_TOKEN,
-							...axiosOptions.headers,
-						},
-						...axiosOptions,
-					});
-					console.log('API response:', response.data);
+					let response;
 
-					// Безопасно получаем sms из API, если структура совпадает
-					responseData = response?.data?.[0]?.content?.sms || [];
+					try {
+						response = await PROD_AXIOS_INSTANCE.post('/api/sms', {
+							data: {},
+							_token: CSRF_TOKEN,
+						});
+					} catch (err) {
+						console.error('[useSms] Ошибка при запросе /api/sms:', err);
+						throw new Error('Не удалось загрузить SMS с сервера');
+					}
+
+					if (
+						Array.isArray(response?.data) &&
+						response.data[0]?.content?.sms &&
+						Array.isArray(response.data[0].content.sms)
+					) {
+						responseData = response.data[0].content.sms;
+					} else {
+						console.warn('[useSms] Ответ от сервера не содержит ожидаемые данные');
+						responseData = [];
+					}
 				} else {
-					// Если mock - функция, вызываем, иначе берем как есть
+					console.log('[useSms] Используется MOCK-данные (dev mode)');
 					const mockData = typeof mock === 'function' ? mock() : mock;
-					responseData = mockData?.[0]?.content?.sms || [];
+
+					if (
+						Array.isArray(mockData) &&
+						mockData[0]?.content?.sms &&
+						Array.isArray(mockData[0].content.sms)
+					) {
+						responseData = mockData[0].content.sms;
+					} else {
+						console.warn('[useSms] MOCK-данные не содержат ожидаемую структуру');
+						responseData = [];
+					}
 				}
 
 				setData(responseData);
 			} catch (err) {
-				setError(err.message || 'Unknown error');
+				console.error('[useSms] Ошибка при загрузке данных:', err);
+				setError(err.message || 'Неизвестная ошибка');
 				setData([]);
 			} finally {
 				setLoading(false);
@@ -43,7 +65,7 @@ export const useSms = ({ url, mock, axiosOptions = {} }) => {
 		};
 
 		fetchData();
-	}, [url]);
+	}, [url, mock]);
 
 	return { data, loading, error };
 };
