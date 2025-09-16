@@ -123,3 +123,55 @@
 	/* background-color: rgba(255, 0, 0, 0.13); */
 	color: red;
 }
+.sa-org-contactstack-box {
+	background-color: #e3e8ea;
+}
+.sa-org-contactstack-box .ant-collapse-item:hover {
+	background-color: #d6dbdd;
+}
+.sa-org-contactstack-box .ant-collapse-item {
+	border-bottom: 1px solid white;
+}
+
+.sa-org-contactstack-box .ant-collapse-item .ant-collapse-header {
+	padding: 2px 12px;
+}
+.sa-org-contactstack-addrow {
+	padding: 2px 6px;
+	border-radius: 3px;
+	opacity: 0.8;
+	display: flex;
+	grid-gap: 9px;
+}
+.sa-org-contactstack-addrow:hover {
+	opacity: 1;
+}
+.sa-org-contactstack-addrow > div {
+	display: flex;
+	grid-gap: 4px;
+}
+.sa-org-contactstack-addrow > div  button {
+	opacity: 0.5;
+}
+.sa-org-contactstack-addrow:hover > div  button {
+	opacity: 0.7;
+}
+.sa-org-contactstack-addrow > div  button:hover {
+	opacity: 1;
+}
+.sa-org-contactstack-delrow {
+	opacity: 0.6;
+}
+.sa-org-contactstack-delrow:hover {
+	opacity: 1;
+}
+
+.ant-collapse-item .ant-collapse-item .sk-omt-stack-control {
+	background-color: #ecf2fa;
+	transition: all 0.1s;
+	color: #006cc4;
+	border-bottom: 1px solid #2195f357;
+}
+/* .ant-collapse-item .ant-collapse-item:hover .sk-omt-stack-control {
+	background-color: #c9daea;
+} */
