@@ -8,6 +8,12 @@ body {
 [flex] {
 	display: flex;
 }
+[hidden] {
+	display: none;
+	pointer-events: none;
+	visibility: hidden;
+	overflow: hidden;
+}
 code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }

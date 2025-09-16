@@ -567,7 +567,7 @@ export const BID_INFO = {
         "bill": null
     },
     "bid_models": [
-        {
+        /*{
             "id": 977889,
             "model_id": 1516,
             "model_count": 1,
@@ -676,7 +676,7 @@ export const BID_INFO = {
             "sort": 10,
             "presence": -2,
             "percent": 0
-        },
+        },*/
         /*{
             "id": 977900,
             "model_id": 1140,

@@ -40,6 +40,7 @@ import { MODAL_NOTES_LIST } from '../ORG_LIST/components/mock/MODALNOTESTABMOCK'
 import { MODAL_PROJECTS_LIST } from '../ORG_LIST/components/mock/MODALPROJECTSTABMOCK';
 import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
+import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
 
 const tabNames = [
 	{
@@ -137,6 +138,8 @@ const OrgPage = (props) => {
 
 	const [baseFiltersData, setBaseFilterstData] = useState(null);
 
+
+
 	useEffect(() => {
 		setLoading(true);
 		let rp = getCurrentParamsString();
@@ -165,6 +168,8 @@ const OrgPage = (props) => {
 			get_notes_data_action(item_id);
 			get_org_calls_action(item_id);
 			get_projects_data_action(item_id);
+
+      get_departs();
 		} else {
 			setBaseFilterstData(OM_ORG_FILTERDATA);
 
@@ -172,6 +177,8 @@ const OrgPage = (props) => {
 			setBaseNotesData(MODAL_NOTES_LIST);
 			setBaseProjectsData(MODAL_PROJECTS_LIST);
 			setBaseCallsData(MODAL_CALLS_LIST);
+
+      setDepartList(DEPARTAMENTS_MOCK);
 		}
 	}, []);
 
@@ -374,6 +381,27 @@ const OrgPage = (props) => {
 				console.log('me2: ', response);
 				setBaseFilterstData(response.data.filters);
 				setBaseCompanies(response.data.filters?.companies);
+			} catch (e) {
+				console.log(e);
+			} finally {
+				// setLoadingOrgs(false)
+			}
+		} else {
+			//setUserAct(USDA);
+		}
+	};
+
+
+  	const get_departs = async () => {
+		if (PRODMODE) {
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/admin/staff/data/getdepartments', {
+					data: {},
+					_token: CSRF_TOKEN,
+				});
+				if (response){
+          setDepartList(response.data.data.departments);
+        }
 			} catch (e) {
 				console.log(e);
 			} finally {

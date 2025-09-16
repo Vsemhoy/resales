@@ -1,105 +1,80 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
-
 import { MOCK } from '../mock/mock.js';
-import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
-import { PROD_AXIOS_INSTANCE } from '../../../config/Api.js';
+import { useSms } from '../../../hooks/sms/useSms.js';
 import { ChatModal } from './ChatModal';
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
-	const [smsData, setSmsData] = useState(false);
-	const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		const fetchSmsData = async () => {
-			if (!PRODMODE) {
-				try {
-					const response = await PROD_AXIOS_INSTANCE.post('/api/sms', { _token: CSRF_TOKEN });
-					if (response.data?.content?.sms) {
-						const smsArray = response.data.content.sms;
-						const messages = smsArray.map((sms) => ({
-							id: sms.id,
-							name: sms.from.name,
-							surname: sms.from.surname,
-							content: sms.text || '(без текста)',
-						}));
-						setSmsData({ hasSms: smsArray.length > 0, messages });
-					} else {
-						setSmsData({ hasSms: false, messages: [] });
-					}
-				} catch (error) {
-					console.error('Ошибка при загрузке sms:', error);
-					setSmsData({ hasSms: false, messages: [] });
-				} finally {
-					setLoading(false);
-				}
-			} else {
-				const smsArray = MOCK.reduce((acc, obj) => [...acc, ...obj.content.sms], []);
-				const messages = smsArray.map((sms) => ({
-					id: sms.id,
-					name: sms.from.name,
-					surname: sms.from.surname,
-					content: sms.text || '(без текста)',
-				}));
-				setSmsData({ hasSms: smsArray.length > 0, messages });
-				setLoading(false);
-			}
+	const {
+		data: smsList,
+		loading,
+		error,
+	} = useSms({
+		url: '/api/sms',
+		mock: MOCK,
+	});
+
+	// Обработка полученных SMS
+	const smsData = useMemo(() => {
+		if (!Array.isArray(smsList) || smsList.length === 0) {
+			return { hasSms: false, messages: [] };
+		}
+
+		const messages = smsList.map((sms) => ({
+			id: sms.id,
+			name: sms.from?.name || 'Без имени',
+			surname: sms.from?.surname || 'Без фамилии',
+			content: sms.text || '(без текста)',
+		}));
+
+		return {
+			hasSms: messages.length > 0,
+			messages,
 		};
+	}, [smsList]);
 
-		fetchSmsData();
-	}, []);
+	// Генерация текста в dropdown
+	const menuItems = useMemo(() => {
+		if (!smsData.hasSms) return [];
 
-	const menuItems = [
-		...(smsData?.hasSms
-			? [
-					{
-						key: 'sms-section',
-						label: (
-							<div className="sms-section">
-								<Space direction="vertical" size={4}>
-									<Space size={4} />
-									<Space size={2} wrap>
-										{(() => {
-											switch (smsData.messages.length) {
-												case 1:
-													return (
-														<>{`${smsData.messages[0].name} ${smsData.messages[0].surname}`}</>
-													);
-												case 2:
-													return (
-														<>
-															{`${smsData.messages[0].name} ${smsData.messages[0].surname} и ${smsData.messages[1].name} ${smsData.messages[1].surname}`}
-														</>
-													);
-												default:
-													return (
-														<>
-															{smsData.messages.length > 2 && (
-																<span className="sms-counter">
-																	{`${smsData.messages[0].surname} ${smsData.messages[0].name}, ${
-																		smsData.messages[1].surname
-																	} ${smsData.messages[1].name} и ещё +${
-																		smsData.messages.length - 2
-																	}`}
-																</span>
-															)}
-														</>
-													);
-											}
-										})()}
-									</Space>
-								</Space>
-							</div>
-						),
-						onClick: () => console.log('Переход к сообщениям'),
-					},
-			  ]
-			: []),
-	];
+		const { messages } = smsData;
+		const count = messages.length;
 
+		const label = (() => {
+			if (count === 1) {
+				return `${messages[0].name} ${messages[0].surname}`;
+			}
+			if (count === 2) {
+				return `${messages[0].name} ${messages[0].surname} и ${messages[1].name} ${messages[1].surname}`;
+			}
+			return `${messages
+				.slice(0, 2)
+				.map((m) => `${m.name} ${m.surname}`)
+				.join(', ')} и ещё ${count - 2}`;
+		})();
+
+		return [
+			{
+				key: 'sms-section',
+				label: (
+					<div className="sms-section">
+						<Space direction="vertical" size={4}>
+							<Space size={2} wrap>
+								<span className="sms-counter">{label}</span>
+							</Space>
+						</Space>
+					</div>
+				),
+				onClick: () => console.log('Переход к сообщениям'),
+			},
+		];
+	}, [smsData]);
+
+	// Обработчики модального окна
 	const showModal = () => {
 		setIsModalOpen(true);
 		setDropdownVisible(false);
@@ -126,10 +101,10 @@ export const ChatBtn = () => {
 						style={{ background: 'transparent' }}
 						type="primary"
 						onClick={showModal}
-						className="sa-flex-gap chat"
+						loading={loading}
 					>
 						<MessageOutlined />
-						{smsData?.hasSms && (
+						{smsData.hasSms && (
 							<span className="notification-badge">{smsData.messages.length}</span>
 						)}
 					</Button>
@@ -137,6 +112,8 @@ export const ChatBtn = () => {
 			</Dropdown>
 
 			<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData} />
+
+			{error && <span style={{ color: 'red', fontSize: '12px' }}>Ошибка загрузки сообщений</span>}
 		</Space>
 	);
 };

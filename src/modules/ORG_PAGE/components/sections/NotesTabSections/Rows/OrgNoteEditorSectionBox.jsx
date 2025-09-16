@@ -36,6 +36,7 @@ const OrgNoteEditorSectionBox = (props) => {
 			setNotes(props.data.notes);
 			setCreator(props.data.id8staff_list);
 			setDeleted(props.data.deleted);
+			setDate(props.data.date);
 		}
 	}, [props.data]);
 
@@ -116,7 +117,7 @@ const OrgNoteEditorSectionBox = (props) => {
 						name: '_creator.name',
 					},
 					{
-						type: 'datetime',
+						type: 'date',
 						value: date,
 						max: 250,
 						required: true,
