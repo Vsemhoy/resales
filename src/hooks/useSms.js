@@ -28,6 +28,8 @@ export const useSms = ({ url, mock = {} }) => {
 						throw new Error('Не удалось загрузить SMS с сервера');
 					}
 
+					console.log('[useSms] Ответ от сервера:', response.data);
+
 					if (
 						Array.isArray(response?.data) &&
 						response.data[0]?.content?.sms &&
@@ -41,6 +43,8 @@ export const useSms = ({ url, mock = {} }) => {
 				} else {
 					console.log('[useSms] Используется MOCK-данные (dev mode)');
 					const mockData = typeof mock === 'function' ? mock() : mock;
+
+					console.log('[useSms] MOCK-данные:', mockData);
 
 					if (
 						Array.isArray(mockData) &&
