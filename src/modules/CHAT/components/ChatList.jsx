@@ -3,38 +3,42 @@ import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/useSms';
 
 export default function ChatList() {
-	const { data, loading, error } = useSms({
-		url: '/api/sms', // используется внутри хука при PRODMODE
-		mock: MOCK, // используется в dev-режиме
+	const {
+		data: smsList,
+		loading,
+		error,
+	} = useSms({
+		url: '/api/sms',
+		mock: MOCK,
 	});
 
 	// Обработка всех сообщений и создание уникальных чатов
 	const chats = useMemo(() => {
-		if (!data || data.length === 0) return [];
+		if (!Array.isArray(smsList) || smsList.length === 0) return [];
 
-		// Собираем уникальные чаты по chat_id
 		const uniqueChatsMap = {};
-		data.forEach((sms) => {
+
+		smsList.forEach((sms) => {
 			const chatId = sms.chat_id;
+			const currentTime = sms.updated_at || sms.created_at;
+
 			if (!uniqueChatsMap[chatId]) {
 				uniqueChatsMap[chatId] = sms;
 			} else {
-				const existing = uniqueChatsMap[chatId];
-				const existingTime = existing.updated_at || existing.created_at;
-				const newTime = sms.updated_at || sms.created_at;
-				if (newTime > existingTime) {
+				const existingTime = uniqueChatsMap[chatId].updated_at || uniqueChatsMap[chatId].created_at;
+				if (currentTime > existingTime) {
 					uniqueChatsMap[chatId] = sms;
 				}
 			}
 		});
 
-		// Сортировка по дате (сначала самые новые)
+		// Сортировка по времени (самые новые — выше)
 		return Object.values(uniqueChatsMap).sort((a, b) => {
-			const timeA = new Date(a.updated_at || a.created_at);
-			const timeB = new Date(b.updated_at || b.created_at);
+			const timeA = a.updated_at || a.created_at;
+			const timeB = b.updated_at || b.created_at;
 			return timeB - timeA;
 		});
-	}, [data]);
+	}, [smsList]);
 
 	// Отображение
 	if (loading) return <p>Загрузка чатов...</p>;

@@ -10,7 +10,7 @@ export const ChatBtn = () => {
 	const [dropdownVisible, setDropdownVisible] = useState(false);
 
 	const {
-		data: rawSmsData,
+		data: smsList,
 		loading,
 		error,
 	} = useSms({
@@ -20,11 +20,11 @@ export const ChatBtn = () => {
 
 	// Обработка полученных SMS
 	const smsData = useMemo(() => {
-		if (!Array.isArray(rawSmsData) || rawSmsData.length === 0) {
+		if (!Array.isArray(smsList) || smsList.length === 0) {
 			return { hasSms: false, messages: [] };
 		}
 
-		const messages = rawSmsData.map((sms) => ({
+		const messages = smsList.map((sms) => ({
 			id: sms.id,
 			name: sms.from?.name || 'Без имени',
 			surname: sms.from?.surname || 'Без фамилии',
@@ -35,7 +35,7 @@ export const ChatBtn = () => {
 			hasSms: messages.length > 0,
 			messages,
 		};
-	}, [rawSmsData]);
+	}, [smsList]);
 
 	// Генерация текста в dropdown
 	const menuItems = useMemo(() => {
@@ -45,16 +45,16 @@ export const ChatBtn = () => {
 		const count = messages.length;
 
 		const label = (() => {
-			switch (count) {
-				case 1:
-					return `${messages[0].name} ${messages[0].surname}`;
-				case 2:
-					return `${messages[0].name} ${messages[0].surname} и ${messages[1].name} ${messages[1].surname}`;
-				default:
-					return `${messages[0].surname} ${messages[0].name}, ${messages[1].surname} ${
-						messages[1].name
-					} и ещё +${count - 2}`;
+			if (count === 1) {
+				return `${messages[0].name} ${messages[0].surname}`;
 			}
+			if (count === 2) {
+				return `${messages[0].name} ${messages[0].surname} и ${messages[1].name} ${messages[1].surname}`;
+			}
+			return `${messages
+				.slice(0, 2)
+				.map((m) => `${m.name} ${m.surname}`)
+				.join(', ')} и ещё ${count - 2}`;
 		})();
 
 		return [

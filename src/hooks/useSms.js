@@ -16,45 +16,37 @@ export const useSms = ({ url, mock = {} }) => {
 				let responseData = [];
 
 				if (PRODMODE) {
-					let response;
-
 					try {
-						response = await PROD_AXIOS_INSTANCE.post('/api/sms', {
+						const response = await PROD_AXIOS_INSTANCE.post('/api/sms', {
 							data: {},
 							_token: CSRF_TOKEN,
 						});
+
+						console.log('[useSms] Ответ от сервера:', response.data);
+
+						const sms = response?.data?.content?.sms;
+
+						if (Array.isArray(sms)) {
+							responseData = sms;
+						} else {
+							console.warn('[useSms] СМС в ответе сервера не является массивом');
+						}
 					} catch (err) {
 						console.error('[useSms] Ошибка при запросе /api/sms:', err);
 						throw new Error('Не удалось загрузить SMS с сервера');
 					}
-
-					console.log('[useSms] Ответ от сервера:', response.data);
-
-					if (
-						Array.isArray(response?.data) &&
-						response.data[0]?.content?.sms &&
-						Array.isArray(response.data[0].content.sms)
-					) {
-						responseData = response.data[0].content.sms;
-					} else {
-						console.warn('[useSms] Ответ от сервера не содержит ожидаемые данные');
-						responseData = [];
-					}
 				} else {
-					console.log('[useSms] Используется MOCK-данные (dev mode)');
+					console.log('[useSms] Используются MOCK-данные (dev mode)');
 					const mockData = typeof mock === 'function' ? mock() : mock;
 
 					console.log('[useSms] MOCK-данные:', mockData);
 
-					if (
-						Array.isArray(mockData) &&
-						mockData[0]?.content?.sms &&
-						Array.isArray(mockData[0].content.sms)
-					) {
-						responseData = mockData[0].content.sms;
+					const sms = mockData?.content?.sms;
+
+					if (Array.isArray(sms)) {
+						responseData = sms;
 					} else {
-						console.warn('[useSms] MOCK-данные не содержат ожидаемую структуру');
-						responseData = [];
+						console.warn('[useSms] MOCK-данные не содержат массив sms');
 					}
 				}
 
