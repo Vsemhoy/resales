@@ -462,6 +462,7 @@ const EngineerPage = (props) => {
       "model_count": 1,
       "model_name": newModel.name,
       "sort": oldModel.sort,
+      "percent": 0,
     };
     const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
     bidModelsUpd[oldModelIdx] = newModelObj;
@@ -488,6 +489,7 @@ const EngineerPage = (props) => {
       "model_count": null,
       "model_name": "",
       "sort": lastModel.sort + 1,
+      "percent": 0,
     });
     setBidModels(bidModelsUpd);
   };
