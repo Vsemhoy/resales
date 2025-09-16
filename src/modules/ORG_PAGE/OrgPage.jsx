@@ -40,6 +40,7 @@ import { MODAL_NOTES_LIST } from '../ORG_LIST/components/mock/MODALNOTESTABMOCK'
 import { MODAL_PROJECTS_LIST } from '../ORG_LIST/components/mock/MODALPROJECTSTABMOCK';
 import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
+import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
 
 const tabNames = [
 	{
@@ -53,6 +54,8 @@ const tabNames = [
 	{ link: 'n', name: 'Заметки' },
 	{ link: 'h', name: 'История' },
 ];
+// Максиму: Я поставил заглушку, departList чтобы сбилдить проект
+// let departList = [];
 
 /**
  *
@@ -76,6 +79,7 @@ const tabNames = [
 const OrgPage = (props) => {
 	const { userdata } = props;
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
+	const [departList, setDepartList] = useState(null);
 	const [open, setOpen] = useState(false);
 	//   const [openResponsive, setOpenResponsive] = useState(false);
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -134,6 +138,8 @@ const OrgPage = (props) => {
 
 	const [baseFiltersData, setBaseFilterstData] = useState(null);
 
+
+
 	useEffect(() => {
 		setLoading(true);
 		let rp = getCurrentParamsString();
@@ -162,6 +168,8 @@ const OrgPage = (props) => {
 			get_notes_data_action(item_id);
 			get_org_calls_action(item_id);
 			get_projects_data_action(item_id);
+
+      get_departs();
 		} else {
 			setBaseFilterstData(OM_ORG_FILTERDATA);
 
@@ -169,6 +177,8 @@ const OrgPage = (props) => {
 			setBaseNotesData(MODAL_NOTES_LIST);
 			setBaseProjectsData(MODAL_PROJECTS_LIST);
 			setBaseCallsData(MODAL_CALLS_LIST);
+
+      setDepartList(DEPARTAMENTS_MOCK);
 		}
 	}, []);
 
@@ -381,6 +391,27 @@ const OrgPage = (props) => {
 		}
 	};
 
+
+  	const get_departs = async () => {
+		if (PRODMODE) {
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/admin/staff/data/getdepartments', {
+					data: {},
+					_token: CSRF_TOKEN,
+				});
+				if (response){
+          setDepartList(response.data.data.departments);
+        }
+			} catch (e) {
+				console.log(e);
+			} finally {
+				// setLoadingOrgs(false)
+			}
+		} else {
+			//setUserAct(USDA);
+		}
+	};
+
 	/** ----------------------- FETCHES -------------------- */
 
 	/**
@@ -550,22 +581,23 @@ const OrgPage = (props) => {
 							userdata={userdata}
 						/>
 
-            <CallsTabPage
-                show={activeTab === 'c'}
-                edit_mode={editMode}
-                item_id={itemId}
-                call_to_save={callToSaveAction}
-                base_data={baseCallsData}
-                on_save={handleDataChangeApprove}
-                active_page={pageCalls}
-                on_change_page={(p)=> {setPageCalls(p)}}
-                current_page={pageCalls}
-                userdata={userdata}
-
-                selects={baseFiltersData}
-                departaments={[]} //departList
-                main_data={baseMainData}
-            />
+						<CallsTabPage
+							show={activeTab === 'c'}
+							edit_mode={editMode}
+							item_id={itemId}
+							call_to_save={callToSaveAction}
+							base_data={baseCallsData}
+							on_save={handleDataChangeApprove}
+							active_page={pageCalls}
+							on_change_page={(p) => {
+								setPageCalls(p);
+							}}
+							current_page={pageCalls}
+							userdata={userdata}
+							selects={baseFiltersData}
+							departaments={departList}
+							main_data={baseMainData}
+						/>
 
 						<ProjectsTabPage
 							show={activeTab === 'p'}
