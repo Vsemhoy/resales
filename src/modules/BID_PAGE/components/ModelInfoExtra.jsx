@@ -7,6 +7,7 @@ import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 const ModelInfoExtra = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [extraId, setExtraId] = useState(null);
+    const [extraName, setExtraName] = useState('');
     const [extraInfo, setExtraInfo] = useState([]);
     const columns = [
         {
@@ -28,6 +29,12 @@ const ModelInfoExtra = (props) => {
             setExtraId(props.model_id);
         }
     }, [props.model_id]);
+
+    useEffect(() => {
+        if (props.model_name) {
+            setExtraName(props.model_name);
+        }
+    }, [props.model_name]);
 
     useEffect(() => {
         if (extraId) {
@@ -64,11 +71,13 @@ const ModelInfoExtra = (props) => {
             width={600}
             onClose={(_) => {
                 setExtraId(null);
+                setExtraName('');
                 setExtraInfo([]);
             }}
             open={extraId}
         >
             <Spin spinning={isLoading}>
+                <h2>{extraName}</h2>
                 <div className={'extra__table__container'}>
                     <Table
                         columns={columns}

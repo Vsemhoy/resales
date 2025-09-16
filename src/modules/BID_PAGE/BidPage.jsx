@@ -145,8 +145,8 @@ const BidPage = (props) => {
 	const [emailSelect, setEmailSelect] = useState([]);
 	const [bidPackageSelect, setBidPackageSelect] = useState([]);
 	/* ОСТАЛЬНОЕ */
-	const [isOpenExtraInfo, setIsOpenExtraInfo] = useState(false);
-	const [modelIdExtra, setModelIdExtra] = useState(false);
+	const [modelIdExtra, setModelIdExtra] = useState(null);
+	const [modelNameExtra, setModelNameExtra] = useState('');
 
 	const handleKeyDown = (event) => {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -697,13 +697,14 @@ const BidPage = (props) => {
 	  }
 	};
 	const handleOpenModelInfo = (modelId) => {
-		setIsOpenExtraInfo(true);
 		setModelIdExtra(modelId);
+		const name = bidModels.find(model => model.model_id === modelId).model_name;
+		setModelNameExtra(name);
 	};
 
 	const handleCloseDrawer = () => {
-		setIsOpenExtraInfo(false);
 		setModelIdExtra(null);
+		setModelNameExtra('');
 	};
 
 	const collapseItems = [
@@ -1486,7 +1487,10 @@ const BidPage = (props) => {
 					onClose={() => setIsAlertVisible(false)}
 				/>
 			)}
-			<ModelInfoExtra closeDrawer={handleCloseDrawer} model_id={modelIdExtra}/>
+			<ModelInfoExtra model_id={modelIdExtra}
+							model_name={modelNameExtra}
+							closeDrawer={handleCloseDrawer}
+			/>
 		</div>
 	);
 };
