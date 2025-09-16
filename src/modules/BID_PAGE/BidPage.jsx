@@ -601,7 +601,11 @@ const BidPage = (props) => {
         }).format(number);
     };
     const handleAddModel = () => {
-        const lastModel = bidModels.sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
+        let sort = 0;
+        if (bidModels && bidModels.length > 0) {
+            const lastModel = bidModels.sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
+            sort = lastModel.sort + 1;
+        }
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd.push({
             "id": 0,
@@ -611,7 +615,7 @@ const BidPage = (props) => {
             "not_available": 0,
             "percent": null,
             "presence": null,
-            "sort": lastModel.sort + 1,
+            "sort": sort,
             "name": "",
             "type_model": 0,
             "currency": 0,
