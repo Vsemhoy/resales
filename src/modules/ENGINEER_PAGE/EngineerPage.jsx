@@ -17,7 +17,7 @@ import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/engPage.css'
 // import { BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, SELECTS, ALLMODELS_LIST } from './mock/mock';
-import {SELECTS, ALLMODELS_LIST, CALC_INFO, MODELS_LIST, PREBID} from './mock/mock';
+import {SELECTS, ALLMODELS_LIST, CALC_INFO, MODELS_LIST, PREBID, CUR_COMPANY, CUR_CURRENCY} from './mock/mock';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import {
   BlockOutlined,
@@ -162,16 +162,7 @@ const EngineerPage = (props) => {
       setIsMounted(true);
     }
   }, []);
-  useEffect(() => {
-    if (isMounted && bidOrg && bidOrg.id) {
-      fetchOrgSelects().then();
-    }
-  }, [bidOrg]);
-  useEffect(() => {
-    if (isMounted && bidOrgUser) {
-      fetchOrgUserSelects().then();
-    }
-  }, [bidOrgUser]);
+
   useEffect(() => {
     if (bidType) {
       document.title = `${+bidType === 1 ? 'КП' : +bidType === 2 ? 'Счет' : ''} | ${bidId}`;
@@ -341,118 +332,25 @@ const EngineerPage = (props) => {
       // setAmounts(AMOUNT);
     }
   };
-  const fetchSelects = async () => {
-  //   if (PRODMODE) {
-  //     try {
-  //       let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
-  //         data: {},
-  //         _token: CSRF_TOKEN,
-  //       });
-  //       if (response.data && response.data.selects) {
-  //         const selects = response.data.selects;
-  //         setTypeSelect(selects.type_select);
-  //         setActionEnumSelect(selects.action_enum);
-  //         setAdminAcceptSelect(selects.admin_accept_select);
-  //         setBidCurrencySelect(selects.bid_currency_select);
-  //         setBidPresenceSelect(selects.bid_presence_select);
-  //         setCompleteSelect(selects.complete_select);
-  //         setConveyanceSelect(selects.conveyance_select);
-  //         setInsuranceSelect(selects.insurance_select);
-  //         setNdsSelect(selects.nds_select);
-  //         setPackageSelect(selects.package_select);
-  //         setPaySelect(selects.pay_select);
-  //         setPresenceSelect(selects.presence);
-  //         setPriceSelect(selects.price_select);
-  //         setProtectionSelect(selects.protection_select);
-  //         setStageSelect(selects.stage_select);
-  //         setTemplateWordSelect(selects.template_word_select);
-  //         setCompanies(selects.companies);
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   } else {
-  //     setTypeSelect(SELECTS.type_select);
-  //     setActionEnumSelect(SELECTS.action_enum);
-  //     setAdminAcceptSelect(SELECTS.admin_accept_select);
-  //     setBidCurrencySelect(SELECTS.bid_currency_select);
-  //     setBidPresenceSelect(SELECTS.bid_presence_select);
-  //     setCompleteSelect(SELECTS.complete_select);
-  //     setConveyanceSelect(SELECTS.conveyance_select);
-  //     setInsuranceSelect(SELECTS.insurance_select);
-  //     setNdsSelect(SELECTS.nds_select);
-  //     setPackageSelect(SELECTS.package_select);
-  //     setPaySelect(SELECTS.pay_select);
-  //     setPresenceSelect(SELECTS.presence);
-  //     setPriceSelect(SELECTS.price_select);
-  //     setProtectionSelect(SELECTS.protection_select);
-  //     setStageSelect(SELECTS.stage_select);
-  //     setTemplateWordSelect(SELECTS.template_word_select);
-  //     setCompanies(SELECTS.companies);
-  //   }
-  };
-  const fetchOrgSelects = async () => {
-  //   if (PRODMODE) {
-  //     try {
-  //       let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
-  //         data: { orgId: bidOrg.id },
-  //         _token: CSRF_TOKEN,
-  //       });
-  //       if (response.data && response.data.selects) {
-  //         const selects = response.data.selects;
-  //         setOrgUsersSelect(selects.orgusers_select);
-  //         setRequisiteSelect(selects.requisite_select);
-  //         setFactAddressSelect(selects.fact_address_select);
-  //         setPhoneSelect(selects.org_phones_select);
-  //         setBidPackageSelect(selects.package_select);
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   } else {
-  //     setOrgUsersSelect(SELECTS.orgusers_select);
-  //     setRequisiteSelect(SELECTS?.requisite_select);
-  //     setFactAddressSelect(SELECTS?.fact_address_select);
-  //     setPhoneSelect(SELECTS?.org_phones_select);
-  //     setBidPackageSelect(SELECTS?.package_select);
-  //   }
-  };
-  const fetchOrgUserSelects = async () => {
-  //   if (PRODMODE) {
-  //     try {
-  //       let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
-  //         data: { orgUserId: bidOrgUser },
-  //         _token: CSRF_TOKEN,
-  //       });
-  //       if (response.data && response.data.selects) {
-  //         const selects = response.data.selects;
-  //         setEmailSelect(selects.contact_email_select);
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   } else {
-  //     setEmailSelect(SELECTS?.contact_email_select);
-  //   }
-  };
+
   const fetchCurrencySelects = async () => {
-  //   if (PRODMODE) {
-  //     try {
-  //       let response = await PROD_AXIOS_INSTANCE.post('/api/currency/getcurrency', {
-  //         data: {},
-  //         _token: CSRF_TOKEN,
-  //       });
-  //       if (response.data) {
-  //         setCompanyCurrency(response.data.company);
-  //         setBankCurrency(response.data.currency);
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   } else {
-  //     setCompanyCurrency(CUR_COMPANY);
-  //     setBankCurrency(CUR_CURRENCY);
-  //   }
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/currency/getcurrency', {
+          data: {},
+          _token: CSRF_TOKEN,
+        });
+        if (response.data) {
+          setCompanyCurrency(response.data.company);
+          setBankCurrency(response.data.currency);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      setCompanyCurrency(CUR_COMPANY);
+      setBankCurrency(CUR_CURRENCY);
+    }
   };
   const fetchBidModels = async () => {
     if (PRODMODE) {
@@ -592,33 +490,12 @@ const EngineerPage = (props) => {
       return [];
     }
   };
-  const countOfComments = () => {
-    return [
-      bidCommentEngineer,
-      bidCommentManager,
-      bidCommentAdmin,
-      bidCommentAccountant,
-      bidCommentAddEquipment
-    ].filter(comment => comment).length;
-  };
+
   const prepareEngineerParameter = (engineerParameter) => {
     const rounded = (+engineerParameter).toFixed(2);
     return rounded % 1 === 0 ? Math.round(rounded) : rounded;
   };
-  const prepareAmount = (amount, symbol) => {
-    const rounded = (+amount / 100).toFixed(2);
-    let formatted =  formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
-    return formatted === `не число` ? <MinusOutlined /> : formatted + (symbol ? symbol : '');
-  };
-  const currencySymbol = (bidModel) => {
-    return +bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
-  }
-  const formatNumberWithSpaces = (number) => {
-    return new Intl.NumberFormat('ru-RU', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    }).format(number);
-  };
+
   const handleAddModel = () => {
     let sort = 0;
     if (bidModels && bidModels.length > 0) {
