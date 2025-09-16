@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../config/config.js';
-import { PROD_AXIOS_INSTANCE } from '../config/Api.js';
+import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
+import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
 
 export const useSms = ({ url, mock = {} }) => {
 	const [data, setData] = useState([]);

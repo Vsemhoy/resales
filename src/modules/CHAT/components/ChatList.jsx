@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { MOCK } from '../mock/mock';
-import { useSms } from '../../../hooks/useSms';
+import { useSms } from '../../../hooks/sms/useSms';
 
 export default function ChatList() {
 	const {

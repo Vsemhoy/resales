@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import { MOCK } from '../mock/mock.js';
-import { useSms } from '../../../hooks/useSms.js';
+import { useSms } from '../../../hooks/sms/useSms.js';
 import { ChatModal } from './ChatModal';
 
 export const ChatBtn = () => {
