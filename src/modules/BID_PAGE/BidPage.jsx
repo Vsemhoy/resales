@@ -5,7 +5,7 @@ import {
 	Badge,
 	Button,
 	Collapse,
-	Input,
+	Input, Modal,
 	Select,
 	Spin,
 	Steps,
@@ -39,6 +39,7 @@ import NameSelect from './components/NameSelect';
 import ModelInput from './components/ModelInput';
 import ModelSelect from './components/ModelSelect';
 import ModelInfoExtra from "./components/ModelInfoExtra";
+import ProjectInfo from "./components/ProjectInfo";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -147,6 +148,7 @@ const BidPage = (props) => {
 	/* ОСТАЛЬНОЕ */
 	const [modelIdExtra, setModelIdExtra] = useState(null);
 	const [modelNameExtra, setModelNameExtra] = useState('');
+	const [isProjectDataModalOpen, setIsProjectDataModalOpen] = useState(false);
 
 	const handleKeyDown = (event) => {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -769,6 +771,7 @@ const BidPage = (props) => {
 									cursor: 'pointer',
 								}}
 								color={'cyan'}
+								onClick={() => setIsProjectDataModalOpen(true)}
 							>
 								{+bidProject}
 							</Tag>
@@ -1488,6 +1491,14 @@ const BidPage = (props) => {
 					onClose={() => setIsAlertVisible(false)}
 				/>
 			)}
+			<Modal
+				title="Информация о связанном проекте"
+				open={isProjectDataModalOpen}
+				onOk={() => setIsProjectDataModalOpen(false)}
+				onCancel={() => setIsProjectDataModalOpen(false)}
+			>
+				<ProjectInfo project={bidProject}/>
+			</Modal>
 			<ModelInfoExtra model_id={modelIdExtra}
 							model_name={modelNameExtra}
 							closeDrawer={handleCloseDrawerExtra}
