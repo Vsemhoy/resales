@@ -5,6 +5,11 @@ import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTM
 import { Button } from 'antd';
 
 import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
+import OPMTCcontactstelephonesSection from './subsections/OPMTCcontactstelephonesSection';
+import OPMTCcontactmobilesSection from './subsections/OPMTCcontactmobilesSection';
+import OPMTCcontacthomephonesSection from './subsections/OPMTCcontacthomephonesSection';
+import OPMTCcontactemailsSection from './subsections/OPMTCcontactemailsSection';
+import OPMTCcontactmessangersSection from './subsections/OPMTCcontactmessangersSection';
 
 const OrgPageMainTabContactsSection = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
@@ -21,6 +26,8 @@ const OrgPageMainTabContactsSection = (props) => {
   const [job, setJob] = useState('');
   const [exittoorg_id, setExittoorg_id] = useState('');
 
+  const [objectResult, setObjectResult] = useState({});
+
   const [contactstelephones, setContactstelephones] = useState([]);
   const [contactmobiles,     setContactmobiles]     = useState([]);
   const [contacthomephones,  setContacthomephones]  = useState([]);
@@ -34,7 +41,17 @@ const OrgPageMainTabContactsSection = (props) => {
   const [newContactmessangers,  setNewContactmessangers]  = useState([]);
 
   useEffect(() => {
-    setItemId(props.data?.id);
+    if (props.data?.id){
+      setItemId(props.data?.id);
+      setObjectResult(props.data);
+
+      setContactstelephones(props.data.contactstelephones);
+      setContactmobiles(props.data.contactmobiles);
+      setContacthomephones(props.data.contacthomephones);
+      setContactemails(props.data.contactemails);
+      setContactmessangers(props.data.contactmessangers);
+    }
+
   }, [props.data]);
 
 	useEffect(() => {
@@ -47,6 +64,11 @@ const OrgPageMainTabContactsSection = (props) => {
 			setFilterData(OM_ORG_FILTERDATA);
 		}
 	}, []);
+
+
+
+
+
 
 	return (
 		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
@@ -184,8 +206,53 @@ const OrgPageMainTabContactsSection = (props) => {
 				]}
 			/>
 
-			
+      <div>
+      {contactstelephones.map((item)=>(
+        <OPMTCcontactstelephonesSection
+          data={item}
+          edit_mode={editMode}
 
+        />
+      ))}</div>
+
+      <div>
+      {contactmobiles.map((item)=>(
+        <OPMTCcontactmobilesSection
+          data={item}
+          edit_mode={editMode}
+
+        />
+      ))}</div>
+
+      <div>
+      {contacthomephones.map((item)=>(
+        <OPMTCcontacthomephonesSection
+          data={item}
+          edit_mode={editMode}
+
+        />
+      ))}</div>
+
+      <div>
+      {contactemails.map((item)=>(
+        <OPMTCcontactemailsSection
+          data={item}
+          edit_mode={editMode}
+
+        />
+      ))}</div>
+
+      <div>
+      {contactmessangers.map((item)=>(
+        <OPMTCcontactmessangersSection
+          data={item}
+          edit_mode={editMode}
+
+        />
+      ))}</div>
+
+			
+      {editMode && (
       <div className={'sk-omt-stack-control sa-flex-space'}>
         <div></div>
         <div>
@@ -246,6 +313,7 @@ const OrgPageMainTabContactsSection = (props) => {
             </div>
         </div>
       </div>
+      )}
 		</div>
 	);
 };

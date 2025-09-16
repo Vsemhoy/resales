@@ -514,16 +514,28 @@ const OrgPageSectionRow = (props) => {
 
 					{titles.length < 3 ? (
 						fields[0]?.name ? (
-							<div className="sk-omt-content">
-								{renderField(fields[0], localValues[fields[0].name], handleChange)}
-							</div>
+              <>
+                {(props.action && editMode && fields[1] === undefined) ? (
+                  <div className="sk-omt-content sa-flex-space">
+                    <span style={{width: '100%'}}>
+                    {renderField(fields[0], localValues[fields[0].name], handleChange)}</span>
+                    <span style={{paddingRight: '6px'}}>{props.action}</span>
+                  </div>
+                ):(
+                  <div className="sk-omt-content">
+                    {renderField(fields[0], localValues[fields[0].name], handleChange)}
+                  </div>
+
+                )}</>
 						) : null
 					) : (
 						<div className="sk-omt-content-epanded">
 							{fields[0]?.name && (
-								<div className="sk-omt-content">
-									{renderField(fields[0], localValues[fields[0].name], handleChange)}
-								</div>
+
+                  <div className="sk-omt-content">
+                    {renderField(fields[0], localValues[fields[0].name], handleChange)}
+                  </div>
+
 							)}
 							<div className="sk-omt-legend sa-flex-space">{titles[2]}</div>
 							{fields[2]?.name && (
@@ -541,9 +553,18 @@ const OrgPageSectionRow = (props) => {
 							<span></span>
 							<span>{titles[1]}</span>
 						</div>
-						<div className="sk-omt-content">
-							{renderField(fields[1], localValues[fields[1].name], handleChange)}
-						</div>
+            {(props.action && editMode) ? (
+              <div className="sk-omt-content sa-flex-space">
+                <span style={{width: '100%'}}>
+                {renderField(fields[1], localValues[fields[1].name], handleChange)}</span>
+                <span style={{paddingRight: '6px'}}>{props.action}</span>
+              </div>
+            ):(
+              <div className="sk-omt-content">
+                {renderField(fields[1], localValues[fields[1].name], handleChange)}
+              </div>
+            )}
+
 					</div>
 				)}
 			</div>

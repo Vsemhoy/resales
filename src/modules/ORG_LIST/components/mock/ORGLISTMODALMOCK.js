@@ -242,6 +242,22 @@ export const ORGLIST_MODAL_MOCK_MAINTAB = {
 					comment: '',
 					deleted: 0,
 				},
+        {
+					id: 42355,
+					id_orgsusers: 63140,
+					number: '+7-4012-35-36-72',
+					ext: '',
+					comment: '',
+					deleted: 0,
+				},
+        {
+					id: 45355,
+					id_orgsusers: 63140,
+					number: '+7-4012-35-36-72',
+					ext: '',
+					comment: '',
+					deleted: 0,
+				},
 			],
 			contactmobiles: [
 				{
