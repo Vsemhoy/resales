@@ -634,11 +634,11 @@ const BidPage = (props) => {
 		  "bid_id": bidId,
 		  "model_id": null,
 		  "model_count": null,
+		  "model_name": "",
 		  "not_available": 0,
 		  "percent": null,
 		  "presence": null,
 		  "sort": sort,
-		  "name": "",
 		  "type_model": 0,
 		  "currency": 0,
 	  });
@@ -659,12 +659,12 @@ const BidPage = (props) => {
 		  "id": oldId,
 		  "bid_id": bidId,
 		  "model_id": newId,
+		  "model_name": newModel.name,
 		  "model_count": 1,
 		  "not_available": 0,
 		  "percent": 0,
 		  "presence": -2,
 		  "sort": oldModel.sort,
-		  "name": newModel.name,
 		  "type_model": newModel.type_model,
 		  "currency": newModel.currency,
 	  };
@@ -696,13 +696,12 @@ const BidPage = (props) => {
 			  break;
 	  }
 	};
-	const handleOpenModelInfo = (modelId) => {
+	const handleOpenModelInfoExtra = (modelId) => {
 		setModelIdExtra(modelId);
 		const name = bidModels.find(model => model.model_id === modelId).model_name;
 		setModelNameExtra(name);
 	};
-
-	const handleCloseDrawer = () => {
+	const handleCloseDrawerExtra = () => {
 		setModelIdExtra(null);
 		setModelNameExtra('');
 	};
@@ -1295,12 +1294,14 @@ const BidPage = (props) => {
 												className={'sa-models-table-cell'}
 												style={{ padding: 0, boxShadow: 'none' }}
 											>
-												<Button
-													color="primary"
-													variant="filled"
-													icon={<InfoCircleOutlined />}
-													onClick={() => handleOpenModelInfo(bidModel.model_id)}
-												></Button>
+												{bidModel.model_id && (
+													<Button
+														color="primary"
+														variant="filled"
+														icon={<InfoCircleOutlined/>}
+														onClick={() => handleOpenModelInfoExtra(bidModel.model_id)}
+													></Button>
+												)}
 											</div>
 											<div className={'sa-models-table-cell'} style={{ padding: 0 }}>
 												<Button
@@ -1489,7 +1490,7 @@ const BidPage = (props) => {
 			)}
 			<ModelInfoExtra model_id={modelIdExtra}
 							model_name={modelNameExtra}
-							closeDrawer={handleCloseDrawer}
+							closeDrawer={handleCloseDrawerExtra}
 			/>
 		</div>
 	);
