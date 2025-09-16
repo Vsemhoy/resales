@@ -2,8 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import { MOCK } from '../mock/mock.js';
-import { useSms } from '../../../hooks/sms/useSms.js';
+import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
+import { useCompanion } from '../../../hooks/sms/useCompanion';
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,24 +19,30 @@ export const ChatBtn = () => {
 		mock: MOCK,
 	});
 
+	const currentUserId = 46; // TODO: Сделать динамическим при необходимости
+	const getCompanion = useCompanion(currentUserId); // ✅
+
 	// Обработка полученных SMS
 	const smsData = useMemo(() => {
 		if (!Array.isArray(smsList) || smsList.length === 0) {
 			return { hasSms: false, messages: [] };
 		}
 
-		const messages = smsList.map((sms) => ({
-			id: sms.id,
-			name: sms.from?.name || 'Без имени',
-			surname: sms.from?.surname || 'Без фамилии',
-			content: sms.text || '(без текста)',
-		}));
+		const messages = smsList.map((sms) => {
+			const companion = getCompanion(sms);
+			return {
+				id: sms.id,
+				name: companion?.name || 'Без имени',
+				surname: companion?.surname || 'Без фамилии',
+				content: sms.text || '(без текста)',
+			};
+		});
 
 		return {
 			hasSms: messages.length > 0,
 			messages,
 		};
-	}, [smsList]);
+	}, [smsList, getCompanion]);
 
 	// Генерация текста в dropdown
 	const menuItems = useMemo(() => {

@@ -1,8 +1,14 @@
 import React, { useMemo } from 'react';
 import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
+import { useCompanion } from '../../../hooks/sms/useCompanion';
+import { FileOutlined } from '@ant-design/icons';
+import './style/ChatList.css';
 
 export default function ChatList() {
+	// 👉 текущий пользователь может быть передан как проп, получен из контекста или auth-хука
+	const currentUserId = 46;
+
 	const {
 		data: smsList,
 		loading,
@@ -12,7 +18,8 @@ export default function ChatList() {
 		mock: MOCK,
 	});
 
-	// Обработка всех сообщений и создание уникальных чатов
+	const getCompanion = useCompanion(currentUserId);
+
 	const chats = useMemo(() => {
 		if (!Array.isArray(smsList) || smsList.length === 0) return [];
 
@@ -32,7 +39,6 @@ export default function ChatList() {
 			}
 		});
 
-		// Сортировка по времени (самые новые — выше)
 		return Object.values(uniqueChatsMap).sort((a, b) => {
 			const timeA = a.updated_at || a.created_at;
 			const timeB = b.updated_at || b.created_at;
@@ -40,18 +46,35 @@ export default function ChatList() {
 		});
 	}, [smsList]);
 
-	// Отображение
 	if (loading) return <p>Загрузка чатов...</p>;
 	if (error) return <p>Ошибка: {error}</p>;
 
 	return (
 		<div>
-			<ul>
-				{chats.map((chat) => (
-					<li key={chat.chat_id}>
-						{chat.from?.surname} {chat.from?.name}
-					</li>
-				))}
+			<ul className="chat-list">
+				{chats.map((chat) => {
+					const companion = getCompanion(chat);
+
+					const isFile = false; // заглушка
+					const lastMessageText = isFile
+						? 'document.pdf'
+						: chat.text || (
+								<>
+									<FileOutlined /> Файл
+								</>
+						  );
+
+					return (
+						<li key={chat.chat_id} className="chat-item">
+							<div>
+								{companion?.surname} {companion?.name}
+							</div>
+							<div className="last-message">
+								{isFile ? `Файл: ${lastMessageText}` : lastMessageText}
+							</div>
+						</li>
+					);
+				})}
 			</ul>
 		</div>
 	);
