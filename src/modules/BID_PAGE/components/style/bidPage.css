@@ -422,3 +422,9 @@
 	padding: 10px;
 	gap: 5px;
 }
+
+.extra__table__container {
+	width: 100%;
+	text-align: left;
+	/*padding: 5px;*/
+}
