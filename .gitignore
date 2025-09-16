@@ -5,8 +5,14 @@
 /.pnp
 .pnp.js
 
-# VS Code
-.vscode/
+# VS Code # 
+.vscode/* 
+.vscode/settings.json
+!.vscode/settings.json 
+!.vscode/tasks.json 
+!.vscode/launch.json 
+!.vscode/extensions.json 
+.history.vscode/settings.json
 
 # testing
 /coverage
