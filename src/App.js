@@ -45,7 +45,6 @@ import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
 import BidPage from './modules/BID_PAGE/BidPage';
 import WinShellMessanger from './modules/DEV/COM/WINSHELL/WinShellMessanger';
 function App() {
-	console.log('upd')
 	const [userdata, setUserdata] = useState([]);
 	const [pageLoaded, setPageLoaded] = useState(false);
 
