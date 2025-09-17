@@ -106,7 +106,15 @@ const BidDuplicationDrawer = (props) => {
                     }))}
                     onSelect={(e, value) => setSelectedOrg(value)}
                     onSearch={setSearchText}
-                    onChange={(e, value) => value?.value ? setSearchText(value.value) : setSearchText('')}
+                    onChange={(e, value) => {
+                        if (value?.value) {
+                            setSearchText(value.value);
+                        } else {
+                            setSearchText('');
+                            setOrgsSuggestions([]);
+                            setSelectedOrg(null);
+                        }
+                    }}
                     allowClear
                     placeholder={"Поиск организации"}
                     variant={"outlined"}
