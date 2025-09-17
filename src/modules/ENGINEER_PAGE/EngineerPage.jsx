@@ -146,8 +146,6 @@ const EngineerPage = (props) => {
 
   const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, manager_name: ""});
   const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, engineer_name: ""});
-  const [manager_name, setManagerName] = useState("");
-  const [engineer_name, setEngineerName] = useState("");
 
   const handleKeyDown = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -231,8 +229,6 @@ const EngineerPage = (props) => {
           const content = response.data.content;
           setManager(content.manager);
           setEngineer(content.engineer);
-          setEngineerName(content.engineer_name);
-          setManagerName(content.manager_name);
 
           setBidCommentEngineer(content.comment_engineer);
           setBidCommentManager(content.comment_manager);
@@ -297,8 +293,6 @@ const EngineerPage = (props) => {
       console.log("HERE: 1");
       setManager(PREBID.manager);
       setEngineer(PREBID.engineer);
-      setEngineerName(PREBID.engineer_name);
-      setManagerName(PREBID.manager_name);
       // setOpenMode(BID.openmode);
       //
       // setBidType(BID.type);
@@ -377,72 +371,37 @@ const EngineerPage = (props) => {
     }
   };
   const fetchUpdates = async () => {
-  //   console.log('fetchUpdates');
-  //   const data = {
-  //     bid: {
-  //       id: bidId,
-  //       id_company: bidIdCompany,
-  //       place: bidPlace,
-  //       type: bidType,
-  //       files_count: bidFilesCount,
-  //       base_info: {
-  //         org: bidOrg,
-  //         curator: bidCurator,
-  //         orguser: bidOrgUser,
-  //         protection: bidProtectionProject,
-  //         object: bidObject,
-  //         sellby: bidSellBy,
-  //       },
-  //       bill:
-  //           +bidType === 2
-  //               ? {
-  //                 requisite: requisite,
-  //                 conveyance: conveyance,
-  //                 fact_address: factAddress,
-  //                 org_phone: phone,
-  //                 contact_email: email,
-  //                 insurance: insurance,
-  //                 package: bidPackage,
-  //                 consignee: consignee,
-  //                 other_equipment: otherEquipment,
-  //               }
-  //               : null,
-  //       comments: {
-  //         engineer: bidCommentEngineer,
-  //         manager: bidCommentManager,
-  //         admin: bidCommentAdmin,
-  //         accountant: bidCommentAccountant,
-  //         add_equipment: bidCommentAddEquipment,
-  //       },
-  //       finance: {
-  //         bid_currency: bidCurrency,
-  //         status: bidPriceStatus,
-  //         percent: bidPercent,
-  //         nds: bidNds,
-  //       },
-  //     },
-  //     bid_models: bidModels,
-  //   };
-  //   console.log(data);
+    console.log('fetchUpdates');
+    const data = {
+      bid: {
+        id: bidId,
+        comments: {
+          engineer: bidCommentEngineer,
+          manager: bidCommentManager,
+        },
+      },
+      bid_models: bidModels,
+    };
+    console.log(data);
     if (PRODMODE) {
-  //     try {
-  //       let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/updatebid/${bidId}`, {
-  //         data,
-  //         _token: CSRF_TOKEN,
-  //       });
-  //       if (response.data.message) {
-  //         setIsAlertVisible(true);
-  //         setAlertMessage('Успех!');
-  //         setAlertDescription(response.data.message);
-  //         setAlertType('success');
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //       setIsAlertVisible(true);
-  //       setAlertMessage('Произошла ошибка!');
-  //       setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-  //       setAlertType('error');
-  //     }
+      try {
+        let response = await PROD_AXIOS_INSTANCE.put(`/api/sales/engineer/${bidId}`, {
+          data,
+          _token: CSRF_TOKEN,
+        });
+        if (response.data.message) {
+          setIsAlertVisible(true);
+          setAlertMessage('Успех!');
+          setAlertDescription(response.data.message);
+          setAlertType('success');
+        }
+      } catch (e) {
+        console.log(e);
+        setIsAlertVisible(true);
+        setAlertMessage('Произошла ошибка!');
+        setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+        setAlertType('error');
+      }
     } else {
       setIsAlertVisible(true);
       setAlertMessage('Успех!');
@@ -609,7 +568,7 @@ const EngineerPage = (props) => {
                                 }}
                                 color="geekblue"
                             >
-                              {engineer_name && (`${engineer_name}`)}
+                              {engineer && (`${engineer.engineer_name}`)}
                             </Tag>
                             для
                             <Tag
@@ -619,7 +578,7 @@ const EngineerPage = (props) => {
                                 }}
                                 color={companies.find(comp => comp.id === manager.id_company)?.color}
                             >
-                              {manager_name && (`${manager_name}`)}
+                              {manager && (`${manager.manager_name}`)}
                             </Tag>
                           </div>
                       )}
