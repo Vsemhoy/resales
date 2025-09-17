@@ -1,8 +1,6 @@
-import React from 'react';
-
 const LogoArstel = ({
 	height = '100%',
-	width = 'auto',
+	width = '100%',
 	primaryColor = '#ed7523',
 	secondaryColor = '#5c5c5c',
 }) => (
@@ -33,7 +31,7 @@ export default LogoArstel;
 
 export const LogoArstelLight = ({
 	height = '100%',
-	width = 'auto',
+	width = '100%',
 	primaryColor = '#ed7523',
 	secondaryColor = '#e9e9e9ff',
 }) => (

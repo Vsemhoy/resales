@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import { MOCK } from '../mock/mock.js';
 import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
+import { useUserData } from '../../../context/UserDataContext'; // импортируем хук для контекста
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,7 +20,12 @@ export const ChatBtn = () => {
 		mock: MOCK,
 	});
 
-	const currentUserId = 46; // TODO: Сделать динамическим при необходимости
+	// Получаем user.id из контекста
+	const { userdata } = useUserData();
+
+	// Проверяем, есть ли userdata и если нет, задаём заглушку (на всякий случай)
+	const currentUserId = userdata?.user?.id || NaN; // если userdata нет, используем заглушку
+
 	const getCompanion = useCompanion(currentUserId); // ✅
 
 	// Обработка полученных SMS
@@ -32,8 +38,8 @@ export const ChatBtn = () => {
 			const companion = getCompanion(sms);
 			return {
 				id: sms.id,
-				name: companion?.name || 'Без имени',
-				surname: companion?.surname || 'Без фамилии',
+				name: companion?.name || null,
+				surname: companion?.surname || null,
 				content: sms.text || '(без текста)',
 			};
 		});
@@ -61,7 +67,7 @@ export const ChatBtn = () => {
 			return `${messages
 				.slice(0, 2)
 				.map((m) => `${m.name} ${m.surname}`)
-				.join(', ')} и ещё ${count - 2}`;
+				.join(', ')} и ещё +${count - 2}`;
 		})();
 
 		return [
