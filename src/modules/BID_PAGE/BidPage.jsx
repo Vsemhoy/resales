@@ -41,6 +41,7 @@ import ModelSelect from './components/ModelSelect';
 import ModelInfoExtraDrawer from "./components/ModelInfoExtraDrawer";
 import ProjectInfo from "./components/ProjectInfo";
 import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
+import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -61,6 +62,11 @@ const BidPage = (props) => {
 	const [alertDescription, setAlertDescription] = useState('');
 	const [alertType, setAlertType] = useState('');
 
+	const [bidActions, setBidActions] = useState({
+		'create': null,
+		'update': null,
+		'view': null,
+	});
 	const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
 	/* ШАПКА СТРАНИЦЫ */
 	const [bidType, setBidType] = useState(null);
@@ -150,6 +156,7 @@ const BidPage = (props) => {
 	const [modelNameExtra, setModelNameExtra] = useState('');
 	const [isProjectDataModalOpen, setIsProjectDataModalOpen] = useState(false);
 	const [isBidDuplicateDrawerOpen, setIsBidDuplicateDrawerOpen] = useState(false);
+	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
 
 	const handleKeyDown = (event) => {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -244,6 +251,8 @@ const BidPage = (props) => {
 					if (content.bid) {
 						const bid = content?.bid;
 
+						setBidActions(bid.actions);
+
 						setBidIdCompany(bid.id_company);
 						setBidType(bid.type);
 						setBidPlace(bid.place);
@@ -299,6 +308,8 @@ const BidPage = (props) => {
 			setOpenMode(openMode);
 			if (BID_INFO.bid) {
 				const bid = BID_INFO?.bid;
+
+				setBidActions(bid.actions);
 
 				setBidIdCompany(bid.id_company);
 				setBidType(bid.type);
@@ -1121,6 +1132,7 @@ const BidPage = (props) => {
 									color="primary"
 									variant="outlined"
 									icon={<HistoryOutlined className={'sa-bid-page-btn-icon'} />}
+									onClick={() => setIsBidHistoryDrawerOpen(true)}
 								></Button>
 							</Tooltip>
 							<Tooltip title={'Сохранить в PDF'} placement={'right'}>
@@ -1490,6 +1502,11 @@ const BidPage = (props) => {
 								  closeDrawer={() => setIsBidDuplicateDrawerOpen(false)}
 								  bidId={bidId}
 								  bidType={bidType}
+			/>
+			<BidHistoryDrawer isOpenDrawer={isBidHistoryDrawerOpen}
+							  closeDrawer={() => setIsBidHistoryDrawerOpen(false)}
+							  bidId={bidId}
+							  bidActions={bidActions}
 			/>
 			{isAlertVisible && (
 				<Alert
