@@ -38,8 +38,9 @@ import {
 import NameSelect from './components/NameSelect';
 import ModelInput from './components/ModelInput';
 import ModelSelect from './components/ModelSelect';
-import ModelInfoExtra from "./components/ModelInfoExtra";
+import ModelInfoExtraDrawer from "./components/ModelInfoExtraDrawer";
 import ProjectInfo from "./components/ProjectInfo";
+import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -144,11 +145,11 @@ const BidPage = (props) => {
 	const [factAddressSelect, setFactAddressSelect] = useState([]);
 	const [phoneSelect, setPhoneSelect] = useState([]);
 	const [emailSelect, setEmailSelect] = useState([]);
-	const [bidPackageSelect, setBidPackageSelect] = useState([]);
 	/* ОСТАЛЬНОЕ */
 	const [modelIdExtra, setModelIdExtra] = useState(null);
 	const [modelNameExtra, setModelNameExtra] = useState('');
 	const [isProjectDataModalOpen, setIsProjectDataModalOpen] = useState(false);
+	const [isBidDuplicateDrawerOpen, setIsBidDuplicateDrawerOpen] = useState(false);
 
 	const handleKeyDown = (event) => {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -410,7 +411,6 @@ const BidPage = (props) => {
 					setRequisiteSelect(selects.requisite_select);
 					setFactAddressSelect(selects.fact_address_select);
 					setPhoneSelect(selects.org_phones_select);
-					setBidPackageSelect(selects.package_select);
 				}
 			} catch (e) {
 				console.log(e);
@@ -420,7 +420,6 @@ const BidPage = (props) => {
 			setRequisiteSelect(SELECTS?.requisite_select);
 			setFactAddressSelect(SELECTS?.fact_address_select);
 			setPhoneSelect(SELECTS?.org_phones_select);
-			setBidPackageSelect(SELECTS?.package_select);
 		}
 	};
 	const fetchOrgUserSelects = async () => {
@@ -1113,6 +1112,7 @@ const BidPage = (props) => {
 									color="primary"
 									variant="outlined"
 									icon={<CopyOutlined className={'sa-bid-page-btn-icon'} />}
+									onClick={() => setIsBidDuplicateDrawerOpen(true)}
 								></Button>
 							</Tooltip>
 							<Tooltip title={'История'} placement={'right'}>
@@ -1474,6 +1474,23 @@ const BidPage = (props) => {
 					</div>
 				</div>
 			</Spin>
+			<Modal
+				title="Информация о связанном проекте"
+				open={isProjectDataModalOpen}
+				onOk={() => setIsProjectDataModalOpen(false)}
+				onCancel={() => setIsProjectDataModalOpen(false)}
+			>
+				<ProjectInfo project={bidProject}/>
+			</Modal>
+			<ModelInfoExtraDrawer model_id={modelIdExtra}
+								  model_name={modelNameExtra}
+								  closeDrawer={handleCloseDrawerExtra}
+			/>
+			<BidDuplicationDrawer isOpenDrawer={isBidDuplicateDrawerOpen}
+								  closeDrawer={() => setIsBidDuplicateDrawerOpen(false)}
+								  bidId={bidId}
+								  bidType={bidType}
+			/>
 			{isAlertVisible && (
 				<Alert
 					message={alertMessage}
@@ -1491,18 +1508,6 @@ const BidPage = (props) => {
 					onClose={() => setIsAlertVisible(false)}
 				/>
 			)}
-			<Modal
-				title="Информация о связанном проекте"
-				open={isProjectDataModalOpen}
-				onOk={() => setIsProjectDataModalOpen(false)}
-				onCancel={() => setIsProjectDataModalOpen(false)}
-			>
-				<ProjectInfo project={bidProject}/>
-			</Modal>
-			<ModelInfoExtra model_id={modelIdExtra}
-							model_name={modelNameExtra}
-							closeDrawer={handleCloseDrawerExtra}
-			/>
 		</div>
 	);
 };

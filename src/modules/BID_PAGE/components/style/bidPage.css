@@ -428,3 +428,43 @@
 	text-align: left;
 	/*padding: 5px;*/
 }
+
+.sa-duplication-header-block {
+	padding: 10px;
+	margin-bottom: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	font-size: 20px;
+}
+
+.sa-duplication-choose-block-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.sa-duplication-choose-block {
+	padding: 10px;
+	border: 1px solid #99bad3;
+	border-radius: 10px;
+	transition: .3s;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+}
+.sa-duplication-choose-block:hover {
+	border: 1px solid #2178fa;
+	background-color: #e4f2fd;
+}
+
+.sa-duplication-icon {
+	font-size: 30px;
+	color: #2178fa;
+}
+
+.sa-duplication-choose-block-span {
+
+}
