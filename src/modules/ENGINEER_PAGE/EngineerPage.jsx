@@ -371,7 +371,7 @@ const EngineerPage = (props) => {
     }
   };
   const fetchUpdates = async () => {
-    console.log('fetchUpdates');
+    console.log('fetchUpdates!');
     const data = {
       bid: {
         id: bidId,
