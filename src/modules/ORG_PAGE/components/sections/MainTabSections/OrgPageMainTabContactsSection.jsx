@@ -27,6 +27,7 @@ const OrgPageMainTabContactsSection = (props) => {
   const [occupy, setOccupy] = useState('');
   const [job, setJob] = useState('');
   const [exittoorg_id, setExittoorg_id] = useState('');
+  const [deleted, setDeleted] = useState(0);
 
   const [objectResult, setObjectResult] = useState({});
 
@@ -62,6 +63,16 @@ const OrgPageMainTabContactsSection = (props) => {
     if (props.data?.id){
       setItemId(props.data?.id);
       setObjectResult(props.data);
+
+      setName(props.data?.name);
+      setLastName(props.data?.lastname);
+      setMiddleName(props.data?.middlename);
+      setOccupy(props.data?.occupy);
+      setComment(props.data?.comment);
+      setJob(props.data?.job);
+      setExittoorg_id(props.data?.exittoorg_id);
+      setDeleted(props.data?.deleted);
+
 
       setContactstelephones(props.data.contactstelephones);
       setContactmobiles(props.data.contactmobiles);
