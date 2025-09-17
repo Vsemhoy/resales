@@ -7,7 +7,7 @@
 	"code-runner.showExecutionMessage": false,
 	"code-runner.saveFileBeforeRun": true,
 	"security.workspace.trust.untrustedFiles": "open",
-	"editor.minimap.enabled": false,
+	"editor.minimap.enabled": true,
 	"editor.tabSize": 2,
 	  "editor.insertSpaces": true,
   "editor.detectIndentation": true,

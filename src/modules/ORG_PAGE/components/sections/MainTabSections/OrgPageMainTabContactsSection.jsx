@@ -93,6 +93,171 @@ const OrgPageMainTabContactsSection = (props) => {
 
 
 
+
+
+// ░███     ░███   ░██████   ░████████   ░██████░██         ░██████████ 
+// ░████   ░████  ░██   ░██  ░██    ░██    ░██  ░██         ░██         
+// ░██░██ ░██░██ ░██     ░██ ░██    ░██    ░██  ░██         ░██         
+// ░██ ░████ ░██ ░██     ░██ ░████████     ░██  ░██         ░█████████  
+// ░██  ░██  ░██ ░██     ░██ ░██     ░██   ░██  ░██         ░██         
+// ░██       ░██  ░██   ░██  ░██     ░██   ░██  ░██         ░██         
+// ░██       ░██   ░██████   ░█████████  ░██████░██████████ ░██████████ 
+
+
+
+
+
+
+//   ░██████    ░██████   ░███    ░██ ░██████████   ░███      ░██████  ░██████████
+//  ░██   ░██  ░██   ░██  ░████   ░██     ░██      ░██░██    ░██   ░██     ░██    
+// ░██        ░██     ░██ ░██░██  ░██     ░██     ░██  ░██  ░██            ░██    
+// ░██        ░██     ░██ ░██ ░██ ░██     ░██    ░█████████ ░██            ░██    
+// ░██        ░██     ░██ ░██  ░██░██     ░██    ░██    ░██ ░██            ░██    
+//  ░██   ░██  ░██   ░██  ░██   ░████     ░██    ░██    ░██  ░██   ░██     ░██    
+//   ░██████    ░██████   ░██    ░███     ░██    ░██    ░██   ░██████      ░██    
+
+
+
+
+
+
+// ░██     ░██   ░██████   ░███     ░███ ░██████████ 
+// ░██     ░██  ░██   ░██  ░████   ░████ ░██         
+// ░██     ░██ ░██     ░██ ░██░██ ░██░██ ░██         
+// ░██████████ ░██     ░██ ░██ ░████ ░██ ░█████████  
+// ░██     ░██ ░██     ░██ ░██  ░██  ░██ ░██         
+// ░██     ░██  ░██   ░██  ░██       ░██ ░██         
+// ░██     ░██   ░██████   ░██       ░██ ░██████████ 
+
+
+
+
+
+
+// ░██████████ ░███     ░███    ░███    ░██████░██         
+// ░██         ░████   ░████   ░██░██     ░██  ░██         
+// ░██         ░██░██ ░██░██  ░██  ░██    ░██  ░██         
+// ░█████████  ░██ ░████ ░██ ░█████████   ░██  ░██         
+// ░██         ░██  ░██  ░██ ░██    ░██   ░██  ░██         
+// ░██         ░██       ░██ ░██    ░██   ░██  ░██         
+// ░██████████ ░██       ░██ ░██    ░██ ░██████░██████████ 
+  /* ----------------- EMAIL --------------------- */
+  /**
+   * Добавление нового элемента в стек новых
+   */
+  const handleAddEmail = ()=>{
+    let item = {
+          id: 'new_' + dayjs().unix() + '_' + newContactemails.length ,
+          id_orgsusers:  itemId,
+          email: '',
+          comment: '',
+          deleted: 0,
+          command: "create",
+        };
+    setNewContactemails([...newContactemails, item]);
+  }
+
+  /**
+   * Удаление напрочь только что добавленной записи
+   * @param {*} id 
+   */
+  const handleDeleteNewEmail = (id) => {
+    console.log('delete', id)
+    setNewContactemails(newContactemails.filter((item)=>item.id !== id));
+  }
+
+  /**
+   * Обновление новой только что добавленной записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateNewEmailUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU NEW UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    data.command = 'create';
+
+    setNewContactemails((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+
+  /**
+   * Обновление и удаление существующей записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateEmailUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU REAL UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    const excluders = ['command', 'date'];
+    let is_original = false;
+
+    originalContactemails.forEach((element) => {
+      if (element.id === id) {
+        console.log('element, data', element, data)
+        is_original = compareObjects(element, data, {
+          excludeFields: excluders,
+          compareArraysDeep: false,
+          ignoreNullUndefined: true,
+        });
+      }
+    });
+    console.log('is_original', is_original)
+    if (is_original === false) {
+      if (!editedEmailsIds?.includes(id)) {
+        setEditedEmailsIds([...editedEmailsIds, id]);
+      }
+      data.command = "update";
+    } else {
+      if (editedEmailsIds?.includes(id)) {
+        setEditedEmailsIds(editedEmailsIds.filter((item) => item !== id));
+      }
+      data.command = '';
+    }
+    if (data.deleted === true){
+      data.command = "delete";
+    } 
+
+    console.log('data email', data)
+    setContactemails((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+    /* ----------------- EMAIL END --------------------- */
+
+
+
+
+
+// ░███     ░███ ░██████████   ░██████     ░██████      ░███      ░██████  ░██████████ 
+// ░████   ░████ ░██          ░██   ░██   ░██   ░██    ░██░██    ░██   ░██ ░██         
+// ░██░██ ░██░██ ░██         ░██         ░██          ░██  ░██  ░██        ░██         
+// ░██ ░████ ░██ ░█████████   ░████████   ░████████  ░█████████ ░██  █████ ░█████████  
+// ░██  ░██  ░██ ░██                 ░██         ░██ ░██    ░██ ░██     ██ ░██         
+// ░██       ░██ ░██          ░██   ░██   ░██   ░██  ░██    ░██  ░██  ░███ ░██         
+// ░██       ░██ ░██████████   ░██████     ░██████   ░██    ░██   ░█████░█ ░██████████ 
   /* ----------------- MESSANGER --------------------- */
   /**
    * Добавление нового элемента в стек новых
@@ -198,6 +363,8 @@ const OrgPageMainTabContactsSection = (props) => {
     });
   };
     /* ----------------- MESSANGER END --------------------- */
+
+
 
 
 
@@ -351,18 +518,31 @@ const OrgPageMainTabContactsSection = (props) => {
         />
       ))}</div>
 
+
+
       <div>
       {contactemails.map((item)=>(
         <OPMTCcontactemailsSection
           key={'OPMTCcontactemailsSection' + item.id}
           data={item}
           edit_mode={editMode}
-
+          on_change={handleUpdateEmailUnit}
         />
       ))}</div>
+      {newContactemails.length > 0 && (
+        <div className='sa-org-temp-stack-collapse'>
+        {newContactemails.map((item)=>(
+          <OPMTCcontactemailsSection
+            key={'newOPMTCcontactemailsSection' + item.id}
+            data={item}
+            edit_mode={editMode}
+            on_delete={handleDeleteNewEmail}
+            on_change={handleUpdateNewEmailUnit}
+          />
+        ))}</div>
+      )}
 
-
-
+      
       <div>
       {contactmessangers.map((item)=>(
         <OPMTCcontactmessangersSection
@@ -434,6 +614,7 @@ const OrgPageMainTabContactsSection = (props) => {
                 icon={<EnvelopeIcon height={'20px'}/>}
                 onClick={(ev) => {
                   ev.stopPropagation();
+                  handleAddEmail();
                 }}
                 >Эл. почту</Button>
               <Button
