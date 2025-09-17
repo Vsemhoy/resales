@@ -35,13 +35,13 @@ const BidHistoryDrawer = (props) => {
             title: "Событие",
             dataIndex: "actname",
             align: "left",
-            width: 150,
+            width: 120,
         },
         {
             title: "Инициатор",
             dataIndex: "username",
             align: "left",
-            width: 180,
+            width: 150,
             render: (e) => <div style={{ fontSize: "10px" }}>{e}</div>,
         },
         {
@@ -141,7 +141,7 @@ const BidHistoryDrawer = (props) => {
                         size={"small"}
                         pagination={false}
                         bordered={true}
-                        scroll={{y: 400}}
+                        scroll={{y: 500}}
                         loading={isLoading}
                     />
                 ),
