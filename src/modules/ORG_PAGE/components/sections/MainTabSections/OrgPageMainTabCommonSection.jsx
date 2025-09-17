@@ -1,22 +1,70 @@
 import React, { useEffect, useState } from 'react';
-import OrgPageSectionRow from '../OrgPageSectionRow';
+import OrgPageSectionRow, { OPS_TYPE } from '../OrgPageSectionRow';
 import { PRODMODE } from '../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTMOCK';
 
 const OrgPageMainTabCommonSection = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
-	const [filterData, setFilterData] = useState([]);
+	
+
+  const [itemId,         setItemId]           = useState(0);
+  const [name,           setName]             = useState('');
+  const [site,           setSite]             = useState('');
+  const [id8an_profiles, setId8an_profiles]   = useState(0);
+  const [middlename,     setMiddlename]       = useState('');
+  const [id8an_fs,       setId8an_fs]         = useState(0);
+  const [inn,            setInn]              = useState('');
+  const [source,         setSource]           = useState('');
+  const [comment,        setComment]          = useState('');
+  const [commentinlist,  setCommentinlist]    = useState('');
+  const [kindofactivity, setKindofactivity]  = useState('');
+
+  
+  const [profsound,      setProfsound]        = useState(null);
+
+  const [selects, setSelects] = useState(null);
+
+  useEffect(() => {
+    console.log('props.selects', props.selects)
+    if (props.selects){
+      setSelects(props.selects);
+    }
+  }, [props.selects]);
+
+  useEffect(() => {
+    if (props.data?.id){
+      setItemId(props.data?.id);
+      // setObjectResult(props.data);
+
+      setName(props.data?.name);
+      setSite(props.data?.site);
+      setMiddlename(props.data?.middlename);
+      setId8an_fs(props.data?.id8an_fs);
+      setId8an_profiles(props.data?.id8an_profiles);
+      setInn(props.data?.inn);
+      setSource(props.data?.source);
+      setComment(props.data?.comment);
+      setProfsound(props.data?.profsound);
+      setCommentinlist(props.data?.commentinlist);
+      setKindofactivity(props.data?.kindofactivity);
+
+
+    }
+
+  }, [props.data, selects]);
+
 
 	useEffect(() => {
 		seteditMode(props.edit_mode);
 	}, [props.edit_mode]);
 
-	useEffect(() => {
-		if (PRODMODE) {
-		} else {
-			setFilterData(OM_ORG_FILTERDATA);
-		}
-	}, []);
+	// useEffect(() => {
+	// 	if (PRODMODE) {
+
+	// 	} else {
+	// 		setFilterData(OM_ORG_FILTERDATA);
+	// 	}
+	// }, []);
 
 	return (
 		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
@@ -29,107 +77,226 @@ const OrgPageMainTabCommonSection = (props) => {
         /> */}
 
 			<OrgPageSectionRow
+        key={'opmaincom_23'}
 				edit_mode={editMode}
-				columns={2}
-				titles={['Имя', 'Возраст', 'Дата рождения']}
+				titles={['Название организации']}
 				datas={[
 					{
-						type: 'string',
-						value: 'Иван',
-						max: 50,
+						type: OPS_TYPE.STRING,
+						value: name,
+						max: 250,
 						required: true,
 						nullable: false,
 						placeholder: '',
-						name: 'username',
-					},
-					{
-						type: 'uinteger',
-						value: 25,
-						min: 0,
-						max: 120,
-						placeholder: '',
-						name: 'userbirth',
-					},
-					{
-						type: 'date',
-						value: '1999-03-15',
-						placeholder: '',
-						name: 'userage',
-					},
+						name: 'name',
+					}
 				]}
-				comment={{
-					type: 'textarea',
-					value: `Иван Это важный клиент
-B ybjfkldsajklf fajsdlk fjlaksjdfklajs kdlfjaksljdfkasj dklfjas kldfa
-asdklfjaskld jfkasjdfas dfkjaslkdfjklasjdfas
-d
-faskdjfklasj dkfljsdklfjsakl`,
-					max: 500,
-					required: false,
-					nullable: true,
-					placeholder: '',
-					name: 'usercomment',
-				}}
-				on_change={(data) => console.log('Изменения:', data)}
+        on_blur={(data)=>{
+          if (props.on_blur){
+            props.on_blur(data);
+          }
+        }}
 			/>
 
 			<OrgPageSectionRow
-				key={'fklasddjl'}
+				key={'opmaincom_233'}
 				edit_mode={editMode}
 				titles={['Форма собственности', 'ИНН']}
 				datas={[
 					{
-						type: 'select',
-						value: 9,
-						options: filterData.profiles,
-						max: 50,
+						type: OPS_TYPE.SELECT,
+						value: id8an_fs,
+						options: selects?.fss?.map((item)=>({
+              key: "fsse_" + item.id,
+              value: item.id,
+              label: item.name,
+            })),
+						max: 500,
 						required: true,
 						nullable: false,
 						placeholder: '',
-						name: 'username',
+						name: 'id8an_fs',
+            showSearch: 'true'
 					},
 					{
-						type: 'uinteger',
-						value: 25,
+						type: OPS_TYPE.STRING,
+						value: inn,
 						min: 0,
-						max: 120,
+						max: 30,
 						placeholder: '',
-						name: 'userbirth',
+						name: 'inn',
 					},
 				]}
+        on_blur={(data)=>{
+          if (props.on_blur){
+            props.on_blur(data);
+          }
+        }}
 			/>
 
-			<OrgPageSectionRow key={'fkl43asdjl'} titles={['Вид деятельности']} datas={['Тестовая  ']} />
-
 			<OrgPageSectionRow
-				key={'fkla3sddjl'}
+        key={'opmaincom_223'}
+				edit_mode={editMode}
+
+				titles={['Вид деятельности']}
+				datas={[
+					{
+						type: OPS_TYPE.STRING,
+						value: kindofactivity,
+						max: 250,
+						required: true,
+						nullable: false,
+						placeholder: '',
+						name: 'kindofactivity',
+					}
+				]}
+        on_blur={(data)=>{
+          if (props.on_blur){
+            props.on_blur(data);
+          }
+        }}
+			/>
+
+      <OrgPageSectionRow
+        key={'opmaincom_213'}
+				edit_mode={editMode}
 				titles={['Второе название']}
-				datas={['Тестова организации']}
+				datas={[
+					{
+						type: OPS_TYPE.STRING,
+						value: middlename,
+						max: 550,
+						required: false,
+						nullable: true,
+						placeholder: '',
+						name: 'middlename',
+					}
+				]}
+        on_blur={(data)=>{
+          if (props.on_blur){
+            props.on_blur(data);
+          }
+        }}
 			/>
 
 			<OrgPageSectionRow
-				key={'fkla5sddjl'}
-				titles={['Профиль компании', 'Проф звук']}
-				datas={['Тестовая карточка организации', '']}
+				key={'opmaincom_2334'}
+				edit_mode={editMode}
+				titles={['Профиль компании', 'Профзвук']}
+				datas={[
+					{
+						type: OPS_TYPE.SELECT,
+						value: id8an_profiles,
+						options: selects?.profiles?.map((item)=>({
+              key: "fsprofle_" + item.key ? item.key : item.id  ,
+              value: item.key ? item.key : item.id,
+              label: item.label ? item.label : item.name,
+            })),
+						max: 500,
+						required: true,
+						nullable: false,
+						placeholder: '',
+						name: 'id8an_profiles',
+            showSearch: 'true'
+					},
+					{
+						type: OPS_TYPE.SELECT,
+						value: profsound,
+						min: 0,
+						max: 30,
+						placeholder: '',
+						name: 'profsound',
+            options: selects?.profsound?.map((item)=>({
+              key: "fprofe_" + item.key ? item.key : item.id  ,
+              value: item.key ? item.key : item.id,
+              label: item.label ? item.label : item.name,
+            })),
+					},
+				]}
+        on_blur={(data)=>{
+          if (props.on_blur){
+            props.on_blur(data);
+          }
+        }}
 			/>
 
-			<OrgPageSectionRow
-				key={'fklasd6352djl'}
-				titles={['Источник']}
-				datas={['Тестовая  организации']}
+      <OrgPageSectionRow
+        key={'opmaincom_243'}
+				edit_mode={editMode}
+				titles={['Источник', 'Сайт']}
+				datas={[
+					{
+						type: OPS_TYPE.STRING,
+						value: source,
+						max: 550,
+						required: false,
+						nullable: true,
+						placeholder: '',
+						name: 'source',
+					},
+          {
+						type: OPS_TYPE.STRING,
+						value: site,
+						max: 150,
+						required: false,
+						nullable: true,
+						placeholder: '',
+						name: 'site',
+					}
+				]}
+        
+        on_blur={(data)=>{
+          if (props.on_blur){
+            props.on_blur(data);
+          }
+        }}
 			/>
 
-			<OrgPageSectionRow
-				key={'fkl452asddjl'}
+      <OrgPageSectionRow
+        key={'opmaincom_253'}
+				edit_mode={editMode}
 				titles={['Комментарий']}
-				datas={[' карточка организации']}
+				datas={[
+					{
+						type: OPS_TYPE.TEXTAREA,
+						value: comment,
+						max: 9250,
+						required: false,
+						nullable: true,
+						placeholder: '',
+						name: 'comment',
+					}
+				]}
+        on_blur={(data)=>{
+          if (props.on_blur){
+            props.on_blur(data);
+          }
+        }}
 			/>
 
-			<OrgPageSectionRow
-				key={'fkla6454sddjl'}
+      <OrgPageSectionRow
+        key={'opmaincom_263'}
+				edit_mode={editMode}
 				titles={['Памятка']}
-				datas={['Тестовая карточка ']}
+				datas={[
+					{
+						type: OPS_TYPE.STRING,
+						value: commentinlist,
+						max: 9250,
+						required: false,
+						nullable: true,
+						placeholder: '',
+						name: 'commentinlist',
+					}
+				]}
+        on_blur={(data)=>{
+          if (props.on_blur){
+            props.on_blur(data);
+          }
+        }}
 			/>
+
+			
 		</div>
 	);
 };

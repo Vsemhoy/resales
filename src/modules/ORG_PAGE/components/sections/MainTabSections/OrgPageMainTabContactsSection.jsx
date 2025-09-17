@@ -101,8 +101,79 @@ const OrgPageMainTabContactsSection = (props) => {
 	}, []);
 
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+			if (objectResult.id == null) {
+				// Объект ещё не смонтировался. воизбежание гонок
+				return;
+			}
+			let result = objectResult;
+			result.name = name;
+			result.lastname = lastName;
+			result.middlename = middleName;
+      result.occupy = occupy;
+      result.comment = comment;
+      result.job = job;
+      result.exittoorg_id = exittoorg_id;
+      result.deleted = deleted;
+
+      result.contactstelephones = contactstelephones;
+      result.contactmobiles =     contactmobiles;
+      result.contacthomephones =  contacthomephones;
+      result.contactemails =      contactemails;
+      result.contactmessangers =  contactmessangers;
+
+			console.log('result', result);
+
+			if (props.on_change) {
+				props.on_change(itemId, result);
+			}
+		}, 220);
+		return () => clearTimeout(timer);
+    
+  }, [name,
+    lastName,
+    middleName,
+    occupy,
+    comment,
+    job,
+    exittoorg_id,
+    deleted,
+    contactemails,
+    contacthomephones,
+    contactmessangers,
+    contactmobiles,
+    contactstelephones
+  ]);
 
 
+
+  const handleChangeData = (changed_data) => {
+    if (changed_data.name !== undefined) {
+        setName(changed_data.name);
+
+    } else if (changed_data.lastname !== undefined) {
+        setLastName(changed_data.lastname);
+
+    } else if (changed_data.middlename !== undefined) {
+        setMiddleName(changed_data.middlename);
+
+    } else if (changed_data.occupy !== undefined) {
+        setOccupy(changed_data.occupy);
+
+    } else if (changed_data.deleted !== undefined) {
+        setDeleted(changed_data.deleted);
+
+    } else if (changed_data.comment !== undefined) {
+        setComment(changed_data.comment); // опечатка в сеттере, но оставил как есть
+
+    } else if (changed_data.job !== undefined) {
+        setJob(changed_data.job);
+
+    } else if (changed_data.exittoorg_id !== undefined){
+      setExittoorg_id(changed_data.exittoorg_id);
+    }
+};
 
 
 
@@ -721,10 +792,11 @@ const OrgPageMainTabContactsSection = (props) => {
 						min: 0,
 						max: 120,
 						placeholder: '',
-						name: 'surname',
+						name: 'lastname',
 					},
 				]}
-				on_change={(data) => console.log('Изменения:', data)}
+				// on_change={(data) => console.log('Изменения:', data)}
+        on_blur={handleChangeData}
 			/>
 
 			<OrgPageSectionRow
@@ -750,6 +822,7 @@ const OrgPageMainTabContactsSection = (props) => {
 						name: 'occupy',
 					},
 				]}
+        on_blur={handleChangeData}
 			/>
 
       <OrgPageSectionRow
@@ -767,6 +840,7 @@ const OrgPageMainTabContactsSection = (props) => {
 						name: 'comment',
 					}
 				]}
+        on_blur={handleChangeData}
 			/>
 
       <OrgPageSectionRow
@@ -794,6 +868,7 @@ const OrgPageMainTabContactsSection = (props) => {
 						name: 'exittoorg_id',
 					}
 				]}
+        on_blur={handleChangeData}
 			/>
 
       <OrgPageSectionRow
@@ -811,6 +886,7 @@ const OrgPageMainTabContactsSection = (props) => {
 						name: 'unsubscribe',
 					}
 				]}
+        on_blur={handleChangeData}
 			/>
 
       <div>
