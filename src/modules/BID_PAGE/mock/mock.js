@@ -503,6 +503,7 @@ export const SELECTS = {
         }
     ],
     "contact_email_select": [],
+    "orgs": []
 };
 export const CUR_COMPANY = [
 	{
@@ -537,7 +538,7 @@ export const BID_INFO = {
         "id": 120828,
         "id_company": 2,
         "place": 1,
-        "type": 2,
+        "type": 1,
         "files_count": 0,
         "comments": {
             "accountant": "",
@@ -897,4 +898,11 @@ export const EXTRA = [
         name: "Тип",
         dimension: "",
     },
+];
+export const ORG_SUGGESTIONS = [
+    {
+        "value": 1,
+        "name": "Тестовая карточка",
+        "town": "Пермский край, г. Пермь"
+    }
 ];

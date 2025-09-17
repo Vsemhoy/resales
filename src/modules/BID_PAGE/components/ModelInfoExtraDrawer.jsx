@@ -4,7 +4,7 @@ import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
 import {EXTRA} from "../mock/mock";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 
-const ModelInfoExtra = (props) => {
+const ModelInfoExtraDrawer = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [extraId, setExtraId] = useState(null);
     const [extraName, setExtraName] = useState('');
@@ -93,4 +93,4 @@ const ModelInfoExtra = (props) => {
     );
 }
 
-export default ModelInfoExtra;
+export default ModelInfoExtraDrawer;
