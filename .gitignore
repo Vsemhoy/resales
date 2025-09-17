@@ -14,6 +14,10 @@
 !.vscode/extensions.json 
 .history.vscode/settings.json
 
+# package.JSON
+package.json
+
+
 # testing
 /coverage
 
