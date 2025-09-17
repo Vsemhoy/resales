@@ -86,7 +86,7 @@ const OPMTCcontactmessangersSection = (props) => {
       <OrgPageSectionRow
 				key={'fakmmfdfj_hhls_dk' + id}
 				edit_mode={editMode}
-				titles={['Ключ api','Id мессенджера']}
+				titles={['Мессенджер - Ключ api','Id мессенджера']}
 				datas={[
 					{
 						type: OPS_TYPE.STRING,

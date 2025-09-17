@@ -70,6 +70,18 @@ const OPMTCcontactmobilesSection = (props) => {
   ]);
 
 
+    useEffect(() => {
+      if (deleted){
+        console.log('ALARM', props)
+        if (props.on_delete){
+          console.log(id)
+          props.on_delete(id, !deleted);
+        }
+      }
+    }, [deleted]);
+
+    
+
   return (
     <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
       <OrgPageSectionRow
@@ -109,6 +121,7 @@ const OPMTCcontactmobilesSection = (props) => {
           />
         }
         on_change={handleChangeData}
+        on_blur={handleChangeData}
 			/>
 
     </div>

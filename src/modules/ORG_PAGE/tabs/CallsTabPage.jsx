@@ -444,13 +444,13 @@ const CallsTabPage = (props) => {
 		if (is_original === false) {
 			if (!editedItemsIds?.includes(id)) {
 				setEditedItemsIds([...editedItemsIds, id]);
-				data.command = 'update';
 			}
+      data.command = 'update';
 		} else {
 			if (editedItemsIds?.includes(id)) {
 				setEditedItemsIds(editedItemsIds.filter((item) => item !== id));
-				data.command = '';
 			}
+      data.command = '';
 		}
 
 		console.log(data);
