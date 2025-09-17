@@ -518,7 +518,7 @@ const EngineerPage = (props) => {
     const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
     switch (type) {
       case 'model_count':
-        bidModelsUpd[bidModelSort-1].model_count = value;
+        bidModelsUpd[bidModelIdx].model_count = value;
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
         setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
