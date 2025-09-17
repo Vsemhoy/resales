@@ -7,6 +7,7 @@ import OrgPageMainTabPayersSection from '../components/sections/MainTabSections/
 import { Button, Collapse } from 'antd';
 import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
+import { forIn } from 'lodash';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -33,6 +34,9 @@ const MainTabPage = (props) => {
 
   const [editedContactIds, setEditedContactIds] = useState([]);
 
+  const [selects, setSelects] = useState(null);
+
+  const [dataModified, setDataModified] = useState(false);
 
 	useEffect(() => {
 		setShow(props.show);
@@ -46,6 +50,10 @@ const MainTabPage = (props) => {
 		setBaseData(props.base_data);
 	}, [props.base_data]);
 
+  useEffect(() => {
+    console.log('props.selects 2', props.selects)
+    setSelects(props.selects);
+  }, [props.selects]);
 
   useEffect(() => {
     console.log('props.base_data', props.base_data)
@@ -88,7 +96,34 @@ const MainTabPage = (props) => {
   }, [show, editMode, baseData]);
 
 
+  // const updateCompanyData = (changed_data) => {
+  //   console.log('UCD', changed_data);
+  //   for (let key in changed_data) {
+  //       if (changed_data.hasOwnProperty(key)) {
+  //         if (baseData.hasOwnProperty(key)){
 
+  //           console.log(key, changed_data[key]); // Example of accessing key and value
+  //         }
+  //           // Perform operations with key or value
+  //       }
+  //   }
+  // }
+
+  const updateCompanyData = (changed_data) => {
+
+    setBaseData(prevData => {
+      const updatedData = { ...prevData };
+      
+      for (let key in changed_data) {
+        if (changed_data.hasOwnProperty(key) && prevData.hasOwnProperty(key)) {
+          updatedData[key] = changed_data[key];
+          setDataModified(true);
+        }
+      }
+      console.log('updatedData', updatedData)
+      return updatedData;
+    });
+  };
 
   useEffect(() => {
     if (!show){ return; }
@@ -98,14 +133,22 @@ const MainTabPage = (props) => {
         label: <div className={`sa-flex-space`}><div>Общая информация</div><div></div></div>,
         children: <OrgPageMainTabCommonSection
           color={'#2196f3'}
-          edit_mode={editMode} />
+          edit_mode={editMode}
+          data={baseData}
+          selects={selects}
+          on_blur={updateCompanyData}
+          />
       },
       {
         key: 'mainorgsec_12',
         label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div></div>,
         children: <OrgPageMainTabDepartSection
           color={'blueviolet'}
-          edit_mode={editMode} />
+          edit_mode={editMode}
+          data={baseData}
+          selects={selects}
+          on_blur={updateCompanyData}
+          />
       },
       {
         key: 'mainorgsec_13',
@@ -126,7 +169,11 @@ const MainTabPage = (props) => {
         </div>,
         children: <OrgPageMainTabContactinfoSection
           color={'#30c97aff'}
-          edit_mode={editMode} />
+          edit_mode={editMode} 
+          data={baseData}
+          selects={selects}
+          on_blur={updateCompanyData}
+          />
       },
       {
         key: 'mainorgsec_14',
@@ -181,7 +228,7 @@ const MainTabPage = (props) => {
     ];
 
     setStructureItems(secids);
-  },[show, editMode, structureContacts]);
+  },[show, editMode, structureContacts, selects]);
 
 
 
