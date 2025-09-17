@@ -521,7 +521,7 @@ const EngineerPage = (props) => {
         bidModelsUpd[bidModelSort-1].model_count = value;
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
-        // setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+        setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
         break;
       case 'percent':
         bidModelsUpd[bidModelIdx].percent = value;
