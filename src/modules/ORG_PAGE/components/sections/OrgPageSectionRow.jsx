@@ -150,6 +150,7 @@ const OrgPageSectionRow = (props) => {
         /** ---------------------------------------------------------------- */
 				return (
 					<Typography.Paragraph
+            className='sk-omt-content-color'
 						style={{ whiteSpace: 'pre-line', display: 'block' }}
 						ellipsis={false}
 					>

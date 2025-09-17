@@ -299,7 +299,7 @@ export const ORGLIST_MODAL_MOCK_MAINTAB = {
 			lastname: 'Мимухин',
 			name: 'Станислав',
 			middlename: 'Евгеньевич',
-			comment: '',
+			comment: 'Hello wolf',
 			id_orgsusers8an_contactfax: 0,
 			deleted: 0,
 			id_orgsusers8an_contactmobile: 0,
