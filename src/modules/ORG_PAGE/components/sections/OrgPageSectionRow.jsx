@@ -339,6 +339,7 @@ const OrgPageSectionRow = (props) => {
 			case 'checkbox':
 				return (
 					<Checkbox
+            style={{paddingLeft: '12px'}}
 						checked={!!value}
 						onChange={(e) => onChange(field.name, e.target.checked, field)}
 					>

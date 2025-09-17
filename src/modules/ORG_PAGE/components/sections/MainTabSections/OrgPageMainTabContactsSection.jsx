@@ -102,7 +102,111 @@ const OrgPageMainTabContactsSection = (props) => {
 // ░██  ░██  ░██ ░██     ░██ ░██     ░██   ░██  ░██         ░██         
 // ░██       ░██  ░██   ░██  ░██     ░██   ░██  ░██         ░██         
 // ░██       ░██   ░██████   ░█████████  ░██████░██████████ ░██████████ 
+  /* ----------------- MOBILE --------------------- */
+  /**
+   * Добавление нового элемента в стек новых
+   */
+  const handleAddMobile = ()=>{
+    let item = {
+          id: 'new_' + dayjs().unix() + '_' + newContactmobiles.length ,
+          id_orgsusers:  itemId,
+          number: '',
+          comment: '',
+          deleted: 0,
+          command: "create",
+        };
+    setNewContactmobiles([...newContactmobiles, item]);
+  }
 
+  /**
+   * Удаление напрочь только что добавленной записи
+   * @param {*} id 
+   */
+  const handleDeleteNewMobile = (id) => {
+    console.log('delete', id)
+    setNewContactmobiles(newContactmobiles.filter((item)=>item.id !== id));
+  }
+
+  /**
+   * Обновление новой только что добавленной записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateNewMobileUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU NEW UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    data.command = 'create';
+
+    setNewContactmobiles((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+
+  /**
+   * Обновление и удаление существующей записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateMobileUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU REAL UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    const excluders = ['command', 'date'];
+    let is_original = false;
+
+    originalContactmobiles.forEach((element) => {
+      if (element.id === id) {
+        console.log('element, data', element, data)
+        is_original = compareObjects(element, data, {
+          excludeFields: excluders,
+          compareArraysDeep: false,
+          ignoreNullUndefined: true,
+        });
+      }
+    });
+    console.log('is_original', is_original)
+    if (is_original === false) {
+      if (!editedMobilephonesIds?.includes(id)) {
+        setEditedMobilephonesIds([...editedMobilephonesIds, id]);
+      }
+      data.command = "update";
+    } else {
+      if (editedMobilephonesIds?.includes(id)) {
+        setEditedMobilephonesIds(editedMobilephonesIds.filter((item) => item !== id));
+      }
+      data.command = '';
+    }
+    if (data.deleted === true){
+      data.command = "delete";
+    } 
+
+    console.log('data email', data)
+    setContactmobiles((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+    /* ----------------- MOBILE END --------------------- */
 
 
 
@@ -115,7 +219,112 @@ const OrgPageMainTabContactsSection = (props) => {
 // ░██        ░██     ░██ ░██  ░██░██     ░██    ░██    ░██ ░██            ░██    
 //  ░██   ░██  ░██   ░██  ░██   ░████     ░██    ░██    ░██  ░██   ░██     ░██    
 //   ░██████    ░██████   ░██    ░███     ░██    ░██    ░██   ░██████      ░██    
+  /* ----------------- CONTACT --------------------- */
+  /**
+   * Добавление нового элемента в стек новых
+   */
+  const handleAddContact = ()=>{
+    let item = {
+          id: 'new_' + dayjs().unix() + '_' + newContactstelephones.length ,
+          id_orgsusers:  itemId,
+          number: '',
+          ext: '',
+          comment: '',
+          deleted: 0,
+          command: "create",
+        };
+    setNewContactstelephones([...newContactstelephones, item]);
+  }
 
+  /**
+   * Удаление напрочь только что добавленной записи
+   * @param {*} id 
+   */
+  const handleDeleteNewContact = (id) => {
+    console.log('delete', id)
+    setNewContactstelephones(newContactstelephones.filter((item)=>item.id !== id));
+  }
+
+  /**
+   * Обновление новой только что добавленной записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateNewContactUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU NEW UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    data.command = 'create';
+
+    setNewContactstelephones((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+
+  /**
+   * Обновление и удаление существующей записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateContactUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU REAL UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    const excluders = ['command', 'date'];
+    let is_original = false;
+
+    originalContactstelephones.forEach((element) => {
+      if (element.id === id) {
+        console.log('element, data', element, data)
+        is_original = compareObjects(element, data, {
+          excludeFields: excluders,
+          compareArraysDeep: false,
+          ignoreNullUndefined: true,
+        });
+      }
+    });
+    console.log('is_original', is_original)
+    if (is_original === false) {
+      if (!editedContactphonesIds?.includes(id)) {
+        setEditedContactphonesIds([...editedContactphonesIds, id]);
+      }
+      data.command = "update";
+    } else {
+      if (editedContactphonesIds?.includes(id)) {
+        setEditedContactphonesIds(editedContactphonesIds.filter((item) => item !== id));
+      }
+      data.command = '';
+    }
+    if (data.deleted === true){
+      data.command = "delete";
+    } 
+
+    console.log('data email', data)
+    setContactstelephones((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+    /* ----------------- CONTACT END --------------------- */
 
 
 
@@ -128,7 +337,112 @@ const OrgPageMainTabContactsSection = (props) => {
 // ░██     ░██ ░██     ░██ ░██  ░██  ░██ ░██         
 // ░██     ░██  ░██   ░██  ░██       ░██ ░██         
 // ░██     ░██   ░██████   ░██       ░██ ░██████████ 
+  /* ----------------- HOME PHONE --------------------- */
+  /**
+   * Добавление нового элемента в стек новых
+   */
+  const handleAddHomePhone = ()=>{
+    let item = {
+          id: 'new_' + dayjs().unix() + '_' + newContacthomephones.length ,
+          id_orgsusers:  itemId,
+          number: '',
+          ext: '',
+          comment: '',
+          deleted: 0,
+          command: "create",
+        };
+    setNewContacthomephones([...newContacthomephones, item]);
+  }
 
+  /**
+   * Удаление напрочь только что добавленной записи
+   * @param {*} id 
+   */
+  const handleDeleteNewHomePhone = (id) => {
+    console.log('delete', id)
+    setNewContacthomephones(newContacthomephones.filter((item)=>item.id !== id));
+  }
+
+  /**
+   * Обновление новой только что добавленной записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateNewHomePhoneUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU NEW UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    data.command = 'create';
+
+    setNewContacthomephones((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+
+  /**
+   * Обновление и удаление существующей записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateHomePhoneUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU REAL UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    const excluders = ['command', 'date'];
+    let is_original = false;
+
+    originalContacthomephones.forEach((element) => {
+      if (element.id === id) {
+        console.log('element, data', element, data)
+        is_original = compareObjects(element, data, {
+          excludeFields: excluders,
+          compareArraysDeep: false,
+          ignoreNullUndefined: true,
+        });
+      }
+    });
+    console.log('is_original', is_original)
+    if (is_original === false) {
+      if (!editedHomephonesIds?.includes(id)) {
+        setEditedHomephonesIds([...editedHomephonesIds, id]);
+      }
+      data.command = "update";
+    } else {
+      if (editedHomephonesIds?.includes(id)) {
+        setEditedHomephonesIds(editedHomephonesIds.filter((item) => item !== id));
+      }
+      data.command = '';
+    }
+    if (data.deleted === true){
+      data.command = "delete";
+    } 
+
+    console.log('data email', data)
+    setContacthomephones((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+    /* ----------------- HOME PHONE END --------------------- */
 
 
 
@@ -494,9 +808,22 @@ const OrgPageMainTabContactsSection = (props) => {
         key={'OPMTCcontactstelephonesSection' + item.id}
           data={item}
           edit_mode={editMode}
-
+          on_change={handleUpdateContactUnit}
         />
       ))}</div>
+      {newContactstelephones.length > 0 && (
+        <div className='sa-org-temp-stack-collapse'>
+        {newContactstelephones.map((item)=>(
+          <OPMTCcontactstelephonesSection
+            key={'newOPMTCcontactstelephonesSection' + item.id}
+            data={item}
+            edit_mode={editMode}
+            on_delete={handleDeleteNewContact}
+            on_change={handleUpdateNewContactUnit}
+          />
+        ))}</div>
+      )}
+
 
       <div>
       {contactmobiles.map((item)=>(
@@ -504,9 +831,22 @@ const OrgPageMainTabContactsSection = (props) => {
         key={'OPMTCcontactmobilesSection' + item.id}
           data={item}
           edit_mode={editMode}
-
+          on_change={handleUpdateMobileUnit}
         />
       ))}</div>
+      {newContactmobiles.length > 0 && (
+        <div className='sa-org-temp-stack-collapse'>
+        {newContactmobiles.map((item)=>(
+          <OPMTCcontactmobilesSection
+            key={'newOPMTCcontactmobilesSection' + item.id}
+            data={item}
+            edit_mode={editMode}
+            on_delete={handleDeleteNewMobile}
+            on_change={handleUpdateNewMobileUnit}
+          />
+        ))}</div>
+      )}
+
 
       <div>
       {contacthomephones.map((item)=>(
@@ -514,10 +854,21 @@ const OrgPageMainTabContactsSection = (props) => {
           key={'OPMTCcontacthomephonesSection' + item.id}
           data={item}
           edit_mode={editMode}
-
+          on_change={handleUpdateHomePhoneUnit}
         />
       ))}</div>
-
+      {newContacthomephones.length > 0 && (
+        <div className='sa-org-temp-stack-collapse'>
+        {newContacthomephones.map((item)=>(
+          <OPMTCcontacthomephonesSection
+            key={'newOPMTCcontactHommiesSection' + item.id}
+            data={item}
+            edit_mode={editMode}
+            on_delete={handleDeleteNewHomePhone}
+            on_change={handleUpdateNewHomePhoneUnit}
+          />
+        ))}</div>
+      )}
 
 
       <div>
@@ -584,30 +935,33 @@ const OrgPageMainTabContactsSection = (props) => {
                 icon={<PhoneIcon height={'20px'}/>}
                 onClick={(ev) => {
                   ev.stopPropagation();
+                  handleAddContact();
                 }}
                 >Конт. телефон</Button>
               <Button
-              title='Добавить мобильный телефон'
+                title='Добавить мобильный телефон'
                 size='small'
                 color="primary"
                 variant="outlined"
                 icon={<DevicePhoneMobileIcon height={'20px'}/>}
                 onClick={(ev) => {
                   ev.stopPropagation();
+                  handleAddMobile();
                 }}
                 >Моб. телефон</Button>
               <Button
-              title='Добавить домашний телефон'
+                title='Добавить домашний телефон'
                 size='small'
                 color="primary"
                 variant="outlined"
                 icon={<CameraIcon height={'20px'}/>}
                 onClick={(ev) => {
                   ev.stopPropagation();
+                  handleAddHomePhone();
                 }}
                 >Дом. телефон</Button>
               <Button
-              title='Добавить эл. почту'
+                title='Добавить эл. почту'
                 size='small'
                 color="primary"
                 variant="outlined"
@@ -618,7 +972,7 @@ const OrgPageMainTabContactsSection = (props) => {
                 }}
                 >Эл. почту</Button>
               <Button
-              title='Добавить мессенджер'
+                title='Добавить мессенджер'
                 size='small'
                 color="primary"
                 variant="outlined"
