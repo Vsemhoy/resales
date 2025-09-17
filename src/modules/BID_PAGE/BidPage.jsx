@@ -599,6 +599,26 @@ const BidPage = (props) => {
 			setTimeout(() => setIsLoadingSmall(false), 500);
 		}
 	};
+	const fetchWordFile = async () => {
+		if (PRODMODE) {
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/makedoc', {
+					data: {
+						bid_id: bidId,
+						new: true,
+						template_id: bidIdCompany - 1,
+						type: 1
+					},
+					_token: CSRF_TOKEN,
+				});
+				const parts = response.data.data.file_link.split('/');
+				const withSlash = '/' + parts.slice(1).join('/');
+				window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
+			} catch (e) {
+				console.log(e);
+			}
+		}
+	};
 
 	const prepareSelect = (select) => {
 	  if (select) {
@@ -1141,6 +1161,7 @@ const BidPage = (props) => {
 									color="primary"
 									variant="outlined"
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'} />}
+									onClick={() => window.open(`/resales/bidsPDF/${bidId}`, '_blank')}
 								></Button>
 							</Tooltip>
 							{+bidType !== 2 && (
@@ -1150,6 +1171,7 @@ const BidPage = (props) => {
 										color="primary"
 										variant="outlined"
 										icon={<FileWordOutlined className={'sa-bid-page-btn-icon'} />}
+										onClick={() => fetchWordFile()}
 									></Button>
 								</Tooltip>
 							)}

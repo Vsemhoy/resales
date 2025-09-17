@@ -44,6 +44,7 @@ import EngineerListPage from './modules/ENGINEER_LIST/EngineerListPage';
 import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
 import BidPage from './modules/BID_PAGE/BidPage';
 import { UserDataProvider, useUserData } from './context/UserDataContext';
+import BidPdfCreator from "./modules/BID_PAGE/components/print/BidPdfCreator";
 // import WinShellMessanger from './modules/DEV/COM/WINSHELL/WinShellMessanger';
 function App() {
 	const [userdata, setUserdata] = useState([]);
@@ -134,6 +135,14 @@ function App() {
 							<Route
 								path={'/bids/:bidId'}
 								element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
+							/>
+							<Route
+								path={BASE_ROUTE + '/bidsPDF/:bidId'}
+								element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
+							/>
+							<Route
+								path={'/bidsPDF/:bidId'}
+								element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
 							/>
 
 							<Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />

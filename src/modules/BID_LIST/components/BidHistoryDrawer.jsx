@@ -105,7 +105,6 @@ const BidHistoryDrawer = (props) => {
             setActionOptions(ACTION_OPTIONS);
         }
     };
-
     const fetchLogs = async (action_type) => {
         if (PRODMODE) {
             try {
@@ -125,7 +124,6 @@ const BidHistoryDrawer = (props) => {
             return LOGS;
         }
     };
-
     const createTabs = async () => {
         const tabs = [];
 
