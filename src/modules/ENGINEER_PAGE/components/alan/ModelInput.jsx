@@ -7,6 +7,7 @@ const ModelInput = (props) => {
     const [bidModelSort, setBidModelSort] = useState(null);
     const [type, setType] = useState('');
     const [timeoutId, setTimeoutId] = useState(null);
+    const [sort, setSort] = useState(0);
 
     useEffect(() => {
         if (props.value || props.value === 0) {
@@ -53,6 +54,7 @@ const ModelInput = (props) => {
         <Input style={{width: '100%'}}
                type="number"
                value={value}
+               min={type === "model_count" ? 1 : undefined}
                onChange={(e) => handleChange(e.target.value)}
         />
     );

@@ -383,7 +383,7 @@ const EngineerPage = (props) => {
       bid_models: bidModels,
     };
     console.log(data);
-    
+
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.put(`/api/sales/engineer/${bidId}`, {
@@ -518,7 +518,7 @@ const EngineerPage = (props) => {
     const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
     switch (type) {
       case 'model_count':
-        bidModelsUpd[bidModelIdx].model_count = value;
+        bidModelsUpd[bidModelSort-1].model_count = value;
         setBidModels(bidModelsUpd);
         setIsNeedCalcMoney(true);
         setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
