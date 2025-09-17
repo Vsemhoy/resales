@@ -146,6 +146,8 @@ const EngineerPage = (props) => {
 
   const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, manager_name: ""});
   const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, engineer_name: ""});
+  const [manager_name, setManagerName] = useState("");
+  const [engineer_name, setEngineerName] = useState("");
 
   const handleKeyDown = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -229,6 +231,8 @@ const EngineerPage = (props) => {
           const content = response.data.content;
           setManager(content.manager);
           setEngineer(content.engineer);
+          setEngineerName(content.engineer_name);
+          setManagerName(content.manager_name);
 
           setBidCommentEngineer(content.comment_engineer);
           setBidCommentManager(content.comment_manager);
@@ -293,6 +297,8 @@ const EngineerPage = (props) => {
       console.log("HERE: 1");
       setManager(PREBID.manager);
       setEngineer(PREBID.engineer);
+      setEngineerName(PREBID.engineer_name);
+      setManagerName(PREBID.manager_name);
       // setOpenMode(BID.openmode);
       //
       // setBidType(BID.type);
@@ -418,7 +424,7 @@ const EngineerPage = (props) => {
   //     bid_models: bidModels,
   //   };
   //   console.log(data);
-  //   if (PRODMODE) {
+    if (PRODMODE) {
   //     try {
   //       let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/updatebid/${bidId}`, {
   //         data,
@@ -437,12 +443,12 @@ const EngineerPage = (props) => {
   //       setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
   //       setAlertType('error');
   //     }
-  //   } else {
-  //     setIsAlertVisible(true);
-  //     setAlertMessage('Успех!');
-  //     setAlertDescription('Успешное обновление');
-  //     setAlertType('success');
-  //   }
+    } else {
+      setIsAlertVisible(true);
+      setAlertMessage('Успех!');
+      setAlertDescription('Успешное обновление');
+      setAlertType('success');
+    }
   };
   const fetchCalcModels = async () => {
     console.log('fetchCalcModels');
@@ -603,7 +609,7 @@ const EngineerPage = (props) => {
                                 }}
                                 color="geekblue"
                             >
-                              {engineer && (`${engineer.engineer_name}`)}
+                              {engineer_name && (`${engineer_name}`)}
                             </Tag>
                             для
                             <Tag
@@ -613,7 +619,7 @@ const EngineerPage = (props) => {
                                 }}
                                 color={companies.find(comp => comp.id === manager.id_company)?.color}
                             >
-                              {manager && (`${manager.manager_name}`)}
+                              {manager_name && (`${manager_name}`)}
                             </Tag>
                           </div>
                       )}
@@ -737,8 +743,7 @@ const EngineerPage = (props) => {
                                   icon={<InfoCircleOutlined />}
                                   onClick={() => handleOpenModelInfo(bidModel.model_id)}
                               ></Button>
-                            </div>
-                            <div className={'sa-models-table-cell'} style={{ padding: 0 }}>
+
                               <Button
                                   color="danger"
                                   variant="filled"
@@ -746,6 +751,7 @@ const EngineerPage = (props) => {
                                   onClick={() => handleDeleteModelFromBid(bidModel.id)}
                               ></Button>
                             </div>
+
                           </div>
                       ))}
                 </div>
