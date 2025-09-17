@@ -1,10 +1,10 @@
-// import { UserPic } from './UserPic';
+import { UserPic } from './UserPic';
 export default function ChatHeader() {
 	return (
 		<>
-			{/* <div>
+			<div>
 				<UserPic />
-			</div> */}
+			</div>
 		</>
 	);
 }

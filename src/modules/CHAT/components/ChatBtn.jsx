@@ -4,7 +4,7 @@ import { MessageOutlined } from '@ant-design/icons';
 import { MOCK } from '../mock/mock.js';
 import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
-import { useCompanion } from '../../../hooks/sms/useCompanion';
+// import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { useUserData } from '../../../context/UserDataContext'; // импортируем хук для контекста
 
 export const ChatBtn = () => {
@@ -23,10 +23,9 @@ export const ChatBtn = () => {
 	// Получаем user.id из контекста
 	const { userdata } = useUserData();
 
-	// Проверяем, есть ли userdata и если нет, задаём заглушку (на всякий случай)
-	const currentUserId = userdata?.user?.id || NaN; // если userdata нет, используем заглушку
+	const currentUserId = userdata?.user?.id || NaN;
 
-	const getCompanion = useCompanion(currentUserId); // ✅
+	// const getCompanion = useCompanion(currentUserId); // ✅
 
 	// Обработка полученных SMS
 	const smsData = useMemo(() => {
@@ -35,7 +34,7 @@ export const ChatBtn = () => {
 		}
 
 		const messages = smsList.map((sms) => {
-			const companion = getCompanion(sms);
+			// const companion = getCompanion(sms);
 			return {
 				id: sms.id,
 				name: companion?.name || null,
@@ -44,11 +43,13 @@ export const ChatBtn = () => {
 			};
 		});
 
+		
 		return {
 			hasSms: messages.length > 0,
 			messages,
 		};
-	}, [smsList, getCompanion]);
+		// }, [smsList, getCompanion]);
+	}, [smsList]);
 
 	// Генерация текста в dropdown
 	const menuItems = useMemo(() => {

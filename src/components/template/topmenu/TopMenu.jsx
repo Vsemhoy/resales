@@ -25,7 +25,7 @@ const TopMenu = () => {
 	const [companiesMenu, setCompanieseMenu] = useState([]);
 
 	useEffect(() => {
-		 console.log('userdata structure:', userdata);
+		console.log('userdata structure:', userdata);
 		if (!userdata || userdata.length === 0) {
 			return;
 		}
