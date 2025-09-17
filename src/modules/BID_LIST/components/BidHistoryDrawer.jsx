@@ -59,23 +59,23 @@ const BidHistoryDrawer = (props) => {
     ];
 
     useEffect(() => {
+        console.log('drawer')
+    }, []);
+    useEffect(() => {
         if (props.bidId) {
             setBidId(props.bidId);
         }
     }, [props.bidId]);
-
     useEffect(() => {
         if (props.bidActions) {
             setBidActions(props.bidActions);
         }
     }, [props.bidActions]);
-
     useEffect(() => {
         if (bidId) {
             fetchActionOptions().then();
         }
     }, [bidId]);
-
     useEffect(() => {
         if (actionOptions) {
             createTabs().then();
