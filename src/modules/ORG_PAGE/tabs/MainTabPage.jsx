@@ -74,10 +74,12 @@ const MainTabPage = (props) => {
         </div>)}
         
         </div>,
-        children: <div className={`${item.deleted ? 'ant-collapse-content-box-deleted' : ''}`}> <OrgPageMainTabContactsSection
+        children: <div className={`${item.deleted ? 'ant-collapse-content-box-deleted' : ''}`}> 
+        <OrgPageMainTabContactsSection
             color={item.deleted ? '#e50000' : '#f39821ff' }
             edit_mode={editMode}
             data={item}
+            on_change={handleUpdateContactData}
           /> </div>
       }))
     }
@@ -233,23 +235,39 @@ const MainTabPage = (props) => {
         newContacts = contacts.filter((item)=> item.id !== id);
       } else {
         newContacts = contacts.map((item) => (item.id === id ? ordata : item));
+        if (!editedContactIds?.includes(id)) {
+          setEditedContactIds([...editedContactIds, id]);
+        }
       };
       
       ndt.contacts = newContacts;
       setBaseData(ndt);
       console.log('ndt', ndt)
     }
-
-
-    // setContactemails((prevUnits) => {
-    //   const exists = prevUnits.some((item) => item.id === id);
-    //   if (!exists) {
-    //     return [...prevUnits, data];
-    //   } else {
-    //     return prevUnits.map((item) => (item.id === id ? data : item));
-    //   }
-    // });
   }
+
+  const handleUpdateContactData = (id, updata) => {
+    console.log('ON CHANGE', id, updata)
+    let contacts = baseData.contacts;
+    // let ordata = contacts.find((item)=> item.id === id);
+
+    if (updata.command && updata.command === 'create'){
+
+    } else {
+      updata.command = 'update';
+    };
+    if (!editedContactIds?.includes(id)) {
+      setEditedContactIds([...editedContactIds, id]);
+    }
+
+    let ndt = JSON.parse(JSON.stringify(baseData)); // В ином случае не вызовется коллбэк
+    let newContacts = [];
+    newContacts = contacts.map((item) => (item.id === id ? updata : item));
+
+    ndt.contacts = newContacts;
+    setBaseData(ndt);
+  }
+
 
 
 	return (
