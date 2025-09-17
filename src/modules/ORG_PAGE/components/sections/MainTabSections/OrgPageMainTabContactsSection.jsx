@@ -41,9 +41,22 @@ const OrgPageMainTabContactsSection = (props) => {
   const [newContacthomephones,  setNewContacthomephones]  = useState([]);
   const [newContactemails,      setNewContactemails]      = useState([]);
   const [newContactmessangers,  setNewContactmessangers]  = useState([]);
+  
+  const [originalContactstelephones, setOriginalContactstelephones] = useState([]);
+  const [originalContactmobiles,     setOriginalContactmobiles]     = useState([]);
+  const [originalContacthomephones,  setOriginalContacthomephones]  = useState([]);
+  const [originalContactemails,      setOriginalContactemails]      = useState([]);
+  const [originalContactmessangers,  setOriginalContactmessangers]  = useState([]);
 
-  const [newEditedMessangersIds, setNewEditedMessangersIds] = useState([]);
+
   const [editedMessangersIds,    setEditedMessangersIds]    = useState([]);
+  const [editedEmailsIds,        setEditedEmailsIds]        = useState([]);
+  const [editedContactphonesIds, setEditedContactphonesIds] = useState([]);
+  const [editedMobilephonesIds,  setEditedMobilephonesIds]  = useState([]);
+  const [editedHomephonesIds,    setEditedHomephonesIds]    = useState([]);
+
+
+
 
   useEffect(() => {
     if (props.data?.id){
@@ -55,6 +68,12 @@ const OrgPageMainTabContactsSection = (props) => {
       setContacthomephones(props.data.contacthomephones);
       setContactemails(props.data.contactemails);
       setContactmessangers(props.data.contactmessangers);
+
+      setOriginalContactstelephones(JSON.parse(JSON.stringify(props.data.contactstelephones)));
+      setOriginalContactmobiles(    JSON.parse(JSON.stringify(props.data.contactmobiles    )));
+      setOriginalContacthomephones( JSON.parse(JSON.stringify(props.data.contacthomephones )));
+      setOriginalContactemails(     JSON.parse(JSON.stringify(props.data.contactemails     )));
+      setOriginalContactmessangers( JSON.parse(JSON.stringify(props.data.contactmessangers )));
     }
 
   }, [props.data]);
@@ -74,7 +93,10 @@ const OrgPageMainTabContactsSection = (props) => {
 
 
 
-
+  /* ----------------- MESSANGER --------------------- */
+  /**
+   * Добавление нового элемента в стек новых
+   */
   const handleAddMessanger = ()=>{
     let item = {
           id: 'new_' + dayjs().unix() + '_' + newContactmessangers.length ,
@@ -86,44 +108,31 @@ const OrgPageMainTabContactsSection = (props) => {
         };
     setNewContactmessangers([...newContactmessangers, item]);
   }
+
+  /**
+   * Удаление напрочь только что добавленной записи
+   * @param {*} id 
+   */
   const handleDeleteNewMessanger = (id) => {
     console.log('delete', id)
     setNewContactmessangers(newContactmessangers.filter((item)=>item.id !== id));
   }
+
+  /**
+   * Обновление новой только что добавленной записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
   const handleUpdateNewMessangerUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
 
-    const excluders = ['command', 'date'];
-    let is_original = false;
-
-    newContactmessangers.forEach((element) => {
-      if (element.id === id) {
-        is_original = compareObjects(element, data, {
-          excludeFields: excluders,
-          compareArraysDeep: false,
-          ignoreNullUndefined: true,
-        });
-      }
-    });
-
-    if (is_original === false) {
-      if (!newEditedMessangersIds?.includes(id)) {
-        setNewEditedMessangersIds([...newEditedMessangersIds, id]);
-        data.command = 'create';
-      }
-    } else {
-      if (newEditedMessangersIds?.includes(id)) {
-        setNewEditedMessangersIds(newEditedMessangersIds.filter((item) => item !== id));
-        data.command = '';
-      }
-    }
-
-    console.log('HOHOHOHO',data);
+    data.command = 'create';
 
     setNewContactmessangers((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
@@ -135,17 +144,69 @@ const OrgPageMainTabContactsSection = (props) => {
     });
   };
 
+  /**
+   * Обновление и удаление существующей записи
+   * @param {*} id 
+   * @param {*} data 
+   * @returns 
+   */
+  const handleUpdateMessangerUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU REAL UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    const excluders = ['command', 'date'];
+    let is_original = false;
+
+    originalContactmessangers.forEach((element) => {
+      if (element.id === id) {
+        console.log('element, data', element, data)
+        is_original = compareObjects(element, data, {
+          excludeFields: excluders,
+          compareArraysDeep: false,
+          ignoreNullUndefined: true,
+        });
+      }
+    });
+    console.log('is_original', is_original)
+    if (is_original === false) {
+      if (!editedMessangersIds?.includes(id)) {
+        setEditedMessangersIds([...editedMessangersIds, id]);
+      }
+      data.command = "update";
+    } else {
+      if (editedMessangersIds?.includes(id)) {
+        setEditedMessangersIds(editedMessangersIds.filter((item) => item !== id));
+      }
+      data.command = '';
+    }
+    if (data.deleted === true){
+      data.command = "delete";
+    } 
+
+    console.log('data', data)
+    setContactmessangers((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
+    /* ----------------- MESSANGER END --------------------- */
+
+
+
+
+
 
 
 	return (
 		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
-			{/* <OrgPageSectionRow
-            edit_mode={editMode}
-            key={'fklasdjl'}
-            titles={['Название организации']}
-            datas={['Тестовая карточка организации']}
-            comment={"Здесь будет длинный комментарий ли очень длинный"}
-        /> */}
 
 			<OrgPageSectionRow
         key={'faksdj_dk' + itemId}
@@ -171,19 +232,6 @@ const OrgPageMainTabContactsSection = (props) => {
 						name: 'surname',
 					},
 				]}
-// 				comment={{
-// 					type: 'textarea',
-// 					value: `Иван Это важный клиент
-// B ybjfkldsajklf fajsdlk fjlaksjdfklajs kdlfjaksljdfkasj dklfjas kldfa
-// asdklfjaskld jfkasjdfas dfkjaslkdfjklasjdfas
-// d
-// faskdjfklasj dkfljsdklfjsakl`,
-// 					max: 500,
-// 					required: false,
-// 					nullable: true,
-// 					placeholder: '',
-// 					name: 'usercomment',
-// 				}}
 				on_change={(data) => console.log('Изменения:', data)}
 			/>
 
@@ -321,7 +369,7 @@ const OrgPageMainTabContactsSection = (props) => {
           key={'OPMTCcontactmessangersSection' + item.id}
           data={item}
           edit_mode={editMode}
-
+          on_change={handleUpdateMessangerUnit}
         />
       ))}</div>
       {newContactmessangers.length > 0 && (

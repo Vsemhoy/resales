@@ -9,6 +9,11 @@
 	"security.workspace.trust.untrustedFiles": "open",
 	"editor.minimap.enabled": false,
 	"editor.tabSize": 2,
+	  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "editor.renderWhitespace": "boundary",
+  "editor.indentSize": "tabSize",
+
 	"git.openRepositoryInParentFolders": "never",
 	"workbench.editor.enablePreview": false,
 	"[javascript]": {
@@ -65,7 +70,6 @@
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	"workbench.tree.stickyScrollMaxItemCount": 10,
-	"editor.indentSize": "tabSize",
 	"pugFormatter.tabSize": 2,
 	"[vue]": {
 		"editor.defaultFormatter": "Vue.volar"
