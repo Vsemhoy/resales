@@ -105,7 +105,8 @@ const OrgPageSectionRow = (props) => {
 			setErrors((prev) => ({ ...prev, [fieldName]: `Минимум: ${field.min}` }));
 			return;
 		}
-		if (field.max !== undefined && newValue != null && newValue > field.max) {
+		if (!(field.type !== 'text' || field.type !== 'string' || field.type !== 'email' || field.type !== 'textarea') &&
+      field.max !== undefined && newValue != null && newValue > field.max) {
 			setErrors((prev) => ({ ...prev, [fieldName]: `Максимум: ${field.max}` }));
 			return;
 		}

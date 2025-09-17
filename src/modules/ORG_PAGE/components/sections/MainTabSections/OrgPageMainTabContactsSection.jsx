@@ -10,6 +10,8 @@ import OPMTCcontactmobilesSection from './subsections/OPMTCcontactmobilesSection
 import OPMTCcontacthomephonesSection from './subsections/OPMTCcontacthomephonesSection';
 import OPMTCcontactemailsSection from './subsections/OPMTCcontactemailsSection';
 import OPMTCcontactmessangersSection from './subsections/OPMTCcontactmessangersSection';
+import dayjs from 'dayjs';
+import { compareObjects } from '../../../../../components/helpers/CompareHelpers';
 
 const OrgPageMainTabContactsSection = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
@@ -40,6 +42,9 @@ const OrgPageMainTabContactsSection = (props) => {
   const [newContactemails,      setNewContactemails]      = useState([]);
   const [newContactmessangers,  setNewContactmessangers]  = useState([]);
 
+  const [newEditedMessangersIds, setNewEditedMessangersIds] = useState([]);
+  const [editedMessangersIds,    setEditedMessangersIds]    = useState([]);
+
   useEffect(() => {
     if (props.data?.id){
       setItemId(props.data?.id);
@@ -67,6 +72,68 @@ const OrgPageMainTabContactsSection = (props) => {
 
 
 
+
+
+
+  const handleAddMessanger = ()=>{
+    let item = {
+          id: 'new_' + dayjs().unix() + '_' + newContactmessangers.length ,
+          id_orgsusers:  itemId,
+          identifier: '',
+          messangers_id: 0,
+          deleted: 0,
+          command: "create",
+        };
+    setNewContactmessangers([...newContactmessangers, item]);
+  }
+  const handleDeleteNewMessanger = (id) => {
+    console.log('delete', id)
+    setNewContactmessangers(newContactmessangers.filter((item)=>item.id !== id));
+  }
+  const handleUpdateNewMessangerUnit = (id, data) => {
+    // let udata = originalData.filter((item) => item.id !== id);
+    // udata.push(data);
+    console.log('CALL TU REAL UPDATE');
+    if (!editMode) {
+      return;
+    }
+
+    const excluders = ['command', 'date'];
+    let is_original = false;
+
+    newContactmessangers.forEach((element) => {
+      if (element.id === id) {
+        is_original = compareObjects(element, data, {
+          excludeFields: excluders,
+          compareArraysDeep: false,
+          ignoreNullUndefined: true,
+        });
+      }
+    });
+
+    if (is_original === false) {
+      if (!newEditedMessangersIds?.includes(id)) {
+        setNewEditedMessangersIds([...newEditedMessangersIds, id]);
+        data.command = 'create';
+      }
+    } else {
+      if (newEditedMessangersIds?.includes(id)) {
+        setNewEditedMessangersIds(newEditedMessangersIds.filter((item) => item !== id));
+        data.command = '';
+      }
+    }
+
+    console.log('HOHOHOHO',data);
+
+    setNewContactmessangers((prevUnits) => {
+      const exists = prevUnits.some((item) => item.id === id);
+      if (!exists) {
+        return [...prevUnits, data];
+      } else {
+        return prevUnits.map((item) => (item.id === id ? data : item));
+      }
+    });
+  };
 
 
 
@@ -209,6 +276,7 @@ const OrgPageMainTabContactsSection = (props) => {
       <div>
       {contactstelephones.map((item)=>(
         <OPMTCcontactstelephonesSection
+        key={'OPMTCcontactstelephonesSection' + item.id}
           data={item}
           edit_mode={editMode}
 
@@ -218,6 +286,7 @@ const OrgPageMainTabContactsSection = (props) => {
       <div>
       {contactmobiles.map((item)=>(
         <OPMTCcontactmobilesSection
+        key={'OPMTCcontactmobilesSection' + item.id}
           data={item}
           edit_mode={editMode}
 
@@ -227,6 +296,7 @@ const OrgPageMainTabContactsSection = (props) => {
       <div>
       {contacthomephones.map((item)=>(
         <OPMTCcontacthomephonesSection
+          key={'OPMTCcontacthomephonesSection' + item.id}
           data={item}
           edit_mode={editMode}
 
@@ -236,22 +306,41 @@ const OrgPageMainTabContactsSection = (props) => {
       <div>
       {contactemails.map((item)=>(
         <OPMTCcontactemailsSection
+          key={'OPMTCcontactemailsSection' + item.id}
           data={item}
           edit_mode={editMode}
 
         />
       ))}</div>
+
+
 
       <div>
       {contactmessangers.map((item)=>(
         <OPMTCcontactmessangersSection
+          key={'OPMTCcontactmessangersSection' + item.id}
           data={item}
           edit_mode={editMode}
 
         />
       ))}</div>
+      {newContactmessangers.length > 0 && (
+        <div className='sa-org-temp-stack-collapse'>
+        {newContactmessangers.map((item)=>(
+          <OPMTCcontactmessangersSection
+            key={'newOPMTCcontactmessangersSection' + item.id}
+            data={item}
+            edit_mode={editMode}
+            on_delete={handleDeleteNewMessanger}
+            on_change={handleUpdateNewMessangerUnit}
+          />
+        ))}</div>
+      )}
 
 			
+
+
+
       {editMode && (
       <div className={'sk-omt-stack-control sa-flex-space'}>
         <div></div>
@@ -307,6 +396,7 @@ const OrgPageMainTabContactsSection = (props) => {
                 icon={<PaperAirplaneIcon height={'20px'}/>}
                 onClick={(ev) => {
                   ev.stopPropagation();
+                  handleAddMessanger();
                 }}
                 >Мессенджер</Button>
                 </div>

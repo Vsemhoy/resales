@@ -279,7 +279,16 @@ export const ORGLIST_MODAL_MOCK_MAINTAB = {
 					deleted: 0,
 				},
 			],
-			contactmessangers: [],
+			contactmessangers: [
+        {
+          id: 678,
+          id_orgsusers:  63140,
+          identifier: '',
+          messangers_id: 0,
+          deleted: 0,
+        }
+
+      ],
 			contactagents: [],
 		},
 		{
