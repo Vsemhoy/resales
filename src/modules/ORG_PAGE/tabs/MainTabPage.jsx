@@ -141,7 +141,7 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_12',
-        label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div></div>,
+        label: <div className={`sa-flex-space`}><div>Информация отдела</div><div></div></div>,
         children: <OrgPageMainTabDepartSection
           color={'blueviolet'}
           edit_mode={editMode}

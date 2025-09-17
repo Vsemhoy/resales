@@ -79,7 +79,6 @@ const OrgPageMainTabCommonSection = (props) => {
 			<OrgPageSectionRow
         key={'opmaincom_23'}
 				edit_mode={editMode}
-				columns={2}
 				titles={['Название организации']}
 				datas={[
 					{
@@ -161,7 +160,6 @@ const OrgPageMainTabCommonSection = (props) => {
       <OrgPageSectionRow
         key={'opmaincom_213'}
 				edit_mode={editMode}
-				columns={2}
 				titles={['Второе название']}
 				datas={[
 					{
@@ -225,7 +223,7 @@ const OrgPageMainTabCommonSection = (props) => {
       <OrgPageSectionRow
         key={'opmaincom_243'}
 				edit_mode={editMode}
-				titles={['Источник']}
+				titles={['Источник', 'Сайт']}
 				datas={[
 					{
 						type: OPS_TYPE.STRING,
@@ -235,8 +233,18 @@ const OrgPageMainTabCommonSection = (props) => {
 						nullable: true,
 						placeholder: '',
 						name: 'source',
+					},
+          {
+						type: OPS_TYPE.STRING,
+						value: site,
+						max: 150,
+						required: false,
+						nullable: true,
+						placeholder: '',
+						name: 'site',
 					}
 				]}
+        
         on_blur={(data)=>{
           if (props.on_blur){
             props.on_blur(data);
