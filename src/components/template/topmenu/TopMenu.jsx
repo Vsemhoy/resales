@@ -1,34 +1,31 @@
 import React, { useEffect, useState } from 'react';
-
 import './style/topmenu.css';
 import { ChatBtn } from '../../../modules/CHAT/components/ChatBtn';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, PRODMODE } from '../../../config/config';
 import { CloseCircleOutlined, HomeFilled, WechatWorkOutlined } from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
-import { USER_ROLES } from '../../definitions/USERDEF';
 import { Dropdown } from 'antd';
 import { ShortName } from '../../helpers/TextHelpers';
 import {
 	ArrowTopRightOnSquareIcon,
-	BarsArrowDownIcon,
 	ClipboardDocumentListIcon,
 	Cog6ToothIcon,
 	ShieldCheckIcon,
 	UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
+import { useUserData } from '../../../context/UserDataContext'; // импортируем хук
 
-const TopMenu = (props) => {
-	const location = useLocation();
-	const { userdata } = props;
+const TopMenu = () => {
+	// Получаем данные из контекста
+	const { userdata, setUserdata } = useUserData();
 	const [roleMenu, setRoleMenu] = useState([]);
 	const [companiesMenu, setCompanieseMenu] = useState([]);
-	// const [userMenu, setUserMenu] = useState([]);
 
 	useEffect(() => {
-		console.log('userdata', userdata);
+		 console.log('userdata structure:', userdata);
 		if (!userdata || userdata.length === 0) {
 			return;
 		}
@@ -42,22 +39,18 @@ const TopMenu = (props) => {
 		}
 		let comps = userdata.companies.filter((item) => item.id > 1);
 
-		console.log('comps', comps);
 		for (let i = 0; i < comps.length; i++) {
 			const company = comps[i];
-			console.log('company', company);
 			if (!activeCompany || activeCompany < 2) {
 				if (company.places && company.places.length > 0) {
 					activeCompany = company.id;
 					changeUserCompany(activeCompany);
-					console.log('CHANGE', activeCompany);
 				}
 			}
 
 			if (company.id === activeCompany && company.places.length > 0) {
 				for (let y = 0; y < company.places.length; y++) {
 					const place = company.places[y];
-					console.log('place', place);
 					roles.push({
 						key: 'rolecom_' + company.id + '_' + place.id,
 						label: (
@@ -67,7 +60,6 @@ const TopMenu = (props) => {
 									if (place.place !== activeRole || company.id !== activeCompany) {
 										changeUserRole(place.place);
 									}
-									// иначе — ничего
 								}}
 							>
 								{place.accessname}
@@ -82,7 +74,7 @@ const TopMenu = (props) => {
 							} else if (place.place === 3) {
 								return <ShieldCheckIcon height="18px" />;
 							}
-							return null; // или <QuestionMarkIcon /> по умолчанию
+							return null;
 						})(),
 					});
 				}
@@ -99,7 +91,6 @@ const TopMenu = (props) => {
 							if (item.id !== activeCompany) {
 								changeUserCompany(item.id);
 							}
-							// иначе — ничего
 						}}
 					>
 						{item.name}
@@ -123,23 +114,10 @@ const TopMenu = (props) => {
 			label: <div>Выйти из системы</div>,
 			icon: <ArrowTopRightOnSquareIcon height={'18px'} />,
 		},
-		/*{
-            key: '1gsdf',
-            label: (
-                <Dropdown menu={{items:roleMenu}}>
-                <div>Сменить роль</div></Dropdown>
-            ),
-            icon: <BarsArrowDownIcon height={'18px'} />
-        },*/
 	];
 
 	const sms = [];
 	/** ------------------ FETCHES ---------------- */
-	/**
-	 * Получение списка отделов
-	 * @param {*} req
-	 * @param {*} res
-	 */
 	const set_user_role = async (newplace) => {
 		if (PRODMODE) {
 			try {
@@ -147,19 +125,12 @@ const TopMenu = (props) => {
 					place: newplace,
 					_token: CSRF_TOKEN,
 				});
-				console.log('response', response);
 				if (response.data) {
-					if (props.changed_user_data) {
-						props.changed_user_data(response.data);
-					}
+					setUserdata(response.data); // Обновляем данные пользователя
 				}
 			} catch (e) {
 				console.log(e);
-			} finally {
-				// setLoadingOrgs(false)
 			}
-		} else {
-			//setUserAct(USDA);
 		}
 	};
 
@@ -170,26 +141,16 @@ const TopMenu = (props) => {
 					id_company: newcom,
 					_token: CSRF_TOKEN,
 				});
-				console.log('response', response);
 				if (response.data) {
-					if (props.changed_user_data) {
-						props.changed_user_data(response.data);
-					}
+					setUserdata(response.data); // Обновляем данные пользователя
 				}
 			} catch (e) {
 				console.log(e);
-			} finally {
-				// setLoadingOrgs(false)
 			}
-		} else {
-			//setUserAct(USDA);
 		}
 	};
 
-	/** ------------------ FETCHES END ---------------- */
-
 	const changeUserCompany = (company_id) => {
-		console.log('company_id', company_id);
 		set_user_company(company_id);
 	};
 
@@ -219,23 +180,17 @@ const TopMenu = (props) => {
 						<NavLink to="/orgs/534">
 							<div className={'sa-topmenu-button'}>Заявка</div>
 						</NavLink>
-					) : (
-						<div></div>
-					)}
+					) : null}
 					{userdata && userdata.user && userdata.user.super ? (
 						<NavLink to="/dev/icons/antdicons">
 							<div className={'sa-topmenu-button'}>DEV</div>
 						</NavLink>
-					) : (
-						<div></div>
-					)}
+					) : null}
 					{userdata && userdata.user && userdata.user.super ? (
 						<NavLink to="/curator/exmonitor">
 							<div className={'sa-topmenu-button'}>Exmo</div>
 						</NavLink>
-					) : (
-						<div></div>
-					)}
+					) : null}
 					<NavLink to="/curator">
 						<div className={'sa-topmenu-button'}>Кураторство</div>
 					</NavLink>
@@ -248,17 +203,13 @@ const TopMenu = (props) => {
 					<ChatBtn sms={sms} />
 					<Dropdown menu={{ items: userMenu }}>
 						<div className={'sa-flex-gap'}>
-							{ShortName(
-								props.userdata?.user?.surname,
-								props.userdata?.user?.name,
-								props.userdata?.user?.secondname
-							)}
+							{ShortName(userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname)}
 						</div>
 					</Dropdown>
 					<Dropdown menu={{ items: companiesMenu }}>
 						<div style={{ padding: '2px 14px' }}>
-							{props.userdata?.user?.active_company === 2 && <LogoArstelLight height="30px" />}
-							{props.userdata?.user?.active_company === 3 && <LogoRondoLight height="30px" />}
+							{userdata?.user?.active_company === 2 && <LogoArstelLight height="30px" />}
+							{userdata?.user?.active_company === 3 && <LogoRondoLight height="30px" />}
 						</div>
 					</Dropdown>
 				</div>
