@@ -8,6 +8,7 @@ import { Button, Collapse } from 'antd';
 import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { forIn } from 'lodash';
+import OrgPageMainTabToleranceSection from '../components/sections/MainTabSections/OrgPageMainTabToleranceSection';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -152,6 +153,31 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_13',
+        label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div>
+        {editMode && (
+           <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              // onClick={(ev) => {
+              //   ev.stopPropagation();
+              //   handleDeleteRealUnit(item.id, 1);
+              // }}
+            >
+              
+            </Button>
+        )}
+        </div>,
+        children: <OrgPageMainTabContactinfoSection
+          color={'#799119ff'}
+          edit_mode={editMode} 
+          data={baseData}
+          selects={selects}
+          on_blur={updateCompanyData}
+          />
+      },
+      {
+        key: 'mainorgsec_131',
         label: <div className={`sa-flex-space`}><div>Лицензии/Допуски</div><div></div>
         {editMode && (
            <Button
@@ -167,7 +193,7 @@ const MainTabPage = (props) => {
             </Button>
         )}
         </div>,
-        children: <OrgPageMainTabContactinfoSection
+        children: <OrgPageMainTabToleranceSection
           color={'#30c97aff'}
           edit_mode={editMode} 
           data={baseData}

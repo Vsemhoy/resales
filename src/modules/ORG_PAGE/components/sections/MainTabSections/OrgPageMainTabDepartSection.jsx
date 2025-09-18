@@ -11,6 +11,8 @@ const OrgPageMainTabDepartSection = (props) => {
   const [itemId,         setItemId]           = useState(0);
   const [statusmoney, setStatusmoney]         = useState(0);
   const [conveyance, setConveyance]           = useState(0);
+  const [id_orgs8an_list, setId_orgs8an_list] = useState(0);
+  const [list_comment,       setList_comment] = useState('');
 
   const [author, setAuthor] = useState(''); //id8staff_list7author
   const [curator, setCurator] = useState('');
@@ -42,6 +44,8 @@ const OrgPageMainTabDepartSection = (props) => {
 
       setStatusmoney(props.data?.id8an_statusmoney);
       setConveyance(props.data?.id8an_conveyance);
+      setId_orgs8an_list(props.data?.id_orgs8an_list);
+      setList_comment(props.data?.list_comment);
 
       // setName(props.data?.name);
       // setSite(props.data?.site);
@@ -135,7 +139,7 @@ const OrgPageMainTabDepartSection = (props) => {
               value: item.id,
               label: item.name,
             })),
-						max: 150,
+						max: 1150,
 						required: true,
 						nullable: false,
 						placeholder: '',
@@ -143,9 +147,9 @@ const OrgPageMainTabDepartSection = (props) => {
 					},
 					{
 						type: OPS_TYPE.SELECT,
-						value: 25,
+						value: conveyance,
 						min: 0,
-						max: 120,
+						max: 1120,
 						placeholder: '',
             options: selects?.conveyance?.map((item)=>({
               key: "fsseb_" + item.id,
@@ -165,25 +169,29 @@ const OrgPageMainTabDepartSection = (props) => {
 			<OrgPageSectionRow
 				key={'opmadepas_003'}
 				edit_mode={editMode}
-				titles={['Форма собственности', 'ИНН']}
+				titles={['Списки', 'Комментарий']}
 				datas={[
 					{
 						type: 'select',
-						value: 9,
-						options: filterData.profiles,
-						max: 50,
+						value: id_orgs8an_list,
+						options: filterData?.rate_lists?.map((item)=>({
+              key: "fssebli_" + item.id,
+              value: item.id,
+              label: item.name,
+            })),
+						max: 1150,
 						required: true,
 						nullable: false,
 						placeholder: '',
-						name: 'username',
+						name: 'id_orgs8an_list',
 					},
 					{
-						type: 'uinteger',
-						value: 25,
+						type: OPS_TYPE.STRING,
+						value: list_comment,
 						min: 0,
-						max: 120,
+						max: 1200,
 						placeholder: '',
-						name: 'userbirth',
+						name: 'list_comment',
 					},
 				]}
         on_blur={(data)=>{

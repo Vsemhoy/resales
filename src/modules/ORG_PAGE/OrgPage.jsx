@@ -9,7 +9,7 @@ import {
 	useParams,
 	useSearchParams,
 } from 'react-router-dom';
-import { Button, DatePicker, Input, Layout, Pagination, Select } from 'antd';
+import { Affix, Button, DatePicker, Input, Layout, Pagination, Select } from 'antd';
 
 import { ArrowSmallLeftIcon } from '@heroicons/react/24/solid';
 import {
@@ -210,6 +210,46 @@ const OrgPage = (props) => {
 			setBaseCompanies(userdata.companies);
 		}
 	}, [userdata]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Ctrl + S
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault(); // Блокируем стандартное сохранение браузера
+        if (editMode){
+          handleSave();
+        } else {
+          setEditMode(true);
+        }
+      }
+      
+      // Ctrl + X
+      if (event.ctrlKey && event.key === 'x') {
+        event.preventDefault();
+        setEditMode(false);
+      }
+
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+
+
+  const handleSave = () => {
+    console.log('Save changes!');
+    // Твоя логика сохранения
+  };
+
+  const handleDiscard = () => {
+    setEditMode(false);
+    // Твоя логика отмены изменений
+  };
+
 
 	// useEffect(() => {
 	//   setCompanies(baseCompanies.map((item)=>({
@@ -469,6 +509,7 @@ const OrgPage = (props) => {
 		<>
 			<div className="app-page">
 				<div className="sa-orgpage-body sa-mw-1400">
+        <Affix offsetTop={0}>
 					<div className="sa-orgpage-header" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
 						<div className={'sa-flex-space'}>
 							<div className={'sa-flex-space'}>
@@ -497,8 +538,10 @@ const OrgPage = (props) => {
 							</div>
 						</div>
 					</div>
+          </Affix>
 
 					<div className={'sa-outlet-body'}>
+          <Affix offsetTop={36}>    
 						<div className={'sa-orgpage-sub-header sa-flex-space'}>
 							<div className={'sa-orgpage-sub-name'}>{baseMainData?.name}</div>
 							<div className={'sa-flex sa-orgpage-sub-control'} style={{ padding: '6px' }}>
@@ -545,6 +588,7 @@ const OrgPage = (props) => {
 								)}
 							</div>
 						</div>
+            </Affix>  
 						{blockOnSave && (
 							<div className={'sa-orgpage-loader'}>
 								<div className="sa-orgpage-loader-chunk" style={{ width: saveProcess + '%' }}></div>
@@ -640,6 +684,8 @@ const OrgPage = (props) => {
 							<OrgListModalHistoryTab data={{ id: itemId }} environment={'editor'} />
 						)}
 					</div>
+
+
 				</div>
 			</div>
 		</>

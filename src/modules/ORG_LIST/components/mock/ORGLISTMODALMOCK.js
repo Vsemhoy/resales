@@ -28,6 +28,7 @@ export const ORGLIST_MODAL_MOCK_MAINTAB = {
 	id8an_subcontract: 0,
 	id8staff_list7author: 0,
 	id_orgs8an_list: 0,
+  list_comment: '',
 	deleted: 0,
 	id8an_fs: 45,
 	date_dealer: '0000-00-00',
