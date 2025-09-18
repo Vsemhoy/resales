@@ -39,13 +39,24 @@ const CustomModal = (props) => {
             title={title}
             open={open}
             buttons={false}
-            footer={buttons}
+            closeIcon={false}
+            footer={buttons.map((button) => {
+                const buttonProps = {
+                    key: button.id,
+                    onClick: () => handleClick(button.id)
+                };
+
+                if (button.type) buttonProps.type = button.type;
+                if (button.typePlus === 'danger') buttonProps.danger = true;
+
+                return (
+                    <Button {...buttonProps}>
+                        {button.text}
+                    </Button>
+                );
+            })}
         >
             <h2> {text}</h2>
-            <Button
-            onClick={() => handleClick(1)}>
-            hkfgbsdfhjkbsdh
-            </Button>
         </Modal>
     );
 }

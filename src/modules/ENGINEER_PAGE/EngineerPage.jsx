@@ -616,19 +616,26 @@ const EngineerPage = (props) => {
 
 
   const modalButtons = [
-    <Button key="cancel" onClick={props.handleCancel}>
-      Отмена
-    </Button>,
-    <Button key="confirm" type="primary" onClick={props.handleConfirm}>
-      Подтвердить
-    </Button>,
-    <Button key="confirm" type="primary" danger onClick={props.handleConfirm}>
-      Подтвердить
-    </Button>
+      {
+        id: 1,
+        text: "Подтвердить",
+        type: "primary",
+      },
+    {
+      id: 2,
+      text: "Осторожно!",
+      type: "primary",
+      typePlus: "danger"
+    },
+    {
+      id: 3,
+      text: "Отменить",
+    }
   ];
 
   const customClick = (button_id) => {
     console.log(button_id)
+    setOpenCopySpecification(false);
   }
 
   return (
