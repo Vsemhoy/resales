@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Flex, Input, Radio} from "antd";
 import FullScreenSpin from "./components/FullScreenSpin";
 import Print from "./components/Print";
+import './style/print.css';
 
 const BidPdfCreator = () => {
     const [kpId] = useState(92006);
@@ -58,9 +59,10 @@ const BidPdfCreator = () => {
     }
 
     return (
-        <div className="App">
+        <div className="app-pdf">
             <div className="edit-fields-wrapper">
-                <Flex gap="middle" vertical>
+                <Flex gap="middle" vertical style={{outline: '1px solid #99bad3', padding: '10px', borderRadius: '10px', background: '#fff'}}>
+                    <div style={{fontWeight: 600}}>Создать PDF</div>
                     <Input
                         placeholder="Email"
                         value={email}
