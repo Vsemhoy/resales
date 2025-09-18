@@ -422,6 +422,7 @@ body {
     top: 1mm;
     left: 0;
     /*background-image: url("../public/media/KP_start_big.png");*/
+    /*background-image: url("~assets/media/KP_start_big.png");*/
     background-size: 297mm 209mm;
     background-position: center;
     background-repeat: no-repeat;
