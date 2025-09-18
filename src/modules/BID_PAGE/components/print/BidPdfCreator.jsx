@@ -6,6 +6,7 @@ import './style/print.css';
 import {CSRF_TOKEN, PRODMODE} from "../../../../config/config";
 import {useParams} from "react-router-dom";
 import {PROD_AXIOS_INSTANCE} from "../../../../config/Api";
+import {CALC_PDF, INFO_PDF, MODELS_PDF} from "../../mock/mock";
 
 const BidPdfCreator = () => {
     const { bidId } = useParams();
@@ -61,6 +62,8 @@ const BidPdfCreator = () => {
             } catch (e) {
                 console.log(e);
             }
+        } else {
+            setInfo(INFO_PDF);
         }
     };
     const fetchModelsFromServer = async () => {
@@ -75,6 +78,8 @@ const BidPdfCreator = () => {
             } catch (e) {
                 console.log(e);
             }
+        } else {
+            setModels(MODELS_PDF);
         }
     };
     const fetchCalcModels = async () => {
@@ -101,6 +106,10 @@ const BidPdfCreator = () => {
             } catch (e) {
                 console.log(e);
             }
+        } else {
+            if (CALC_PDF.models) setModels(CALC_PDF.models);
+            if (CALC_PDF.amounts) setAmounts(CALC_PDF.amounts);
+            if (CALC_PDF.models_data) setEngineerParameters(CALC_PDF.models_data);
         }
     };
     const handlePrint = () => {

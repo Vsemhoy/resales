@@ -8,7 +8,10 @@ import {HTTP_HOST} from "../../../../../../config/config";
 const TitleChapter = ({ type, titleInfo, startPage, name, phone, email, onRender }) => {
     let rendered = false;
     useEffect(() => {
-        onRender(startPage++, name);
+        if (!rendered) {
+            console.log('TitleChapter', startPage);
+            onRender(startPage + 1, name);
+        }
     }, []);
 
     function formatDate(timestamp) {

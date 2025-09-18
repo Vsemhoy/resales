@@ -5,7 +5,10 @@ const CharacteristicsChapter = ({ startPage, subChapterNum, characteristicInfo, 
     const [pageNumSelf, setPageNameSelf] = useState(startPage);
     let rendered = false;
     useEffect(() => {
-        onRender(startPage++, name);
+        if (!rendered) {
+            console.log('CharacteristicsChapter', startPage);
+            onRender(startPage + 1, name);
+        }
     }, []);
     return (
         <div className="body-container specification">
