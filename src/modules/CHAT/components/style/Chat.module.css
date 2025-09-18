@@ -68,7 +68,7 @@ ul {
 
 .chat-list {
 	overflow-y: scroll;
-	height: 100%;
+	height: 50vh;
 }
 .chat-list::-webkit-scrollbar {
 	display: none;
@@ -100,6 +100,9 @@ ul {
 }
 .chat-footer > * {
 	margin: 0 auto;
+}
+.chat-footer:nth-child(3) {
+	background-color: #fafafa;
 }
 .message .bubble {
 	max-width: 70%;
@@ -152,6 +155,68 @@ ul {
 	border-radius: 50%;
 }
 
+:global(.ant-list-item) .senderName {
+	display: block;
+	font-size: 12px;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 4px;
+}
+
+/* Я отправил */
+:global(.ant-list-item.my-message) :global(.bubble) {
+	background: #dcf8c6; /* светло-зелёный фон */
+	color: #000;
+	border-radius: 12px 12px 0 12px;
+}
+/* Мне отправили */
+:global(.ant-list-item.other-message) :global(.bubble) {
+	background: #fff;
+	color: #000;
+	border: 1px solid #e6e6e6;
+	border-radius: 12px 12px 12px 0;
+}
+
+:global(.ant-list-item) .bubble {
+	max-width: 70%;
+	padding: 8px 12px;
+	border-radius: 12px;
+	position: relative;
+}
+
+/* Общие стили времени */
+:global(.ant-list-item) .bubble .time {
+	font-size: 11px;
+	color: #666666;
+	text-align: right;
+	margin-top: 2px;
+}
+
+/* Имя отправителя */
+:global(.ant-list-item) .senderName {
+	display: block;
+	font-size: 12px;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 4px;
+}
+
+/* Я отправил */
+:global(.ant-list-item) .bubble.my-message {
+	background: #dcf8c6;
+	color: #000;
+	border-radius: 12px 12px 0 12px;
+	align-self: flex-end;
+}
+
+/* Мне отправили */
+:global(.ant-list-item) .bubble.other-message {
+	background: #fff;
+	color: #000;
+	border: 1px solid #e6e6e6;
+	border-radius: 12px 12px 12px 0;
+	align-self: flex-start;
+}
 /*
 
 .ant-input {

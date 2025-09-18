@@ -1,23 +1,22 @@
+import styles from './style/Chat.module.css';
+import { useState } from 'react';
 import ChatHeader from './ChatHeader';
 import ChatList from './ChatList';
 import ChatFooter from './ChatFooter';
 import { Layout } from 'antd';
-import { useState } from 'react';
-import styles from './style/Chat.module.css';
 
-const { Header, Content, Footer } = Layout;
+const { Content } = Layout;
 
-export default function ChatSidebar() {
+export default function ChatSidebar({ onSelectChat }) {
 	const [draggable, setDraggable] = useState(false);
-
-	// 🟡 Добавь управление позициями
-	const [position, setPosition] = useState('topLeft'); // возможные значения: 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'
+	const [position, setPosition] = useState('topLeft');
+	const [search, setSearch] = useState('');
 
 	return (
 		<Layout className={styles['sidebar-layout']}>
-			<ChatHeader className={styles['sidebar-header']} />
+			<ChatHeader className={styles['sidebar-header']} onSearchChange={setSearch} />
 			<Content className={styles['sidebar-content']}>
-				<ChatList />
+				<ChatList search={search} onSelectChat={onSelectChat} /> {/* ✅ */}
 			</Content>
 			<ChatFooter
 				className={styles['sidebar-footer']}

@@ -1,81 +1,114 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Layout, List, Input, Button, Popover, Space } from 'antd';
 import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 import styles from './style/Chat.module.css';
+import { useUserData } from '../../../context/UserDataContext';
+import { useSms } from '../../../hooks/sms/useSms';
+import { useSendSms } from '../../../hooks/sms/useSendSms';
+import { MOCK } from '../mock/mock'; // при необходимости
 
 const { Content, Footer } = Layout;
 
-const initialMessages = [
-	{ id: 1, from: 'me', text: 'Привет 👋', time: '12:00' },
-	{ id: 2, from: 'other', text: 'Привет! Как дела?', time: '12:01' },
-	{ id: 3, from: 'me', text: 'Всё супер 🚀', time: '12:02' },
-	{ id: 4, from: 'me', text: 'Привет 👋', time: '13:05' },
-	{ id: 5, from: 'other', text: 'Привет! Как дела?', time: '13:06' },
-	{ id: 6, from: 'me', text: 'Всё супер 🚀', time: '14:02' },
-	{ id: 7, from: 'me', text: 'Привет 👋', time: '15:00' },
-	{ id: 8, from: 'other', text: 'Привет! Как дела?', time: '16:11' },
-	{ id: 9, from: 'me', text: 'Всё супер 🚀', time: '17:42' },
-];
+export default function ChatContent({ chatId }) {
+	const { userdata } = useUserData();
+	const currentUserId = userdata?.user?.id;
 
-export default function ChatContent() {
-	const [messages, setMessages] = useState(initialMessages);
+	const { data: smsList, loading } = useSms({ url: '/api/sms', mock: MOCK });
+	const { sendSms, loading: sending } = useSendSms();
+
 	const [text, setText] = useState('');
 	const [showPicker, setShowPicker] = useState(false);
+	const [messages, setMessages] = useState([]);
 
-	const onEmojiClick = (emojiData) => {
-		setText((prev) => prev + emojiData.emoji);
-		setShowPicker(false);
-	};
+	useEffect(() => {
+		if (!Array.isArray(smsList) || !chatId) return;
 
-	const sendMessage = () => {
+		const filtered = smsList.filter((sms) => sms.chat_id === chatId);
+
+		const normalized = filtered.map((msg) => ({
+			id: msg.id,
+			from: msg.from.id === currentUserId ? 'me' : 'other',
+			text: msg.text,
+			time: new Date(msg.updated_at * 1000).toLocaleTimeString([], {
+				hour: '2-digit',
+				minute: '2-digit',
+			}),
+			senderName: msg.from.id === currentUserId ? 'Вы' : `${msg.from.name} ${msg.from.surname}`,
+		}));
+
+		normalized.sort((a, b) => a.id - b.id);
+		setMessages(normalized);
+	}, [smsList, currentUserId, chatId]);
+
+	const handleSend = async () => {
 		if (!text.trim()) return;
+
+		await sendSms({
+			to: 0, // не нужен, так как бэкенд сам определит по chat_id
+			text: text.trim(),
+			answer: null,
+			chat_id: chatId, // ✅ добавляем сюда chat_id при отправке
+		});
+
 		setMessages((prev) => [
 			...prev,
 			{
-				id: prev.length + 1,
+				id: Date.now(),
 				from: 'me',
 				text: text.trim(),
 				time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
 			},
 		]);
+
 		setText('');
+	};
+
+	// Эмоджи
+	const onEmojiClick = (emojiData) => {
+		setText((prev) => prev + emojiData.emoji);
+		setShowPicker(false);
 	};
 
 	return (
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.messages}>
-				<List
-					dataSource={messages}
-					renderItem={(msg) => (
-						<List.Item
-							className={`${styles.message} ${
-								msg.from === 'me' ? styles.myMessage : styles.otherMessage
-							}`}
-						>
-							<div
-								className={`${styles.bubble} ${
+				{loading ? (
+					<p className={styles.statusMessage}>Загрузка сообщений...</p>
+				) : (
+					<List
+						dataSource={messages}
+						renderItem={(msg) => (
+							<List.Item
+								className={`${styles.message} ${
 									msg.from === 'me' ? styles.myMessage : styles.otherMessage
 								}`}
 							>
-								<span>{msg.text}</span>
-								<div className={styles.time}>{msg.time}</div>
-							</div>
-						</List.Item>
-					)}
-				/>
+								<div
+									className={`${styles.bubble} ${
+										msg.from === 'me' ? styles.myMessage : styles.otherMessage
+									}`}
+								>
+									<div className={styles.senderName}>{msg.senderName}</div>
+									<span>{msg.text}</span>
+									<div className={styles.time}>{msg.time}</div>
+								</div>
+							</List.Item>
+						)}
+					/>
+				)}
 			</Content>
 
 			<Footer className={styles['chat-input__footer']}>
 				<Space className={styles.spaceContainer}>
-					<Button icon={<FileAddOutlined />} onClick={sendMessage} />
+					<Button icon={<FileAddOutlined />} disabled />
 
 					<Input
 						value={text}
 						onChange={(e) => setText(e.target.value)}
 						placeholder="Введите сообщение..."
 						style={{ flex: 1 }}
-						onPressEnter={sendMessage}
+						onPressEnter={handleSend}
 					/>
 
 					<Popover
@@ -88,7 +121,7 @@ export default function ChatContent() {
 						<Button icon={<SmileOutlined />} />
 					</Popover>
 
-					<Button type="primary" icon={<SendOutlined />} onClick={sendMessage} />
+					<Button type="primary" icon={<SendOutlined />} onClick={handleSend} loading={sending} />
 				</Space>
 			</Footer>
 		</Layout>
