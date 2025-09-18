@@ -153,6 +153,7 @@ const EngineerPage = (props) => {
   const [openCopySpecification, setOpenCopySpecification] = useState(false);
   const [allSpecification, setAllSpecification] = useState([]);
   const [value, setValue] = useState(0);
+  const [superUser, setSuperUser] = useState(false);
 
   const handleKeyDown = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -188,6 +189,10 @@ const EngineerPage = (props) => {
     // }
 
   }, [props.userdata]);
+
+  useEffect(() => {
+    setSuperUser(props.userdata.user?.super);
+  }, [props.userdata.user?.super]);
 
 
   useEffect(() => {
@@ -614,30 +619,6 @@ const EngineerPage = (props) => {
       }
   }
 
-
-  const modalButtons = [
-      {
-        id: 1,
-        text: "Подтвердить",
-        type: "primary",
-      },
-    {
-      id: 2,
-      text: "Осторожно!",
-      type: "primary",
-      typePlus: "danger"
-    },
-    {
-      id: 3,
-      text: "Отменить",
-    }
-  ];
-
-  const customClick = (button_id) => {
-    console.log(button_id)
-    setOpenCopySpecification(false);
-  }
-
   return (
       <div className={'sa-engineer-page-container'}>
         <Spin size="large" spinning={isLoading}>
@@ -709,7 +690,7 @@ const EngineerPage = (props) => {
                     ></Button>
                   </Badge>
                 </Tooltip>
-                {(activeRole === 1 || userData.user.super === 1) && (
+                {(activeRole === 1 || superUser) && (
                     <>
                       <Tooltip title={'Копировать спецификацию'} placement={'right'}>
                         <Button className={'sa-engineer-page-btn'}
@@ -730,24 +711,24 @@ const EngineerPage = (props) => {
                     </>
                 )}
 
-                {/*{(activeRole === 2 || userData.user.super === 1) && (*/}
-                {/*    <>*/}
-                {/*      <Tooltip title={'Создать КП'} placement={'right'}>*/}
-                {/*        <Button className={'sa-engineer-page-btn'}*/}
-                {/*                color="primary"*/}
-                {/*                variant="outlined"*/}
-                {/*                icon={<ProfileOutlined  className={'sa-engineer-page-btn-icon'}/>}*/}
-                {/*        ></Button>*/}
-                {/*      </Tooltip>*/}
-                {/*      <Tooltip title={'Создать счет'} placement={'right'}>*/}
-                {/*        <Button className={'sa-engineer-page-btn'}*/}
-                {/*                color="primary"*/}
-                {/*                variant="outlined"*/}
-                {/*                icon={<DollarOutlined className={'sa-engineer-page-btn-icon'}/>}*/}
-                {/*        ></Button>*/}
-                {/*      </Tooltip>*/}
-                {/*    </>*/}
-                {/*)}*/}
+                {(activeRole === 2 || superUser) && (
+                    <>
+                      <Tooltip title={'Создать КП'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                icon={<ProfileOutlined  className={'sa-engineer-page-btn-icon'}/>}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title={'Создать счет'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                icon={<DollarOutlined className={'sa-engineer-page-btn-icon'}/>}
+                        ></Button>
+                      </Tooltip>
+                    </>
+                )}
               </div>
               <div className={'sa-engineer-page-info-wrapper'}>
                 <div className={'sa-info-models-header'}>Основные данные</div>
@@ -965,19 +946,11 @@ const EngineerPage = (props) => {
         )}
 
         {openCopySpecification && (
-            // <CopyMessageView
-            //     openCopySpecification={openCopySpecification}
-            //     handleCancel={handleCancel}
-            //     handleOk={handleOk}
-            //     handleSetValue={handleSetValue}
-            // />
-            <CustomModal
-                customClick={customClick}
-                customType={"danger"}
-                customText={"Кастомный текст сообщения"}
-                customTitle={"Кастомный Тайтл"}
-                customButtons={modalButtons}
-                open={openCopySpecification}
+            <CopyMessageView
+                openCopySpecification={openCopySpecification}
+                handleCancel={handleCancel}
+                handleOk={handleOk}
+                handleSetValue={handleSetValue}
             />
         )}
       </div>
