@@ -3,6 +3,7 @@ import ArstelLogoPDF from "../../../../../../assets/Comicon/PDF/ArstelLogoPDF";
 import AffaLogoPDF from "../../../../../../assets/Comicon/PDF/AffaLogoPDF";
 import IntermLogoPDF from "../../../../../../assets/Comicon/PDF/IntermLogoPDF";
 import PMU60N from "../../../../../../assets/Comicon/PDF/PMU60N";
+import {HTTP_HOST} from "../../../../../../config/config";
 
 const TitleChapter = ({ type, titleInfo, startPage, name, email, onRender }) => {
     let rendered = false;
@@ -21,6 +22,7 @@ const TitleChapter = ({ type, titleInfo, startPage, name, email, onRender }) => 
     return (
         <div id="start"
              className="body-container start"
+             style={{ backgroundImage: `url(${HTTP_HOST})/media/KP_start_big.png` }}
         >
             <div className="start-header">
                 {/*<img className="start-arstel" src="/src/assets/media/ARSTEL.png" alt="arstel"/>*/}

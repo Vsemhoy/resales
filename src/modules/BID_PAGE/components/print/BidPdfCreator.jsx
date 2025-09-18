@@ -4,9 +4,10 @@ import FullScreenSpin from "./components/FullScreenSpin";
 import Print from "./components/Print";
 import './style/print.css';
 import {PRODMODE} from "../../../../config/config";
+import {useParams} from "react-router-dom";
 
 const BidPdfCreator = () => {
-    const [kpId] = useState(92006);
+    const { bidId } = useParams();
     const [type] = useState(1);
     const [isPrint, setIsPrint] = useState(false);
     const [email, setEmail] = useState('');
@@ -87,7 +88,7 @@ const BidPdfCreator = () => {
 
             {isPrint && (
                 <Print
-                    kpId={kpId}
+                    bidId={bidId}
                     type={type}
                     info={{
                         titleInfo,

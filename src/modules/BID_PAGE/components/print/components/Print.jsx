@@ -4,7 +4,7 @@ import ContentsChapter from "./chapters/ContentsChapter";
 import SpecificationChapter from "./chapters/SpecificationChapter";
 import CharacteristicsChapter from "./chapters/CharacteristicsChapter";
 
-const Print = ({ kpId, type, info, email, currency }) => {
+const Print = ({ bidId, type, info, email, currency }) => {
     const [currentPage, setCurrentPage] = useState(1);
 
     const [chaptersRendered, setChaptersRendered] = useState({
@@ -64,7 +64,7 @@ const Print = ({ kpId, type, info, email, currency }) => {
 
             {chaptersRendered.contents.rendered && (
                 <SpecificationChapter
-                    kpId={kpId}
+                    bidId={bidId}
                     startPage={currentPage}
                     name={'specification'}
                     chapterNum={1}
