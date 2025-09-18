@@ -150,6 +150,7 @@ const OrgPageSectionRow = (props) => {
         /** ---------------------------------------------------------------- */
 				return (
 					<Typography.Paragraph
+            className='sk-omt-content-color'
 						style={{ whiteSpace: 'pre-line', display: 'block' }}
 						ellipsis={false}
 					>
@@ -339,6 +340,7 @@ const OrgPageSectionRow = (props) => {
 			case 'checkbox':
 				return (
 					<Checkbox
+            style={{paddingLeft: '12px'}}
 						checked={!!value}
 						onChange={(e) => onChange(field.name, e.target.checked, field)}
 					>
@@ -360,17 +362,28 @@ const OrgPageSectionRow = (props) => {
             size='small'
             variant="borderless"
             value={value}
-            onChange={(val) => onChange(field.name, val, field)}
-            style={{ width: '100%' }}
-            onBlur={ (e) => {
+            onChange={ (e) => {
               if (props.on_blur){
                 const val = e?.target?.value ?? e;
                 console.log(val);
                 let obj = {};
                 obj[field.name] = val;
                 props.on_blur(obj);
+              }else{
+                  onChange(field.name, e, field)
               }
             }}
+      
+            style={{ width: '100%' }}
+            // onBlur={ (e) => {
+            //   if (props.on_blur){
+            //     const val = e?.target?.value ?? e;
+            //     console.log(val);
+            //     let obj = {};
+            //     obj[field.name] = val;
+            //     props.on_blur(obj);
+            //   }
+            // }}
           >
             {field.options?.map((opt) => (
               <Option key={opt.value} value={opt.value}>

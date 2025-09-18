@@ -463,6 +463,8 @@ const OrgPage = (props) => {
 		}, 2000);
 	};
 
+
+
 	return (
 		<>
 			<div className="app-page">
@@ -579,6 +581,7 @@ const OrgPage = (props) => {
 							base_data={baseMainData}
 							on_save={handleDataChangeApprove}
 							userdata={userdata}
+              selects={baseFiltersData}
 						/>
 
 						<CallsTabPage

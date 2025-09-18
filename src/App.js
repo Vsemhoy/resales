@@ -44,6 +44,7 @@ import EngineerListPage from './modules/ENGINEER_LIST/EngineerListPage';
 import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
 import BidPage from './modules/BID_PAGE/BidPage';
 import { UserDataProvider, useUserData } from './context/UserDataContext';
+import BidPdfCreator from './modules/BID_PAGE/components/print/BidPdfCreator';
 // import WinShellMessanger from './modules/DEV/COM/WINSHELL/WinShellMessanger';
 function App() {
 	const [userdata, setUserdata] = useState([]);
@@ -67,10 +68,10 @@ function App() {
 		if (PRODMODE) {
 			try {
 				// setLoadingOrgs(true)
-				const format_data = {
-					CSRF_TOKEN,
-					data: {},
-				};
+				// const format_data = {
+				// 	CSRF_TOKEN,
+				// 	data: {},
+				// };
 				let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
 				console.log('me: ', response);
 				// setOrganizations(organizations_response.data.org_list)
@@ -134,6 +135,14 @@ function App() {
 							<Route
 								path={'/bids/:bidId'}
 								element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
+							/>
+							<Route
+								path={BASE_ROUTE + '/bidsPDF/:bidId'}
+								element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
+							/>
+							<Route
+								path={'/bidsPDF/:bidId'}
+								element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
 							/>
 
 							<Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />

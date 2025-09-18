@@ -565,7 +565,24 @@ export const BID_INFO = {
             "sellby": "",
             "project": 1
         },
-        "bill": null
+        "bill": null,
+        "actions": {
+            "create": {
+                "username": "Кошелев Александр Станиславович",
+                "user_id": 46,
+                "date": 1758105433
+            },
+            "update": {
+                "username": "  ",
+                "user_id": 0,
+                "date": 0
+            },
+            "view": {
+                "username": "Кошелев Александр Станиславович",
+                "user_id": 46,
+                "date": 1758105433
+            }
+        }
     },
     "bid_models": [
         {
@@ -905,4 +922,104 @@ export const ORG_SUGGESTIONS = [
         "name": "Тестовая карточка",
         "town": "Пермский край, г. Пермь"
     }
+];
+export const ACTION_OPTIONS = [
+    {
+        key: 1,
+        value: 1,
+        label: "просмотр",
+        icon: "faHouse",
+    },
+    {
+        key: 2,
+        value: 2,
+        label: "изменение",
+        icon: "faHouse",
+    },
+];
+export const LOGS = [
+    {
+        date: 1725022198,
+        actname: "Обновление",
+        username: "Мистер Бин Джугашвилли",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
+    {
+        date: 1725022198,
+        actname: "Просмотр",
+        username: "Мистер Слободан Ассанж де Сад",
+        placecolor: "purple",
+        placename: "Бухгалтерия",
+    },
 ];
