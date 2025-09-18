@@ -5,7 +5,11 @@ const ContentsChapter = ({ startPage, name, chapterNum, subChapterNum, chaptersR
     const [pageNumSelf, setPageNameSelf] = useState(startPage);
     let rendered = false;
     useEffect(() => {
-        onRender(startPage++, name);
+        if (!rendered) {
+            console.log('ContentsChapter', startPage);
+            rendered = true;
+            onRender(startPage + 1, name);
+        }
     }, []);
 
     return (

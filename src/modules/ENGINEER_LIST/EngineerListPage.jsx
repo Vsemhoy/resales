@@ -95,6 +95,7 @@ const EngineerListPage = (props) => {
 	const [isOpenModal, setIsOpenModal] = useState(false);
 	const [modalOrderID, setModalOrderID] = useState(0);
 	const [modalReason, setModalReason] = useState('');
+	const [superUser, setSuperUser] = useState(false);
 
 	const success = (content) => {
 		messageApi.open({
@@ -102,6 +103,10 @@ const EngineerListPage = (props) => {
 			content: content,
 		});
 	};
+
+	useEffect(() => {
+		setSuperUser(props.userdata.user?.super);
+	}, [props.userdata.user?.super]);
 
 	useEffect(() => {
 		fetchInfo().then();
@@ -137,11 +142,11 @@ const EngineerListPage = (props) => {
 			setIsOneRole(found.length === 1);
 		}
 		if (userdata !== null && userdata.user && userdata.user.id_departament) {
-			// if ([7,8,20].includes(userdata.user.id_departament)) {
-			//   setActiveRole(1);
-			// } else {
-			//   setActiveRole(2);
-			// }
+			if ([7,8,20].includes(userdata.user.id_departament)) {
+			  setActiveRole(1);
+			} else {
+			  setActiveRole(2);
+			}
 		}
 	}, [userdata]);
 
@@ -465,6 +470,7 @@ const EngineerListPage = (props) => {
 	};
 	// handleOk={handleOk}
 	// handleCancel={handleCancel}
+
 	return (
 		<div className={`app-page sa-app-page ${isOpenedFilters ? 'sa-filer-opened' : ''}`}>
 			{contextHolder}
@@ -611,6 +617,8 @@ const EngineerListPage = (props) => {
 								on_preview_open={handlePreviewOpen}
 								on_set_sort_orders={setOrderBox}
 								base_companies={baseCompanies}
+								userData={userdata}
+								superUser={superUser}
 							/>
 						</Spin>
 						<div className={'sa-space-panel sa-pa-12'}></div>

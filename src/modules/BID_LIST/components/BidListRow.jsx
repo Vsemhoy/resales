@@ -16,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import PositionList from './PositionList';
+import {BASE_ROUTE} from "../../../config/config";
 
 const BidListRow = (props) => {
 	const navigate = useNavigate();
@@ -59,8 +60,7 @@ const BidListRow = (props) => {
 	const handleDoubleClick = () => {
 		if (props.on_double_click) {
 			props.on_double_click(data);
-			//navigate(`/bids/${data.id}`, { relative: 'path' });
-			window.open(`/resales/bids/${data.id}`, '_blank');
+			window.open(`${BASE_ROUTE}/resales/bids/${data.id}`, '_blank');
 		}
 	};
 

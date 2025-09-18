@@ -13,7 +13,7 @@ import {
 	Tooltip,
 } from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/bidPage.css';
 import { BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, SELECTS } from './mock/mock';
@@ -159,13 +159,6 @@ const BidPage = (props) => {
 	const [isBidDuplicateDrawerOpen, setIsBidDuplicateDrawerOpen] = useState(false);
 	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
 
-	const handleKeyDown = (event) => {
-		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-			event.preventDefault();
-			setIsSavingInfo(true);
-		}
-	};
-
 	useEffect(() => {
 		if (!isMounted) {
 			fetchInfo().then(() => {
@@ -201,11 +194,26 @@ const BidPage = (props) => {
 				setTimeout(() => setIsSavingInfo(false), 500);
 			});
 		}
+	}, [isSavingInfo]);
+	useEffect(() => {
+		const handleKeyDown = (event) => {
+			console.log('event', event)
+			if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+				event.preventDefault();
+				setIsSavingInfo(prev => {
+					if (!prev) {
+						return true;
+					}
+					return prev;
+				});
+			}
+		};
+
 		window.addEventListener('keydown', handleKeyDown);
 		return () => {
 			window.removeEventListener('keydown', handleKeyDown);
 		};
-	}, [isSavingInfo]);
+	}, []);
 	useEffect(() => {
 		if (isMounted && isNeedCalcMoney) {
 			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
@@ -612,9 +620,31 @@ const BidPage = (props) => {
 					},
 					_token: CSRF_TOKEN,
 				});
-				const parts = response.data.data.file_link.split('/');
-				const withSlash = '/' + parts.slice(1).join('/');
-				window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
+				if (response.data) {
+					const parts = response.data.data.file_link.split('/');
+					const withSlash = '/' + parts.slice(1).join('/');
+					window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
+					setBidFilesCount(bidFilesCount + 1);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		}
+	};
+	const fetchNewBid = async () => {
+		if (PRODMODE) {
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/sales/data/makebid', {
+					data: {
+						bid: bidId,
+						org: bidOrg.id,
+						type: 2
+					},
+					_token: CSRF_TOKEN,
+				});
+				if (response.data) {
+					window.open(`${BASE_ROUTE}/bids/${response.data.item_id}`, '_blank');
+				}
 			} catch (e) {
 				console.log(e);
 			}
@@ -1163,7 +1193,7 @@ const BidPage = (props) => {
 									variant="outlined"
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'} />}
 									// onClick={() => window.open(`/resales/bidsPDF/${bidId}`, '_blank')}
-									onClick={() => navigate(`/resales/bidsPDF/${bidId}`)}
+									onClick={() => navigate(`/bidsPDF/${bidId}`)}
 								></Button>
 							</Tooltip>
 							{+bidType !== 2 && (
@@ -1194,6 +1224,7 @@ const BidPage = (props) => {
 										color="primary"
 										variant="outlined"
 										icon={<DollarOutlined className={'sa-bid-page-btn-icon'} />}
+										onClick={() => fetchNewBid()}
 									></Button>
 								</Tooltip>
 							)}

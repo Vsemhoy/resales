@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from 'antd';
 import { useParams } from 'react-router-dom';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/engPage.css'
 // import { BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, SELECTS, ALLMODELS_LIST } from './mock/mock';
@@ -24,7 +24,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   DollarOutlined,
-  DownloadOutlined,
+  DownloadOutlined, FileAddOutlined,
   FilePdfOutlined,
   FileSearchOutlined,
   FileWordOutlined,
@@ -33,11 +33,13 @@ import {
   LoadingOutlined,
   MinusOutlined,
   PlusOutlined, ProfileOutlined,
-  SaveOutlined,
+  SaveOutlined, SendOutlined,
 } from '@ant-design/icons';
 import NameSelect from './components/alan/NameSelect';
 import ModelInput from './components/alan/ModelInput';
 import ModelSelect from './components/alan/ModelSelect';
+import CopyMessageView from "./components/CopyMessageView";
+import CustomModal from "../../components/helpers/modals/CustomModal";
 const { TextArea } = Input;
 
 const EngineerPage = (props) => {
@@ -147,6 +149,13 @@ const EngineerPage = (props) => {
   const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, manager_name: ""});
   const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, engineer_name: ""});
 
+  const [activeRole, setActiveRole] = useState(1);
+  const [openCopySpecification, setOpenCopySpecification] = useState(false);
+  const [openAddIntoBidSpecification, setOpenAddIntoBidSpecification] = useState(false);
+  const [allSpecification, setAllSpecification] = useState([]);
+  const [value, setValue] = useState(0);
+  const [superUser, setSuperUser] = useState(false);
+
   const handleKeyDown = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
       event.preventDefault();
@@ -173,7 +182,19 @@ const EngineerPage = (props) => {
     if (props.userdata) {
       setUserData(props.userdata);
     }
+
+    if ([7,8,20].includes(userData?.user?.id_departament)) {
+      setActiveRole(1);
+    } else {
+      setActiveRole(2);
+    }
+
   }, [props.userdata]);
+
+  useEffect(() => {
+    setSuperUser(props.userdata.user?.super);
+  }, [props.userdata.user?.super]);
+
   useEffect(() => {
     if (isSavingInfo) {
       fetchUpdates().then(() => {
@@ -537,6 +558,97 @@ const EngineerPage = (props) => {
   };
   const handleOpenModelInfo = (modelId) => {};
 
+  const handleCopySpecification = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/copy/' + bidId, {
+          _token: CSRF_TOKEN,
+          data: {
+            bidId: value
+          }
+        });
+
+        setOpenCopySpecification(true);
+
+        // window.open(BASE_ROUTE + '/api/sales/engineer/' + response.data.newId);
+      } catch (e) {
+        console.log(e);
+        setTimeout(() => setIsLoadingSmall(false), 500);
+      }
+    }
+  };
+
+  const handleCopySpecificationIntoBid = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/intoBid/' + bidId, {
+          _token: CSRF_TOKEN,
+          data: {
+            bidId: value
+          }
+        });
+
+        setOpenAddIntoBidSpecification(true);
+
+        // window.open(BASE_ROUTE + '/api/sales/engineer/' + response.data.newId);
+      } catch (e) {
+        console.log(e);
+        setTimeout(() => setIsLoadingSmall(false), 500);
+      }
+    }
+  };
+  const handleCancel = () => {
+    setOpenCopySpecification(false);
+    setOpenAddIntoBidSpecification(false);
+    setValue(0);
+  };
+  const handleOk = () => {
+    setOpenCopySpecification(false);
+    setOpenAddIntoBidSpecification(false);
+    setValue(0);
+  };
+  const handleSetValue = (spec_id, type) => {
+    setValue(spec_id);
+
+    switch (type){
+      case 1:
+        handleCopySpecification().then( () => {setOpenCopySpecification(false)});
+        break;
+
+      case 2:
+        handleCopySpecificationIntoBid().then( () => {setOpenCopySpecification(false)});
+        break;
+    }
+    console.log(spec_id, type);
+  }
+
+
+
+  const handleSpecificationFinal = async () => {
+      if (PRODMODE){
+        try {
+          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/final/' + bidId, {
+            _token: CSRF_TOKEN,
+            data: {}
+          });
+
+          setIsAlertVisible(true);
+          setAlertMessage('Успех!');
+          setAlertDescription(response.data.message);
+          setAlertType('success');
+
+        } catch (e) {
+          console.log(e);
+          setTimeout(() => setIsLoadingSmall(false), 500);
+        }
+      } else {
+        setIsAlertVisible(true);
+        setAlertMessage('Успех!');
+        setAlertDescription("Спецификация отправлена!");
+        setAlertType('success');
+      }
+  }
+
   return (
       <div className={'sa-engineer-page-container'}>
         <Spin size="large" spinning={isLoading}>
@@ -608,20 +720,46 @@ const EngineerPage = (props) => {
                     ></Button>
                   </Badge>
                 </Tooltip>
-                <Tooltip title={'Создать КП'} placement={'right'}>
-                  <Button className={'sa-engineer-page-btn'}
-                          color="primary"
-                          variant="outlined"
-                          icon={<ProfileOutlined  className={'sa-engineer-page-btn-icon'}/>}
-                  ></Button>
-                </Tooltip>
-                <Tooltip title={'Создать счет'} placement={'right'}>
-                  <Button className={'sa-engineer-page-btn'}
-                          color="primary"
-                          variant="outlined"
-                          icon={<DollarOutlined className={'sa-engineer-page-btn-icon'}/>}
-                  ></Button>
-                </Tooltip>
+                {(activeRole === 1 || superUser) && (
+                    <>
+                      <Tooltip title={'Копировать спецификацию'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                icon={<CopyOutlined className={'sa-engineer-page-btn-icon'}/>}
+                                onClick={() => {setOpenCopySpecification(true);}}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title={'Отправить спецификацию'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                icon={<SendOutlined className={'sa-engineer-page-btn-icon'}/>}
+                                onClick={handleSpecificationFinal}
+                        ></Button>
+                      </Tooltip>
+                    </>
+                )}
+
+                {(activeRole === 2 || superUser) && (
+                    <>
+                      <Tooltip title={'Создать КП'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                icon={<ProfileOutlined className={'sa-engineer-page-btn-icon'}/>}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title={'Добавить в КП'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                onClick={() => {setOpenAddIntoBidSpecification(true);}}
+                                icon={<FileAddOutlined className={'sa-engineer-page-btn-icon'}/>}
+                        ></Button>
+                      </Tooltip>
+                    </>
+                )}
               </div>
               <div className={'sa-engineer-page-info-wrapper'}>
                 <div className={'sa-info-models-header'}>Основные данные</div>
@@ -835,6 +973,28 @@ const EngineerPage = (props) => {
                   width: 350,
                 }}
                 onClose={() => setIsAlertVisible(false)}
+            />
+        )}
+
+        {openCopySpecification && (
+            <CopyMessageView
+                customText={"Введите ID спецификации, в которую нужно скопировать"}
+                openCopySpecification={openCopySpecification}
+                handleCancel={handleCancel}
+                handleOk={handleOk}
+                type={1}
+                handleSetValue={handleSetValue}
+            />
+        )}
+
+        {openAddIntoBidSpecification && (
+            <CopyMessageView
+                customText={"Введите ID заявки, в которую нужно скопировать данные"}
+                openCopySpecification={openAddIntoBidSpecification}
+                handleCancel={handleCancel}
+                handleOk={handleOk}
+                type={2}
+                handleSetValue={handleSetValue}
             />
         )}
       </div>
