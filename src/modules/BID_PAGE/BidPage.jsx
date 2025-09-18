@@ -13,7 +13,7 @@ import {
 	Tooltip,
 } from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/bidPage.css';
 import { BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, SELECTS } from './mock/mock';
@@ -620,9 +620,31 @@ const BidPage = (props) => {
 					},
 					_token: CSRF_TOKEN,
 				});
-				const parts = response.data.data.file_link.split('/');
-				const withSlash = '/' + parts.slice(1).join('/');
-				window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
+				if (response.data) {
+					const parts = response.data.data.file_link.split('/');
+					const withSlash = '/' + parts.slice(1).join('/');
+					window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
+					setBidFilesCount(bidFilesCount + 1);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		}
+	};
+	const fetchNewBid = async () => {
+		if (PRODMODE) {
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/sales/data/makebid', {
+					data: {
+						bid: bidId,
+						org: bidOrg.id,
+						type: 2
+					},
+					_token: CSRF_TOKEN,
+				});
+				if (response.data) {
+					window.open(`${BASE_ROUTE}/bids/${response.data.item_id}`, '_blank');
+				}
 			} catch (e) {
 				console.log(e);
 			}
@@ -1202,6 +1224,7 @@ const BidPage = (props) => {
 										color="primary"
 										variant="outlined"
 										icon={<DollarOutlined className={'sa-bid-page-btn-icon'} />}
+										onClick={() => fetchNewBid()}
 									></Button>
 								</Tooltip>
 							)}
