@@ -28,6 +28,10 @@ const CustomModal = (props) => {
         setOpen(props.open);
     }, [props.open]);
 
+    const handleClick = (button_id) => {
+        props.customClick(button_id);
+    }
+
 
     return (
         <Modal
@@ -38,6 +42,10 @@ const CustomModal = (props) => {
             footer={buttons}
         >
             <h2> {text}</h2>
+            <Button
+            onClick={() => handleClick(1)}>
+            hkfgbsdfhjkbsdh
+            </Button>
         </Modal>
     );
 }
