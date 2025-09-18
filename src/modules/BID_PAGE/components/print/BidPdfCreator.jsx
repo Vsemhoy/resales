@@ -11,6 +11,7 @@ const BidPdfCreator = () => {
     const { bidId } = useParams();
     const [type, setType] = useState(1);
     const [isPrint, setIsPrint] = useState(false);
+    const [isNeedCaclMoney, setIsNeedCaclMoney] = useState(true);
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [currency, setCurrency] = useState({ label: '$', value: '1' });
@@ -35,8 +36,10 @@ const BidPdfCreator = () => {
     }, []);
 
     useEffect(() => {
-        if (models && models.length > 0) {
-            fetchCalcModels().then();
+        if (models && models.length > 0 && isNeedCaclMoney) {
+            fetchCalcModels().then(() => {
+                setIsNeedCaclMoney(false);
+            });
         }
     }, [models]);
 
@@ -77,7 +80,7 @@ const BidPdfCreator = () => {
                     data: {
                         bid_info: {
                             bidCurrency: info?.titleInfo?.currency,
-                            bidPriceStatus: info?.titleInfo?.priceStatus,
+                            bidPriceStatus: info?.titleInfo?.statusmoney_id,
                             bidPercent: info?.titleInfo?.percent,
                             bidNds: info?.titleInfo?.nds,
                         },
