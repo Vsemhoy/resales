@@ -147,12 +147,12 @@ const OrgPageMainTabDepartSection = (props) => {
 						min: 0,
 						max: 120,
 						placeholder: '',
-            options: selects?.price_statuses?.map((item)=>({
+            options: selects?.conveyance?.map((item)=>({
               key: "fsseb_" + item.id,
               value: item.id,
               label: item.name,
             })),
-						name: 'userbirth',
+						name: 'id8an_conveyance',
 					},
 				]}
         on_blur={(data)=>{
