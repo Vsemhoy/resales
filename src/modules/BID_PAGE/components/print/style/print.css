@@ -414,7 +414,7 @@ body {
 .start {
     padding: 17mm 15mm 21mm 28mm;
     background-size: 297mm 209mm;
-    background-position: center;
+    background-position: center calc(50% + 1mm);
     background-repeat: no-repeat;
 }
 .start::before {

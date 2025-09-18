@@ -5,7 +5,7 @@ import IntermLogoPDF from "../../../../../../assets/Comicon/PDF/IntermLogoPDF";
 import PMU60N from "../../../../../../assets/Comicon/PDF/PMU60N";
 import {HTTP_HOST} from "../../../../../../config/config";
 
-const TitleChapter = ({ type, titleInfo, startPage, name, email, onRender }) => {
+const TitleChapter = ({ type, titleInfo, startPage, name, phone, email, onRender }) => {
     let rendered = false;
     useEffect(() => {
         onRender(startPage++, name);
@@ -76,7 +76,7 @@ const TitleChapter = ({ type, titleInfo, startPage, name, email, onRender }) => 
                     </div>
                     <div className="start-block lil">
                         <p className="start-block-header">Контакты:</p>
-                        <p id="tel_print" className="start-block-description">тел.: {titleInfo.manager.phone ? titleInfo.manager.phone : '-'}</p>
+                        <p id="tel_print" className="start-block-description">тел.: {titleInfo.manager.phone ? titleInfo.manager.phone : (phone ? phone : '-')}</p>
                         <p id="mail_print" className="start-block-description">e-mail: {titleInfo.manager.email ? titleInfo.manager.email : (email ? email : '-')}</p>
                         <p className="start-block-description">www.arstel.com</p>
                     </div>
