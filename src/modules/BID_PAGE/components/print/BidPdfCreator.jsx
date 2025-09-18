@@ -3,6 +3,7 @@ import {Button, Flex, Input, Radio} from "antd";
 import FullScreenSpin from "./components/FullScreenSpin";
 import Print from "./components/Print";
 import './style/print.css';
+import {PRODMODE} from "../../../../config/config";
 
 const BidPdfCreator = () => {
     const [kpId] = useState(92006);
@@ -25,15 +26,17 @@ const BidPdfCreator = () => {
     }, []);
 
     const getInfoFromServer = () => {
-        try {
-            fetch(`/test.json`)
-                .then(res => res.json())
-                .then(res => {
-                    setTitleInfo(res.titleInfo);
-                    setCharacteristicInfo(res.characteristicInfo);
-                });
-        } catch (e) {
-            console.log(e);
+        if (PRODMODE) {
+            try {
+                fetch(`/test.json`)
+                    .then(res => res.json())
+                    .then(res => {
+                        setTitleInfo(res.titleInfo);
+                        setCharacteristicInfo(res.characteristicInfo);
+                    });
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
 
