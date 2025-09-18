@@ -149,6 +149,7 @@ const EngineerListTable = (props) => {
 						<EngineerListRow
 							activeRole={props.activeRole}
 							data={spec}
+							userData={props.userData}
 							is_active={isPreviewOpen && previewItem === spec.id}
 							on_double_click={handlePreviewOpen}
 							key={index}
