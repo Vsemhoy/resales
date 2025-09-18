@@ -26,6 +26,8 @@ const CopyMessageView = (props) => {
 	const [allModels, setAllModels] = useState(props.allModels ?? null);
 	const [openModal, setOpenModal] = useState(false);
 	const [value, setValue] = useState(0);
+	const [type, setType] = useState(1);
+	const [title, setTitle] = useState("");
 
 	useEffect(() => {
 		setData(props.data);
@@ -35,13 +37,21 @@ const CopyMessageView = (props) => {
 		setOpenModal(props.openCopySpecification);
 	}, [props.openCopySpecification]);
 
+	useEffect(() => {
+		setTitle(props.customText);
+	}, [props.customText]);
+
+	useEffect(() => {
+		setType(props.type);
+	}, [props.type]);
+
 	const handleChange = () => {
-		props.handleSetValue(value);
+		props.handleSetValue(value, type);
 	};
 
 	return (
 		<Modal
-			title="Выберите ID спецификации, в которую нужно скопировать"
+			title={title}
 			open={openModal}
 			onOk={props.handleOk}
 			onCancel={props.handleCancel}
@@ -52,8 +62,6 @@ const CopyMessageView = (props) => {
 					style={{width: '100%'}}
 					onChange={(spec_id) => setValue(spec_id)}
 					onBlur={handleChange}
-					// handleChangeModel={props.handleChangeModel}
-					// options={props.allModels ? props.allModels : []}
 				/>
 			</div>
 		</Modal>

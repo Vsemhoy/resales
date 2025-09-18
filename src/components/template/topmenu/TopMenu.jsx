@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './style/topmenu.css';
 import { ChatBtn } from '../../../modules/CHAT/components/ChatBtn';
 import { NavLink } from 'react-router-dom';
-import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, PRODMODE } from '../../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE} from '../../../config/config';
 import { CloseCircleOutlined, HomeFilled, WechatWorkOutlined } from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
