@@ -1,7 +1,6 @@
 import {useEffect} from "react";
 import ArstelLogoPDF from "../../../../../../assets/Comicon/PDF/ArstelLogoPDF";
 import AffaLogoPDF from "../../../../../../assets/Comicon/PDF/AffaLogoPDF";
-import {BorderInnerOutlined} from "@ant-design/icons";
 import IntermLogoPDF from "../../../../../../assets/Comicon/PDF/IntermLogoPDF";
 import PMU60N from "../../../../../../assets/Comicon/PDF/PMU60N";
 
