@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
@@ -71,9 +71,7 @@ export default function ChatList() {
 							<div className={styles.companionName}>
 								{companion?.surname} {companion?.name}
 							</div>
-							<div className={styles.lastMessage}>
-								{isFile ? `Файл: ${lastMessageText}` : lastMessageText}
-							</div>
+							<div className={styles.lastMessage}>{isFile ? 'Файл' : lastMessageText}</div>
 						</li>
 					);
 				})}

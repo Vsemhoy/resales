@@ -40,9 +40,8 @@ export default function ChatFooter({ draggable, setDraggable, position, setPosit
 	);
 
 	return (
-		<footer className={styles['chat-footer']}>
+		<footer hidden className={styles['chat-footer']}>
 			<Space.Compact>
-				{/* Кнопка включения перетаскивания */}
 				<Popover
 					content={draggable ? 'Отключить перетаскивание' : 'Включить перетаскивание'}
 					trigger="hover"

@@ -5,8 +5,7 @@ ul {
 	padding-left: 0;
 	margin: 0;
 }
-.draggableWrapper {
-}
+
 .draggableWrapper :global(.ant-modal-content) {
 	padding: 0;
 	background-color: #fff;
@@ -24,7 +23,7 @@ ul {
 	width: 100%;
 }
 .chat-layout {
-	max-height: 600px;
+	max-height: 400px;
 }
 .chat-layout::-webkit-scrollbar,
 .ant-layout-content::-webkit-scrollbar {
@@ -60,13 +59,25 @@ ul {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	padding: 5px;
 }
+
+.sidebar-layout > *:not(:last-child) {
+	border-bottom: 1px solid #e6e6e6;
+}
+
 .chat-list {
 	overflow-y: scroll;
 	height: 100%;
 }
 .chat-list::-webkit-scrollbar {
 	display: none;
+}
+
+.chat-list > * {
+	margin: 12px 0;
+	border-bottom: 1px solid #e6e6e6;
+	padding-bottom: 12px;
 }
 
 .messages {
@@ -83,7 +94,13 @@ ul {
 	display: flex;
 	margin-bottom: 8px;
 }
-
+.chat-footer {
+	display: flex;
+	padding: 0 auto;
+}
+.chat-footer > * {
+	margin: 0 auto;
+}
 .message .bubble {
 	max-width: 70%;
 	padding: 8px 12px;
@@ -117,14 +134,19 @@ ul {
 }
 /* Сообщения от меня */
 
-.chat-input-footer {
+.chat-input__footer {
 	border-top: 1px solid #e6e6e6;
 	background: #fff;
 	padding: 5px;
 	display: flex;
 	gap: 8px;
 }
-.chat-input-footer .ant-btn {
+
+.chat-input__footer > * {
+	margin: 0 auto !important;
+}
+
+.chat-input__footer .ant-btn {
 	width: 30px;
 	max-height: 30px;
 	border-radius: 50%;
@@ -175,9 +197,7 @@ ul {
 /* ChatModal */
 
 /* ChatSidebar */
-/* .sidebar-layout {
-	height: 100%;
-}
+/*
 .sidebar-header {
 	padding: 0;
 	background: #f9f9f9;
