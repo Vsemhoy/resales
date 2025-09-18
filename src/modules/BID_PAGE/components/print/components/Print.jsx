@@ -7,7 +7,7 @@ import CharacteristicsChapter from "./chapters/CharacteristicsChapter";
 const Print = ({ bidId, type, info, models, phone, email, currency, amounts }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [chaptersRendered, setChaptersRendered] = useState({
-        title: { startPage: 1, rendered: false },
+        title: { startPage: 2, rendered: false },
         contents: { startPage: 0, rendered: false },
         specification: { startPage: 0, rendered: false },
         characteristics: { startPage: 0, rendered: false },
@@ -22,7 +22,7 @@ const Print = ({ bidId, type, info, models, phone, email, currency, amounts }) =
                     rendered: true
                 }
             };
-            setCurrentPage(prevPage => prevPage + pagesUsed);
+            setCurrentPage(prevPage => pagesUsed);
             return newChaptersRendered;
         });
     };

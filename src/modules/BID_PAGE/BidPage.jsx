@@ -159,13 +159,6 @@ const BidPage = (props) => {
 	const [isBidDuplicateDrawerOpen, setIsBidDuplicateDrawerOpen] = useState(false);
 	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
 
-	const handleKeyDown = (event) => {
-		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-			event.preventDefault();
-			setIsSavingInfo(true);
-		}
-	};
-
 	useEffect(() => {
 		if (!isMounted) {
 			fetchInfo().then(() => {
@@ -201,11 +194,26 @@ const BidPage = (props) => {
 				setTimeout(() => setIsSavingInfo(false), 500);
 			});
 		}
+	}, [isSavingInfo]);
+	useEffect(() => {
+		const handleKeyDown = (event) => {
+			console.log('event', event)
+			if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+				event.preventDefault();
+				setIsSavingInfo(prev => {
+					if (!prev) {
+						return true;
+					}
+					return prev;
+				});
+			}
+		};
+
 		window.addEventListener('keydown', handleKeyDown);
 		return () => {
 			window.removeEventListener('keydown', handleKeyDown);
 		};
-	}, [isSavingInfo]);
+	}, []);
 	useEffect(() => {
 		if (isMounted && isNeedCalcMoney) {
 			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
