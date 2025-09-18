@@ -5,7 +5,8 @@ import { MOCK } from '../mock/mock.js';
 import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
-import { useUserData } from '../../../context/UserDataContext'; // импортируем хук для контекста
+import { useUserData } from '../../../context/UserDataContext';
+import styles from './style/Chat.module.css'; // импорт CSS-модуля
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,15 +21,11 @@ export const ChatBtn = () => {
 		mock: MOCK,
 	});
 
-	// Получаем user.id из контекста
 	const { userdata } = useUserData();
+	const currentUserId = userdata?.user?.id || NaN;
 
-	// Проверяем, есть ли userdata и если нет, задаём заглушку (на всякий случай)
-	const currentUserId = userdata?.user?.id || NaN; // если userdata нет, используем заглушку
+	const getCompanion = useCompanion(currentUserId);
 
-	const getCompanion = useCompanion(currentUserId); // ✅
-
-	// Обработка полученных SMS
 	const smsData = useMemo(() => {
 		if (!Array.isArray(smsList) || smsList.length === 0) {
 			return { hasSms: false, messages: [] };
@@ -50,7 +47,6 @@ export const ChatBtn = () => {
 		};
 	}, [smsList, getCompanion]);
 
-	// Генерация текста в dropdown
 	const menuItems = useMemo(() => {
 		if (!smsData.hasSms) return [];
 
@@ -74,10 +70,10 @@ export const ChatBtn = () => {
 			{
 				key: 'sms-section',
 				label: (
-					<div className="sms-section">
+					<div className={styles['sms-section']}>
 						<Space direction="vertical" size={4}>
 							<Space size={2} wrap>
-								<span className="sms-counter">{label}</span>
+								<span className={styles['sms-counter']}>{label}</span>
 							</Space>
 						</Space>
 					</div>
@@ -87,7 +83,6 @@ export const ChatBtn = () => {
 		];
 	}, [smsData]);
 
-	// Обработчики модального окна
 	const showModal = () => {
 		setIsModalOpen(true);
 		setDropdownVisible(false);
@@ -102,12 +97,12 @@ export const ChatBtn = () => {
 	};
 
 	return (
-		<Space style={{ padding: '0px' }}>
+		<Space style={{ padding: 0 }}>
 			<Dropdown
 				menu={{ items: menuItems }}
 				trigger={['hover']}
 				open={dropdownVisible}
-				onOpenChange={(visible) => setDropdownVisible(visible)}
+				onOpenChange={setDropdownVisible}
 			>
 				<div>
 					<Button
@@ -118,7 +113,7 @@ export const ChatBtn = () => {
 					>
 						<MessageOutlined />
 						{smsData.hasSms && (
-							<span className="notification-badge">{smsData.messages.length}</span>
+							<span className={styles['notification-badge']}>{smsData.messages.length}</span>
 						)}
 					</Button>
 				</div>
@@ -126,7 +121,7 @@ export const ChatBtn = () => {
 
 			<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData} />
 
-			{error && <span style={{ color: 'red', fontSize: '12px' }}>Ошибка загрузки сообщений</span>}
+			{error && <span style={{ color: 'red', fontSize: 12 }}>Ошибка загрузки сообщений</span>}
 		</Space>
 	);
 };

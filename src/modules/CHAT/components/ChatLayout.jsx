@@ -1,17 +1,17 @@
 import { Layout } from 'antd';
 import ChatSidebar from './ChatSidebar';
 import ChatContent from './ChatContent';
-import './style/ChatLayout.css';
+import styles from './style/Chat.module.css';
 
 const { Sider, Content } = Layout;
 
 export default function ChatLayout() {
 	return (
-		<Layout className="chat-layout">
-			<Sider width={180} className="chat-sidebar">
+		<Layout className={styles['chat-layout']}>
+			<Sider width={180} className={styles['chat-sidebar']}>
 				<ChatSidebar />
 			</Sider>
-			<Content className="chat-content">
+			<Content className={styles['chat-content']}>
 				<ChatContent />
 			</Content>
 		</Layout>

@@ -2,22 +2,30 @@ import ChatHeader from './ChatHeader';
 import ChatList from './ChatList';
 import ChatFooter from './ChatFooter';
 import { Layout } from 'antd';
-import './style/ChatSidebar.css';
+import { useState } from 'react';
+import styles from './style/Chat.module.css';
 
 const { Header, Content, Footer } = Layout;
 
 export default function ChatSidebar() {
+	const [draggable, setDraggable] = useState(false);
+
+	// 🟡 Добавь управление позициями
+	const [position, setPosition] = useState('topLeft'); // возможные значения: 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'
+
 	return (
-		<Layout className="sidebar-layout">
-			<Header className="sidebar-header">
-				<ChatHeader />
-			</Header>
-			<Content className="sidebar-content">
+		<Layout className={styles['sidebar-layout']}>
+			<ChatHeader className={styles['sidebar-header']} />
+			<Content className={styles['sidebar-content']}>
 				<ChatList />
 			</Content>
-			<Footer className="sidebar-footer">
-				<ChatFooter />
-			</Footer>
+			<ChatFooter
+				className={styles['sidebar-footer']}
+				draggable={draggable}
+				setDraggable={setDraggable}
+				position={position}
+				setPosition={setPosition}
+			/>
 		</Layout>
 	);
 }

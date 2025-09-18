@@ -3,10 +3,10 @@ import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { FileOutlined } from '@ant-design/icons';
-import './style/ChatList.css';
+import styles from './style/Chat.module.css';
 
 export default function ChatList() {
-	// 👉 текущий пользователь может быть передан как проп, получен из контекста или auth-хука
+	// 👉 текущий пользователь, пока заглушка
 	const currentUserId = 46;
 
 	const {
@@ -46,16 +46,18 @@ export default function ChatList() {
 		});
 	}, [smsList]);
 
-	if (loading) return <p>Загрузка чатов...</p>;
-	if (error) return <p>Ошибка: {error}</p>;
+	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
+	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
 
 	return (
-		<div>
-			<ul className="chat-list">
+		<container className={styles['chat-list__container']}>
+			<ul className={styles['chat-list']}>
 				{chats.map((chat) => {
 					const companion = getCompanion(chat);
 
-					const isFile = false; // заглушка
+					// Для демонстрации, заглушка — здесь лучше добавить логику определения типа сообщения
+					const isFile = false;
+
 					const lastMessageText = isFile
 						? 'document.pdf'
 						: chat.text || (
@@ -65,17 +67,17 @@ export default function ChatList() {
 						  );
 
 					return (
-						<li key={chat.chat_id} className="chat-item">
-							<div>
+						<li key={chat.chat_id} className={styles.chatItem}>
+							<div className={styles.companionName}>
 								{companion?.surname} {companion?.name}
 							</div>
-							<div className="last-message">
+							<div className={styles.lastMessage}>
 								{isFile ? `Файл: ${lastMessageText}` : lastMessageText}
 							</div>
 						</li>
 					);
 				})}
 			</ul>
-		</div>
+		</container>
 	);
 }

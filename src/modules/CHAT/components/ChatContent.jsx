@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Layout, List, Input, Button, Popover, Space } from 'antd';
 import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
-import './style/ChatContent.css';
+import styles from './style/Chat.module.css';
 
 const { Content, Footer } = Layout;
 
@@ -43,23 +43,27 @@ export default function ChatContent() {
 	};
 
 	return (
-		<Layout className="chatcontent-layout">
-			<Content className="messages">
+		<Layout className={styles.chatcontentLayout}>
+			<Content className={styles.messages}>
 				<List
 					dataSource={messages}
 					renderItem={(msg) => (
-						<List.Item className={`message ${msg.from === 'me' ? 'my-message' : 'other-message'}`}>
-							<div className="bubble">
+						<List.Item
+							className={`${styles.message} ${
+								msg.from === 'me' ? styles.myMessage : styles.otherMessage
+							}`}
+						>
+							<div className={styles.bubble}>
 								<span>{msg.text}</span>
-								<div className="time">{msg.time}</div>
+								<div className={styles.time}>{msg.time}</div>
 							</div>
 						</List.Item>
 					)}
 				/>
 			</Content>
 
-			<Footer className="chat-input-footer">
-				<Space style={{ width: '100%', alignItems: 'space-between' }}>
+			<Footer className={styles['chat-input__footer']}>
+				<Space className={styles.spaceContainer}>
 					<Button icon={<FileAddOutlined />} onClick={sendMessage} />
 
 					<Input
@@ -69,6 +73,7 @@ export default function ChatContent() {
 						style={{ flex: 1 }}
 						onPressEnter={sendMessage}
 					/>
+
 					<Popover
 						content={<EmojiPicker onEmojiClick={onEmojiClick} />}
 						trigger="click"
@@ -78,6 +83,7 @@ export default function ChatContent() {
 					>
 						<Button icon={<SmileOutlined />} />
 					</Popover>
+
 					<Button type="primary" icon={<SendOutlined />} onClick={sendMessage} />
 				</Space>
 			</Footer>
