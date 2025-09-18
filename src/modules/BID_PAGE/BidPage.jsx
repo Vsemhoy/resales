@@ -12,7 +12,7 @@ import {
 	Tag,
 	Tooltip,
 } from 'antd';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/bidPage.css';
@@ -46,6 +46,7 @@ const { TextArea } = Input;
 
 const BidPage = (props) => {
 	const { bidId } = useParams();
+	const navigate = useNavigate();
 	const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isLoadingSmall, setIsLoadingSmall] = useState(false);
@@ -1161,7 +1162,8 @@ const BidPage = (props) => {
 									color="primary"
 									variant="outlined"
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'} />}
-									onClick={() => window.open(`/resales/bidsPDF/${bidId}`, '_blank')}
+									// onClick={() => window.open(`/resales/bidsPDF/${bidId}`, '_blank')}
+									onClick={() => navigate(`/bidsPDF/${bidId}`)}
 								></Button>
 							</Tooltip>
 							{+bidType !== 2 && (

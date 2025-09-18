@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import PageFooter from "../PageFooter";
 
-const SpecificationChapter = ({ kpId, startPage, name, chapterNum, currency, onRender }) => {
+const SpecificationChapter = ({ bidId, startPage, name, chapterNum, currency, onRender }) => {
     const [pageNumSelf, setPageNameSelf] = useState(startPage);
     const [models, setModels] = useState([]);
     let rendered = false;
