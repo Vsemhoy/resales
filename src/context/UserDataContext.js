@@ -2,10 +2,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../config/config';
 import { PROD_AXIOS_INSTANCE } from '../config/Api';
 import { MS_USER } from '../mock/MAINSTATE';
-// Создаём контекст
 const UserDataContext = createContext();
 
-// Компонент провайдера для оборачивания приложения
 export const UserDataProvider = ({ children }) => {
 	const [userdata, setUserdata] = useState([]);
 	const [pageLoaded, setPageLoaded] = useState(false);
@@ -21,10 +19,6 @@ export const UserDataProvider = ({ children }) => {
 	const get_userdata = async () => {
 		if (PRODMODE) {
 			try {
-				// const format_data = {
-				// 	CSRF_TOKEN,
-				// 	data: {},
-				// };
 				let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
 				console.log('me: ', response);
 				setUserdata(response.data);
@@ -45,5 +39,4 @@ export const UserDataProvider = ({ children }) => {
 	);
 };
 
-// Хук для использования контекста
 export const useUserData = () => useContext(UserDataContext);
