@@ -80,7 +80,7 @@ const EngineerListRow = (props) => {
 				<div className={'sa-table-box-cell'} style={{ display: 'inline-block' }} >
 					<div>
 						<div style={{ display: 'flex', gap: '8px' }}>
-							{(props.activeRole === 1 || props.userData.user.super === 1) && (
+							{(props.activeRole === 1 || props.superUser === 1) && (
 								<>
 									<Button type={'primary'} style={{ width: '100px' }}>
 										Копировать
@@ -91,7 +91,7 @@ const EngineerListRow = (props) => {
 								</>
 							)}
 
-							{(props.activeRole === 2 || props.userData.user.super === 1) && (
+							{(props.activeRole === 2 || props.superUser === 1) && (
 								<>
 									<Button type={'primary'} style={{ width: '100px' }}>
 										КП
