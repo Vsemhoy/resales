@@ -6,12 +6,12 @@ const SpecificationChapter = ({ models, startPage, name, chapterNum, currency, o
     let rendered = false;
     useEffect(() => {
         if (!rendered) {
+            console.log('SpecificationChapter', startPage);
             rendered = true;
         }
     }, []);
     useEffect(() => {
         if (models.length > 0) {
-            console.log(models.length)
             onRender(pageNumSelf + calculateBlocksCount(), name);
         }
     }, [models]);
@@ -37,7 +37,6 @@ const SpecificationChapter = ({ models, startPage, name, chapterNum, currency, o
     // Рассчитываем общую сумму
     const totalSum = models.reduce((sum, model) => sum + (+model.quantity * +model.price_0), 0);
     const renderAmount = () => {
-        console.log(amounts)
         if (+currency.value === 1) {
             return +amounts?.usd / 100;
         }
