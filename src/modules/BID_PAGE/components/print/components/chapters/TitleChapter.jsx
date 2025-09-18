@@ -22,7 +22,7 @@ const TitleChapter = ({ type, titleInfo, startPage, name, email, onRender }) => 
     return (
         <div id="start"
              className="body-container start"
-             style={{ backgroundImage: `url(${HTTP_HOST})/media/KP_start_big.png` }}
+             style={{ backgroundImage: `url(${HTTP_HOST}/media/KP_start_big.png)` }}
         >
             <div className="start-header">
                 {/*<img className="start-arstel" src="/src/assets/media/ARSTEL.png" alt="arstel"/>*/}
