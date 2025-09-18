@@ -4,41 +4,33 @@ import ContentsChapter from "./chapters/ContentsChapter";
 import SpecificationChapter from "./chapters/SpecificationChapter";
 import CharacteristicsChapter from "./chapters/CharacteristicsChapter";
 
-const Print = ({ bidId, type, info, phone, email, currency }) => {
+const Print = ({ bidId, type, info, models, phone, email, currency, amounts }) => {
     const [currentPage, setCurrentPage] = useState(1);
-
     const [chaptersRendered, setChaptersRendered] = useState({
-        title: {
-            startPage: 1,
-            rendered: false
-        },
-        contents: {
-            startPage: 0,
-            rendered: false
-        },
-        specification: {
-            startPage: 0,
-            rendered: false
-        },
-        characteristics: {
-            startPage: 0,
-            rendered: false
-        },
+        title: { startPage: 1, rendered: false },
+        contents: { startPage: 0, rendered: false },
+        specification: { startPage: 0, rendered: false },
+        characteristics: { startPage: 0, rendered: false },
     });
 
-    const updateCurrentPage = (newPage, chapter) => {
+    const updateCurrentPage = (pagesUsed, chapter) => {
         setChaptersRendered(prev => {
-            return {
+            const newChaptersRendered = {
                 ...prev,
                 [chapter]: {
-                    startPage: currentPage,
+                    startPage: prev[chapter].startPage || currentPage,
                     rendered: true
                 }
-            }
+            };
+            setCurrentPage(prevPage => prevPage + pagesUsed);
+            return newChaptersRendered;
         });
-        setCurrentPage(newPage);
-        console.log(chaptersRendered)
     };
+
+    useEffect(() => {
+        console.log('Current page:', currentPage);
+        console.log('Chapters rendered:', chaptersRendered);
+    }, [currentPage, chaptersRendered]);
 
     return (
         <div className="print-container">
@@ -54,7 +46,7 @@ const Print = ({ bidId, type, info, phone, email, currency }) => {
 
             {chaptersRendered.title.rendered && (
                 <ContentsChapter
-                    startPage={currentPage}
+                    startPage={chaptersRendered.title.startPage}
                     name={'contents'}
                     chapterNum={1}
                     subChapterNum={1.1}
@@ -66,7 +58,9 @@ const Print = ({ bidId, type, info, phone, email, currency }) => {
             {chaptersRendered.contents.rendered && (
                 <SpecificationChapter
                     bidId={bidId}
-                    startPage={currentPage}
+                    models={models}
+                    amounts={amounts}
+                    startPage={chaptersRendered.contents.startPage}
                     name={'specification'}
                     chapterNum={1}
                     currency={currency}
@@ -76,7 +70,7 @@ const Print = ({ bidId, type, info, phone, email, currency }) => {
 
             {chaptersRendered.specification.rendered && (
                 <CharacteristicsChapter
-                    startPage={currentPage}
+                    startPage={chaptersRendered.specification.startPage}
                     name={'characteristics'}
                     subChapterNum={1.1}
                     characteristicInfo={info.characteristicInfo}
