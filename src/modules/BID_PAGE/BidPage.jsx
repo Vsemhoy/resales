@@ -1163,7 +1163,7 @@ const BidPage = (props) => {
 									variant="outlined"
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'} />}
 									// onClick={() => window.open(`/resales/bidsPDF/${bidId}`, '_blank')}
-									onClick={() => navigate(`/resales/bidsPDF/${bidId}`)}
+									onClick={() => navigate(`/bidsPDF/${bidId}`)}
 								></Button>
 							</Tooltip>
 							{+bidType !== 2 && (
