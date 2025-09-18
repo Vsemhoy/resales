@@ -25,7 +25,6 @@ const EngineerListRow = (props) => {
 
 	useEffect(() => {
 		setData(props.data);
-		console.log(props.data);
 	}, [props.data]);
 
 	useEffect(() => {
@@ -41,8 +40,6 @@ const EngineerListRow = (props) => {
 			props.on_double_click(data);
 		}
 	};
-
-	console.log(props.activeRole);
 
 	return (
 		<Dropdown trigger={['contextMenu']}>
@@ -80,10 +77,10 @@ const EngineerListRow = (props) => {
 						</Tooltip>
 					</div>
 				</div>
-				<div className={'sa-table-box-cell'} style={{ display: 'inline-block' }}>
+				<div className={'sa-table-box-cell'} style={{ display: 'inline-block' }} >
 					<div>
 						<div style={{ display: 'flex', gap: '8px' }}>
-							{props.activeRole === 1 ? (
+							{(props.activeRole === 1 || props.userData.user.super === 1) && (
 								<>
 									<Button type={'primary'} style={{ width: '100px' }}>
 										Копировать
@@ -92,7 +89,9 @@ const EngineerListRow = (props) => {
 										Отправить
 									</Button>
 								</>
-							) : (
+							)}
+
+							{(props.activeRole === 2 || props.userData.user.super === 1) && (
 								<>
 									<Button type={'primary'} style={{ width: '100px' }}>
 										КП
