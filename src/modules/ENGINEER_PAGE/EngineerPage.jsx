@@ -627,6 +627,10 @@ const EngineerPage = (props) => {
     </Button>
   ];
 
+  const customClick = (button_id) => {
+    console.log(button_id)
+  }
+
   return (
       <div className={'sa-engineer-page-container'}>
         <Spin size="large" spinning={isLoading}>
@@ -961,6 +965,7 @@ const EngineerPage = (props) => {
             //     handleSetValue={handleSetValue}
             // />
             <CustomModal
+                customClick={customClick}
                 customType={"danger"}
                 customText={"Кастомный текст сообщения"}
                 customTitle={"Кастомный Тайтл"}
