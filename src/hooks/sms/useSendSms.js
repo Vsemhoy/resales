@@ -7,7 +7,7 @@ export const useSendSms = () => {
 	const [error, setError] = useState(null);
 	const [success, setSuccess] = useState(false);
 
-	const sendSms = async ({ to, text, answer = null, chatId }) => {
+	const sendSms = async ({ to, text, answer = null, chat_id }) => {
 		setLoading(true);
 		setError(null);
 		setSuccess(false);
@@ -27,7 +27,7 @@ export const useSendSms = () => {
 					to,
 					text,
 					answer,
-					chatId
+					chat_id
 				},
 			};
 
