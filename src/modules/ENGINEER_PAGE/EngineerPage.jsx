@@ -232,7 +232,7 @@ const EngineerPage = (props) => {
       setBidModels(MODELS_LIST);
       setEngineerParameters(CALC_INFO.models_data);
 
-      setBidPlace(1);
+      setBidPlace(2);
 
       setBidFilesCount(1);
     }
@@ -646,16 +646,20 @@ const EngineerPage = (props) => {
                       current={+bidPlace - 1}
                       items={[
                         {
-                          title: 'Новая',
+                          title: 'Отклонено',
                           description: +bidPlace === 1 ? 'Текущий этап' : '',
                         },
                         {
-                          title: 'В работе',
+                          title: 'Новая',
                           description: +bidPlace === 2 ? 'Текущий этап' : '',
                         },
                         {
-                          title: 'Завершено',
+                          title: 'В работе',
                           description: +bidPlace === 3 ? 'Текущий этап' : '',
+                        },
+                        {
+                          title: 'Завершено',
+                          description: +bidPlace === 4 ? 'Текущий этап' : '',
                         },
                       ]}
                   />
