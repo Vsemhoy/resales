@@ -211,6 +211,8 @@ const EngineerPage = (props) => {
             mass: 0,
             size: 0
           });
+
+          setBidFilesCount(content.files_count);
         }
       } catch (e) {
         console.log(e);
@@ -225,6 +227,8 @@ const EngineerPage = (props) => {
 
       setBidModels(MODELS_LIST);
       setEngineerParameters(CALC_INFO.models_data);
+
+      setBidFilesCount(1);
     }
   };
 
@@ -574,16 +578,6 @@ const EngineerPage = (props) => {
             </Affix>
             <div className={'sa-engineer-page-info-container'}>
               <div className={'sa-engineer-page-btns-wrapper'}>
-                <Tooltip title={'Файлы'} placement={'right'}>
-                  <Badge count={bidFilesCount} color={'geekblue'}>
-                    <Button className={'sa-engineer-page-btn'}
-                            color="primary"
-                            variant="outlined"
-                            icon={<DownloadOutlined className={'sa-engineer-page-btn-icon'}/>}
-                            onClick={() => setIsEngineerFilesDrawerOpen(true)}
-                    ></Button>
-                  </Badge>
-                </Tooltip>
                 {(activeRole === 1 || superUser) && (
                     <>
                       <Tooltip title={'Копировать спецификацию'} placement={'right'}>
@@ -624,6 +618,17 @@ const EngineerPage = (props) => {
                       </Tooltip>
                     </>
                 )}
+
+                <Tooltip title={'Файлы'} placement={'right'}>
+                  <Badge count={bidFilesCount} color={'geekblue'}>
+                    <Button className={'sa-engineer-page-btn'}
+                            color="primary"
+                            variant="outlined"
+                            icon={<DownloadOutlined className={'sa-engineer-page-btn-icon'}/>}
+                            onClick={() => setIsEngineerFilesDrawerOpen(true)}
+                    ></Button>
+                  </Badge>
+                </Tooltip>
               </div>
               <div className={'sa-engineer-page-info-wrapper'}>
                 <div className={'sa-info-models-header'}>Основные данные</div>
