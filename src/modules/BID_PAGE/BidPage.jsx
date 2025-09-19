@@ -800,6 +800,8 @@ const BidPage = (props) => {
 			...bidModelsUpd,
 			...arr
 		]);
+		setAdditionData([]);
+		setIsNeedCalcMoney(true);
 	};
 
 	const collapseItems = [
