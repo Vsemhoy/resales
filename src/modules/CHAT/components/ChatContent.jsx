@@ -21,13 +21,6 @@ export default function ChatContent({ chatId }) {
 	const [showPicker, setShowPicker] = useState(false);
 	const [messages, setMessages] = useState([]);
 
-
-	const [tmpChatID, setTmpChatID] = useState(0);
-
-	useEffect(() => {
-		setTmpChatID(chatId);
-	}, [chatId]);
-
 	useEffect(() => {
 		if (!Array.isArray(smsList) || !chatId) return;
 
@@ -50,13 +43,12 @@ export default function ChatContent({ chatId }) {
 
 	const handleSend = async () => {
 		if (!text.trim()) return;
-		console.log("ChatID: ", tmpChatID);
 
 		await sendSms({
 			to: 0, // не нужен, так как бэкенд сам определит по chat_id
 			text: text.trim(),
 			answer: null,
-			chat_id: tmpChatID, // ✅ добавляем сюда chat_id при отправке
+			chat_id: chatId, // ✅ добавляем сюда chat_id при отправке
 		});
 
 		setMessages((prev) => [
