@@ -44,6 +44,7 @@ import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
 import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
 import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
 import DataParser from "./components/DataParser";
+import FindSimilarDrawer from "./components/FindSimilarDrawer";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -163,6 +164,7 @@ const BidPage = (props) => {
 	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
 	const [isBidFilesDrawerOpen, setIsBidFilesDrawerOpen] = useState(false);
 	const [isParseModalOpen, setIsParseModalOpen] = useState(false);
+	const [isFindSimilarDrawerOpen, setIsFindSimilarDrawerOpen] = useState(false);
 	const [additionData, setAdditionData] = useState([]);
 
 	useEffect(() => {
@@ -1494,6 +1496,7 @@ const BidPage = (props) => {
 										color="primary"
 										variant="filled"
 										icon={<BlockOutlined />}
+										onClick={() => setIsFindSimilarDrawerOpen(true)}
 										disabled={openMode?.status === 1}
 									>
 										Похожие
@@ -1669,6 +1672,10 @@ const BidPage = (props) => {
 			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
 							closeDrawer={() => setIsBidFilesDrawerOpen(false)}
 							bidId={bidId}
+			/>
+			<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
+							   closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
+							   bidId={bidId}
 			/>
 			{isAlertVisible && (
 				<Alert
