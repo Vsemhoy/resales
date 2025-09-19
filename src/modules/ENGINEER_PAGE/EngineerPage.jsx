@@ -104,6 +104,8 @@ const EngineerPage = (props) => {
   const [modelIdExtra, setModelIdExtra] = useState(null);
   const [modelNameExtra, setModelNameExtra] = useState('');
   const [isEngineerFilesDrawerOpen, setIsEngineerFilesDrawerOpen] = useState(false);
+  const [bidPlace, setBidPlace] = useState(1); // статус по пайплайну
+
 
   const handleKeyDown = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -212,6 +214,8 @@ const EngineerPage = (props) => {
             size: 0
           });
 
+          setBidPlace(content.place);
+
           setBidFilesCount(content.files_count);
         }
       } catch (e) {
@@ -227,6 +231,8 @@ const EngineerPage = (props) => {
 
       setBidModels(MODELS_LIST);
       setEngineerParameters(CALC_INFO.models_data);
+
+      setBidPlace(1);
 
       setBidFilesCount(1);
     }
@@ -632,6 +638,28 @@ const EngineerPage = (props) => {
               </div>
               <div className={'sa-engineer-page-info-wrapper'}>
                 <div className={'sa-info-models-header'}>Основные данные</div>
+                <div className={'custom-small-steps-container'}>
+                  <Steps
+                      className="sa-custom-steps custom-small-steps"
+                      progressDot
+                      size="small"
+                      current={+bidPlace - 1}
+                      items={[
+                        {
+                          title: 'Новая',
+                          description: +bidPlace === 1 ? 'Текущий этап' : '',
+                        },
+                        {
+                          title: 'В работе',
+                          description: +bidPlace === 2 ? 'Текущий этап' : '',
+                        },
+                        {
+                          title: 'Завершено',
+                          description: +bidPlace === 3 ? 'Текущий этап' : '',
+                        },
+                      ]}
+                  />
+                </div>
                 <div className={'sa-info-list'}>
                   <div className={'sa-info-list-row'}>
                     <div className={'sa-list-row-label'}><p>Комментарий инженера</p></div>
