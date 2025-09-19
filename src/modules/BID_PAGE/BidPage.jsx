@@ -791,8 +791,8 @@ const BidPage = (props) => {
 				"percent": 0,
 				"presence": -2,
 				"sort": sort + idx,
-				"type_model": newModel.type_model,
-				"currency": newModel.currency,
+				"type_model": model.type_model,
+				"currency": model.currency,
 			}
 		});
 		const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
