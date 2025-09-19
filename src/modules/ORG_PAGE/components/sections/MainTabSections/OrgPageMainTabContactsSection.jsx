@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import OrgPageSectionRow, { OPS_TYPE } from '../OrgPageSectionRow';
 import { PRODMODE } from '../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTMOCK';
-import { Button } from 'antd';
+import { Affix, Button } from 'antd';
 
 import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import OPMTCcontactstelephonesSection from './subsections/OPMTCcontactstelephonesSection';
