@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from 'antd';
 import { useParams } from 'react-router-dom';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/engPage.css'
 // import { BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, SELECTS, ALLMODELS_LIST } from './mock/mock';
@@ -24,7 +24,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   DollarOutlined,
-  DownloadOutlined,
+  DownloadOutlined, FileAddOutlined,
   FilePdfOutlined,
   FileSearchOutlined,
   FileWordOutlined,
@@ -33,11 +33,14 @@ import {
   LoadingOutlined,
   MinusOutlined,
   PlusOutlined, ProfileOutlined,
-  SaveOutlined,
+  SaveOutlined, SendOutlined,
 } from '@ant-design/icons';
 import NameSelect from './components/alan/NameSelect';
 import ModelInput from './components/alan/ModelInput';
 import ModelSelect from './components/alan/ModelSelect';
+import CopyMessageView from "./components/CopyMessageView";
+import CustomModal from "../../components/helpers/modals/CustomModal";
+import ModelInfoExtraDrawer from "../BID_PAGE/components/ModelInfoExtraDrawer";
 const { TextArea } = Input;
 
 const EngineerPage = (props) => {
@@ -61,51 +64,18 @@ const EngineerPage = (props) => {
   const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
   /* ШАПКА СТРАНИЦЫ */
   const [bidType, setBidType] = useState(null);
-  const [bidIdCompany, setBidIdCompany] = useState(null);
-  const [bidOrg, setBidOrg] = useState({});
-  const [bidCurator, setBidCurator] = useState({});
-  const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
-  const [companyCurrency, setCompanyCurrency] = useState(null);
-  const [bankCurrency, setBankCurrency] = useState(null);
-  /* БАЗОВЫЙ БЛОК */
-  const [bidOrgUser, setBidOrgUser] = useState('');
-  const [bidProtectionProject, setBidProtectionProject] = useState('');
-  const [bidObject, setBidObject] = useState('');
-  const [bidSellBy, setBidSellBy] = useState(''); // срок реализации
-  /* БЛОК ПЛАТЕЛЬЩИКА */
-  const [requisite, setRequisite] = useState(null);
-  const [conveyance, setConveyance] = useState(null);
-  const [factAddress, setFactAddress] = useState(null);
-  const [phone, setPhone] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [insurance, setInsurance] = useState(null);
-  const [bidPackage, setBidPackage] = useState(null);
-  const [consignee, setConsignee] = useState('');
-  const [otherEquipment, setOtherEquipment] = useState('');
-  /* БЛОК КОММЕНТАРИЕВ */
+
   const [bidCommentEngineer, setBidCommentEngineer] = useState('');
   const [bidCommentManager, setBidCommentManager] = useState('');
-  const [bidCommentAdmin, setBidCommentAdmin] = useState('');
-  const [bidCommentAccountant, setBidCommentAccountant] = useState('');
-  const [bidCommentAddEquipment, setBidCommentAddEquipment] = useState('');
   /* ФИНАНСОВЫЙ БЛОК */
   const [bidCurrency, setBidCurrency] = useState(0);
   const [bidPriceStatus, setBidPriceStatus] = useState(0);
   const [bidPercent, setBidPercent] = useState(0);
   const [bidNds, setBidNds] = useState(0);
-  /* ЛОГИ */
-  const [bidActionsLogs, setBidActionsLogs] = useState({});
   /* ФАЙЛЫ */
   const [bidFilesCount, setBidFilesCount] = useState(0);
-  /* ПРОЕКТ */
-  const [bidProject, setBidProject] = useState(null); // проект из карточки организации
   /* МОДЕЛИ */
   const [bidModels, setBidModels] = useState([]);
-  const [amounts, setAmounts] = useState({
-    usd: 0,
-    eur: 0,
-    rub: 0,
-  });
   const [engineerParameters, setEngineerParameters] = useState({
     unit: 0,
     box_size: 0,
@@ -119,33 +89,18 @@ const EngineerPage = (props) => {
   const [modelsSelect, setModelsSelect] = useState([]);
   const [garbage, setGarbage] = useState([]);
   /* ВСЕ ОСТАЛЬНЫЕ СЕЛЕКТЫ */
-  const [typeSelect, setTypeSelect] = useState([]);
-  const [actionEnumSelect, setActionEnumSelect] = useState([]);
-  const [adminAcceptSelect, setAdminAcceptSelect] = useState([]);
-  const [bidCurrencySelect, setBidCurrencySelect] = useState([]);
-  const [bidPresenceSelect, setBidPresenceSelect] = useState([]);
-  const [completeSelect, setCompleteSelect] = useState([]);
-  const [ndsSelect, setNdsSelect] = useState([]);
-  const [packageSelect, setPackageSelect] = useState([]);
-  const [paySelect, setPaySelect] = useState([]);
-  const [presenceSelect, setPresenceSelect] = useState([]);
-  const [priceSelect, setPriceSelect] = useState([]);
-  const [protectionSelect, setProtectionSelect] = useState([]);
-  const [stageSelect, setStageSelect] = useState([]);
-  const [templateWordSelect, setTemplateWordSelect] = useState([]);
-  const [companies, setCompanies] = useState([]);
-  const [conveyanceSelect, setConveyanceSelect] = useState([]);
-  const [insuranceSelect, setInsuranceSelect] = useState([]);
-  /* ЭКСТРА СЕЛЕКТЫ */
-  const [orgUsersSelect, setOrgUsersSelect] = useState([]);
-  const [requisiteSelect, setRequisiteSelect] = useState([]);
-  const [factAddressSelect, setFactAddressSelect] = useState([]);
-  const [phoneSelect, setPhoneSelect] = useState([]);
-  const [emailSelect, setEmailSelect] = useState([]);
-  const [bidPackageSelect, setBidPackageSelect] = useState([]);
+    const [companies, setCompanies] = useState([]);
 
   const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, manager_name: ""});
   const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, engineer_name: ""});
+
+  const [activeRole, setActiveRole] = useState(1);
+  const [openCopySpecification, setOpenCopySpecification] = useState(false);
+  const [openAddIntoBidSpecification, setOpenAddIntoBidSpecification] = useState(false);
+  const [value, setValue] = useState(0);
+  const [superUser, setSuperUser] = useState(false);
+  const [modelIdExtra, setModelIdExtra] = useState(null);
+  const [modelNameExtra, setModelNameExtra] = useState('');
 
   const handleKeyDown = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -173,7 +128,19 @@ const EngineerPage = (props) => {
     if (props.userdata) {
       setUserData(props.userdata);
     }
+
+    if ([7,8,20].includes(userData?.user?.id_departament)) {
+      setActiveRole(1);
+    } else {
+      setActiveRole(2);
+    }
+
   }, [props.userdata]);
+
+  useEffect(() => {
+    setSuperUser(props.userdata.user?.super);
+  }, [props.userdata.user?.super]);
+
   useEffect(() => {
     if (isSavingInfo) {
       fetchUpdates().then(() => {
@@ -187,7 +154,6 @@ const EngineerPage = (props) => {
   }, [isSavingInfo]);
   useEffect(() => {
     if (isMounted && isNeedCalcMoney) {
-      // && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
       const timer = setTimeout(() => {
         fetchCalcModels().then(() => {
           setIsNeedCalcMoney(false);
@@ -214,7 +180,6 @@ const EngineerPage = (props) => {
     await fetchBidInfo();
     await fetchBidModels();
     setTimeout(() => setIsLoading(false), 1000);
-    await fetchCurrencySelects();
   };
   const fetchBidInfo = async () => {
     if (PRODMODE) {
@@ -244,48 +209,6 @@ const EngineerPage = (props) => {
             size: 0
           });
         }
-        // if (response.data && response.data.bid && response.data.bid_models) {
-        //   const openMode = response.data.openmode;
-        //   setOpenMode(openMode);
-        //
-        //   const bid = response.data.bid;
-        //   setBidType(bid.type);
-        //   setBidIdCompany(bid.id_company);
-        //   setBidOrg(bid.properties.org);
-        //   setBidPlace(bid.place);
-        //   setBidOrgUser(bid.statuses.orguser); // пока что у меня есть только id, надо еще телефон и почту
-        //   setBidProtectionProject(bid.statuses.protection);
-        //   setBidObject(bid.properties.object);
-        //   setBidSellBy(bid.properties.sellby);
-        //
-        //   setRequisite(bid.statuses.requisite);
-        //   setConveyance(bid.statuses.conveyance);
-        //   setFactAddress(bid.statuses.fact_address);
-        //   setPhone(bid.statuses.org_phone);
-        //   setEmail(bid.statuses.contact_email);
-        //   setInsurance(bid.statuses.insurance);
-        //   setBidPackage(bid.statuses.package);
-        //   setConsignee(bid.properties.consignee);
-        //   setOtherEquipment(bid.properties.other_equipment);
-        //
-        //   setBidCommentEngineer(bid.comments.engineer);
-        //   setBidCommentManager(bid.comments.manager);
-        //   setBidCommentAdmin(bid.comments.admin);
-        //   setBidCommentAccountant(bid.comments.accountant);
-        //   setBidCommentAddEquipment(bid.comments.add_equipment);
-        //
-        //   setBidCurrency(bid.finance.bid_currency);
-        //   setBidPriceStatus(bid.statuses.price);
-        //   setBidPercent(bid.finance.percent);
-        //   setBidNds(bid.finance.nds);
-        //
-        //   setBidFilesCount(bid.files_count);
-        //
-        //   const models = response.data.bid_models;
-        //   setBidModels(models);
-        //   setEngineerParameters(response.data.models_data);
-        //   setAmounts(response.data.amount);
-        // }
       } catch (e) {
         console.log(e);
       }
@@ -293,64 +216,16 @@ const EngineerPage = (props) => {
       console.log("HERE: 1");
       setManager(PREBID.manager);
       setEngineer(PREBID.engineer);
-      // setOpenMode(BID.openmode);
-      //
-      // setBidType(BID.type);
-      // setBidIdCompany(BID.id_company);
-      // setBidOrg(BID.properties.org);
-      // setBidPlace(BID.place);
-      // setBidOrgUser(BID.statuses.orguser);
-      // setBidProtectionProject(BID.statuses.protection);
-      // setBidObject(BID.properties.object);
-      // setBidSellBy(BID.properties.sellby);
-      //
-      // setRequisite(BID.statuses.requisite);
-      // setConveyance(BID.statuses.conveyance);
-      // setFactAddress(BID.statuses.fact_address);
-      // setPhone(BID.statuses.org_phone);
-      // setEmail(BID.statuses.contact_email);
-      // setInsurance(BID.statuses.insurance);
-      // setBidPackage(BID.statuses.package);
-      // setConsignee(BID.properties.consignee);
-      // setOtherEquipment(BID.properties.other_equipment);
+
       setBidCommentEngineer(PREBID.comment_engineer);
       setBidCommentManager(PREBID.comment_manager);
-      // setBidCommentAdmin(BID.comments.admin);
-      // setBidCommentAccountant(BID.comments.accountant);
-      // setBidCommentAddEquipment(BID.comments.add_equipment);
-      //
-      // setBidCurrency(BID.finance.bid_currency);
-      // setBidPriceStatus(BID.statuses.price);
-      // setBidPercent(BID.finance.percent);
-      // setBidNds(BID.finance.nds);
-      //
-      // setBidFilesCount(BID.files_count);
-      //
+
       setBidModels(MODELS_LIST);
       setEngineerParameters(CALC_INFO.models_data);
-      // setAmounts(AMOUNT);
     }
   };
 
-  const fetchCurrencySelects = async () => {
-    if (PRODMODE) {
-      try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/currency/getcurrency', {
-          data: {},
-          _token: CSRF_TOKEN,
-        });
-        if (response.data) {
-          setCompanyCurrency(response.data.company);
-          setBankCurrency(response.data.currency);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      setCompanyCurrency(CUR_COMPANY);
-      setBankCurrency(CUR_CURRENCY);
-    }
-  };
+
   const fetchBidModels = async () => {
     if (PRODMODE) {
       try {
@@ -431,7 +306,6 @@ const EngineerPage = (props) => {
         if (response.data.content) {
           const content = response.data.content;
           if (content.models) setBidModels(content.models);
-          if (content.amounts) setAmounts(content.amounts);
           if (content.models_data) setEngineerParameters(content.models_data);
         }
         setTimeout(() => setIsLoadingSmall(false), 500);
@@ -441,9 +315,8 @@ const EngineerPage = (props) => {
       }
     } else {
       setIsLoadingSmall(true);
-      //setBidModels(CALC_INFO.models);
-      //setAmounts(CALC_INFO.amounts);
-      //setEngineerParameters(CALC_INFO.models_data);
+      // setBidModels(CALC_INFO.models);
+      // setEngineerParameters(CALC_INFO.models_data);
       setTimeout(() => setIsLoadingSmall(false), 500);
     }
   };
@@ -535,7 +408,106 @@ const EngineerPage = (props) => {
         break;
     }
   };
-  const handleOpenModelInfo = (modelId) => {};
+  const handleOpenModelInfo = (modelId) => {
+    setModelIdExtra(modelId);
+    const name = bidModels.find(model => model.model_id === modelId).model_name;
+    setModelNameExtra(name);
+  };
+  const handleCloseDrawerExtra = () => {
+    setModelIdExtra(null);
+    setModelNameExtra('');
+  };
+
+  const handleCopySpecification = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/copy/' + bidId, {
+          _token: CSRF_TOKEN,
+          data: {
+            bidId: value
+          }
+        });
+
+        setOpenCopySpecification(true);
+
+        // window.open(BASE_ROUTE + '/api/sales/engineer/' + response.data.newId);
+      } catch (e) {
+        console.log(e);
+        setTimeout(() => setIsLoadingSmall(false), 500);
+      }
+    }
+  };
+
+  const handleCopySpecificationIntoBid = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/intoBid/' + bidId, {
+          _token: CSRF_TOKEN,
+          data: {
+            bidId: value
+          }
+        });
+
+        setOpenAddIntoBidSpecification(true);
+
+        // window.open(BASE_ROUTE + '/api/sales/engineer/' + response.data.newId);
+      } catch (e) {
+        console.log(e);
+        setTimeout(() => setIsLoadingSmall(false), 500);
+      }
+    }
+  };
+  const handleCancel = () => {
+    setOpenCopySpecification(false);
+    setOpenAddIntoBidSpecification(false);
+    setValue(0);
+  };
+  const handleOk = () => {
+    setOpenCopySpecification(false);
+    setOpenAddIntoBidSpecification(false);
+    setValue(0);
+  };
+  const handleSetValue = (spec_id, type) => {
+    setValue(spec_id);
+
+    switch (type){
+      case 1:
+        handleCopySpecification().then( () => {setOpenCopySpecification(false)});
+        break;
+
+      case 2:
+        handleCopySpecificationIntoBid().then( () => {setOpenCopySpecification(false)});
+        break;
+    }
+    console.log(spec_id, type);
+  }
+
+
+
+  const handleSpecificationFinal = async () => {
+      if (PRODMODE){
+        try {
+          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/final/' + bidId, {
+            _token: CSRF_TOKEN,
+            data: {}
+          });
+
+          setIsAlertVisible(true);
+          setAlertMessage('Успех!');
+          setAlertDescription(response.data.message);
+          setAlertType('success');
+
+        } catch (e) {
+          console.log(e);
+          setTimeout(() => setIsLoadingSmall(false), 500);
+        }
+      } else {
+        setIsAlertVisible(true);
+        setAlertMessage('Успех!');
+        setAlertDescription("Спецификация отправлена!");
+        setAlertType('success');
+      }
+  }
 
   return (
       <div className={'sa-engineer-page-container'}>
@@ -608,20 +580,46 @@ const EngineerPage = (props) => {
                     ></Button>
                   </Badge>
                 </Tooltip>
-                <Tooltip title={'Создать КП'} placement={'right'}>
-                  <Button className={'sa-engineer-page-btn'}
-                          color="primary"
-                          variant="outlined"
-                          icon={<ProfileOutlined  className={'sa-engineer-page-btn-icon'}/>}
-                  ></Button>
-                </Tooltip>
-                <Tooltip title={'Создать счет'} placement={'right'}>
-                  <Button className={'sa-engineer-page-btn'}
-                          color="primary"
-                          variant="outlined"
-                          icon={<DollarOutlined className={'sa-engineer-page-btn-icon'}/>}
-                  ></Button>
-                </Tooltip>
+                {(activeRole === 1 || superUser) && (
+                    <>
+                      <Tooltip title={'Копировать спецификацию'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                icon={<CopyOutlined className={'sa-engineer-page-btn-icon'}/>}
+                                onClick={() => {setOpenCopySpecification(true);}}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title={'Отправить спецификацию'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                icon={<SendOutlined className={'sa-engineer-page-btn-icon'}/>}
+                                onClick={handleSpecificationFinal}
+                        ></Button>
+                      </Tooltip>
+                    </>
+                )}
+
+                {(activeRole === 2 || superUser) && (
+                    <>
+                      <Tooltip title={'Создать КП'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                icon={<ProfileOutlined className={'sa-engineer-page-btn-icon'}/>}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip title={'Добавить в КП'} placement={'right'}>
+                        <Button className={'sa-engineer-page-btn'}
+                                color="primary"
+                                variant="outlined"
+                                onClick={() => {setOpenAddIntoBidSpecification(true);}}
+                                icon={<FileAddOutlined className={'sa-engineer-page-btn-icon'}/>}
+                        ></Button>
+                      </Tooltip>
+                    </>
+                )}
               </div>
               <div className={'sa-engineer-page-info-wrapper'}>
                 <div className={'sa-info-models-header'}>Основные данные</div>
@@ -835,6 +833,33 @@ const EngineerPage = (props) => {
                   width: 350,
                 }}
                 onClose={() => setIsAlertVisible(false)}
+            />
+        )}
+
+        {openCopySpecification && (
+            <CopyMessageView
+                customText={"Введите ID спецификации, в которую нужно скопировать"}
+                openCopySpecification={openCopySpecification}
+                handleCancel={handleCancel}
+                handleOk={handleOk}
+                type={1}
+                handleSetValue={handleSetValue}
+            />
+        )}
+
+        <ModelInfoExtraDrawer model_id={modelIdExtra}
+                              model_name={modelNameExtra}
+                              closeDrawer={handleCloseDrawerExtra}
+        />
+
+        {openAddIntoBidSpecification && (
+            <CopyMessageView
+                customText={"Введите ID заявки, в которую нужно скопировать данные"}
+                openCopySpecification={openAddIntoBidSpecification}
+                handleCancel={handleCancel}
+                handleOk={handleOk}
+                type={2}
+                handleSetValue={handleSetValue}
             />
         )}
       </div>

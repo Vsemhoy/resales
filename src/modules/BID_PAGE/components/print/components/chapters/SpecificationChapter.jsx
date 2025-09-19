@@ -1,20 +1,17 @@
 import {useEffect, useState} from "react";
 import PageFooter from "../PageFooter";
 
-const SpecificationChapter = ({ bidId, startPage, name, chapterNum, currency, onRender }) => {
-    const [pageNumSelf, setPageNameSelf] = useState(startPage);
-    const [models, setModels] = useState([]);
+const SpecificationChapter = ({ models, startPage, name, chapterNum, currency, onRender, amounts }) => {
+    const [pageNumSelf] = useState(startPage);
     let rendered = false;
     useEffect(() => {
         if (!rendered) {
-            fetchModels();
+            console.log('SpecificationChapter', startPage);
             rendered = true;
         }
     }, []);
-
     useEffect(() => {
         if (models.length > 0) {
-            console.log(models.length)
             onRender(pageNumSelf + calculateBlocksCount(), name);
         }
     }, [models]);
@@ -26,7 +23,6 @@ const SpecificationChapter = ({ bidId, startPage, name, chapterNum, currency, on
         if (length <= 3) return 1;
         return Math.ceil((length - 3) / 4) + 1;
     }
-
     // Функция для получения моделей для конкретного блока
     const getModelsForBlock = (blockIndex) => {
         if (blockIndex === 0) {
@@ -38,27 +34,23 @@ const SpecificationChapter = ({ bidId, startPage, name, chapterNum, currency, on
             return models.slice(startIndex, startIndex + 4);
         }
     }
-
-    const blocksCount = calculateBlocksCount();
-
-    const fetchModels = () => {
-        try {
-            fetch(`/test2.json`)
-                .then(res => res.json())
-                .then(res => {
-                    setModels(res);
-                });
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
     // Рассчитываем общую сумму
     const totalSum = models.reduce((sum, model) => sum + (+model.quantity * +model.price_0), 0);
+    const renderAmount = () => {
+        if (+currency.value === 1) {
+            return +amounts?.usd / 100;
+        }
+        if (+currency.value === 2) {
+            return +amounts?.eur / 100;
+        }
+        if (+currency.value === 3) {
+            return +amounts?.rub / 100;
+        }
+    };
 
     return (
         <div>
-            {Array.from({ length: blocksCount }).map((_, blockIndex) => (
+            {Array.from({ length: calculateBlocksCount() }).map((_, blockIndex) => (
                 <div key={blockIndex} id={`specification-${blockIndex}`} className="body-container specification">
                     <div className={blockIndex > 0 ? "specification-wrapper-1" : "specification-wrapper"}>
                         {blockIndex === 0 && (
@@ -79,7 +71,7 @@ const SpecificationChapter = ({ bidId, startPage, name, chapterNum, currency, on
                             <div className="specification-header-cell"><p>Фото<br/>оборудования</p></div>
                         </div>
 
-                        {getModelsForBlock(blockIndex).map((model, index) => {
+                        {getModelsForBlock(blockIndex).sort((a,b) => a.sort - b.sort).map((model, index) => {
                             // Вычисляем глобальный индекс модели в массиве models
                             const globalIndex = blockIndex === 0
                                 ? index
@@ -95,8 +87,8 @@ const SpecificationChapter = ({ bidId, startPage, name, chapterNum, currency, on
                                         </div>
                                     </div>
                                     <div className="specification-line-cell"><p>{model.quantity}</p></div>
-                                    <div className="specification-line-cell"><p>{model.price_0}</p></div>
-                                    <div className="specification-line-cell"><p>{+model.quantity * +model.price_0}</p></div>
+                                    <div className="specification-line-cell"><p>{model.moneyOne / 100}</p></div>
+                                    <div className="specification-line-cell"><p>{model.moneyCount / 100}</p></div>
                                     <div className="specification-line-cell"><p>{model.availability}+</p></div>
                                     <div className="specification-line-cell">
                                         <img src={model.path} alt={model.name}/>
@@ -105,11 +97,11 @@ const SpecificationChapter = ({ bidId, startPage, name, chapterNum, currency, on
                             );
                         })}
 
-                        {blockIndex === blocksCount - 1 && (
+                        {blockIndex === calculateBlocksCount() - 1 && (
                             <>
                                 <div className="sum-line">
                                     <div className="sum-name">Итого:</div>
-                                    <div className="sum">{totalSum} {currency.label}</div>
+                                    <div className="sum">{renderAmount()} {currency.label}</div>
                                 </div>
                                 <div className="sum-description-line">
                                     <div className="sum-text-left">По условиям договора поставка осуществляется при<br/>100%

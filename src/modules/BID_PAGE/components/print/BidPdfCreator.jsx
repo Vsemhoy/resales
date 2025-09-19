@@ -6,6 +6,7 @@ import './style/print.css';
 import {CSRF_TOKEN, PRODMODE} from "../../../../config/config";
 import {useParams} from "react-router-dom";
 import {PROD_AXIOS_INSTANCE} from "../../../../config/Api";
+import {CALC_PDF, INFO_PDF, MODELS_PDF} from "../../mock/mock";
 
 const BidPdfCreator = () => {
     const { bidId } = useParams();
@@ -19,14 +20,11 @@ const BidPdfCreator = () => {
     const [models, setModels] = useState([]);
     const [amounts, setAmounts] = useState({});
     const [engineerParameters, setEngineerParameters] = useState({});
-
-
     const options = [
         { label: '$', value: '1' },
         { label: '€', value: '2' },
         { label: '₽', value: '3' },
     ];
-
     const [titleInfo, setTitleInfo] = useState({ manager: {}, contactPerson: {} });
     const [characteristicInfo, setCharacteristicInfo] = useState({});
 
@@ -34,7 +32,6 @@ const BidPdfCreator = () => {
         fetchInfoFromServer().then();
         fetchModelsFromServer().then();
     }, []);
-
     useEffect(() => {
         if (models && models.length > 0 && isNeedCaclMoney) {
             fetchCalcModels().then(() => {
@@ -42,6 +39,16 @@ const BidPdfCreator = () => {
             });
         }
     }, [models]);
+    useEffect(() => {
+        if (isPrint) {
+            const timer = setTimeout(() => {
+                window.print();
+                setIsPrint(false);
+            }, 300);
+
+            return () => clearTimeout(timer);
+        }
+    }, [isPrint]);
 
     const fetchInfoFromServer = async () => {
         if (PRODMODE) {
@@ -55,9 +62,10 @@ const BidPdfCreator = () => {
             } catch (e) {
                 console.log(e);
             }
+        } else {
+            setInfo(INFO_PDF);
         }
-    }
-
+    };
     const fetchModelsFromServer = async () => {
         if (PRODMODE) {
             try {
@@ -70,9 +78,10 @@ const BidPdfCreator = () => {
             } catch (e) {
                 console.log(e);
             }
+        } else {
+            setModels(MODELS_PDF);
         }
-    }
-
+    };
     const fetchCalcModels = async () => {
         if (PRODMODE) {
             try {
@@ -82,7 +91,7 @@ const BidPdfCreator = () => {
                             bidCurrency: info?.titleInfo?.currency,
                             bidPriceStatus: info?.titleInfo?.statusmoney_id,
                             bidPercent: info?.titleInfo?.percent,
-                            bidNds: info?.titleInfo?.nds,
+                            bidNds: info?.titleInfo?.nds > 0 ? 1 : 0,
                         },
                         bid_models: models,
                     },
@@ -97,29 +106,20 @@ const BidPdfCreator = () => {
             } catch (e) {
                 console.log(e);
             }
+        } else {
+            if (CALC_PDF.models) setModels(CALC_PDF.models);
+            if (CALC_PDF.amounts) setAmounts(CALC_PDF.amounts);
+            if (CALC_PDF.models_data) setEngineerParameters(CALC_PDF.models_data);
         }
     };
-
     const handlePrint = () => {
         setIsPrint(true);
-    }
-
-    useEffect(() => {
-        if (isPrint) {
-            const timer = setTimeout(() => {
-                window.print();
-                setIsPrint(false);
-            }, 300);
-
-            return () => clearTimeout(timer);
-        }
-    }, [isPrint]);
-
+    };
     const handleCurrencyChange = (e) => {
         const selectedValue = e.target.value;
         const selectedOption = options.find(opt => opt.value === selectedValue);
         setCurrency(selectedOption || { label: '$', value: '1' });
-    }
+    };
 
     return (
         <div className="app-pdf">
@@ -154,13 +154,12 @@ const BidPdfCreator = () => {
                 <Print
                     bidId={bidId}
                     type={type}
-                    info={{
-                        titleInfo,
-                        characteristicInfo
-                    }}
+                    info={info}
+                    models={models}
                     phone={phone}
                     email={email}
                     currency={currency}
+                    amounts={amounts}
                 />
             )}
 

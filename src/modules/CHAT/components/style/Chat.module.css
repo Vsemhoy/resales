@@ -1,0 +1,287 @@
+/* Cброс стилей */
+ol,
+ul {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
+}
+
+.draggableWrapper :global(.ant-modal-content) {
+	padding: 0;
+	background-color: #fff;
+	border: 1px solid #787878a2;
+	border-radius: 15px;
+	overflow: hidden;
+}
+/* Cброс стилей */
+
+.chat-header {
+	background-color: white;
+	width: 100%;
+}
+.chat-header__input {
+	width: 100%;
+}
+.chat-layout {
+	max-height: 400px;
+}
+.chat-layout::-webkit-scrollbar,
+.ant-layout-content::-webkit-scrollbar {
+	display: none;
+}
+.chat-content {
+	display: flex;
+	flex-direction: column;
+	background: #fff;
+}
+
+.chat-modal__title {
+	cursor: grab;
+	padding: 20px 10px 10px 20px;
+	background: linear-gradient(to bottom, #4d84bbda, #366da5);
+	color: #fff !important;
+	font-weight: 400 !important;
+}
+
+.chat-modal__title:active {
+	cursor: grabbing;
+}
+
+.chat-input__footer {
+	border-top: 1px solid #e6e6e6;
+	padding: 5px;
+}
+.chat-input__footer:nth-child(1) {
+	background-color: #fafafa;
+	padding: 10px;
+}
+.sidebar-layout {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 5px;
+}
+
+.sidebar-layout > *:not(:last-child) {
+	border-bottom: 1px solid #e6e6e6;
+}
+
+.chat-list {
+	overflow-y: scroll;
+	height: 50vh;
+}
+.chat-list::-webkit-scrollbar {
+	display: none;
+}
+
+.chat-list > * {
+	margin: 12px 0;
+	border-bottom: 1px solid #e6e6e6;
+	padding-bottom: 12px;
+}
+
+.messages {
+	flex: 1;
+	overflow-y: auto;
+	padding: 16px;
+	background: #c6deffad;
+}
+.messages::-webkit-scrollbar {
+	display: none;
+}
+
+.message {
+	display: flex;
+	margin-bottom: 8px;
+}
+.chat-footer {
+	display: flex;
+	padding: 0 auto;
+}
+.chat-footer > * {
+	margin: 0 auto;
+}
+.chat-footer:nth-child(3) {
+	background-color: #fafafa;
+}
+.message .bubble {
+	max-width: 70%;
+	padding: 8px 12px;
+	border-radius: 12px;
+	position: relative;
+}
+
+.message .bubble .time {
+	font-size: 11px;
+	color: #666666;
+	text-align: right;
+	margin-top: 2px;
+}
+
+.message.my-message {
+	justify-content: flex-end;
+}
+
+.message.my-message .bubble {
+	background: #8be4ff;
+	align-self: flex-end;
+}
+/* Сообщения от собеседника */
+.message.other-message {
+	justify-content: flex-start;
+}
+
+.message.other-message .bubble {
+	background: #ffffff94;
+	border: 1px solid #e6e6e6;
+}
+/* Сообщения от меня */
+
+.chat-input__footer {
+	border-top: 1px solid #e6e6e6;
+	background: #fff;
+	padding: 5px;
+	display: flex;
+	gap: 8px;
+}
+
+.chat-input__footer > * {
+	margin: 0 auto !important;
+}
+
+.chat-input__footer .ant-btn {
+	width: 30px;
+	max-height: 30px;
+	border-radius: 50%;
+}
+
+:global(.ant-list-item) .senderName {
+	display: block;
+	font-size: 12px;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 4px;
+}
+
+/* Я отправил */
+:global(.ant-list-item.my-message) :global(.bubble) {
+	background: #dcf8c6; /* светло-зелёный фон */
+	color: #000;
+	border-radius: 12px 12px 0 12px;
+}
+/* Мне отправили */
+:global(.ant-list-item.other-message) :global(.bubble) {
+	background: #fff;
+	color: #000;
+	border: 1px solid #e6e6e6;
+	border-radius: 12px 12px 12px 0;
+}
+
+:global(.ant-list-item) .bubble {
+	max-width: 70%;
+	padding: 8px 12px;
+	border-radius: 12px;
+	position: relative;
+}
+
+/* Общие стили времени */
+:global(.ant-list-item) .bubble .time {
+	font-size: 11px;
+	color: #666666;
+	text-align: right;
+	margin-top: 2px;
+}
+
+/* Имя отправителя */
+:global(.ant-list-item) .senderName {
+	display: block;
+	font-size: 12px;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 4px;
+}
+
+/* Я отправил */
+:global(.ant-list-item) .bubble.my-message {
+	background: #dcf8c6;
+	color: #000;
+	border-radius: 12px 12px 0 12px;
+	align-self: flex-end;
+}
+
+/* Мне отправили */
+:global(.ant-list-item) .bubble.other-message {
+	background: #fff;
+	color: #000;
+	border: 1px solid #e6e6e6;
+	border-radius: 12px 12px 12px 0;
+	align-self: flex-start;
+}
+/*
+
+.ant-input {
+	border-radius: 20px;
+}
+
+*/
+
+/* ChatList */
+/* .chat-list {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
+}
+
+.chat-item {
+	margin-bottom: 12px;
+}
+
+.last-message {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+	font-size: 0.9em;
+	color: #555;
+} */
+
+/* ChatList */
+
+/* ChatModal */
+
+/* Сообщение о непрочитанных */
+/* .unread-msg {
+	margin-top: 16px;
+	font-size: 14px;
+	color: #444;
+} */
+
+/* ChatModal */
+
+/* ChatSidebar */
+/*
+.sidebar-header {
+	padding: 0;
+	background: #f9f9f9;
+}
+.sidebar-content {
+	overflow-y: auto;
+	background: #fff;
+}
+.sidebar-footer {
+	background: #f9f9f9;
+	border-top: 1px solid #e6e6e6;
+	text-align: center;
+	padding: 8px;
+	height: 50px;
+}
+
+.chat-sidebar {
+	border-right: 1px solid #e6e6e6;
+	background: #f9f9f9;
+} */
+
+/* ChatSidebar */
