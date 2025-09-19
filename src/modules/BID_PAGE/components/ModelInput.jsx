@@ -54,6 +54,7 @@ const ModelInput = (props) => {
                type="number"
                value={value}
                onChange={(e) => handleChange(e.target.value)}
+               disabled={props?.openMode?.status === 1}
         />
     );
 }

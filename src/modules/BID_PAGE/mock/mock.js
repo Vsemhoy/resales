@@ -716,11 +716,17 @@ export const BID_INFO = {
             "percent": 0
         }
     ],
-    "openmode": {
+    /*"openmode": {
         "status": 1,
         "description": "Режим просмотра",
         "tagtext": "Просмотр",
         "color": "volcano"
+    },*/
+    "openmode": {
+        "status": 2,
+        "description": "Режим редактирования",
+        "tagtext": "Редактирование",
+        "color": "green"
     },
     "__endpont": "#NEWOFDC77096732",
     "_duration": 0.02536606788635254
