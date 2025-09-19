@@ -42,6 +42,7 @@ import CopyMessageView from "./components/CopyMessageView";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import ModelInfoExtraDrawer from "../BID_PAGE/components/ModelInfoExtraDrawer";
 import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
+import EngineerFilesDrawer from "./components/EngineerFilesDrawer";
 const { TextArea } = Input;
 
 const EngineerPage = (props) => {
@@ -102,7 +103,7 @@ const EngineerPage = (props) => {
   const [superUser, setSuperUser] = useState(false);
   const [modelIdExtra, setModelIdExtra] = useState(null);
   const [modelNameExtra, setModelNameExtra] = useState('');
-  const [isBidFilesDrawerOpen, setIsBidFilesDrawerOpen] = useState(false);
+  const [isEngineerFilesDrawerOpen, setIsEngineerFilesDrawerOpen] = useState(false);
 
   const handleKeyDown = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -579,7 +580,7 @@ const EngineerPage = (props) => {
                             color="primary"
                             variant="outlined"
                             icon={<DownloadOutlined className={'sa-engineer-page-btn-icon'}/>}
-                            onClick={() => setIsBidFilesDrawerOpen(true)}
+                            onClick={() => setIsEngineerFilesDrawerOpen(true)}
                     ></Button>
                   </Badge>
                 </Tooltip>
@@ -855,8 +856,8 @@ const EngineerPage = (props) => {
                               closeDrawer={handleCloseDrawerExtra}
         />
 
-        <BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
-                        closeDrawer={() => setIsBidFilesDrawerOpen(false)}
+        <EngineerFilesDrawer isOpenDrawer={isEngineerFilesDrawerOpen}
+                        closeDrawer={() => setIsEngineerFilesDrawerOpen(false)}
                         bidId={bidId}
         />
 
