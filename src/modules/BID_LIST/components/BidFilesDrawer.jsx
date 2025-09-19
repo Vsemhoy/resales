@@ -102,7 +102,9 @@ const BidFilesDrawer = (props) => {
                 };
                 const config = { timeout: 50000 };
                 const response = await PROD_AXIOS_INSTANCE.post("/api/sales/makedoc", data, config,);
-                window.open(`${PROD_API_URL}/${response.data.data.file_link}`, "_blank", "noopener,noreferrer",);
+                const parts = response.data.data.file_link.split('/');
+                const withSlash = '/' + parts.slice(1).join('/');
+                window.open(`${withSlash}`, "_blank", "noopener,noreferrer",);
             } catch (e) {
                 console.log(e);
             }
