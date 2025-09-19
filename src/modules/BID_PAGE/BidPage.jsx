@@ -69,7 +69,7 @@ const BidPage = (props) => {
 		'update': null,
 		'view': null,
 	});
-	const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
+	const [openMode, setOpenMode] = useState(null); // просмотр, редактирование
 	const [isSmthChanged, setIsSmthChanged] = useState(false);
 	/* ШАПКА СТРАНИЦЫ */
 	const [bidType, setBidType] = useState(null);
@@ -199,24 +199,26 @@ const BidPage = (props) => {
 		}
 	}, [isSavingInfo]);
 	useEffect(() => {
-		const handleKeyDown = (event) => {
-			console.log('event', event)
-			if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-				event.preventDefault();
-				setIsSavingInfo(prev => {
-					if (!prev) {
-						return true;
-					}
-					return prev;
-				});
-			}
-		};
+		if (openMode) {
+			const handleKeyDown = (event) => {
+				console.log('event', event);
+				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status > 1) {
+					event.preventDefault();
+					setIsSavingInfo(prev => {
+						if (!prev) {
+							return true;
+						}
+						return prev;
+					});
+				}
+			};
 
-		window.addEventListener('keydown', handleKeyDown);
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-		};
-	}, []);
+			window.addEventListener('keydown', handleKeyDown);
+			return () => {
+				window.removeEventListener('keydown', handleKeyDown);
+			};
+		}
+	}, [openMode]);
 	useEffect(() => {
 		if (isMounted && isNeedCalcMoney) {
 			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
