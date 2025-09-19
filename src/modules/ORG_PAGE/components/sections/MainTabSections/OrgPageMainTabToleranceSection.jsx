@@ -196,6 +196,7 @@ const OrgPageMainTabToleranceSection = (props) => {
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateEmailUnit}
+		  selects={selects}
         />
       ))}</div>
 
@@ -208,6 +209,7 @@ const OrgPageMainTabToleranceSection = (props) => {
             edit_mode={editMode}
             on_delete={handleDeleteNewTolerance}
             on_change={handleUpdateNewToleranceUnit}
+			selects={selects}
           />
         ))}</div>
       )}
