@@ -3,6 +3,7 @@ import OrgPageSectionRow, { OPS_TYPE } from '../../OrgPageSectionRow';
 import { Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import { forIn } from 'lodash';
 
 
 const OPMTtoleranceSection = (props) => {
@@ -19,6 +20,9 @@ const OPMTtoleranceSection = (props) => {
   const [end_date,   setEnd_date]   = useState(0);
 
   const [objectResult, setObjectResult] = useState({});
+
+  const [options, setOptions] = useState([]);
+  const [selects, setSelects] = useState(null);
 
   useEffect(() => {
     if (props.data?.id){
@@ -42,6 +46,31 @@ const OPMTtoleranceSection = (props) => {
       seteditMode(props.edit_mode);
     }, [props.edit_mode]);
 
+
+  useEffect(() => {
+    console.log('props.selects', props.selects)
+    let arrak = [];
+    if (props.selects){
+      setSelects(props.selects);
+      if (props?.selects?.tollic){
+        for (const key in props?.selects?.tollic) {
+            if (props?.selects?.tollic.hasOwnProperty(key)) {
+              if (key.startsWith(String(docType))){
+                const davalue = props.selects.tollic[key];
+                arrak.push({
+                  key: 'kivala_k' + key,
+                  value: Number(key.split('-')[1]),
+                  label: davalue
+                });
+              }
+                // Your logic here
+            }
+        }
+      }
+    }
+    console.log('ARRAK', arrak);
+    setOptions(arrak);
+  }, [props.selects, docType]);
 
 
   const handleChangeData = (changed_data) => {
@@ -170,13 +199,14 @@ const OPMTtoleranceSection = (props) => {
         titles={['Вид лицензии/допуска', 'Конец действия']}
         datas={[
           {
-            type: OPS_TYPE.STRING,
-            value: docType,
+            type: OPS_TYPE.SELECT,
+            value: type,
             max: 150,
+            options: options,
             required: false,
             nullable: false,
             placeholder: '',
-            name: 'number',
+            name: 'type',
           },
           {
             type: OPS_TYPE.DATE,
@@ -196,17 +226,7 @@ const OPMTtoleranceSection = (props) => {
           placeholder: '',
           name: 'comment',
         }}
-        action={<Button
-          className='sa-org-sub-sub-section-row-action'
-          size='small'
-          color="danger"
-          variant="outlined"
-          icon={<TrashIcon height={'18px'} />}
-          onClick={()=>{
-            setDeleted(!deleted);
-          }}
-          />
-        }
+
         on_change={handleChangeData}
         on_blur={handleChangeData}
       />

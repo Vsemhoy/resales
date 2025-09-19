@@ -64,7 +64,11 @@ const MainTabPage = (props) => {
       contics = baseData.contacts.map((item)=>({
         key: "controw_org_" + item.id,
         classNames : 'super',
-        style: {border: item.deleted ? '2px solid #ff0000a2' : '0px', marginBottom: item.deleted ? '1px ' : '0px'},
+        style: {border: item.deleted ? '2px solid #ff0000a2' : (
+          item.command === 'create' ? '2px solid #2196f3' : '0px'
+        ) , marginBottom: item.deleted ? '1px ' : (
+          item.command === 'create' ? '2px' : '0px'
+        )},
         label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}><div>{item.lastname} {item.name} {item.middlename} <span style={{color: 'gray', fontWeight: 100}}>({item.id})</span></div>
         {editMode && (
         <div className={'sa-flex-gap'}>
@@ -181,19 +185,7 @@ const MainTabPage = (props) => {
       {
         key: 'mainorgsec_131',
         label: <div className={`sa-flex-space`}><div>Лицензии/Допуски</div><div></div>
-        {editMode && (
-           <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              // onClick={(ev) => {
-              //   ev.stopPropagation();
-              //   handleDeleteRealUnit(item.id, 1);
-              // }}
-            >
-              Добавить лдопуск
-            </Button>
-        )}
+
         </div>,
         children: <OrgPageMainTabToleranceSection
           color={'#30c97aff'}
@@ -275,12 +267,12 @@ const MainTabPage = (props) => {
       job:          1,
 			exittoorg_id: 0,
       unsubscribe:  0,
-      command: 'create',
       contactstelephones: [],
       contactmobiles:     [],
       contacthomephones:  [],
       contactemails:      [],
       contactmessangers:  [],
+      command: 'create',
     }
     let ndt = JSON.parse(JSON.stringify(baseData));
     let newContacts = [newContact, ...ndt.contacts];
