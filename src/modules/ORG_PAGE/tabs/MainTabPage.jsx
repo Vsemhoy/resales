@@ -63,6 +63,8 @@ const MainTabPage = (props) => {
     if (baseData?.contacts){
       contics = baseData.contacts.map((item)=>({
         key: "controw_org_" + item.id,
+        classNames : 'super',
+        style: {border: item.deleted ? '2px solid #ff0000a2' : '0px', marginBottom: item.deleted ? '1px ' : '0px'},
         label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}><div>{item.lastname} {item.name} {item.middlename} <span style={{color: 'gray', fontWeight: 100}}>({item.id})</span></div>
         {editMode && (
         <div className={'sa-flex-gap'}>

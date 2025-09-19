@@ -898,6 +898,52 @@ const OrgPageMainTabContactsSection = (props) => {
           on_change={handleUpdateContactUnit}
         />
       ))}</div>
+
+
+      <div>
+      {contactmobiles.map((item)=>(
+        <OPMTCcontactmobilesSection
+        key={'OPMTCcontactmobilesSection' + item.id}
+          data={item}
+          edit_mode={editMode}
+          on_change={handleUpdateMobileUnit}
+        />
+      ))}</div>
+
+
+      <div>
+      {contacthomephones.map((item)=>(
+        <OPMTCcontacthomephonesSection
+          key={'OPMTCcontacthomephonesSection' + item.id}
+          data={item}
+          edit_mode={editMode}
+          on_change={handleUpdateHomePhoneUnit}
+        />
+      ))}</div>
+
+
+      <div>
+      {contactemails.map((item)=>(
+        <OPMTCcontactemailsSection
+          key={'OPMTCcontactemailsSection' + item.id}
+          data={item}
+          edit_mode={editMode}
+          on_change={handleUpdateEmailUnit}
+        />
+      ))}</div>
+
+      
+      <div>
+      {contactmessangers.map((item)=>(
+        <OPMTCcontactmessangersSection
+          key={'OPMTCcontactmessangersSection' + item.id}
+          data={item}
+          edit_mode={editMode}
+          on_change={handleUpdateMessangerUnit}
+        />
+      ))}</div>
+
+
       {newContactstelephones.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContactstelephones.map((item)=>(
@@ -910,17 +956,6 @@ const OrgPageMainTabContactsSection = (props) => {
           />
         ))}</div>
       )}
-
-
-      <div>
-      {contactmobiles.map((item)=>(
-        <OPMTCcontactmobilesSection
-        key={'OPMTCcontactmobilesSection' + item.id}
-          data={item}
-          edit_mode={editMode}
-          on_change={handleUpdateMobileUnit}
-        />
-      ))}</div>
       {newContactmobiles.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContactmobiles.map((item)=>(
@@ -933,17 +968,6 @@ const OrgPageMainTabContactsSection = (props) => {
           />
         ))}</div>
       )}
-
-
-      <div>
-      {contacthomephones.map((item)=>(
-        <OPMTCcontacthomephonesSection
-          key={'OPMTCcontacthomephonesSection' + item.id}
-          data={item}
-          edit_mode={editMode}
-          on_change={handleUpdateHomePhoneUnit}
-        />
-      ))}</div>
       {newContacthomephones.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContacthomephones.map((item)=>(
@@ -957,16 +981,6 @@ const OrgPageMainTabContactsSection = (props) => {
         ))}</div>
       )}
 
-
-      <div>
-      {contactemails.map((item)=>(
-        <OPMTCcontactemailsSection
-          key={'OPMTCcontactemailsSection' + item.id}
-          data={item}
-          edit_mode={editMode}
-          on_change={handleUpdateEmailUnit}
-        />
-      ))}</div>
       {newContactemails.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContactemails.map((item)=>(
@@ -979,17 +993,6 @@ const OrgPageMainTabContactsSection = (props) => {
           />
         ))}</div>
       )}
-
-      
-      <div>
-      {contactmessangers.map((item)=>(
-        <OPMTCcontactmessangersSection
-          key={'OPMTCcontactmessangersSection' + item.id}
-          data={item}
-          edit_mode={editMode}
-          on_change={handleUpdateMessangerUnit}
-        />
-      ))}</div>
       {newContactmessangers.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContactmessangers.map((item)=>(
