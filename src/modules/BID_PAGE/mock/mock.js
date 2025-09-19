@@ -538,7 +538,7 @@ export const BID_INFO = {
         "id": 120828,
         "id_company": 2,
         "place": 1,
-        "type": 1,
+        "type": 2,
         "files_count": 0,
         "comments": {
             "accountant": "",

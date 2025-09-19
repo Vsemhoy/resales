@@ -1197,7 +1197,7 @@ const BidPage = (props) => {
 									onClick={() => navigate(`/bidsPDF/${bidId}`)}
 								></Button>
 							</Tooltip>
-							{+bidType !== 2 && (
+							{+bidType === 1 && (
 								<Tooltip title={'Сохранить в WORD'} placement={'right'}>
 									<Button
 										className={'sa-bid-page-btn'}
@@ -1208,18 +1208,20 @@ const BidPage = (props) => {
 									></Button>
 								</Tooltip>
 							)}
-							<Tooltip title={'Файлы'} placement={'right'}>
-								<Badge count={bidFilesCount} color={'geekblue'}>
-									<Button
-										className={'sa-bid-page-btn'}
-										color="primary"
-										variant="outlined"
-										icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
-										onClick={() => setIsBidFilesDrawerOpen(true)}
-									></Button>
-								</Badge>
-							</Tooltip>
-							{+bidType !== 2 && (
+							{+bidType === 1 && (
+								<Tooltip title={'Файлы'} placement={'right'}>
+									<Badge count={bidFilesCount} color={'geekblue'}>
+										<Button
+											className={'sa-bid-page-btn'}
+											color="primary"
+											variant="outlined"
+											icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
+											onClick={() => setIsBidFilesDrawerOpen(true)}
+										></Button>
+									</Badge>
+								</Tooltip>
+							)}
+							{+bidType === 1 && (
 								<Tooltip title={'Создать счет'} placement={'right'}>
 									<Button
 										className={'sa-bid-page-btn'}
@@ -1228,6 +1230,19 @@ const BidPage = (props) => {
 										icon={<DollarOutlined className={'sa-bid-page-btn-icon'} />}
 										onClick={() => fetchNewBid()}
 									></Button>
+								</Tooltip>
+							)}
+							{+bidType === 2 && (
+								<Tooltip title={'Счета'} placement={'right'}>
+									<Badge count={bidFilesCount} color={'geekblue'}>
+										<Button
+											className={'sa-bid-page-btn'}
+											color="primary"
+											variant="outlined"
+											icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
+											onClick={() => setIsBidFilesDrawerOpen(true)}
+										></Button>
+									</Badge>
 								</Tooltip>
 							)}
 						</div>
