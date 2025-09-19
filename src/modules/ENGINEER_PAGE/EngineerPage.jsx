@@ -104,7 +104,8 @@ const EngineerPage = (props) => {
   const [modelIdExtra, setModelIdExtra] = useState(null);
   const [modelNameExtra, setModelNameExtra] = useState('');
   const [isEngineerFilesDrawerOpen, setIsEngineerFilesDrawerOpen] = useState(false);
-  const [bidPlace, setBidPlace] = useState(1); // статус по пайплайну
+  const [bidPlace, setBidPlace] = useState(2); // статус по пайплайну
+  const [editMode, setEditMode] = useState(false);
 
 
   const handleKeyDown = (event) => {
@@ -217,6 +218,8 @@ const EngineerPage = (props) => {
           setBidPlace(content.place);
 
           setBidFilesCount(content.files_count);
+
+          setEditMode(content.edit);
         }
       } catch (e) {
         console.log(e);
@@ -232,9 +235,11 @@ const EngineerPage = (props) => {
       setBidModels(MODELS_LIST);
       setEngineerParameters(CALC_INFO.models_data);
 
-      setBidPlace(2);
+      setBidPlace(4);
 
       setBidFilesCount(1);
+
+      setEditMode(!((bidPlace === 4) || (bidPlace === 1)));
     }
   };
 
@@ -574,6 +579,7 @@ const EngineerPage = (props) => {
                           icon={<SaveOutlined />}
                           loading={isSavingInfo}
                           onClick={() => setIsSavingInfo(true)}
+                          disabled={!editMode}
                       >
                         {isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
                       </Button>
@@ -672,6 +678,7 @@ const EngineerPage = (props) => {
                         autoSize={{minRows: 5, maxRows: 6}}
                         style={{fontSize: '18px'}}
                         onChange={(e) => setBidCommentEngineer(e.target.value)}
+                        disabled={!editMode}
                     />
                   </div>
                   <div className={'sa-info-list-row'}>
@@ -681,6 +688,7 @@ const EngineerPage = (props) => {
                         autoSize={{minRows: 5, maxRows: 6}}
                         style={{fontSize: '18px'}}
                         onChange={(e) => setBidCommentManager(e.target.value)}
+                        disabled={!editMode}
                     />
                     </div>
                 </div>
@@ -720,6 +728,7 @@ const EngineerPage = (props) => {
                                   options={prepareSelect(modelsSelect)}
                                   model={bidModel}
                                   onUpdateModelName={handleChangeModel}
+                                  disabled={!editMode}
                               />
                             </div>
                             <div className={'sa-models-table-cell'}>
@@ -729,6 +738,8 @@ const EngineerPage = (props) => {
                                   bidModelSort={bidModel.sort}
                                   type={'model_count'}
                                   onChangeModel={handleChangeModelInfo}
+                                  disabled={!editMode}
+
                               />
                             </div>
 
@@ -748,6 +759,7 @@ const EngineerPage = (props) => {
                                   variant="filled"
                                   icon={<DeleteOutlined />}
                                   onClick={() => handleDeleteModelFromBid(bidModel.id)}
+                                  disabled={!editMode}
                               ></Button>
                             </div>
 
@@ -762,6 +774,7 @@ const EngineerPage = (props) => {
                         variant="outlined"
                         icon={<PlusOutlined />}
                         onClick={handleAddModel}
+                        disabled={!editMode}
                     >
                       Добавить модель
                     </Button>
