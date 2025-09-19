@@ -802,6 +802,7 @@ const BidPage = (props) => {
 		]);
 		setAdditionData([]);
 		setIsNeedCalcMoney(true);
+		setIsParseModalOpen(false);
 	};
 
 	const collapseItems = [
