@@ -37,6 +37,7 @@ const NameSelect = (props) => {
         <Select style={{width: '100%'}}
                 value={modelId}
                 options={options}
+                disabled={props.disabled}
                 showSearch
                 optionFilterProp="label"
                 filterOption={(input, option) =>

@@ -54,6 +54,7 @@ const ModelInput = (props) => {
         <Input style={{width: '100%'}}
                type="number"
                value={value}
+               disabled={props.disabled}
                min={type === "model_count" ? 1 : undefined}
                onChange={(e) => handleChange(e.target.value)}
         />

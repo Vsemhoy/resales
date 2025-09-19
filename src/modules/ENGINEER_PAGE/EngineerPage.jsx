@@ -41,6 +41,8 @@ import ModelSelect from './components/alan/ModelSelect';
 import CopyMessageView from "./components/CopyMessageView";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import ModelInfoExtraDrawer from "../BID_PAGE/components/ModelInfoExtraDrawer";
+import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
+import EngineerFilesDrawer from "./components/EngineerFilesDrawer";
 const { TextArea } = Input;
 
 const EngineerPage = (props) => {
@@ -101,6 +103,10 @@ const EngineerPage = (props) => {
   const [superUser, setSuperUser] = useState(false);
   const [modelIdExtra, setModelIdExtra] = useState(null);
   const [modelNameExtra, setModelNameExtra] = useState('');
+  const [isEngineerFilesDrawerOpen, setIsEngineerFilesDrawerOpen] = useState(false);
+  const [bidPlace, setBidPlace] = useState(2); // статус по пайплайну
+  const [editMode, setEditMode] = useState(false);
+
 
   const handleKeyDown = (event) => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -208,6 +214,12 @@ const EngineerPage = (props) => {
             mass: 0,
             size: 0
           });
+
+          setBidPlace(content.place);
+
+          setBidFilesCount(content.files_count);
+
+          setEditMode(content.edit);
         }
       } catch (e) {
         console.log(e);
@@ -222,6 +234,12 @@ const EngineerPage = (props) => {
 
       setBidModels(MODELS_LIST);
       setEngineerParameters(CALC_INFO.models_data);
+
+      setBidPlace(4);
+
+      setBidFilesCount(1);
+
+      setEditMode(!((bidPlace === 4) || (bidPlace === 1)));
     }
   };
 
@@ -561,6 +579,7 @@ const EngineerPage = (props) => {
                           icon={<SaveOutlined />}
                           loading={isSavingInfo}
                           onClick={() => setIsSavingInfo(true)}
+                          disabled={!editMode}
                       >
                         {isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
                       </Button>
@@ -571,15 +590,6 @@ const EngineerPage = (props) => {
             </Affix>
             <div className={'sa-engineer-page-info-container'}>
               <div className={'sa-engineer-page-btns-wrapper'}>
-                <Tooltip title={'Файлы'} placement={'right'}>
-                  <Badge count={bidFilesCount} color={'geekblue'}>
-                    <Button className={'sa-engineer-page-btn'}
-                            color="primary"
-                            variant="outlined"
-                            icon={<DownloadOutlined className={'sa-engineer-page-btn-icon'}/>}
-                    ></Button>
-                  </Badge>
-                </Tooltip>
                 {(activeRole === 1 || superUser) && (
                     <>
                       <Tooltip title={'Копировать спецификацию'} placement={'right'}>
@@ -620,9 +630,46 @@ const EngineerPage = (props) => {
                       </Tooltip>
                     </>
                 )}
+
+                <Tooltip title={'Файлы'} placement={'right'}>
+                  <Badge count={bidFilesCount} color={'geekblue'}>
+                    <Button className={'sa-engineer-page-btn'}
+                            color="primary"
+                            variant="outlined"
+                            icon={<DownloadOutlined className={'sa-engineer-page-btn-icon'}/>}
+                            onClick={() => setIsEngineerFilesDrawerOpen(true)}
+                    ></Button>
+                  </Badge>
+                </Tooltip>
               </div>
               <div className={'sa-engineer-page-info-wrapper'}>
                 <div className={'sa-info-models-header'}>Основные данные</div>
+                <div className={'custom-small-steps-container'}>
+                  <Steps
+                      className="sa-custom-steps custom-small-steps"
+                      progressDot
+                      size="small"
+                      current={+bidPlace - 1}
+                      items={[
+                        {
+                          title: 'Отклонено',
+                          description: +bidPlace === 1 ? 'Текущий этап' : '',
+                        },
+                        {
+                          title: 'Новая',
+                          description: +bidPlace === 2 ? 'Текущий этап' : '',
+                        },
+                        {
+                          title: 'В работе',
+                          description: +bidPlace === 3 ? 'Текущий этап' : '',
+                        },
+                        {
+                          title: 'Завершено',
+                          description: +bidPlace === 4 ? 'Текущий этап' : '',
+                        },
+                      ]}
+                  />
+                </div>
                 <div className={'sa-info-list'}>
                   <div className={'sa-info-list-row'}>
                     <div className={'sa-list-row-label'}><p>Комментарий инженера</p></div>
@@ -631,6 +678,7 @@ const EngineerPage = (props) => {
                         autoSize={{minRows: 5, maxRows: 6}}
                         style={{fontSize: '18px'}}
                         onChange={(e) => setBidCommentEngineer(e.target.value)}
+                        disabled={!editMode}
                     />
                   </div>
                   <div className={'sa-info-list-row'}>
@@ -640,6 +688,7 @@ const EngineerPage = (props) => {
                         autoSize={{minRows: 5, maxRows: 6}}
                         style={{fontSize: '18px'}}
                         onChange={(e) => setBidCommentManager(e.target.value)}
+                        disabled={!editMode}
                     />
                     </div>
                 </div>
@@ -679,6 +728,7 @@ const EngineerPage = (props) => {
                                   options={prepareSelect(modelsSelect)}
                                   model={bidModel}
                                   onUpdateModelName={handleChangeModel}
+                                  disabled={!editMode}
                               />
                             </div>
                             <div className={'sa-models-table-cell'}>
@@ -688,6 +738,8 @@ const EngineerPage = (props) => {
                                   bidModelSort={bidModel.sort}
                                   type={'model_count'}
                                   onChangeModel={handleChangeModelInfo}
+                                  disabled={!editMode}
+
                               />
                             </div>
 
@@ -707,6 +759,7 @@ const EngineerPage = (props) => {
                                   variant="filled"
                                   icon={<DeleteOutlined />}
                                   onClick={() => handleDeleteModelFromBid(bidModel.id)}
+                                  disabled={!editMode}
                               ></Button>
                             </div>
 
@@ -721,6 +774,7 @@ const EngineerPage = (props) => {
                         variant="outlined"
                         icon={<PlusOutlined />}
                         onClick={handleAddModel}
+                        disabled={!editMode}
                     >
                       Добавить модель
                     </Button>
@@ -850,6 +904,11 @@ const EngineerPage = (props) => {
         <ModelInfoExtraDrawer model_id={modelIdExtra}
                               model_name={modelNameExtra}
                               closeDrawer={handleCloseDrawerExtra}
+        />
+
+        <EngineerFilesDrawer isOpenDrawer={isEngineerFilesDrawerOpen}
+                        closeDrawer={() => setIsEngineerFilesDrawerOpen(false)}
+                        bidId={bidId}
         />
 
         {openAddIntoBidSpecification && (

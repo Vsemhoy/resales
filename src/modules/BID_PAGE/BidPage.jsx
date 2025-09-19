@@ -43,6 +43,7 @@ import ProjectInfo from "./components/ProjectInfo";
 import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
 import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
 import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
+import DataParser from "./components/DataParser";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -69,7 +70,8 @@ const BidPage = (props) => {
 		'update': null,
 		'view': null,
 	});
-	const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
+	const [openMode, setOpenMode] = useState(null); // просмотр, редактирование
+	const [isSmthChanged, setIsSmthChanged] = useState(false);
 	/* ШАПКА СТРАНИЦЫ */
 	const [bidType, setBidType] = useState(null);
 	const [bidIdCompany, setBidIdCompany] = useState(null);
@@ -160,6 +162,8 @@ const BidPage = (props) => {
 	const [isBidDuplicateDrawerOpen, setIsBidDuplicateDrawerOpen] = useState(false);
 	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
 	const [isBidFilesDrawerOpen, setIsBidFilesDrawerOpen] = useState(false);
+	const [isParseModalOpen, setIsParseModalOpen] = useState(false);
+	const [additionData, setAdditionData] = useState([]);
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -198,24 +202,26 @@ const BidPage = (props) => {
 		}
 	}, [isSavingInfo]);
 	useEffect(() => {
-		const handleKeyDown = (event) => {
-			console.log('event', event)
-			if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-				event.preventDefault();
-				setIsSavingInfo(prev => {
-					if (!prev) {
-						return true;
-					}
-					return prev;
-				});
-			}
-		};
+		if (openMode) {
+			const handleKeyDown = (event) => {
+				console.log('event', event);
+				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status > 1) {
+					event.preventDefault();
+					setIsSavingInfo(prev => {
+						if (!prev) {
+							return true;
+						}
+						return prev;
+					});
+				}
+			};
 
-		window.addEventListener('keydown', handleKeyDown);
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-		};
-	}, []);
+			window.addEventListener('keydown', handleKeyDown);
+			return () => {
+				window.removeEventListener('keydown', handleKeyDown);
+			};
+		}
+	}, [openMode]);
 	useEffect(() => {
 		if (isMounted && isNeedCalcMoney) {
 			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
@@ -770,6 +776,31 @@ const BidPage = (props) => {
 		setModelIdExtra(null);
 		setModelNameExtra('');
 	};
+	const addParseModels = () => {
+		console.log(additionData);
+		const sort = bidModels.sort((a,b) => a.sort - b.sort)[bidModels.length-1].sort;
+		const arr = additionData.map((newModel, idx) => {
+			const model = modelsSelect.find(model => model.id === newModel.id);
+			return {
+				"id": 0,
+				"bid_id": bidId,
+				"model_id": model.id,
+				"model_name": model.name,
+				"model_count": newModel.count,
+				"not_available": 0,
+				"percent": 0,
+				"presence": -2,
+				"sort": sort + idx,
+				"type_model": model.type_model,
+				"currency": model.currency,
+			}
+		});
+		const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+		setBidModels([
+			...bidModelsUpd,
+			...arr
+		]);
+	};
 
 	const collapseItems = [
 		{
@@ -786,6 +817,7 @@ const BidPage = (props) => {
 							value={bidOrgUser}
 							options={prepareSelect(orgUsersSelect)}
 							onChange={(val) => setBidOrgUser(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -797,6 +829,7 @@ const BidPage = (props) => {
 							value={bidProtectionProject}
 							options={prepareSelect(protectionSelect)}
 							onChange={(val) => setBidProtectionProject(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -807,6 +840,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={bidObject}
 							onChange={(e) => setBidObject(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -817,6 +851,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={bidSellBy}
 							onChange={(e) => setBidSellBy(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -859,6 +894,7 @@ const BidPage = (props) => {
 							value={requisite}
 							options={prepareSelect(requisiteSelect)}
 							onChange={(val) => setRequisite(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -870,6 +906,7 @@ const BidPage = (props) => {
 							value={conveyance}
 							options={prepareSelect(conveyanceSelect)}
 							onChange={(val) => setConveyance(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -881,6 +918,7 @@ const BidPage = (props) => {
 							value={factAddress}
 							options={prepareSelect(factAddressSelect)}
 							onChange={(val) => setFactAddress(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -892,6 +930,7 @@ const BidPage = (props) => {
 							value={phone}
 							options={prepareSelect(phoneSelect)}
 							onChange={(val) => setPhone(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -903,6 +942,7 @@ const BidPage = (props) => {
 							value={email}
 							options={prepareSelect(emailSelect)}
 							onChange={(val) => setEmail(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -914,6 +954,7 @@ const BidPage = (props) => {
 							value={insurance}
 							options={prepareSelect(insuranceSelect)}
 							onChange={(val) => setInsurance(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -925,6 +966,7 @@ const BidPage = (props) => {
 							value={bidPackage}
 							options={prepareSelect(packageSelect)}
 							onChange={(val) => setBidPackage(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -935,6 +977,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={consignee}
 							onChange={(e) => setConsignee(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -945,6 +988,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={otherEquipment}
 							onChange={(e) => setOtherEquipment(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 				</div>
@@ -972,6 +1016,7 @@ const BidPage = (props) => {
 							value={bidCommentEngineer}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentEngineer(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -982,6 +1027,7 @@ const BidPage = (props) => {
 							value={bidCommentManager}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentManager(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -992,6 +1038,7 @@ const BidPage = (props) => {
 							value={bidCommentAdmin}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentAdmin(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1002,6 +1049,7 @@ const BidPage = (props) => {
 							value={bidCommentAccountant}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentAccountant(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1012,6 +1060,7 @@ const BidPage = (props) => {
 							value={bidCommentAddEquipment}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentAddEquipment(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 				</div>
@@ -1035,6 +1084,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1050,6 +1100,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1065,6 +1116,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1080,6 +1132,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 				</div>
@@ -1152,6 +1205,11 @@ const BidPage = (props) => {
 													<Tooltip title={openMode.description}>
 														<Tag color={openMode.color}>{openMode.tagtext}</Tag>
 													</Tooltip>
+													{isSmthChanged && (
+														<Tooltip title={'Не забудьте сохранить'}>
+															<Tag color='red-inverse'>Есть несохраненные данные</Tag>
+														</Tooltip>
+													)}
 												</div>
 											)}
 										<Button
@@ -1160,6 +1218,7 @@ const BidPage = (props) => {
 											icon={<SaveOutlined />}
 											loading={isSavingInfo}
 											onClick={() => setIsSavingInfo(true)}
+											disabled={openMode?.status === 1}
 										>
 											{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
 										</Button>
@@ -1197,7 +1256,7 @@ const BidPage = (props) => {
 									onClick={() => navigate(`/bidsPDF/${bidId}`)}
 								></Button>
 							</Tooltip>
-							{+bidType !== 2 && (
+							{+bidType === 1 && (
 								<Tooltip title={'Сохранить в WORD'} placement={'right'}>
 									<Button
 										className={'sa-bid-page-btn'}
@@ -1208,18 +1267,20 @@ const BidPage = (props) => {
 									></Button>
 								</Tooltip>
 							)}
-							<Tooltip title={'Файлы'} placement={'right'}>
-								<Badge count={bidFilesCount} color={'geekblue'}>
-									<Button
-										className={'sa-bid-page-btn'}
-										color="primary"
-										variant="outlined"
-										icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
-										onClick={() => setIsBidFilesDrawerOpen(true)}
-									></Button>
-								</Badge>
-							</Tooltip>
-							{+bidType !== 2 && (
+							{+bidType === 1 && (
+								<Tooltip title={'Файлы'} placement={'right'}>
+									<Badge count={bidFilesCount} color={'geekblue'}>
+										<Button
+											className={'sa-bid-page-btn'}
+											color="primary"
+											variant="outlined"
+											icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
+											onClick={() => setIsBidFilesDrawerOpen(true)}
+										></Button>
+									</Badge>
+								</Tooltip>
+							)}
+							{+bidType === 1 && (
 								<Tooltip title={'Создать счет'} placement={'right'}>
 									<Button
 										className={'sa-bid-page-btn'}
@@ -1228,6 +1289,19 @@ const BidPage = (props) => {
 										icon={<DollarOutlined className={'sa-bid-page-btn-icon'} />}
 										onClick={() => fetchNewBid()}
 									></Button>
+								</Tooltip>
+							)}
+							{+bidType === 2 && (
+								<Tooltip title={'Счета'} placement={'right'}>
+									<Badge count={bidFilesCount} color={'geekblue'}>
+										<Button
+											className={'sa-bid-page-btn'}
+											color="primary"
+											variant="outlined"
+											icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
+											onClick={() => setIsBidFilesDrawerOpen(true)}
+										></Button>
+									</Badge>
 								</Tooltip>
 							)}
 						</div>
@@ -1296,9 +1370,8 @@ const BidPage = (props) => {
 								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
 									<p>Наличие</p>
 								</div>
-								<div
-									className={'sa-models-table-cell sa-models-table-cell-header'}
-									style={{ boxShadow: 'none' }}
+								<div className={'sa-models-table-cell sa-models-table-cell-header'}
+									 style={{ boxShadow: 'none' }}
 								></div>
 								<div className={'sa-models-table-cell sa-models-table-cell-header'}></div>
 							</div>
@@ -1317,6 +1390,7 @@ const BidPage = (props) => {
 												<NameSelect
 													options={prepareSelect(modelsSelect)}
 													model={bidModel}
+													openMode={openMode}
 													onUpdateModelName={handleChangeModel}
 												/>
 											</div>
@@ -1325,6 +1399,7 @@ const BidPage = (props) => {
 													value={bidModel.model_count}
 													bidModelId={bidModel.id}
 													bidModelSort={bidModel.sort}
+													openMode={openMode}
 													type={'model_count'}
 													onChangeModel={handleChangeModelInfo}
 												/>
@@ -1334,6 +1409,7 @@ const BidPage = (props) => {
 													value={bidModel.percent}
 													bidModelId={bidModel.id}
 													bidModelSort={bidModel.sort}
+													openMode={openMode}
 													type={'percent'}
 													onChangeModel={handleChangeModelInfo}
 												/>
@@ -1358,6 +1434,7 @@ const BidPage = (props) => {
 													value={bidModel.presence}
 													bidModelId={bidModel.id}
 													bidModelSort={bidModel.sort}
+													openMode={openMode}
 													type={'presence'}
 													onChangeModel={handleChangeModelInfo}
 												/>
@@ -1381,6 +1458,7 @@ const BidPage = (props) => {
 													variant="filled"
 													icon={<DeleteOutlined />}
 													onClick={() => handleDeleteModelFromBid(bidModel.id)}
+													disabled={openMode?.status === 1}
 												></Button>
 											</div>
 										</div>
@@ -1394,6 +1472,7 @@ const BidPage = (props) => {
 										variant="outlined"
 										icon={<PlusOutlined />}
 										onClick={handleAddModel}
+										disabled={openMode?.status === 1}
 									>
 										Добавить модель
 									</Button>
@@ -1402,6 +1481,8 @@ const BidPage = (props) => {
 										color="primary"
 										variant="filled"
 										icon={<FileSearchOutlined />}
+										onClick={() => setIsParseModalOpen(true)}
+										disabled={openMode?.status === 1}
 									>
 										Анализ сырых данных
 									</Button>
@@ -1410,6 +1491,7 @@ const BidPage = (props) => {
 										color="primary"
 										variant="filled"
 										icon={<BlockOutlined />}
+										disabled={openMode?.status === 1}
 									>
 										Похожие
 									</Button>
@@ -1550,6 +1632,22 @@ const BidPage = (props) => {
 				onCancel={() => setIsProjectDataModalOpen(false)}
 			>
 				<ProjectInfo project={bidProject}/>
+			</Modal>
+			<Modal
+				title="Анализ сырых данных"
+				centered
+				width={800}
+				open={isParseModalOpen}
+				onOk={() => addParseModels()}
+				onCancel={() => setIsParseModalOpen(false)}
+				okText={"Добавить в спецификацию"}
+				cancelText={"Отмена"}
+			>
+				<DataParser
+					additionData={additionData}
+					setAdditionData={setAdditionData}
+					models={modelsSelect}
+				/>
 			</Modal>
 			<ModelInfoExtraDrawer model_id={modelIdExtra}
 								  model_name={modelNameExtra}
