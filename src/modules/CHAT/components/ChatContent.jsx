@@ -56,7 +56,7 @@ export default function ChatContent({ chatId }) {
 			to: 0, // не нужен, так как бэкенд сам определит по chat_id
 			text: text.trim(),
 			answer: null,
-			chat_id: chatId, // ✅ добавляем сюда chat_id при отправке
+			chat_id: tmpChatID, // ✅ добавляем сюда chat_id при отправке
 		});
 
 		setMessages((prev) => [
