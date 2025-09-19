@@ -496,6 +496,18 @@
 	color: #2178fa;
 }
 
-.sa-duplication-choose-block-span {
-
+.dataParser__container {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: flex-start;
+}
+.dataParser__container__text {
+	width: 50%;
+}
+.dataParser__container__table {
+	padding: 5px;
+	width: 50%;
 }
