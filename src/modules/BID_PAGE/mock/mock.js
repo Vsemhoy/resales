@@ -1466,3 +1466,19 @@ export const CALC_PDF = {
         "box_size": 39
     }
 };
+export const FILES = [
+    {
+        "id": 142,
+        "name_file": "Коммерческое предложение для ЗапСибЗНИИЭП.docx",
+        "type": 1,
+        "template_id": 1,
+        "created_at": 1758131203
+    },
+    {
+        "id": 146,
+        "name_file": "Коммерческое предложение для ЗапСибЗНИИЭП.docx",
+        "type": 1,
+        "template_id": 1,
+        "created_at": 1758275490
+    }
+];

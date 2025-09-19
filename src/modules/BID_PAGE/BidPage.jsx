@@ -42,6 +42,7 @@ import ModelInfoExtraDrawer from "./components/ModelInfoExtraDrawer";
 import ProjectInfo from "./components/ProjectInfo";
 import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
 import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
+import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -158,6 +159,7 @@ const BidPage = (props) => {
 	const [isProjectDataModalOpen, setIsProjectDataModalOpen] = useState(false);
 	const [isBidDuplicateDrawerOpen, setIsBidDuplicateDrawerOpen] = useState(false);
 	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
+	const [isBidFilesDrawerOpen, setIsBidFilesDrawerOpen] = useState(false);
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -1192,7 +1194,6 @@ const BidPage = (props) => {
 									color="primary"
 									variant="outlined"
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'} />}
-									// onClick={() => window.open(`/resales/bidsPDF/${bidId}`, '_blank')}
 									onClick={() => navigate(`/bidsPDF/${bidId}`)}
 								></Button>
 							</Tooltip>
@@ -1214,6 +1215,7 @@ const BidPage = (props) => {
 										color="primary"
 										variant="outlined"
 										icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
+										onClick={() => setIsBidFilesDrawerOpen(true)}
 									></Button>
 								</Badge>
 							</Tooltip>
@@ -1562,6 +1564,10 @@ const BidPage = (props) => {
 							  closeDrawer={() => setIsBidHistoryDrawerOpen(false)}
 							  bidId={bidId}
 							  bidActions={bidActions}
+			/>
+			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
+							closeDrawer={() => setIsBidFilesDrawerOpen(false)}
+							bidId={bidId}
 			/>
 			{isAlertVisible && (
 				<Alert
