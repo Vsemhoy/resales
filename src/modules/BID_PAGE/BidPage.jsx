@@ -775,6 +775,34 @@ const BidPage = (props) => {
 			}
 		}
 	};
+	const fetchBidPlace = async (newPlace) => {
+		if (PRODMODE) {
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/sales/data/changebidstage', {
+					data: {
+						bid_id: bidId,
+						data: {
+							bid: bidId,
+							stage: newPlace
+						},
+					},
+					_token: CSRF_TOKEN,
+				});
+				if (response.data) {
+					setIsAlertVisible(true);
+					setAlertMessage('Успех!');
+					setAlertDescription(response.data.message);
+					setAlertType('success');
+				}
+			} catch (e) {
+				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
+			}
+		}
+	};
 
 	const areArraysEqual = (arr1, arr2) => {
 		// Проверка длины
@@ -1023,19 +1051,19 @@ const BidPage = (props) => {
 			case 'toAdmin':
 				if (+button_id === 2) {
 					setBidPlace(2);
-					fetchUpdates().then(() => fetchBidInfo().then());
+					fetchBidPlace(2).then(() => fetchBidInfo().then());
 				}
 				break;
 			case 'backManager':
 				if (+button_id === 2) {
 					setBidPlace(1);
-					fetchUpdates().then(() => fetchBidInfo().then());
+					fetchBidPlace(1).then(() => fetchBidInfo().then());
 				}
 				break;
 			case 'toBuh':
 				if (+button_id === 2) {
 					setBidPlace(3);
-					fetchUpdates().then(() => fetchBidInfo().then());
+					fetchBidPlace(3).then(() => fetchBidInfo().then());
 				}
 				break;
 		}
@@ -1480,7 +1508,7 @@ const BidPage = (props) => {
 																	);
 																} else {
 																	setBidPlace(2);
-																	fetchUpdates().then(() => fetchBidInfo().then());
+																	fetchBidPlace(2).then(() => fetchBidInfo().then());
 																}
 															}}
 													>Передать администратору <ArrowRightOutlined /></Button>
@@ -1500,7 +1528,7 @@ const BidPage = (props) => {
 																	);
 																} else {
 																	setBidPlace(1);
-																	fetchUpdates().then(() => fetchBidInfo().then());
+																	fetchBidPlace(1).then(() => fetchBidInfo().then());
 																}
 															}}
 													><ArrowLeftOutlined /> Вернуть менеджеру</Button>
@@ -1516,7 +1544,7 @@ const BidPage = (props) => {
 																	);
 																} else {
 																	setBidPlace(3);
-																	fetchUpdates().then(() => fetchBidInfo().then());
+																	fetchBidPlace(3).then(() => fetchBidInfo().then());
 																}
 															}}
 													>Передать бухгалтеру <ArrowRightOutlined /></Button>
@@ -1528,14 +1556,14 @@ const BidPage = (props) => {
 															disabled={openMode?.status === 1}
 															onClick={() => {
 																setBidPlace(2);
-																fetchUpdates().then(() => fetchBidInfo().then());
+																fetchBidPlace(2).then(() => fetchBidInfo().then());
 															}}
 													><ArrowLeftOutlined /> Вернуть администратору</Button>
 													<Button className={'sa-select-custom-end'}
 															disabled={openMode?.status === 1}
 															onClick={() => {
 																setBidPlace(4);
-																fetchUpdates().then(() => fetchBidInfo().then());
+																fetchBidPlace(4).then(() => fetchBidInfo().then());
 															}}
 													>Завершить счет <CheckCircleOutlined /></Button>
 												</Space.Compact>
@@ -1546,7 +1574,7 @@ const BidPage = (props) => {
 															disabled={openMode?.status === 1 && userData?.user?.sales_role === 3}
 															onClick={() => {
 																setBidPlace(3);
-																fetchUpdates().then(() => fetchBidInfo().then());
+																fetchBidPlace(3).then(() => fetchBidInfo().then());
 															}}
 													><ArrowLeftOutlined /> Вернуть бухгалтеру</Button>
 												</Space.Compact>
