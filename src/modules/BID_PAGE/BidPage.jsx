@@ -630,6 +630,8 @@ const BidPage = (props) => {
 					setAlertMessage('Успех!');
 					setAlertDescription(response.data.message);
 					setAlertType('success');
+					setIsSmthChanged(false);
+					updateDefaultInfo();
 				}
 			} catch (e) {
 				console.log(e);
@@ -643,6 +645,8 @@ const BidPage = (props) => {
 			setAlertMessage('Успех!');
 			setAlertDescription('Успешное обновление');
 			setAlertType('success');
+			setIsSmthChanged(false);
+			updateDefaultInfo();
 		}
 	};
 	const fetchCalcModels = async () => {
@@ -905,6 +909,36 @@ const BidPage = (props) => {
 		setAdditionData([]);
 		setIsNeedCalcMoney(true);
 		setIsParseModalOpen(false);
+	};
+	const updateDefaultInfo = () => {
+		const defaultInfoUpd = JSON.parse(JSON.stringify(defaultInfo));
+		defaultInfoUpd.bid.base_info.orguser = bidOrgUser;
+		defaultInfoUpd.bid.base_info.protection = bidProtectionProject;
+		defaultInfoUpd.bid.base_info.object = bidObject;
+		defaultInfoUpd.bid.base_info.sellby = bidSellBy;
+
+		defaultInfoUpd.bid.bill.requisite = requisite;
+		defaultInfoUpd.bid.bill.conveyance = conveyance;
+		defaultInfoUpd.bid.bill.fact_address = factAddress;
+		defaultInfoUpd.bid.bill.org_phone = phone;
+		defaultInfoUpd.bid.bill.contact_email = email;
+		defaultInfoUpd.bid.bill.insurance = insurance;
+		defaultInfoUpd.bid.bill.package = bidPackage;
+		defaultInfoUpd.bid.bill.consignee = consignee;
+		defaultInfoUpd.bid.bill.other_equipment = otherEquipment;
+
+		defaultInfoUpd.bid.comments.engineer = bidCommentEngineer;
+		defaultInfoUpd.bid.comments.manager = bidCommentManager;
+		defaultInfoUpd.bid.comments.admin = bidCommentAdmin;
+		defaultInfoUpd.bid.comments.accountant = bidCommentAccountant;
+		defaultInfoUpd.bid.comments.add_equipment = bidCommentAddEquipment;
+
+		defaultInfoUpd.bid.finance.bid_currency = bidCurrency;
+		defaultInfoUpd.bid.finance.status = bidPriceStatus;
+		defaultInfoUpd.bid.finance.percent = bidPercent;
+		defaultInfoUpd.bid.finance.nds = bidNds;
+
+		defaultInfoUpd.bid_models = bidModels;
 	};
 
 	const collapseItems = [
