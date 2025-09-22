@@ -628,7 +628,7 @@ const EngineerListPage = (props) => {
 				</div>
 			</Affix>
 
-			<Layout className={'sa-layout sa-w-100'}>ё
+			<Layout className={'sa-layout sa-w-100'}>
 				<Sider
 					collapsed={!isOpenedFilters}
 					collapsedWidth={0}
