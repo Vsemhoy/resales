@@ -29,7 +29,7 @@ const EngineerFilesDrawer = (props) => {
             key: "download",
             width: 30,
             render: (e, v) => (
-                <a onClick={() => fetchDownloadFile(v.template_id, v.key, v.type)}>
+                <a onClick={() => fetchDownloadFile(v.file_link)}>
                     <DownloadOutlined style={{ fontSize: "16px", color: "#5099ff" }} />
                 </a>
             ),
@@ -60,6 +60,7 @@ const EngineerFilesDrawer = (props) => {
                                 key: el.id,
                                 date: get_date_by_unix(el.created_at),
                                 name: parseNameFromFilePath(el.name_file),
+                                file_link: el.name_file,
                                 download: "download",
                                 // template_id: el.template_id,
                                 // type: el.type,
@@ -77,32 +78,19 @@ const EngineerFilesDrawer = (props) => {
                         key: el.id,
                         date: get_date_by_unix(el.created_at),
                         name: parseNameFromFilePath(el.name_file),
+                        file_link: el.name_file,
                         download: "download",
-                        template_id: el.template_id,
-                        type: el.type,
                     };
                 }),
             );
         }
     };
-    const fetchDownloadFile = async (template_id, id, type) => {
+    const fetchDownloadFile = async (file_link) => {
+        console.log(file_link)
         if (PRODMODE) {
             try {
-                const data = {
-                    data: {
-                        template_id,
-                        id,
-                        bid_id: props.bidId,
-                        type,
-                        new: false,
-                    },
-                    _token: CSRF_TOKEN,
-                };
-                const config = { timeout: 50000 };
-                const response = await PROD_AXIOS_INSTANCE.post("/api/sales/makedoc", data, config,);
-                const parts = response.data.data.file_link.split('/');
-                const withSlash = '/' + parts.slice(1).join('/');
-                window.open(`${withSlash}`, "_blank", "noopener,noreferrer",);
+                // const parts = file_link.split('/');
+                window.open(`${file_link}`, "_blank", "noopener,noreferrer",);
             } catch (e) {
                 console.log(e);
             }
