@@ -9,6 +9,7 @@ import { compareObjects } from '../../../../../components/helpers/CompareHelpers
 import OPMTtoleranceSection from './subsections/OPMTtoleranceSection';
 import { Button } from 'antd';
 import { ExclamationTriangleIcon, IdentificationIcon } from '@heroicons/react/24/outline';
+import OPMTanZendToleranceSection from './subsections/OPMTanZendToleranceSection';
 
 const OrgPageMainTabToleranceSection = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
@@ -322,6 +323,28 @@ const OrgPageMainTabToleranceSection = (props) => {
 		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
 
 
+      <div className={'sa-tolerance-old-v'}>
+      {anZendLicenses.map((item)=>(
+        <OPMTanZendToleranceSection
+          key={'OPMTCcontactemailsSection' + item.id}
+          data={item}
+          edit_mode={editMode}
+          on_change={handleUpdateTolikUnit}
+		  selects={selects}
+        />
+      ))}
+
+      {anZendTolerances.map((item)=>(
+        <OPMTanZendToleranceSection
+          key={'OPMTCcontactemailsSection' + item.id}
+          data={item}
+          edit_mode={editMode}
+          on_change={handleUpdateTolikUnit}
+		  selects={selects}
+        />
+      ))}
+	  </div>
+
       <div>
       {tolerances.map((item)=>(
         <OPMTtoleranceSection
@@ -331,7 +354,8 @@ const OrgPageMainTabToleranceSection = (props) => {
           on_change={handleUpdateTolikUnit}
 		  selects={selects}
         />
-      ))}</div>
+      ))}
+	  </div>
 
 			{newTolerances.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>

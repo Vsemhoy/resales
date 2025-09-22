@@ -1,4 +1,4 @@
-import { Affix, DatePicker, Input, Select } from 'antd';
+import {Affix, DatePicker, Empty, Input, Select} from 'antd';
 import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import BidListRow from './BidListRow';
@@ -412,15 +412,19 @@ const BidListTable = (props) => {
 			</Affix>
 
 			<div className={'sa-table-box-stack'}>
-				{props.bids.map((bid, index) => (
-					<BidListRow
-						data={bid}
-						is_active={isPreviewOpen && previewItem === bid.id}
-						on_double_click={handlePreviewOpen}
-						key={index}
-						company_color={props.base_companies?.find((item) => item.id === bid.id_company)?.color}
-					/>
-				))}
+				{(props.bids && props.bids.length > 0) ?
+					props.bids.map((bid, index) => (
+						<BidListRow
+							data={bid}
+							is_active={isPreviewOpen && previewItem === bid.id}
+							on_double_click={handlePreviewOpen}
+							key={index}
+							company_color={props.base_companies?.find((item) => item.id === bid.id_company)?.color}
+						/>
+					)) : (
+						<Empty/>
+					)
+				}
 			</div>
 		</div>
 	);
