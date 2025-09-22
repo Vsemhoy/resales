@@ -1484,17 +1484,27 @@ export const CALC_PDF = {
 };
 export const FILES = [
     {
-        "id": 142,
-        "name_file": "Коммерческое предложение для ЗапСибЗНИИЭП.docx",
-        "type": 1,
-        "template_id": 1,
-        "created_at": 1758131203
+        "id": 10,
+        "name_file": "\/orders_files\/orders_6_1758548037_excel_1749124028.xlsx",
+        "created_at": 1758548037,
+        "updated_at": 1758548037
     },
     {
-        "id": 146,
-        "name_file": "Коммерческое предложение для ЗапСибЗНИИЭП.docx",
-        "type": 1,
-        "template_id": 1,
-        "created_at": 1758275490
+        "id": 11,
+        "name_file": "\/orders_files\/orders_6_1758548037_excel_1749123716.xlsx",
+        "created_at": 1758548037,
+        "updated_at": 1758548037
+    },
+    {
+        "id": 12,
+        "name_file": "\/orders_files\/orders_6_1758548037_excel_1749123698.xlsx",
+        "created_at": 1758548037,
+        "updated_at": 1758548037
+    },
+    {
+        "id": 13,
+        "name_file": "\/orders_files\/orders_6_1758548037_excel_1749123266.xlsx",
+        "created_at": 1758548037,
+        "updated_at": 1758548037
     }
 ];
