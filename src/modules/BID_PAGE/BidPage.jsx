@@ -44,6 +44,8 @@ import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
 import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
 import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
 import DataParser from "./components/DataParser";
+import FindSimilarDrawer from "./components/FindSimilarDrawer";
+import dayjs from "dayjs";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -72,6 +74,7 @@ const BidPage = (props) => {
 	});
 	const [openMode, setOpenMode] = useState(null); // просмотр, редактирование
 	const [isSmthChanged, setIsSmthChanged] = useState(false);
+	const [defaultInfo, setDefaultInfo] = useState(null);
 	/* ШАПКА СТРАНИЦЫ */
 	const [bidType, setBidType] = useState(null);
 	const [bidIdCompany, setBidIdCompany] = useState(null);
@@ -81,10 +84,10 @@ const BidPage = (props) => {
 	const [companyCurrency, setCompanyCurrency] = useState(null);
 	const [bankCurrency, setBankCurrency] = useState(null);
 	/* БАЗОВЫЙ БЛОК */
-	const [bidOrgUser, setBidOrgUser] = useState('');
-	const [bidProtectionProject, setBidProtectionProject] = useState('');
-	const [bidObject, setBidObject] = useState('');
-	const [bidSellBy, setBidSellBy] = useState(''); // срок реализации
+	const [bidOrgUser, setBidOrgUser] = useState(null);
+	const [bidProtectionProject, setBidProtectionProject] = useState(null);
+	const [bidObject, setBidObject] = useState(null);
+	const [bidSellBy, setBidSellBy] = useState(null); // срок реализации
 	/* БЛОК ПЛАТЕЛЬЩИКА */
 	const [requisite, setRequisite] = useState(null);
 	const [conveyance, setConveyance] = useState(null);
@@ -93,19 +96,19 @@ const BidPage = (props) => {
 	const [email, setEmail] = useState(null);
 	const [insurance, setInsurance] = useState(null);
 	const [bidPackage, setBidPackage] = useState(null);
-	const [consignee, setConsignee] = useState('');
-	const [otherEquipment, setOtherEquipment] = useState('');
+	const [consignee, setConsignee] = useState(null);
+	const [otherEquipment, setOtherEquipment] = useState(null);
 	/* БЛОК КОММЕНТАРИЕВ */
-	const [bidCommentEngineer, setBidCommentEngineer] = useState('');
-	const [bidCommentManager, setBidCommentManager] = useState('');
-	const [bidCommentAdmin, setBidCommentAdmin] = useState('');
-	const [bidCommentAccountant, setBidCommentAccountant] = useState('');
-	const [bidCommentAddEquipment, setBidCommentAddEquipment] = useState('');
+	const [bidCommentEngineer, setBidCommentEngineer] = useState(null);
+	const [bidCommentManager, setBidCommentManager] = useState(null);
+	const [bidCommentAdmin, setBidCommentAdmin] = useState(null);
+	const [bidCommentAccountant, setBidCommentAccountant] = useState(null);
+	const [bidCommentAddEquipment, setBidCommentAddEquipment] = useState(null);
 	/* ФИНАНСОВЫЙ БЛОК */
-	const [bidCurrency, setBidCurrency] = useState(0);
-	const [bidPriceStatus, setBidPriceStatus] = useState(0);
-	const [bidPercent, setBidPercent] = useState(0);
-	const [bidNds, setBidNds] = useState(0);
+	const [bidCurrency, setBidCurrency] = useState(null);
+	const [bidPriceStatus, setBidPriceStatus] = useState(null);
+	const [bidPercent, setBidPercent] = useState(null);
+	const [bidNds, setBidNds] = useState(null);
 	/* ЛОГИ */
 	const [bidActionsLogs, setBidActionsLogs] = useState({});
 	/* ФАЙЛЫ */
@@ -163,6 +166,7 @@ const BidPage = (props) => {
 	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
 	const [isBidFilesDrawerOpen, setIsBidFilesDrawerOpen] = useState(false);
 	const [isParseModalOpen, setIsParseModalOpen] = useState(false);
+	const [isFindSimilarDrawerOpen, setIsFindSimilarDrawerOpen] = useState(false);
 	const [additionData, setAdditionData] = useState([]);
 
 	useEffect(() => {
@@ -204,7 +208,7 @@ const BidPage = (props) => {
 	useEffect(() => {
 		if (openMode) {
 			const handleKeyDown = (event) => {
-				console.log('event', event);
+				//console.log('event', event);
 				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status > 1) {
 					event.preventDefault();
 					setIsSavingInfo(prev => {
@@ -245,6 +249,55 @@ const BidPage = (props) => {
 			return () => clearTimeout(timer);
 		}
 	}, [isAlertVisible]);
+	useEffect(() => {
+		if (defaultInfo) {
+			const bid = defaultInfo.bid;
+			let flag = false;
+			/* base info */
+			if (+bid.base_info.orguser !== +bidOrgUser) flag = true;
+			if (+bid.base_info.protection !== +bidProtectionProject) flag = true;
+			if (bid.base_info.object !== bidObject) flag = true;
+			if (bid.base_info.sellby !== bidSellBy) flag = true;
+			/* bill */
+			if (+bid.bill.requisite !== +requisite) flag = true;
+			if (+bid.bill.conveyance !== +conveyance) flag = true;
+			if (+bid.bill.fact_address !== +factAddress) flag = true;
+			if (+bid.bill.org_phone !== +phone) flag = true;
+			if (+bid.bill.contact_email !== +email) flag = true;
+			if (+bid.bill.insurance !== +insurance) flag = true;
+			if (+bid.bill.package !== +bidPackage) flag = true;
+			if (bid.bill.consignee !== consignee) flag = true;
+			if (bid.bill.other_equipment !== otherEquipment) flag = true;
+			/* comments */
+			if (bid.comments.engineer !== bidCommentEngineer) flag = true;
+			if (bid.comments.manager !== bidCommentManager) flag = true;
+			if (bid.comments.admin !== bidCommentAdmin) flag = true;
+			if (bid.comments.accountant !== bidCommentAccountant) flag = true;
+			if (bid.comments.add_equipment !== bidCommentAddEquipment) flag = true;
+			/* finance */
+			if (bid.finance.bid_currency !== bidCurrency) flag = true;
+			if (bid.finance.status !== bidPriceStatus) flag = true;
+			if (String(bid.finance.percent) !== String(bidPercent)) flag = true;
+			if (bid.finance.nds !== bidNds) flag = true;
+			/* bid_models */
+			if (!areArraysEqual(defaultInfo.bid_models, bidModels)) flag = true;
+
+			setIsSmthChanged(flag);
+		}
+	}, [
+		/* base info */
+		bidOrgUser, bidProtectionProject, bidObject, bidSellBy,
+		/* bill */
+		requisite, conveyance, factAddress, phone, email,
+		insurance, bidPackage, consignee, otherEquipment,
+		/* comments */
+		bidCommentEngineer, bidCommentManager, bidCommentAdmin,
+		bidCommentAccountant, bidCommentAddEquipment,
+		/* finance */
+		bidCurrency, bidPriceStatus, bidPercent, bidNds,
+		/* bid_models */
+		bidModels
+	]);
 
 	const fetchInfo = async () => {
 		setIsLoading(true);
@@ -316,6 +369,12 @@ const BidPage = (props) => {
 					if (content.bid_models) {
 						setBidModels(content.bid_models);
 					}
+					setTimeout(() => {
+						setDefaultInfo({
+							bid: content.bid,
+							bid_models: content.bid_models,
+						});
+					}, 500);
 				}
 			} catch (e) {
 				console.log(e);
@@ -374,6 +433,12 @@ const BidPage = (props) => {
 			if (BID_INFO.bid_models) {
 				setBidModels(BID_INFO.bid_models);
 			}
+			setTimeout(() => {
+				setDefaultInfo({
+					bid: BID_INFO.bid,
+					bid_models: BID_INFO.bid_models,
+				});
+			}, 500);
 		}
 	};
 	const fetchSelects = async () => {
@@ -659,6 +724,43 @@ const BidPage = (props) => {
 		}
 	};
 
+	const areArraysEqual = (arr1, arr2) => {
+		// Проверка длины
+		if (arr1.length !== arr2.length) return false;
+
+		// Проверка каждого элемента
+		return arr1.every((item, index) => {
+			const item2 = arr2[index];
+
+			// Если оба объекта
+			if (typeof item === 'object' && item !== null &&
+				typeof item2 === 'object' && item2 !== null) {
+				return areObjectsEqual(item, item2);
+			}
+
+			// Для примитивов
+			return item === item2;
+		});
+	};
+	const areObjectsEqual = (obj1, obj2) => {
+		const keys1 = Object.keys(obj1);
+		const keys2 = Object.keys(obj2);
+
+		//if (keys1.length !== keys2.length) return false;
+
+		return keys1.every(key => {
+			// Рекурсивная проверка для вложенных объектов
+			if (typeof obj1[key] === 'object' && obj1[key] !== null &&
+				typeof obj2[key] === 'object' && obj2[key] !== null) {
+				return areObjectsEqual(obj1[key], obj2[key]);
+			}
+			if (key !== 'moneyOne' && key !== 'moneyCount') {
+				return String(obj1[key]) === String(obj2[key]);
+			} else {
+				return true;
+			}
+		});
+	};
 	const prepareSelect = (select) => {
 	  if (select) {
 		  return select.map((item) => ({value: item.id, label: item.name}));
@@ -802,6 +904,7 @@ const BidPage = (props) => {
 		]);
 		setAdditionData([]);
 		setIsNeedCalcMoney(true);
+		setIsParseModalOpen(false);
 	};
 
 	const collapseItems = [
@@ -1493,6 +1596,7 @@ const BidPage = (props) => {
 										color="primary"
 										variant="filled"
 										icon={<BlockOutlined />}
+										onClick={() => setIsFindSimilarDrawerOpen(true)}
 										disabled={openMode?.status === 1}
 									>
 										Похожие
@@ -1668,6 +1772,10 @@ const BidPage = (props) => {
 			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
 							closeDrawer={() => setIsBidFilesDrawerOpen(false)}
 							bidId={bidId}
+			/>
+			<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
+							   closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
+							   bidId={bidId}
 			/>
 			{isAlertVisible && (
 				<Alert

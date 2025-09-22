@@ -7,24 +7,31 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
 
     // Функция для получения имени (первого слова в верхнем регистре)
     const getName = (str) => {
-        const trimmed = str.trim();
         let name = '';
-        //if (!trimmed) return "";
-        //return trimmed.split(" ")[0].toUpperCase();
-        trimmed.split(" ").forEach(str => {
-            if (isNaN(str) && str !== '-') {
-                name += str + ' ';
+        const splited = str.trim().split(" ")
+        for (let i = 0; i < splited.length; i++) {
+            if (isNaN(splited[i]) && splited[i] !== '-') {
+                name += splited[i] + ' ';
+            } else {
+                break;
             }
-        });
+        }
         return name.trim();
     };
 
     // Функция для получения количества (число в конце строки или 1 по умолчанию)
     const getCount = (str) => {
+        console.log('test')
         const parts = str.trim().split(" ");
-        const lastPart = parts[parts.length - 1];
-        const count = Number(lastPart);
-        return isNaN(count) ? 1 : count;
+
+        let numberStr = 1;
+        for (let i = parts.length - 1; i >= 0; i--) {
+            if (!isNaN(Number(parts[i]))) {
+                numberStr = parts[i];
+            }
+        }
+
+        return numberStr;
     };
 
     // Получение id модели по имени

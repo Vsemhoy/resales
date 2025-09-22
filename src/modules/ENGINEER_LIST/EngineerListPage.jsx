@@ -26,6 +26,7 @@ import { BID_LIST, FILTERS, ORDERS, ORDERSSTATUS, SPECS_LIST } from './mock/mock
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { c } from 'react/compiler-runtime';
 import OrderListSider from './components/OrderListSider';
+import NewOrderModal from "./components/NewOrderModal";
 
 const EngineerListPage = (props) => {
 	const { userdata } = props;
@@ -406,10 +407,10 @@ const EngineerListPage = (props) => {
 		}
 	};
 
-	const addNewSpec = () => {
-		setBlockNewSpec(true);
-		fetchNewSpec().then((r) => setBlockNewSpec(false));
-	};
+	// const addNewSpec = () => {
+	// 	setBlockNewSpec(true);
+	// 	fetchNewSpec().then((r) => setBlockNewSpec(false));
+	// };
 
 	const addNewOrder = () => {
 		setBlockNewSpec(true);
@@ -471,6 +472,61 @@ const EngineerListPage = (props) => {
 	// handleOk={handleOk}
 	// handleCancel={handleCancel}
 
+
+
+	const [modalText, setModalText] = useState("");
+	const [modalFileList, setModalFileList] = useState([]);
+
+	const handleSetModalText = (text) => {
+		setModalText(text);
+	};
+
+	const handleModalCancel = () => {
+		console.log('HERE: handleModalCancel');
+		setBlockNewSpec(false);
+		setModalText("");
+		setModalFileList([]);
+	};
+	const handleModalOk = (text, files) => {
+		console.log('HERE: handleModalOk', text);
+		setModalText(text);
+		setModalFileList(files);
+		console.log(files)
+
+		fetchCreateNewOrder().then()
+
+
+			// setIsOpenModal(false);
+		// console.log('HERE: ', modalReason);
+		//
+		// const updatedOrders = orders.filter((order) => order.id !== modalOrderID);
+		// setOrders(updatedOrders);
+		// setModalReason('');
+	};
+
+
+	const fetchCreateNewOrder = async () => {
+		if (PRODMODE) {
+			const formData = new FormData();
+			formData.append('_token', CSRF_TOKEN);
+			formData.append('data', JSON.stringify({comment: modalText}));
+			modalFileList.forEach((file) => {
+				formData.append('files[]', file.originFileObj || file);
+			});
+
+			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/add', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				}
+			});
+
+
+		} else {
+			message.success("Привет!");
+		}
+	}
+
+
 	return (
 		<div className={`app-page sa-app-page ${isOpenedFilters ? 'sa-filer-opened' : ''}`}>
 			{contextHolder}
@@ -525,21 +581,22 @@ const EngineerListPage = (props) => {
 								</Tag>
 							</div>
 							<div style={{ display: 'flex', alignItems: 'end' }}>
-								{activeRole === 1 && (
-									<Button
-										type={'primary'}
-										icon={<PlusOutlined />}
-										onClick={addNewSpec}
-										disabled={blockNewSpec}
-									>
-										Новая спецификация
-									</Button>
-								)}
+								{/*{activeRole === 1 && (*/}
+								{/*	<Button*/}
+								{/*		type={'primary'}*/}
+								{/*		icon={<PlusOutlined />}*/}
+								{/*		onClick={addNewSpec}*/}
+								{/*		disabled={blockNewSpec}*/}
+								{/*	>*/}
+								{/*		Новая спецификация*/}
+								{/*	</Button>*/}
+								{/*)}*/}
 								{activeRole === 2 && (
 									<Button
 										type={'primary'}
 										icon={<PlusOutlined />}
-										onClick={addNewOrder}
+										onClick={() => setBlockNewSpec(true)}
+										// onClick={addNewOrder}
 										disabled={blockNewSpec}
 									>
 										Новая заявка
@@ -551,7 +608,7 @@ const EngineerListPage = (props) => {
 				</div>
 			</Affix>
 
-			<Layout className={'sa-layout sa-w-100'}>
+			<Layout className={'sa-layout sa-w-100'}>ё
 				<Sider
 					collapsed={!isOpenedFilters}
 					collapsedWidth={0}
@@ -655,6 +712,17 @@ const EngineerListPage = (props) => {
 						)}
 					</div>
 				</Sider>
+
+				{blockNewSpec && (
+					<NewOrderModal
+						open={blockNewSpec}
+						text={modalText}
+						handleOk={handleModalOk}
+						handleCancel={handleModalCancel}
+						handleSetModalText={handleSetModalText}
+						fileListM={modalFileList}
+					/>
+				)}
 			</Layout>
 		</div>
 	);
