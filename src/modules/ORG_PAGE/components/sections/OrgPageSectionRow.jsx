@@ -519,7 +519,9 @@ const OrgPageSectionRow = (props) => {
 							{commentConfig && (
 								<div className="sk-omt-comment-trigger" onClick={() => setOpened(!opened)}>
 									<span>{opened ? <CaretUpOutlined /> : <CaretDownOutlined />}</span>
-									<span>комм</span>
+									<span className={`${commentConfig.value !== null && commentConfig.value.trim() !== "" ? "sk-omt-comment-trigger-treasure" : "" }`}>
+                  {commentConfig.label ? commentConfig.label : 'комм'}
+                  </span>
 								</div>
 							)}
 						</span>
