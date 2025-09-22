@@ -493,7 +493,7 @@ const EngineerListPage = (props) => {
 		setModalFileList(files);
 		console.log(files)
 
-		fetchCreateNewOrder().then()
+		fetchCreateNewOrder(modalFileList).then()
 
 
 			// setIsOpenModal(false);
@@ -505,18 +505,16 @@ const EngineerListPage = (props) => {
 	};
 
 
-	const fetchCreateNewOrder = async () => {
+	const fetchCreateNewOrder = async (files) => {
 		const formData = new FormData();
 		formData.append('_token', CSRF_TOKEN);
 		formData.append('data', JSON.stringify({text: modalText}));
 
-		console.log(modalFileList)
+		console.log(files)
 
-		modalFileList.forEach((file, index) => {
+		files.forEach((file, index) => {
 			formData.append('files[]', file.originFileObj || file);
 		});
-
-		console.log(formData);
 
 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', formData, {
 			headers: {
