@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 // import { useUserData } from '../../hooks/utils/useUserData';
 /**
  * Хук возвращает функцию, которая определяет собеседника в чате.
- * @param {number} currentUserId — ID текущего пользователя (клиента)
+ * @param {number} currentUserId
  */
 export const useCompanion = (currentUserId) => {
 	return useCallback(

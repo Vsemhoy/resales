@@ -6,7 +6,7 @@ import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { useUserData } from '../../../context/UserDataContext';
-import styles from './style/Chat.module.css'; // импорт CSS-модуля
+import styles from './style/Chat.module.css';
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
