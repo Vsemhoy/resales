@@ -17,13 +17,16 @@ const OrgPageMainTabToleranceSection = (props) => {
 	const [orgId, setOrgId] = useState([]);
 
 	const [tolerances,     setTolerances]     = useState([]);
-	const [lastTolerances, setLastTolerances] = useState([]);
+	const [anZendTolerances, setAnZendTolerances] = useState([]);
+	const [anZendLicenses,   setAnZendLicenses]   = useState([]);
+
 	const [licenses,       setLicenses]       = useState([]);
-	const [lastLicenses,   setLastLicenses]   = useState([]);
 	const [newTolerances,  setNewTolerances]  = useState([]);
 	const [newLicenses,    setNewLicenses]    = useState([]);
 	const [originalTolerances, setOriginalTolerances] = useState([]);
-	const [originalLicenses  , setOriginalLicenses]   = useState([]);
+
+	const [originalAnZendLicenses    , setOriginalAnZendLicenses]   = useState([]);
+	const [originalAnZendTolerances  , setOriginalAnZendTolerances]   = useState([]);
 
 	const [editedToleranceIds, setEditedToleranceIds] = useState([]);
 
@@ -45,35 +48,29 @@ const OrgPageMainTabToleranceSection = (props) => {
 	useEffect(() => {
 		if (props.data?.id){
 			setOrgId(props.data?.id);
-			// setObjectResult(props.data);
 
-			// setName(props.data?.name);
-			// setLastName(props.data?.lastname);
-			// setMiddleName(props.data?.middlename);
-			// setOccupy(props.data?.occupy);
-			// setComment(props.data?.comment);
-			// setJob(props.data?.job);
-			// setExittoorg_id(props.data?.exittoorg_id);
-			// setDeleted(props.data?.deleted);
 
 
 			setTolerances(props.data.active_licenses_bo);
-			// setContactmobiles(props.data.contactmobiles);
-			// setContacthomephones(props.data.contacthomephones);
-			// setContactemails(props.data.contactemails);
-			// setContactmessangers(props.data.contactmessangers);
+			setAnZendLicenses(props.data.active_licenses);
+			setAnZendTolerances(props.data.active_tolerance);
+
 
 			setOriginalTolerances(JSON.parse(JSON.stringify(props.data.active_licenses_bo)));
-			// setOriginalContactmobiles(    JSON.parse(JSON.stringify(props.data.contactmobiles    )));
-			// setOriginalContacthomephones( JSON.parse(JSON.stringify(props.data.contacthomephones )));
-			// setOriginalContactemails(     JSON.parse(JSON.stringify(props.data.contactemails     )));
-			// setOriginalContactmessangers( JSON.parse(JSON.stringify(props.data.contactmessangers )));
+			setOriginalAnZendLicenses(JSON.parse(JSON.stringify(props.data.active_licenses)));
+			setOriginalAnZendTolerances(JSON.parse(JSON.stringify(props.data.active_tolerance)));
+
 		}
 
 	}, [props.data]);
 
 
-		/* ----------------- TOLERANCE --------------------- */
+// ██████   ██████      ████████  ██████  ██      ██ ██   ██ 
+// ██   ██ ██    ██        ██    ██    ██ ██      ██ ██  ██  
+// ██████  ██    ██        ██    ██    ██ ██      ██ █████   
+// ██   ██ ██    ██        ██    ██    ██ ██      ██ ██  ██  
+// ██████   ██████         ██     ██████  ███████ ██ ██   ██                                                 
+	/* ----------------- TOLERANCE --------------------- */
 	/**
 	 * Добавление нового элемента в стек новых
 	 */
@@ -134,7 +131,7 @@ const OrgPageMainTabToleranceSection = (props) => {
 	 * @param {*} data 
 	 * @returns 
 	 */
-	const handleUpdateEmailUnit = (id, data) => {
+	const handleUpdateTolikUnit = (id, data) => {
 		// let udata = originalData.filter((item) => item.id !== id);
 		// udata.push(data);
 		console.log('CALL TU REAL UPDATE');
@@ -185,6 +182,142 @@ const OrgPageMainTabToleranceSection = (props) => {
 
 
 
+
+// ██       █████  ███████ ████████     ████████  ██████  ██      ███████ ██████   █████  ███    ██  ██████ ███████ 
+// ██      ██   ██ ██         ██           ██    ██    ██ ██      ██      ██   ██ ██   ██ ████   ██ ██      ██      
+// ██      ███████ ███████    ██           ██    ██    ██ ██      █████   ██████  ███████ ██ ██  ██ ██      █████   
+// ██      ██   ██      ██    ██           ██    ██    ██ ██      ██      ██   ██ ██   ██ ██  ██ ██ ██      ██      
+// ███████ ██   ██ ███████    ██           ██     ██████  ███████ ███████ ██   ██ ██   ██ ██   ████  ██████ ███████                                                                                                            
+	/* ----------------- AnZend (old version, zend generation) Tolerances --------------------- */
+	/**
+	 * Добавление нового элемента в стек новых
+	 */
+
+	/**
+	 * Обновление и удаление существующей записи
+	 * @param {*} id 
+	 * @param {*} data 
+	 * @returns 
+	 */
+	const handleUpdateAnZendToleranceUnit = (id, data) => {
+		// let udata = originalData.filter((item) => item.id !== id);
+		// udata.push(data);
+		console.log('CALL TU REAL UPDATE');
+		if (!editMode) {
+			return;
+		}
+
+		const excluders = ['command', 'date'];
+		let is_original = false;
+
+		originalAnZendTolerances.forEach((element) => {
+			if (element.id === id) {
+				console.log('element, data', element, data)
+				is_original = compareObjects(element, data, {
+					excludeFields: excluders,
+					compareArraysDeep: false,
+					ignoreNullUndefined: true,
+				});
+			}
+		});
+		console.log('is_original', is_original)
+		if (is_original === false) {
+			if (!editedToleranceIds?.includes('t' + id)) {
+				setEditedToleranceIds([...editedToleranceIds, 't' + id]);
+			}
+			data.command = "update";
+		} else {
+			if (editedToleranceIds?.includes('t' + id)) {
+				setEditedToleranceIds(editedToleranceIds.filter((item) => item !== 't' + id));
+			}
+			data.command = '';
+		}
+		if (data.deleted === true){
+			data.command = "delete";
+		} 
+
+		console.log('data email', data)
+		setAnZendTolerances((prevUnits) => {
+			const exists = prevUnits.some((item) => item.id === id);
+			if (!exists) {
+				return [...prevUnits, data];
+			} else {
+				return prevUnits.map((item) => (item.id === id ? data : item));
+			}
+		});
+	};
+	/* ----------------- AnZend Tolerances END --------------------- */
+
+
+	
+	
+	
+	
+	// ██       █████  ███████ ████████     ██      ██  ██████ ███████ ███    ██ ███████ ███████ ███████ 
+	// ██      ██   ██ ██         ██        ██      ██ ██      ██      ████   ██ ██      ██      ██      
+	// ██      ███████ ███████    ██        ██      ██ ██      █████   ██ ██  ██ ███████ █████   ███████ 
+	// ██      ██   ██      ██    ██        ██      ██ ██      ██      ██  ██ ██      ██ ██           ██ 
+	// ███████ ██   ██ ███████    ██        ███████ ██  ██████ ███████ ██   ████ ███████ ███████ ███████ 
+	/* ----------------- AnZend (old version) Licenses --------------------- */
+
+	/**
+	 * Обновление и удаление существующей записи
+	 * @param {*} id 
+	 * @param {*} data 
+	 * @returns 
+	 */
+	const handleUpdateAnZendLicenseUnit = (id, data) => {
+		// let udata = originalData.filter((item) => item.id !== id);
+		// udata.push(data);
+		console.log('CALL TU REAL UPDATE');
+		if (!editMode) {
+			return;
+		}
+
+		const excluders = ['command', 'date'];
+		let is_original = false;
+
+		originalTolerances.forEach((element) => {
+			if (element.id === id) {
+				console.log('element, data', element, data)
+				is_original = compareObjects(element, data, {
+					excludeFields: excluders,
+					compareArraysDeep: false,
+					ignoreNullUndefined: true,
+				});
+			}
+		});
+		console.log('is_original', is_original)
+		if (is_original === false) {
+			if (!editedToleranceIds?.includes(id)) {
+				setEditedToleranceIds([...editedToleranceIds, 'L' + id]);
+			}
+			data.command = "update";
+		} else {
+			if (editedToleranceIds?.includes('L' + id)) {
+				setEditedToleranceIds(editedToleranceIds.filter((item) => item !== 'L' + id));
+			}
+			data.command = '';
+		}
+		if (data.deleted === true){
+			data.command = "delete";
+		} 
+
+		console.log('data email', data)
+		setAnZendLicenses((prevUnits) => {
+			const exists = prevUnits.some((item) => item.id === id);
+			if (!exists) {
+				return [...prevUnits, data];
+			} else {
+				return prevUnits.map((item) => (item.id === id ? data : item));
+			}
+		});
+	};
+	/* ----------------- AnZend Licenses END --------------------- */
+
+
+
+
 	return (
 		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
 
@@ -195,7 +328,7 @@ const OrgPageMainTabToleranceSection = (props) => {
           key={'OPMTCcontactemailsSection' + item.id}
           data={item}
           edit_mode={editMode}
-          on_change={handleUpdateEmailUnit}
+          on_change={handleUpdateTolikUnit}
 		  selects={selects}
         />
       ))}</div>

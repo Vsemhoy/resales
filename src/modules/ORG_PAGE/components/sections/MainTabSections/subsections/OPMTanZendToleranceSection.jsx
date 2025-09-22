@@ -7,7 +7,7 @@ import { forIn } from 'lodash';
 import dayjs from 'dayjs';
 
 
-const OPMTtoleranceSection = (props) => {
+const OPMTanZendToleranceSection  = (props) => {
   const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 
   const [id, setId] = useState(null);
@@ -237,4 +237,4 @@ const OPMTtoleranceSection = (props) => {
   );
 };
 
-export default OPMTtoleranceSection;
+export default OPMTanZendToleranceSection ;
