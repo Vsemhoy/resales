@@ -55,12 +55,12 @@ const EngineerFilesDrawer = (props) => {
                 });
                 if (response.data) {
                     setFiles(
-                        response.data.data.files.map((el) => {
+                        response.data.content.files.map((el) => {
                             return {
                                 key: el.id,
                                 date: get_date_by_unix(el.created_at),
                                 name: parseNameFromFilePath(el.name_file),
-                                // download: "download",
+                                download: "download",
                                 // template_id: el.template_id,
                                 // type: el.type,
                             };

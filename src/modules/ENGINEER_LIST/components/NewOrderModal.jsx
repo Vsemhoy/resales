@@ -69,11 +69,15 @@ const NewOrderModal = (props) => {
                 fileList={fileList}
                 onRemove={handleRemoveFile}
             >
-                <Button icon={<UploadOutlined />}>Загрузить файлы</Button>
+                <Button icon={<UploadOutlined/>}>Загрузить файлы</Button>
             </Upload>
 
-            <div style={{ marginTop: 8, fontSize: '12px', color: '#999' }}>
+            <div style={{marginTop: 8, fontSize: '12px', color: '#999'}}>
                 Максимальный размер файла: 10MB
+            </div>
+
+            <div style={{marginTop: 8, fontSize: '12px', color: '#999'}}>
+                Название файлов должно быть на АНГЛИЙСКОМ
             </div>
 
         </Modal>
