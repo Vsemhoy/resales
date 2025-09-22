@@ -287,3 +287,8 @@ div.sa-outlet-body > div > div > .ant-collapse-item {
 .sa-outlet-body .ant-collapse {
 	border-radius: 0px !important;
 }
+
+
+.sa-tolerance-old-v {
+	border: #d48a00 1px dashed;
+}
