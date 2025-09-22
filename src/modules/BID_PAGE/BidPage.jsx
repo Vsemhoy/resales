@@ -1023,19 +1023,19 @@ const BidPage = (props) => {
 			case 'toAdmin':
 				if (+button_id === 2) {
 					setBidPlace(2);
-					setIsSavingInfo(true);
+					fetchUpdates().then(() => fetchBidInfo().then());
 				}
 				break;
 			case 'backManager':
 				if (+button_id === 2) {
 					setBidPlace(1);
-					setIsSavingInfo(true);
+					fetchUpdates().then(() => fetchBidInfo().then());
 				}
 				break;
 			case 'toBuh':
 				if (+button_id === 2) {
 					setBidPlace(3);
-					setIsSavingInfo(true);
+					fetchUpdates().then(() => fetchBidInfo().then());
 				}
 				break;
 		}
@@ -1480,7 +1480,7 @@ const BidPage = (props) => {
 																	);
 																} else {
 																	setBidPlace(2);
-																	setIsSavingInfo(true);
+																	fetchUpdates().then(() => fetchBidInfo().then());
 																}
 															}}
 													>Передать администратору <ArrowRightOutlined /></Button>
@@ -1500,7 +1500,7 @@ const BidPage = (props) => {
 																	);
 																} else {
 																	setBidPlace(1);
-																	setIsSavingInfo(true);
+																	fetchUpdates().then(() => fetchBidInfo().then());
 																}
 															}}
 													><ArrowLeftOutlined /> Вернуть менеджеру</Button>
@@ -1516,7 +1516,7 @@ const BidPage = (props) => {
 																	);
 																} else {
 																	setBidPlace(3);
-																	setIsSavingInfo(true);
+																	fetchUpdates().then(() => fetchBidInfo().then());
 																}
 															}}
 													>Передать бухгалтеру <ArrowRightOutlined /></Button>
@@ -1528,14 +1528,14 @@ const BidPage = (props) => {
 															disabled={openMode?.status === 1}
 															onClick={() => {
 																setBidPlace(2);
-																setIsSavingInfo(true);
+																fetchUpdates().then(() => fetchBidInfo().then());
 															}}
 													><ArrowLeftOutlined /> Вернуть администратору</Button>
 													<Button className={'sa-select-custom-end'}
 															disabled={openMode?.status === 1}
 															onClick={() => {
 																setBidPlace(4);
-																setIsSavingInfo(true);
+																fetchUpdates().then(() => fetchBidInfo().then());
 															}}
 													>Завершить счет <CheckCircleOutlined /></Button>
 												</Space.Compact>
@@ -1546,7 +1546,7 @@ const BidPage = (props) => {
 															disabled={openMode?.status === 1 && userData?.user?.sales_role === 3}
 															onClick={() => {
 																setBidPlace(3);
-																setIsSavingInfo(true);
+																fetchUpdates().then(() => fetchBidInfo().then());
 															}}
 													><ArrowLeftOutlined /> Вернуть бухгалтеру</Button>
 												</Space.Compact>
