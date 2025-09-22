@@ -493,7 +493,7 @@ const EngineerListPage = (props) => {
 		setModalFileList(files);
 		console.log(files)
 
-		fetchCreateNewOrder().then()
+		fetchCreateNewOrder(files, text).then()
 
 
 			// setIsOpenModal(false);
@@ -505,16 +505,17 @@ const EngineerListPage = (props) => {
 	};
 
 
-	const fetchCreateNewOrder = async () => {
+	const fetchCreateNewOrder = async (files, text) => {
 		const formData = new FormData();
 		formData.append('_token', CSRF_TOKEN);
-		formData.append('data', JSON.stringify({text: modalText}));
+		formData.append('data', JSON.stringify({text: text}));
 
-		modalFileList.forEach((file) => {
+		console.log("Files: ", files);
+		console.log("Text: ", text);
+
+		files.forEach((file, index) => {
 			formData.append('files[]', file.originFileObj || file);
 		});
-
-		console.log(formData)
 
 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', formData, {
 			headers: {
@@ -627,7 +628,7 @@ const EngineerListPage = (props) => {
 				</div>
 			</Affix>
 
-			<Layout className={'sa-layout sa-w-100'}>ё
+			<Layout className={'sa-layout sa-w-100'}>
 				<Sider
 					collapsed={!isOpenedFilters}
 					collapsedWidth={0}
