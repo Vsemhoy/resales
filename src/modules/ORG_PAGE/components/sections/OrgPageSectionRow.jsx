@@ -159,7 +159,7 @@ const OrgPageSectionRow = (props) => {
 				);
 			} else if (field.type === 'date') {
         /** ---------------------------------------------------------------- */
-				return <div className="sk-omt-content-formatted">{dayjs(value).format('DD.MM.YYYY')}</div>;
+				return <div className="sk-omt-content-formatted">{ value === null ? "" : dayjs(value).format('DD.MM.YYYY')}</div>;
 			} else if (field.type === 'datetime') {
         /** ---------------------------------------------------------------- */
         console.log('field.value TTT', field, value)

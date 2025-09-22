@@ -8,6 +8,7 @@
 
 .sk-omt-row {
 	display: grid;
+	border-top: 1px solid white;
 }
 .omt-1-col {
 	grid-template-columns: 100%;
@@ -23,9 +24,9 @@
 .sk-omt-row > div:first-child {
 	grid-template-columns: 220px auto;
 }
-.sk-omt-stack {
+/* .sk-omt-stack {
 	border-bottom: 6px solid #d9dee4;
-}
+} */
 .sk-omt-legend {
 	background-color: #ecf2fa;
 	/* height: 22px; */
@@ -257,4 +258,32 @@
 	position: sticky !important;
 	top: 32px !important;
 	z-index: 1000 !important;
+}
+
+.sa-org-contactstack-box .ant-collapse-item, .ant-collapse-content-box .ant-collapse-item {
+	border-top: 1px solid white !important;
+	border-bottom: 1px solid rgb(192, 192, 192) !important;
+	border-radius: 6px !important;
+	background-color: #e3e8ea;
+	/* overflow: hidden; */
+}
+
+/* .sa-outlet-body > div > div > div > div >  */
+.sa-org-modal-body  > div > div >  div > div >  .ant-collapse-item ,
+div.sa-outlet-body > div > div > .ant-collapse-item {
+	border-bottom: #e4e4e4 12px solid;
+}
+
+.ant-collapse-header-text .sa-flex-space > div:first-child {
+	font-weight: 600;
+	font-size: 0.95rem;
+}
+
+.sa-org-modal-body  > div > div >  div >  div > .ant-collapse-item:first-child > .ant-collapse-header{
+	/* outline: 2px solid red; */
+	border-radius: 0px !important;
+}
+.sa-org-modal-body .ant-collapse,
+.sa-outlet-body .ant-collapse {
+	border-radius: 0px !important;
 }
