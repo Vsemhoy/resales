@@ -23,7 +23,7 @@ import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/Curren
 import {
 	ArrowLeftOutlined,
 	ArrowRightOutlined,
-	BlockOutlined, CheckOutlined,
+	BlockOutlined, CheckCircleOutlined, CheckOutlined,
 	CopyOutlined,
 	DeleteOutlined,
 	DollarOutlined,
@@ -1419,20 +1419,36 @@ const BidPage = (props) => {
 										<div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
 											{+bidType === 2 && +bidPlace === 1 && (
 												<Space.Compact>
-													{/*<Button className={'sa-select-custom-admin'}><ArrowLeftOutlined /> Вернуть менеджеру</Button>*/}
-													<Button className={'sa-select-custom-admin'}>Передать администратору <ArrowRightOutlined /></Button>
+													<Button className={'sa-select-custom-admin'}
+															disabled={openMode?.status === 1}
+													>Передать администратору <ArrowRightOutlined /></Button>
 												</Space.Compact>
 											)}
 											{+bidType === 2 && +bidPlace === 2 && (
 												<Space.Compact>
-													<Button className={'sa-select-custom-manager'}><ArrowLeftOutlined /> Вернуть менеджеру</Button>
-													<Button className={'sa-select-custom-bugh'}>Передать бухгалтеру <ArrowRightOutlined /></Button>
+													<Button className={'sa-select-custom-manager'}
+															disabled={openMode?.status === 1}
+													><ArrowLeftOutlined /> Вернуть менеджеру</Button>
+													<Button className={'sa-select-custom-bugh'}
+															disabled={openMode?.status === 1}
+													>Передать бухгалтеру <ArrowRightOutlined /></Button>
 												</Space.Compact>
 											)}
 											{+bidType === 2 && +bidPlace === 3 && (
 												<Space.Compact>
-													<Button className={'sa-select-custom-admin'}><ArrowLeftOutlined /> Вернуть администратору</Button>
-													<Button className={'sa-select-custom-end'}>Завершить счет <CheckOutlined /></Button>
+													<Button className={'sa-select-custom-admin'}
+															disabled={openMode?.status === 1}
+													><ArrowLeftOutlined /> Вернуть администратору</Button>
+													<Button className={'sa-select-custom-end'}
+															disabled={openMode?.status === 1}
+													>Завершить счет <CheckCircleOutlined /></Button>
+												</Space.Compact>
+											)}
+											{+bidType === 2 && +bidPlace === 4 && (
+												<Space.Compact>
+													<Button className={'sa-select-custom-bugh'}
+															disabled={openMode?.status === 1}
+													><ArrowLeftOutlined /> Вернуть бухгалтеру</Button>
 												</Space.Compact>
 											)}
 
