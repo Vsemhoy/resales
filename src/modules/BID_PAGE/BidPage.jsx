@@ -11,6 +11,7 @@ import {
 	Steps,
 	Tag,
 	Tooltip,
+	Space
 } from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
 import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
@@ -20,7 +21,9 @@ import { BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, SELECTS } from './mock/
 import MODELS from './mock/mock_models';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import {
-	BlockOutlined,
+	ArrowLeftOutlined,
+	ArrowRightOutlined,
+	BlockOutlined, CheckOutlined,
 	CopyOutlined,
 	DeleteOutlined,
 	DollarOutlined,
@@ -46,6 +49,7 @@ import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
 import DataParser from "./components/DataParser";
 import FindSimilarDrawer from "./components/FindSimilarDrawer";
 import dayjs from "dayjs";
+import CustomModal from "../../components/helpers/modals/CustomModal";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -168,6 +172,7 @@ const BidPage = (props) => {
 	const [isParseModalOpen, setIsParseModalOpen] = useState(false);
 	const [isFindSimilarDrawerOpen, setIsFindSimilarDrawerOpen] = useState(false);
 	const [additionData, setAdditionData] = useState([]);
+	const [openCopySpecification, setOpenCopySpecification] = useState(false);
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -259,15 +264,17 @@ const BidPage = (props) => {
 			if (bid.base_info.object !== bidObject) flag = true;
 			if (bid.base_info.sellby !== bidSellBy) flag = true;
 			/* bill */
-			if (+bid.bill.requisite !== +requisite) flag = true;
-			if (+bid.bill.conveyance !== +conveyance) flag = true;
-			if (+bid.bill.fact_address !== +factAddress) flag = true;
-			if (+bid.bill.org_phone !== +phone) flag = true;
-			if (+bid.bill.contact_email !== +email) flag = true;
-			if (+bid.bill.insurance !== +insurance) flag = true;
-			if (+bid.bill.package !== +bidPackage) flag = true;
-			if (bid.bill.consignee !== consignee) flag = true;
-			if (bid.bill.other_equipment !== otherEquipment) flag = true;
+			if (bid.bill) {
+				if (+bid.bill.requisite !== +requisite) flag = true;
+				if (+bid.bill.conveyance !== +conveyance) flag = true;
+				if (+bid.bill.fact_address !== +factAddress) flag = true;
+				if (+bid.bill.org_phone !== +phone) flag = true;
+				if (+bid.bill.contact_email !== +email) flag = true;
+				if (+bid.bill.insurance !== +insurance) flag = true;
+				if (+bid.bill.package !== +bidPackage) flag = true;
+				if (bid.bill.consignee !== consignee) flag = true;
+				if (bid.bill.other_equipment !== otherEquipment) flag = true;
+			}
 			/* comments */
 			if (bid.comments.engineer !== bidCommentEngineer) flag = true;
 			if (bid.comments.manager !== bidCommentManager) flag = true;
@@ -953,15 +960,17 @@ const BidPage = (props) => {
 		defaultInfoUpd.bid.base_info.object = bidObject;
 		defaultInfoUpd.bid.base_info.sellby = bidSellBy;
 
-		defaultInfoUpd.bid.bill.requisite = requisite;
-		defaultInfoUpd.bid.bill.conveyance = conveyance;
-		defaultInfoUpd.bid.bill.fact_address = factAddress;
-		defaultInfoUpd.bid.bill.org_phone = phone;
-		defaultInfoUpd.bid.bill.contact_email = email;
-		defaultInfoUpd.bid.bill.insurance = insurance;
-		defaultInfoUpd.bid.bill.package = bidPackage;
-		defaultInfoUpd.bid.bill.consignee = consignee;
-		defaultInfoUpd.bid.bill.other_equipment = otherEquipment;
+		if (defaultInfoUpd.bid.bill) {
+			defaultInfoUpd.bid.bill.requisite = requisite;
+			defaultInfoUpd.bid.bill.conveyance = conveyance;
+			defaultInfoUpd.bid.bill.fact_address = factAddress;
+			defaultInfoUpd.bid.bill.org_phone = phone;
+			defaultInfoUpd.bid.bill.contact_email = email;
+			defaultInfoUpd.bid.bill.insurance = insurance;
+			defaultInfoUpd.bid.bill.package = bidPackage;
+			defaultInfoUpd.bid.bill.consignee = consignee;
+			defaultInfoUpd.bid.bill.other_equipment = otherEquipment;
+		}
 
 		defaultInfoUpd.bid.comments.engineer = bidCommentEngineer;
 		defaultInfoUpd.bid.comments.manager = bidCommentManager;
@@ -978,6 +987,10 @@ const BidPage = (props) => {
 
 		setDefaultInfo(defaultInfoUpd);
 	};
+	const customClick = (button_id) => {
+		console.log(button_id)
+		setOpenCopySpecification(false);
+	}
 
 	const collapseItems = [
 		{
@@ -1388,17 +1401,39 @@ const BidPage = (props) => {
 														</Tooltip>
 													)}
 												</div>
+											)
+										}
+										<div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+											{+bidType === 2 && +bidPlace === 1 && (
+												<Space.Compact>
+													{/*<Button className={'sa-select-custom-admin'}><ArrowLeftOutlined /> Вернуть менеджеру</Button>*/}
+													<Button className={'sa-select-custom-admin'}>Передать администратору <ArrowRightOutlined /></Button>
+												</Space.Compact>
 											)}
-										<Button
-											type={'primary'}
-											style={{ width: '150px' }}
-											icon={<SaveOutlined />}
-											loading={isSavingInfo}
-											onClick={() => setIsSavingInfo(true)}
-											disabled={openMode?.status === 1}
-										>
-											{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
-										</Button>
+											{+bidType === 2 && +bidPlace === 2 && (
+												<Space.Compact>
+													<Button className={'sa-select-custom-manager'}><ArrowLeftOutlined /> Вернуть менеджеру</Button>
+													<Button className={'sa-select-custom-bugh'}>Передать бухгалтеру <ArrowRightOutlined /></Button>
+												</Space.Compact>
+											)}
+											{+bidType === 2 && +bidPlace === 3 && (
+												<Space.Compact>
+													<Button className={'sa-select-custom-admin'}><ArrowLeftOutlined /> Вернуть администратору</Button>
+													<Button className={'sa-select-custom-end'}>Завершить счет <CheckOutlined /></Button>
+												</Space.Compact>
+											)}
+
+											<Button
+												type={'primary'}
+												style={{ width: '150px' }}
+												icon={<SaveOutlined />}
+												loading={isSavingInfo}
+												onClick={() => setIsSavingInfo(true)}
+												disabled={openMode?.status === 1}
+											>
+												{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
+											</Button>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1430,7 +1465,13 @@ const BidPage = (props) => {
 									color="primary"
 									variant="outlined"
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'} />}
-									onClick={() => navigate(`/bidsPDF/${bidId}`)}
+									onClick={() => {
+										if (isSmthChanged) {
+											setOpenCopySpecification(true);
+										} else {
+											navigate(`/bidsPDF/${bidId}`);
+										}
+									}}
 								></Button>
 							</Tooltip>
 							{+bidType === 1 && (
@@ -1848,6 +1889,30 @@ const BidPage = (props) => {
 			<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
 							   closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
 							   bidId={bidId}
+			/>
+			<CustomModal
+				customClick={customClick}
+				customType={"danger"}
+				customText={"Кастомный текст сообщения"}
+				customTitle={"Кастомный Тайтл"}
+				customButtons={[
+					{
+						id: 1,
+						text: "Подтвердить",
+						type: "primary",
+					},
+					{
+						id: 2,
+						text: "Осторожно!",
+						type: "primary",
+						typePlus: "danger"
+					},
+					{
+						id: 3,
+						text: "Отменить",
+					}
+				]}
+				open={openCopySpecification}
 			/>
 			{isAlertVisible && (
 				<Alert
