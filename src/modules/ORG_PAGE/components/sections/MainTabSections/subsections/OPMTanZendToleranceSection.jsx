@@ -7,6 +7,38 @@ import { forIn } from 'lodash';
 import dayjs from 'dayjs';
 
 
+const datademo = {
+  active_licenses: [
+		{
+			id: 8191,
+			id_orgs: 22809,
+			id8an_typelicenses: '2',
+			number: '45-Б/00029',
+			comment: 'от 26.12.2014',
+			deleted: 0,
+			type: {
+				id: 2,
+				name: 'монтаж',
+			},
+		},
+	],
+
+	active_tolerance: [
+		{
+			id: 3981,
+			id_orgs: 22762,
+			id8an_typetolerance: '3',
+			number: '16-04-15-172-П-016/ 16.04.15   ',
+			comment: '',
+			deleted: 0,
+			type: {
+				id: 3,
+				name: '10. Проектирование МПБ',
+			},
+		},
+	],
+}
+
 const OPMTanZendToleranceSection  = (props) => {
   const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 
@@ -237,4 +269,4 @@ const OPMTanZendToleranceSection  = (props) => {
   );
 };
 
-export default OPMTanZendToleranceSection ;
+export default OPMTanZendToleranceSection;
