@@ -537,7 +537,7 @@ export const BID_INFO = {
     "bid": {
         "id": 120828,
         "id_company": 2,
-        "place": 2,
+        "place": 1,
         "type": 2,
         "files_count": 0,
         "comments": {
