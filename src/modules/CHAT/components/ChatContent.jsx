@@ -45,9 +45,9 @@ export default function ChatContent({ chatId }) {
 		if (!text.trim()) return;
 
 		await sendSms({
+			to: chatId, // не нужен, так как бэкенд сам определит по chat_id
 			text: text.trim(),
 			answer: null,
-			chat_id: chatId, // ✅ добавляем сюда chat_id при отправке
 		});
 
 		setMessages((prev) => [

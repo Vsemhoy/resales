@@ -1,37 +1,11 @@
-import {
-	ArchiveBoxXMarkIcon,
-	ArrowRightEndOnRectangleIcon,
-	ArrowRightStartOnRectangleIcon,
-	DocumentCurrencyDollarIcon,
-	NewspaperIcon,
-} from '@heroicons/react/24/outline';
-import {Button, Dropdown, Input, InputNumber, Menu, Modal, Select, Space, Tag, Tooltip} from 'antd';
-import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import {
-	DeleteOutlined,
-	DollarOutlined,
-	FileDoneOutlined,
-	InfoCircleOutlined,
-	LogoutOutlined,
-	SafetyOutlined,
-} from '@ant-design/icons';
-import dayjs from 'dayjs';
-import Name from './alan/Name';
-import Count from './alan/Count';
-import NameSelect from "./alan/NameSelect";
+import { useEffect, useState } from 'react';
+import {InputNumber, Modal} from 'antd';
 
 const CopyMessageView = (props) => {
-	const [data, setData] = useState([]);
-	const [allModels, setAllModels] = useState(props.allModels ?? null);
 	const [openModal, setOpenModal] = useState(false);
 	const [value, setValue] = useState(0);
 	const [type, setType] = useState(1);
 	const [title, setTitle] = useState("");
-
-	useEffect(() => {
-		setData(props.data);
-	}, [props.data]);
 
 	useEffect(() => {
 		setOpenModal(props.openCopySpecification);

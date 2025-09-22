@@ -538,7 +538,7 @@ export const BID_INFO = {
         "id": 120828,
         "id_company": 2,
         "place": 1,
-        "type": 1,
+        "type": 2,
         "files_count": 0,
         "comments": {
             "accountant": "",
@@ -565,7 +565,17 @@ export const BID_INFO = {
             "sellby": "",
             "project": 1
         },
-        "bill": null,
+        "bill": {
+            "requisite": null,
+            "conveyance": 0,
+            "fact_address": null,
+            "org_phone": null,
+            "contact_email": 0,
+            "insurance": 0,
+            "package": 0,
+            "consignee": "",
+            "other_equipment": ""
+        },
         "actions": {
             "create": {
                 "username": "Кошелев Александр Станиславович",
@@ -716,11 +726,17 @@ export const BID_INFO = {
             "percent": 0
         }
     ],
-    "openmode": {
+    /*"openmode": {
         "status": 1,
         "description": "Режим просмотра",
         "tagtext": "Просмотр",
         "color": "volcano"
+    },*/
+    "openmode": {
+        "status": 2,
+        "description": "Режим редактирования",
+        "tagtext": "Редактирование",
+        "color": "green"
     },
     "__endpont": "#NEWOFDC77096732",
     "_duration": 0.02536606788635254
@@ -1466,3 +1482,19 @@ export const CALC_PDF = {
         "box_size": 39
     }
 };
+export const FILES = [
+    {
+        "id": 142,
+        "name_file": "Коммерческое предложение для ЗапСибЗНИИЭП.docx",
+        "type": 1,
+        "template_id": 1,
+        "created_at": 1758131203
+    },
+    {
+        "id": 146,
+        "name_file": "Коммерческое предложение для ЗапСибЗНИИЭП.docx",
+        "type": 1,
+        "template_id": 1,
+        "created_at": 1758275490
+    }
+];

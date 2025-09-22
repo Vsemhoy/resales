@@ -8,6 +8,7 @@ import { Button, Collapse } from 'antd';
 import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { forIn } from 'lodash';
+import OrgPageMainTabToleranceSection from '../components/sections/MainTabSections/OrgPageMainTabToleranceSection';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -62,6 +63,12 @@ const MainTabPage = (props) => {
     if (baseData?.contacts){
       contics = baseData.contacts.map((item)=>({
         key: "controw_org_" + item.id,
+        classNames : 'super',
+        style: {border: item.deleted ? '2px solid #ff0000a2' : (
+          item.command === 'create' ? '2px solid #2196f3' : '0px'
+        ) , marginBottom: item.deleted ? '1px ' : (
+          item.command === 'create' ? '2px' : '0px'
+        )},
         label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}><div>{item.lastname} {item.name} {item.middlename} <span style={{color: 'gray', fontWeight: 100}}>({item.id})</span></div>
         {editMode && (
         <div className={'sa-flex-gap'}>
@@ -152,7 +159,7 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_13',
-        label: <div className={`sa-flex-space`}><div>Лицензии/Допуски</div><div></div>
+        label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div>
         {editMode && (
            <Button
               size="small"
@@ -163,11 +170,24 @@ const MainTabPage = (props) => {
               //   handleDeleteRealUnit(item.id, 1);
               // }}
             >
-              Добавить лдопуск
+              
             </Button>
         )}
         </div>,
         children: <OrgPageMainTabContactinfoSection
+          color={'#799119ff'}
+          edit_mode={editMode} 
+          data={baseData}
+          selects={selects}
+          on_blur={updateCompanyData}
+          />
+      },
+      {
+        key: 'mainorgsec_131',
+        label: <div className={`sa-flex-space`}><div>Лицензии/Допуски</div><div></div>
+
+        </div>,
+        children: <OrgPageMainTabToleranceSection
           color={'#30c97aff'}
           edit_mode={editMode} 
           data={baseData}
@@ -247,12 +267,12 @@ const MainTabPage = (props) => {
       job:          1,
 			exittoorg_id: 0,
       unsubscribe:  0,
-      command: 'create',
       contactstelephones: [],
       contactmobiles:     [],
       contacthomephones:  [],
       contactemails:      [],
       contactmessangers:  [],
+      command: 'create',
     }
     let ndt = JSON.parse(JSON.stringify(baseData));
     let newContacts = [newContact, ...ndt.contacts];

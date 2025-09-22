@@ -9,7 +9,7 @@ const OrgPageMainTabCommonSection = (props) => {
 
   const [itemId,         setItemId]           = useState(0);
   const [name,           setName]             = useState('');
-  const [site,           setSite]             = useState('');
+  // const [site,           setSite]             = useState('');
   const [id8an_profiles, setId8an_profiles]   = useState(0);
   const [middlename,     setMiddlename]       = useState('');
   const [id8an_fs,       setId8an_fs]         = useState(0);
@@ -37,7 +37,7 @@ const OrgPageMainTabCommonSection = (props) => {
       // setObjectResult(props.data);
 
       setName(props.data?.name);
-      setSite(props.data?.site);
+      // setSite(props.data?.site);
       setMiddlename(props.data?.middlename);
       setId8an_fs(props.data?.id8an_fs);
       setId8an_profiles(props.data?.id8an_profiles);
@@ -223,7 +223,7 @@ const OrgPageMainTabCommonSection = (props) => {
       <OrgPageSectionRow
         key={'opmaincom_243'}
 				edit_mode={editMode}
-				titles={['Источник', 'Сайт']}
+				titles={['Источник']}
 				datas={[
 					{
 						type: OPS_TYPE.STRING,
@@ -234,15 +234,15 @@ const OrgPageMainTabCommonSection = (props) => {
 						placeholder: '',
 						name: 'source',
 					},
-          {
-						type: OPS_TYPE.STRING,
-						value: site,
-						max: 150,
-						required: false,
-						nullable: true,
-						placeholder: '',
-						name: 'site',
-					}
+          // {
+					// 	type: OPS_TYPE.STRING,
+					// 	value: site,
+					// 	max: 150,
+					// 	required: false,
+					// 	nullable: true,
+					// 	placeholder: '',
+					// 	name: 'site',
+					// }
 				]}
         
         on_blur={(data)=>{

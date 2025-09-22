@@ -42,6 +42,10 @@ import ModelInfoExtraDrawer from "./components/ModelInfoExtraDrawer";
 import ProjectInfo from "./components/ProjectInfo";
 import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
 import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
+import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
+import DataParser from "./components/DataParser";
+import FindSimilarDrawer from "./components/FindSimilarDrawer";
+import dayjs from "dayjs";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -68,7 +72,9 @@ const BidPage = (props) => {
 		'update': null,
 		'view': null,
 	});
-	const [openMode, setOpenMode] = useState({}); // просмотр, редактирование
+	const [openMode, setOpenMode] = useState(null); // просмотр, редактирование
+	const [isSmthChanged, setIsSmthChanged] = useState(false);
+	const [defaultInfo, setDefaultInfo] = useState(null);
 	/* ШАПКА СТРАНИЦЫ */
 	const [bidType, setBidType] = useState(null);
 	const [bidIdCompany, setBidIdCompany] = useState(null);
@@ -78,10 +84,10 @@ const BidPage = (props) => {
 	const [companyCurrency, setCompanyCurrency] = useState(null);
 	const [bankCurrency, setBankCurrency] = useState(null);
 	/* БАЗОВЫЙ БЛОК */
-	const [bidOrgUser, setBidOrgUser] = useState('');
-	const [bidProtectionProject, setBidProtectionProject] = useState('');
-	const [bidObject, setBidObject] = useState('');
-	const [bidSellBy, setBidSellBy] = useState(''); // срок реализации
+	const [bidOrgUser, setBidOrgUser] = useState(null);
+	const [bidProtectionProject, setBidProtectionProject] = useState(null);
+	const [bidObject, setBidObject] = useState(null);
+	const [bidSellBy, setBidSellBy] = useState(null); // срок реализации
 	/* БЛОК ПЛАТЕЛЬЩИКА */
 	const [requisite, setRequisite] = useState(null);
 	const [conveyance, setConveyance] = useState(null);
@@ -90,19 +96,19 @@ const BidPage = (props) => {
 	const [email, setEmail] = useState(null);
 	const [insurance, setInsurance] = useState(null);
 	const [bidPackage, setBidPackage] = useState(null);
-	const [consignee, setConsignee] = useState('');
-	const [otherEquipment, setOtherEquipment] = useState('');
+	const [consignee, setConsignee] = useState(null);
+	const [otherEquipment, setOtherEquipment] = useState(null);
 	/* БЛОК КОММЕНТАРИЕВ */
-	const [bidCommentEngineer, setBidCommentEngineer] = useState('');
-	const [bidCommentManager, setBidCommentManager] = useState('');
-	const [bidCommentAdmin, setBidCommentAdmin] = useState('');
-	const [bidCommentAccountant, setBidCommentAccountant] = useState('');
-	const [bidCommentAddEquipment, setBidCommentAddEquipment] = useState('');
+	const [bidCommentEngineer, setBidCommentEngineer] = useState(null);
+	const [bidCommentManager, setBidCommentManager] = useState(null);
+	const [bidCommentAdmin, setBidCommentAdmin] = useState(null);
+	const [bidCommentAccountant, setBidCommentAccountant] = useState(null);
+	const [bidCommentAddEquipment, setBidCommentAddEquipment] = useState(null);
 	/* ФИНАНСОВЫЙ БЛОК */
-	const [bidCurrency, setBidCurrency] = useState(0);
-	const [bidPriceStatus, setBidPriceStatus] = useState(0);
-	const [bidPercent, setBidPercent] = useState(0);
-	const [bidNds, setBidNds] = useState(0);
+	const [bidCurrency, setBidCurrency] = useState(null);
+	const [bidPriceStatus, setBidPriceStatus] = useState(null);
+	const [bidPercent, setBidPercent] = useState(null);
+	const [bidNds, setBidNds] = useState(null);
 	/* ЛОГИ */
 	const [bidActionsLogs, setBidActionsLogs] = useState({});
 	/* ФАЙЛЫ */
@@ -158,6 +164,10 @@ const BidPage = (props) => {
 	const [isProjectDataModalOpen, setIsProjectDataModalOpen] = useState(false);
 	const [isBidDuplicateDrawerOpen, setIsBidDuplicateDrawerOpen] = useState(false);
 	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
+	const [isBidFilesDrawerOpen, setIsBidFilesDrawerOpen] = useState(false);
+	const [isParseModalOpen, setIsParseModalOpen] = useState(false);
+	const [isFindSimilarDrawerOpen, setIsFindSimilarDrawerOpen] = useState(false);
+	const [additionData, setAdditionData] = useState([]);
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -196,24 +206,26 @@ const BidPage = (props) => {
 		}
 	}, [isSavingInfo]);
 	useEffect(() => {
-		const handleKeyDown = (event) => {
-			console.log('event', event)
-			if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-				event.preventDefault();
-				setIsSavingInfo(prev => {
-					if (!prev) {
-						return true;
-					}
-					return prev;
-				});
-			}
-		};
+		if (openMode) {
+			const handleKeyDown = (event) => {
+				//console.log('event', event);
+				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status > 1) {
+					event.preventDefault();
+					setIsSavingInfo(prev => {
+						if (!prev) {
+							return true;
+						}
+						return prev;
+					});
+				}
+			};
 
-		window.addEventListener('keydown', handleKeyDown);
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-		};
-	}, []);
+			window.addEventListener('keydown', handleKeyDown);
+			return () => {
+				window.removeEventListener('keydown', handleKeyDown);
+			};
+		}
+	}, [openMode]);
 	useEffect(() => {
 		if (isMounted && isNeedCalcMoney) {
 			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
@@ -237,6 +249,55 @@ const BidPage = (props) => {
 			return () => clearTimeout(timer);
 		}
 	}, [isAlertVisible]);
+	useEffect(() => {
+		if (defaultInfo) {
+			const bid = defaultInfo.bid;
+			let flag = false;
+			/* base info */
+			if (+bid.base_info.orguser !== +bidOrgUser) flag = true;
+			if (+bid.base_info.protection !== +bidProtectionProject) flag = true;
+			if (bid.base_info.object !== bidObject) flag = true;
+			if (bid.base_info.sellby !== bidSellBy) flag = true;
+			/* bill */
+			if (+bid.bill.requisite !== +requisite) flag = true;
+			if (+bid.bill.conveyance !== +conveyance) flag = true;
+			if (+bid.bill.fact_address !== +factAddress) flag = true;
+			if (+bid.bill.org_phone !== +phone) flag = true;
+			if (+bid.bill.contact_email !== +email) flag = true;
+			if (+bid.bill.insurance !== +insurance) flag = true;
+			if (+bid.bill.package !== +bidPackage) flag = true;
+			if (bid.bill.consignee !== consignee) flag = true;
+			if (bid.bill.other_equipment !== otherEquipment) flag = true;
+			/* comments */
+			if (bid.comments.engineer !== bidCommentEngineer) flag = true;
+			if (bid.comments.manager !== bidCommentManager) flag = true;
+			if (bid.comments.admin !== bidCommentAdmin) flag = true;
+			if (bid.comments.accountant !== bidCommentAccountant) flag = true;
+			if (bid.comments.add_equipment !== bidCommentAddEquipment) flag = true;
+			/* finance */
+			if (bid.finance.bid_currency !== bidCurrency) flag = true;
+			if (bid.finance.status !== bidPriceStatus) flag = true;
+			if (String(bid.finance.percent) !== String(bidPercent)) flag = true;
+			if (bid.finance.nds !== bidNds) flag = true;
+			/* bid_models */
+			if (!areArraysEqual(defaultInfo.bid_models, bidModels)) flag = true;
+
+			setIsSmthChanged(flag);
+		}
+	}, [
+		/* base info */
+		bidOrgUser, bidProtectionProject, bidObject, bidSellBy,
+		/* bill */
+		requisite, conveyance, factAddress, phone, email,
+		insurance, bidPackage, consignee, otherEquipment,
+		/* comments */
+		bidCommentEngineer, bidCommentManager, bidCommentAdmin,
+		bidCommentAccountant, bidCommentAddEquipment,
+		/* finance */
+		bidCurrency, bidPriceStatus, bidPercent, bidNds,
+		/* bid_models */
+		bidModels
+	]);
 
 	const fetchInfo = async () => {
 		setIsLoading(true);
@@ -308,9 +369,19 @@ const BidPage = (props) => {
 					if (content.bid_models) {
 						setBidModels(content.bid_models);
 					}
+					setTimeout(() => {
+						setDefaultInfo({
+							bid: content.bid,
+							bid_models: content.bid_models,
+						});
+					}, 500);
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			const openMode = BID_INFO?.openmode;
@@ -366,6 +437,12 @@ const BidPage = (props) => {
 			if (BID_INFO.bid_models) {
 				setBidModels(BID_INFO.bid_models);
 			}
+			setTimeout(() => {
+				setDefaultInfo({
+					bid: BID_INFO.bid,
+					bid_models: BID_INFO.bid_models,
+				});
+			}, 500);
 		}
 	};
 	const fetchSelects = async () => {
@@ -397,6 +474,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setTypeSelect(SELECTS.type_select);
@@ -434,6 +515,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setOrgUsersSelect(SELECTS.orgusers_select);
@@ -455,6 +540,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setEmailSelect(SELECTS?.contact_email_select);
@@ -473,6 +562,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setCompanyCurrency(CUR_COMPANY);
@@ -492,6 +585,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setGarbage([]);
@@ -557,6 +654,8 @@ const BidPage = (props) => {
 					setAlertMessage('Успех!');
 					setAlertDescription(response.data.message);
 					setAlertType('success');
+					setIsSmthChanged(false);
+					updateDefaultInfo();
 				}
 			} catch (e) {
 				console.log(e);
@@ -570,6 +669,8 @@ const BidPage = (props) => {
 			setAlertMessage('Успех!');
 			setAlertDescription('Успешное обновление');
 			setAlertType('success');
+			setIsSmthChanged(false);
+			updateDefaultInfo();
 		}
 	};
 	const fetchCalcModels = async () => {
@@ -598,6 +699,10 @@ const BidPage = (props) => {
 				setTimeout(() => setIsLoadingSmall(false), 500);
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 				setTimeout(() => setIsLoadingSmall(false), 500);
 			}
 		} else {
@@ -628,6 +733,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		}
 	};
@@ -647,10 +756,51 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		}
 	};
 
+	const areArraysEqual = (arr1, arr2) => {
+		// Проверка длины
+		if (arr1.length !== arr2.length) return false;
+
+		// Проверка каждого элемента
+		return arr1.every((item, index) => {
+			const item2 = arr2[index];
+
+			// Если оба объекта
+			if (typeof item === 'object' && item !== null &&
+				typeof item2 === 'object' && item2 !== null) {
+				return areObjectsEqual(item, item2);
+			}
+
+			// Для примитивов
+			return item === item2;
+		});
+	};
+	const areObjectsEqual = (obj1, obj2) => {
+		const keys1 = Object.keys(obj1);
+		const keys2 = Object.keys(obj2);
+
+		//if (keys1.length !== keys2.length) return false;
+
+		return keys1.every(key => {
+			// Рекурсивная проверка для вложенных объектов
+			if (typeof obj1[key] === 'object' && obj1[key] !== null &&
+				typeof obj2[key] === 'object' && obj2[key] !== null) {
+				return areObjectsEqual(obj1[key], obj2[key]);
+			}
+			if (key !== 'moneyOne' && key !== 'moneyCount') {
+				return String(obj1[key]) === String(obj2[key]);
+			} else {
+				return true;
+			}
+		});
+	};
 	const prepareSelect = (select) => {
 	  if (select) {
 		  return select.map((item) => ({value: item.id, label: item.name}));
@@ -768,6 +918,66 @@ const BidPage = (props) => {
 		setModelIdExtra(null);
 		setModelNameExtra('');
 	};
+	const addParseModels = () => {
+		console.log(additionData);
+		const sort = bidModels.sort((a,b) => a.sort - b.sort)[bidModels.length-1].sort;
+		const arr = additionData.map((newModel, idx) => {
+			const model = modelsSelect.find(model => model.id === newModel.id);
+			return {
+				"id": 0,
+				"bid_id": bidId,
+				"model_id": model.id,
+				"model_name": model.name,
+				"model_count": newModel.count,
+				"not_available": 0,
+				"percent": 0,
+				"presence": -2,
+				"sort": sort + idx,
+				"type_model": model.type_model,
+				"currency": model.currency,
+			}
+		});
+		const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+		setBidModels([
+			...bidModelsUpd,
+			...arr
+		]);
+		setAdditionData([]);
+		setIsNeedCalcMoney(true);
+		setIsParseModalOpen(false);
+	};
+	const updateDefaultInfo = () => {
+		const defaultInfoUpd = JSON.parse(JSON.stringify(defaultInfo));
+		defaultInfoUpd.bid.base_info.orguser = bidOrgUser;
+		defaultInfoUpd.bid.base_info.protection = bidProtectionProject;
+		defaultInfoUpd.bid.base_info.object = bidObject;
+		defaultInfoUpd.bid.base_info.sellby = bidSellBy;
+
+		defaultInfoUpd.bid.bill.requisite = requisite;
+		defaultInfoUpd.bid.bill.conveyance = conveyance;
+		defaultInfoUpd.bid.bill.fact_address = factAddress;
+		defaultInfoUpd.bid.bill.org_phone = phone;
+		defaultInfoUpd.bid.bill.contact_email = email;
+		defaultInfoUpd.bid.bill.insurance = insurance;
+		defaultInfoUpd.bid.bill.package = bidPackage;
+		defaultInfoUpd.bid.bill.consignee = consignee;
+		defaultInfoUpd.bid.bill.other_equipment = otherEquipment;
+
+		defaultInfoUpd.bid.comments.engineer = bidCommentEngineer;
+		defaultInfoUpd.bid.comments.manager = bidCommentManager;
+		defaultInfoUpd.bid.comments.admin = bidCommentAdmin;
+		defaultInfoUpd.bid.comments.accountant = bidCommentAccountant;
+		defaultInfoUpd.bid.comments.add_equipment = bidCommentAddEquipment;
+
+		defaultInfoUpd.bid.finance.bid_currency = bidCurrency;
+		defaultInfoUpd.bid.finance.status = bidPriceStatus;
+		defaultInfoUpd.bid.finance.percent = bidPercent;
+		defaultInfoUpd.bid.finance.nds = bidNds;
+
+		defaultInfoUpd.bid_models = bidModels;
+
+		setDefaultInfo(defaultInfoUpd);
+	};
 
 	const collapseItems = [
 		{
@@ -784,6 +994,7 @@ const BidPage = (props) => {
 							value={bidOrgUser}
 							options={prepareSelect(orgUsersSelect)}
 							onChange={(val) => setBidOrgUser(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -795,6 +1006,7 @@ const BidPage = (props) => {
 							value={bidProtectionProject}
 							options={prepareSelect(protectionSelect)}
 							onChange={(val) => setBidProtectionProject(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -805,6 +1017,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={bidObject}
 							onChange={(e) => setBidObject(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -815,6 +1028,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={bidSellBy}
 							onChange={(e) => setBidSellBy(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -857,6 +1071,7 @@ const BidPage = (props) => {
 							value={requisite}
 							options={prepareSelect(requisiteSelect)}
 							onChange={(val) => setRequisite(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -868,6 +1083,7 @@ const BidPage = (props) => {
 							value={conveyance}
 							options={prepareSelect(conveyanceSelect)}
 							onChange={(val) => setConveyance(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -879,6 +1095,7 @@ const BidPage = (props) => {
 							value={factAddress}
 							options={prepareSelect(factAddressSelect)}
 							onChange={(val) => setFactAddress(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -890,6 +1107,7 @@ const BidPage = (props) => {
 							value={phone}
 							options={prepareSelect(phoneSelect)}
 							onChange={(val) => setPhone(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -901,6 +1119,7 @@ const BidPage = (props) => {
 							value={email}
 							options={prepareSelect(emailSelect)}
 							onChange={(val) => setEmail(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -912,6 +1131,7 @@ const BidPage = (props) => {
 							value={insurance}
 							options={prepareSelect(insuranceSelect)}
 							onChange={(val) => setInsurance(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -923,6 +1143,7 @@ const BidPage = (props) => {
 							value={bidPackage}
 							options={prepareSelect(packageSelect)}
 							onChange={(val) => setBidPackage(val)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -933,6 +1154,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={consignee}
 							onChange={(e) => setConsignee(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -943,6 +1165,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={otherEquipment}
 							onChange={(e) => setOtherEquipment(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 				</div>
@@ -970,6 +1193,7 @@ const BidPage = (props) => {
 							value={bidCommentEngineer}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentEngineer(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -980,6 +1204,7 @@ const BidPage = (props) => {
 							value={bidCommentManager}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentManager(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -990,6 +1215,7 @@ const BidPage = (props) => {
 							value={bidCommentAdmin}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentAdmin(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1000,6 +1226,7 @@ const BidPage = (props) => {
 							value={bidCommentAccountant}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentAccountant(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1010,6 +1237,7 @@ const BidPage = (props) => {
 							value={bidCommentAddEquipment}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentAddEquipment(e.target.value)}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 				</div>
@@ -1033,6 +1261,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1048,6 +1277,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1063,6 +1293,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1078,6 +1309,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
+							disabled={openMode?.status === 1}
 						/>
 					</div>
 				</div>
@@ -1150,6 +1382,11 @@ const BidPage = (props) => {
 													<Tooltip title={openMode.description}>
 														<Tag color={openMode.color}>{openMode.tagtext}</Tag>
 													</Tooltip>
+													{isSmthChanged && (
+														<Tooltip title={'Не забудьте сохранить'}>
+															<Tag color='red-inverse'>Есть несохраненные данные</Tag>
+														</Tooltip>
+													)}
 												</div>
 											)}
 										<Button
@@ -1158,6 +1395,7 @@ const BidPage = (props) => {
 											icon={<SaveOutlined />}
 											loading={isSavingInfo}
 											onClick={() => setIsSavingInfo(true)}
+											disabled={openMode?.status === 1}
 										>
 											{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
 										</Button>
@@ -1192,11 +1430,10 @@ const BidPage = (props) => {
 									color="primary"
 									variant="outlined"
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'} />}
-									// onClick={() => window.open(`/resales/bidsPDF/${bidId}`, '_blank')}
 									onClick={() => navigate(`/bidsPDF/${bidId}`)}
 								></Button>
 							</Tooltip>
-							{+bidType !== 2 && (
+							{+bidType === 1 && (
 								<Tooltip title={'Сохранить в WORD'} placement={'right'}>
 									<Button
 										className={'sa-bid-page-btn'}
@@ -1207,17 +1444,20 @@ const BidPage = (props) => {
 									></Button>
 								</Tooltip>
 							)}
-							<Tooltip title={'Файлы'} placement={'right'}>
-								<Badge count={bidFilesCount} color={'geekblue'}>
-									<Button
-										className={'sa-bid-page-btn'}
-										color="primary"
-										variant="outlined"
-										icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
-									></Button>
-								</Badge>
-							</Tooltip>
-							{+bidType !== 2 && (
+							{+bidType === 1 && (
+								<Tooltip title={'Файлы'} placement={'right'}>
+									<Badge count={bidFilesCount} color={'geekblue'}>
+										<Button
+											className={'sa-bid-page-btn'}
+											color="primary"
+											variant="outlined"
+											icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
+											onClick={() => setIsBidFilesDrawerOpen(true)}
+										></Button>
+									</Badge>
+								</Tooltip>
+							)}
+							{+bidType === 1 && (
 								<Tooltip title={'Создать счет'} placement={'right'}>
 									<Button
 										className={'sa-bid-page-btn'}
@@ -1226,6 +1466,19 @@ const BidPage = (props) => {
 										icon={<DollarOutlined className={'sa-bid-page-btn-icon'} />}
 										onClick={() => fetchNewBid()}
 									></Button>
+								</Tooltip>
+							)}
+							{+bidType === 2 && (
+								<Tooltip title={'Счета'} placement={'right'}>
+									<Badge count={bidFilesCount} color={'geekblue'}>
+										<Button
+											className={'sa-bid-page-btn'}
+											color="primary"
+											variant="outlined"
+											icon={<DownloadOutlined className={'sa-bid-page-btn-icon'} />}
+											onClick={() => setIsBidFilesDrawerOpen(true)}
+										></Button>
+									</Badge>
 								</Tooltip>
 							)}
 						</div>
@@ -1294,9 +1547,8 @@ const BidPage = (props) => {
 								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
 									<p>Наличие</p>
 								</div>
-								<div
-									className={'sa-models-table-cell sa-models-table-cell-header'}
-									style={{ boxShadow: 'none' }}
+								<div className={'sa-models-table-cell sa-models-table-cell-header'}
+									 style={{ boxShadow: 'none' }}
 								></div>
 								<div className={'sa-models-table-cell sa-models-table-cell-header'}></div>
 							</div>
@@ -1315,6 +1567,7 @@ const BidPage = (props) => {
 												<NameSelect
 													options={prepareSelect(modelsSelect)}
 													model={bidModel}
+													openMode={openMode}
 													onUpdateModelName={handleChangeModel}
 												/>
 											</div>
@@ -1323,6 +1576,7 @@ const BidPage = (props) => {
 													value={bidModel.model_count}
 													bidModelId={bidModel.id}
 													bidModelSort={bidModel.sort}
+													openMode={openMode}
 													type={'model_count'}
 													onChangeModel={handleChangeModelInfo}
 												/>
@@ -1332,6 +1586,7 @@ const BidPage = (props) => {
 													value={bidModel.percent}
 													bidModelId={bidModel.id}
 													bidModelSort={bidModel.sort}
+													openMode={openMode}
 													type={'percent'}
 													onChangeModel={handleChangeModelInfo}
 												/>
@@ -1356,6 +1611,7 @@ const BidPage = (props) => {
 													value={bidModel.presence}
 													bidModelId={bidModel.id}
 													bidModelSort={bidModel.sort}
+													openMode={openMode}
 													type={'presence'}
 													onChangeModel={handleChangeModelInfo}
 												/>
@@ -1379,6 +1635,7 @@ const BidPage = (props) => {
 													variant="filled"
 													icon={<DeleteOutlined />}
 													onClick={() => handleDeleteModelFromBid(bidModel.id)}
+													disabled={openMode?.status === 1}
 												></Button>
 											</div>
 										</div>
@@ -1392,6 +1649,7 @@ const BidPage = (props) => {
 										variant="outlined"
 										icon={<PlusOutlined />}
 										onClick={handleAddModel}
+										disabled={openMode?.status === 1}
 									>
 										Добавить модель
 									</Button>
@@ -1400,6 +1658,8 @@ const BidPage = (props) => {
 										color="primary"
 										variant="filled"
 										icon={<FileSearchOutlined />}
+										onClick={() => setIsParseModalOpen(true)}
+										disabled={openMode?.status === 1}
 									>
 										Анализ сырых данных
 									</Button>
@@ -1408,6 +1668,8 @@ const BidPage = (props) => {
 										color="primary"
 										variant="filled"
 										icon={<BlockOutlined />}
+										onClick={() => setIsFindSimilarDrawerOpen(true)}
+										disabled={openMode?.status === 1}
 									>
 										Похожие
 									</Button>
@@ -1549,6 +1811,22 @@ const BidPage = (props) => {
 			>
 				<ProjectInfo project={bidProject}/>
 			</Modal>
+			<Modal
+				title="Анализ сырых данных"
+				centered
+				width={800}
+				open={isParseModalOpen}
+				onOk={() => addParseModels()}
+				onCancel={() => setIsParseModalOpen(false)}
+				okText={"Добавить в спецификацию"}
+				cancelText={"Отмена"}
+			>
+				<DataParser
+					additionData={additionData}
+					setAdditionData={setAdditionData}
+					models={modelsSelect}
+				/>
+			</Modal>
 			<ModelInfoExtraDrawer model_id={modelIdExtra}
 								  model_name={modelNameExtra}
 								  closeDrawer={handleCloseDrawerExtra}
@@ -1562,6 +1840,14 @@ const BidPage = (props) => {
 							  closeDrawer={() => setIsBidHistoryDrawerOpen(false)}
 							  bidId={bidId}
 							  bidActions={bidActions}
+			/>
+			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
+							closeDrawer={() => setIsBidFilesDrawerOpen(false)}
+							bidId={bidId}
+			/>
+			<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
+							   closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
+							   bidId={bidId}
 			/>
 			{isAlertVisible && (
 				<Alert
