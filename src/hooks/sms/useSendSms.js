@@ -21,16 +21,18 @@ export const useSendSms = () => {
 				return;
 			}
 
-			const payload = {
-				_token: CSRF_TOKEN,
-				data: {
+			const formData = new FormData();
+			formData.append('_token', CSRF_TOKEN);
+			formData.append(
+				'data',
+				JSON.stringify({
 					to,
 					text,
 					answer,
-				},
-			};
+				})
+			);
 
-			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create', payload);
+			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/FAKE_URL', formData);
 
 			console.log('[useSendSms] Ответ от сервера:', response.data);
 
