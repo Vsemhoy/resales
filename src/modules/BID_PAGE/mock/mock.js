@@ -565,7 +565,17 @@ export const BID_INFO = {
             "sellby": "",
             "project": 1
         },
-        "bill": null,
+        "bill": {
+            "requisite": null,
+            "conveyance": 0,
+            "fact_address": null,
+            "org_phone": null,
+            "contact_email": 0,
+            "insurance": 0,
+            "package": 0,
+            "consignee": "",
+            "other_equipment": ""
+        },
         "actions": {
             "create": {
                 "username": "Кошелев Александр Станиславович",
