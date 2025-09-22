@@ -6,7 +6,7 @@ import styles from './style/Chat.module.css';
 import { useUserData } from '../../../context/UserDataContext';
 import { useSms } from '../../../hooks/sms/useSms';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
-import { MOCK } from '../mock/mock'; // при необходимости
+import { MOCK } from '../mock/mock';
 
 const { Content, Footer } = Layout;
 
@@ -45,7 +45,6 @@ export default function ChatContent({ chatId }) {
 		if (!text.trim()) return;
 
 		await sendSms({
-			to: 0, // не нужен, так как бэкенд сам определит по chat_id
 			text: text.trim(),
 			answer: null,
 			chat_id: chatId, // ✅ добавляем сюда chat_id при отправке
