@@ -50,6 +50,7 @@ import DataParser from "./components/DataParser";
 import FindSimilarDrawer from "./components/FindSimilarDrawer";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
+import customModal from "../../components/helpers/modals/CustomModal";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -173,6 +174,10 @@ const BidPage = (props) => {
 	const [isFindSimilarDrawerOpen, setIsFindSimilarDrawerOpen] = useState(false);
 	const [additionData, setAdditionData] = useState([]);
 	const [openCopySpecification, setOpenCopySpecification] = useState(false);
+	const [customModalTitle, setCustomModalTitle] = useState('');
+	const [customModalText, setCustomModalText] = useState('');
+	const [customModalType, setCustomModalType] = useState('');
+	const [customModalColumns, setCustomModalColumns] = useState([]);
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -989,6 +994,14 @@ const BidPage = (props) => {
 	};
 	const customClick = (button_id) => {
 		console.log(button_id)
+		switch (customModalType) {
+			case 'pdf':
+				if (+button_id === 2) {
+					setIsSavingInfo(true);
+					setTimeout(() => navigate(`/bidsPDF/${bidId}`), 200);
+				}
+				break;
+		}
 		setOpenCopySpecification(false);
 	}
 
@@ -1467,7 +1480,21 @@ const BidPage = (props) => {
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'} />}
 									onClick={() => {
 										if (isSmthChanged) {
-											setOpenCopySpecification(true);
+											setCustomModalTitle('Переход в интерфейс создания PDF-документа');
+											setCustomModalText('У Вас есть несохраненные изменения! Подтвердите сохранение перед сменой интерфейса.');
+											setCustomModalType('pdf');
+											setCustomModalColumns([
+												{
+													id: 1,
+													text: "Отменить",
+												},
+												{
+													id: 2,
+													text: "Подтвердить и сохранить",
+													type: "primary",
+												},
+											]);
+											setTimeout(() => setOpenCopySpecification(true), 200);
 										} else {
 											navigate(`/bidsPDF/${bidId}`);
 										}
@@ -1892,26 +1919,10 @@ const BidPage = (props) => {
 			/>
 			<CustomModal
 				customClick={customClick}
-				customType={"danger"}
-				customText={"Кастомный текст сообщения"}
-				customTitle={"Кастомный Тайтл"}
-				customButtons={[
-					{
-						id: 1,
-						text: "Подтвердить",
-						type: "primary",
-					},
-					{
-						id: 2,
-						text: "Осторожно!",
-						type: "primary",
-						typePlus: "danger"
-					},
-					{
-						id: 3,
-						text: "Отменить",
-					}
-				]}
+				customType={customModalType}
+				customText={customModalText}
+				customTitle={customModalTitle}
+				customButtons={customModalColumns}
 				open={openCopySpecification}
 			/>
 			{isAlertVisible && (

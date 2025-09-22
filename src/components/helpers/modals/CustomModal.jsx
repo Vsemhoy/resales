@@ -42,7 +42,7 @@ const CustomModal = (props) => {
             closeIcon={false}
             footer={buttons.map((button) => {
                 const buttonProps = {
-                    key: button.id,
+                    //key: button.id,
                     onClick: () => handleClick(button.id)
                 };
 
@@ -50,7 +50,7 @@ const CustomModal = (props) => {
                 if (button.typePlus === 'danger') buttonProps.danger = true;
 
                 return (
-                    <Button {...buttonProps}>
+                    <Button key={button.id} {...buttonProps}>
                         {button.text}
                     </Button>
                 );
