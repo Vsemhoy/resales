@@ -160,19 +160,7 @@ const MainTabPage = (props) => {
       {
         key: 'mainorgsec_13',
         label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div>
-        {editMode && (
-           <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              // onClick={(ev) => {
-              //   ev.stopPropagation();
-              //   handleDeleteRealUnit(item.id, 1);
-              // }}
-            >
-              
-            </Button>
-        )}
+       
         </div>,
         children: <OrgPageMainTabContactinfoSection
           color={'#799119ff'}
@@ -243,7 +231,10 @@ const MainTabPage = (props) => {
         </div>,
         children: <OrgPageMainTabPayersSection
           color={'#f0f321ff'}
-          edit_mode={editMode} />
+          edit_mode={editMode} 
+          data={baseData}
+          selects={selects}
+          />
       },
     ];
 
