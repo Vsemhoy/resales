@@ -554,5 +554,8 @@
 	padding: 5px;
 	width: 50%;
 }
-
-
+.sa-bid-page-btns-wrapper .divider {
+	width: 50px;
+	margin: 5px 0;
+	border: 1px solid #99bad3;
+}
