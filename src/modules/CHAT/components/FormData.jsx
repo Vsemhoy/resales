@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Popover, Upload } from 'antd';
 
-const FormDataComponent = () => {
+export const FormData = () => {
 	// Состояние для хранения данных формы
 	const [text, setText] = useState('');
 	const [files, setFiles] = useState([]);
@@ -85,5 +86,3 @@ const FormDataComponent = () => {
 		</div>
 	);
 };
-
-export default FormDataComponent;

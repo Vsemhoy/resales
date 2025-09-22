@@ -1,12 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import { MOCK } from '../mock/mock.js';
 import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
-import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { useUserData } from '../../../context/UserDataContext';
-import styles from './style/Chat.module.css'; // импорт CSS-модуля
+import styles from './style/Chat.module.css';
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +23,16 @@ export const ChatBtn = () => {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id || NaN;
 
-	const getCompanion = useCompanion(currentUserId);
+	// ✅ Заменили useCompanion на явную логику
+	const getCompanion = useCallback(
+		(sms) => {
+			if (sms.from.id === currentUserId && sms.to.id === currentUserId) {
+				return { name: 'Вы', surname: '' }; // сохранённое сообщение самому себе
+			}
+			return sms.from.id === currentUserId ? sms.to : sms.from;
+		},
+		[currentUserId]
+	);
 
 	const smsData = useMemo(() => {
 		if (!Array.isArray(smsList) || smsList.length === 0) {
@@ -55,14 +63,14 @@ export const ChatBtn = () => {
 
 		const label = (() => {
 			if (count === 1) {
-				return `${messages[0].name} ${messages[0].surname}`;
+				return `${messages[0].name} ${messages[0].surname}`.trim();
 			}
 			if (count === 2) {
-				return `${messages[0].name} ${messages[0].surname} и ${messages[1].name} ${messages[1].surname}`;
+				return `${messages[0].name} ${messages[0].surname} и ${messages[1].name} ${messages[1].surname}`.trim();
 			}
 			return `${messages
 				.slice(0, 2)
-				.map((m) => `${m.name} ${m.surname}`)
+				.map((m) => `${m.name} ${m.surname}`.trim())
 				.join(', ')} и ещё +${count - 2}`;
 		})();
 
