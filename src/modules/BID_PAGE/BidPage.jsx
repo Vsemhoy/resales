@@ -11,7 +11,7 @@ import {
 	Steps,
 	Tag,
 	Tooltip,
-	Space
+	Space, Empty
 } from 'antd';
 import {useNavigate, useParams} from 'react-router-dom';
 import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
@@ -1621,9 +1621,8 @@ const BidPage = (props) => {
 								<div className={'sa-models-table-cell sa-models-table-cell-header'}></div>
 							</div>
 							<div className={'sa-models-table'}>
-								{bidModels
-									.sort((a, b) => +a.sort - +b.sort)
-									.map((bidModel, idx) => (
+								{(bidModels && bidModels.length > 0) ?
+									bidModels.sort((a, b) => +a.sort - +b.sort).map((bidModel, idx) => (
 										<div
 											className={'sa-models-table-row'}
 											key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
@@ -1707,7 +1706,10 @@ const BidPage = (props) => {
 												></Button>
 											</div>
 										</div>
-									))}
+									)) : (
+										<Empty/>
+									)
+								}
 							</div>
 							<div className={'sa-bid-models-footer'}>
 								<div className={'sa-footer-btns'}>
