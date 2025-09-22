@@ -1,8 +1,12 @@
 import { useCallback } from 'react';
-// import { useUserData } from '../../hooks/utils/useUserData';
+
 /**
- * Хук возвращает функцию, которая определяет собеседника в чате.
- * @param {number} currentUserId — ID текущего пользователя (клиента)
+ * Хук возвращает объект собеседника относительно сообщения.
+ * Если чат с самим собой — возвращает строку 'self'.
+ * Иначе — объект пользователя, который не текущий пользователь.
+ *
+ * @param {number} currentUserId — ID текущего пользователя
+ * @returns {(sms: object) => 'self' | {id, name, surname} | null}
  */
 export const useCompanion = (currentUserId) => {
 	return useCallback(
@@ -10,10 +14,14 @@ export const useCompanion = (currentUserId) => {
 			if (typeof currentUserId !== 'number') {
 				throw new Error('currentUserId должен быть числом');
 			}
-			if (!sms || !sms.from || !sms.to) return null;
+			if (!sms || typeof sms.chat_id !== 'number') return null;
 
-			const { from, to } = sms;
-			return from.id === currentUserId ? to : from;
+			if (sms.from.id === currentUserId && sms.to.id === currentUserId) {
+				return 'self'; // чат с самим собой
+			}
+
+			// возвращаем объект компаньона
+			return sms.from.id === currentUserId ? sms.to : sms.from;
 		},
 		[currentUserId]
 	);
