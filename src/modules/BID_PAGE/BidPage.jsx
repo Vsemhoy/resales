@@ -378,6 +378,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			const openMode = BID_INFO?.openmode;
@@ -470,6 +474,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setTypeSelect(SELECTS.type_select);
@@ -507,6 +515,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setOrgUsersSelect(SELECTS.orgusers_select);
@@ -528,6 +540,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setEmailSelect(SELECTS?.contact_email_select);
@@ -546,6 +562,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setCompanyCurrency(CUR_COMPANY);
@@ -565,6 +585,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setGarbage([]);
@@ -675,6 +699,10 @@ const BidPage = (props) => {
 				setTimeout(() => setIsLoadingSmall(false), 500);
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 				setTimeout(() => setIsLoadingSmall(false), 500);
 			}
 		} else {
@@ -705,6 +733,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		}
 	};
@@ -724,6 +756,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		}
 	};
@@ -939,6 +975,8 @@ const BidPage = (props) => {
 		defaultInfoUpd.bid.finance.nds = bidNds;
 
 		defaultInfoUpd.bid_models = bidModels;
+
+		setDefaultInfo(defaultInfoUpd);
 	};
 
 	const collapseItems = [
