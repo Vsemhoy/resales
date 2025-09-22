@@ -6,7 +6,7 @@ import styles from './style/Chat.module.css';
 import { useUserData } from '../../../context/UserDataContext';
 import { useSms } from '../../../hooks/sms/useSms';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
-import { MOCK } from '../mock/mock'; // при необходимости
+import { MOCK } from '../mock/mock';
 
 const { Content, Footer } = Layout;
 
