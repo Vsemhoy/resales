@@ -493,7 +493,7 @@ const EngineerListPage = (props) => {
 		setModalFileList(files);
 		console.log(files)
 
-		fetchCreateNewOrder(modalFileList).then()
+		fetchCreateNewOrder(files, text).then()
 
 
 			// setIsOpenModal(false);
@@ -505,12 +505,13 @@ const EngineerListPage = (props) => {
 	};
 
 
-	const fetchCreateNewOrder = async (files) => {
+	const fetchCreateNewOrder = async (files, text) => {
 		const formData = new FormData();
 		formData.append('_token', CSRF_TOKEN);
-		formData.append('data', JSON.stringify({text: modalText}));
+		formData.append('data', JSON.stringify({text: text}));
 
-		console.log(files)
+		console.log("Files: ", files);
+		console.log("Text: ", text);
 
 		files.forEach((file, index) => {
 			formData.append('files[]', file.originFileObj || file);
