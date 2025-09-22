@@ -140,7 +140,7 @@ const OrgPageMainTabToleranceSection = (props) => {
 			return;
 		}
 
-		const excluders = ['command', 'date'];
+		const excluders = ['command', 'date', 'type'];
 		let is_original = false;
 
 		originalTolerances.forEach((element) => {
@@ -167,7 +167,9 @@ const OrgPageMainTabToleranceSection = (props) => {
 		}
 		if (data.deleted === true){
 			data.command = "delete";
-		} 
+		}
+
+    data.id8an_typetolerance = data.type;
 
 		console.log('data email', data)
 		setTolerances((prevUnits) => {
@@ -208,7 +210,7 @@ const OrgPageMainTabToleranceSection = (props) => {
 			return;
 		}
 
-		const excluders = ['command', 'date'];
+		const excluders = ['command', 'date', 'type'];
 		let is_original = false;
 
 		originalAnZendTolerances.forEach((element) => {
@@ -236,6 +238,8 @@ const OrgPageMainTabToleranceSection = (props) => {
 		if (data.deleted === true){
 			data.command = "delete";
 		} 
+
+    data.id8an_typetolerance = data.type;
 
 		console.log('data email', data)
 		setAnZendTolerances((prevUnits) => {
@@ -324,25 +328,31 @@ const OrgPageMainTabToleranceSection = (props) => {
 
 
       <div className={'sa-tolerance-old-v'}>
-      {anZendLicenses.map((item)=>(
+      {anZendLicenses.map((item)=>{
+        item.document_type = 1;
+        item.type = parseInt(item.id8an_typelicenses);
+        return (
         <OPMTanZendToleranceSection
-          key={'OPMTCcontactemailsSection' + item.id}
+          key={'OPMTCcontactemailsSection_1_' + item.id}
           data={item}
           edit_mode={editMode}
-          on_change={handleUpdateTolikUnit}
+          on_change={handleUpdateAnZendLicenseUnit}
 		  selects={selects}
         />
-      ))}
+      )})}
 
-      {anZendTolerances.map((item)=>(
+      {anZendTolerances.map((item)=>{
+        item.document_type = 2;
+        item.type = parseInt(item.id8an_typetolerance);
+        return (
         <OPMTanZendToleranceSection
-          key={'OPMTCcontactemailsSection' + item.id}
+          key={'OPMTCcontactemailsSection_2_' + item.id}
           data={item}
           edit_mode={editMode}
-          on_change={handleUpdateTolikUnit}
+          on_change={handleUpdateAnZendToleranceUnit}
 		  selects={selects}
         />
-      ))}
+      )})}
 	  </div>
 
       <div>

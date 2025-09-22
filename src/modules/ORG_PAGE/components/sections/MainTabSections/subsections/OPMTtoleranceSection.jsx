@@ -59,7 +59,7 @@ const OPMTtoleranceSection = (props) => {
               if (key.startsWith(String(docType))){
                 const davalue = props.selects.tollic[key];
                 arrak.push({
-                  key: 'kivala_k' + key,
+                  key: 'kivala_k' + key + '_' + id,
                   value: Number(key.split('-')[1]),
                   label: davalue
                 });
@@ -229,6 +229,9 @@ const OPMTtoleranceSection = (props) => {
           placeholder: '',
           name: 'comment',
         }}
+        action={<div
+        className='sa-omt-filler'
+        />}
 
         on_change={handleChangeData}
         on_blur={handleChangeData}
