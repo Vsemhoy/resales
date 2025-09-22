@@ -182,6 +182,15 @@
 	text-align: justify !important;
 }
 
+.sa-bid-page-container .ant-empty {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+
 /* NO ANTD */
 
 .sa-bid-page {
