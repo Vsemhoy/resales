@@ -506,27 +506,43 @@ const EngineerListPage = (props) => {
 
 
 	const fetchCreateNewOrder = async () => {
-		if (PRODMODE) {
-			const formData = new FormData();
-			formData.append('_token', CSRF_TOKEN);
-			formData.append('data', JSON.stringify({text: modalText}));
+		const formData = new FormData();
+		formData.append('_token', CSRF_TOKEN);
+		formData.append('data', JSON.stringify({text: modalText}));
 
-			modalFileList.forEach((file) => {
-				formData.append('files[]', file.originFileObj || file);
-			});
+		modalFileList.forEach((file) => {
+			formData.append('files[]', file.originFileObj || file);
+		});
 
-			console.log(formData)
+		console.log(formData)
 
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/add', formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				}
-			});
+		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			}
+		});
 
-
-		} else {
-			message.success("Привет!");
-		}
+		// if (PRODMODE) {
+		// 	const formData = new FormData();
+		// 	formData.append('_token', CSRF_TOKEN);
+		// 	formData.append('data', JSON.stringify({text: modalText}));
+		//
+		// 	modalFileList.forEach((file) => {
+		// 		formData.append('files[]', file.originFileObj || file);
+		// 	});
+		//
+		// 	console.log(formData)
+		//
+		// 	let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/add', formData, {
+		// 		headers: {
+		// 			'Content-Type': 'multipart/form-data',
+		// 		}
+		// 	});
+		//
+		//
+		// } else {
+		// 	message.success("Привет!");
+		// }
 	}
 
 
