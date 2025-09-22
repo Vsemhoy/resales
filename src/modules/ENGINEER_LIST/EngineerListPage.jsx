@@ -509,7 +509,7 @@ const EngineerListPage = (props) => {
 		if (PRODMODE) {
 			const formData = new FormData();
 			formData.append('_token', CSRF_TOKEN);
-			formData.append('data', JSON.stringify({text: modalText}));
+			formData.append('data', JSON.stringify({comment: modalText}));
 			modalFileList.forEach((file) => {
 				formData.append('files[]', file.originFileObj || file);
 			});
