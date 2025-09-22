@@ -111,7 +111,7 @@ const TopMenu = () => {
 		},
 		{
 			key: '3fgsd',
-			label: <div>Выйти из системы</div>,
+			label: <NavLink to={`${HTTP_ROOT}/logout`}>Выйти из системы</NavLink>,
 			icon: <ArrowTopRightOnSquareIcon height={'18px'} />,
 		},
 	];
