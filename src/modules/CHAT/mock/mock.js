@@ -79,11 +79,11 @@ export const MOCK = {
 			},
 			{
 				id: 12,
-				chat_id: 51,
+				chat_id: 57,
 				from: {
 					surname: 'Анастасия',
 					name: 'Маркова',
-					id: 49,
+					id: 57,
 				},
 				to: {
 					surname: 'Кошелев',
