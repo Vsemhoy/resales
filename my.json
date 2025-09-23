@@ -29,7 +29,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "push-all-changes": "git add . && git commit -m\"update\" && git push origin master:bogdan",
+        "push-all-changes2": "git add . && git commit -m\"update\" && git push origin master:bogdan",
         "fetch-all": "git fetch origin && git merge origin/master"
 },
     "eslintConfig": {
