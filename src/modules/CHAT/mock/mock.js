@@ -5,14 +5,14 @@ export const MOCK = {
 				id: 4,
 				chat_id: 540,
 				from: {
+					surname: 'Анатолий',
+					name: 'Дроботенко',
+					id: 540,
+				},
+				to: {
 					surname: 'Кошелев',
 					name: 'Александр',
 					id: 46,
-				},
-				to: {
-					surname: 'Точилина',
-					name: 'Лидия',
-					id: 540,
 				},
 				text: 'Зайдите ко мне!',
 				files: [],
@@ -22,11 +22,11 @@ export const MOCK = {
 			},
 			{
 				id: 2,
-				chat_id: 47,
+				chat_id: 52,
 				from: {
 					surname: 'Кошелева',
 					name: 'Валентина',
-					id: 47,
+					id: 52,
 				},
 				to: {
 					surname: 'Кошелев',
@@ -41,11 +41,11 @@ export const MOCK = {
 			},
 			{
 				id: 5,
-				chat_id: 48,
+				chat_id: 51,
 				from: {
 					surname: 'Андрей',
 					name: 'Григорьев',
-					id: 47,
+					id: 51,
 				},
 				to: {
 					surname: 'Кошелев',
@@ -64,7 +64,7 @@ export const MOCK = {
 				from: {
 					surname: 'Григорий',
 					name: 'Андреев',
-					id: 47,
+					id: 50,
 				},
 				to: {
 					surname: 'Кошелев',
@@ -83,7 +83,7 @@ export const MOCK = {
 				from: {
 					surname: 'Анастасия',
 					name: 'Маркова',
-					id: 47,
+					id: 49,
 				},
 				to: {
 					surname: 'Кошелев',
@@ -102,7 +102,7 @@ export const MOCK = {
 				from: {
 					surname: 'Илья',
 					name: 'Климов',
-					id: 47,
+					id: 48,
 				},
 				to: {
 					surname: 'Кошелев',
@@ -117,7 +117,7 @@ export const MOCK = {
 			},
 			{
 				id: 135,
-				chat_id: 60,
+				chat_id: 63,
 				from: {
 					surname: 'Артур',
 					name: 'Король',
@@ -136,7 +136,7 @@ export const MOCK = {
 			},
 			{
 				id: 136,
-				chat_id: 60,
+				chat_id: 63,
 				from: {
 					surname: 'Артур',
 					name: 'Король',
@@ -153,104 +153,10 @@ export const MOCK = {
 				created_at: 1757341930,
 				updated_at: 1757341930,
 			},
+
 			{
 				id: 137,
-				chat_id: 60,
-				from: {
-					surname: 'Артур',
-					name: 'Король',
-					id: 47,
-				},
-				to: {
-					surname: 'Кошелев',
-					name: 'Александр',
-					id: 46,
-				},
-				text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum eveniet vel quo itaque totam voluptas sint provident accusamus vitae placeat.',
-				files: [],
-				status: false,
-				created_at: 1757341930,
-				updated_at: 1757341930,
-			},
-			{
-				id: 137,
-				chat_id: 60,
-				from: {
-					surname: 'Артур',
-					name: 'Король',
-					id: 47,
-				},
-				to: {
-					surname: 'Кошелев',
-					name: 'Александр',
-					id: 46,
-				},
-				text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum eveniet vel quo itaque totam voluptas sint provident accusamus vitae placeat.',
-				files: [],
-				status: false,
-				created_at: 1757341930,
-				updated_at: 1757341930,
-			},
-			{
-				id: 139,
-				chat_id: 60,
-				from: {
-					surname: 'Артур',
-					name: 'Король',
-					id: 47,
-				},
-				to: {
-					surname: 'Кошелев',
-					name: 'Александр',
-					id: 46,
-				},
-				text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum eveniet vel quo itaque totam voluptas sint provident accusamus vitae placeat.',
-				files: [],
-				status: false,
-				created_at: 1757341930,
-				updated_at: 1757341930,
-			},
-			{
-				id: 137,
-				chat_id: 60,
-				from: {
-					surname: 'Артур',
-					name: 'Король',
-					id: 47,
-				},
-				to: {
-					surname: 'Кошелев',
-					name: 'Александр',
-					id: 46,
-				},
-				text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum eveniet vel quo itaque totam voluptas sint provident accusamus vitae placeat.',
-				files: [],
-				status: false,
-				created_at: 1757341930,
-				updated_at: 1757341930,
-			},
-			{
-				id: 138,
-				chat_id: 60,
-				from: {
-					surname: 'Артур',
-					name: 'Король',
-					id: 47,
-				},
-				to: {
-					surname: 'Кошелев',
-					name: 'Александр',
-					id: 46,
-				},
-				text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum eveniet vel quo itaque totam voluptas sint provident accusamus vitae placeat.',
-				files: [],
-				status: false,
-				created_at: 1757341930,
-				updated_at: 1757341930,
-			},
-			{
-				id: 140,
-				chat_id: 60,
+				chat_id: 63,
 				from: {
 					surname: 'Артур',
 					name: 'Король',
