@@ -1,0 +1,16 @@
+# Node modules
+node_modules/
+
+# PM2 logs and dump
+pids/
+logs/
+*.pid
+*.log
+dump.pm2
+
+# Environment files
+.env
+
+# OS-specific
+.DS_Store
+Thumbs.db
