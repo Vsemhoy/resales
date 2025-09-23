@@ -79,6 +79,7 @@ const OrderListSider = (props) => {
 												>
 													Принять
 												</Button>
+
 												{/*<Button*/}
 												{/*	type="primary"*/}
 												{/*	danger*/}
