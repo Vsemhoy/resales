@@ -49,6 +49,7 @@ import BidPdfCreator from './modules/BID_PAGE/components/print/BidPdfCreator';
 function App() {
 	const [userdata, setUserdata] = useState([]);
 	const [pageLoaded, setPageLoaded] = useState(false);
+	const [topRole, setTopRole] = useState(1);
 
 	useEffect(() => {
 		if (PRODMODE) {
@@ -57,6 +58,15 @@ function App() {
 			setUserdata(MS_USER);
 		}
 	}, []);
+
+	useEffect(() => {
+		if (userdata.user?.id_departament === 7 || userdata.user?.id_departament === 8 || userdata.user?.id_departament === 20) {
+			setTopRole(1)
+		} else {
+			setTopRole(2)
+		}
+	}, [userdata]);
+
 
 	/** ------------------ FETCHES ---------------- */
 	/**
@@ -102,8 +112,8 @@ function App() {
 					<div>
 						<Routes>
 							{/* Редирект с корня на /orgs */}
-							<Route path="/" element={<Navigate to="/orgs" replace />} />
-							<Route path={BASE_ROUTE + '/'} element={<Navigate to="/orgs" replace />} />
+							<Route path="/" element={topRole === 2 ? <Navigate to="/orgs" replace /> : <Navigate to="/engineer" replace /> } />
+							<Route path={BASE_ROUTE + '/'} element={topRole === 2 ? <Navigate to="/orgs" replace /> : <Navigate to="/engineer" replace /> } />
 
 							<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata} />} />
 							<Route path={'/orgs'} element={<OrgListPage userdata={userdata} />} />

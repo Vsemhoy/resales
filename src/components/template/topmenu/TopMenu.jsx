@@ -31,12 +31,10 @@ const TopMenu = () => {
 			return;
 		}
 
-		console.log(userdata);
 		let activeRole = userdata.user?.sales_role;
 		let activeCompany = userdata.user?.active_company;
 		let roles = [];
 
-		console.log("dfsdfdsfsddsfsdfds: ", userdata.user?.id_departament)
 		if (userdata.user?.id_departament === 7 || userdata.user?.id_departament === 8 || userdata.user?.id_departament === 20) {
 			setTopRole(1)
 		} else {
