@@ -23,21 +23,30 @@ const TopMenu = () => {
 	const { userdata, setUserdata } = useUserData();
 	const [roleMenu, setRoleMenu] = useState([]);
 	const [companiesMenu, setCompanieseMenu] = useState([]);
+	const [topRole, setTopRole] = useState(1);
 
 	useEffect(() => {
 		 console.log('userdata structure:', userdata);
 		if (!userdata || userdata.length === 0) {
 			return;
 		}
-		let activeRole = userdata.user.sales_role;
-		let activeCompany = userdata.user.active_company;
+
+		console.log(userdata);
+		let activeRole = userdata.user?.sales_role;
+		let activeCompany = userdata.user?.active_company;
 		let roles = [];
 
+		console.log("dfsdfdsfsddsfsdfds: ", userdata.user?.id_departament)
+		if (userdata.user?.id_departament === 7 || userdata.user?.id_departament === 8 || userdata.user?.id_departament === 20) {
+			setTopRole(1)
+		} else {
+			setTopRole(2)
+		}
 		if (!activeRole || activeRole === 0) {
 			changeUserRole(1);
 			activeRole = 1;
 		}
-		let comps = userdata.companies.filter((item) => item.id > 1);
+		let comps = userdata.companies?.filter((item) => item.id > 1) ?? [];
 
 		for (let i = 0; i < comps.length; i++) {
 			const company = comps[i];
@@ -167,20 +176,20 @@ const TopMenu = () => {
 							<HomeFilled />
 						</div>
 					</NavLink>
-          
-          {userdata && !userdata.id_departament?.includes([7, 8, 20]) && (
+
+					{topRole === 2 &&(
 						<NavLink to="/orgs">
 							<div className={'sa-topmenu-button'}>Организации</div>
 						</NavLink>
 					)}
 
-					{userdata && !userdata.id_departament?.includes([7, 8, 20]) && (
+					{topRole === 2 &&(
 						<NavLink to="/bids">
 							<div className={'sa-topmenu-button'}>Заявки</div>
 						</NavLink>
 					)}
 
-					{userdata && !userdata.id_departament?.includes([7, 8, 20]) && (
+					{topRole === 2 &&(
 						<NavLink to="/price">
 							<div className={'sa-topmenu-button'}>Прайс</div>
 						</NavLink>
@@ -192,14 +201,18 @@ const TopMenu = () => {
 							<div className={'sa-topmenu-button'}>Заявка</div>
 						</NavLink>
 					) : null}
+
 					{userdata && userdata.user && userdata.user.super ? (
 						<NavLink to="/curator/exmonitor">
 							<div className={'sa-topmenu-button'}>Exmo</div>
 						</NavLink>
 					) : null}
-					<NavLink to="/curator">
-						<div className={'sa-topmenu-button'}>Кураторство</div>
-					</NavLink>
+					{topRole === 2 && (
+						<NavLink to="/curator">
+							<div className={'sa-topmenu-button'}>Кураторство</div>
+						</NavLink>
+					)}
+
 					<NavLink to="/engineer">
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
