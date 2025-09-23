@@ -426,8 +426,8 @@ const ProjectsTabPage = (props) => {
 
 
   return (
-    <div>
-      {show && (
+    <div className={`${show ? '' : 'sa-orgpage-tab-hidder'}`}>
+   
         <Spin spinning={loading}>
           <div className={"sa-orgtab-container"}>
             <div
@@ -495,7 +495,7 @@ const ProjectsTabPage = (props) => {
             </div>
           </div>
         </Spin>
-      )}
+
     </div>
   );
 };

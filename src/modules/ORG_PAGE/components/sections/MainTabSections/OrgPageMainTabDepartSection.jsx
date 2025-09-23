@@ -21,7 +21,6 @@ const OrgPageMainTabDepartSection = (props) => {
   const [selects, setSelects] = useState(null);
 
   useEffect(() => {
-    console.log('props.selects', props.selects)
     if (props.selects){
       setSelects(props.selects);
     }
@@ -65,12 +64,7 @@ const OrgPageMainTabDepartSection = (props) => {
   }, [props.data, selects]);
 
 
-  useEffect(() => {
-    console.log('props.selects', props.selects)
-    if (props.selects){
-      setSelects(props.selects);
-    }
-  }, [props.selects]);
+
 
 
 	useEffect(() => {

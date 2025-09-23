@@ -207,6 +207,7 @@
 }
 .sk-omt-content-color {
 	color: #2c6da7;
+	
 }
 .ant-collapse-content-box-deleted {
 	opacity: 0.7;
@@ -221,6 +222,18 @@
 .sa-omt-filler {
 	width: 24px;
 }
+.sk-omt-comment-trigger {
+	border-radius: 3px;
+
+}
 .sk-omt-comment-trigger-treasure {
+	outline: 1px solid #2c6ea77c;
+}
+.sk-omt-comment-trigger-treasure > span {
 	color: rgb(0, 89, 178);
+	
+}
+
+.sa-orgpage-tab-hidder {
+	display: none;
 }

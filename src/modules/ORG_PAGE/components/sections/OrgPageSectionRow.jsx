@@ -162,7 +162,6 @@ const OrgPageSectionRow = (props) => {
 				return <div className="sk-omt-content-formatted">{ value === null ? "" : dayjs(value).format('DD.MM.YYYY')}</div>;
 			} else if (field.type === 'datetime') {
         /** ---------------------------------------------------------------- */
-        console.log('field.value TTT', field, value)
 				return (
 					<div className="sk-omt-content-formatted">
 						{dayjs(value).format('DD.MM.YYYY HH:mm:ss')}
@@ -480,7 +479,7 @@ const OrgPageSectionRow = (props) => {
               console.log(e);
               const val = e?.target?.value ?? e;
               let obj = {};
-              obj[field.name] = val.trim();
+              obj[field.name] = val?.trim();
               if (props.on_blur){
                 console.log("BLURER");
                 props.on_blur(obj);
@@ -496,7 +495,6 @@ const OrgPageSectionRow = (props) => {
              size='small'
               variant="borderless"
               onChange={()=>{
-                console.log("HELLOW")
               }}
                />
           </AutoComplete>
@@ -517,9 +515,9 @@ const OrgPageSectionRow = (props) => {
 					<div className="sk-omt-legend sa-flex-space">
 						<span style={{ paddingLeft: '6px' }}>
 							{commentConfig && (
-								<div className="sk-omt-comment-trigger" onClick={() => setOpened(!opened)}>
+								<div className={`sk-omt-comment-trigger ${commentConfig.value !== null && commentConfig.value?.trim() !== "" ? "sk-omt-comment-trigger-treasure" : "" }`} onClick={() => setOpened(!opened)}>
 									<span>{opened ? <CaretUpOutlined /> : <CaretDownOutlined />}</span>
-									<span className={`${commentConfig.value !== null && commentConfig.value.trim() !== "" ? "sk-omt-comment-trigger-treasure" : "" }`}>
+									<span >
                   {commentConfig.label ? commentConfig.label : 'комм'}
                   </span>
 								</div>

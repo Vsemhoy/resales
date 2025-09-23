@@ -30,7 +30,6 @@ const OPMTanZendToleranceSection  = (props) => {
   useEffect(() => {
     if (props.data?.id){
       setObjectResult(props.data);
-      console.log('LICENSE LICENSE LICENSE', props.data)
       setId(        props.data.id);
       setId_orgs(   props.data.id_orgs);
       setType(      props.data.type);
@@ -50,7 +49,6 @@ const OPMTanZendToleranceSection  = (props) => {
 
 
   useEffect(() => {
-    console.log('props.selects', props.selects)
     let arrak = [];
     if (props.selects){
       setSelects(props.selects);
@@ -70,7 +68,6 @@ const OPMTanZendToleranceSection  = (props) => {
         }
       }
     }
-    console.log('ARRAK', arrak);
     setOptions(arrak);
   }, [props.selects, docType]);
 

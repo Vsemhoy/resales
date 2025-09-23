@@ -56,7 +56,6 @@ const OrgPageMainTabContactinfoSection = (props) => {
 
 
   useEffect(() => {
-    console.log('props.selects', props.selects)
     if (props.selects){
       setSelects(props.selects);
     }

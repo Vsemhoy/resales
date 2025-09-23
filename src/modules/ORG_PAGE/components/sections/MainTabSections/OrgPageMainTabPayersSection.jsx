@@ -29,7 +29,6 @@ const OrgPageMainTabPayersSection = (props) => {
 
 
 	useEffect(() => {
-		console.log('props.selects', props.selects)
 		if (props.selects){
 			setSelects(props.selects);
 		}
@@ -60,7 +59,7 @@ const OrgPageMainTabPayersSection = (props) => {
 	const handleAddRequisite = (typedoc)=>{
 		let item = {
 					id: 'new_' + dayjs().unix() + '_' + newRequisites.length ,
-					id_an_orgs:  orgId,
+					id_orgs:  orgId,
 					type: 1,
 					document_type: typedoc,
 					name: '',
@@ -151,9 +150,7 @@ const OrgPageMainTabPayersSection = (props) => {
 			data.command = "delete";
 		}
 
-    data.id8an_typetolerance = data.type;
 
-		console.log('data email', data)
 		setRequisites((prevUnits) => {
 			const exists = prevUnits.some((item) => item.id === id);
 			if (!exists) {
@@ -166,8 +163,18 @@ const OrgPageMainTabPayersSection = (props) => {
 		/* ----------------- REQUISITES END --------------------- */
 
 
+	useEffect(() => {
+		console.log(props.on_add_requisites);
+		if (props.on_add_requisites !== null){
+			handleAddRequisite(1);
+		}
+	}, [props.on_add_requisites]);
 
 
+	useEffect(() => {
+		console.log('UPDATED DATA STACK ');
+		console.log(requisites, newRequisites);
+	}, [requisites, newRequisites]);
 
 
 
@@ -200,7 +207,7 @@ const OrgPageMainTabPayersSection = (props) => {
         ))}</div>
       )}
 
-		{editMode && (
+		{/* {editMode && (
       <div className={'sk-omt-stack-control sa-flex-space'}>
         <div></div>
         <div>
@@ -224,7 +231,7 @@ const OrgPageMainTabPayersSection = (props) => {
             </div>
         </div>
       </div>
-      )}
+      )} */}
 		</div>
 	);
 };
