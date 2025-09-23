@@ -7,16 +7,20 @@ import { Layout } from 'antd';
 
 const { Content } = Layout;
 
-export default function ChatSidebar({ onSelectChat }) {
+export default function ChatSidebar({ onSelectChat, selectedChatId }) {
 	const [draggable, setDraggable] = useState(false);
 	const [position, setPosition] = useState('topLeft');
 	const [search, setSearch] = useState('');
 
 	return (
 		<Layout className={styles['sidebar-layout']}>
-			<ChatHeader className={styles['sidebar-header']} onSearchChange={setSearch} />
+			<ChatHeader
+				className={styles['sidebar-header']}
+				onSearchChange={setSearch}
+				selectedChatId={selectedChatId}
+			/>
 			<Content className={styles['sidebar-content']}>
-				<ChatList search={search} onSelectChat={onSelectChat} /> {/* ✅ */}
+				<ChatList search={search} onSelectChat={onSelectChat} />
 			</Content>
 			<ChatFooter
 				className={styles['sidebar-footer']}

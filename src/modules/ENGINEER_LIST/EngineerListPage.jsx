@@ -13,7 +13,7 @@ import {
 	message,
 	Spin,
 	Tag,
-	Tooltip,
+	Tooltip, Alert,
 } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
@@ -98,6 +98,11 @@ const EngineerListPage = (props) => {
 	const [modalReason, setModalReason] = useState('');
 	const [superUser, setSuperUser] = useState(false);
 
+	const [isAlertVisible, setIsAlertVisible] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertDescription, setAlertDescription] = useState('');
+	const [alertType, setAlertType] = useState('');
+
 	const success = (content) => {
 		messageApi.open({
 			type: 'success',
@@ -170,6 +175,16 @@ const EngineerListPage = (props) => {
 	useEffect(() => {
 		makeFilterMenu();
 	}, [filterBox, orderBox]);
+
+	useEffect(() => {
+		if (isAlertVisible && alertType !== 'error') {
+			const timer = setTimeout(() => {
+				setIsAlertVisible(false);
+			}, 3000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [isAlertVisible]);
 
 	const fetchInfo = async () => {
 		setIsLoading(true);
@@ -499,6 +514,8 @@ const EngineerListPage = (props) => {
 	};
 
 
+
+
 	const fetchCreateNewOrder = async (files, text) => {
 		if (PRODMODE) {
 			const formData = new FormData();
@@ -520,6 +537,38 @@ const EngineerListPage = (props) => {
 			success('Заявка успешно создана');
 		} else {
 			success('Заявка успешно создана');
+		}
+	}
+
+	const acceptOrder = async (order_id, engineer) => {
+		if (PRODMODE) {
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/accept/' + order_id, {
+					_token: CSRF_TOKEN,
+				})
+
+				setIsAlertVisible(true);
+				setAlertMessage('Успех!');
+				setAlertDescription(response.data.message);
+				setAlertType('success');
+
+				const updatedOrders = orders.filter((order) => order.id !== order_id);
+				setOrders(updatedOrders);
+			} catch (e) {
+				console.log(e)
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
+			}
+		} else {
+			setIsAlertVisible(true);
+			setAlertMessage('Успех!');
+			setAlertDescription('Успешное обновление');
+			setAlertType('success');
+
+			const updatedOrders = orders.filter((order) => order.id !== order_id);
+			setOrders(updatedOrders);
 		}
 	}
 
@@ -689,6 +738,7 @@ const EngineerListPage = (props) => {
 							<OrderListSider
 								orders={orders}
 								returnOrderToSpec={returnOrderToSpec}
+								acceptOrder={acceptOrder}
 								activeRole={activeRole}
 								isOpenModal={isOpenModal}
 								modalOrderID={modalOrderID}
@@ -718,6 +768,24 @@ const EngineerListPage = (props) => {
 						handleCancel={handleModalCancel}
 						handleSetModalText={handleSetModalText}
 						fileListM={modalFileList}
+					/>
+				)}
+
+				{isAlertVisible && (
+					<Alert
+						message={alertMessage}
+						description={alertDescription}
+						type={alertType}
+						showIcon
+						closable
+						style={{
+							position: 'fixed',
+							top: 20,
+							right: 20,
+							zIndex: 9999,
+							width: 350,
+						}}
+						onClose={() => setIsAlertVisible(false)}
 					/>
 				)}
 			</Layout>

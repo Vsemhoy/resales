@@ -6,7 +6,7 @@ import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
 
-export default function ChatList({ search, onSelectChat }) {
+export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 
@@ -86,10 +86,12 @@ export default function ChatList({ search, onSelectChat }) {
 						</>
 					);
 
+					const isActive = chat.chat_id === selectedChatId;
+
 					return (
 						<li
 							key={chat.chat_id}
-							className={styles.chatItem}
+							className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
 							onClick={() => onSelectChat?.(chat.chat_id)}
 						>
 							<div className={styles.companionName}>
