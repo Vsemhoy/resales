@@ -70,18 +70,24 @@ const OrderListSider = (props) => {
 
 										{role && role === 1 ? (
 											<div className="buttons-container">
-												<Button type="primary" icon={<CheckOutlined />} size="small">
-													Принять
-												</Button>
 												<Button
 													type="primary"
-													danger
-													icon={<CloseOutlined />}
+													icon={<CheckOutlined />}
+													style={{ width: '100%' }}
 													size="small"
-													onClick={(e) => props.returnOrderToSpec(order.id, 'engineer')}
+													onClick={(e) => props.acceptOrder(order.id, 'engineer')}
 												>
-													Отклонить
+													Принять
 												</Button>
+												{/*<Button*/}
+												{/*	type="primary"*/}
+												{/*	danger*/}
+												{/*	icon={<CloseOutlined />}*/}
+												{/*	size="small"*/}
+												{/*	onClick={(e) => props.returnOrderToSpec(order.id, 'engineer')}*/}
+												{/*>*/}
+												{/*	Отклонить*/}
+												{/*</Button>*/}
 											</div>
 										) : (
 											<div className="buttons-container">
