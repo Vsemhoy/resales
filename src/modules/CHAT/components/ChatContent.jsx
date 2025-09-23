@@ -63,32 +63,25 @@ export default function ChatContent({ chatId }) {
 
 	// Объединяем серверные и локальные сообщения, фильтруем по chatId и форматируем
 	const allMessages = useMemo(() => {
-		const combined = [...(smsList || []), ...localMessages]
-			.filter((msg) => msg.chat_id === chatId)
-			.map((msg) => {
-				// Проверка, локальное ли сообщение
-				const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
+		const combined = [...(smsList || []), ...localMessages].map((msg) => {
+			const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
+			const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
 
-				// timestamp в миллисекундах для корректного сравнения и вывода времени
-				const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
+			const role = isLocal ? 'self' : getRole(msg);
 
-				const role = isLocal ? 'self' : getRole(msg);
+			return {
+				id: msg.id,
+				text: msg.text,
+				timestamp,
+				time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+				role,
+				senderName:
+					role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`.trim(),
+			};
+		});
 
-				return {
-					id: msg.id,
-					chat_id: msg.chat_id,
-					text: msg.text,
-					timestamp,
-					time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-					role,
-					senderName:
-						role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`.trim(),
-				};
-			})
-			.sort((a, b) => a.timestamp - b.timestamp);
-
-		return combined;
-	}, [smsList, localMessages, chatId, getRole]);
+		return combined.sort((a, b) => a.timestamp - b.timestamp);
+	}, [smsList, localMessages, getRole]);
 
 	const messagesWithDividers = useMemo(() => injectDayDividers(allMessages), [allMessages]);
 

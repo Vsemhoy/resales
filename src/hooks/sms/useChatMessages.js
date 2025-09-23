@@ -18,33 +18,48 @@ export const useChatMessages = ({ chatId, mock = {} }) => {
 				let responseData = [];
 
 				if (PRODMODE) {
-					try {
-						const response = await PROD_AXIOS_INSTANCE.post(`/api/sms/${chatId}`, {
-							data: {},
-							_token: CSRF_TOKEN,
-						});
+					const response = await PROD_AXIOS_INSTANCE.post(`/api/sms/${chatId}`, {
+						data: {},
+						_token: CSRF_TOKEN,
+					});
 
-						console.log('[useChatMessages] Ответ от сервера:', response.data);
+					const messages = response?.data?.content?.messages;
 
-						const sms = response?.data?.content?.sms;
+					// 🔍 Логируем "сырые" данные с сервера
+					console.log(`[useChatMessages] API /api/sms/${chatId} -> messages:`, messages);
 
-						if (Array.isArray(sms)) {
-							responseData = sms;
-						} else {
-							console.warn('[useChatMessages] СМС в ответе сервера не является массивом');
-						}
-					} catch (err) {
-						console.error(`[useChatMessages] Ошибка при запросе /api/sms/${chatId}:`, err);
-						throw new Error('Не удалось загрузить сообщения чата');
+					if (Array.isArray(messages)) {
+						// Преобразуем, без добавления chat_id
+						responseData = messages.map((msg) => ({
+							id: msg.message_id,
+							text: msg.text,
+							created_at: msg.created_at,
+							updated_at: msg.updated_at,
+							from: { id: msg.from_id },
+							// answer и to отсутствуют — не трогаем
+						}));
+					} else {
+						console.warn('[useChatMessages] messages в API ответе не массив');
 					}
 				} else {
-					console.log('[useChatMessages] Используются MOCK-данные (dev mode)');
-					const mockData = typeof mock === 'function' ? mock() : mock;
+					console.log('[useChatMessages] Используются MOCK-данные');
 
+					const mockData = typeof mock === 'function' ? mock() : mock;
 					const sms = mockData?.content?.sms;
 
 					if (Array.isArray(sms)) {
-						responseData = sms.filter((msg) => msg.chat_id === chatId);
+						responseData = sms
+							.filter((msg) => msg.chat_id === chatId)
+							.map((msg) => ({
+								id: msg.id,
+								text: msg.text,
+								created_at: msg.created_at,
+								updated_at: msg.updated_at,
+								from: msg.from,
+								to: msg.to,
+							}));
+					} else {
+						console.warn('[useChatMessages] sms в MOCK не массив');
 					}
 				}
 

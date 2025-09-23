@@ -20,7 +20,7 @@ export const UserDataProvider = ({ children }) => {
 		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
-				console.log('me: ', response);
+				console.log('response.data.user: ', response?.data?.user || 'No data');
 				setUserdata(response.data);
 			} catch (e) {
 				console.log(e);
