@@ -527,6 +527,8 @@ const EngineerPage = (props) => {
       }
   }
 
+  console.log(activeRole);
+
   return (
       <div className={'sa-engineer-page-container'}>
         <Spin size="large" spinning={isLoading}>
@@ -590,7 +592,7 @@ const EngineerPage = (props) => {
             </Affix>
             <div className={'sa-engineer-page-info-container'}>
               <div className={'sa-engineer-page-btns-wrapper'}>
-                {(activeRole === 1 || superUser) && (
+                {(activeRole === 2 || superUser) && (
                     <>
                       <Tooltip title={'Копировать спецификацию'} placement={'right'}>
                         <Button className={'sa-engineer-page-btn'}
@@ -611,7 +613,7 @@ const EngineerPage = (props) => {
                     </>
                 )}
 
-                {(activeRole === 2 || superUser) && (
+                {(activeRole === 1 || superUser) && (
                     <>
                       <Tooltip title={'Создать КП'} placement={'right'}>
                         <Button className={'sa-engineer-page-btn'}
