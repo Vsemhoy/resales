@@ -945,6 +945,10 @@ const BidPage = (props) => {
 			  bidModelsUpd[bidModelIdx].presence = value;
 			  setBidModels(bidModelsUpd);
 			  break;
+		  case 'sklad':
+			  bidModelsUpd[bidModelIdx].sklad = value;
+			  setBidModels(bidModelsUpd);
+			  break;
 	  }
 	};
 	const handleOpenModelInfoExtra = (modelId) => {
@@ -1060,15 +1064,44 @@ const BidPage = (props) => {
 				break;
 			case 'toBuh':
 				if (+button_id === 2) {
-					setBidPlace(3);
-					fetchBidPlace(3).then(() => fetchBidInfo().then());
+					fetchUpdates().then(() => {
+						if (isAdminDone()) {
+							setBidPlace(3);
+							fetchBidPlace(3).then(() => fetchBidInfo().then());
+						} else {
+							setIsAlertVisible(true);
+							setAlertMessage('Заполните поля!');
+							setAlertDescription('Количество моделей должно быть равно количеству на складе');
+							setAlertType('error');
+						}
+					});
 				}
 				break;
 		}
 		setIsOpenCustomModal(false);
 	};
+	const isErrorInput = (bidModelId) => {
+		const model = bidModels.find(model => model.id === bidModelId);
+		if (model && +model.model_count === +model.sklad) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+	const isAdminDone = () => {
+		return !(bidModels.find(model => +model.model_count !== +model.sklad));
+	};
 	const isDisabledInput = () => {
-		return (openMode?.status === 1 || openMode?.status === 5);
+		if (openMode?.status === 1 || openMode?.status === 5) return true;
+	};
+	const isDisabledInputManager = () => {
+		return (openMode?.status !== 2);
+	};
+	const isDisabledInputAdmin = () => {
+		return (openMode?.status !== 3);
+	};
+	const isDisabledInputBuh = () => {
+		return (openMode?.status !== 4);
 	};
 
 	const baseButtons = [
@@ -1098,7 +1131,7 @@ const BidPage = (props) => {
 							value={bidOrgUser}
 							options={prepareSelect(orgUsersSelect)}
 							onChange={(val) => setBidOrgUser(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1110,7 +1143,7 @@ const BidPage = (props) => {
 							value={bidProtectionProject}
 							options={prepareSelect(protectionSelect)}
 							onChange={(val) => setBidProtectionProject(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1121,7 +1154,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={bidObject}
 							onChange={(e) => setBidObject(e.target.value)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1132,7 +1165,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={bidSellBy}
 							onChange={(e) => setBidSellBy(e.target.value)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1175,7 +1208,7 @@ const BidPage = (props) => {
 							value={requisite}
 							options={prepareSelect(requisiteSelect)}
 							onChange={(val) => setRequisite(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1187,7 +1220,7 @@ const BidPage = (props) => {
 							value={conveyance}
 							options={prepareSelect(conveyanceSelect)}
 							onChange={(val) => setConveyance(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1199,7 +1232,7 @@ const BidPage = (props) => {
 							value={factAddress}
 							options={prepareSelect(factAddressSelect)}
 							onChange={(val) => setFactAddress(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1211,7 +1244,7 @@ const BidPage = (props) => {
 							value={phone}
 							options={prepareSelect(phoneSelect)}
 							onChange={(val) => setPhone(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1223,7 +1256,7 @@ const BidPage = (props) => {
 							value={email}
 							options={prepareSelect(emailSelect)}
 							onChange={(val) => setEmail(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1235,7 +1268,7 @@ const BidPage = (props) => {
 							value={insurance}
 							options={prepareSelect(insuranceSelect)}
 							onChange={(val) => setInsurance(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1247,7 +1280,7 @@ const BidPage = (props) => {
 							value={bidPackage}
 							options={prepareSelect(packageSelect)}
 							onChange={(val) => setBidPackage(val)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1258,7 +1291,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={consignee}
 							onChange={(e) => setConsignee(e.target.value)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1269,7 +1302,7 @@ const BidPage = (props) => {
 							style={{ width: '100%', height: '32px' }}
 							value={otherEquipment}
 							onChange={(e) => setOtherEquipment(e.target.value)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 				</div>
@@ -1297,7 +1330,7 @@ const BidPage = (props) => {
 							value={bidCommentEngineer}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentEngineer(e.target.value)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInput()}/**/
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1308,7 +1341,7 @@ const BidPage = (props) => {
 							value={bidCommentManager}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentManager(e.target.value)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1319,7 +1352,7 @@ const BidPage = (props) => {
 							value={bidCommentAdmin}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentAdmin(e.target.value)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputAdmin()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1330,7 +1363,7 @@ const BidPage = (props) => {
 							value={bidCommentAccountant}
 							autoSize={{ minRows: 2, maxRows: 6 }}
 							onChange={(e) => setBidCommentAccountant(e.target.value)}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputBuh()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1365,7 +1398,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1381,7 +1414,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1397,7 +1430,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1413,7 +1446,7 @@ const BidPage = (props) => {
 								setIsNeedCalcMoney(true);
 								setIsUpdateAll(true);
 							}}
-							disabled={isDisabledInput()}
+							disabled={isDisabledInputManager()}
 						/>
 					</div>
 				</div>
@@ -1544,8 +1577,15 @@ const BidPage = (props) => {
 																		baseButtons
 																	);
 																} else {
-																	setBidPlace(3);
-																	fetchBidPlace(3).then(() => fetchBidInfo().then());
+																	if (isAdminDone()) {
+																		setBidPlace(3);
+																		fetchBidPlace(3).then(() => fetchBidInfo().then());
+																	} else {
+																		setIsAlertVisible(true);
+																		setAlertMessage('Заполните поля!');
+																		setAlertDescription('Количество моделей должно быть равно количеству на складе');
+																		setAlertType('error');
+																	}
 																}
 															}}
 													>Передать бухгалтеру <ArrowRightOutlined /></Button>
@@ -1691,16 +1731,20 @@ const BidPage = (props) => {
 									onClick={() => setIsBidHistoryDrawerOpen(true)}
 								></Button>
 							</Tooltip>
-							<div className={'divider'}></div>
-							<Tooltip title={'Дублировать'} placement={'right'}>
-								<Button
-									className={'sa-bid-page-btn'}
-									color="primary"
-									variant="outlined"
-									icon={<CopyOutlined className={'sa-bid-page-btn-icon'}/>}
-									onClick={() => setIsBidDuplicateDrawerOpen(true)}
-								></Button>
-							</Tooltip>
+							{(userData?.user?.sales_role === 1 || userData?.user?.super === 1) && (
+								<div className={'divider'}></div>
+							)}
+							{(userData?.user?.sales_role === 1 || userData?.user?.super === 1) && (
+								<Tooltip title={'Дублировать'} placement={'right'}>
+									<Button
+										className={'sa-bid-page-btn'}
+										color="primary"
+										variant="outlined"
+										icon={<CopyOutlined className={'sa-bid-page-btn-icon'}/>}
+										onClick={() => setIsBidDuplicateDrawerOpen(true)}
+									></Button>
+								</Tooltip>
+							)}
 							{+bidType === 1 && (
 								<Tooltip title={'Создать счет'} placement={'right'}>
 									<Button
@@ -1769,151 +1813,281 @@ const BidPage = (props) => {
 
 						<div className={'sa-bid-page-models-wrapper'}>
 							<div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
-							<div className={'sa-models-table-row sa-header-row'}>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-									<p>№</p>
+
+							{ userData?.user?.sales_role === 1 ? (
+								<div className={'sa-models-table-row sa-header-row'}>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>№</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p className={'align-left'}>Название</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p className={'align-left'}>Кол-во</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p className={'align-left'}>Процент</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>Цена</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>Сумма</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>Наличие</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}
+										 style={{boxShadow: 'none'}}
+									></div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}></div>
 								</div>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-									<p className={'align-left'}>Название</p>
+							) : (
+								<div className={'sa-models-table-row-two sa-header-row'}>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>№</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p className={'align-left'}>Название</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p className={'align-left'}>Кол-во</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p className={'align-left'}>Процент</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>Цена</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>Сумма</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>Наличие</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
+										<p>Склад</p>
+									</div>
+									<div className={'sa-models-table-cell sa-models-table-cell-header'}
+										 style={{boxShadow: 'none'}}
+									></div>
 								</div>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-									<p className={'align-left'}>Кол-во</p>
-								</div>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-									<p className={'align-left'}>Процент</p>
-								</div>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-									<p>Цена</p>
-								</div>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-									<p>Сумма</p>
-								</div>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-									<p>Наличие</p>
-								</div>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}
-									 style={{ boxShadow: 'none' }}
-								></div>
-								<div className={'sa-models-table-cell sa-models-table-cell-header'}></div>
-							</div>
-							<div className={'sa-models-table'}>
-								{(bidModels && bidModels.length > 0) ?
-									bidModels.sort((a, b) => +a.sort - +b.sort).map((bidModel, idx) => (
-										<div
-											className={'sa-models-table-row'}
-											key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
-										>
-											<div className={'sa-models-table-cell'}>
-												<p>{idx + 1}</p>
-											</div>
-											<div className={'sa-models-table-cell align-left'}>
-												<NameSelect
-													options={prepareSelect(modelsSelect)}
-													model={bidModel}
-													disabled={isDisabledInput()}
-													onUpdateModelName={handleChangeModel}
-												/>
-											</div>
-											<div className={'sa-models-table-cell'}>
-												<ModelInput
-													value={bidModel.model_count}
-													bidModelId={bidModel.id}
-													bidModelSort={bidModel.sort}
-													disabled={isDisabledInput()}
-													type={'model_count'}
-													onChangeModel={handleChangeModelInfo}
-												/>
-											</div>
-											<div className={'sa-models-table-cell'}>
-												<ModelInput
-													value={bidModel.percent}
-													bidModelId={bidModel.id}
-													bidModelSort={bidModel.sort}
-													disabled={isDisabledInput()}
-													type={'percent'}
-													onChangeModel={handleChangeModelInfo}
-												/>
-											</div>
-											<div className={'sa-models-table-cell'}>
-												{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
-													<LoadingOutlined />
-												) : (
-													<p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
-												)}
-											</div>
-											<div className={'sa-models-table-cell'}>
-												{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
-													<LoadingOutlined />
-												) : (
-													<p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
-												)}
-											</div>
-											<div className={'sa-models-table-cell'}>
-												<ModelSelect
-													options={prepareSelect(presenceSelect)}
-													value={bidModel.presence}
-													bidModelId={bidModel.id}
-													bidModelSort={bidModel.sort}
-													disabled={isDisabledInput()}
-													type={'presence'}
-													onChangeModel={handleChangeModelInfo}
-												/>
-											</div>
+							)}
+							{userData?.user?.sales_role === 1 ? (
+								<div className={'sa-models-table'}>
+									{(bidModels && bidModels.length > 0) ?
+										bidModels.sort((a, b) => +a.sort - +b.sort).map((bidModel, idx) => (
 											<div
-												className={'sa-models-table-cell'}
-												style={{ padding: 0, boxShadow: 'none' }}
+												className={'sa-models-table-row'}
+												key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
 											>
-												{bidModel.model_id && (
+												<div className={'sa-models-table-cell'}>
+													<p>{idx + 1}</p>
+												</div>
+												<div className={'sa-models-table-cell align-left'}>
+													<NameSelect
+														options={prepareSelect(modelsSelect)}
+														model={bidModel}
+														disabled={isDisabledInputManager()}
+														onUpdateModelName={handleChangeModel}
+													/>
+												</div>
+												<div className={'sa-models-table-cell'}>
+													<ModelInput
+														value={bidModel.model_count}
+														bidModelId={bidModel.id}
+														bidModelSort={bidModel.sort}
+														disabled={isDisabledInputManager()}
+														type={'model_count'}
+														onChangeModel={handleChangeModelInfo}
+													/>
+												</div>
+												<div className={'sa-models-table-cell'}>
+													<ModelInput
+														value={bidModel.percent}
+														bidModelId={bidModel.id}
+														bidModelSort={bidModel.sort}
+														disabled={isDisabledInputManager()}
+														type={'percent'}
+														onChangeModel={handleChangeModelInfo}
+													/>
+												</div>
+												<div className={'sa-models-table-cell'}>
+													{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
+														<LoadingOutlined/>
+													) : (
+														<p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
+													)}
+												</div>
+												<div className={'sa-models-table-cell'}>
+													{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
+														<LoadingOutlined/>
+													) : (
+														<p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
+													)}
+												</div>
+												<div className={'sa-models-table-cell'}>
+													<ModelSelect
+														options={prepareSelect(presenceSelect)}
+														value={bidModel.presence}
+														bidModelId={bidModel.id}
+														bidModelSort={bidModel.sort}
+														disabled={isDisabledInput()}
+														type={'presence'}
+														onChangeModel={handleChangeModelInfo}
+													/>
+												</div>
+												<div
+													className={'sa-models-table-cell'}
+													style={{padding: 0, boxShadow: 'none'}}
+												>
+													{bidModel.model_id && (
+														<Button
+															color="primary"
+															variant="filled"
+															icon={<InfoCircleOutlined/>}
+															onClick={() => handleOpenModelInfoExtra(bidModel.model_id)}
+														></Button>
+													)}
+												</div>
+												<div className={'sa-models-table-cell'} style={{padding: 0}}>
 													<Button
-														color="primary"
+														color="danger"
 														variant="filled"
-														icon={<InfoCircleOutlined/>}
-														onClick={() => handleOpenModelInfoExtra(bidModel.model_id)}
+														icon={<DeleteOutlined/>}
+														onClick={() => handleDeleteModelFromBid(bidModel.id)}
+														disabled={isDisabledInputManager()}
 													></Button>
-												)}
+												</div>
 											</div>
-											<div className={'sa-models-table-cell'} style={{ padding: 0 }}>
-												<Button
-													color="danger"
-													variant="filled"
-													icon={<DeleteOutlined />}
-													onClick={() => handleDeleteModelFromBid(bidModel.id)}
-													disabled={isDisabledInput()}
-												></Button>
+										)) : (
+											<Empty/>
+										)
+									}
+								</div>
+							) : (
+								<div className={'sa-models-table'}>
+									{(bidModels && bidModels.length > 0) ?
+										bidModels.sort((a, b) => +a.sort - +b.sort).map((bidModel, idx) => (
+											<div
+												className={`sa-models-table-row-two ${Math.random()}`}
+												key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}-${Math.random()}`}
+											>
+												<div className={'sa-models-table-cell'}>
+													<p>{idx + 1}</p>
+												</div>
+												<div className={'sa-models-table-cell align-left'}>
+													<NameSelect
+														options={prepareSelect(modelsSelect)}
+														model={bidModel}
+														disabled={isDisabledInputManager()}
+														onUpdateModelName={handleChangeModel}
+													/>
+												</div>
+												<div className={'sa-models-table-cell'}>
+													<ModelInput
+														value={bidModel.model_count}
+														bidModelId={bidModel.id}
+														bidModelSort={bidModel.sort}
+														disabled={isDisabledInputManager()}
+														type={'model_count'}
+														onChangeModel={handleChangeModelInfo}
+														error={isErrorInput(bidModel.id)}
+													/>
+												</div>
+												<div className={'sa-models-table-cell'}>
+													<ModelInput
+														value={bidModel.percent}
+														bidModelId={bidModel.id}
+														bidModelSort={bidModel.sort}
+														disabled={isDisabledInputManager()}
+														type={'percent'}
+														onChangeModel={handleChangeModelInfo}
+													/>
+												</div>
+												<div className={'sa-models-table-cell'}>
+													{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
+														<LoadingOutlined/>
+													) : (
+														<p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
+													)}
+												</div>
+												<div className={'sa-models-table-cell'}>
+													{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
+														<LoadingOutlined/>
+													) : (
+														<p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
+													)}
+												</div>
+												<div className={'sa-models-table-cell'}>
+													<ModelSelect
+														options={prepareSelect(presenceSelect)}
+														value={bidModel.presence}
+														bidModelId={bidModel.id}
+														bidModelSort={bidModel.sort}
+														disabled={(isDisabledInputManager() && isDisabledInputAdmin())}
+														type={'presence'}
+														onChangeModel={handleChangeModelInfo}
+													/>
+												</div>
+												<div className={'sa-models-table-cell'}>
+													<ModelInput
+														value={bidModel.sklad}
+														bidModelId={bidModel.id}
+														bidModelSort={bidModel.sort}
+														disabled={isDisabledInputAdmin()}
+														type={'sklad'}
+														onChangeModel={handleChangeModelInfo}
+													/>
+												</div>
+												<div
+													className={'sa-models-table-cell'}
+													style={{padding: 0, boxShadow: 'none'}}
+												>
+													{bidModel.model_id && (
+														<Button
+															color="primary"
+															variant="filled"
+															icon={<InfoCircleOutlined/>}
+															onClick={() => handleOpenModelInfoExtra(bidModel.model_id)}
+														></Button>
+													)}
+												</div>
 											</div>
-										</div>
-									)) : (
-										<Empty/>
-									)
-								}
-							</div>
+										)) : (
+											<Empty/>
+										)
+									}
+								</div>
+							)}
+
 							<div className={'sa-bid-models-footer'}>
 								<div className={'sa-footer-btns'}>
 									<Button
-										style={{ width: '30%' }}
+										style={{width: '30%'}}
 										color="primary"
 										variant="outlined"
-										icon={<PlusOutlined />}
+										icon={<PlusOutlined/>}
 										onClick={handleAddModel}
-										disabled={isDisabledInput()}
+										disabled={isDisabledInputManager()}
 									>
 										Добавить модель
 									</Button>
 									<Button
-										style={{ width: '30%' }}
+										style={{width: '30%'}}
 										color="primary"
 										variant="filled"
-										icon={<FileSearchOutlined />}
+										icon={<FileSearchOutlined/>}
 										onClick={() => setIsParseModalOpen(true)}
-										disabled={isDisabledInput()}
+										disabled={isDisabledInputManager()}
 									>
 										Анализ сырых данных
 									</Button>
 									<Button
-										style={{ width: '30%' }}
+										style={{width: '30%'}}
 										color="primary"
 										variant="filled"
-										icon={<BlockOutlined />}
+										icon={<BlockOutlined/>}
 										onClick={() => setIsFindSimilarDrawerOpen(true)}
 									>
 										Похожие
@@ -1929,7 +2103,7 @@ const BidPage = (props) => {
 														<span>{prepareEngineerParameter(engineerParameters.unit)}</span> U
 													</p>
 												) : (
-													<LoadingOutlined />
+													<LoadingOutlined/>
 												)}
 											</div>
 											<div className={'sa-footer-table-cell'}>
@@ -1939,7 +2113,7 @@ const BidPage = (props) => {
 														<span>{prepareEngineerParameter(engineerParameters.box_size)}</span> U
 													</p>
 												) : (
-													<LoadingOutlined />
+													<LoadingOutlined/>
 												)}
 											</div>
 										</div>
@@ -1954,7 +2128,7 @@ const BidPage = (props) => {
 														кВт
 													</p>
 												) : (
-													<LoadingOutlined />
+													<LoadingOutlined/>
 												)}
 											</div>
 											<div className={'sa-footer-table-cell'}>
@@ -1964,7 +2138,7 @@ const BidPage = (props) => {
 														<span>{prepareEngineerParameter(engineerParameters.max_power)}</span> Вт
 													</p>
 												) : (
-													<LoadingOutlined />
+													<LoadingOutlined/>
 												)}
 											</div>
 										</div>
@@ -1979,7 +2153,7 @@ const BidPage = (props) => {
 														Вт
 													</p>
 												) : (
-													<LoadingOutlined />
+													<LoadingOutlined/>
 												)}
 											</div>
 											<div className={'sa-footer-table-cell'}>
@@ -1989,7 +2163,7 @@ const BidPage = (props) => {
 														<span>{prepareEngineerParameter(engineerParameters.mass)}</span> кг
 													</p>
 												) : (
-													<LoadingOutlined />
+													<LoadingOutlined/>
 												)}
 											</div>
 										</div>
@@ -2001,7 +2175,7 @@ const BidPage = (props) => {
 														<span>{prepareEngineerParameter(engineerParameters.size)}</span> m3
 													</p>
 												) : (
-													<LoadingOutlined />
+													<LoadingOutlined/>
 												)}
 											</div>
 										</div>

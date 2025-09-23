@@ -55,6 +55,8 @@ const ModelInput = (props) => {
                value={value}
                onChange={(e) => handleChange(e.target.value)}
                disabled={props?.disabled}
+               danger={props?.danger}
+               status={props?.error ? 'error' : ''}
         />
     );
 }
