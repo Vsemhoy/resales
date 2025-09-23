@@ -98,7 +98,7 @@ function App() {
 				// setTotal(organizations_response.data.total_count)
 				setUserdata(response.data);
 
-				if (userdata.user?.id_departament === 7 || userdata.user?.id_departament === 8 || userdata.user?.id_departament === 20) {
+				if (response.data.user?.id_departament === 7 || response.data.user?.id_departament === 8 || response.data.user?.id_departament === 20) {
 					setTopRole(1)
 				} else {
 					setTopRole(2)
@@ -118,6 +118,8 @@ function App() {
 
 	/** ------------------ FETCHES END ---------------- */
 
+	const redirectPath = topRole === 2 ? "/orgs" : "/engineer";
+
 	return (
 		<div className="App">
 			<UserDataProvider>
@@ -129,8 +131,8 @@ function App() {
 					<div>
 						<Routes>
 							{/* Редирект с корня на /orgs */}
-							<Route path="/" element={topRole === 2 ? <Navigate to="/orgs" replace /> : <Navigate to="/engineer" replace /> } />
-							<Route path={BASE_ROUTE + '/'} element={topRole === 2 ? <Navigate to="/orgs" replace /> : <Navigate to="/engineer" replace /> } />
+							<Route path="/" element={<Navigate to={redirectPath} replace />} />
+							<Route path={BASE_ROUTE + '/'} element={<Navigate to={redirectPath} replace />} />
 
 							<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata} />} />
 							<Route path={'/orgs'} element={<OrgListPage userdata={userdata} />} />
