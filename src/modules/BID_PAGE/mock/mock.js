@@ -537,7 +537,7 @@ export const BID_INFO = {
     "bid": {
         "id": 120828,
         "id_company": 2,
-        "place": 1,
+        "place": 2,
         "type": 2,
         "files_count": 0,
         "comments": {
@@ -738,6 +738,12 @@ export const BID_INFO = {
         "tagtext": "Редактирование",
         "color": "green"
     },
+    /*"openmode": {
+        "status": 5,
+        "description": "Возможность вернуть к бухгалитеру",
+        "tagtext": "Разрешено",
+        "color": "green"
+    },*/
     "__endpont": "#NEWOFDC77096732",
     "_duration": 0.02536606788635254
 };

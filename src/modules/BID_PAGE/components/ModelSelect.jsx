@@ -49,7 +49,7 @@ const ModelSelect = (props) => {
                     option.label.toLowerCase().includes(input.toLowerCase())
                 }
                 onChange={(val) => handleChangeSelect(val)}
-                disabled={props?.openMode?.status === 1}
+                disabled={props?.disabled}
         />
     );
 }
