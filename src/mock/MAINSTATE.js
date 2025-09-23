@@ -107,10 +107,11 @@ export const MS_USER = {
 		passcard: null,
 		id_role: 1,
 		email: null,
-		sales_role: 1,
+		sales_role: 2,
 		password2: '$2y$12$vwqewb1to3XkD3FUvSrgoeydtcmsswjQSp6DWvJfxZanevLwAq6BS',
 		active_company: 2,
 		id_departament: 11,
+		// id_departament: 8,
 		id_company: 2,
 		super: 1,
 	},
@@ -118,3 +119,5 @@ export const MS_USER = {
 	duration: 0.0012869834899902344,
 	state: [],
 };
+
+

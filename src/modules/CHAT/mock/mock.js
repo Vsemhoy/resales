@@ -192,8 +192,8 @@ export const MOCK = {
 				updated_at: 1757341930,
 			},
 			{
-				id: 137,
-				chat_id: 61,
+				id: 139,
+				chat_id: 60,
 				from: {
 					surname: 'Артур',
 					name: 'Король',
@@ -212,7 +212,7 @@ export const MOCK = {
 			},
 			{
 				id: 137,
-				chat_id: 62,
+				chat_id: 60,
 				from: {
 					surname: 'Артур',
 					name: 'Король',
@@ -230,8 +230,8 @@ export const MOCK = {
 				updated_at: 1757341930,
 			},
 			{
-				id: 137,
-				chat_id: 63,
+				id: 138,
+				chat_id: 60,
 				from: {
 					surname: 'Артур',
 					name: 'Король',
@@ -249,8 +249,8 @@ export const MOCK = {
 				updated_at: 1757341930,
 			},
 			{
-				id: 137,
-				chat_id: 64,
+				id: 140,
+				chat_id: 60,
 				from: {
 					surname: 'Артур',
 					name: 'Король',
