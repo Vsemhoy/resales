@@ -67,6 +67,10 @@ function App() {
 		}
 	}, [userdata]);
 
+	useEffect(() => {
+		console.log(topRole)
+	}, [topRole]);
+
 
 	/** ------------------ FETCHES ---------------- */
 	/**
