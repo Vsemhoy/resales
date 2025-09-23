@@ -180,8 +180,8 @@
 	border: 2px solid #ffffff;
 }
 .sa-org-sub-sub-section-row.deleted {
-	  border: 2px solid rgba(255, 0, 0, 0.634);
-		background-color: rgb(255, 233, 233);
+	  border: 2px solid rgba(255, 0, 0, 0.634) !important;
+		background-color: rgb(255, 255, 255);
 		color: rgb(199, 0, 0);
 		margin-bottom: 2px;
 		border-radius: 3px;
@@ -231,7 +231,6 @@
 }
 .sk-omt-comment-trigger-treasure > span {
 	color: rgb(0, 89, 178);
-	
 }
 
 .sa-orgpage-tab-hidder {

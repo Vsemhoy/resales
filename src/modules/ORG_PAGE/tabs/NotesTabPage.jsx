@@ -36,7 +36,9 @@ const NotesTabPage = (props) => {
 
 	useEffect(() => {
 		if (props.on_change_data){
-			props.on_change_data('main', baseData)
+			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
+        props.on_change_data('projects', baseData.concat(temporaryUnits))
+      }
 		}
 	}, [baseData]);
 

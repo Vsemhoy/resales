@@ -422,7 +422,15 @@ const ProjectsTabPage = (props) => {
   }, [props.call_to_save]);
 
 
-
+  /** Отптавка данных родительскому компоненту */
+  useEffect(() => {
+    console.log('HELLL');
+    if (props.on_change_data){
+      if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
+        props.on_change_data('projects', baseData.concat(temporaryUnits))
+      }
+    }
+  }, [baseData, temporaryUnits]);
 
 
   return (

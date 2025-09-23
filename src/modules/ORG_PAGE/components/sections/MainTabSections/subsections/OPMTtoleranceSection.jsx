@@ -28,7 +28,6 @@ const OPMTtoleranceSection = (props) => {
   useEffect(() => {
     if (props.data?.id){
       setObjectResult(props.data);
-      console.log('LICENSE LICENSE LICENSE', props.data)
       setId(props.data.id);
       setId_an_orgs(props.data.id_an_orgs);
       setType(      props.data.type);
