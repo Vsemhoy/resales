@@ -551,6 +551,9 @@ const EngineerListPage = (props) => {
 				setAlertMessage('Успех!');
 				setAlertDescription(response.data.message);
 				setAlertType('success');
+
+				const updatedOrders = orders.filter((order) => order.id !== order_id);
+				setOrders(updatedOrders);
 			} catch (e) {
 				console.log(e)
 				setIsAlertVisible(true);
