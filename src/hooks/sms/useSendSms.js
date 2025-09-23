@@ -1,68 +1,87 @@
 import { useState } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
-import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
+import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { nanoid } from 'nanoid';
+import { useUserData } from '../../context/UserDataContext';
 
+/**
+ * Хук отправки SMS сообщений.
+ * Возвращает функцию отправки, статус загрузки, ошибки и локальные сообщения.
+ */
 export const useSendSms = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [success, setSuccess] = useState(false);
-
-	// Локальный буфер отправленных сообщений
 	const [localSentMessages, setLocalSentMessages] = useState([]);
+	const { userdata } = useUserData();
+	const currentUserId = userdata?.user?.id;
 
+	/**
+	 * Отправка сообщения на сервер (или локально в dev)
+	 * @param {Object} param
+	 * @param {number|string} param.to — ID собеседника
+	 * @param {string} param.text — Текст сообщения
+	 * @param {number|null} param.answer — ID сообщения, на которое ответ
+	 */
 	const sendSms = async ({ to, text, answer = null }) => {
+		if (!to || !text?.trim()) return;
+		if (!currentUserId) {
+			setError('Пользователь не авторизован');
+			return;
+		}
+
 		setLoading(true);
 		setError(null);
 		setSuccess(false);
 
-		// Создаём локальное сообщение с уникальным id
+		const timestamp = Math.floor(Date.now() / 1000);
 		const newLocalMessage = {
 			id: nanoid(),
-			from: { id: 'self', name: 'Вы', surname: '' }, // можно адаптировать под данные пользователя
+			from: { id: currentUserId, name: 'Вы', surname: '' },
 			to,
 			chat_id: to,
-			text,
-			created_at: Math.floor(Date.now() / 1000),
-			updated_at: Math.floor(Date.now() / 1000),
+			text: text.trim(),
+			created_at: timestamp,
+			updated_at: timestamp,
 		};
 
 		try {
+			// 💻 Development mock
 			if (!PRODMODE) {
-				console.log('[useSendSms] Режим разработки — сообщение не отправляется');
-				// Имитация успешного ответа
-				await new Promise((res) => setTimeout(res, 500));
+				console.log('[useSendSms] Dev mode: message not actually sent');
+				await new Promise((res) => setTimeout(res, 300));
 				setSuccess(true);
-
 				setLocalSentMessages((prev) => [...prev, newLocalMessage]);
 				return;
 			}
 
-			const formData = new FormData();
-			formData.append('_token', CSRF_TOKEN);
-			formData.append(
-				'data',
-				JSON.stringify({
+			// 🚀 Production mode: отправка JSON-запроса
+			const payload = {
+				_token: CSRF_TOKEN,
+				data: {
 					to,
-					text,
+					text: text.trim(),
 					answer,
-				})
-			);
+				},
+			};
 
-			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create', formData);
+			console.log('[useSendSms] Отправка данных на сервер:', JSON.stringify(payload, null, 2));
 
-			console.log('[useSendSms] Ответ от сервера:', response.data);
+			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create', payload, {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
 
 			if (response.data?.status === 'OK') {
 				setSuccess(true);
-				// Можно добавить здесь замену id на реальный из ответа сервера, если нужно
 				setLocalSentMessages((prev) => [...prev, newLocalMessage]);
 			} else {
-				throw new Error(response.data?.message || 'Ошибка при отправке СМС');
+				throw new Error(response.data?.message || 'Ошибка при отправке');
 			}
 		} catch (err) {
 			console.error('[useSendSms] Ошибка:', err);
-			setError(err.message || 'Неизвестная ошибка');
+			setError(err?.message || 'Неизвестная ошибка');
 		} finally {
 			setLoading(false);
 		}
