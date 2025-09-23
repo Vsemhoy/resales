@@ -15,7 +15,15 @@ import './style/Chat.module.css';
 
 const { Content, Footer } = Layout;
 
-// 🔧 Вставка компонентов ChatDivider при смене дня
+// 💡 Генерация UUID (если нет поддержки crypto.randomUUID)
+const generateUUID = () =>
+	'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+		const r = (Math.random() * 16) | 0;
+		const v = c === 'x' ? r : (r & 0x3) | 0x8;
+		return v.toString(16);
+	});
+
+// 📅 Разделитель по дням
 function injectDayDividers(messages) {
 	const result = [];
 	let lastDate = null;
@@ -46,47 +54,38 @@ export default function ChatContent({ chatId }) {
 
 	const [text, setText] = useState('');
 	const [showPicker, setShowPicker] = useState(false);
-	const [localMessages, setLocalMessages] = useState([]); // локальные отправленные сообщения
+	const [localMessages, setLocalMessages] = useState([]);
 
-	// 📦 Комбинируем сообщения (сервер + локальные)
-	const combinedMessages = (smsList || [])
-		.filter((sms) => sms.chat_id === chatId)
-		.map((sms) => ({
-			id: sms.id,
-			role: getRole(sms), // 'self' или 'companion'
-			text: sms.text,
-			timestamp: sms.updated_at * 1000,
-			time: new Date(sms.updated_at * 1000).toLocaleTimeString([], {
-				hour: '2-digit',
-				minute: '2-digit',
-			}),
-			senderName: getRole(sms) === 'self' ? 'Вы' : `${sms.from.name} ${sms.from.surname}`,
-		}))
-		.concat(
-			localMessages
-				.filter((msg) => msg.chat_id === chatId)
-				.map((msg) => ({
-					id: msg.id,
-					role: 'self',
-					text: msg.text,
-					timestamp: msg.timestamp,
-					time: new Date(msg.timestamp).toLocaleTimeString([], {
-						hour: '2-digit',
-						minute: '2-digit',
-					}),
-					senderName: 'Вы',
-				}))
-		)
-		.sort((a, b) => a.timestamp - b.timestamp); // сортируем по времени
+	// 🔄 Комбинируем сообщения
+	const combinedMessages = [...(smsList || []), ...localMessages]
+		.filter((msg) => msg.chat_id === chatId)
+		.map((msg) => {
+			const isLocal = Boolean(msg.timestamp); // локальные уже имеют timestamp в ms
+			const ts = isLocal ? msg.timestamp : msg.updated_at * 1000;
 
-	// 🧩 Вставляем разделители дней
+			return {
+				id: msg.id,
+				role: isLocal ? 'self' : getRole(msg), // для серверных определить роль
+				text: msg.text,
+				timestamp: ts,
+				time: new Date(ts).toLocaleTimeString([], {
+					hour: '2-digit',
+					minute: '2-digit',
+				}),
+				senderName:
+					isLocal || getRole(msg) === 'self' ? 'Вы' : `${msg.from.name} ${msg.from.surname}`,
+				type: 'message',
+			};
+		})
+		.sort((a, b) => a.timestamp - b.timestamp);
+
 	const messagesWithDividers = injectDayDividers(combinedMessages);
 
 	const handleSend = async () => {
 		if (!text.trim()) return;
 
 		const newLocalMsg = {
-			id: crypto.randomUUID(), // надёжный уникальный id
+			id: generateUUID(),
 			chat_id: chatId,
 			text: text.trim(),
 			timestamp: Date.now(),
@@ -115,7 +114,7 @@ export default function ChatContent({ chatId }) {
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.messages}>
 				{loading ? (
-					<p>loading...</p>
+					<p>Загрузка...</p>
 				) : (
 					<List
 						dataSource={messagesWithDividers}
@@ -147,7 +146,6 @@ export default function ChatContent({ chatId }) {
 
 			<Footer className={styles['chat-input__footer']}>
 				<Space className={styles.spaceContainer}>
-					{/* <FormData /> */}
 					<Popover
 						content={<EmojiPicker onEmojiClick={onEmojiClick} />}
 						trigger="hover"
@@ -157,7 +155,8 @@ export default function ChatContent({ chatId }) {
 					>
 						<Button icon={<SmileOutlined />} />
 					</Popover>
-					<Button trigger="hover" type={FormData} icon={<FileAddOutlined />} />
+
+					<Button icon={<FileAddOutlined />} />
 
 					<Input
 						value={text}
