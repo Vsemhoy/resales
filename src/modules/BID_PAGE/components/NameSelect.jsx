@@ -43,7 +43,7 @@ const NameSelect = (props) => {
                     option.label.toLowerCase().includes(input.toLowerCase())
                 }
                 onChange={(val) => handleChangeModel(val, model.id, model.sort)}
-                disabled={props?.openMode?.status === 1}
+                disabled={props?.disabled}
         />
     );
 }
