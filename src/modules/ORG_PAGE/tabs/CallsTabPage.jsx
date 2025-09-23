@@ -113,7 +113,7 @@ const CallsTabPage = (props) => {
 					// alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
 					if (props.on_break_discard) {
 						// setBaseData(props.base_data?.calls);
-						console.log('BREAK SETTER');
+						console.log('BREAK SETTER CALLLS ');
 						setOriginalData(
 							
 							joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings)
@@ -147,6 +147,7 @@ const CallsTabPage = (props) => {
 		}
 
 		result.sort((a, b) => dayjs(a).isAfter(dayjs(b)));
+		console.log('JOINED CALLS ', result);
 		return result;
 	};
 
@@ -242,9 +243,9 @@ const CallsTabPage = (props) => {
 
     /* ------------------------------------------------------- */
 	useEffect(() => {
-		console.log('original', baseData, originalData);
-		setOriginalData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
-		setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
+		console.log('ORIGINAL SETTER ------------------------------ ', props.base_data?.calls, props.base_data?.meetings);
+		setOriginalData(JSON.parse(JSON.stringify( joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings))));
+		setBaseData(JSON.parse(JSON.stringify(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings))));
 	}, [props.base_data]);
 
 
@@ -252,7 +253,9 @@ const CallsTabPage = (props) => {
     /* ------------------------------------------------------- */
 
 
-
+	useEffect(() => {
+		console.log('ORIGINAL RE SETTER ------------------------------ ', originalData);
+	}, [originalData]);
 
     /* ------------------------------------------------------- */
 	useEffect(() => {
@@ -438,7 +441,7 @@ const CallsTabPage = (props) => {
 		if (!editMode) {
 			return;
 		}
-		console.log('data', data);
+		
 
 		const excluders = ['command', 'date', 'departament', 'creator', '_type'];
 		let is_original = false;
@@ -446,6 +449,7 @@ const CallsTabPage = (props) => {
 		originalData.forEach((element) => {
 			if (element.id === id) {
 				console.log(element, data);
+				console.log(originalData);
 				is_original = compareObjects(element, data, {
 					excludeFields: excluders,
 					compareArraysDeep: false,

@@ -180,7 +180,7 @@ const NotesTabPage = (props) => {
 	}, [baseData, editMode]);
 
 	useEffect(() => {
-		console.log('original', baseData, originalData);
+		console.log('ORIGGINAL DATA', baseData, originalData);
 		setOriginalData(
 			props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
 		);
