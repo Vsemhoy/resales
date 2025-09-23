@@ -779,12 +779,10 @@ const BidPage = (props) => {
 		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post('/sales/data/changebidstage', {
+					bid_id: bidId,
 					data: {
-						bid_id: bidId,
-						data: {
-							bid: bidId,
-							stage: newPlace
-						},
+						bid: bidId,
+						stage: newPlace
 					},
 					_token: CSRF_TOKEN,
 				});
