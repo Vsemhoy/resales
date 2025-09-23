@@ -476,7 +476,7 @@ const OrgPage = (props) => {
 	const update_data_action = async (dataToUpdate) => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/updateorglist/' + itemId, {
+				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/updateorglist/' + itemId, {
 					data: dataToUpdate,
 					_token: CSRF_TOKEN,
 				});
