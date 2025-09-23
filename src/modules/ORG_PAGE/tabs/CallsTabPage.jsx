@@ -77,6 +77,15 @@ const CallsTabPage = (props) => {
 		}
 	}, [props.main_data]);
 
+
+	useEffect(() => {
+		if (props.on_change_data){
+			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
+        props.on_change_data('projects', baseData.concat(temporaryUnits))
+      }
+		}
+	}, [baseData, temporaryUnits]);
+
 	useEffect(() => {
 		if (props.edit_mode === false) {
 			if (editedItemsIds.length > 0 || newStructureItems.length > 0) {
@@ -308,6 +317,10 @@ const CallsTabPage = (props) => {
 		}
 		setNewLoading(false);
 	}, [temporaryUnits, editMode]);
+
+
+
+
 
 	const get_org_data_action = (org_id, ev, on) => {
 		if (props.on_change_page && ev !== currentPage) {

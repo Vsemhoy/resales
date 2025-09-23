@@ -59,6 +59,7 @@ const MainTabPage = (props) => {
   useEffect(() => {
     setSelects(props.selects);
   }, [props.selects]);
+  
 
   useEffect(() => {
     let contics = [];
@@ -67,10 +68,10 @@ const MainTabPage = (props) => {
       contics = baseData.contacts.map((item)=>({
         key: "controw_org_" + item.id,
         classNames : 'super',
-        style: {border: item.deleted ? '2px solid #ff0000a2' : (
+        style: {outline: item.deleted ? '2px solid #ff0000a2' : (
           item.command === 'create' ? '2px solid #2196f3' : '0px'
-        ) , marginBottom: item.deleted ? '1px ' : (
-          item.command === 'create' ? '2px' : '0px'
+        ) , marginBottom: item.deleted ? '3px ' : (
+          item.command === 'create' ? '3px' : '0px'
         )},
         label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}><div>{item.lastname} {item.name} {item.middlename} <span style={{color: 'gray', fontWeight: 100}}>({item.id})</span></div>
         {editMode && (
@@ -135,7 +136,7 @@ const MainTabPage = (props) => {
   // }
 
   const updateCompanyData = (changed_data) => {
-
+    console.log(changed_data);
     setBaseData(prevData => {
       const updatedData = { ...prevData };
       
@@ -148,6 +149,13 @@ const MainTabPage = (props) => {
       return updatedData;
     });
   };
+
+  useEffect(() => {
+    if (props.on_change_data)
+    {
+      props.on_change_data('main', baseData);
+    }
+  }, [baseData]);
 
   useEffect(() => {
     if (!show){ return; }
@@ -342,7 +350,11 @@ const MainTabPage = (props) => {
     }
   }
 
+
+
+
   const handleUpdateContactData = (id, updata) => {
+    console.log('HUCON');
     let contacts = baseData.contacts;
     // let ordata = contacts.find((item)=> item.id === id);
 
@@ -361,6 +373,8 @@ const MainTabPage = (props) => {
 
     ndt.contacts = newContacts;
     setBaseData(ndt);
+
+    console.log("UPDATE CONTACT");
   }
 
 

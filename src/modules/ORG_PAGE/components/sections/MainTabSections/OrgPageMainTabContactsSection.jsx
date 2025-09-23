@@ -117,11 +117,11 @@ const OrgPageMainTabContactsSection = (props) => {
       result.exittoorg_id = exittoorg_id;
       result.deleted = deleted;
 
-      result.contactstelephones = contactstelephones;
-      result.contactmobiles =     contactmobiles;
-      result.contacthomephones =  contacthomephones;
-      result.contactemails =      contactemails;
-      result.contactmessangers =  contactmessangers;
+      result.contactstelephones = contactstelephones.concat(newContactstelephones);
+      result.contactmobiles =     contactmobiles.concat(newContactmobiles);
+      result.contacthomephones =  contacthomephones.concat(newContacthomephones);
+      result.contactemails =      contactemails.concat(newContactemails);
+      result.contactmessangers =  contactmessangers.concat(newContactmessangers);
 
 			console.log('result', result);
 
@@ -143,7 +143,12 @@ const OrgPageMainTabContactsSection = (props) => {
     contacthomephones,
     contactmessangers,
     contactmobiles,
-    contactstelephones
+    contactstelephones,
+    newContactemails,
+    newContacthomephones,
+    newContactmessangers,
+    newContactmobiles, 
+    newContactstelephones
   ]);
 
 
@@ -174,6 +179,8 @@ const OrgPageMainTabContactsSection = (props) => {
       setExittoorg_id(changed_data.exittoorg_id);
     }
 };
+
+
 
 
 

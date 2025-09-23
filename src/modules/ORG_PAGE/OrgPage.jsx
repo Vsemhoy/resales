@@ -85,7 +85,7 @@ const OrgPage = (props) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 
-	const [isSmthChanged, setIsSmthChanged] = useState(true);
+	const [isSmthChanged, setIsSmthChanged] = useState(false);
 
 	const { item_id } = useParams();
 	const onPage = 30;
@@ -473,6 +473,44 @@ const OrgPage = (props) => {
 		}
 	};
 
+	const update_data_action = async (dataToUpdate) => {
+		if (PRODMODE) {
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/updateorglist/' + itemId, {
+					data: dataToUpdate,
+					_token: CSRF_TOKEN,
+				});
+				if (response){
+          // setDepartList(response.data.data.departments);
+					if (tempMainData){
+						setTempMainData(null);
+						get_main_data_action();
+					}
+					if (tempProjectsData && tempProjectsData.length > 0){
+							setTempProjectsData(null);
+							get_projects_data_action();
+						}
+						if (tempCallsData && tempCallsData.length > 0){
+							setTempCallsData(null);
+							get_org_calls_action();
+						}
+						if (tempNotesData && tempNotesData.length > 0){
+							setTempNotesData(null);
+							get_notes_data_action();
+						}
+        }
+			} catch (e) {
+				console.log(e);
+			} finally {
+				// setLoadingOrgs(false)
+
+			}
+		} else {
+			//setUserAct(USDA);
+			console.log('SEND', dataToUpdate);
+		}
+	};
+
 	/** ----------------------- FETCHES -------------------- */
 
 	/**
@@ -481,25 +519,25 @@ const OrgPage = (props) => {
 	 * @param {*} section
 	 */
 	const handleDataChangeApprove = (data, section) => {
-		setBlockOnSave(true);
-		const timer = setTimeout(() => {
-			switch (section) {
-				case 'main':
-					setTempMainData(data);
-					break;
-				case 'calls':
-					setTempCallsData(data);
-					break;
-				case 'projects':
-					setTempProjectsData(data);
-					break;
-				case 'notes':
-					setTempCallsData(data);
-					break;
-			}
-		}, 400);
+		// setBlockOnSave(true);
+		// const timer = setTimeout(() => {
+		// 	switch (section) {
+		// 		case 'main':
+		// 			setTempMainData(data);
+		// 			break;
+		// 		case 'calls':
+		// 			setTempCallsData(data);
+		// 			break;
+		// 		case 'projects':
+		// 			setTempProjectsData(data);
+		// 			break;
+		// 		case 'notes':
+		// 			setTempNotesData(data);
+		// 			break;
+		// 	}
+		// }, 400);
 
-		return () => clearTimeout(timer);
+		// return () => clearTimeout(timer);
 	};
 
 	useEffect(() => {
@@ -515,18 +553,80 @@ const OrgPage = (props) => {
 	}, [pageProject]);
 
 	const handleSaveData = () => {
+		setBlockOnSave(true);
 		setSaveProcess(5);
 		setBlockOnSave(true);
 		setTimeout(() => {
 			setSaveProcess(100);
 			setBlockOnSave(false);
 		}, 2000);
+
+
+		let saveData = {};
+			if (tempMainData){
+				saveData.orgData = tempMainData;
+			}
+			if (tempProjectsData && tempProjectsData.length > 0){
+				saveData.projects = tempProjectsData;
+			}
+			if (tempCallsData && tempCallsData.length > 0){
+				saveData.calls = tempCallsData;
+			}
+			if (tempNotesData && tempNotesData.length > 0){
+				saveData.notes = tempNotesData;
+			}
+			
+		update_data_action(saveData);
+		console.log('SAVEDATA FIN', saveData);
+
+
+			setIsSmthChanged(false);
 	};
 
 
 	const handleTabDataChange = (tab_name, data) => {
-		console.log(tab_name, data);
+		console.log('END POOINT', tab_name, data);
+		if (tab_name === 'main'){
+			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+				setTempMainData(data);
+				console.log('HASE   data');
+			} else {
+				setTempMainData(null);
+				console.log('NULL   data');
+			}
+
+		} else if (tab_name === 'projects'){
+			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+				setTempProjectsData(data);
+			} else {
+				setTempProjectsData(null);
+			}
+
+		} else if (tab_name === 'notes'){
+			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+				setTempNotesData(data);
+			} else {
+				setTempNotesData(null);
+			}
+
+		} else if (tab_name === 'calls'){
+			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+				setTempCallsData(data);
+			} else {
+				setTempCallsData(null);
+			}
+
+		}
+		
 	}
+
+		useEffect(() => {
+			if (tempCallsData || tempMainData || tempNotesData || tempProjectsData){
+				setIsSmthChanged(true);
+			} else {
+				setIsSmthChanged(false);
+			}
+		}, [tempCallsData, tempMainData, tempNotesData, tempProjectsData]);
 
 
 	return (
