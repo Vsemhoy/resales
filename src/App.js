@@ -116,8 +116,8 @@ function App() {
 					<div>
 						<Routes>
 							{/* Редирект с корня на /orgs */}
-							<Route path="/" element={topRole === 2 ? <Navigate to="/orgs" replace /> : <Navigate to="/engineer" replace /> } />
-							<Route path={BASE_ROUTE + '/'} element={topRole === 2 ? <Navigate to="/orgs" replace /> : <Navigate to="/engineer" replace /> } />
+							<Route path="/" element={topRole === 1 ? <Navigate to="/orgs" replace /> : <Navigate to="/engineer" replace /> } />
+							<Route path={BASE_ROUTE + '/'} element={topRole === 1 ? <Navigate to="/orgs" replace /> : <Navigate to="/engineer" replace /> } />
 
 							<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata} />} />
 							<Route path={'/orgs'} element={<OrgListPage userdata={userdata} />} />
