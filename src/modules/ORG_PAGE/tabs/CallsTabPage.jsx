@@ -39,9 +39,7 @@ const CallsTabPage = (props) => {
 
 	const [orgusers, setOrgUsers] = useState([]);
 
-	useEffect(() => {
-		console.log('props.selects', props.selects);
-	}, [props.selects]);
+
 
 	useEffect(() => {
 		setShow(props.show);
@@ -230,7 +228,6 @@ const CallsTabPage = (props) => {
     /* ------------------------------------------------------- */
 	useEffect(() => {
 		console.log('original', baseData, originalData);
-		console.log('BASE SETTER NNN');
 		setOriginalData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
 		setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
 	}, [props.base_data]);
@@ -238,10 +235,10 @@ const CallsTabPage = (props) => {
 
 
     /* ------------------------------------------------------- */
-	useEffect(() => {
-		console.log('ORIGINAL DATA', originalData);
-		console.log('BASE DATA', baseData);
-	}, [originalData, baseData]);
+	// useEffect(() => {
+	// 	console.log('ORIGINAL DATA', originalData);
+	// 	console.log('BASE DATA', baseData);
+	// }, [originalData, baseData]);
 
 
 
@@ -474,8 +471,8 @@ const CallsTabPage = (props) => {
 	}, [props.call_to_save]);
 
 	return (
-		<div>
-			{show && (
+		<div className={`${show ? '' : 'sa-orgpage-tab-hidder'}`}>
+
 				<Spin spinning={loading}>
 					<div className={'sa-orgtab-container'}>
 						<div className={'sa-pa-6 sa-flex-space'} style={{ paddingTop: '9px' }}>
@@ -552,7 +549,7 @@ const CallsTabPage = (props) => {
 						</div>
 					</div>
 				</Spin>
-			)}
+
 		</div>
 	);
 };

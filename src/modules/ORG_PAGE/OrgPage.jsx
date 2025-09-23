@@ -9,7 +9,7 @@ import {
 	useParams,
 	useSearchParams,
 } from 'react-router-dom';
-import { Affix, Button, DatePicker, Input, Layout, Pagination, Select } from 'antd';
+import { Affix, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
 
 import { ArrowSmallLeftIcon } from '@heroicons/react/24/solid';
 import {
@@ -85,6 +85,8 @@ const OrgPage = (props) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 
+	const [isSmthChanged, setIsSmthChanged] = useState(true);
+
 	const { item_id } = useParams();
 	const onPage = 30;
 
@@ -139,11 +141,21 @@ const OrgPage = (props) => {
 	const [baseFiltersData, setBaseFilterstData] = useState(null);
 
 
+	const [originalData,     setOriginalData]     = useState({});
+	const [originalCalls,    setOriginalCalls]    = useState([]);
+	const [originalNotes,    setOriginalNotes]    = useState([]);
+	const [originalProjects, setOriginalProjects] = useState([]);
+
+
+	const [updatedlData,     setUpdatedData]     = useState({});
+	const [updatedlCalls,    setUpdatedCalls]    = useState([]);
+	const [updatedlNotes,    setUpdatedNotes]    = useState([]);
+	const [updatedlProjects, setUpdatedProjects] = useState([]);
+
 
 	useEffect(() => {
 		setLoading(true);
 		let rp = getCurrentParamsString();
-		console.log(rp);
 
 		if (rp.includes('frompage=orgs')) {
 			rp.replace('frompage=orgs&', '');
@@ -259,6 +271,9 @@ const OrgPage = (props) => {
 	//   })));
 	// }, [baseCompanies]);
 
+
+
+
 	const companies = useMemo(() => {
 		return baseCompanies.map((item) => ({
 			key: `kompa_${item.id}`,
@@ -318,6 +333,8 @@ const OrgPage = (props) => {
 				// }
 				setBaseMainData(response.data.content);
 				setLoading(false);
+				setOriginalData(response.data.content);
+				
 			}
 		} catch (e) {
 			console.log(e);
@@ -344,6 +361,8 @@ const OrgPage = (props) => {
 				// }
 				setBaseCallsData(response.data.content);
 				setLoading(false);
+				setOriginalCalls(response.data.content);
+
 			}
 		} catch (e) {
 			console.log(e);
@@ -370,6 +389,7 @@ const OrgPage = (props) => {
 				// }
 				setBaseProjectsData(response.data.content);
 				setLoading(false);
+				setOriginalProjects(response.data.content);
 			}
 		} catch (e) {
 			console.log(e);
@@ -396,6 +416,7 @@ const OrgPage = (props) => {
 				// }
 				setBaseNotesData(response.data.content);
 				setLoading(false);
+				setOriginalNotes(response.data.content);
 			}
 		} catch (e) {
 			console.log(e);
@@ -460,7 +481,6 @@ const OrgPage = (props) => {
 	 * @param {*} section
 	 */
 	const handleDataChangeApprove = (data, section) => {
-		console.log(data, section);
 		setBlockOnSave(true);
 		const timer = setTimeout(() => {
 			switch (section) {
@@ -504,6 +524,10 @@ const OrgPage = (props) => {
 	};
 
 
+	const handleTabDataChange = (tab_name, data) => {
+		console.log(tab_name, data);
+	}
+
 
 	return (
 		<>
@@ -544,17 +568,28 @@ const OrgPage = (props) => {
           <Affix offsetTop={36}>    
 						<div className={'sa-orgpage-sub-header sa-flex-space'}>
 							<div className={'sa-orgpage-sub-name'}>{baseMainData?.name}</div>
+							<div>
+								
+							</div>
 							<div className={'sa-flex sa-orgpage-sub-control'} style={{ padding: '6px' }}>
 								{/* {editMode && (
                             <div onClick={triggerEditMode}>
                                 <XMarkIcon height={'22px'}/> Просмотр
                             </div>
                         )} */}
+								{isSmthChanged && (
+									<div style={{display: 'flex', alignItems: 'flex-end', paddingRight: '12px'}}>
+										<Tooltip title={'Не забудьте сохранить'}>
+											<Tag color='red-inverse'>Есть несохраненные данные</Tag>
+										</Tooltip>
+									</div>
+								)}
+
 
 								{editMode ? (
 									<div>
 										{blockOnSave ? (
-											<Button icon={<LoadingOutlined />} color="danger" variant="solid">
+											<Button icon={<LoadingOutlined />} color="primary" variant="solid">
 												Сохраняю...
 											</Button>
 										) : (
@@ -562,7 +597,7 @@ const OrgPage = (props) => {
 												icon={<ClipboardDocumentCheckIcon height={'16px'} />}
 												disabled={blockOnSave}
 												onClick={handleSaveData}
-												color="danger"
+												color="primary"
 												variant="solid"
 											>
 												Сохранить
@@ -570,7 +605,8 @@ const OrgPage = (props) => {
 										)}
 
 										<Button
-											type={'dashed'}
+											color="primary"
+											variant="outlined"
 											onClick={triggerEditMode}
 											icon={<XMarkIcon height={'16px'} />}
 										>
@@ -579,13 +615,15 @@ const OrgPage = (props) => {
 									</div>
 								) : (
 									<Button
-										type={'dashed'}
+									color="primary"
+										variant="outlined"
 										onClick={triggerEditMode}
 										icon={<PencilIcon height={'16px'} />}
 									>
 										Редактировать
 									</Button>
 								)}
+								
 							</div>
 						</div>
             </Affix>  
@@ -626,6 +664,7 @@ const OrgPage = (props) => {
 							on_save={handleDataChangeApprove}
 							userdata={userdata}
               selects={baseFiltersData}
+							on_change_data={handleTabDataChange}
 						/>
 
 						<CallsTabPage
@@ -644,6 +683,7 @@ const OrgPage = (props) => {
 							selects={baseFiltersData}
 							departaments={departList}
 							main_data={baseMainData}
+							on_change_data={handleTabDataChange}
 						/>
 
 						<ProjectsTabPage
@@ -659,6 +699,7 @@ const OrgPage = (props) => {
 							}}
 							current_page={pageProject}
 							userdata={userdata}
+							on_change_data={handleTabDataChange}
 						/>
 
 						<NotesTabPage
@@ -674,6 +715,7 @@ const OrgPage = (props) => {
 							}}
 							current_page={pageNotes}
 							userdata={userdata}
+							on_change_data={handleTabDataChange}
 						/>
 
 						{activeTab === 'h' && (

@@ -4,11 +4,12 @@ import OrgPageMainTabDepartSection from '../components/sections/MainTabSections/
 import OrgPageMainTabContactsSection from '../components/sections/MainTabSections/OrgPageMainTabContactsSection';
 import OrgPageMainTabContactinfoSection from '../components/sections/MainTabSections/OrgPageMainTabContactinfoSection';
 import OrgPageMainTabPayersSection from '../components/sections/MainTabSections/OrgPageMainTabPayersSection';
-import { Button, Collapse } from 'antd';
+import { Badge, Button, Collapse } from 'antd';
 import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { forIn } from 'lodash';
 import OrgPageMainTabToleranceSection from '../components/sections/MainTabSections/OrgPageMainTabToleranceSection';
+import { PlusCircleOutlined } from '@ant-design/icons';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -39,6 +40,10 @@ const MainTabPage = (props) => {
 
   const [dataModified, setDataModified] = useState(false);
 
+  const [callToAddRequisite, setCallToAddRequisite] = useState(null);
+  const [callToAddLicense, setCallToAddLicense]     = useState(null);
+  const [callToAddTolerance, setCallToAddTolerance] = useState(null);
+
 	useEffect(() => {
 		setShow(props.show);
 	}, [props.show]);
@@ -52,12 +57,10 @@ const MainTabPage = (props) => {
 	}, [props.base_data]);
 
   useEffect(() => {
-    console.log('props.selects 2', props.selects)
     setSelects(props.selects);
   }, [props.selects]);
 
   useEffect(() => {
-    console.log('props.base_data', props.base_data)
     let contics = [];
     setOriginalData(JSON.parse(JSON.stringify(props.base_data)));
     if (baseData?.contacts){
@@ -74,6 +77,22 @@ const MainTabPage = (props) => {
         <div className={'sa-flex-gap'}>
 
             <div className={'sa-org-contactstack-delrow'}>
+
+          {editMode && (
+           <Button
+              size="small"
+              color="default"
+              variant="filled"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                handleAddContact();
+              }}
+              icon={<PlusCircleOutlined />}
+            >
+              Звонок
+            </Button>
+        )}
+
           <Button
             title='Удалить контакт'
             size='small'
@@ -99,7 +118,6 @@ const MainTabPage = (props) => {
       }))
     }
     setStructureContacts(contics);
-    console.log('baseData CALLBACK')
   }, [show, editMode, baseData]);
 
 
@@ -127,7 +145,6 @@ const MainTabPage = (props) => {
           setDataModified(true);
         }
       }
-      console.log('updatedData', updatedData)
       return updatedData;
     });
   };
@@ -172,7 +189,13 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_131',
-        label: <div className={`sa-flex-space`}><div>Лицензии/Допуски</div><div></div>
+        label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Лицензии/Допуски 
+
+          <Badge 
+          count={baseData?.active_licenses_bo?.length + baseData?.active_licenses?.length + baseData?.active_tolerance?.length}
+            color="blue"
+          />
+          </div><div></div>
 
         </div>,
         children: <OrgPageMainTabToleranceSection
@@ -185,7 +208,13 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_14',
-        label: <div className={`sa-flex-space`}><div>Контактные лица</div><div></div>
+        label: <div className={`sa-flex-space`}><div  className={`sa-flex`}>Контактные лица  
+
+        <Badge 
+          count={baseData?.contacts?.length}
+            color="blue"
+          />
+        </div><div></div>
         {editMode && (
            <Button
               size="small"
@@ -195,6 +224,7 @@ const MainTabPage = (props) => {
                 ev.stopPropagation();
                 handleAddContact();
               }}
+              icon={<PlusCircleOutlined />}
             >
               Добавить контакт
             </Button>
@@ -214,16 +244,26 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_15',
-        label: <div className={`sa-flex-space`}><div>Фирмы/плательщики</div><div></div>
+        label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Фирмы/плательщики   
+          <Badge 
+            count={baseData?.requisites?.length}
+            color="blue"
+          />
+          </div><div></div>
         {editMode && (
            <Button
               size="small"
               color="primary"
               variant="outlined"
-              // onClick={(ev) => {
-              //   ev.stopPropagation();
-              //   handleDeleteRealUnit(item.id, 1);
-              // }}
+              onClick={(ev) => {
+                ev.stopPropagation();
+                setCallToAddRequisite(dayjs().unix());
+                console.log(dayjs().unix());
+                setTimeout(() => {
+                  setCallToAddRequisite(null);
+                }, 300);
+              }}
+              icon={<PlusCircleOutlined />}
             >
               Добавить плательщика
             </Button>
@@ -234,12 +274,13 @@ const MainTabPage = (props) => {
           edit_mode={editMode} 
           data={baseData}
           selects={selects}
+          on_add_requisites={callToAddRequisite}
           />
       },
     ];
 
     setStructureItems(secids);
-  },[show, editMode, structureContacts, selects]);
+  },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense]);
 
 
 
@@ -268,12 +309,10 @@ const MainTabPage = (props) => {
     let ndt = JSON.parse(JSON.stringify(baseData));
     let newContacts = [newContact, ...ndt.contacts];
     ndt.contacts = newContacts;
-    console.log('ndt', ndt)
     setBaseData(ndt);
   }
 
   const handleDeleteContact = (id) => {
-    console.log('id', id)
     let contacts = baseData.contacts;
     let ordata = contacts.find((item)=> item.id === id);
 
@@ -300,12 +339,10 @@ const MainTabPage = (props) => {
       
       ndt.contacts = newContacts;
       setBaseData(ndt);
-      console.log('ndt', ndt)
     }
   }
 
   const handleUpdateContactData = (id, updata) => {
-    console.log('ON CHANGE', id, updata)
     let contacts = baseData.contacts;
     // let ordata = contacts.find((item)=> item.id === id);
 
@@ -329,10 +366,9 @@ const MainTabPage = (props) => {
 
 
 	return (
-		<div>
+		<div className={`${show ? '' : 'sa-orgpage-tab-hidder'}`}>
 				{/* <div className={'sk-omt-stack'} style={{ borderLeft: '4px solid seagreen' }}>
 				</div> */}
-    {show && (
 			
       <Collapse
           defaultActiveKey={['mainorgsec_11', 'mainorgsec_12', 'mainorgsec_14']}
@@ -342,7 +378,7 @@ const MainTabPage = (props) => {
           // onMouseDown={handleSectionClick}
           items={structureItems}
         />
-      )}
+
 		</div>
 	);
 };

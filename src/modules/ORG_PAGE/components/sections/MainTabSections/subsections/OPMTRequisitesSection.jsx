@@ -26,7 +26,6 @@ const OPMTRequisitesSection = (props) => {
   useEffect(() => {
     if (props.data?.id){
       setObjectResult(props.data);
-      console.log('LICENSE LICENSE LICENSE', props.data)
       setId(props.data.id);
       setId_orgs(props.data.id_orgs);
       setInn(   props.data.inn);
@@ -148,7 +147,7 @@ const OPMTRequisitesSection = (props) => {
           }}
           />
         }
-        on_change={handleChangeData}
+        // on_change={handleChangeData}
         on_blur={handleChangeData}
       />
 
@@ -190,7 +189,7 @@ const OPMTRequisitesSection = (props) => {
         className='sa-omt-filler'
         />}
 
-        on_change={handleChangeData}
+        // on_change={handleChangeData}
         on_blur={handleChangeData}
       />
     </div>

@@ -33,6 +33,13 @@ const NotesTabPage = (props) => {
 	const [editedItemsIds, setEditedItemsIds] = useState([]);
 	const [openedNewSections, setOpenedNewSections] = useState([]);
 
+
+	useEffect(() => {
+		if (props.on_change_data){
+			props.on_change_data('main', baseData)
+		}
+	}, [baseData]);
+
 	useEffect(() => {
 		setShow(props.show);
 	}, [props.show]);
@@ -172,17 +179,16 @@ const NotesTabPage = (props) => {
 
 	useEffect(() => {
 		console.log('original', baseData, originalData);
-		console.log('BASE SETTER NNN');
 		setOriginalData(
 			props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
 		);
 		setBaseData(props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []);
 	}, [props.base_data]);
 
-	useEffect(() => {
-		console.log('ORIGINAL DATA', originalData);
-		console.log('BASE DATA', baseData);
-	}, [originalData, baseData]);
+	// useEffect(() => {
+	// 	console.log('ORIGINAL DATA', originalData);
+	// 	console.log('BASE DATA', baseData);
+	// }, [originalData, baseData]);
 
 	useEffect(() => {
 		let secids = [];
@@ -393,8 +399,8 @@ const NotesTabPage = (props) => {
 	}, [props.call_to_save]);
 
 	return (
-		<div>
-			{show && (
+		<div className={`${show ? '' : 'sa-orgpage-tab-hidder'}`}>
+
 				<Spin spinning={loading}>
 					<div className={'sa-orgtab-container'}>
 						<div className={'sa-pa-6 sa-flex-space'} style={{ paddingTop: '9px' }}>
@@ -457,7 +463,7 @@ const NotesTabPage = (props) => {
 						</div>
 					</div>
 				</Spin>
-			)}
+
 		</div>
 	);
 };
