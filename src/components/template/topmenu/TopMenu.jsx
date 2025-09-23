@@ -167,15 +167,25 @@ const TopMenu = () => {
 							<HomeFilled />
 						</div>
 					</NavLink>
-					<NavLink to="/orgs">
-						<div className={'sa-topmenu-button'}>Организации</div>
-					</NavLink>
-					<NavLink to="/bids">
-						<div className={'sa-topmenu-button'}>Заявки</div>
-					</NavLink>
-					<NavLink to="/price">
-						<div className={'sa-topmenu-button'}>Прайс</div>
-					</NavLink>
+					{userdata && !userdata.id_departament?.includes([7, 8, 20]) && (
+						<NavLink to="/orgs">
+							<div className={'sa-topmenu-button'}>Организации</div>
+						</NavLink>
+					)}
+
+					{userdata && !userdata.id_departament?.includes([7, 8, 20]) && (
+						<NavLink to="/bids">
+							<div className={'sa-topmenu-button'}>Заявки</div>
+						</NavLink>
+					)}
+
+					{userdata && !userdata.id_departament?.includes([7, 8, 20]) && (
+						<NavLink to="/price">
+							<div className={'sa-topmenu-button'}>Прайс</div>
+						</NavLink>
+					)}
+
+
 					{userdata && userdata.user && userdata.user.super ? (
 						<NavLink to="/orgs/534">
 							<div className={'sa-topmenu-button'}>Заявка</div>

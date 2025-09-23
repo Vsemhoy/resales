@@ -493,57 +493,34 @@ const EngineerListPage = (props) => {
 		setModalFileList(files);
 		console.log(files)
 
-		fetchCreateNewOrder(files, text).then()
-
-
-			// setIsOpenModal(false);
-		// console.log('HERE: ', modalReason);
-		//
-		// const updatedOrders = orders.filter((order) => order.id !== modalOrderID);
-		// setOrders(updatedOrders);
-		// setModalReason('');
+		fetchCreateNewOrder(files, text).then(() => {
+			setBlockNewSpec(false);
+		});
 	};
 
 
 	const fetchCreateNewOrder = async (files, text) => {
-		const formData = new FormData();
-		formData.append('_token', CSRF_TOKEN);
-		formData.append('data', JSON.stringify({text: text}));
+		if (PRODMODE) {
+			const formData = new FormData();
+			formData.append('_token', CSRF_TOKEN);
+			formData.append('data', JSON.stringify({text: text}));
 
-		console.log("Files: ", files);
-		console.log("Text: ", text);
+			console.log("Files: ", files);
+			console.log("Text: ", text);
 
-		files.forEach((file, index) => {
-			formData.append('files[]', file.originFileObj || file);
-		});
+			files.forEach((file, index) => {
+				formData.append('files[]', file.originFileObj || file);
+			});
 
-		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', formData, {
-			headers: {
-				'Content-Type': 'multipart/form-data',
-			}
-		});
-
-		// if (PRODMODE) {
-		// 	const formData = new FormData();
-		// 	formData.append('_token', CSRF_TOKEN);
-		// 	formData.append('data', JSON.stringify({text: modalText}));
-		//
-		// 	modalFileList.forEach((file) => {
-		// 		formData.append('files[]', file.originFileObj || file);
-		// 	});
-		//
-		// 	console.log(formData)
-		//
-		// 	let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/add', formData, {
-		// 		headers: {
-		// 			'Content-Type': 'multipart/form-data',
-		// 		}
-		// 	});
-		//
-		//
-		// } else {
-		// 	message.success("Привет!");
-		// }
+			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				}
+			});
+			success('Заявка успешно создана');
+		} else {
+			success('Заявка успешно создана');
+		}
 	}
 
 
