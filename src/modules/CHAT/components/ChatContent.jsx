@@ -1,43 +1,49 @@
 import { useState } from 'react';
+import { Layout, List, Input, Button, Popover, Space } from 'antd';
+import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
+import EmojiPicker from 'emoji-picker-react';
+
 import { useUserData } from '../../../context/UserDataContext';
 import { useSms } from '../../../hooks/sms/useSms';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
-import { FormData } from './FormData';
-import { ChatDivider } from './ChatDivider';
+import { nanoid } from 'nanoid';
 
-import { Layout, List, Input, Button, Popover, Space } from 'antd';
-import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
-import EmojiPicker from 'emoji-picker-react';
+import { ChatDivider } from './ChatDivider';
 import styles from './style/Chat.module.css';
 import { MOCK } from '../mock/mock';
-import './style/Chat.module.css';
 
 const { Content, Footer } = Layout;
 
-// 💡 Генерация UUID (если нет поддержки crypto.randomUUID)
-const generateUUID = () =>
-	'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === 'x' ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
+const generateUUID = () => nanoid(8);
 
-// 📅 Разделитель по дням
+// 📅 Вставка ChatDivider при смене дня
 function injectDayDividers(messages) {
 	const result = [];
 	let lastDate = null;
+	const shortWeekdays = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
 
 	messages.forEach((msg) => {
-		const currentDate = new Date(msg.timestamp).toDateString();
+		const dateObj = new Date(msg.timestamp);
+
+		const weekdayShort = shortWeekdays[dateObj.getDay()];
+		const datePart = dateObj.toLocaleDateString('ru-RU', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+		});
+
+		const currentDate = `${weekdayShort}, ${datePart}`;
+
 		if (currentDate !== lastDate) {
 			lastDate = currentDate;
 			result.push({
 				type: 'divider',
 				key: `divider-${currentDate}`,
-				date: currentDate,
+				date: currentDate.charAt(0).toUpperCase() + currentDate.slice(1),
 			});
 		}
+
 		result.push({ ...msg, type: 'message' });
 	});
 
@@ -47,39 +53,40 @@ function injectDayDividers(messages) {
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
-	const getRole = useCompanion(currentUserId);
 
-	const { data: smsList, loading } = useSms({ url: '/api/sms', mock: MOCK });
+	const getRole = useCompanion(currentUserId);
+	const { data: smsList, loading, error } = useSms({ url: '/api/sms', mock: MOCK });
 	const { sendSms, loading: sending } = useSendSms();
 
 	const [text, setText] = useState('');
 	const [showPicker, setShowPicker] = useState(false);
 	const [localMessages, setLocalMessages] = useState([]);
 
-	// 🔄 Комбинируем сообщения
-	const combinedMessages = [...(smsList || []), ...localMessages]
+	if (error) {
+		return <div className={styles.error}>Ошибка загрузки: {error}</div>;
+	}
+
+	// 🧩 Комбинация серверных и локальных сообщений
+	const allMessages = [...(smsList || []), ...localMessages]
 		.filter((msg) => msg.chat_id === chatId)
 		.map((msg) => {
-			const isLocal = Boolean(msg.timestamp); // локальные уже имеют timestamp в ms
-			const ts = isLocal ? msg.timestamp : msg.updated_at * 1000;
+			const isLocal = 'timestamp' in msg;
+			const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
+			const role = isLocal ? 'self' : getRole(msg);
 
 			return {
 				id: msg.id,
-				role: isLocal ? 'self' : getRole(msg), // для серверных определить роль
+				chat_id: msg.chat_id,
 				text: msg.text,
-				timestamp: ts,
-				time: new Date(ts).toLocaleTimeString([], {
-					hour: '2-digit',
-					minute: '2-digit',
-				}),
-				senderName:
-					isLocal || getRole(msg) === 'self' ? 'Вы' : `${msg.from.name} ${msg.from.surname}`,
-				type: 'message',
+				timestamp,
+				time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+				role,
+				senderName: role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`,
 			};
 		})
 		.sort((a, b) => a.timestamp - b.timestamp);
 
-	const messagesWithDividers = injectDayDividers(combinedMessages);
+	const messagesWithDividers = injectDayDividers(allMessages);
 
 	const handleSend = async () => {
 		if (!text.trim()) return;
@@ -101,7 +108,7 @@ export default function ChatContent({ chatId }) {
 				answer: null,
 			});
 		} catch (err) {
-			console.error('Ошибка отправки', err);
+			console.error('Ошибка при отправке сообщения:', err);
 		}
 	};
 
@@ -114,7 +121,9 @@ export default function ChatContent({ chatId }) {
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.messages}>
 				{loading ? (
-					<p>Загрузка...</p>
+					<p className={styles.loading}>Загрузка сообщений...</p>
+				) : allMessages.length === 0 ? (
+					<p className={styles.empty}>Нет сообщений</p>
 				) : (
 					<List
 						dataSource={messagesWithDividers}

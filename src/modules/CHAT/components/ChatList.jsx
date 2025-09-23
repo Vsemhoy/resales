@@ -8,7 +8,7 @@ import { useCompanion } from '../../../hooks/sms/useCompanion';
 
 export default function ChatList({ search, onSelectChat }) {
 	const { userdata } = useUserData();
-	const currentUserId = userdata?.user?.id || NaN;
+	const currentUserId = userdata?.user?.id;
 
 	const {
 		data: smsList,
@@ -24,10 +24,11 @@ export default function ChatList({ search, onSelectChat }) {
 	const chats = useMemo(() => {
 		const normalizedSearch = search.toLowerCase();
 
-		// Фильтруем сообщения по поиску
-		let filtered = Array.isArray(smsList)
+		const filtered = Array.isArray(smsList)
 			? smsList.filter((sms) => {
 					const companion = getCompanion(sms);
+					if (companion === 'self') return true;
+
 					const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
 					const messageText = sms.text?.toLowerCase() || '';
 					return fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
@@ -49,13 +50,13 @@ export default function ChatList({ search, onSelectChat }) {
 			}
 		});
 
-		let result = Object.values(uniqueChatsMap).sort((a, b) => {
+		const result = Object.values(uniqueChatsMap).sort((a, b) => {
 			const timeA = a.updated_at || a.created_at;
 			const timeB = b.updated_at || b.created_at;
 			return timeB - timeA;
 		});
 
-		// Добавляем чат "Сохранённое" всегда в начало списка
+		// Добавляем чат "Сохранённое" всегда в начало
 		result.unshift({
 			chat_id: 'saved',
 			from: { id: currentUserId, name: 'Вы', surname: '' },
