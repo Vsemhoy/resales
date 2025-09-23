@@ -20,6 +20,7 @@ import PositionList from './PositionList';
 const EngineerListRow = (props) => {
 	const [active, setActive] = useState(false);
 	const [compColor, setCompColor] = useState('#00000000');
+	const [activeRole, setActiveRole] = useState(0);
 
 	const [data, setData] = useState(props.data);
 
@@ -34,6 +35,10 @@ const EngineerListRow = (props) => {
 	useEffect(() => {
 		setCompColor(props.company_color);
 	}, [props.company_color]);
+
+	useEffect(() => {
+		setActiveRole(props.activeRole);
+	}, [props.activeRole]);
 
 	const handleDoubleClick = () => {
 		if (props.on_double_click) {
@@ -57,7 +62,7 @@ const EngineerListRow = (props) => {
 					<div>{dayjs.unix(data.created_at).format('DD.MM.YYYY')}</div>
 				</div>
 				<div className={'sa-table-box-cell'}>
-					<div>{data.engineer}</div>
+					<div>{activeRole === 1 ? data.engineer : data.manager}</div>
 				</div>
 				<div className={'sa-table-box-cell text-align-left'}>
 					<div>{data.comment}</div>

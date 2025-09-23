@@ -107,7 +107,7 @@ const EngineerListTable = (props) => {
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
 								>
-									Инженер
+									{props.activeRole === 2 ? "Инженер" : "Менеджер"}
 								</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
 									<Input
