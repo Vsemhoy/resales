@@ -738,6 +738,12 @@ export const BID_INFO = {
         "tagtext": "Редактирование",
         "color": "green"
     },
+    /*"openmode": {
+        "status": 5,
+        "description": "Возможность вернуть к бухгалитеру",
+        "tagtext": "Разрешено",
+        "color": "green"
+    },*/
     "__endpont": "#NEWOFDC77096732",
     "_duration": 0.02536606788635254
 };

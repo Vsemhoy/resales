@@ -111,7 +111,7 @@ const TopMenu = () => {
 		},
 		{
 			key: '3fgsd',
-			label: <div>Выйти из системы</div>,
+			label: <NavLink to={`${HTTP_ROOT}/logout`}>Выйти из системы</NavLink>,
 			icon: <ArrowTopRightOnSquareIcon height={'18px'} />,
 		},
 	];
@@ -167,7 +167,8 @@ const TopMenu = () => {
 							<HomeFilled />
 						</div>
 					</NavLink>
-					{userdata && !userdata.id_departament?.includes([7, 8, 20]) && (
+          
+          {userdata && !userdata.id_departament?.includes([7, 8, 20]) && (
 						<NavLink to="/orgs">
 							<div className={'sa-topmenu-button'}>Организации</div>
 						</NavLink>
@@ -192,11 +193,6 @@ const TopMenu = () => {
 						</NavLink>
 					) : null}
 					{userdata && userdata.user && userdata.user.super ? (
-						<NavLink to="/dev/icons/antdicons">
-							<div className={'sa-topmenu-button'}>DEV</div>
-						</NavLink>
-					) : null}
-					{userdata && userdata.user && userdata.user.super ? (
 						<NavLink to="/curator/exmonitor">
 							<div className={'sa-topmenu-button'}>Exmo</div>
 						</NavLink>
@@ -207,6 +203,12 @@ const TopMenu = () => {
 					<NavLink to="/engineer">
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
+
+          {userdata && userdata.user && userdata.user.super ? (
+						<NavLink to="/dev/icons/antdicons">
+							<div className={'sa-topmenu-button'}>DEV</div>
+						</NavLink>
+					) : null}
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>

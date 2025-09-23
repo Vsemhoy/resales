@@ -292,3 +292,8 @@ div.sa-outlet-body > div > div > .ant-collapse-item {
 .sa-tolerance-old-v {
 	border: #d48a00 1px dashed;
 }
+
+.sa-org-modal-body > div > .ant-collapse:last-child ,
+.sa-outlet-body > div >  .ant-collapse:last-child {
+	margin-bottom: 20vh;
+}

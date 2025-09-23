@@ -218,3 +218,9 @@
 .sk-omt-stack-control {
 	background-color: #ecf2fa;
 }
+.sa-omt-filler {
+	width: 24px;
+}
+.sk-omt-comment-trigger-treasure {
+	color: rgb(0, 89, 178);
+}

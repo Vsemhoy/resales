@@ -1,69 +1,111 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useUserData } from '../../../context/UserDataContext';
+import { useSms } from '../../../hooks/sms/useSms';
+import { useSendSms } from '../../../hooks/sms/useSendSms';
+import { useCompanion } from '../../../hooks/sms/useCompanion';
+import { FormData } from './FormData';
+import { ChatDivider } from './ChatDivider';
+
 import { Layout, List, Input, Button, Popover, Space } from 'antd';
 import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 import styles from './style/Chat.module.css';
-import { useUserData } from '../../../context/UserDataContext';
-import { useSms } from '../../../hooks/sms/useSms';
-import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { MOCK } from '../mock/mock';
+import './style/Chat.module.css';
 
 const { Content, Footer } = Layout;
+
+// 🔧 Вставка компонентов ChatDivider при смене дня
+function injectDayDividers(messages) {
+	const result = [];
+	let lastDate = null;
+
+	messages.forEach((msg) => {
+		const currentDate = new Date(msg.timestamp).toDateString();
+		if (currentDate !== lastDate) {
+			lastDate = currentDate;
+			result.push({
+				type: 'divider',
+				key: `divider-${currentDate}`,
+				date: currentDate,
+			});
+		}
+		result.push({ ...msg, type: 'message' });
+	});
+
+	return result;
+}
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
+	const getRole = useCompanion(currentUserId);
 
 	const { data: smsList, loading } = useSms({ url: '/api/sms', mock: MOCK });
 	const { sendSms, loading: sending } = useSendSms();
 
 	const [text, setText] = useState('');
 	const [showPicker, setShowPicker] = useState(false);
-	const [messages, setMessages] = useState([]);
+	const [localMessages, setLocalMessages] = useState([]); // локальные отправленные сообщения
 
-	useEffect(() => {
-		if (!Array.isArray(smsList) || !chatId) return;
-
-		const filtered = smsList.filter((sms) => sms.chat_id === chatId);
-
-		const normalized = filtered.map((msg) => ({
-			id: msg.id,
-			from: msg.from.id === currentUserId ? 'me' : 'other',
-			text: msg.text,
-			time: new Date(msg.updated_at * 1000).toLocaleTimeString([], {
+	// 📦 Комбинируем сообщения (сервер + локальные)
+	const combinedMessages = (smsList || [])
+		.filter((sms) => sms.chat_id === chatId)
+		.map((sms) => ({
+			id: sms.id,
+			role: getRole(sms), // 'self' или 'companion'
+			text: sms.text,
+			timestamp: sms.updated_at * 1000,
+			time: new Date(sms.updated_at * 1000).toLocaleTimeString([], {
 				hour: '2-digit',
 				minute: '2-digit',
 			}),
-			senderName: msg.from.id === currentUserId ? 'Вы' : `${msg.from.name} ${msg.from.surname}`,
-		}));
+			senderName: getRole(sms) === 'self' ? 'Вы' : `${sms.from.name} ${sms.from.surname}`,
+		}))
+		.concat(
+			localMessages
+				.filter((msg) => msg.chat_id === chatId)
+				.map((msg) => ({
+					id: msg.id,
+					role: 'self',
+					text: msg.text,
+					timestamp: msg.timestamp,
+					time: new Date(msg.timestamp).toLocaleTimeString([], {
+						hour: '2-digit',
+						minute: '2-digit',
+					}),
+					senderName: 'Вы',
+				}))
+		)
+		.sort((a, b) => a.timestamp - b.timestamp); // сортируем по времени
 
-		normalized.sort((a, b) => a.id - b.id);
-		setMessages(normalized);
-	}, [smsList, currentUserId, chatId]);
+	// 🧩 Вставляем разделители дней
+	const messagesWithDividers = injectDayDividers(combinedMessages);
 
 	const handleSend = async () => {
 		if (!text.trim()) return;
 
-		await sendSms({
-			to: chatId, // не нужен, так как бэкенд сам определит по chat_id
+		const newLocalMsg = {
+			id: crypto.randomUUID(), // надёжный уникальный id
+			chat_id: chatId,
 			text: text.trim(),
-			answer: null,
-		});
+			timestamp: Date.now(),
+		};
 
-		setMessages((prev) => [
-			...prev,
-			{
-				id: Date.now(),
-				from: 'me',
-				text: text.trim(),
-				time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-			},
-		]);
-
+		setLocalMessages((prev) => [...prev, newLocalMsg]);
 		setText('');
+
+		try {
+			await sendSms({
+				to: chatId,
+				text: newLocalMsg.text,
+				answer: null,
+			});
+		} catch (err) {
+			console.error('Ошибка отправки', err);
+		}
 	};
 
-	// Эмоджи
 	const onEmojiClick = (emojiData) => {
 		setText((prev) => prev + emojiData.emoji);
 		setShowPicker(false);
@@ -73,34 +115,49 @@ export default function ChatContent({ chatId }) {
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.messages}>
 				{loading ? (
-					<p className={styles.statusMessage}>Загрузка сообщений...</p>
+					<p>loading...</p>
 				) : (
 					<List
-						dataSource={messages}
-						renderItem={(msg) => (
-							<List.Item
-								className={`${styles.message} ${
-									msg.from === 'me' ? styles.myMessage : styles.otherMessage
-								}`}
-							>
-								<div
-									className={`${styles.bubble} ${
-										msg.from === 'me' ? styles.myMessage : styles.otherMessage
+						dataSource={messagesWithDividers}
+						renderItem={(item) =>
+							item.type === 'divider' ? (
+								<ChatDivider key={item.key} date={item.date} />
+							) : (
+								<List.Item
+									key={item.id}
+									className={`${styles.message} ${
+										item.role === 'self' ? styles.myMessage : styles.otherMessage
 									}`}
 								>
-									<div className={styles.senderName}>{msg.senderName}</div>
-									<span>{msg.text}</span>
-									<div className={styles.time}>{msg.time}</div>
-								</div>
-							</List.Item>
-						)}
+									<div
+										className={`${styles.bubble} ${
+											item.role === 'self' ? styles.myMessageBubble : styles.otherMessageBubble
+										}`}
+									>
+										<div className={styles.senderName}>{item.senderName}</div>
+										<span>{item.text}</span>
+										<div className={styles.time}>{item.time}</div>
+									</div>
+								</List.Item>
+							)
+						}
 					/>
 				)}
 			</Content>
 
 			<Footer className={styles['chat-input__footer']}>
 				<Space className={styles.spaceContainer}>
-					<Button icon={<FileAddOutlined />} disabled />
+					{/* <FormData /> */}
+					<Popover
+						content={<EmojiPicker onEmojiClick={onEmojiClick} />}
+						trigger="hover"
+						open={showPicker}
+						onOpenChange={setShowPicker}
+						placement="topRight"
+					>
+						<Button icon={<SmileOutlined />} />
+					</Popover>
+					<Button trigger="hover" type={FormData} icon={<FileAddOutlined />} />
 
 					<Input
 						value={text}
@@ -109,16 +166,6 @@ export default function ChatContent({ chatId }) {
 						style={{ flex: 1 }}
 						onPressEnter={handleSend}
 					/>
-
-					<Popover
-						content={<EmojiPicker onEmojiClick={onEmojiClick} />}
-						trigger="click"
-						open={showPicker}
-						onOpenChange={setShowPicker}
-						placement="topRight"
-					>
-						<Button icon={<SmileOutlined />} />
-					</Popover>
 
 					<Button type="primary" icon={<SendOutlined />} onClick={handleSend} loading={sending} />
 				</Space>

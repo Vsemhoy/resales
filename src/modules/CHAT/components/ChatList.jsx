@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
-import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
+import { useCompanion } from '../../../hooks/sms/useCompanion';
 
 export default function ChatList({ search, onSelectChat }) {
 	const { userdata } = useUserData();
@@ -22,20 +22,18 @@ export default function ChatList({ search, onSelectChat }) {
 	const getCompanion = useCompanion(currentUserId);
 
 	const chats = useMemo(() => {
-		if (!Array.isArray(smsList) || smsList.length === 0) return [];
-
-		// 🔍 фильтрация
 		const normalizedSearch = search.toLowerCase();
 
-		const filtered = smsList.filter((sms) => {
-			const companion = getCompanion(sms);
+		// Фильтруем сообщения по поиску
+		let filtered = Array.isArray(smsList)
+			? smsList.filter((sms) => {
+					const companion = getCompanion(sms);
+					const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
+					const messageText = sms.text?.toLowerCase() || '';
+					return fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
+			  })
+			: [];
 
-			const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
-			const messageText = sms.text?.toLowerCase() || '';
-
-			return fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
-		});
-		// 🧠 последние сообщения по chat_id
 		const uniqueChatsMap = {};
 		filtered.forEach((sms) => {
 			const chatId = sms.chat_id;
@@ -51,12 +49,25 @@ export default function ChatList({ search, onSelectChat }) {
 			}
 		});
 
-		return Object.values(uniqueChatsMap).sort((a, b) => {
+		let result = Object.values(uniqueChatsMap).sort((a, b) => {
 			const timeA = a.updated_at || a.created_at;
 			const timeB = b.updated_at || b.created_at;
 			return timeB - timeA;
 		});
-	}, [smsList, search, getCompanion]);
+
+		// Добавляем чат "Сохранённое" всегда в начало списка
+		result.unshift({
+			chat_id: 'saved',
+			from: { id: currentUserId, name: 'Вы', surname: '' },
+			to: { id: currentUserId, name: 'Вы', surname: '' },
+			text: '📁',
+			updated_at: Infinity,
+			created_at: Infinity,
+			isSavedChat: true,
+		});
+
+		return result;
+	}, [smsList, search, getCompanion, currentUserId]);
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
@@ -65,25 +76,25 @@ export default function ChatList({ search, onSelectChat }) {
 		<div className={styles['chat-list__container']}>
 			<ul className={styles['chat-list']}>
 				{chats.map((chat) => {
-					const companion = getCompanion(chat);
-					const isFile = false;
+					const isSaved = chat.chat_id === 'saved' || chat.isSavedChat;
+					const companion = isSaved ? null : getCompanion(chat);
 
-					const lastMessageText = isFile
-						? 'document.pdf'
-						: chat.text || (
-								<>
-									<FileOutlined /> Файл
-								</>
-						  );
+					const lastMessageText = chat.text || (
+						<>
+							<FileOutlined /> Файл
+						</>
+					);
 
 					return (
 						<li
 							key={chat.chat_id}
 							className={styles.chatItem}
-							onClick={() => onSelectChat?.(chat.chat_id)} // ✅
+							onClick={() => onSelectChat?.(chat.chat_id)}
 						>
 							<div className={styles.companionName}>
-								{companion?.surname} {companion?.name}
+								{isSaved
+									? 'Сохранённое'
+									: `${companion?.surname ?? ''} ${companion?.name ?? ''}`.trim()}
 							</div>
 							<div className={styles.lastMessage}>
 								{typeof lastMessageText === 'string'

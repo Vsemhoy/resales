@@ -7,50 +7,20 @@ import { forIn } from 'lodash';
 import dayjs from 'dayjs';
 
 
-const datademo = {
-  active_licenses: [
-		{
-			id: 8191,
-			id_orgs: 22809,
-			id8an_typelicenses: '2',
-			number: '45-Б/00029',
-			comment: 'от 26.12.2014',
-			deleted: 0,
-			type: {
-				id: 2,
-				name: 'монтаж',
-			},
-		},
-	],
 
-	active_tolerance: [
-		{
-			id: 3981,
-			id_orgs: 22762,
-			id8an_typetolerance: '3',
-			number: '16-04-15-172-П-016/ 16.04.15   ',
-			comment: '',
-			deleted: 0,
-			type: {
-				id: 3,
-				name: '10. Проектирование МПБ',
-			},
-		},
-	],
-}
 
 const OPMTanZendToleranceSection  = (props) => {
   const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 
   const [id, setId] = useState(null);
-  const [id_an_orgs, setId_an_orgs] = useState(null); //id_orgsusers
+  const [id_orgs, setId_orgs] = useState(null); //id_orgsusers
   const [comment,    setComment]    = useState('');
   const [type,       setType]       = useState(1);
   const [docType,    setDocType]    = useState(1);
-  const [name,       setName]       = useState('');
+  const [number,       setNumber]       = useState('');
   const [deleted,    setDeleted]    = useState(0);
-  const [start_date, setStart_date] = useState(0);
-  const [end_date,   setEnd_date]   = useState(0);
+  // const [start_date, setStart_date] = useState(0);
+  // const [end_date,   setEnd_date]   = useState(0);
 
   const [objectResult, setObjectResult] = useState({});
 
@@ -61,16 +31,15 @@ const OPMTanZendToleranceSection  = (props) => {
     if (props.data?.id){
       setObjectResult(props.data);
       console.log('LICENSE LICENSE LICENSE', props.data)
-      setId(props.data.id);
-      setId_an_orgs(props.data.id_an_orgs);
+      setId(        props.data.id);
+      setId_orgs(   props.data.id_orgs);
       setType(      props.data.type);
       setDocType(   props.data.document_type);
       setComment(   props.data.comment);
       setDeleted(   props.data.deleted);
-      setName(      props.data.name);
-      setDeleted(   props.data.deleted);
-      setStart_date(props.data.start_date);
-      setEnd_date(  props.data.end_date);
+      setNumber(    props.data.number);
+      // setStart_date(props.data.start_date);
+      // setEnd_date(  props.data.end_date);
     }
   }, [props.data]);
 
@@ -91,7 +60,7 @@ const OPMTanZendToleranceSection  = (props) => {
               if (key.startsWith(String(docType))){
                 const davalue = props.selects.tollic[key];
                 arrak.push({
-                  key: 'kivala_k' + key,
+                  key: 'kivalas3_k' + key + '_' + id,
                   value: Number(key.split('-')[1]),
                   label: davalue
                 });
@@ -108,32 +77,32 @@ const OPMTanZendToleranceSection  = (props) => {
 
   const handleChangeData = (changed_data) => {
     console.log('changed_data', changed_data)
-    if (changed_data.id_an_orgs !== undefined) {
-      setId_an_orgs(changed_data.id_an_orgs);
+    if (changed_data.id_orgs !== undefined) {
+      setId_orgs(changed_data.id_orgs);
 
     } else if (changed_data.comment !== undefined) {
       setComment(changed_data.comment);
 
-    } else if (changed_data.name !== undefined) {
-      setName(changed_data.name);
+    } else if (changed_data.number !== undefined) {
+      setNumber(changed_data.number);
 
     } else if (changed_data.type !== undefined) {
       setType(changed_data.type);
 
-    } else if (changed_data.document_type !== undefined) {
-      setDocType(changed_data.document_type);
+    // } else if (changed_data.document_type !== undefined) {
+    //   setDocType(changed_data.document_type);
 
     } else if (changed_data.deleted !== undefined) {
       setDeleted(changed_data.deleted);
 
-    } else if (changed_data.start_date !== undefined) {
-      setStart_date(changed_data.start_date === null ? null : changed_data.start_date.unix());
+    // } else if (changed_data.start_date !== undefined) {
+    //   setStart_date(changed_data.start_date === null ? null : changed_data.start_date.unix());
 
-    } else if (changed_data.end_date !== undefined) {
-      setEnd_date(changed_data.end_date === null ? null : changed_data.end_date.unix());
+    // } else if (changed_data.end_date !== undefined) {
+    //   setEnd_date(changed_data.end_date === null ? null : changed_data.end_date.unix());
 
-    } else if (changed_data.id_an_orgs !== undefined) {
-      setId_an_orgs(changed_data.id_an_orgs);
+    } else if (changed_data.id_orgs !== undefined) {
+      setId_orgs(changed_data.id_orgs);
     } 
   }
 
@@ -146,12 +115,12 @@ const OPMTanZendToleranceSection  = (props) => {
       };
       let resultObject = objectResult;
 
-      resultObject.id_an_orgs    = id_an_orgs;
+      resultObject.id_orgs    = id_orgs;
       resultObject.type          = type;
       resultObject.document_type = docType;
-      resultObject.name          = name;
-      resultObject.start_date    = start_date;
-      resultObject.end_date      = end_date;
+      resultObject.number          = number;
+      // resultObject.start_date    = start_date;
+      // resultObject.end_date      = end_date;
       resultObject.comment = comment;
       resultObject.deleted = deleted;
 
@@ -163,14 +132,14 @@ const OPMTanZendToleranceSection  = (props) => {
     }, 120);
     return () => clearTimeout(timer);
   }, [
-    id_an_orgs,
+    id_orgs,
     comment,   
     type,      
-    docType,   
-    name,      
+    // docType,   
+    number,      
     deleted,   
-    start_date,
-    end_date,  
+    // start_date,
+    // end_date,  
   ]);
 
 
@@ -185,21 +154,25 @@ const OPMTanZendToleranceSection  = (props) => {
   }, [deleted]);
 
 
+  useEffect(() => {
+    console.log('options', options)
+  }, [options]);
+
   return (
-    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
-      <OrgPageSectionRow
+    <div classNumber={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
+      {/* <OrgPageSectionRow
         key={'fotolpddk_dk' + id}
         edit_mode={editMode}
         titles={[ docType === 1 ? 'Лицензия МЧС': 'Допуск СРО', 'Начало действия']}
         datas={[
           {
             type: OPS_TYPE.STRING,
-            value: name,
+            value: number,
             max: 50,
             required: false,
             nullable: false,
             placeholder: '',
-            name: 'name',
+            number: 'number',
           },
           {
             type: OPS_TYPE.DATE,
@@ -208,12 +181,12 @@ const OPMTanZendToleranceSection  = (props) => {
             max: 9,
             nullable: false,
             placeholder: '',
-            name: 'start_date',
+            number: 'start_date',
           },
         ]}
 
         action={<Button
-          className='sa-org-sub-sub-section-row-action'
+          classNumber='sa-org-sub-sub-section-row-action'
           size='small'
           color="danger"
           variant="outlined"
@@ -225,12 +198,12 @@ const OPMTanZendToleranceSection  = (props) => {
         }
         on_change={handleChangeData}
         on_blur={handleChangeData}
-      />
+      /> */}
 
       <OrgPageSectionRow
-        key={'otolddk_dk' + id}
+        key={'otoldssdk_dk' + id}
         edit_mode={editMode}
-        titles={['Вид лицензии/допуска', 'Конец действия']}
+        titles={[docType === 1 ? "Лицензия" : "Допуск", 'Номер']}
         datas={[
           {
             type: OPS_TYPE.SELECT,
@@ -243,13 +216,12 @@ const OPMTanZendToleranceSection  = (props) => {
             name: 'type',
           },
           {
-            type: OPS_TYPE.DATE,
-            value: end_date ? dayjs.unix(end_date) : null,
+            type: OPS_TYPE.STRING,
+            value: number,
             min: 0,
-            max: 9,
-            nullable: false,
+            max: 120,
             placeholder: '',
-            name: 'end_date',
+            name: 'number',
           },
         ]}
         comment={{
@@ -261,6 +233,16 @@ const OPMTanZendToleranceSection  = (props) => {
           placeholder: '',
           name: 'comment',
         }}
+        action={<Button
+          classNumber='sa-org-sub-sub-section-row-action'
+          size='small'
+          color="danger"
+          variant="outlined"
+          icon={<TrashIcon height={'18px'} />}
+          onClick={()=>{
+            setDeleted(!deleted);
+        }}
+      />}
 
         on_change={handleChangeData}
         on_blur={handleChangeData}
