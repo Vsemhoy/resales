@@ -79,12 +79,16 @@ const CallsTabPage = (props) => {
 
 
 	useEffect(() => {
+		console.log(baseData, editedItemsIds.length);
 		if (props.on_change_data){
 			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
         props.on_change_data('projects', baseData.concat(temporaryUnits))
       }
 		}
 	}, [baseData, temporaryUnits]);
+
+
+
 
 	useEffect(() => {
 		if (props.edit_mode === false) {
@@ -109,7 +113,9 @@ const CallsTabPage = (props) => {
 					// alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
 					if (props.on_break_discard) {
 						// setBaseData(props.base_data?.calls);
+						console.log('BREAK SETTER');
 						setOriginalData(
+							
 							joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings)
 						);
 						props.on_break_discard();
@@ -244,10 +250,6 @@ const CallsTabPage = (props) => {
 
 
     /* ------------------------------------------------------- */
-	// useEffect(() => {
-	// 	console.log('ORIGINAL DATA', originalData);
-	// 	console.log('BASE DATA', baseData);
-	// }, [originalData, baseData]);
 
 
 
@@ -432,7 +434,7 @@ const CallsTabPage = (props) => {
 	const handleUpdateRealUnit = (id, data) => {
 		// let udata = originalData.filter((item) => item.id !== id);
 		// udata.push(data);
-		console.log('CALL TU REAL UPDATE');
+		console.log('CALL TU REAL UPDATE', originalData, editMode, editedItemsIds);
 		if (!editMode) {
 			return;
 		}
@@ -443,6 +445,7 @@ const CallsTabPage = (props) => {
 
 		originalData.forEach((element) => {
 			if (element.id === id) {
+				console.log(element, data);
 				is_original = compareObjects(element, data, {
 					excludeFields: excluders,
 					compareArraysDeep: false,
@@ -463,7 +466,7 @@ const CallsTabPage = (props) => {
       data.command = '';
 		}
 
-		console.log(data);
+		console.log(is_original, id);
 
 		setBaseData((prevUnits) => {
 			const exists = prevUnits.some((item) => item.id === id);
