@@ -56,16 +56,22 @@ function App() {
 			get_userdata();
 		} else {
 			setUserdata(MS_USER);
+
+			if (MS_USER.user?.id_departament === 7 || MS_USER.user?.id_departament === 8 || MS_USER.user?.id_departament === 20) {
+				setTopRole(1)
+			} else {
+				setTopRole(2)
+			}
 		}
 	}, []);
 
-	useEffect(() => {
-		if (userdata.user?.id_departament === 7 || userdata.user?.id_departament === 8 || userdata.user?.id_departament === 20) {
-			setTopRole(1)
-		} else {
-			setTopRole(2)
-		}
-	}, [userdata]);
+	// useEffect(() => {
+	// 	if (userdata.user?.id_departament === 7 || userdata.user?.id_departament === 8 || userdata.user?.id_departament === 20) {
+	// 		setTopRole(1)
+	// 	} else {
+	// 		setTopRole(2)
+	// 	}
+	// }, [userdata]);
 
 	useEffect(() => {
 		console.log("topRole: ",topRole)
@@ -91,6 +97,13 @@ function App() {
 				// setOrganizations(organizations_response.data.org_list)
 				// setTotal(organizations_response.data.total_count)
 				setUserdata(response.data);
+
+				if (userdata.user?.id_departament === 7 || userdata.user?.id_departament === 8 || userdata.user?.id_departament === 20) {
+					setTopRole(1)
+				} else {
+					setTopRole(2)
+				}
+
 			} catch (e) {
 				console.log(e);
 			} finally {
