@@ -789,7 +789,7 @@ const BidPage = (props) => {
 				if (response.data) {
 					setIsAlertVisible(true);
 					setAlertMessage('Успех!');
-					setAlertDescription(response.data.message);
+					setAlertDescription(response.data.message.message);
 					setAlertType('success');
 				}
 			} catch (e) {
