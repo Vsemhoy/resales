@@ -603,7 +603,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 0,
             "presence": 3,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977890,
@@ -613,7 +614,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 1,
             "presence": -2,
-            "percent": 0
+            "percent": 0,
+            "sklad": 187
         },
         {
             "id": 977891,
@@ -732,12 +734,24 @@ export const BID_INFO = {
         "tagtext": "Просмотр",
         "color": "volcano"
     },*/
-    "openmode": {
+    /*"openmode": {
         "status": 2,
         "description": "Режим редактирования",
         "tagtext": "Редактирование",
         "color": "green"
+    },*/
+    "openmode": {
+        "status": 3,
+        "description": "Редактирование от администратора",
+        "tagtext": "Разрешено",
+        "color": "green"
     },
+    /*"openmode": {
+        "status": 4,
+        "description": "Редактирование от бухгалтера",
+        "tagtext": "Разрешено",
+        "color": "green"
+    },*/
     /*"openmode": {
         "status": 5,
         "description": "Возможность вернуть к бухгалитеру",

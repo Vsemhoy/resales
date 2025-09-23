@@ -230,6 +230,12 @@
 	background: rgba(0, 0, 0, 0.04) !important;
 	box-shadow: none !important;
 }
+.sa-bid-page-container .ant-input-disabled {
+	color: rgba(0, 0, 0, 0.7) !important;
+}
+.sa-bid-page-container .ant-select-disabled .ant-select-selection-item {
+	color: rgba(0, 0, 0, 0.7) !important;
+}
 
 
 	/* NO ANTD */
@@ -346,6 +352,22 @@
 		minmax(70px, 2fr)
 		minmax(50px, 1.5fr)
 		45px
+		45px;
+	grid-auto-rows: 40px;
+	border-bottom: 1px solid #99bad3 /*var(--column-divider-color)*/;
+}
+.sa-models-table-row-two {
+	width: 100%;
+	display: grid;
+	grid-template-columns:
+		40px
+		minmax(50px, 1.5fr)
+		minmax(70px, 0.5fr)
+		minmax(70px, 0.5fr)
+		minmax(70px, 1fr)
+		minmax(70px, 1fr)
+		minmax(50px, 1fr)
+		minmax(50px, 0.5fr)
 		45px;
 	grid-auto-rows: 40px;
 	border-bottom: 1px solid #99bad3 /*var(--column-divider-color)*/;
