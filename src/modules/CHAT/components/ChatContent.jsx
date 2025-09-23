@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { Layout, List, Input, Button, Popover, Space } from 'antd';
+import { useState, useMemo, useCallback } from 'react';
+import { Layout, List, Input, Button, Popover, Space, message } from 'antd';
 import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 
 import { useUserData } from '../../../context/UserDataContext';
-import { useSms } from '../../../hooks/sms/useSms';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
-import { nanoid } from 'nanoid';
+import { useChatMessages } from '../../../hooks/sms/useChatMessages';
 
+import { nanoid } from 'nanoid';
 import { ChatDivider } from './ChatDivider';
 import styles from './style/Chat.module.css';
 import { MOCK } from '../mock/mock';
@@ -17,7 +17,6 @@ const { Content, Footer } = Layout;
 
 const generateUUID = () => nanoid(8);
 
-// 📅 Вставка ChatDivider при смене дня
 function injectDayDividers(messages) {
 	const result = [];
 	let lastDate = null;
@@ -25,7 +24,6 @@ function injectDayDividers(messages) {
 
 	messages.forEach((msg) => {
 		const dateObj = new Date(msg.timestamp);
-
 		const weekdayShort = shortWeekdays[dateObj.getDay()];
 		const datePart = dateObj.toLocaleDateString('ru-RU', {
 			day: 'numeric',
@@ -55,40 +53,46 @@ export default function ChatContent({ chatId }) {
 	const currentUserId = userdata?.user?.id;
 
 	const getRole = useCompanion(currentUserId);
-	const { data: smsList, loading, error } = useSms({ url: '/api/sms', mock: MOCK });
+	const { data: smsList, loading, error } = useChatMessages({ chatId, mock: MOCK });
+
 	const { sendSms, loading: sending } = useSendSms();
 
 	const [text, setText] = useState('');
 	const [showPicker, setShowPicker] = useState(false);
 	const [localMessages, setLocalMessages] = useState([]);
 
-	if (error) {
-		return <div className={styles.error}>Ошибка загрузки: {error}</div>;
-	}
+	// Объединяем серверные и локальные сообщения, фильтруем по chatId и форматируем
+	const allMessages = useMemo(() => {
+		const combined = [...(smsList || []), ...localMessages]
+			.filter((msg) => msg.chat_id === chatId)
+			.map((msg) => {
+				// Проверка, локальное ли сообщение
+				const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
 
-	// 🧩 Комбинация серверных и локальных сообщений
-	const allMessages = [...(smsList || []), ...localMessages]
-		.filter((msg) => msg.chat_id === chatId)
-		.map((msg) => {
-			const isLocal = 'timestamp' in msg;
-			const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
-			const role = isLocal ? 'self' : getRole(msg);
+				// timestamp в миллисекундах для корректного сравнения и вывода времени
+				const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
 
-			return {
-				id: msg.id,
-				chat_id: msg.chat_id,
-				text: msg.text,
-				timestamp,
-				time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-				role,
-				senderName: role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`,
-			};
-		})
-		.sort((a, b) => a.timestamp - b.timestamp);
+				const role = isLocal ? 'self' : getRole(msg);
 
-	const messagesWithDividers = injectDayDividers(allMessages);
+				return {
+					id: msg.id,
+					chat_id: msg.chat_id,
+					text: msg.text,
+					timestamp,
+					time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+					role,
+					senderName:
+						role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`.trim(),
+				};
+			})
+			.sort((a, b) => a.timestamp - b.timestamp);
 
-	const handleSend = async () => {
+		return combined;
+	}, [smsList, localMessages, chatId, getRole]);
+
+	const messagesWithDividers = useMemo(() => injectDayDividers(allMessages), [allMessages]);
+
+	const handleSend = useCallback(async () => {
 		if (!text.trim()) return;
 
 		const newLocalMsg = {
@@ -108,14 +112,19 @@ export default function ChatContent({ chatId }) {
 				answer: null,
 			});
 		} catch (err) {
+			message.error('Ошибка при отправке сообщения');
 			console.error('Ошибка при отправке сообщения:', err);
 		}
-	};
+	}, [text, chatId, sendSms]);
 
-	const onEmojiClick = (emojiData) => {
+	const onEmojiClick = useCallback((emojiData) => {
 		setText((prev) => prev + emojiData.emoji);
 		setShowPicker(false);
-	};
+	}, []);
+
+	if (error) {
+		return <div className={styles.error}>Ошибка загрузки: {error}</div>;
+	}
 
 	return (
 		<Layout className={styles.chatcontentLayout}>
