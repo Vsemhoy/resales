@@ -62,7 +62,7 @@ const EngineerListRow = (props) => {
 					<div>{dayjs.unix(data.created_at).format('DD.MM.YYYY')}</div>
 				</div>
 				<div className={'sa-table-box-cell'}>
-					<div>{activeRole === 1 ? data.engineer : data.manager}</div>
+					<div>{activeRole === 2 ? data.engineer : data.manager}</div>
 				</div>
 				<div className={'sa-table-box-cell text-align-left'}>
 					<div>{data.comment}</div>
