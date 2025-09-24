@@ -12,54 +12,59 @@ export const useSms = ({ chatId = null, mock = {} }) => {
 			setLoading(true);
 			setError(null);
 
+			console.log('[useSms] START fetch, chatId =', chatId, 'PRODMODE =', PRODMODE);
+			console.log('[useSms] mock (входной):', mock);
+
 			try {
 				let responseData = [];
 
-				if (PRODMODE) {
-					try {
-						const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
-						const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
-							data: {},
-							_token: CSRF_TOKEN,
-						});
+				if (!PRODMODE) {
+					// DEV режим — берём из mock
+					const mockData = typeof mock === 'function' ? mock() : mock;
+					console.log('[useSms] mockData внутри:', mockData);
 
-						console.log(`[useSms] Ответ от сервера (${endpoint}):`, response.data);
+					const smsAll = Array.isArray(mockData?.content?.sms) ? mockData.content.sms : [];
+					console.log('[useSms] smsAll from mockData.content.sms:', smsAll);
 
-						const sms = response?.data?.content?.sms;
+					// Приводим chatId к числу для безопасной фильтрации
+					const targetId = chatId != null ? Number(chatId) : null;
 
+					if (targetId != null) {
+						const filtered = smsAll.filter((msg) => Number(msg.chat_id) === targetId);
+						console.log('[useSms] filtered by chatId (mock):', filtered);
+						responseData = filtered;
+					} else {
+						responseData = smsAll;
+					}
+				} else {
+					// PRODMODE — делаем запрос к серверу
+					const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
+					const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
+						data: {},
+						_token: CSRF_TOKEN,
+					});
+
+					console.log(`[useSms] Ответ от сервера (${endpoint}) =`, response.data);
+
+					if (chatId) {
+						if (Array.isArray(response.data.messages)) {
+							responseData = response.data.messages;
+						} else {
+							console.warn(`[useSms] response.data.messages не массив для ${endpoint}`);
+						}
+					} else {
+						const sms = response.data?.content?.sms;
 						if (Array.isArray(sms)) {
 							responseData = sms;
 						} else {
-							console.warn(`[useSms] СМС в ответе сервера по ${endpoint} не является массивом`);
+							console.warn(`[useSms] content.sms не массив для ${endpoint}`);
 						}
-					} catch (err) {
-						console.error(
-							`[useSms] Ошибка при запросе ${chatId ? `/api/sms/${chatId}` : '/api/sms'}:`,
-							err
-						);
-						throw new Error('Не удалось загрузить SMS с сервера');
-					}
-				} else {
-					console.log('[useSms] Используются MOCK-данные (dev mode)');
-					const mockData = typeof mock === 'function' ? mock() : mock;
-
-					console.log('[useSms] MOCK-данные:', mockData);
-
-					// Для chatId можно расширить мок или фильтровать
-					const sms = chatId
-						? mockData?.content?.sms.filter((msg) => msg.chat_id === chatId)
-						: mockData?.content?.sms;
-
-					if (Array.isArray(sms)) {
-						responseData = sms;
-					} else {
-						console.warn('[useSms] MOCK-данные не содержат массив sms');
 					}
 				}
 
 				setData(responseData);
 			} catch (err) {
-				console.error('[useSms] Ошибка при загрузке данных:', err);
+				console.error('[useSms] Ошибка в fetchData:', err);
 				setError(err.message || 'Неизвестная ошибка');
 				setData([]);
 			} finally {

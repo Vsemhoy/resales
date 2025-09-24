@@ -1,65 +1,71 @@
-import { useEffect, useState } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
-import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
+import React, { useEffect, useState } from 'react';
+import { PRODMODE } from '../../config/config.js';
+import { useSms } from './useSms';
 
-export const useChatMessages = ({ chatId, mock = {} }) => {
-	const [data, setData] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+export const useChatMessages = ({ chatId = null, mock = {} }) => {
+	const { data: history, loading, error } = useSms({ chatId, mock });
+	const [liveMessages, setLiveMessages] = useState([]);
+	const [wsError, setWsError] = useState(null);
 
 	useEffect(() => {
-		if (!chatId) return;
+		if (!PRODMODE) {
+			// В dev режиме WS не нужен, сбрасываем live-сообщения
+			setLiveMessages([]);
+			return;
+		}
 
-		const fetchMessages = async () => {
-			setLoading(true);
-			setError(null);
+		const ws = new WebSocket('wss://your-bff-server');
 
+		ws.onopen = () => {
+			ws.send(JSON.stringify({ action: 'subscribe', chatId }));
+		};
+
+		ws.onmessage = (event) => {
 			try {
-				let responseData = [];
+				const msg = JSON.parse(event.data);
 
-				if (PRODMODE) {
-					try {
-						const response = await PROD_AXIOS_INSTANCE.post(`/api/sms/${chatId}`, {
-							data: {},
-							_token: CSRF_TOKEN,
-						});
-
-						console.log('[useChatMessages] Ответ от сервера:', response.data);
-
-						const sms = response?.data?.content?.sms;
-
-						if (Array.isArray(sms)) {
-							responseData = sms;
-						} else {
-							console.warn('[useChatMessages] СМС в ответе сервера не является массивом');
-						}
-					} catch (err) {
-						console.error(`[useChatMessages] Ошибка при запросе /api/sms/${chatId}:`, err);
-						throw new Error('Не удалось загрузить сообщения чата');
-					}
-				} else {
-					console.log('[useChatMessages] Используются MOCK-данные (dev mode)');
-					const mockData = typeof mock === 'function' ? mock() : mock;
-
-					const sms = mockData?.content?.sms;
-
-					if (Array.isArray(sms)) {
-						responseData = sms.filter((msg) => msg.chat_id === chatId);
+				if (msg.action === 'CHAT_MESSAGE' && msg.payload) {
+					// Проверяем, что сообщение принадлежит нужному чату
+					if (!chatId || msg.payload.chat_id === chatId) {
+						setLiveMessages((prev) => [...prev, msg.payload]);
 					}
 				}
-
-				setData(responseData);
-			} catch (err) {
-				console.error('[useChatMessages] Ошибка при загрузке:', err);
-				setError(err.message || 'Неизвестная ошибка');
-				setData([]);
-			} finally {
-				setLoading(false);
+			} catch (e) {
+				console.error('[useChatMessages] Ошибка парсинга WS сообщения:', e);
 			}
 		};
 
-		fetchMessages();
-	}, [chatId, mock]);
+		ws.onerror = (error) => {
+			console.error('[useChatMessages] WS ошибка:', error);
+			setWsError('WebSocket error');
+		};
 
-	return { data, loading, error };
+		ws.onclose = () => {
+			console.log('[useChatMessages] WS соединение закрыто');
+		};
+
+		return () => {
+			ws.close();
+		};
+	}, [chatId]);
+
+	// Объединяем историю и live-сообщения, убираем дубликаты по id
+	const allMessages = React.useMemo(() => {
+		if (!history) return liveMessages;
+
+		const map = new Map();
+		history.forEach((msg) => map.set(msg.id, msg));
+		liveMessages.forEach((msg) => map.set(msg.id, msg));
+
+		return Array.from(map.values()).sort((a, b) => a.created_at - b.created_at);
+	}, [history, liveMessages]);
+
+	// Для режима mock будем сразу возвращать мок-данные из useSms, liveMessages пустые
+	// Для PRODMODE liveMessages добавляются из WS
+
+	return {
+		data: allMessages,
+		loading,
+		error: error || wsError,
+	};
 };
