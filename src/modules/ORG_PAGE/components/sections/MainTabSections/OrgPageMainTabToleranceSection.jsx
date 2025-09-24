@@ -65,6 +65,40 @@ const OrgPageMainTabToleranceSection = (props) => {
 	}, [props.data]);
 
 
+	useEffect(() => {
+		if (props.on_blur){
+			props.on_blur('active_licenses_bo', JSON.parse(JSON.stringify(tolerances.concat(newTolerances))));
+		}
+	}, [tolerances, newTolerances]);
+
+		useEffect(() => {
+		if (props.on_blur){
+			props.on_blur('active_tolerance', JSON.parse(JSON.stringify(anZendTolerances)));
+		}
+	}, [anZendTolerances]);
+	
+		useEffect(() => {
+		if (props.on_blur){
+			props.on_blur('active_licenses', JSON.parse(JSON.stringify(anZendLicenses)));
+		}
+	}, [anZendLicenses]);
+
+
+	useEffect(() => {
+		if (props.on_add_license !== null){
+			 handleAddTolerance(1);
+		}
+	}, [props.on_add_license]);
+
+
+		useEffect(() => {
+		if (props.on_add_tolerance !== null){
+			 handleAddTolerance(2);
+		}
+	}, [props.on_add_tolerance]);
+
+
+
 // ██████   ██████      ████████  ██████  ██      ██ ██   ██ 
 // ██   ██ ██    ██        ██    ██    ██ ██      ██ ██  ██  
 // ██████  ██    ██        ██    ██    ██ ██      ██ █████   
@@ -349,7 +383,7 @@ const OrgPageMainTabToleranceSection = (props) => {
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateAnZendToleranceUnit}
-		  selects={selects}
+		  		selects={selects}
         />
       )})}
 	  </div>
@@ -361,7 +395,7 @@ const OrgPageMainTabToleranceSection = (props) => {
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateTolikUnit}
-		  selects={selects}
+		  		selects={selects}
         />
       ))}
 	  </div>
@@ -380,7 +414,7 @@ const OrgPageMainTabToleranceSection = (props) => {
         ))}</div>
       )}
 
-		{editMode && (
+		{/* {editMode && (
       <div className={'sk-omt-stack-control sa-flex-space'}>
         <div></div>
         <div>
@@ -414,7 +448,7 @@ const OrgPageMainTabToleranceSection = (props) => {
             </div>
         </div>
       </div>
-      )}
+      )} */}
 		</div>
 	);
 };

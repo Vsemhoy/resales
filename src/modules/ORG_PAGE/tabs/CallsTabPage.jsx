@@ -253,9 +253,7 @@ const CallsTabPage = (props) => {
     /* ------------------------------------------------------- */
 
 
-	useEffect(() => {
-		console.log('ORIGINAL RE SETTER ------------------------------ ', originalData);
-	}, [originalData]);
+
 
     /* ------------------------------------------------------- */
 	useEffect(() => {
