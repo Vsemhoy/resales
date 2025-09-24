@@ -63,7 +63,8 @@ export default function ChatContent({ chatId }) {
 
 	// Объединяем серверные и локальные сообщения, фильтруем по chatId и форматируем
 	const allMessages = useMemo(() => {
-		const combined = [...(smsList || []), ...localMessages].map((msg) => {
+		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
+		const combined = [...(smsList || []), ...filteredLocal].map((msg) => {
 			const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
 			const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
 
@@ -81,7 +82,7 @@ export default function ChatContent({ chatId }) {
 		});
 
 		return combined.sort((a, b) => a.timestamp - b.timestamp);
-	}, [smsList, localMessages, getRole]);
+	}, [smsList, localMessages, getRole, chatId]);
 
 	const messagesWithDividers = useMemo(() => injectDayDividers(allMessages), [allMessages]);
 
@@ -118,6 +119,9 @@ export default function ChatContent({ chatId }) {
 	if (error) {
 		return <div className={styles.error}>Ошибка загрузки: {error}</div>;
 	}
+	// console.log('[ChatContent] chatId:', chatId);
+	// console.log('[ChatContent] smsList:', smsList);
+	// console.log('[ChatContent] allMessages:', allMessages);
 
 	return (
 		<Layout className={styles.chatcontentLayout}>

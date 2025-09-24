@@ -1,80 +1,71 @@
-import { useEffect, useState } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
-import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
+import React, { useEffect, useState } from 'react';
+import { PRODMODE } from '../../config/config.js';
+import { useSms } from './useSms';
 
-export const useChatMessages = ({ chatId, mock = {} }) => {
-	const [data, setData] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+export const useChatMessages = ({ chatId = null, mock = {} }) => {
+	const { data: history, loading, error } = useSms({ chatId, mock });
+	const [liveMessages, setLiveMessages] = useState([]);
+	const [wsError, setWsError] = useState(null);
 
 	useEffect(() => {
-		if (!chatId) return;
+		if (!PRODMODE) {
+			// В dev режиме WS не нужен, сбрасываем live-сообщения
+			setLiveMessages([]);
+			return;
+		}
 
-		const fetchMessages = async () => {
-			setLoading(true);
-			setError(null);
+		const ws = new WebSocket('wss://your-bff-server');
 
+		ws.onopen = () => {
+			ws.send(JSON.stringify({ action: 'subscribe', chatId }));
+		};
+
+		ws.onmessage = (event) => {
 			try {
-				let responseData = [];
+				const msg = JSON.parse(event.data);
 
-				if (PRODMODE) {
-					const response = await PROD_AXIOS_INSTANCE.post(`/api/sms/${chatId}`, {
-						data: {},
-						_token: CSRF_TOKEN,
-					});
-
-					const messages = response?.data?.content?.messages;
-
-					// 🔍 Логируем "сырые" данные с сервера
-					console.log(`[useChatMessages] API /api/sms/${chatId} -> messages:`, messages);
-
-					if (Array.isArray(messages)) {
-						// Преобразуем, без добавления chat_id
-						responseData = messages.map((msg) => ({
-							id: msg.message_id,
-							text: msg.text,
-							created_at: msg.created_at,
-							updated_at: msg.updated_at,
-							from: { id: msg.from_id },
-							// answer и to отсутствуют — не трогаем
-						}));
-					} else {
-						console.warn('[useChatMessages] messages в API ответе не массив');
-					}
-				} else {
-					console.log('[useChatMessages] Используются MOCK-данные');
-
-					const mockData = typeof mock === 'function' ? mock() : mock;
-					const sms = mockData?.content?.sms;
-
-					if (Array.isArray(sms)) {
-						responseData = sms
-							.filter((msg) => msg.chat_id === chatId)
-							.map((msg) => ({
-								id: msg.id,
-								text: msg.text,
-								created_at: msg.created_at,
-								updated_at: msg.updated_at,
-								from: msg.from,
-								to: msg.to,
-							}));
-					} else {
-						console.warn('[useChatMessages] sms в MOCK не массив');
+				if (msg.action === 'CHAT_MESSAGE' && msg.payload) {
+					// Проверяем, что сообщение принадлежит нужному чату
+					if (!chatId || msg.payload.chat_id === chatId) {
+						setLiveMessages((prev) => [...prev, msg.payload]);
 					}
 				}
-
-				setData(responseData);
-			} catch (err) {
-				console.error('[useChatMessages] Ошибка при загрузке:', err);
-				setError(err.message || 'Неизвестная ошибка');
-				setData([]);
-			} finally {
-				setLoading(false);
+			} catch (e) {
+				console.error('[useChatMessages] Ошибка парсинга WS сообщения:', e);
 			}
 		};
 
-		fetchMessages();
-	}, [chatId, mock]);
+		ws.onerror = (error) => {
+			console.error('[useChatMessages] WS ошибка:', error);
+			setWsError('WebSocket error');
+		};
 
-	return { data, loading, error };
+		ws.onclose = () => {
+			console.log('[useChatMessages] WS соединение закрыто');
+		};
+
+		return () => {
+			ws.close();
+		};
+	}, [chatId]);
+
+	// Объединяем историю и live-сообщения, убираем дубликаты по id
+	const allMessages = React.useMemo(() => {
+		if (!history) return liveMessages;
+
+		const map = new Map();
+		history.forEach((msg) => map.set(msg.id, msg));
+		liveMessages.forEach((msg) => map.set(msg.id, msg));
+
+		return Array.from(map.values()).sort((a, b) => a.created_at - b.created_at);
+	}, [history, liveMessages]);
+
+	// Для режима mock будем сразу возвращать мок-данные из useSms, liveMessages пустые
+	// Для PRODMODE liveMessages добавляются из WS
+
+	return {
+		data: allMessages,
+		loading,
+		error: error || wsError,
+	};
 };
