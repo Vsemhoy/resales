@@ -9,13 +9,13 @@ import OPMTRequisitesSection from './subsections/OPMTRequisitesSection';
 
 const OrgPageMainTabPayersSection = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
-	const [filterData, setFilterData] = useState([]);
+
 
 	const [orgId, setOrgId] = useState([]);
 
 	const [requisites,     setRequisites]         = useState([]);
 
-	const [newRequisites,  setNewRequisites]  = useState([]);
+	const [newRequisites,  setNewRequisites]       = useState([]);
 	const [originalRequisites, setOriginalRequisites] = useState([]);
 
 
@@ -51,6 +51,13 @@ const OrgPageMainTabPayersSection = (props) => {
 	}, [props.data]);
 
 
+	useEffect(() => {
+		if (props.on_blur){
+			props.on_blur('requisites', JSON.parse(JSON.stringify(requisites.concat(newRequisites))));
+		}
+	}, [requisites, newRequisites]);
+
+
                                               
 	/* ----------------- REQUISITES --------------------- */
 	/**
@@ -60,12 +67,10 @@ const OrgPageMainTabPayersSection = (props) => {
 		let item = {
 					id: 'new_' + dayjs().unix() + '_' + newRequisites.length ,
 					id_orgs:  orgId,
-					type: 1,
-					document_type: typedoc,
-					name: '',
-					start_date: null,
-					end_date: null,
-					comment: '',
+					nameorg: '',
+					kpp: '',
+					inn: '',
+					requisites: '',
 					deleted: 0,
 					command: "create",
 				};
@@ -171,10 +176,7 @@ const OrgPageMainTabPayersSection = (props) => {
 	}, [props.on_add_requisites]);
 
 
-	useEffect(() => {
-		console.log('UPDATED DATA STACK ');
-		console.log(requisites, newRequisites);
-	}, [requisites, newRequisites]);
+
 
 
 
@@ -207,31 +209,7 @@ const OrgPageMainTabPayersSection = (props) => {
         ))}</div>
       )}
 
-		{/* {editMode && (
-      <div className={'sk-omt-stack-control sa-flex-space'}>
-        <div></div>
-        <div>
-          <div className={'sa-org-contactstack-addrow'}>
-            Добавить
-            <div>
-
-
-              <Button
-                title='Добавить плательщика'
-                size='small'
-                color="primary"
-                variant="outlined"
-                icon={<ExclamationTriangleIcon height={'20px'}/>}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  handleAddRequisite(1);
-                }}
-                >Добавить реквизиты</Button>
-                </div>
-            </div>
-        </div>
-      </div>
-      )} */}
+	
 		</div>
 	);
 };

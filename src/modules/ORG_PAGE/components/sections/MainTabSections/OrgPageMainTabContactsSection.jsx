@@ -123,7 +123,7 @@ const OrgPageMainTabContactsSection = (props) => {
       result.contactemails =      contactemails.concat(newContactemails);
       result.contactmessangers =  contactmessangers.concat(newContactmessangers);
 
-			console.log('result', result);
+			console.log('OrgPageMainTabContactsSection', result);
 
 			if (props.on_change) {
 				props.on_change(itemId, result);

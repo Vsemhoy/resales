@@ -131,6 +131,15 @@ const OrgPage = (props) => {
 	const [tempCallsData, setTempCallsData] = useState(null);
 	const [tempNotesData, setTempNotesData] = useState(null);
 
+	const [tempMain_phones, setTempMain_phones] = useState([]);
+	const [tempMain_addresses, setTempMain_addresses] = useState([]);
+	const [tempMain_legalAddresses, setTempMain_legalAddresses] = useState([]);
+	const [tempMain_emails, setTempMain_emails] = useState([]);
+	const [tempMain_bo_licenses, setTempMain_bo_licenses] = useState([]);
+	const [tempMain_an_licenses, setTempMain__an_licenses] = useState([]);
+	const [tempMain_an_tolerances, setTempMain_an_tolerances] = useState([]);
+	const [tempMain_an_requisites, setTempMain_an_requisites] = useState([]);
+
 	// При нажатии кнопочки сохранить - сюда вставляется Timestamp, слушатели в компонентах видят изменение, отправляею данные в сохранятор
 	const [callToSaveAction, setCallToSaveAction] = useState(null);
 	const [blockOnSave, setBlockOnSave] = useState(false);
@@ -584,11 +593,71 @@ const OrgPage = (props) => {
 	};
 
 
+	const handleMaintabObjectDataChange = (key, dataarr) => {
+		if (key === 'emails'){
+			setTempMain_emails(dataarr);
+		} else if (key === 'licenses'){
+			setTempMain__an_licenses(dataarr);
+		} else if (key === 'tolerances'){
+			setTempMain_an_tolerances(dataarr);
+		} else if (key === 'bo_licenses'){
+			setTempMain_bo_licenses(dataarr);
+		} else if (key === 'requisites'){
+			setTempMain_an_requisites(dataarr);
+		} else if (key === 'phones'){
+			setTempMain_phones(dataarr);
+		} else if (key === 'addresses'){
+			setTempMain_addresses(dataarr);
+		} else if (key === 'legaladdresses'){
+			setTempMain_legalAddresses(dataarr);
+		} else if (key === 'emails'){
+			setTempMain_emails(dataarr);
+		}
+		console.log('MAIN SETTER');
+	};
+
+	useEffect(() => {
+		let copyData = tempMainData ?  JSON.parse(JSON.stringify(tempMainData)) : {};
+			if (copyData){
+				copyData.active_licenses =     tempMain_an_licenses;
+				copyData.active_tolerance =    tempMain_an_tolerances;
+				copyData.active_licenses_bo =  tempMain_bo_licenses;
+				copyData.legaladdresses =      tempMain_legalAddresses;
+				copyData.address =             tempMain_addresses;
+				copyData.emails =              tempMain_emails;
+				copyData.phones =              tempMain_phones;
+				copyData.requisites =          tempMain_an_requisites;
+				
+				setTempMainData(copyData);
+				console.log('END POINT ALT', copyData);
+			}
+	}, [
+		tempMain_an_licenses,
+		tempMain_an_tolerances,
+		tempMain_bo_licenses,
+		tempMain_legalAddresses,
+		tempMain_addresses,
+		tempMain_emails,
+		tempMain_phones,
+		tempMain_an_requisites,
+	]);
+
+
 	const handleTabDataChange = (tab_name, data) => {
 		console.log('END POOINT', tab_name, data);
-		if (tab_name === 'main'){
+		if (tab_name === 'main' && data && data.active_licenses){
+			let copyData = JSON.parse(JSON.stringify(data));
 			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
-				setTempMainData(data);
+				copyData.active_licenses =     tempMain_an_licenses;
+				copyData.active_tolerance =    tempMain_an_tolerances;
+				copyData.active_licenses_bo =  tempMain_bo_licenses;
+				copyData.legaladdresses =      tempMain_legalAddresses;
+				copyData.address =             tempMain_addresses;
+				copyData.emails =              tempMain_emails;
+				copyData.phones =              tempMain_phones;
+				copyData.requisites =          tempMain_an_requisites;
+				
+				setTempMainData(copyData);
 				console.log('HASE   data');
 			} else {
 				setTempMainData(null);
@@ -765,6 +834,7 @@ const OrgPage = (props) => {
 							userdata={userdata}
               selects={baseFiltersData}
 							on_change_data={handleTabDataChange}
+							on_change_main_data_part={handleMaintabObjectDataChange}
 						/>
 
 						<CallsTabPage

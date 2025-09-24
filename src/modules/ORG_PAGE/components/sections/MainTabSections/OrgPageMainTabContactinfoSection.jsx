@@ -89,6 +89,7 @@ const OrgPageMainTabContactinfoSection = (props) => {
   }, [props.data, selects]);
 
 
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (objectResult.id == null) {
@@ -115,6 +116,7 @@ const OrgPageMainTabContactinfoSection = (props) => {
       }
       let result = newLegaladdresses.concat(legaladdresses);
       if (props.on_change) {
+        console.log('118', legaladdresses, newLegaladdresses);
         props.on_change('legaladdresses', result);
       }
     }, 220);
@@ -589,7 +591,7 @@ const OrgPageMainTabContactinfoSection = (props) => {
   const handleUpdateEmailUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    console.log('CALL TU REAL UPDATE 453645');
     if (!editMode) {
       return;
     }

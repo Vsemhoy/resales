@@ -122,21 +122,8 @@ const MainTabPage = (props) => {
   }, [show, editMode, baseData]);
 
 
-  // const updateCompanyData = (changed_data) => {
-  //   console.log('UCD', changed_data);
-  //   for (let key in changed_data) {
-  //       if (changed_data.hasOwnProperty(key)) {
-  //         if (baseData.hasOwnProperty(key)){
-
-  //           console.log(key, changed_data[key]); // Example of accessing key and value
-  //         }
-  //           // Perform operations with key or value
-  //       }
-  //   }
-  // }
 
   const updateCompanyData = (changed_data) => {
-    console.log(changed_data);
     setBaseData(prevData => {
       const updatedData = { ...prevData };
       
@@ -150,12 +137,29 @@ const MainTabPage = (props) => {
     });
   };
 
+
+  const updateCompanyObject = (key, changed_data) => {
+    console.log('UPCHANGEDE OBJECT MainTabPage ', key, changed_data);
+
+    if (props.on_change_main_data_part)
+    {
+      console.log('CALL TO ON CHANGE CALLBIK');
+      props.on_change_main_data_part(key, changed_data);
+    }
+  };
+
+
   useEffect(() => {
     if (props.on_change_data)
     {
+      console.log('CALL TO ON CHANGE CALLBIK');
       props.on_change_data('main', baseData);
     }
   }, [baseData]);
+
+
+
+
 
   useEffect(() => {
     if (!show){ return; }
@@ -192,7 +196,8 @@ const MainTabPage = (props) => {
           edit_mode={editMode} 
           data={baseData}
           selects={selects}
-          on_blur={updateCompanyData}
+          on_blur={props.on_change_main_data_part} // Изменение строк
+          on_change={updateCompanyObject} // Изменение объектов
           />
       },
       {
@@ -203,7 +208,42 @@ const MainTabPage = (props) => {
           count={baseData?.active_licenses_bo?.length + baseData?.active_licenses?.length + baseData?.active_tolerance?.length}
             color="blue"
           />
-          </div><div></div>
+          </div><div className={'sa-flex-gap'}>
+                    {editMode && (
+           <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                setCallToAddLicense(dayjs().unix());
+                setTimeout(() => {
+                  setCallToAddLicense(null);
+                }, 300);
+              }}
+              icon={<PlusCircleOutlined />}
+            >
+              Добавить Лицензию
+            </Button>
+        )}
+                {editMode && (
+           <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                setCallToAddTolerance(dayjs().unix());
+                setTimeout(() => {
+                  setCallToAddTolerance(null);
+                }, 300);
+              }}
+              icon={<PlusCircleOutlined />}
+            >
+              Добавить Допуск
+            </Button>
+        )}
+          </div>
 
         </div>,
         children: <OrgPageMainTabToleranceSection
@@ -211,7 +251,9 @@ const MainTabPage = (props) => {
           edit_mode={editMode} 
           data={baseData}
           selects={selects}
-          on_blur={updateCompanyData}
+          on_blur={props.on_change_main_data_part}
+          on_add_license={callToAddLicense}
+          on_add_tolerance={callToAddTolerance}
           />
       },
       {
@@ -283,12 +325,13 @@ const MainTabPage = (props) => {
           data={baseData}
           selects={selects}
           on_add_requisites={callToAddRequisite}
+          on_blur={props.on_change_main_data_part}
           />
       },
     ];
 
     setStructureItems(secids);
-  },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense]);
+  },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
 
 
 

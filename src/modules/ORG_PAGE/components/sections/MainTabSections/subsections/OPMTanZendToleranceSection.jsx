@@ -156,7 +156,7 @@ const OPMTanZendToleranceSection  = (props) => {
   }, [options]);
 
   return (
-    <div classNumber={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
+    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
       {/* <OrgPageSectionRow
         key={'fotolpddk_dk' + id}
         edit_mode={editMode}
