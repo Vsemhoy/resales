@@ -103,6 +103,7 @@ const BidPage = (props) => {
 	const [bidPackage, setBidPackage] = useState(null);
 	const [consignee, setConsignee] = useState(null);
 	const [otherEquipment, setOtherEquipment] = useState(null);
+	const [isSended1c, setIsSended1c] = useState(0);
 	/* БЛОК КОММЕНТАРИЕВ */
 	const [bidCommentEngineer, setBidCommentEngineer] = useState(null);
 	const [bidCommentManager, setBidCommentManager] = useState(null);
@@ -363,6 +364,7 @@ const BidPage = (props) => {
 							setBidPackage(bill.package);
 							setConsignee(bill.consignee);
 							setOtherEquipment(bill.other_equipment);
+							setIsSended1c(bill.send1c);
 						}
 						if (bid.comments) {
 							const comments = bid.comments;
@@ -433,6 +435,7 @@ const BidPage = (props) => {
 					setBidPackage(bill.package);
 					setConsignee(bill.consignee);
 					setOtherEquipment(bill.other_equipment);
+					setIsSended1c(bill.send1c);
 				}
 				if (bid.comments) {
 					const comments = bid.comments;
@@ -830,6 +833,7 @@ const BidPage = (props) => {
 	const fetchSend1c = async () => {
 		if (PRODMODE) {
 			try {
+				console.log('send1c');
 				setIsLoading1c(true);
 				let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/send1c/${bidId}`, {
 					_token: CSRF_TOKEN,
@@ -839,6 +843,7 @@ const BidPage = (props) => {
 					setAlertMessage('Успех!');
 					setAlertDescription(response.data.message);
 					setAlertType('success');
+					setIsSended1c(1);
 				}
 				setTimeout(() => setIsLoading1c(false), 500);
 			} catch (e) {
@@ -849,6 +854,14 @@ const BidPage = (props) => {
 				setAlertType('error');
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
+		} else {
+			setIsLoading1c(true);
+			setIsAlertVisible(true);
+			setAlertMessage('Успех!');
+			setAlertDescription("Заявка успешно передана в 1С");
+			setAlertType('success');
+			setIsSended1c(1);
+			setTimeout(() => setIsLoading1c(false), 500);
 		}
 	}
 
@@ -1096,8 +1109,7 @@ const BidPage = (props) => {
 				break;
 			case '1c':
 				if (+button_id === 2) {
-					setIsSavingInfo(true);
-					setTimeout(() => console.log('1c'), 200);
+					fetchSend1c().then();
 				}
 				break;
 			case 'toAdmin':
@@ -1150,11 +1162,28 @@ const BidPage = (props) => {
 		{
 			id: 1,
 			text: "Отменить",
+			color: "default",
+			variant: "outlined"
 		},
 		{
 			id: 2,
 			text: "Подтвердить и сохранить",
-			type: "primary",
+			color: "primary",
+			variant: "solid"
+		},
+	];
+	const buttons1C = [
+		{
+			id: 1,
+			text: "Отменить",
+			color: "default",
+			variant: "outlined"
+		},
+		{
+			id: 2,
+			text: "Подтвердить повторную отправку в 1С",
+			color: "danger",
+			variant: "solid"
 		},
 	];
 
@@ -1715,21 +1744,21 @@ const BidPage = (props) => {
 								</Tooltip>
 							)}
 							{(+bidType === 2 && bidPlace === 3 && (userData?.user?.sales_role === 3 || userData?.user?.super === 1)) && (
-								<Tooltip title={'Отправить в 1С'} placement={'right'}>
+								<Tooltip title={isSended1c ? 'Уже было отправлено в 1С' : 'Отправить в 1С'} placement={'right'}>
 									<Badge count={bidFilesCount} color={'geekblue'}>
 										<Button
 											className={'sa-bid-page-btn'}
-											color="primary"
+											color={isSended1c ? "danger" : "primary"}
 											variant="outlined"
 											style={{fontSize: '20px', fontWeight: 'bold'}}
 											disabled={isLoading1c}
 											onClick={() => {
-												if (isSmthChanged) {
+												if (isSended1c) {
 													openCustomModal(
 														'1c',
 														'Отправить данные в 1С',
-														'У Вас есть несохраненные изменения! Подтвердите сохранение перед отправкой данных в 1С.',
-														baseButtons
+														'Данные уже были отправлены в 1С! Подтвердите повторную отправку данных.',
+														buttons1C
 													);
 												} else {
 													fetchSend1c().then();
