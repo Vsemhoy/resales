@@ -55,12 +55,6 @@ const FindSimilarDrawer = (props) => {
     const [searchCount, setSearchCount] = useState(0);
     const [notCompany, setNotCompany] = useState(0);
     const [childrenDrawer, setChildrenDrawer] = useState(false);
-    const similarDOM = similar ? similar.map((el, index) => {
-            return {
-                data: <D bid={el.bid} />,
-                value: <S bid={el.bid} />,
-            };
-    }) : null;
     const settingsColumns = [
         {
             title: "",
@@ -508,6 +502,12 @@ const FindSimilarDrawer = (props) => {
             : [];
         return <div className={''}>{models}</div>;
     };
+    const similarDOM = similar ? similar.map((el, index) => {
+        return {
+            data: <D bid={el.bid} />,
+            value: <S bid={el.bid} />,
+        };
+    }) : null;
 
     return (
         <Drawer
