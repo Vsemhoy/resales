@@ -607,7 +607,7 @@ const BidPage = (props) => {
 			setModelsSelect(MODELS);
 		}
 	};
-	const fetchUpdates = async () => {
+	const fetchUpdates = async (newPlace) => {
 		console.log('fetchUpdates');
 		const data = {
 			bid: {
@@ -668,6 +668,27 @@ const BidPage = (props) => {
 					setAlertType('success');
 					setIsSmthChanged(false);
 					updateDefaultInfo();
+				}
+				if (newPlace && newPlace === 2) {
+					if (isManagerDone()) {
+						setBidPlace(2);
+						fetchBidPlace(2).then(() => fetchBidInfo().then());
+					} else {
+						setIsAlertVisible(true);
+						setAlertMessage('Заполните поля!');
+						setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
+						setAlertType('error');
+					}
+				} else if (newPlace && newPlace === 3) {
+					if (isAdminDone()) {
+						setBidPlace(3);
+						fetchBidPlace(3).then(() => fetchBidInfo().then());
+					} else {
+						setIsAlertVisible(true);
+						setAlertMessage('Заполните поля!');
+						setAlertDescription('Количество моделей должно быть равно количеству на складе');
+						setAlertType('error');
+					}
 				}
 			} catch (e) {
 				console.log(e);
@@ -1052,17 +1073,7 @@ const BidPage = (props) => {
 				break;
 			case 'toAdmin':
 				if (+button_id === 2) {
-					fetchUpdates().then(() => {
-						if (isManagerDone()) {
-							setBidPlace(2);
-							fetchBidPlace(2).then(() => fetchBidInfo().then());
-						} else {
-							setIsAlertVisible(true);
-							setAlertMessage('Заполните поля!');
-							setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
-							setAlertType('error');
-						}
-					});
+					fetchUpdates(2).then();
 				}
 				break;
 			case 'backManager':
@@ -1073,17 +1084,7 @@ const BidPage = (props) => {
 				break;
 			case 'toBuh':
 				if (+button_id === 2) {
-					fetchUpdates().then(() => {
-						if (isAdminDone()) {
-							setBidPlace(3);
-							fetchBidPlace(3).then(() => fetchBidInfo().then());
-						} else {
-							setIsAlertVisible(true);
-							setAlertMessage('Заполните поля!');
-							setAlertDescription('Количество моделей должно быть равно количеству на складе');
-							setAlertType('error');
-						}
-					});
+					fetchUpdates(3).then();
 				}
 				break;
 		}
