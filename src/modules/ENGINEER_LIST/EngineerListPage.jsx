@@ -197,21 +197,21 @@ const EngineerListPage = (props) => {
 	const fetchFilterSelects = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/filterlist', {
+				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/filter/list', {
 					_token: CSRF_TOKEN,
 				});
 				if (response.data) {
 					const filters = response.data.content;
-					setFilterStep(filters.step);
-					setFilterProtectionProject(filters.protection_project);
-					setFilterBidType(filters.type_select);
-					setFilterPaySelect(filters.pay_select);
-					setFilterAdminAcceptSelect(filters.admin_accept_select);
-					setFilterPackageSelect(filters.package_select);
+					// setFilterStep(filters.step);
+					// setFilterProtectionProject(filters.protection_project);
+					// setFilterBidType(filters.type_select);
+					// setFilterPaySelect(filters.pay_select);
+					// setFilterAdminAcceptSelect(filters.admin_accept_select);
+					// setFilterPackageSelect(filters.package_select);
 					setFilterPriceSelect(filters.price_select);
-					setFilterBidCurrencySelect(filters.bid_currency_select);
-					setFilterNdsSelect(filters.nds_select);
-					setFilterCompleteSelect(filters.complete_select);
+					// setFilterBidCurrencySelect(filters.bid_currency_select);
+					// setFilterNdsSelect(filters.nds_select);
+					// setFilterCompleteSelect(filters.complete_select);
 					setFilterCompaniesSelect(filters.companies);
 					setBaseCompanies(filters.companies);
 				}
@@ -219,16 +219,16 @@ const EngineerListPage = (props) => {
 				console.log(e);
 			}
 		} else {
-			setFilterStep(FILTERS.step);
-			setFilterProtectionProject(FILTERS.protection_project);
-			setFilterBidType(FILTERS.type_select);
-			setFilterPaySelect(FILTERS.pay_select);
-			setFilterAdminAcceptSelect(FILTERS.admin_accept_select);
-			setFilterPackageSelect(FILTERS.package_select);
+			// setFilterStep(FILTERS.step);
+			// setFilterProtectionProject(FILTERS.protection_project);
+			// setFilterBidType(FILTERS.type_select);
+			// setFilterPaySelect(FILTERS.pay_select);
+			// setFilterAdminAcceptSelect(FILTERS.admin_accept_select);
+			// setFilterPackageSelect(FILTERS.package_select);
 			setFilterPriceSelect(FILTERS.price_select);
-			setFilterBidCurrencySelect(FILTERS.bid_currency_select);
-			setFilterNdsSelect(FILTERS.nds_select);
-			setFilterCompleteSelect(FILTERS.complete_select);
+			// setFilterBidCurrencySelect(FILTERS.bid_currency_select);
+			// setFilterNdsSelect(FILTERS.nds_select);
+			// setFilterCompleteSelect(FILTERS.complete_select);
 			setFilterCompaniesSelect(FILTERS.companies);
 			setBaseCompanies(FILTERS.companies);
 		}
@@ -486,10 +486,6 @@ const EngineerListPage = (props) => {
 	const handleSetText = (text) => {
 		setModalReason(text);
 	};
-	// handleOk={handleOk}
-	// handleCancel={handleCancel}
-
-
 
 	const [modalText, setModalText] = useState("");
 	const [modalFileList, setModalFileList] = useState([]);
@@ -514,9 +510,6 @@ const EngineerListPage = (props) => {
 			setBlockNewSpec(false);
 		});
 	};
-
-
-
 
 	const fetchCreateNewOrder = async (files, text) => {
 		if (PRODMODE) {
@@ -666,13 +659,7 @@ const EngineerListPage = (props) => {
 					<div className={'sa-sider'}>
 						{isOpenedFilters && (
 							<EngineerListSiderFilters
-								filter_pay_select={prepareSelectOptions(filterPaySelect)}
-								filter_admin_accept_select={prepareSelectOptions(filterAdminAcceptSelect)}
-								filter_package_select={prepareSelectOptions(filterPackageSelect)}
 								filter_price_select={prepareSelectOptions(filterPriceSelect)}
-								filter_bid_currency_select={prepareSelectOptions(filterBidCurrencySelect)}
-								filter_nds_select={prepareSelectOptions(filterNdsSelect)}
-								filter_complete_select={prepareSelectOptions(filterCompleteSelect)}
 								filter_companies_select={prepareSelectOptions(filterCompaniesSelect)}
 								on_change_filter_box={handleUpdateFilterBox}
 							/>
