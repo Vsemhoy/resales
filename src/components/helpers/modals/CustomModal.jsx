@@ -46,6 +46,8 @@ const CustomModal = (props) => {
                     onClick: () => handleClick(button.id)
                 };
 
+                if (button.color) buttonProps.color = button.color;
+                if (button.variant) buttonProps.variant = button.variant;
                 if (button.type) buttonProps.type = button.type;
                 if (button.typePlus === 'danger') buttonProps.danger = true;
 

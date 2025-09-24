@@ -103,6 +103,7 @@ const BidPage = (props) => {
 	const [bidPackage, setBidPackage] = useState(null);
 	const [consignee, setConsignee] = useState(null);
 	const [otherEquipment, setOtherEquipment] = useState(null);
+	const [isSended1c, setIsSended1c] = useState(0);
 	/* БЛОК КОММЕНТАРИЕВ */
 	const [bidCommentEngineer, setBidCommentEngineer] = useState(null);
 	const [bidCommentManager, setBidCommentManager] = useState(null);
@@ -178,6 +179,8 @@ const BidPage = (props) => {
 	const [customModalText, setCustomModalText] = useState('');
 	const [customModalType, setCustomModalType] = useState('');
 	const [customModalColumns, setCustomModalColumns] = useState([]);
+	const [isLoading1c, setIsLoading1c] = useState(false);
+	const [isLoadingChangePlaceBtn, setIsLoadingChangePlaceBtn] = useState('');
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -219,7 +222,7 @@ const BidPage = (props) => {
 		if (openMode) {
 			const handleKeyDown = (event) => {
 				//console.log('event', event);
-				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status !== 1 && openMode?.status !== 5) {
+				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status !== 1 && openMode?.status !== 4 && openMode?.status !== 5) {
 					event.preventDefault();
 					setIsSavingInfo(prev => {
 						if (!prev) {
@@ -361,6 +364,7 @@ const BidPage = (props) => {
 							setBidPackage(bill.package);
 							setConsignee(bill.consignee);
 							setOtherEquipment(bill.other_equipment);
+							setIsSended1c(bill.send1c);
 						}
 						if (bid.comments) {
 							const comments = bid.comments;
@@ -388,12 +392,14 @@ const BidPage = (props) => {
 						});
 					}, 500);
 				}
+				setIsLoadingChangePlaceBtn('');
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
 				setAlertMessage('Произошла ошибка!');
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
+				setIsLoadingChangePlaceBtn('');
 			}
 		} else {
 			const openMode = BID_INFO?.openmode;
@@ -429,6 +435,7 @@ const BidPage = (props) => {
 					setBidPackage(bill.package);
 					setConsignee(bill.consignee);
 					setOtherEquipment(bill.other_equipment);
+					setIsSended1c(bill.send1c);
 				}
 				if (bid.comments) {
 					const comments = bid.comments;
@@ -455,6 +462,7 @@ const BidPage = (props) => {
 					bid_models: BID_INFO.bid_models,
 				});
 			}, 500);
+			setIsLoadingChangePlaceBtn('');
 		}
 	};
 	const fetchSelects = async () => {
@@ -607,7 +615,7 @@ const BidPage = (props) => {
 			setModelsSelect(MODELS);
 		}
 	};
-	const fetchUpdates = async () => {
+	const fetchUpdates = async (newPlace) => {
 		console.log('fetchUpdates');
 		const data = {
 			bid: {
@@ -668,6 +676,27 @@ const BidPage = (props) => {
 					setAlertType('success');
 					setIsSmthChanged(false);
 					updateDefaultInfo();
+				}
+				if (newPlace && newPlace === 2) {
+					if (isManagerDone()) {
+						setBidPlace(2);
+						fetchBidPlace(2).then(() => fetchBidInfo().then());
+					} else {
+						setIsAlertVisible(true);
+						setAlertMessage('Заполните поля!');
+						setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
+						setAlertType('error');
+					}
+				} else if (newPlace && newPlace === 3) {
+					if (isAdminDone()) {
+						setBidPlace(3);
+						fetchBidPlace(3).then(() => fetchBidInfo().then());
+					} else {
+						setIsAlertVisible(true);
+						setAlertMessage('Заполните поля!');
+						setAlertDescription('Количество моделей должно быть равно количеству на складе');
+						setAlertType('error');
+					}
 				}
 			} catch (e) {
 				console.log(e);
@@ -801,6 +830,40 @@ const BidPage = (props) => {
 			}
 		}
 	};
+	const fetchSend1c = async () => {
+		if (PRODMODE) {
+			try {
+				console.log('send1c');
+				setIsLoading1c(true);
+				let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/send1c/${bidId}`, {
+					_token: CSRF_TOKEN,
+				});
+				if (response.data) {
+					setIsAlertVisible(true);
+					setAlertMessage('Успех!');
+					setAlertDescription(response.data.message);
+					setAlertType('success');
+					setIsSended1c(1);
+				}
+				setTimeout(() => setIsLoading1c(false), 500);
+			} catch (e) {
+				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
+				setTimeout(() => setIsLoading1c(false), 500);
+			}
+		} else {
+			setIsLoading1c(true);
+			setIsAlertVisible(true);
+			setAlertMessage('Успех!');
+			setAlertDescription("Заявка успешно передана в 1С");
+			setAlertType('success');
+			setIsSended1c(1);
+			setTimeout(() => setIsLoading1c(false), 500);
+		}
+	}
 
 	const areArraysEqual = (arr1, arr2) => {
 		// Проверка длины
@@ -1046,14 +1109,12 @@ const BidPage = (props) => {
 				break;
 			case '1c':
 				if (+button_id === 2) {
-					setIsSavingInfo(true);
-					setTimeout(() => console.log('1c'), 200);
+					fetchSend1c().then();
 				}
 				break;
 			case 'toAdmin':
 				if (+button_id === 2) {
-					setBidPlace(2);
-					fetchBidPlace(2).then(() => fetchBidInfo().then());
+					fetchUpdates(2).then();
 				}
 				break;
 			case 'backManager':
@@ -1064,17 +1125,7 @@ const BidPage = (props) => {
 				break;
 			case 'toBuh':
 				if (+button_id === 2) {
-					fetchUpdates().then(() => {
-						if (isAdminDone()) {
-							setBidPlace(3);
-							fetchBidPlace(3).then(() => fetchBidInfo().then());
-						} else {
-							setIsAlertVisible(true);
-							setAlertMessage('Заполните поля!');
-							setAlertDescription('Количество моделей должно быть равно количеству на складе');
-							setAlertType('error');
-						}
-					});
+					fetchUpdates(3).then();
 				}
 				break;
 		}
@@ -1087,6 +1138,9 @@ const BidPage = (props) => {
 		} else {
 			return true;
 		}
+	};
+	const isManagerDone = () => {
+		return (bidOrgUser && requisite && phone);
 	};
 	const isAdminDone = () => {
 		return !(bidModels.find(model => +model.model_count !== +model.sklad));
@@ -1108,11 +1162,28 @@ const BidPage = (props) => {
 		{
 			id: 1,
 			text: "Отменить",
+			color: "default",
+			variant: "outlined"
 		},
 		{
 			id: 2,
 			text: "Подтвердить и сохранить",
-			type: "primary",
+			color: "primary",
+			variant: "solid"
+		},
+	];
+	const buttons1C = [
+		{
+			id: 1,
+			text: "Отменить",
+			color: "default",
+			variant: "outlined"
+		},
+		{
+			id: 2,
+			text: "Подтвердить повторную отправку в 1С",
+			color: "danger",
+			variant: "solid"
 		},
 	];
 
@@ -1531,8 +1602,10 @@ const BidPage = (props) => {
 											{+bidType === 2 && +bidPlace === 1 && (
 												<Space.Compact>
 													<Button className={'sa-select-custom-admin'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toAdmin')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toAdmin'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('toAdmin');
 																if (isSmthChanged) {
 																	openCustomModal(
 																		'toAdmin',
@@ -1541,8 +1614,16 @@ const BidPage = (props) => {
 																		baseButtons
 																	);
 																} else {
-																	setBidPlace(2);
-																	fetchBidPlace(2).then(() => fetchBidInfo().then());
+																	if (isManagerDone()) {
+																		setBidPlace(2);
+																		fetchBidPlace(2).then(() => fetchBidInfo().then());
+																	} else {
+																		setIsAlertVisible(true);
+																		setAlertMessage('Заполните поля!');
+																		setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
+																		setAlertType('error');
+																		setIsLoadingChangePlaceBtn('');
+																	}
 																}
 															}}
 													>Передать администратору <ArrowRightOutlined /></Button>
@@ -1551,8 +1632,10 @@ const BidPage = (props) => {
 											{+bidType === 2 && +bidPlace === 2 && (
 												<Space.Compact>
 													<Button className={'sa-select-custom-manager'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backManager')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backManager'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('backManager');
 																if (isSmthChanged) {
 																	openCustomModal(
 																		'backManager',
@@ -1567,8 +1650,10 @@ const BidPage = (props) => {
 															}}
 													><ArrowLeftOutlined /> Вернуть менеджеру</Button>
 													<Button className={'sa-select-custom-bugh'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toBuh')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toBuh'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('toBuh');
 																if (isSmthChanged) {
 																	openCustomModal(
 																		'toBuh',
@@ -1585,6 +1670,7 @@ const BidPage = (props) => {
 																		setAlertMessage('Заполните поля!');
 																		setAlertDescription('Количество моделей должно быть равно количеству на складе');
 																		setAlertType('error');
+																		setIsLoadingChangePlaceBtn('');
 																	}
 																}
 															}}
@@ -1594,15 +1680,19 @@ const BidPage = (props) => {
 											{+bidType === 2 && +bidPlace === 3 && (
 												<Space.Compact>
 													<Button className={'sa-select-custom-admin'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backAdmin')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backAdmin'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('backAdmin');
 																setBidPlace(2);
 																fetchBidPlace(2).then(() => fetchBidInfo().then());
 															}}
 													><ArrowLeftOutlined /> Вернуть администратору</Button>
 													<Button className={'sa-select-custom-end'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'done')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'done'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('done');
 																setBidPlace(4);
 																fetchBidPlace(4).then(() => fetchBidInfo().then());
 															}}
@@ -1612,8 +1702,10 @@ const BidPage = (props) => {
 											{+bidType === 2 && +bidPlace === 4 && (
 												<Space.Compact>
 													<Button className={'sa-select-custom-bugh'}
-															disabled={openMode?.status !== 5}
+															disabled={openMode?.status !== 5 || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backBuh')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backBuh'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('backBuh');
 																setBidPlace(3);
 																fetchBidPlace(3).then(() => fetchBidInfo().then());
 															}}
@@ -1627,7 +1719,7 @@ const BidPage = (props) => {
 												icon={<SaveOutlined />}
 												loading={isSavingInfo}
 												onClick={() => setIsSavingInfo(true)}
-												disabled={isDisabledInput()}
+												disabled={isDisabledInput() || openMode?.status === 4}
 											>
 												{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
 											</Button>
@@ -1652,23 +1744,24 @@ const BidPage = (props) => {
 								</Tooltip>
 							)}
 							{(+bidType === 2 && bidPlace === 3 && (userData?.user?.sales_role === 3 || userData?.user?.super === 1)) && (
-								<Tooltip title={'Отправить в 1С'} placement={'right'}>
+								<Tooltip title={isSended1c ? 'Уже было отправлено в 1С' : 'Отправить в 1С'} placement={'right'}>
 									<Badge count={bidFilesCount} color={'geekblue'}>
 										<Button
 											className={'sa-bid-page-btn'}
-											color="primary"
+											color={isSended1c ? "danger" : "primary"}
 											variant="outlined"
 											style={{fontSize: '20px', fontWeight: 'bold'}}
+											disabled={isLoading1c}
 											onClick={() => {
-												if (isSmthChanged) {
+												if (isSended1c) {
 													openCustomModal(
 														'1c',
 														'Отправить данные в 1С',
-														'У Вас есть несохраненные изменения! Подтвердите сохранение перед отправкой данных в 1С.',
-														baseButtons
+														'Данные уже были отправлены в 1С! Подтвердите повторную отправку данных.',
+														buttons1C
 													);
 												} else {
-
+													fetchSend1c().then();
 												}
 											}}
 										>1С</Button>
