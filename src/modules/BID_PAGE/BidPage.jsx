@@ -1052,8 +1052,17 @@ const BidPage = (props) => {
 				break;
 			case 'toAdmin':
 				if (+button_id === 2) {
-					setBidPlace(2);
-					fetchBidPlace(2).then(() => fetchBidInfo().then());
+					fetchUpdates().then(() => {
+						if (isManagerDone()) {
+							setBidPlace(2);
+							fetchBidPlace(2).then(() => fetchBidInfo().then());
+						} else {
+							setIsAlertVisible(true);
+							setAlertMessage('Заполните поля!');
+							setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
+							setAlertType('error');
+						}
+					});
 				}
 				break;
 			case 'backManager':
@@ -1087,6 +1096,9 @@ const BidPage = (props) => {
 		} else {
 			return true;
 		}
+	};
+	const isManagerDone = () => {
+		return (bidOrgUser && requisite && phone);
 	};
 	const isAdminDone = () => {
 		return !(bidModels.find(model => +model.model_count !== +model.sklad));
@@ -1541,8 +1553,15 @@ const BidPage = (props) => {
 																		baseButtons
 																	);
 																} else {
-																	setBidPlace(2);
-																	fetchBidPlace(2).then(() => fetchBidInfo().then());
+																	if (isManagerDone()) {
+																		setBidPlace(2);
+																		fetchBidPlace(2).then(() => fetchBidInfo().then());
+																	} else {
+																		setIsAlertVisible(true);
+																		setAlertMessage('Заполните поля!');
+																		setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
+																		setAlertType('error');
+																	}
 																}
 															}}
 													>Передать администратору <ArrowRightOutlined /></Button>
