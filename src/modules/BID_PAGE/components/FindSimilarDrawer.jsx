@@ -449,12 +449,12 @@ const FindSimilarDrawer = (props) => {
     };
     const D = ({ bid }) => {
         return (
-            <div className={''}>
-                <div className={''}>
+            <div className={'sa-similar__card__subcont__item'}>
+                <div className={'sa-similar__text__title'}>
                     {bid.org_name}
                     <a
                         style={{ fontSize: "12px", marginLeft: "10px" }}
-                        href={`/newsales/offers/${bid.id}`}
+                        href={`/resales/bids/${bid.id}`}
                     >
                         {"  ID " + bid.id}
                     </a>
@@ -474,7 +474,7 @@ const FindSimilarDrawer = (props) => {
                     {bid.user}
                 </div>
                 <div
-                    className={''}
+                    className={'sa-similar__text__data'}
                 >{`Дата: ${dayjs(bid.date * 1000).format("DD.MM.YYYY")}`}</div>
             </div>
         );
@@ -490,7 +490,7 @@ const FindSimilarDrawer = (props) => {
                         <div style={{ margin: "0 5px" }}>
                             <Tag
                                 icon={
-                                    <Tag className={''}>{el.model_count}</Tag>
+                                    <Tag className={'sa-similar__tag'}>{el.model_count}</Tag>
                                 }
                                 color={el.model_match ? "green" : "blue"}
                             >
@@ -500,7 +500,7 @@ const FindSimilarDrawer = (props) => {
                     );
                 })
             : [];
-        return <div className={''}>{models}</div>;
+        return <div className={'sa-similar__card__models__cont'}>{models}</div>;
     };
     const similarDOM = similar ? similar.map((el, index) => {
         return {
@@ -520,7 +520,7 @@ const FindSimilarDrawer = (props) => {
             <div
                 style={{userSelect: "none", overflow: "auto", paddingBottom: "50px"}}
             >
-                <div className={''}>
+                <div className={'sa-position__one'}>
                     <div style={{padding: "0", width: "100%"}}>
                         <Table
                             columns={settingsColumns}
@@ -542,7 +542,7 @@ const FindSimilarDrawer = (props) => {
                         />
                     </div>
                 </div>
-                <div className={''}>
+                <div className={'sa-similar__tab__container'}>
                     <Input
                         style={{width: "350px", margin: "0 0 10px"}}
                         placeholder={"Введите поисковый запрос..."}
