@@ -96,7 +96,7 @@ const EngineerPage = (props) => {
   const [manager, setManager] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, manager_name: ""});
   const [engineer, setEngineer] = useState({name: "", surname: "", middlename: "", id_company: 0, id: 0, engineer_name: ""});
 
-  const [activeRole, setActiveRole] = useState(1);
+  const [activeRole, setActiveRole] = useState(0);
   const [openCopySpecification, setOpenCopySpecification] = useState(false);
   const [openAddIntoBidSpecification, setOpenAddIntoBidSpecification] = useState(false);
   const [value, setValue] = useState(0);
@@ -134,14 +134,16 @@ const EngineerPage = (props) => {
     if (props.userdata) {
       setUserData(props.userdata);
     }
+      }, [props.userdata]);
 
-    if ([7,8,20].includes(userData?.user?.id_departament)) {
-      setActiveRole(1);
-    } else {
+  useEffect(() => {
+    if (userData?.user?.id_departament === 7 || userData?.user?.id_departament === 8 || userData?.user?.id_departament === 20) {
+      // if ([7,8,20].includes(userData?.user?.id_departament)) {
       setActiveRole(2);
+    } else {
+      setActiveRole(1);
     }
-
-  }, [props.userdata]);
+  }, [userData]);
 
   useEffect(() => {
     setSuperUser(props.userdata.user?.super);
@@ -598,6 +600,7 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
+                                disabled={!editMode}
                                 icon={<CopyOutlined className={'sa-engineer-page-btn-icon'}/>}
                                 onClick={() => {setOpenCopySpecification(true);}}
                         ></Button>
@@ -606,6 +609,7 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
+                                disabled={!editMode}
                                 icon={<SendOutlined className={'sa-engineer-page-btn-icon'}/>}
                                 onClick={handleSpecificationFinal}
                         ></Button>
@@ -619,6 +623,7 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
+                                disabled={!editMode}
                                 icon={<ProfileOutlined className={'sa-engineer-page-btn-icon'}/>}
                         ></Button>
                       </Tooltip>
@@ -626,6 +631,7 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
+                                disabled={!editMode}
                                 onClick={() => {setOpenAddIntoBidSpecification(true);}}
                                 icon={<FileAddOutlined className={'sa-engineer-page-btn-icon'}/>}
                         ></Button>
@@ -638,6 +644,7 @@ const EngineerPage = (props) => {
                     <Button className={'sa-engineer-page-btn'}
                             color="primary"
                             variant="outlined"
+                            disabled={!editMode}
                             icon={<DownloadOutlined className={'sa-engineer-page-btn-icon'}/>}
                             onClick={() => setIsEngineerFilesDrawerOpen(true)}
                     ></Button>
