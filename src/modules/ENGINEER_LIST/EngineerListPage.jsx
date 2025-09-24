@@ -213,6 +213,7 @@ const EngineerListPage = (props) => {
 					setFilterNdsSelect(filters.nds_select);
 					setFilterCompleteSelect(filters.complete_select);
 					setFilterCompaniesSelect(filters.companies);
+					setBaseCompanies(filters.companies);
 				}
 			} catch (e) {
 				console.log(e);
@@ -229,6 +230,7 @@ const EngineerListPage = (props) => {
 			setFilterNdsSelect(FILTERS.nds_select);
 			setFilterCompleteSelect(FILTERS.complete_select);
 			setFilterCompaniesSelect(FILTERS.companies);
+			setBaseCompanies(FILTERS.companies);
 		}
 	};
 
