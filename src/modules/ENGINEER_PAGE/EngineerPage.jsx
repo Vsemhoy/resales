@@ -592,7 +592,7 @@ const EngineerPage = (props) => {
             </Affix>
             <div className={'sa-engineer-page-info-container'}>
               <div className={'sa-engineer-page-btns-wrapper'}>
-                {(activeRole === 2 || superUser) && (
+                {(activeRole === 2 || superUser) ? (
                     <>
                       <Tooltip title={'Копировать спецификацию'} placement={'right'}>
                         <Button className={'sa-engineer-page-btn'}
@@ -611,9 +611,9 @@ const EngineerPage = (props) => {
                         ></Button>
                       </Tooltip>
                     </>
-                )}
+                ) : ""}
 
-                {(activeRole === 1 || superUser) && (
+                {(activeRole === 1 || superUser) ? (
                     <>
                       <Tooltip title={'Создать КП'} placement={'right'}>
                         <Button className={'sa-engineer-page-btn'}
@@ -631,7 +631,7 @@ const EngineerPage = (props) => {
                         ></Button>
                       </Tooltip>
                     </>
-                )}
+                ) : ""}
 
                 <Tooltip title={'Файлы'} placement={'right'}>
                   <Badge count={bidFilesCount} color={'geekblue'}>
