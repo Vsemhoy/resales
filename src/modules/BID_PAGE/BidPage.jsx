@@ -2360,7 +2360,9 @@ const BidPage = (props) => {
 			/>
 			<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
 							   closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
-							   bidId={bidId}
+							   bid_id={bidId}
+							   bid_models={bidModels}
+							   protection_project={bidProtectionProject}
 			/>
 			<CustomModal
 				customClick={customClick}
