@@ -113,7 +113,7 @@ export const MS_USER = {
 		id_departament: 11,
 		// id_departament: 8,
 		id_company: 2,
-		super: 1,
+		// super: 1,
 	},
 	mode: 0,
 	duration: 0.0012869834899902344,
