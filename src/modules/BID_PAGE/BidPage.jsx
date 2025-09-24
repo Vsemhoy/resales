@@ -179,6 +179,7 @@ const BidPage = (props) => {
 	const [customModalType, setCustomModalType] = useState('');
 	const [customModalColumns, setCustomModalColumns] = useState([]);
 	const [isLoading1c, setIsLoading1c] = useState(false);
+	const [isLoadingChangePlaceBtn, setIsLoadingChangePlaceBtn] = useState('');
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -220,7 +221,7 @@ const BidPage = (props) => {
 		if (openMode) {
 			const handleKeyDown = (event) => {
 				//console.log('event', event);
-				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status !== 1 && openMode?.status !== 5) {
+				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status !== 1 && openMode?.status !== 4 && openMode?.status !== 5) {
 					event.preventDefault();
 					setIsSavingInfo(prev => {
 						if (!prev) {
@@ -389,12 +390,14 @@ const BidPage = (props) => {
 						});
 					}, 500);
 				}
+				setIsLoadingChangePlaceBtn('');
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
 				setAlertMessage('Произошла ошибка!');
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
+				setIsLoadingChangePlaceBtn('');
 			}
 		} else {
 			const openMode = BID_INFO?.openmode;
@@ -456,6 +459,7 @@ const BidPage = (props) => {
 					bid_models: BID_INFO.bid_models,
 				});
 			}, 500);
+			setIsLoadingChangePlaceBtn('');
 		}
 	};
 	const fetchSelects = async () => {
@@ -833,7 +837,7 @@ const BidPage = (props) => {
 				if (response.data) {
 					setIsAlertVisible(true);
 					setAlertMessage('Успех!');
-					setAlertDescription(response.data.message.message);
+					setAlertDescription(response.data.message);
 					setAlertType('success');
 				}
 				setTimeout(() => setIsLoading1c(false), 500);
@@ -1569,8 +1573,10 @@ const BidPage = (props) => {
 											{+bidType === 2 && +bidPlace === 1 && (
 												<Space.Compact>
 													<Button className={'sa-select-custom-admin'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toAdmin')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toAdmin'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('toAdmin');
 																if (isSmthChanged) {
 																	openCustomModal(
 																		'toAdmin',
@@ -1587,6 +1593,7 @@ const BidPage = (props) => {
 																		setAlertMessage('Заполните поля!');
 																		setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
 																		setAlertType('error');
+																		setIsLoadingChangePlaceBtn('');
 																	}
 																}
 															}}
@@ -1596,8 +1603,10 @@ const BidPage = (props) => {
 											{+bidType === 2 && +bidPlace === 2 && (
 												<Space.Compact>
 													<Button className={'sa-select-custom-manager'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backManager')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backManager'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('backManager');
 																if (isSmthChanged) {
 																	openCustomModal(
 																		'backManager',
@@ -1612,8 +1621,10 @@ const BidPage = (props) => {
 															}}
 													><ArrowLeftOutlined /> Вернуть менеджеру</Button>
 													<Button className={'sa-select-custom-bugh'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toBuh')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toBuh'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('toBuh');
 																if (isSmthChanged) {
 																	openCustomModal(
 																		'toBuh',
@@ -1630,6 +1641,7 @@ const BidPage = (props) => {
 																		setAlertMessage('Заполните поля!');
 																		setAlertDescription('Количество моделей должно быть равно количеству на складе');
 																		setAlertType('error');
+																		setIsLoadingChangePlaceBtn('');
 																	}
 																}
 															}}
@@ -1639,15 +1651,19 @@ const BidPage = (props) => {
 											{+bidType === 2 && +bidPlace === 3 && (
 												<Space.Compact>
 													<Button className={'sa-select-custom-admin'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backAdmin')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backAdmin'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('backAdmin');
 																setBidPlace(2);
 																fetchBidPlace(2).then(() => fetchBidInfo().then());
 															}}
 													><ArrowLeftOutlined /> Вернуть администратору</Button>
 													<Button className={'sa-select-custom-end'}
-															disabled={isDisabledInput()}
+															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'done')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'done'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('done');
 																setBidPlace(4);
 																fetchBidPlace(4).then(() => fetchBidInfo().then());
 															}}
@@ -1657,8 +1673,10 @@ const BidPage = (props) => {
 											{+bidType === 2 && +bidPlace === 4 && (
 												<Space.Compact>
 													<Button className={'sa-select-custom-bugh'}
-															disabled={openMode?.status !== 5}
+															disabled={openMode?.status !== 5 || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backBuh')}
+															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backBuh'}
 															onClick={() => {
+																setIsLoadingChangePlaceBtn('backBuh');
 																setBidPlace(3);
 																fetchBidPlace(3).then(() => fetchBidInfo().then());
 															}}
@@ -1672,7 +1690,7 @@ const BidPage = (props) => {
 												icon={<SaveOutlined />}
 												loading={isSavingInfo}
 												onClick={() => setIsSavingInfo(true)}
-												disabled={isDisabledInput()}
+												disabled={isDisabledInput() || openMode?.status === 4}
 											>
 												{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
 											</Button>
