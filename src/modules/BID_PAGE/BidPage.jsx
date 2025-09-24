@@ -178,6 +178,7 @@ const BidPage = (props) => {
 	const [customModalText, setCustomModalText] = useState('');
 	const [customModalType, setCustomModalType] = useState('');
 	const [customModalColumns, setCustomModalColumns] = useState([]);
+	const [isLoading1c, setIsLoading1c] = useState(false);
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -822,6 +823,30 @@ const BidPage = (props) => {
 			}
 		}
 	};
+	const fetchSend1c = async () => {
+		if (PRODMODE) {
+			try {
+				setIsLoading1c(true);
+				let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/send1c/${bidId}`, {
+					_token: CSRF_TOKEN,
+				});
+				if (response.data) {
+					setIsAlertVisible(true);
+					setAlertMessage('Успех!');
+					setAlertDescription(response.data.message.message);
+					setAlertType('success');
+				}
+				setTimeout(() => setIsLoading1c(false), 500);
+			} catch (e) {
+				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage('Произошла ошибка!');
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
+				setTimeout(() => setIsLoading1c(false), 500);
+			}
+		}
+	}
 
 	const areArraysEqual = (arr1, arr2) => {
 		// Проверка длины
@@ -1679,6 +1704,7 @@ const BidPage = (props) => {
 											color="primary"
 											variant="outlined"
 											style={{fontSize: '20px', fontWeight: 'bold'}}
+											disabled={isLoading1c}
 											onClick={() => {
 												if (isSmthChanged) {
 													openCustomModal(
@@ -1688,7 +1714,7 @@ const BidPage = (props) => {
 														baseButtons
 													);
 												} else {
-
+													fetchSend1c().then();
 												}
 											}}
 										>1С</Button>
