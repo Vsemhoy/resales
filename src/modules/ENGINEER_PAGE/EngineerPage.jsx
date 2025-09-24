@@ -623,7 +623,6 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
-                                disabled={!editMode}
                                 icon={<ProfileOutlined className={'sa-engineer-page-btn-icon'}/>}
                         ></Button>
                       </Tooltip>
@@ -631,7 +630,6 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
-                                disabled={!editMode}
                                 onClick={() => {setOpenAddIntoBidSpecification(true);}}
                                 icon={<FileAddOutlined className={'sa-engineer-page-btn-icon'}/>}
                         ></Button>
