@@ -537,7 +537,7 @@ export const BID_INFO = {
     "bid": {
         "id": 120828,
         "id_company": 2,
-        "place": 3,
+        "place": 1,
         "type": 2,
         "files_count": 0,
         "comments": {
@@ -574,7 +574,8 @@ export const BID_INFO = {
             "insurance": 0,
             "package": 0,
             "consignee": "",
-            "other_equipment": ""
+            "other_equipment": "",
+            "send1c": 0
         },
         "actions": {
             "create": {
@@ -745,24 +746,24 @@ export const BID_INFO = {
         "tagtext": "Просмотр",
         "color": "volcano"
     },*/
-    /*"openmode": {
+    "openmode": {
         "status": 2,
         "description": "Режим редактирования",
         "tagtext": "Редактирование",
         "color": "green"
-    },*/
+    },
     /*"openmode": {
         "status": 3,
         "description": "Редактирование от администратора",
         "tagtext": "Разрешено",
         "color": "green"
     },*/
-    "openmode": {
+    /*"openmode": {
         "status": 4,
         "description": "Редактирование от бухгалтера",
         "tagtext": "Разрешено",
         "color": "green"
-    },
+    },*/
     /*"openmode": {
         "status": 5,
         "description": "Возможность вернуть к бухгалитеру",
