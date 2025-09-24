@@ -537,7 +537,7 @@ export const BID_INFO = {
     "bid": {
         "id": 120828,
         "id_company": 2,
-        "place": 2,
+        "place": 1,
         "type": 2,
         "files_count": 0,
         "comments": {
@@ -604,7 +604,7 @@ export const BID_INFO = {
             "sort": 0,
             "presence": 3,
             "percent": 0,
-            "sklad": 1
+            "sklad": 0
         },
         {
             "id": 977890,
@@ -625,7 +625,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 2,
             "presence": 3,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977892,
@@ -635,7 +636,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 3,
             "presence": 3,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977893,
@@ -645,7 +647,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 4,
             "presence": -2,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977894,
@@ -655,7 +658,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 5,
             "presence": -2,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977895,
@@ -665,7 +669,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 6,
             "presence": -2,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977896,
@@ -675,7 +680,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 7,
             "presence": 3,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977897,
@@ -685,7 +691,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 8,
             "presence": -2,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977898,
@@ -695,7 +702,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 9,
             "presence": 3,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977899,
@@ -705,7 +713,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 10,
             "presence": -2,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977900,
@@ -715,7 +724,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 11,
             "presence": 3,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         },
         {
             "id": 977901,
@@ -725,7 +735,8 @@ export const BID_INFO = {
             "currency": 0,
             "sort": 12,
             "presence": 3,
-            "percent": 0
+            "percent": 0,
+            "sklad": 1
         }
     ],
     /*"openmode": {
@@ -734,18 +745,18 @@ export const BID_INFO = {
         "tagtext": "Просмотр",
         "color": "volcano"
     },*/
-    /*"openmode": {
+    "openmode": {
         "status": 2,
         "description": "Режим редактирования",
         "tagtext": "Редактирование",
         "color": "green"
-    },*/
-    "openmode": {
+    },
+    /*"openmode": {
         "status": 3,
         "description": "Редактирование от администратора",
         "tagtext": "Разрешено",
         "color": "green"
-    },
+    },*/
     /*"openmode": {
         "status": 4,
         "description": "Редактирование от бухгалтера",
