@@ -1,79 +1,56 @@
-import { useEffect, useState } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
-import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
+import { useState, useEffect } from 'react';
+import { PRODMODE } from '../../config/config';
 
-export const useSms = ({ chatId = null, mock = {} }) => {
+export function useSms({ chatId = null, mock = null }) {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		const fetchData = async () => {
+		const loadData = async () => {
 			setLoading(true);
 			setError(null);
 
-			console.log('[useSms] START fetch, chatId =', chatId, 'PRODMODE =', PRODMODE);
-			console.log('[useSms] mock (входной):', mock);
-
-			try {
-				let responseData = [];
-
-				if (!PRODMODE) {
-					// DEV режим — берём из mock
-					const mockData = typeof mock === 'function' ? mock() : mock;
-					console.log('[useSms] mockData внутри:', mockData);
-
-					const smsAll = Array.isArray(mockData?.content?.sms) ? mockData.content.sms : [];
-					console.log('[useSms] smsAll from mockData.content.sms:', smsAll);
-
-					// Приводим chatId к числу для безопасной фильтрации
-					const targetId = chatId != null ? Number(chatId) : null;
-
-					if (targetId != null) {
-						const filtered = smsAll.filter((msg) => Number(msg.chat_id) === targetId);
-						console.log('[useSms] filtered by chatId (mock):', filtered);
-						responseData = filtered;
-					} else {
-						responseData = smsAll;
-					}
-				} else {
-					// PRODMODE — делаем запрос к серверу
-					const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
-					const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
-						data: {},
-						_token: CSRF_TOKEN,
-					});
-
-					console.log(`[useSms] Ответ от сервера (${endpoint}) =`, response.data);
-
-					if (chatId) {
-						if (Array.isArray(response.data.messages)) {
-							responseData = response.data.messages;
-						} else {
-							console.warn(`[useSms] response.data.messages не массив для ${endpoint}`);
-						}
-					} else {
-						const sms = response.data?.content?.sms;
-						if (Array.isArray(sms)) {
-							responseData = sms;
-						} else {
-							console.warn(`[useSms] content.sms не массив для ${endpoint}`);
-						}
-					}
+			// Если не PRODMODE и передан mock — используем мок-данные
+			if (!PRODMODE && mock) {
+				try {
+					const allSms = mock?.content?.sms || [];
+					const filtered = chatId ? allSms.filter((msg) => msg.chat_id === chatId) : allSms;
+					setData(filtered);
+				} catch (e) {
+					console.error('[useSms] Ошибка при разборе мок-данных:', e);
+					setError('Ошибка при загрузке мок-данных');
+				} finally {
+					setLoading(false);
 				}
+				return;
+			}
 
-				setData(responseData);
+			// В PRODMODE — фетчим с сервера
+			try {
+				const url = chatId ? `/api/sms?chatId=${chatId}` : '/api/sms';
+				const response = await fetch(url);
+
+				if (!response.ok) throw new Error('Ошибка при загрузке данных');
+				const json = await response.json();
+
+				const allSms = json?.content?.sms || [];
+				const filtered = chatId ? allSms.filter((msg) => msg.chat_id === chatId) : allSms;
+				setData(filtered);
 			} catch (err) {
-				console.error('[useSms] Ошибка в fetchData:', err);
-				setError(err.message || 'Неизвестная ошибка');
-				setData([]);
+				console.error('[useSms] Ошибка:', err);
+				setError('Не удалось загрузить сообщения');
 			} finally {
 				setLoading(false);
 			}
 		};
 
-		fetchData();
+		loadData();
 	}, [chatId, mock]);
 
-	return { data, loading, error };
-};
+	return {
+		data,
+		loading,
+		error,
+	};
+}
