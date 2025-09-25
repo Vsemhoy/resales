@@ -58,55 +58,62 @@ const ProjectsTabPage = (props) => {
       setCurrentPage(props.current_page);
   }, [props.current_page]);
 
-  useEffect(() => {
-    if (props.edit_mode === false) {
-      if (editedItemsIds.length > 0 || newStructureItems.length > 0) {
-        if (
-          window.confirm(
-            "У вас есть несохраненные заметки! Отменить изменения?"
-          )
-        ) {
-          setOriginalData([]);
-          setLoading(true);
-          setEditMode(props.edit_mode);
-          setTemporaryUnits([]);
-          setEditedItemsIds([]);
-          setTimeout(() => {
-            setBaseData(
-              props.base_data?.projects
-                ? JSON.parse(JSON.stringify(props.base_data.projects))
-                : []
-            );
-          }, 1000);
+  // useEffect(() => {
+  //   if (props.edit_mode === false) {
+  //     if (editedItemsIds.length > 0 || newStructureItems.length > 0) {
+  //       if (
+  //         window.confirm(
+  //           "У вас есть несохраненные заметки! Отменить изменения?"
+  //         )
+  //       ) {
+  //         setOriginalData([]);
+  //         setLoading(true);
+  //         setEditMode(props.edit_mode);
+  //         setTemporaryUnits([]);
+  //         setEditedItemsIds([]);
+  //         setTimeout(() => {
+  //           setBaseData(
+  //             props.base_data?.projects
+  //               ? JSON.parse(JSON.stringify(props.base_data.projects))
+  //               : []
+  //           );
+  //         }, 1000);
 
-          setBaseData([]);
+  //         setBaseData([]);
 
-          setTimeout(() => {
-            setBaseData(
-              props.base_data?.projects
-                ? JSON.parse(JSON.stringify(props.base_data.projects))
-                : []
-            );
-          }, 1000);
-        } else {
-          // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
-          if (props.on_break_discard) {
-            // setBaseData(props.base_data?.projects);
-            setOriginalData(
-              props.base_data?.projects
-                ? JSON.parse(JSON.stringify(props.base_data.projects))
-                : []
-            );
-            props.on_break_discard();
-          }
-        }
-      } else {
-        setEditMode(props.edit_mode);
-      }
-    } else {
-      setEditMode(props.edit_mode);
+  //         setTimeout(() => {
+  //           setBaseData(
+  //             props.base_data?.projects
+  //               ? JSON.parse(JSON.stringify(props.base_data.projects))
+  //               : []
+  //           );
+  //         }, 1000);
+  //       } else {
+  //         // alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
+  //         if (props.on_break_discard) {
+  //           // setBaseData(props.base_data?.projects);
+  //           setOriginalData(
+  //             props.base_data?.projects
+  //               ? JSON.parse(JSON.stringify(props.base_data.projects))
+  //               : []
+  //           );
+  //           props.on_break_discard();
+  //         }
+  //       }
+  //     } else {
+  //       setEditMode(props.edit_mode);
+  //     }
+  //   } else {
+  //     setEditMode(props.edit_mode);
+  //   }
+  // }, [props.edit_mode]);
+
+	useEffect(() => {
+    if (props.edit_mode === false){
+      setTemporaryUnits([]);
     }
-  }, [props.edit_mode]);
+		setEditMode(props.edit_mode);
+	}, [props.edit_mode]);
 
   useEffect(() => {
     if (props.base_data?.projects !== null && props.base_data?.projects?.length > 0) {
@@ -434,7 +441,7 @@ const ProjectsTabPage = (props) => {
   /** Отптавка данных родительскому компоненту */
   useEffect(() => {
     console.log('HELLL');
-    if (props.on_change_data){
+    if (editMode && props.on_change_data){
       if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
         props.on_change_data('projects', baseData.concat(temporaryUnits))
       }

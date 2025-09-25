@@ -53,7 +53,7 @@ const OrgCallEditorSectionBox = (props) => {
   useEffect(() => {
     if (props.data?.id) {
       setObjectResult(props.data);
-
+      console.log('==++++++++++++++++++++++   ', props.data);
       setId(props.data.id);
       // if (props.data.id_orgs !== org){
       setOrg(props.data.id_orgs);
@@ -67,9 +67,15 @@ const OrgCallEditorSectionBox = (props) => {
       setPost(props.data.post);
       setPhone(props.data.phone);
       setResult(props.data.result);
-      setNextCallDate(props.data?.next_call_date);
+      setNextCallDate(props.data?.next_call_date ? props.data?.next_call_date : null);
+      setSaveContact(props.data?._savecontact ? props.data?._savecontact : false);
     }
   }, [props.data]);
+
+
+  useEffect(() => {
+    console.log('SET SAVE CONTACT', saveContact)
+  }, [saveContact]);
 
 
   useEffect(() => {
@@ -87,10 +93,23 @@ const OrgCallEditorSectionBox = (props) => {
   }, []);
 
   useEffect(() => {
+
     if (props.org_users) {
-      setOrgUsers(props.org_users.map((item) => (
-        `${item.lastname} ${item.name} ${item.middlename}`
-      )));
+     
+      let usess = [];
+      let fusers = props.org_users.filter((item)=>
+        !item.lastname || !item.name || !item.middlename
+      );
+
+      for (let i = 0; i < fusers.length; i++) {
+        const element = fusers[i];
+        let nm = `${element.lastname + (element.name ? ' ' : '') +  element.name + (element.middlename ? ' ' : '') +  element.middlename }`;
+
+        if (!usess.includes(nm.trim())){
+          usess.push(nm.trim());
+        }
+      }
+      setOrgUsers(usess);
     }
   }, [props.org_users]); // dependency is correct.
 
@@ -192,9 +211,9 @@ const OrgCallEditorSectionBox = (props) => {
     } else if (changed_data.id8ref_departaments !== undefined) {
       setDepart(changed_data.id8ref_departaments);
     } else if (changed_data.subscriber !== undefined) {
-      setSubscriber(changed_data.subscriber);
+      setSubscriber(changed_data.subscriber.trim());
     } else if (changed_data.post !== undefined) {
-      setPost(changed_data.post);
+      setPost(changed_data.post.trim());
       } else if (changed_data.date !== undefined) {
       setDate(changed_data.date);
     } else if (changed_data.phone !== undefined) {
@@ -371,7 +390,7 @@ const OrgCallEditorSectionBox = (props) => {
           datas={[
             {
               type: OPS_TYPE.CHECKBOX,
-              value: false,
+              value: saveContact,
               placeholder: '',
               name: '_savecontact',
             },

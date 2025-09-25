@@ -350,14 +350,14 @@ const OrgPageSectionRow = (props) => {
       case 'select':
         return (
           <Select
-            allowClear={field.alloWclear ? field.alloWclear : false}
+            allowClear={field.allowClear ? field.allowClear : false}
             showSearch={field.showSearch ? field.showSearch : false}
             optionFilterProp="children"
             // optionFilterProp="label"
             //     filterSort={(optionA, optionB) =>
             //       (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
             //     }
-
+			onSearch={field?.on_search}
             size='small'
             variant="borderless"
             value={value}
@@ -395,13 +395,14 @@ const OrgPageSectionRow = (props) => {
       case 'multiselect':
         return (
           <Select
-            allowClear={field.alloWclear ? field.alloWclear : false}
+            allowClear={field.allowClear ? field.allowClear : false}
             showSearch={field.showSearch ? field.showSearch : false}
             optionFilterProp="children"
             // optionFilterProp="label"
             //     filterSort={(optionA, optionB) =>
             //       (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
             //     }
+			onSearch={field?.on_search}
             mode="multiple"
             size='small'
             variant="borderless"

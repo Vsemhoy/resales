@@ -81,53 +81,60 @@ const CallsTabPage = (props) => {
 
 	useEffect(() => {
 		console.log(baseData, editedItemsIds.length);
-		if (props.on_change_data){
+		if (editMode && props.on_change_data){
 			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
-        props.on_change_data('calls', baseData.concat(temporaryUnits))
-      }
+				props.on_change_data('calls', baseData.concat(temporaryUnits))
+			}
 		}
 	}, [baseData, temporaryUnits]);
 
 
 
 
-	useEffect(() => {
-		if (props.edit_mode === false) {
-			if (editedItemsIds.length > 0 || newStructureItems.length > 0) {
-				if (window.confirm('У вас есть несохраненные заметки! Отменить изменения?')) {
-					setOriginalData([]);
-					setLoading(true);
-					setEditMode(props.edit_mode);
-					setTemporaryUnits([]);
-					setEditedItemsIds([]);
-					setTimeout(() => {
-						setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
-					}, 1000);
+	// useEffect(() => {
+	// 	if (props.edit_mode === false) {
+	// 		if (editedItemsIds.length > 0 || newStructureItems.length > 0) {
+	// 			if (window.confirm('У вас есть несохраненные заметки! Отменить изменения?')) {
+	// 				setOriginalData([]);
+	// 				setLoading(true);
+	// 				setEditMode(props.edit_mode);
+	// 				setTemporaryUnits([]);
+	// 				setEditedItemsIds([]);
+	// 				setTimeout(() => {
+	// 					setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
+	// 				}, 1000);
 
-					setBaseData([]);
-					console.log('---------- 65 ---------', originalData);
+	// 				setBaseData([]);
+	// 				console.log('---------- 65 ---------', originalData);
 
-					setTimeout(() => {
-						setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
-					}, 1000);
-				} else {
-					// alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
-					if (props.on_break_discard) {
-						// setBaseData(props.base_data?.calls);
-						console.log('BREAK SETTER CALLLS ');
-						setOriginalData(
+	// 				setTimeout(() => {
+	// 					setBaseData(joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings));
+	// 				}, 1000);
+	// 			} else {
+	// 				// alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
+	// 				if (props.on_break_discard) {
+	// 					// setBaseData(props.base_data?.calls);
+	// 					console.log('BREAK SETTER CALLLS ');
+	// 					setOriginalData(
 							
-							joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings)
-						);
-						props.on_break_discard();
-					}
-				}
-			} else {
-				setEditMode(props.edit_mode);
-			}
-		} else {
-			setEditMode(props.edit_mode);
+	// 						joinCallsAndMeetings(props.base_data?.calls, props.base_data?.meetings)
+	// 					);
+	// 					props.on_break_discard();
+	// 				}
+	// 			}
+	// 		} else {
+	// 			setEditMode(props.edit_mode);
+	// 		}
+	// 	} else {
+	// 		setEditMode(props.edit_mode);
+	// 	}
+	// }, [props.edit_mode]);
+
+	useEffect(() => {
+		if (props.edit_mode === false){
+			setTemporaryUnits([]);
 		}
+		setEditMode(props.edit_mode);
 	}, [props.edit_mode]);
 
 	const joinCallsAndMeetings = (calls, meetings) => {
@@ -463,12 +470,12 @@ const CallsTabPage = (props) => {
 			if (!editedItemsIds?.includes(id)) {
 				setEditedItemsIds([...editedItemsIds, id]);
 			}
-      data.command = 'update';
+      		data.command = 'update';
 		} else {
 			if (editedItemsIds?.includes(id)) {
 				setEditedItemsIds(editedItemsIds.filter((item) => item !== id));
 			}
-      data.command = '';
+      		data.command = '';
 		}
 
 		console.log(is_original, id);
@@ -484,12 +491,12 @@ const CallsTabPage = (props) => {
 	};
 
 	// если в call_to_save не null, а timestamp, отправляем данные на обновление
-	useEffect(() => {
-		console.log('basedata', baseData, temporaryUnits);
-		if (props.call_to_save !== null && props.on_save !== null) {
-			props.on_save(baseData, temporaryUnits);
-		}
-	}, [props.call_to_save]);
+	// useEffect(() => {
+	// 	console.log('basedata', baseData, temporaryUnits);
+	// 	if (props.call_to_save !== null && props.on_save !== null) {
+	// 		props.on_save(baseData, temporaryUnits);
+	// 	}
+	// }, [props.call_to_save]);
 
 	return (
 		<div className={`${show ? '' : 'sa-orgpage-tab-hidder'}`}>
