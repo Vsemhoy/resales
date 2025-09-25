@@ -14,7 +14,7 @@ export const useChatMessages = ({ chatId = null, mock = {} }) => {
 			return;
 		}
 
-		const ws = new WebSocket('wss://your-bff-server');
+		const ws = new WebSocket('wss://192.168.1.16:5001');
 
 		ws.onopen = () => {
 			ws.send(JSON.stringify({ action: 'subscribe', chatId }));
