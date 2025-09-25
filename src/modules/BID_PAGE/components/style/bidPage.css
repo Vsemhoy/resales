@@ -237,6 +237,12 @@
 	color: rgba(0, 0, 0, 0.7) !important;
 }
 
+.sa-bid-page-container .sa-bid-page-modal .ant-modal-body {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+}
+
 
 	/* NO ANTD */
 
