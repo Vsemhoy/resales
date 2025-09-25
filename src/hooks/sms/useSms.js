@@ -28,8 +28,6 @@ export function useSms({ chatId = null, mock = null }) {
 			// В PRODMODE — POST запрос на сервер с chatId в теле
 			try {
 				const response = await PROD_AXIOS_INSTANCE.post('/api/sms', { _token: CSRF_TOKEN });
-
-				if (!response.ok) throw new Error('Ошибка при загрузке данных');
 				const json = await response.json();
 
 				const allSms = json?.content?.sms || [];
