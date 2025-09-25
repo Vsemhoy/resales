@@ -356,8 +356,9 @@ const BidPage = (props) => {
 	};
 	const fetchBidInfo = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/v2/offers/${bidId}`
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/v2/offers/${bidId}`, {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,
 				});
 				console.log(response);
@@ -428,7 +429,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setIsLoadingChangePlaceBtn('');
@@ -499,8 +500,9 @@ const BidPage = (props) => {
 	};
 	const fetchSelects = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/v2/bidselects`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
@@ -527,7 +529,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -553,8 +555,9 @@ const BidPage = (props) => {
 	};
 	const fetchOrgSelects = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/v2/bidselects`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: { orgId: bidOrg.id },
 					_token: CSRF_TOKEN,
 				});
@@ -568,7 +571,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -581,8 +584,9 @@ const BidPage = (props) => {
 	};
 	const fetchOrgUserSelects = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/v2/bidselects`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/bidselects', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: { orgUserId: bidOrgUser },
 					_token: CSRF_TOKEN,
 				});
@@ -593,7 +597,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -603,8 +607,9 @@ const BidPage = (props) => {
 	};
 	const fetchCurrencySelects = async () => {
 		if (PRODMODE) {
+			const path = `/api/currency/getcurrency`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/currency/getcurrency', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
@@ -615,7 +620,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -626,8 +631,9 @@ const BidPage = (props) => {
 	};
 	const fetchBidModels = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/getmodels`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.get('/api/sales/getmodels', {
+				let response = await PROD_AXIOS_INSTANCE.get(path, {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
@@ -638,7 +644,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -695,9 +701,10 @@ const BidPage = (props) => {
 			bid_models: bidModels,
 		};
 		console.log(data);
+		const path = `/api/sales/updatebid/${bidId}`;
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/updatebid/${bidId}`, {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data,
 					_token: CSRF_TOKEN,
 				});
@@ -733,13 +740,13 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
 		} else {
 			setIsAlertVisible(true);
-			setAlertMessage('Успех!');
+			setAlertMessage(`Успех! ${path}`);
 			setAlertDescription('Успешное обновление');
 			setAlertType('success');
 			setIsSmthChanged(false);
@@ -749,9 +756,10 @@ const BidPage = (props) => {
 	const fetchCalcModels = async () => {
 		console.log('fetchCalcModels');
 		if (PRODMODE) {
+			const path = `/api/sales/calcmodels`;
 			try {
 				setIsLoadingSmall(true);
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/calcmodels', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {
 						bid_info: {
 							bidCurrency,
@@ -773,7 +781,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setTimeout(() => setIsLoadingSmall(false), 500);
@@ -788,8 +796,9 @@ const BidPage = (props) => {
 	};
 	const fetchWordFile = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/makedoc`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/makedoc', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {
 						bid_id: bidId,
 						new: true,
@@ -807,7 +816,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -815,8 +824,9 @@ const BidPage = (props) => {
 	};
 	const fetchNewBid = async () => {
 		if (PRODMODE) {
+			const path = `/sales/data/makebid`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/sales/data/makebid', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {
 						bid: bidId,
 						org: bidOrg.id,
@@ -830,7 +840,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -838,8 +848,9 @@ const BidPage = (props) => {
 	};
 	const fetchBidPlace = async (newPlace) => {
 		if (PRODMODE) {
+			const path = `/sales/data/changebidstage`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/sales/data/changebidstage', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					bid_id: bidId,
 					data: {
 						bid: bidId,
@@ -856,7 +867,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -864,10 +875,11 @@ const BidPage = (props) => {
 	};
 	const fetchSend1c = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/send1c/${bidId}`;
 			try {
 				console.log('send1c');
 				setIsLoading1c(true);
-				let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/send1c/${bidId}`, {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,
 				});
 				if (response.data) {
@@ -881,7 +893,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setTimeout(() => setIsLoading1c(false), 500);
@@ -898,8 +910,9 @@ const BidPage = (props) => {
 	};
 	const fetchProjectInfo = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/v2/offers/project/${bidProject}`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/v2/offers/project/${bidProject}`, {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,
 				});
 				if (response.data?.content) {
@@ -908,7 +921,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage('Произошла ошибка!');
+				setAlertMessage(`Произошла ошибка! ${path}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setTimeout(() => setIsLoading1c(false), 500);
@@ -2435,9 +2448,9 @@ const BidPage = (props) => {
 							   bid_id={bidId}
 							   bid_models={bidModels}
 							   protection_project={bidProtectionProject}
-							   error_alert={(e) => {
+							   error_alert={(path, e) => {
 								   setIsAlertVisible(true);
-								   setAlertMessage('Произошла ошибка!');
+								   setAlertMessage(`Произошла ошибка! ${path}`);
 								   setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 								   setAlertType('error');
 							   }}

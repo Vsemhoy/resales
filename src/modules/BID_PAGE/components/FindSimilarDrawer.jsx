@@ -343,9 +343,10 @@ const FindSimilarDrawer = (props) => {
                 }
             };
             if (PRODMODE) {
+                const path = `/sales/data/getsimilarbid`
                 try {
                     setLoad(true);
-                    let response = await PROD_AXIOS_INSTANCE.post(`/sales/data/getsimilarbid`, {
+                    let response = await PROD_AXIOS_INSTANCE.post(path, {
                             bid_id: props?.bid_id,
                             _token: CSRF_TOKEN,
                             data: {
@@ -373,7 +374,7 @@ const FindSimilarDrawer = (props) => {
                     }
                 } catch (e) {
                     console.log(e);
-                    props?.error_alert(e);
+                    props?.error_alert(path, e);
                 }
             }
         };
