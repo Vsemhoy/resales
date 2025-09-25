@@ -43,6 +43,8 @@ const OrgNoteEditorSectionBox = (props) => {
     const [authorId,    setAuthorId] = useState(null);
     const [author,    setAuthor] = useState(null);
 
+    const [_type, set_type] = useState(null);
+
     const [erectorName, setErectorName] = useState(null);
 
 
@@ -93,7 +95,7 @@ const OrgNoteEditorSectionBox = (props) => {
         setAuthorId(props.data.author_id);
         setAuthor(props.data.author);
 
-        
+        set_type(props.data.type);
       }
     }, [props.data]);
 
@@ -471,6 +473,11 @@ const handleChangeData = (changed_data) => {
         />
 
 
+
+
+
+
+      {editMode ? (
         <OrgPageSectionRow
             key={'orpprow7_' + id}
             edit_mode={editMode}
@@ -491,6 +498,23 @@ const handleChangeData = (changed_data) => {
             // on_blur={handleChangeData}
         />
 
+          ) :  (
+          <OrgPageSectionRow
+            key={'orpprow10_7_' + id}
+            titles={['Тип проекта']}
+            datas={[
+                {
+                type: OPS_TYPE.STRING,
+                value: _type?.name,
+                max: null,
+                required: true,
+                nullable: true,
+                placeholder: '',
+                name: 'linkbid',
+                },
+            ]}
+        />
+          )}
 
         <OrgPageSectionRow
             key={'orpprow8_' + id}
@@ -516,30 +540,30 @@ const handleChangeData = (changed_data) => {
             // on_blur={handleChangeData}
         />
 
-        <OrgPageSectionRow
-            key={'orpprow9_' + id}
-            edit_mode={editMode}
-            titles={['Связанное КП']}
-            datas={[
-                {
-                  options: mountBidList,
-                  type: OPS_TYPE.MSELECT,
-                  value: linkbidId,
-                  max: Number.MAX_SAFE_INTEGER,
-                  required: false,
-                  nullable: true,
-                  placeholder: 'ID коммерческого предложения',
-                  name: 'linkbid_id',
-                  link: '/bid/',
-                },
-            ]}
-            // on_change={handleChangeData}
-            // on_blur={handleChangeData}
-            // on_change={(data)=>{console.log(data)}}
-            on_change={handleChangeData}
-        />
 
-
+            <OrgPageSectionRow
+                key={'orpprow9_' + id}
+                edit_mode={editMode}
+                titles={['Связанное КП']}
+                datas={[
+                    {
+                      options: mountBidList,
+                      type: OPS_TYPE.MSELECT,
+                      value: linkbidId,
+                      max: Number.MAX_SAFE_INTEGER,
+                      required: false,
+                      nullable: true,
+                      placeholder: 'ID коммерческого предложения',
+                      name: 'linkbid_id',
+                      link: '/bids/',
+                      blank: true,
+                    },
+                ]}
+                // on_change={handleChangeData}
+                // on_blur={handleChangeData}
+                // on_change={(data)=>{console.log(data)}}
+                on_change={handleChangeData}
+            />
 
         <OrgPageSectionRow
             key={'orpprow10_' + id}

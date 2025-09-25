@@ -26,7 +26,11 @@ const OrgListRow = (props) => {
 	const navigate = useNavigate();
 	const [active, setActive] = useState(false);
 	const [compColor, setCompColor] = useState('#00000000');
-	const menuItems = [
+	const [menuItems, setMenuItems] = useState([]);
+
+	const { userdata } = props;
+
+	const menuItemsd = [
 		{
 			key: '1',
 			icon: <ArrowRightEndOnRectangleIcon height="18px" />,
@@ -55,7 +59,63 @@ const OrgListRow = (props) => {
 	];
 
 	const [orgData, setOrgData] = useState(props.data);
+	
+	useEffect(() => {
+		if (orgData){
+			let newArr = [];
+			if ((orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company) &&
+			(userdata?.acls?.includes(138) // Разрешено брать кураторство
+		 || userdata?.acls?.includes(137) // Рукотдела продаж
+		) 
+		){
+				newArr.push(
+							{
+							key: 'Call_cur_item1',
+							icon: <ArrowRightEndOnRectangleIcon height="18px" />,
+							label: <div
+								onClick={handleCallBecomeCurator}
+							>Запросить кураторство</div>,
+						},
+				)
+			};
 
+			if (userdata?.acls?.includes(55) && (orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company)){
+				newArr.push(
+					{
+							key: 'Can_create_offer',
+							icon: <ArchiveBoxXMarkIcon height="18px" />,
+							label: <div
+								onClick={handleDeletOrg}
+							>Создать КП</div>,
+						},
+				);
+				newArr.push(
+					{
+							key: 'Can_create_bid',
+							icon: <ArchiveBoxXMarkIcon height="18px" />,
+							label: <div
+								onClick={handleDeletOrg}
+							>Создать счёт</div>,
+						},
+				)
+			};
+
+			if (userdata?.acls?.includes(55) && (orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company)){
+				newArr.push(
+					{
+							key: 'Can_del_item1',
+							icon: <ArchiveBoxXMarkIcon height="18px" />,
+							label: <div
+								onClick={handleDeletOrg}
+							>Удалить пасспорт из списка</div>,
+						},
+				)
+			};
+
+			setMenuItems(newArr);
+		}
+	}, [orgData]);
+	
 	useEffect(() => {
 		if (props.data) {
 			setOrgData(props.data);
@@ -78,6 +138,15 @@ const OrgListRow = (props) => {
 			props.on_double_click(orgData.id);
 		}
 	};
+
+
+	const handleCallBecomeCurator = () => {
+		console.log('curator of', orgData.id);
+	}
+
+		const handleDeletOrg = () => {
+		console.log('delete of', orgData.id);
+	}
 
 	const wrapLink = (text) => {
 		return text.split(' ').map((word, index) => {
