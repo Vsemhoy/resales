@@ -26,10 +26,15 @@ export function useSms({ chatId = null, mock = null }) {
 				return;
 			}
 
-			// В PRODMODE — фетчим с сервера
+			// В PRODMODE — POST запрос на сервер с chatId в теле
 			try {
-				const url = chatId ? `/api/sms?chatId=${chatId}` : '/api/sms';
-				const response = await fetch(url);
+				const response = await fetch('/api/sms', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(chatId ? { chatId } : {}),
+				});
 
 				if (!response.ok) throw new Error('Ошибка при загрузке данных');
 				const json = await response.json();
