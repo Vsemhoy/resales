@@ -151,17 +151,22 @@ const OrgCallEditorSectionBox = (props) => {
       setPost(foundUser.occupy.trim());
     }
 
+    
     if (foundUser.contactstelephones.length){
       for (let index = 0; index < foundUser.contactstelephones.length; index++) {
         const element = foundUser.contactstelephones[index];
-        of.push(element.number);
+        if (!of.includes(element.number)){
+          of.push(element.number);
+        }
       }
     }
 
     if (foundUser.contactmobiles.length){
       for (let index = 0; index < foundUser.contactmobiles.length; index++) {
         const element = foundUser.contactmobiles[index];
+        if (!of.includes(element.number)){
         of.push(element.number);
+        }
       }
     }
     setOrgPhones(of);

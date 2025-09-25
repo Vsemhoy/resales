@@ -205,7 +205,7 @@ const MainTabPage = (props) => {
         label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Лицензии/Допуски 
 
           <Badge 
-          count={baseData?.active_licenses_bo?.length + baseData?.active_licenses?.length + baseData?.active_tolerance?.length}
+            count={baseData?.active_licenses_bo?.length ? baseData?.active_licenses_bo?.length + baseData?.active_licenses?.length + baseData?.active_tolerance?.length : 0}
             color="blue"
           />
           </div><div className={'sa-flex-gap'}>
@@ -246,7 +246,7 @@ const MainTabPage = (props) => {
           </div>
 
         </div>,
-        children: <OrgPageMainTabToleranceSection
+        children: baseData ? ( <OrgPageMainTabToleranceSection
           color={'#30c97aff'}
           edit_mode={editMode} 
           data={baseData}
@@ -254,7 +254,7 @@ const MainTabPage = (props) => {
           on_blur={props.on_change_main_data_part}
           on_add_license={callToAddLicense}
           on_add_tolerance={callToAddTolerance}
-          />
+          /> ) : ("")
       },
       {
         key: 'mainorgsec_14',

@@ -8,6 +8,7 @@ import { PlusCircleFilled, PlusOutlined } from "@ant-design/icons";
 import OrgNoteEditorSectionBox from "../components/sections/NotesTabSections/Rows/OrgNoteEditorSectionBox";
 import { compareObjects } from "../../../components/helpers/CompareHelpers";
 import OrgProjectEditorSectionBox from "../components/sections/NotesTabSections/Rows/OrgProjectEditorSectionBox";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 const ProjectsTabPage = (props) => {
   const { userdata } = props;
@@ -145,6 +146,7 @@ const ProjectsTabPage = (props) => {
                     </Button>
                   ) : (
                     <Button
+                      title={'Удалить проект'}
                       size="small"
                       color="danger"
                       variant="outlined"
@@ -152,8 +154,9 @@ const ProjectsTabPage = (props) => {
                         ev.stopPropagation();
                         handleDeleteRealUnit(item.id, 1);
                       }}
+                      icon=<TrashIcon height={'20px'} />
                     >
-                      Удалить
+                      
                     </Button>
                   )}
                 </>
@@ -291,7 +294,7 @@ const ProjectsTabPage = (props) => {
         deleted: 1,
         date_end: null,
         erector_id: null,
-        linkbid_id: null,
+        linkbid_id: [],
         date_create: dayjs().unix(),
         id_company: userdata.user.active_company,
         created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),

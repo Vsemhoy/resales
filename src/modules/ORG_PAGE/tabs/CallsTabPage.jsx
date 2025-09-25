@@ -9,6 +9,7 @@ import OrgNoteEditorSectionBox from '../components/sections/NotesTabSections/Row
 import { compareObjects } from '../../../components/helpers/CompareHelpers';
 import OrgCallEditorSectionBox from '../components/sections/NotesTabSections/Rows/OrgCallEditorSectionBox';
 import { BriefcaseIcon, PhoneIcon } from '@heroicons/react/24/solid';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 const CallsTabPage = (props) => {
 	const { userdata } = props;
@@ -82,7 +83,7 @@ const CallsTabPage = (props) => {
 		console.log(baseData, editedItemsIds.length);
 		if (props.on_change_data){
 			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
-        props.on_change_data('projects', baseData.concat(temporaryUnits))
+        props.on_change_data('calls', baseData.concat(temporaryUnits))
       }
 		}
 	}, [baseData, temporaryUnits]);
@@ -202,6 +203,7 @@ const CallsTabPage = (props) => {
 										</Button>
 									) : (
 										<Button
+											title={"Удалить"}
 											size="small"
 											color="danger"
 											variant="outlined"
@@ -209,8 +211,9 @@ const CallsTabPage = (props) => {
 												ev.stopPropagation();
 												handleDeleteRealUnit(item.id, 1);
 											}}
+											icon=<TrashIcon height={'20px'} />
 										>
-											Удалить
+											
 										</Button>
 									)}
 								</>

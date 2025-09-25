@@ -41,6 +41,7 @@ import { MODAL_PROJECTS_LIST } from '../ORG_LIST/components/mock/MODALPROJECTSTA
 import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
+import CustomModal from '../../components/helpers/modals/CustomModal';
 
 const tabNames = [
 	{
@@ -150,16 +151,25 @@ const OrgPage = (props) => {
 	const [baseFiltersData, setBaseFilterstData] = useState(null);
 
 
-	const [originalData,     setOriginalData]     = useState({});
-	const [originalCalls,    setOriginalCalls]    = useState([]);
-	const [originalNotes,    setOriginalNotes]    = useState([]);
-	const [originalProjects, setOriginalProjects] = useState([]);
+	const [isOpenCustomModal,  setIsOpenCustomModal]  = useState(false);
+	const [customModalTitle,   setCustomModalTitle]   = useState('Некоторые данные не сохранены. Выйти из режима редактирования и отменить изменения?');
+	const [customModalText,    setCustomModalText]    = useState('');
+	const [customModalType,    setCustomModalType]    = useState('');
+	const [customModalColumns, setCustomModalColumns] = useState([
+		{
+			id: 1,
+			text: "Отменить все изменения",
+			color: "danger",
+			variant: "outlined"
+		},
+		{
+			id: 2,
+			text: "Остаться в редакторе",
+			color: "primary",
+			variant: "outlined"
+		},
 
-
-	const [updatedlData,     setUpdatedData]     = useState({});
-	const [updatedlCalls,    setUpdatedCalls]    = useState([]);
-	const [updatedlNotes,    setUpdatedNotes]    = useState([]);
-	const [updatedlProjects, setUpdatedProjects] = useState([]);
+	]);
 
 
 	useEffect(() => {
@@ -219,7 +229,7 @@ const OrgPage = (props) => {
 		//     setBackeReturnPath("/orgs");
 		// };
 		// setBackeReturnPath(returnPath);
-		// console.log('returnPath', searchParams.get('mode'))
+		// console.log('returnPath', searchParams.get('mode'))отмена
 		// if (searchParams.get('mode')){
 		//     setEditMode(searchParams.get('mode') === 'edit');
 		// }
@@ -238,7 +248,7 @@ const OrgPage = (props) => {
       if (event.ctrlKey && event.key === 's') {
         event.preventDefault(); // Блокируем стандартное сохранение браузера
         if (editMode){
-          handleSave();
+          handleSaveData();
         } else {
           setEditMode(true);
         }
@@ -247,7 +257,7 @@ const OrgPage = (props) => {
       // Ctrl + X
       if (event.ctrlKey && event.key === 'x') {
         event.preventDefault();
-        setEditMode(false);
+        handleDiscard();
       }
 
     };
@@ -261,24 +271,44 @@ const OrgPage = (props) => {
 
 
 
-  const handleSave = () => {
-    console.log('Save changes!');
-    // Твоя логика сохранения
-  };
+	const handleDiscard = () => {
+		if (isSmthChanged){
+			console.log('HADIDSLDFJSLKDJ ');
+			let itt  = itemId;
+			if (PRODMODE) {
+				setItemId(0);
+				setBaseMainData(null);
+				setItemId(itt);
+				setTimeout(() => {
+					
+					get_main_data_action(item_id);
+					get_notes_data_action(item_id);
+					get_org_calls_action(item_id);
+					get_projects_data_action(item_id);
 
-  const handleDiscard = () => {
-    setEditMode(false);
-    // Твоя логика отмены изменений
-  };
+				}, 500);
+				} else {
+					setItemId(0);
+					setBaseMainData(null);
+
+					setItemId(itt);
+					setTimeout(() => {
+						setBaseMainData(ORGLIST_MODAL_MOCK_MAINTAB);
+						setBaseNotesData(MODAL_NOTES_LIST);
+						setBaseProjectsData(MODAL_PROJECTS_LIST);
+						setBaseCallsData(MODAL_CALLS_LIST);
+	
+					}, 500);
+
+					clearTemps();
+				}
+
+		}
+		setEditMode(false);
+	}
 
 
-	// useEffect(() => {
-	//   setCompanies(baseCompanies.map((item)=>({
-	//     key: `kompa_${item.id}`,
-	//     id: item.id,
-	//     label: item.name
-	//   })));
-	// }, [baseCompanies]);
+
 
 
 
@@ -342,7 +372,6 @@ const OrgPage = (props) => {
 				// }
 				setBaseMainData(response.data.content);
 				setLoading(false);
-				setOriginalData(response.data.content);
 				
 			}
 		} catch (e) {
@@ -370,7 +399,6 @@ const OrgPage = (props) => {
 				// }
 				setBaseCallsData(response.data.content);
 				setLoading(false);
-				setOriginalCalls(response.data.content);
 
 			}
 		} catch (e) {
@@ -398,7 +426,7 @@ const OrgPage = (props) => {
 				// }
 				setBaseProjectsData(response.data.content);
 				setLoading(false);
-				setOriginalProjects(response.data.content);
+
 			}
 		} catch (e) {
 			console.log(e);
@@ -425,7 +453,6 @@ const OrgPage = (props) => {
 				// }
 				setBaseNotesData(response.data.content);
 				setLoading(false);
-				setOriginalNotes(response.data.content);
 			}
 		} catch (e) {
 			console.log(e);
@@ -490,23 +517,9 @@ const OrgPage = (props) => {
 					_token: CSRF_TOKEN,
 				});
 				if (response){
-          // setDepartList(response.data.data.departments);
-					if (tempMainData){
-						setTempMainData(null);
-						get_main_data_action();
-					}
-					if (tempProjectsData && tempProjectsData.length > 0){
-							setTempProjectsData(null);
-							get_projects_data_action();
-						}
-						if (tempCallsData && tempCallsData.length > 0){
-							setTempCallsData(null);
-							get_org_calls_action();
-						}
-						if (tempNotesData && tempNotesData.length > 0){
-							setTempNotesData(null);
-							get_notes_data_action();
-						}
+          // При успешной записи - очищаем все временные списки и загружаем данные заново
+					clearTemps();
+
         }
 			} catch (e) {
 				console.log(e);
@@ -592,6 +605,10 @@ const OrgPage = (props) => {
 			setIsSmthChanged(false);
 	};
 
+	useEffect(() => {
+		console.log(tempMainData, tempNotesData, tempCallsData);
+		console.log('isSmthChanged',isSmthChanged);
+	}, [isSmthChanged]);
 
 	const handleMaintabObjectDataChange = (key, dataarr) => {
 		if (key === 'emails'){
@@ -665,21 +682,21 @@ const OrgPage = (props) => {
 			}
 
 		} else if (tab_name === 'projects'){
-			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+			if (JSON.stringify(data) !== JSON.stringify(baseProjectsData)){
 				setTempProjectsData(data);
 			} else {
 				setTempProjectsData(null);
 			}
 
 		} else if (tab_name === 'notes'){
-			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+			if (JSON.stringify(data) !== JSON.stringify(baseNotesData)){
 				setTempNotesData(data);
 			} else {
 				setTempNotesData(null);
 			}
 
 		} else if (tab_name === 'calls'){
-			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+			if (JSON.stringify(data) !== JSON.stringify(baseCallsData)){
 				setTempCallsData(data);
 			} else {
 				setTempCallsData(null);
@@ -690,12 +707,86 @@ const OrgPage = (props) => {
 	}
 
 		useEffect(() => {
-			if (tempCallsData || tempMainData || tempNotesData || tempProjectsData){
+			if (tempCallsData || tempNotesData || tempProjectsData || tempMainData ||
+				tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
+				tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
+				tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
+			){
+				console.log('CHANGE LISTENER', tempCallsData, tempNotesData, tempProjectsData);
+
 				setIsSmthChanged(true);
-			} else {
+			}  else 
+				{
 				setIsSmthChanged(false);
 			}
-		}, [tempCallsData, tempMainData, tempNotesData, tempProjectsData]);
+		}, [tempCallsData, tempMainData, tempNotesData, tempProjectsData,
+			tempMain_addresses, tempMain_an_licenses, tempMain_an_requisites,
+			tempMain_an_requisites, tempMain_an_tolerances, tempMain_emails,
+			tempMain_legalAddresses, tempMain_phones
+		]);
+
+	const customClick = (button_id) => {
+		console.log(button_id);
+		if (button_id === 1){
+			handleDiscard();
+		}
+		setIsOpenCustomModal(false)
+	}
+
+	// Очистка данных для сохранения (измененных)
+	const clearTemps = () => {
+			if (tempMainData){
+				setTempMainData(null);
+				get_main_data_action();
+			}
+			if (tempProjectsData && tempProjectsData.length > 0){
+					setTempProjectsData(null);
+					get_projects_data_action();
+				}
+				if (tempCallsData && tempCallsData.length > 0){
+					setTempCallsData(null);
+					get_org_calls_action();
+				}
+				if (tempNotesData && tempNotesData.length > 0){
+					setTempNotesData(null);
+					get_notes_data_action();
+				}
+
+
+				if (tempMain_addresses && tempMain_addresses.length > 0){
+					setTempMain_addresses(null);
+				}
+
+				if (tempMain_an_licenses && tempMain_an_licenses.length > 0){
+					setTempMain__an_licenses(null);
+				}
+
+				if (tempMain_an_requisites && tempMain_an_requisites.length > 0){
+					setTempMain_an_requisites(null);
+				}
+
+
+				if (tempMain_an_tolerances && tempMain_an_tolerances.length > 0){
+					setTempMain_an_tolerances(null);
+				}
+
+
+				if (tempMain_bo_licenses && tempMain_bo_licenses.length > 0){
+					setTempMain_bo_licenses(null);
+				}
+
+				if (tempMain_emails && tempMain_emails.length > 0){
+					setTempMain_emails(null);
+				}
+				
+				if (tempMain_legalAddresses && tempMain_legalAddresses.length > 0){
+					setTempMain_legalAddresses(null);
+				}
+
+				if (tempMain_phones && tempMain_phones.length > 0){
+					setTempMain_phones(null);
+				}
+	}
 
 
 	return (
@@ -718,8 +809,9 @@ const OrgPage = (props) => {
 							</div>
 							<div></div>
 							<div className={'sa-orp-menu'}>
-								{tabNames.map((tab) => (
+								{tabNames.map((tab, index) => (
 									<div
+										key={'tab_index_' + index}
 										className={`sa-orp-menu-button  ${activeTab === tab.link ? 'active' : ''}`}
 										onClick={() => {
 											handleChangeTab(tab.link);
@@ -776,10 +868,10 @@ const OrgPage = (props) => {
 										<Button
 											color="primary"
 											variant="outlined"
-											onClick={triggerEditMode}
+											onClick={()=>{isSmthChanged ? setIsOpenCustomModal(true) : setEditMode(false)}}
 											icon={<XMarkIcon height={'16px'} />}
 										>
-											Отменить
+											Закрыть редактирование
 										</Button>
 									</div>
 								) : (
@@ -899,6 +991,15 @@ const OrgPage = (props) => {
 
 
 				</div>
+
+				<CustomModal
+					customClick={customClick}
+					customType={customModalType}
+					customText={customModalText}
+					customTitle={customModalTitle}
+					customButtons={customModalColumns}
+					open={isOpenCustomModal}
+				/>
 			</div>
 		</>
 	);
