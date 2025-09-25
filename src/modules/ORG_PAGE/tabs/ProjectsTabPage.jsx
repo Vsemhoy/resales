@@ -5,7 +5,6 @@ import OrgNoteModalRow from "../../ORG_LIST/components/OrgModal/Tabs/TabComponen
 import dayjs from "dayjs";
 import { getMonthName } from "../../../components/helpers/TextHelpers";
 import { PlusCircleFilled, PlusOutlined } from "@ant-design/icons";
-import OrgNoteEditorSectionBox from "../components/sections/NotesTabSections/Rows/OrgNoteEditorSectionBox";
 import { compareObjects } from "../../../components/helpers/CompareHelpers";
 import OrgProjectEditorSectionBox from "../components/sections/NotesTabSections/Rows/OrgProjectEditorSectionBox";
 import { TrashIcon } from "@heroicons/react/24/outline";
@@ -250,6 +249,7 @@ const ProjectsTabPage = (props) => {
               on_change={handleUpdateBlankUnit}
               on_blur={handleUpdateBlankUnit}
               edit_mode={editMode}
+              selects={selects}
               // selects_data={props.selects_data}
             />
           ),

@@ -59,7 +59,6 @@ const OrgNoteEditorSectionBox = (props) => {
 
     const [objectResult, setObjectResult] = useState({});
 
-    const [SKIPPER, setSKIPPER] = useState(1);
 
       const [selects, setSelects] = useState(null);
       useEffect(() => {

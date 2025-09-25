@@ -6723,6 +6723,25 @@ export const OM_COMP_LIST = [
 ];
 
 export const OM_ORG_FILTERDATA = {
+
+  projecttype: [
+    {
+        "id": 1,
+        "name": "Текущий"
+    },
+    {
+        "id": 2,
+        "name": "Реализованный"
+    },
+    {
+        "id": 3,
+        "name": "Предстоящий"
+    },
+    {
+        "id": 4,
+        "name": "Выполненный"
+    }
+],
 	towns: [
 		{
 			key: 1,
