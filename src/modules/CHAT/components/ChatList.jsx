@@ -1,4 +1,3 @@
-// ChatList.jsx
 import { useMemo, useState } from 'react';
 import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
