@@ -50,174 +50,41 @@ export const SPECS_LIST = [
 ];
 
 export const FILTERS = {
-	pay_select: [
+	"companies": [
 		{
-			id: 0,
-			name: 'Нет',
+			"id": 1,
+			"name": "FreeCompany",
+			"color": "#8d8d8d"
 		},
 		{
-			id: 1,
-			name: 'Есть',
+			"id": 2,
+			"name": "Arstel",
+			"color": "#ff7700"
 		},
 		{
-			id: 2,
-			name: 'Оплачен',
-		},
+			"id": 3,
+			"name": "Rondo",
+			"color": "#229922"
+		}
 	],
-	step: [
+	"statuses": [
 		{
-			id: 1,
-			name: 'Менеджер',
+			"id": 1,
+			"name": "\u041e\u0442\u043a\u043b\u043e\u043d\u0435\u043d"
 		},
 		{
-			id: 2,
-			name: 'Администратор',
+			"id": 2,
+			"name": "\u041d\u043e\u0432\u0430\u044f"
 		},
 		{
-			id: 3,
-			name: 'Бухгалтерия',
+			"id": 3,
+			"name": "B\u0437\u044f\u0442\u0430 \u0432 \u0440\u0430\u0431\u043e\u0442\u0443"
 		},
 		{
-			id: 4,
-			name: 'Завершено',
-		},
-	],
-	protection_project: [
-		{
-			id: 1,
-			name: 'ЗП',
-		},
-		{
-			id: 2,
-			name: 'РП',
-		},
-		{
-			id: 3,
-			name: 'ЗП и РП',
-		},
-	],
-	admin_accept_select: [
-		{
-			id: 1,
-			name: 'рассматривается',
-		},
-		{
-			id: 2,
-			name: 'согласовано',
-		},
-		{
-			id: 3,
-			name: 'не согласовано',
-		},
-	],
-	package_select: [
-		{
-			id: 0,
-			name: 'нет',
-		},
-		{
-			id: 1,
-			name: 'стандартная упаковка',
-		},
-		{
-			id: 2,
-			name: 'жесткая упаковка',
-		},
-	],
-	price_select: [
-		{
-			id: 1,
-			name: 'розница',
-		},
-		{
-			id: 2,
-			name: '10000',
-		},
-		{
-			id: 3,
-			name: '20000',
-		},
-		{
-			id: 4,
-			name: '30000',
-		},
-	],
-	type_select: [
-		{
-			id: 1,
-			name: 'КП',
-		},
-		{
-			id: 2,
-			name: 'Счет',
-		},
-	],
-	bid_currency_select: [
-		{
-			id: 0,
-			name: 'Валюта',
-		},
-		{
-			id: 1,
-			name: 'Рубли',
-		},
-	],
-	nds_select: [
-		{
-			id: 0,
-			name: 'нет',
-		},
-		{
-			id: 1,
-			name: 'да',
-		},
-	],
-	stage_select: [
-		{
-			id: 1,
-			name: 'Менеджер',
-		},
-		{
-			id: 2,
-			name: 'Администратор',
-		},
-		{
-			id: 3,
-			name: 'Бухгалтер',
-		},
-		{
-			id: 4,
-			name: 'Завершено',
-		},
-	],
-	complete_select: [
-		{
-			id: 1,
-			name: 'В работе',
-		},
-		{
-			id: 2,
-			name: 'Реализовано',
-		},
-		{
-			id: 3,
-			name: 'Не  реализовано',
-		},
-	],
-	companies: [
-		{
-			id: 1,
-			name: 'FreeCompany',
-		},
-		{
-			id: 2,
-			name: 'Arstel',
-		},
-		{
-			id: 3,
-			name: 'Rondo',
-		},
-	],
+			"id": 4,
+			"name": "\u0413\u043e\u0442\u043e\u0432\u0430"
+		}
+	]
 };
 
 export const ORDERS = [

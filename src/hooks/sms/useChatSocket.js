@@ -3,9 +3,9 @@ import { PRODMODE } from '../../config/config.js';
 
 const getWebSocketUrl = () => {
 	if (!PRODMODE) {
-		return 'ws://localhost:5001'; // для dev режима
+		return 'ws://localhost:5003'; // для dev режима
 	}
-	return 'ws://192.168.1.16:5001'; // твой BFF WebSocket сервер
+	return 'ws://192.168.1.16:5003'; // твой BFF WebSocket сервер
 };
 
 export const useChatSocket = ({ chatId, onNewMessage }) => {

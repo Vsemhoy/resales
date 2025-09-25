@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import { MOCK } from '../mock/mock.js';
@@ -22,6 +22,50 @@ export const ChatBtn = () => {
 
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id || NaN;
+
+	const wsRef = useRef(null);
+
+	// WS-подключение и обработка сообщений
+	useEffect(() => {
+		if (!currentUserId) return;
+
+		if (wsRef.current) return; // если уже подключено, не создаём новое
+
+		const ws = new WebSocket(`ws://${window.location.hostname}:5001/chat?userId=${currentUserId}`);
+		wsRef.current = ws;
+
+		ws.onopen = () => {
+			console.log('[ChatBtn WS] Connected');
+		};
+
+		ws.onmessage = (event) => {
+			try {
+				const message = JSON.parse(event.data);
+				console.log('[ChatBtn WS] Message received:', message);
+				// TODO: можно здесь обновлять локальный state, если нужно (или через useSms refetch)
+			} catch (e) {
+				console.error('[ChatBtn WS] Error parsing message:', e);
+			}
+		};
+
+		ws.onclose = () => {
+			console.warn('[ChatBtn WS] Connection closed');
+			wsRef.current = null;
+		};
+
+		ws.onerror = (error) => {
+			console.error('[ChatBtn WS] Error:', error);
+			ws.close();
+			wsRef.current = null;
+		};
+
+		return () => {
+			if (wsRef.current) {
+				wsRef.current.close();
+				wsRef.current = null;
+			}
+		};
+	}, [currentUserId]);
 
 	// ✅ Заменили useCompanion на явную логику
 	const getCompanion = useCallback(

@@ -704,36 +704,36 @@ const EngineerPage = (props) => {
                 </div>
               </div>
               <div className={'sa-engineer-page-models-wrapper'}>
-                <div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
-                <div className={'sa-models-table-row sa-header-row'}>
-                  <div className={'sa-models-table-cell sa-models-table-cell-header'}>
+                <div className={'sa-info-models-engineer-header'}>Спецификация оборудования и материалов</div>
+                <div className={'sa-models-engineer-table-row sa-header-engineer-row'}>
+                  <div className={'sa-models-table-engineer-cell sa-models-table-engineer-cell-header'}>
                     <p>№</p>
                   </div>
-                  <div className={'sa-models-table-cell sa-models-table-cell-header'}>
+                  <div className={'sa-models-table-engineer-cell sa-models-table-engineer-cell-header'}>
                     <p className={'align-left'}>Название</p>
                   </div>
-                  <div className={'sa-models-table-cell sa-models-table-cell-header'}>
+                  <div className={'sa-models-table-engineer-cell sa-models-table-engineer-cell-header'}>
                     <p className={'align-left'}>Кол-во</p>
                   </div>
 
                   <div
-                      className={'sa-models-table-cell sa-models-table-cell-header'}
+                      className={'sa-models-table-engineer-cell sa-models-table-engineer-cell-header'}
                       style={{ boxShadow: 'none' }}
                   >
                   </div>
                 </div>
-                <div className={'sa-models-table'}>
+                <div className={'sa-models-table-engineer'}>
                   {bidModels
                       .sort((a, b) => +a.sort - +b.sort)
                       .map((bidModel, idx) => (
                           <div
-                              className={'sa-models-table-row'}
+                              className={'sa-models-engineer-table-row'}
                               key={`engineer-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
                           >
-                            <div className={'sa-models-table-cell'}>
+                            <div className={'sa-models-table-engineer-cell'}>
                               <p>{idx + 1}</p>
                             </div>
-                            <div className={'sa-models-table-cell align-left'}>
+                            <div className={'sa-models-table-engineer-cell align-left'}>
                               <NameSelect
                                   options={prepareSelect(modelsSelect)}
                                   model={bidModel}
@@ -741,7 +741,7 @@ const EngineerPage = (props) => {
                                   disabled={!editMode}
                               />
                             </div>
-                            <div className={'sa-models-table-cell'}>
+                            <div className={'sa-models-table-engineer-cell'}>
                               <ModelInput
                                   value={bidModel.model_count}
                                   bidModelId={bidModel.id}
@@ -754,7 +754,7 @@ const EngineerPage = (props) => {
                             </div>
 
                             <div
-                                className={'sa-models-table-cell'}
+                                className={'sa-models-table-engineer-cell'}
                                 style={{ padding: 0, boxShadow: 'none' }}
                             >
                               <Button
@@ -767,6 +767,7 @@ const EngineerPage = (props) => {
                               <Button
                                   color="danger"
                                   variant="filled"
+                                  style={{marginLeft: "10px"}}
                                   icon={<DeleteOutlined />}
                                   onClick={() => handleDeleteModelFromBid(bidModel.id)}
                                   disabled={!editMode}

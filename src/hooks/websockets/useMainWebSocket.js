@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { HTTP_HOST, PRODMODE } from '../config/config';
+import { HTTP_HOST, PRODMODE } from '../../config/config';
 
 export default function useMainWebSocket(userdata, onMessageHandler) {
 	const socketRef = useRef(null);

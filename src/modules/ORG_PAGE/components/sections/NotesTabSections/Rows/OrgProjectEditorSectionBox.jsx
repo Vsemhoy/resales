@@ -288,7 +288,7 @@ const handleChangeData = (changed_data) => {
 
   return (
     <div className={'sk-omt-stack'}
-    style={{borderLeft: '4px solid ' + props.color}}
+    style={{borderLeft: '4px solid ' + props.color, width: '100%'}}
     >
 
           <OrgPageSectionRow

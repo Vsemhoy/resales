@@ -1,17 +1,19 @@
-import { useMemo } from 'react';
+// ChatList.jsx
+import { useMemo, useState } from 'react';
 import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
+import { useChatWebSocket } from '../../../hooks/sms/useChatWebSocket';
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 
 	const {
-		data: smsList,
+		data: smsList = [],
 		loading,
 		error,
 	} = useSms({
@@ -19,34 +21,44 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		mock: MOCK,
 	});
 
+	const [incomingMessages, setIncomingMessages] = useState([]);
+
+	// WebSocket для входящих сообщений
+	useChatWebSocket({
+		userId: currentUserId,
+		onMessage: (message) => {
+			if (message.action === 'NEWMESSAGE' && message.data) {
+				setIncomingMessages((prev) => [...prev, message.data]);
+			}
+		},
+	});
+
 	const getCompanion = useCompanion(currentUserId);
 
 	const chats = useMemo(() => {
+		const allSms = [...smsList, ...incomingMessages];
+
 		const normalizedSearch = search.toLowerCase();
 
-		const filtered = Array.isArray(smsList)
-			? smsList.filter((sms) => {
-					const companion = getCompanion(sms);
-					if (companion === 'self') return true;
+		const filtered = allSms.filter((sms) => {
+			const companion = getCompanion(sms);
+			if (companion === 'self') return true;
 
-					const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
-					const messageText = sms.text?.toLowerCase() || '';
-					return fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
-			  })
-			: [];
+			const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
+			const messageText = sms.text?.toLowerCase() || '';
+			return fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
+		});
 
 		const uniqueChatsMap = {};
 		filtered.forEach((sms) => {
 			const chatId = sms.chat_id;
 			const currentTime = sms.updated_at || sms.created_at;
 
-			if (!uniqueChatsMap[chatId]) {
+			if (
+				!uniqueChatsMap[chatId] ||
+				currentTime > (uniqueChatsMap[chatId].updated_at || uniqueChatsMap[chatId].created_at)
+			) {
 				uniqueChatsMap[chatId] = sms;
-			} else {
-				const existingTime = uniqueChatsMap[chatId].updated_at || uniqueChatsMap[chatId].created_at;
-				if (currentTime > existingTime) {
-					uniqueChatsMap[chatId] = sms;
-				}
 			}
 		});
 
@@ -56,7 +68,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			return timeB - timeA;
 		});
 
-		// Добавляем чат "Сохранённое" всегда в начало
+		// Чат "Сохранённое"
 		result.unshift({
 			chat_id: 'saved',
 			from: { id: currentUserId, name: 'Вы', surname: '' },
@@ -68,7 +80,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		});
 
 		return result;
-	}, [smsList, search, getCompanion, currentUserId]);
+	}, [smsList, search, getCompanion, currentUserId, incomingMessages]);
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;

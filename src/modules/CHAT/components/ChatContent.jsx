@@ -2,12 +2,11 @@ import { useState, useMemo, useCallback } from 'react';
 import { Layout, List, Input, Button, Popover, Space, message } from 'antd';
 import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
-
 import { useUserData } from '../../../context/UserDataContext';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { useChatMessages } from '../../../hooks/sms/useChatMessages';
-
+import { useChatWebSocket } from '../../../hooks/sms/useChatWebSocket';
 import { nanoid } from 'nanoid';
 import { ChatDivider } from './ChatDivider';
 import styles from './style/Chat.module.css';
@@ -53,36 +52,50 @@ export default function ChatContent({ chatId }) {
 	const currentUserId = userdata?.user?.id;
 
 	const getRole = useCompanion(currentUserId);
-	const { data: smsList, loading, error } = useChatMessages({ chatId, mock: MOCK });
+	const { data: smsList = [], loading, error } = useChatMessages({ chatId, mock: MOCK });
 
 	const { sendSms, loading: sending } = useSendSms();
 
 	const [text, setText] = useState('');
 	const [showPicker, setShowPicker] = useState(false);
 	const [localMessages, setLocalMessages] = useState([]);
+	const [incomingMessages, setIncomingMessages] = useState([]);
 
-	// Объединяем серверные и локальные сообщения, фильтруем по chatId и форматируем
+	// 🔌 Подключаем WebSocket
+	useChatWebSocket({
+		userId: currentUserId,
+		onMessage: (message) => {
+			if (message?.action === 'NEWMESSAGE' && message.data?.chat_id === chatId) {
+				setIncomingMessages((prev) => [...prev, message.data]);
+			}
+		},
+	});
+
+	// 📦 Объединяем сообщения из API, WebSocket и локальные
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
-		const combined = [...(smsList || []), ...filteredLocal].map((msg) => {
-			const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
-			const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
+		const filteredIncoming = incomingMessages.filter((msg) => msg.chat_id === chatId);
+		const combined = [...smsList, ...filteredIncoming, ...filteredLocal];
 
-			const role = isLocal ? 'self' : getRole(msg);
+		return combined
+			.map((msg) => {
+				const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
+				const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
 
-			return {
-				id: msg.id,
-				text: msg.text,
-				timestamp,
-				time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-				role,
-				senderName:
-					role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`.trim(),
-			};
-		});
+				const role = isLocal ? 'self' : getRole(msg);
 
-		return combined.sort((a, b) => a.timestamp - b.timestamp);
-	}, [smsList, localMessages, getRole, chatId]);
+				return {
+					id: msg.id || generateUUID(),
+					text: msg.text,
+					timestamp,
+					time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+					role,
+					senderName:
+						role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`.trim(),
+				};
+			})
+			.sort((a, b) => a.timestamp - b.timestamp);
+	}, [smsList, localMessages, incomingMessages, getRole, chatId]);
 
 	const messagesWithDividers = useMemo(() => injectDayDividers(allMessages), [allMessages]);
 
@@ -119,9 +132,6 @@ export default function ChatContent({ chatId }) {
 	if (error) {
 		return <div className={styles.error}>Ошибка загрузки: {error}</div>;
 	}
-	// console.log('[ChatContent] chatId:', chatId);
-	// console.log('[ChatContent] smsList:', smsList);
-	// console.log('[ChatContent] allMessages:', allMessages);
 
 	return (
 		<Layout className={styles.chatcontentLayout}>

@@ -13,7 +13,7 @@ const EngineerListSiderFilters = (props) => {
 							placeholder=""
 							style={{ width: '100%' }}
 							options={props.filter_companies_select}
-							onChange={(val) => props.on_change_filter_box('type', val)}
+							onChange={(val) => props.on_change_filter_box('id_company', val)}
 							allowClear
 						/>
 					</div>
@@ -25,8 +25,8 @@ const EngineerListSiderFilters = (props) => {
 						<Select
 							placeholder=""
 							style={{ width: '100%' }}
-							options={props.filter_price_select}
-							onChange={(val) => props.on_change_filter_box('type', val)}
+							options={props.filter_status_select}
+							onChange={(val) => props.on_change_filter_box('status', val)}
 							allowClear
 						/>
 					</div>
