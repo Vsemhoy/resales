@@ -518,7 +518,7 @@ const handleChangeData = (changed_data) => {
                 required: true,
                 nullable: true,
                 placeholder: '',
-                name: 'bidsId',
+                name: 'id8an_projecttype',
                 },
             ]}
         />
@@ -565,6 +565,8 @@ const handleChangeData = (changed_data) => {
                       name: 'linkbid_id',
                       link: '/bids/',
                       blank: true,
+                      alloWclear: true,
+                      showSearch: true,
                     },
                 ]}
                 // on_change={handleChangeData}
