@@ -7,6 +7,7 @@ import { getMonthName } from '../../../components/helpers/TextHelpers';
 import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons';
 import OrgNoteEditorSectionBox from '../components/sections/NotesTabSections/Rows/OrgNoteEditorSectionBox';
 import { compareObjects } from '../../../components/helpers/CompareHelpers';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 const NotesTabPage = (props) => {
 	const { userdata } = props;
@@ -37,7 +38,7 @@ const NotesTabPage = (props) => {
 	useEffect(() => {
 		if (props.on_change_data){
 			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
-        props.on_change_data('projects', baseData.concat(temporaryUnits))
+        props.on_change_data('notes', baseData.concat(temporaryUnits))
       }
 		}
 	}, [baseData]);
@@ -143,6 +144,7 @@ const NotesTabPage = (props) => {
 										</Button>
 									) : (
 										<Button
+											title='Удалить заметку'
 											size="small"
 											color="danger"
 											variant="outlined"
@@ -151,8 +153,9 @@ const NotesTabPage = (props) => {
 												console.log(item.id);
 												handleDeleteRealUnit(item.id, 1);
 											}}
+											icon=<TrashIcon height={'20px'} />
 										>
-											Удалить
+											
 										</Button>
 									)}
 								</>
@@ -216,14 +219,16 @@ const NotesTabPage = (props) => {
 								<span className={'sa-text-phantom'}>({item.id})</span>
 							</div>
 							<Button
+								title='Удалить заметку'
 								size="small"
 								onClick={(ev) => {
 									ev.stopPropagation();
 									console.log(item.id);
 									handleDeleteBlankUnit(item.id);
 								}}
+								icon=<TrashIcon height={'20px'} />
 							>
-								Удалить
+								
 							</Button>
 						</div>
 					),

@@ -184,7 +184,7 @@ const OrgPageSectionRow = (props) => {
 			} else if (field.type === 'multiselect') {
         /** ---------------------------------------------------------------- */
         if (field.link){
-          return field.value.map((item, index)=>(
+          return field.value?.map((item, index)=>(
             <NavLink target='blank' key={'fkljasdkfass_' + item + index}
              to={field.link + item}> <Tag color="#3b5999">{item} </Tag></NavLink>
           ));
@@ -234,7 +234,7 @@ const OrgPageSectionRow = (props) => {
 						{...commonProps}
 						type={field.type}
 						placeholder={field.placeholder ? field.placeholder : isRequired ? 'Обязательно' : ''}
-						nullable={field.nullable}
+						allowClear={field.nullable}
 						maxLength={field.max}
 					/>
 				);

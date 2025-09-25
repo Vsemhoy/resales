@@ -65,6 +65,8 @@ const OrgNoteEditorSectionBox = (props) => {
       if (props.data?.id){
         setObjectResult(props.data);
 
+        console.log(props.data);
+
         setId(props.data.id);
         // if (props.data.id_orgs !== org){
         setOrgId(props.data.id_orgs);
@@ -84,7 +86,7 @@ const OrgNoteEditorSectionBox = (props) => {
         setTypeEac(props.data.typepaec);
         setDateEnd(props.data.date_end);
         setErector(props.data.erector_id);
-        setLinkbidId(props.data.linkbid_id);
+        setLinkbidId(Number.isInteger( props.data.linkbid_id) ? [props.data.linkbid_id] : props.data.linkbid_id );
         setDateCreate(props.data.date_create);
         setIdCompany(props.data.id_company);
         setDeleted(props.data.deleted);
@@ -472,18 +474,8 @@ const handleChangeData = (changed_data) => {
         <OrgPageSectionRow
             key={'orpprow7_' + id}
             edit_mode={editMode}
-            titles={['Защита проекта/тип','Состояние']}
+            titles={['Тип проекта']}
             datas={[
-                {
-                type: OPS_TYPE.SELECT,
-                value: projType,
-                max: 3,
-                required: true,
-                nullable: false,
-                placeholder: '',
-                name: 'id8an_projecttype',
-                options: ORG_PROJECT_DEFENSES
-                },
                 {
                 type: OPS_TYPE.SELECT,
                 value: projType, 
@@ -542,7 +534,9 @@ const handleChangeData = (changed_data) => {
                 },
             ]}
             // on_change={handleChangeData}
-            on_blur={handleChangeData}
+            // on_blur={handleChangeData}
+            // on_change={(data)=>{console.log(data)}}
+            on_change={handleChangeData}
         />
 
 
