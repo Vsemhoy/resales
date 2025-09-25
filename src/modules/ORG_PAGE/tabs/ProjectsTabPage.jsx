@@ -35,6 +35,11 @@ const ProjectsTabPage = (props) => {
   const [editedItemsIds, setEditedItemsIds] = useState([]);
   const [openedNewSections, setOpenedNewSections] = useState([]);
 
+    const [selects, setSelects] = useState(null);
+    useEffect(() => {
+      setSelects(props.selects);
+    }, [props.selects]);
+
   useEffect(() => {
     setShow(props.show);
   }, [props.show]);
@@ -170,6 +175,7 @@ const ProjectsTabPage = (props) => {
               on_delete={handleDeleteRealUnit}
               on_change={handleUpdateRealUnit}
               edit_mode={editMode}
+              selects={selects}
               // selects_data={props.selects_data}
             />
           ),

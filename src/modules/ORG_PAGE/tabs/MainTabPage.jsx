@@ -36,13 +36,17 @@ const MainTabPage = (props) => {
 
   const [editedContactIds, setEditedContactIds] = useState([]);
 
-  const [selects, setSelects] = useState(null);
-
+  
   const [dataModified, setDataModified] = useState(false);
-
+  
   const [callToAddRequisite, setCallToAddRequisite] = useState(null);
   const [callToAddLicense, setCallToAddLicense]     = useState(null);
   const [callToAddTolerance, setCallToAddTolerance] = useState(null);
+
+  const [selects, setSelects] = useState(null);
+  useEffect(() => {
+    setSelects(props.selects);
+  }, [props.selects]);
 
 	useEffect(() => {
 		setShow(props.show);
@@ -56,9 +60,6 @@ const MainTabPage = (props) => {
 		setBaseData(props.base_data);
 	}, [props.base_data]);
 
-  useEffect(() => {
-    setSelects(props.selects);
-  }, [props.selects]);
   
 
   useEffect(() => {
@@ -115,6 +116,7 @@ const MainTabPage = (props) => {
             edit_mode={editMode}
             data={item}
             on_change={handleUpdateContactData}
+            selects={selects}
           /> </div>
       }))
     }
