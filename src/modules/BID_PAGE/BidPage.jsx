@@ -2363,6 +2363,12 @@ const BidPage = (props) => {
 							   bid_id={bidId}
 							   bid_models={bidModels}
 							   protection_project={bidProtectionProject}
+							   error_alert={(e) => {
+								   setIsAlertVisible(true);
+								   setAlertMessage('Произошла ошибка!');
+								   setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+								   setAlertType('error');
+							   }}
 			/>
 			<CustomModal
 				customClick={customClick}
