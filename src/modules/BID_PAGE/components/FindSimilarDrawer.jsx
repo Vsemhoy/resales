@@ -342,36 +342,43 @@ const FindSimilarDrawer = (props) => {
                         return 0;
                 }
             };
-            setLoad(true);
-            let response = await PROD_AXIOS_INSTANCE.post(`/sales/data/getsimilarbid`, {
-                    bid_id: props?.bid_id,
-                    _token: CSRF_TOKEN,
-                    data: {
-                        type: getType(type),
-                        protection_project: proptect
-                            ? props?.protection_project
-                            : 0,
-                        bid_models: similarData,
-                        mondatoryAll,
-                        notMe: notSelf,
-                        searchType: getSearchType(searchType),
-                        dates,
-                        searchText: text,
-                        limit,
-                        range,
-                        notMatchLimit,
-                        notCompany,
-                    },
-                },
-            );
-            if (response.data) {
-                setLoad(false);
-                setSimilar(response.data.data.bids);
-                setSearchCount(response.data.data.count_match);
+            if (PRODMODE) {
+                try {
+                    setLoad(true);
+                    let response = await PROD_AXIOS_INSTANCE.post(`/sales/data/getsimilarbid`, {
+                            bid_id: props?.bid_id,
+                            _token: CSRF_TOKEN,
+                            data: {
+                                type: getType(type),
+                                protection_project: proptect
+                                    ? props?.protection_project
+                                    : 0,
+                                bid_models: similarData,
+                                mondatoryAll,
+                                notMe: notSelf,
+                                searchType: getSearchType(searchType),
+                                dates,
+                                searchText: text,
+                                limit,
+                                range,
+                                notMatchLimit,
+                                notCompany,
+                            },
+                        },
+                    );
+                    if (response.data) {
+                        setLoad(false);
+                        setSimilar(response.data.data.bids);
+                        setSearchCount(response.data.data.count_match);
+                    }
+                } catch (e) {
+                    console.log(e);
+                    props?.error_alert(e);
+                }
             }
         };
         const delayInputTimeoutId = setTimeout(() => {
-            PRODMODE && similarData.length > 1 && similar_data();
+            /*PRODMODE && similarData.length > 1 && */ similar_data();
         }, 1000);
         return () => clearTimeout(delayInputTimeoutId);
     }, [
