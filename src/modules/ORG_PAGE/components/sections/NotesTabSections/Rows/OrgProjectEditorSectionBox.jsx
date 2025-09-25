@@ -61,6 +61,11 @@ const OrgNoteEditorSectionBox = (props) => {
 
     const [SKIPPER, setSKIPPER] = useState(1);
 
+      const [selects, setSelects] = useState(null);
+      useEffect(() => {
+        setSelects(props.selects);
+      }, [props.selects]);
+
     // DATA    // DATA      // DATA      // DATA  
 
     useEffect(() => {
@@ -88,7 +93,7 @@ const OrgNoteEditorSectionBox = (props) => {
         setTypeEac(props.data.typepaec);
         setDateEnd(props.data.date_end);
         setErector(props.data.erector_id);
-        setLinkbidId(Number.isInteger( props.data.linkbid_id) ? [props.data.linkbid_id] : props.data.linkbid_id );
+        setLinkbidId(props.data?.bidsId );
         setDateCreate(props.data.date_create);
         setIdCompany(props.data.id_company);
         setDeleted(props.data.deleted);
@@ -155,8 +160,8 @@ const handleChangeData = (changed_data) => {
         setDateEnd(changed_data.date_end);
     } else if (changed_data.erector_id !== undefined) {
         setErector(changed_data.erector_id);
-    } else if (changed_data.linkbid_id !== undefined) {
-        setLinkbidId(changed_data.linkbid_id);
+    } else if (changed_data.bidsId !== undefined) {
+        setLinkbidId(changed_data.bidsId);
     } else if (changed_data.date_create !== undefined) {
         setDateCreate(changed_data.date_create);
     } else if (changed_data.id_company !== undefined) {
@@ -190,7 +195,7 @@ const handleChangeData = (changed_data) => {
             result.typepaec = typeEac; // typepaec → typeEac
             result.date_end = dateEnd;
             result.erector_id = erector; // erector_id → erector
-            result.linkbid_id = linkbidId; // linkbid_id → linkbidId
+            result.bidsId = linkbidId; // linkbid_id → linkbidId
             result.date_create = dateCreate;
             result.id_company = idCompany; // id_company → idCompany
             result.author_id = authorId; // author_id → authorId
@@ -491,7 +496,11 @@ const handleChangeData = (changed_data) => {
                 nullable: false,
                 placeholder: '',
                 name: 'id8an_projecttype',
-                options: ORG_PROJECT_STATES
+                options: selects?.projecttype?.map((item)=>({
+                    key: 'keyadflj' + item.id,
+                    value: item.id,
+                    label: item.name
+                }))
                 },
             ]}
             on_change={handleChangeData}
@@ -510,7 +519,7 @@ const handleChangeData = (changed_data) => {
                 required: true,
                 nullable: true,
                 placeholder: '',
-                name: 'linkbid',
+                name: 'bidsId',
                 },
             ]}
         />

@@ -76,6 +76,7 @@ export const MODAL_PROJECTS_LIST = {
                 "id": 1,
                 "name": "Текущий"
             },
+      bidsId: [234, 54323],
 			curator: {
 				id: 294,
 				surname: 'Бирюкова',
@@ -145,6 +146,7 @@ export const MODAL_PROJECTS_LIST = {
                 "id": 1,
                 "name": "Текущий"
             },
+          bidsId: [],
 			curator: {
 				id: 294,
 				surname: 'Бирюкова',
