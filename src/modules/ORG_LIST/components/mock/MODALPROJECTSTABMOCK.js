@@ -72,6 +72,10 @@ export const MODAL_PROJECTS_LIST = {
 			id_company: 0,
 			created_at: '2025-03-14 17:06:15',
 			author_id: null,
+      "type": {
+                "id": 1,
+                "name": "Текущий"
+            },
 			curator: {
 				id: 294,
 				surname: 'Бирюкова',
@@ -137,6 +141,10 @@ export const MODAL_PROJECTS_LIST = {
 			id_company: 2,
 			created_at: '2025-03-14 17:06:15',
 			author_id: null,
+      "type": {
+                "id": 1,
+                "name": "Текущий"
+            },
 			curator: {
 				id: 294,
 				surname: 'Бирюкова',
