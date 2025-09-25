@@ -48,7 +48,7 @@ const EngineerListPage = (props) => {
 	const [filterPaySelect, setFilterPaySelect] = useState([]);
 	const [filterAdminAcceptSelect, setFilterAdminAcceptSelect] = useState([]);
 	const [filterPackageSelect, setFilterPackageSelect] = useState([]);
-	const [filterPriceSelect, setFilterPriceSelect] = useState([]);
+	const [filterStatusSelect, setFilterStatusSelect] = useState([]);
 	const [filterBidCurrencySelect, setFilterBidCurrencySelect] = useState([]);
 	const [filterNdsSelect, setFilterNdsSelect] = useState([]);
 	const [filterCompleteSelect, setFilterCompleteSelect] = useState([]);
@@ -64,18 +64,8 @@ const EngineerListPage = (props) => {
 	const [specs, setSpecs] = useState([]);
 
 	const [filterBox, setFilterBox] = useState({
-		company_name: null,
-		company_id: null,
-		object_name: null,
-		comment: null,
-		dates: null,
-		type: null,
-		manager: null,
-		bill_number: null,
-		protect_status: null,
-		pay_status: null,
-		stage_status: null,
-		bid_id: null,
+		id_company: null,
+		status: null,
 	});
 	const [orderBox, setOrderBox] = useState({});
 
@@ -208,7 +198,7 @@ const EngineerListPage = (props) => {
 					// setFilterPaySelect(filters.pay_select);
 					// setFilterAdminAcceptSelect(filters.admin_accept_select);
 					// setFilterPackageSelect(filters.package_select);
-					setFilterPriceSelect(filters.price_select);
+					setFilterStatusSelect(filters.price_select);
 					// setFilterBidCurrencySelect(filters.bid_currency_select);
 					// setFilterNdsSelect(filters.nds_select);
 					// setFilterCompleteSelect(filters.complete_select);
@@ -225,7 +215,7 @@ const EngineerListPage = (props) => {
 			// setFilterPaySelect(FILTERS.pay_select);
 			// setFilterAdminAcceptSelect(FILTERS.admin_accept_select);
 			// setFilterPackageSelect(FILTERS.package_select);
-			setFilterPriceSelect(FILTERS.price_select);
+			setFilterStatusSelect(FILTERS.statuses);
 			// setFilterBidCurrencySelect(FILTERS.bid_currency_select);
 			// setFilterNdsSelect(FILTERS.nds_select);
 			// setFilterCompleteSelect(FILTERS.complete_select);
@@ -237,21 +227,8 @@ const EngineerListPage = (props) => {
 	const fetchBids = async () => {
 		if (PRODMODE) {
 			const data = {
-				company_name: filterBox.company_name,
-				company_id: filterBox.company_id,
-				object_name: filterBox.object_name,
-				comment: filterBox.comment,
-				dates: filterBox.dates,
-				type: filterBox.type,
-				manager: filterBox.manager,
-				bill_number: filterBox.bill_number,
-				protect_status: filterBox.protect_status,
-				pay_status: filterBox.pay_status,
-				stage_status: filterBox.stage_status,
-				bid_id: filterBox.bid_id,
-				to: 0,
-				page: currentPage,
-				limit: onPage,
+				id_company: filterBox.id_company,
+				status: filterBox.status,
 				sort_orders: orderBox,
 			};
 			try {
@@ -366,7 +343,10 @@ const EngineerListPage = (props) => {
 	};
 
 	const handleClearAllFilterBox = () => {
-		setFilterBox({});
+		setFilterBox({
+			id_company: null,
+			status: null,
+		});
 	};
 
 	const handleClearOrderBox = () => {
@@ -659,7 +639,7 @@ const EngineerListPage = (props) => {
 					<div className={'sa-sider'}>
 						{isOpenedFilters && (
 							<EngineerListSiderFilters
-								filter_price_select={prepareSelectOptions(filterPriceSelect)}
+								filter_status_select={prepareSelectOptions(filterStatusSelect)}
 								filter_companies_select={prepareSelectOptions(filterCompaniesSelect)}
 								on_change_filter_box={handleUpdateFilterBox}
 							/>
