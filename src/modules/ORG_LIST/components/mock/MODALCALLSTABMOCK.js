@@ -49,6 +49,7 @@ export const MODAL_CALLS_LIST = {
 	calls: [
 		{
 			id: 3901,
+			next_call_date: null,
 			id_orgs: 40,
 			date: '2017-12-06T21:00:00.000000Z',
 			id8ref_departaments: 5,
@@ -112,6 +113,7 @@ export const MODAL_CALLS_LIST = {
 		{
 			id: 3917,
 			id_orgs: 40,
+			next_call_date: null,
 			date: '2017-12-13T21:00:00.000000Z',
 			id8ref_departaments: 5,
 			id8staff_list: 260,
@@ -174,6 +176,7 @@ export const MODAL_CALLS_LIST = {
 		{
 			id: 5104,
 			id_orgs: 40,
+			next_call_date: null,
 			date: '2019-08-15T21:00:00.000000Z',
 			id8ref_departaments: 5,
 			id8staff_list: 384,
@@ -239,6 +242,7 @@ export const MODAL_CALLS_LIST = {
 		{
 			id: 1105,
 			id_orgs: 40,
+			next_call_date: null,
 			date: '2017-08-24T21:00:00.000000Z',
 			id8ref_departaments: 5,
 			id8staff_list: 260,

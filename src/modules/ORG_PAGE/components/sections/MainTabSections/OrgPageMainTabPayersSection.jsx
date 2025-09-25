@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { compareObjects } from '../../../../../components/helpers/CompareHelpers';
-import { Button } from 'antd';
+import { Button, Empty } from 'antd';
 import { ExclamationTriangleIcon, IdentificationIcon } from '@heroicons/react/24/outline';
 import OPMTRequisitesSection from './subsections/OPMTRequisitesSection';
 
@@ -209,6 +209,11 @@ const OrgPageMainTabPayersSection = (props) => {
         ))}</div>
       )}
 
+			
+      	  
+    {newRequisites.length === 0 &&
+     requisites.length === 0  ? 
+	  <Empty /> : ''}
 	
 		</div>
 	);

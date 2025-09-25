@@ -36,10 +36,10 @@ const NotesTabPage = (props) => {
 
 
 	useEffect(() => {
-		if (props.on_change_data){
+		if (editMode && props.on_change_data){
 			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
-        props.on_change_data('notes', baseData.concat(temporaryUnits))
-      }
+				props.on_change_data('notes', baseData.concat(temporaryUnits))
+			}
 		}
 	}, [baseData]);
 
@@ -62,45 +62,52 @@ const NotesTabPage = (props) => {
 			setCurrentPage(props.current_page);
 	}, [props.current_page]);
 
+	// useEffect(() => {
+	// 	if (props.edit_mode === false) {
+	// 		if (editedItemsIds.length > 0 || newStructureItems.length > 0) {
+	// 			if (window.confirm('У вас есть несохраненные заметки! Отменить изменения?')) {
+	// 				setOriginalData([]);
+	// 				setLoading(true);
+	// 				setEditMode(props.edit_mode);
+	// 				setTemporaryUnits([]);
+	// 				setEditedItemsIds([]);
+	// 				setTimeout(() => {
+	// 					setBaseData(
+	// 						props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
+	// 					);
+	// 				}, 1000);
+
+	// 				setBaseData([]);
+	// 				console.log('---------- 65 ---------', originalData);
+
+	// 				setTimeout(() => {
+	// 					setBaseData(
+	// 						props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
+	// 					);
+	// 				}, 1000);
+	// 			} else {
+	// 				// alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
+	// 				if (props.on_break_discard) {
+	// 					// setBaseData(props.base_data?.notes);
+	// 					setOriginalData(
+	// 						props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
+	// 					);
+	// 					props.on_break_discard();
+	// 				}
+	// 			}
+	// 		} else {
+	// 			setEditMode(props.edit_mode);
+	// 		}
+	// 	} else {
+	// 		setEditMode(props.edit_mode);
+	// 	}
+	// }, [props.edit_mode]);
+
 	useEffect(() => {
-		if (props.edit_mode === false) {
-			if (editedItemsIds.length > 0 || newStructureItems.length > 0) {
-				if (window.confirm('У вас есть несохраненные заметки! Отменить изменения?')) {
-					setOriginalData([]);
-					setLoading(true);
-					setEditMode(props.edit_mode);
-					setTemporaryUnits([]);
-					setEditedItemsIds([]);
-					setTimeout(() => {
-						setBaseData(
-							props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
-						);
-					}, 1000);
-
-					setBaseData([]);
-					console.log('---------- 65 ---------', originalData);
-
-					setTimeout(() => {
-						setBaseData(
-							props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
-						);
-					}, 1000);
-				} else {
-					// alert('Нажмите кнопку [Редактировать] и заново сохраните данные');
-					if (props.on_break_discard) {
-						// setBaseData(props.base_data?.notes);
-						setOriginalData(
-							props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
-						);
-						props.on_break_discard();
-					}
-				}
-			} else {
-				setEditMode(props.edit_mode);
-			}
-		} else {
-			setEditMode(props.edit_mode);
+		if (props.edit_mode === false){
+			setTemporaryUnits([]);
 		}
+		setEditMode(props.edit_mode);
 	}, [props.edit_mode]);
 
 	useEffect(() => {

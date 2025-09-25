@@ -7,7 +7,7 @@ import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTM
 import dayjs from 'dayjs';
 import { compareObjects } from '../../../../../components/helpers/CompareHelpers';
 import OPMTtoleranceSection from './subsections/OPMTtoleranceSection';
-import { Button } from 'antd';
+import { Button, Empty } from 'antd';
 import { ExclamationTriangleIcon, IdentificationIcon } from '@heroicons/react/24/outline';
 import OPMTanZendToleranceSection from './subsections/OPMTanZendToleranceSection';
 
@@ -400,7 +400,7 @@ const OrgPageMainTabToleranceSection = (props) => {
       ))}
 	  </div>
 
-			{newTolerances.length > 0 && (
+	{newTolerances.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newTolerances.map((item)=>(
           <OPMTtoleranceSection
@@ -413,6 +413,10 @@ const OrgPageMainTabToleranceSection = (props) => {
           />
         ))}</div>
       )}
+
+	  {newTolerances.length === 0 && tolerances.length === 0 && anZendLicenses.length === 0 && anZendTolerances.length === 0 ? 
+	  <Empty /> : ''}
+	  
 
 		{/* {editMode && (
       <div className={'sk-omt-stack-control sa-flex-space'}>

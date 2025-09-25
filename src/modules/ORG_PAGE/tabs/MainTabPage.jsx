@@ -4,7 +4,7 @@ import OrgPageMainTabDepartSection from '../components/sections/MainTabSections/
 import OrgPageMainTabContactsSection from '../components/sections/MainTabSections/OrgPageMainTabContactsSection';
 import OrgPageMainTabContactinfoSection from '../components/sections/MainTabSections/OrgPageMainTabContactinfoSection';
 import OrgPageMainTabPayersSection from '../components/sections/MainTabSections/OrgPageMainTabPayersSection';
-import { Badge, Button, Collapse } from 'antd';
+import { Badge, Button, Collapse, Empty } from 'antd';
 import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { forIn } from 'lodash';
@@ -248,7 +248,7 @@ const MainTabPage = (props) => {
           </div>
 
         </div>,
-        children: baseData ? ( <OrgPageMainTabToleranceSection
+          children: baseData ? ( <OrgPageMainTabToleranceSection
           color={'#30c97aff'}
           edit_mode={editMode} 
           data={baseData}
@@ -283,14 +283,17 @@ const MainTabPage = (props) => {
         )}
         </div>,
         children: <div className='sa-org-contactstack-box'>
-          <Collapse
-          defaultActiveKey={['mainorgsec_11', 'mainorgsec_12', 'mainorgsec_14']}
-          // activeKey={modalSectionsOpened}
-          size={"small"}
-          // onChange={handleSectionChange}
-          // onMouseDown={handleSectionClick}
-          items={structureContacts}
-        />
+          {structureContacts.length > 0 ? (
+            <Collapse
+            defaultActiveKey={['mainorgsec_11', 'mainorgsec_12', 'mainorgsec_14']}
+            // activeKey={modalSectionsOpened}
+            size={"small"}
+            // onChange={handleSectionChange}
+            // onMouseDown={handleSectionClick}
+            items={structureContacts}
+          />
+
+          ) : (<Empty />)}
           
         </div> 
       },

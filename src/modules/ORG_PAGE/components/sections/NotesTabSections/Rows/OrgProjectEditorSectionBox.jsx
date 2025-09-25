@@ -43,6 +43,9 @@ const OrgNoteEditorSectionBox = (props) => {
     const [authorId,    setAuthorId] = useState(null);
     const [author,    setAuthor] = useState(null);
 
+    const [searchErector, setSearchErector] = useState('');
+    const [searchBid, setSearchBid]         = useState('');
+ 
     const [_type, set_type] = useState(null);
 
     const [erectorName, setErectorName] = useState(null);
@@ -92,6 +95,7 @@ const OrgNoteEditorSectionBox = (props) => {
         setTypeEac(props.data.typepaec);
         setDateEnd(props.data.date_end);
         setErector(props.data.erector_id);
+        setSearchErector(props.data.erector_id);
         setLinkbidId(props.data?.bidsId );
         setDateCreate(props.data.date_create);
         setIdCompany(props.data.id_company);
@@ -231,7 +235,7 @@ const handleChangeData = (changed_data) => {
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
           data: {
-            erector: erector,
+            erector: searchErector,
           },
           _token: CSRF_TOKEN,
         });
@@ -258,12 +262,12 @@ const handleChangeData = (changed_data) => {
       if (PRODMODE){
         try {
           let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
-            data: {linkbid: linkbidId, org_id: orgId},
+            data: {linkbid: searchBid, org_id: orgId},
             _token: CSRF_TOKEN,
           });
           console.log('response', response);
           if (response.data) {
-
+            setMountBidList(response.data.selects.linkbid);
           }
         } catch (e) {
           console.log(e);
@@ -280,15 +284,15 @@ const handleChangeData = (changed_data) => {
 
     useEffect(() => {
       get_orgautofill_action();
-      console.log('SET ERECTOR', erector);
-    }, [erector]);
+      console.log('SET ERECTOR', searchErector);
+    }, [searchErector, erector]);
 
     useEffect(() => {
-      if (editMode === true){
         get_bidautofill_action();
-      }
-    }, [editMode]);
+    }, [searchBid]);
 
+
+    
 
   return (
     <div className={'sk-omt-stack'}
@@ -524,6 +528,8 @@ const handleChangeData = (changed_data) => {
         />
           )}
 
+
+
         <OrgPageSectionRow
             key={'orpprow8_' + id}
             edit_mode={editMode}
@@ -538,10 +544,10 @@ const handleChangeData = (changed_data) => {
                 placeholder: 'ID организации',
                 name: 'erector_id',
                 options: mountOrgList,
-                  alloWclear: true,
                   showSearch: true,
                 link: '/orgs/',
 
+                on_search: (et)=>{setSearchErector(et)}
                 },
             ]}
             on_change={handleChangeData}
@@ -549,31 +555,34 @@ const handleChangeData = (changed_data) => {
         />
 
 
-            <OrgPageSectionRow
-                key={'orpprow9_' + id}
-                edit_mode={editMode}
-                titles={['Связанное КП']}
-                datas={[
-                    {
-                      options: mountBidList,
-                      type: OPS_TYPE.MSELECT,
-                      value: linkbidId,
-                      max: Number.MAX_SAFE_INTEGER,
-                      required: false,
-                      nullable: true,
-                      placeholder: 'ID коммерческого предложения',
-                      name: 'linkbid_id',
-                      link: '/bids/',
-                      blank: true,
-                      alloWclear: true,
-                      showSearch: true,
-                    },
-                ]}
-                // on_change={handleChangeData}
-                // on_blur={handleChangeData}
-                // on_change={(data)=>{console.log(data)}}
-                on_change={handleChangeData}
-            />
+        <OrgPageSectionRow
+            key={'orpprow9_' + id}
+            edit_mode={editMode}
+            titles={['Связанное КП']}
+            datas={[
+                {
+                  options: mountBidList,
+                  type: OPS_TYPE.MSELECT,
+                  value: linkbidId,
+                  max: Number.MAX_SAFE_INTEGER,
+                  required: false,
+                  nullable: true,
+                  placeholder: 'ID коммерческого предложения',
+                  name: 'linkbid_id',
+                  link: '/bids/',
+                  blank: true,
+                  showSearch: true,
+                  on_search: (et)=>{setSearchBid(et)}
+                },
+            ]}
+            // on_change={handleChangeData}
+            // on_blur={handleChangeData}
+            // on_change={(data)=>{console.log(data)}}
+            on_change={handleChangeData}
+        />
+
+
+
 
         <OrgPageSectionRow
             key={'orpprow10_' + id}

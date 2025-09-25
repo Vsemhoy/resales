@@ -397,7 +397,10 @@ const OrgPage = (props) => {
 				// if (props.changed_user_data){
 				//     props.changed_user_data(response.data);
 				// }
-				setBaseCallsData(response.data.content);
+				setBaseCallsData(response.data.content.map((item)=>{
+					item._savecontact = false;
+					return item;
+				}));
 				setLoading(false);
 
 			}
