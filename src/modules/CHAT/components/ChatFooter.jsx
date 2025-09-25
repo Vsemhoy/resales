@@ -57,14 +57,12 @@ export default function ChatFooter({ draggable, setDraggable, position, setPosit
 					</Button>
 				</Popover>
 
-				{/* Кнопка смены позиции */}
 				<Popover content="Переместить окно по углам экрана" trigger="hover">
 					<Button type="default" onClick={cyclePosition}>
 						<DragOutlined style={{ transform: 'rotate(45deg)' }} />
 					</Button>
 				</Popover>
 
-				{/* Меню настроек */}
 				<Popover content={settingsContent} trigger="hover" title="Настройки чата">
 					<Button type="default">
 						<SettingOutlined />
