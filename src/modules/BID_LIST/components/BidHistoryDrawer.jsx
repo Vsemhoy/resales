@@ -87,6 +87,9 @@ const BidHistoryDrawer = (props) => {
             createTabs().then();
         }
     }, [actionOptions]);
+    useEffect(() => {
+        updateTab();
+    }, [logs]);
 
 
     const fetchActionOptions = async () => {
@@ -120,11 +123,11 @@ const BidHistoryDrawer = (props) => {
                 if (response) {
                     setLogs(response.data.logs);
                 }
+                setIsLoading(false);
             } catch (e) {
                 console.log(e);
                 props.error_alert(path, e);
                 setLogs([]);
-            } finally {
                 setIsLoading(false);
             }
         } else {
@@ -135,7 +138,6 @@ const BidHistoryDrawer = (props) => {
     };
     const createTabs = async () => {
         const tabs = [];
-
         for (const option of actionOptions) {
             tabs.push({
                 key: option.value.toString(),
@@ -143,7 +145,7 @@ const BidHistoryDrawer = (props) => {
                 children: (
                     <Table
                         columns={table_columns}
-                        dataSource={logs}
+                        dataSource={[]}
                         size={"small"}
                         pagination={false}
                         bordered={true}
@@ -153,8 +155,25 @@ const BidHistoryDrawer = (props) => {
                 ),
             });
         }
-
         setItems(tabs);
+    };
+
+    const updateTab = () => {
+        const itemsUpd = JSON.parse(JSON.stringify(items));
+        if (itemsUpd && itemsUpd.length > 0) {
+            itemsUpd[page - 1].children = (
+                <Table
+                    columns={table_columns}
+                    dataSource={logs}
+                    size={"small"}
+                    pagination={false}
+                    bordered={true}
+                    scroll={{y: 500}}
+                    loading={isLoading}
+                />
+            );
+            setItems(itemsUpd);
+        }
     };
 
     return (
