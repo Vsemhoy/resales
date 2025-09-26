@@ -500,7 +500,7 @@ const OrgPage = (props) => {
 					_token: CSRF_TOKEN,
 				});
 				if (response){
-          setDepartList(response.data.data.departments);
+          setDepartList(response.data.content);
         }
 			} catch (e) {
 				console.log(e);
