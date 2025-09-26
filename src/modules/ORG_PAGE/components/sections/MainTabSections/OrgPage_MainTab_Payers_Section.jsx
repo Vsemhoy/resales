@@ -7,7 +7,7 @@ import { Button, Empty } from 'antd';
 import { ExclamationTriangleIcon, IdentificationIcon } from '@heroicons/react/24/outline';
 import OPMTRequisitesSection from './subsections/OPMTRequisitesSection';
 
-const OrgPageMainTabPayersSection = (props) => {
+const OrgPage_MainTab_Payers_Section = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 
 
@@ -219,4 +219,4 @@ const OrgPageMainTabPayersSection = (props) => {
 	);
 };
 
-export default OrgPageMainTabPayersSection;
+export default OrgPage_MainTab_Payers_Section;

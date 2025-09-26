@@ -282,9 +282,9 @@ const OrgPage = (props) => {
 				setTimeout(() => {
 					
 					get_main_data_action(item_id);
-					get_notes_data_action(item_id);
-					get_org_calls_action(item_id);
-					get_projects_data_action(item_id);
+					// get_notes_data_action(item_id);
+					// get_org_calls_action(item_id);
+					// get_projects_data_action(item_id);
 
 				}, 500);
 				} else {
@@ -495,7 +495,7 @@ const OrgPage = (props) => {
   	const get_departs = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/admin/staff/data/getdepartments', {
+				let response = await PROD_AXIOS_INSTANCE.post('/api/timeskud/claims/getdepartments', {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
@@ -566,15 +566,15 @@ const OrgPage = (props) => {
 	};
 
 	useEffect(() => {
-		get_notes_data_action();
+		get_notes_data_action(item_id);
 	}, [pageNotes]);
 
 	useEffect(() => {
-		get_org_calls_action();
+		get_org_calls_action(item_id);
 	}, [pageCalls]);
 
 	useEffect(() => {
-		get_projects_data_action();
+		get_projects_data_action(item_id);
 	}, [pageProject]);
 
 	const handleSaveData = () => {

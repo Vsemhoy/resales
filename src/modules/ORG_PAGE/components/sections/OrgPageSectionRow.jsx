@@ -402,22 +402,31 @@ const OrgPageSectionRow = (props) => {
             //     filterSort={(optionA, optionB) =>
             //       (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
             //     }
-			onSearch={field?.on_search}
+						onSearch={field?.on_search}
             mode="multiple"
             size='small'
             variant="borderless"
             value={value}
-            onChange={(val) => onChange(field.name, val, field)}
+
+            onChange={(val) => {
+							if (props.on_change){
+								let o = {};
+								o[field.name] = val;
+								
+								props.on_change(o);
+							}
+						}}
+            // onChange={(val) => console.log(val)}
             style={{ width: '100%' }}
-            onBlur={ (e) => {
-              if (props.on_blur){
-                const val = e?.target?.value ?? e;
-                console.log(val);
-                let obj = {};
-                obj[field.name] = val;
-                props.on_blur(obj);
-              }
-            }}
+            // onBlur={ (e) => {
+            //   if (props.on_blur){
+            //     const val = e?.target?.value ?? e;
+            //     console.log(val);
+            //     let obj = {};
+            //     obj[field.name] = val;
+            //     props.on_blur(obj);
+            //   }
+            // }}
           >
             {field.options?.map((opt) => (
               <Option key={opt.value} value={opt.value}>

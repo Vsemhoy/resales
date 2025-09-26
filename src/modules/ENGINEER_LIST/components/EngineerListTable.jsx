@@ -75,7 +75,7 @@ const EngineerListTable = (props) => {
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
 								<TableHeadNameWithSort
-									sort_key={'date'}
+									sort_key={'created_at'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
 								>
@@ -88,12 +88,12 @@ const EngineerListTable = (props) => {
 										variant="filled"
 										onChange={(val) => {
 											if (val) {
-												props.on_change_filter_box('dates', [
+												props.on_change_filter_box('created_at', [
 													val.startOf('day').unix() * 1000,
 													val.endOf('day').unix() * 1000,
 												]);
 											} else {
-												props.on_change_filter_box('dates', null);
+												props.on_change_filter_box('created_at', null);
 											}
 										}}
 									/>
