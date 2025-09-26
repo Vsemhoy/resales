@@ -156,3 +156,10 @@
 	justify-content: center;
 	padding: 20px;
 }
+
+.sa-app-page .ant-alert-message {
+	text-align: left !important;
+}
+.sa-app-page .ant-alert-description {
+	text-align: justify !important;
+}

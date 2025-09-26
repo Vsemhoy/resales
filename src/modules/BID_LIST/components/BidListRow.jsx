@@ -73,7 +73,9 @@ const BidListRow = (props) => {
 		if (PRODMODE) {
 			const path = `/api/sales/deletebid/${data.id}`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.delete(path);
+				let response = await PROD_AXIOS_INSTANCE.delete(path, {
+					_token: CSRF_TOKEN,
+				});
 				if (response.data) {
 					props.rerenderPage();
 				}
