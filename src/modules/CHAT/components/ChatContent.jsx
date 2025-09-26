@@ -6,7 +6,6 @@ import { useUserData } from '../../../context/UserDataContext';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { useChatMessages } from '../../../hooks/sms/useChatMessages';
-import { useChatWebSocket } from '../../../hooks/sms/useChatWebSocket';
 import { nanoid } from 'nanoid';
 import { ChatDivider } from './ChatDivider';
 import styles from './style/Chat.module.css';
@@ -52,6 +51,8 @@ export default function ChatContent({ chatId }) {
 	const currentUserId = userdata?.user?.id;
 
 	const getRole = useCompanion(currentUserId);
+
+	// получаем историю + live через useChatMessages
 	const { data: smsList = [], loading, error } = useChatMessages({ chatId, mock: MOCK });
 
 	const { sendSms, loading: sending } = useSendSms();
@@ -59,23 +60,12 @@ export default function ChatContent({ chatId }) {
 	const [text, setText] = useState('');
 	const [showPicker, setShowPicker] = useState(false);
 	const [localMessages, setLocalMessages] = useState([]);
-	const [incomingMessages, setIncomingMessages] = useState([]);
 
-	// 🔌 Подключаем WebSocket
-	useChatWebSocket({
-		userId: currentUserId,
-		onMessage: (message) => {
-			if (message?.action === 'NEWMESSAGE' && message.data?.chat_id === chatId) {
-				setIncomingMessages((prev) => [...prev, message.data]);
-			}
-		},
-	});
+	// объединяем сообщения из useChatMessages и локальные (до подтверждения с сервера)
 
-	// 📦 Объединяем сообщения из API, WebSocket и локальные
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
-		const filteredIncoming = incomingMessages.filter((msg) => msg.chat_id === chatId);
-		const combined = [...smsList, ...filteredIncoming, ...filteredLocal];
+		const combined = [...smsList, ...filteredLocal];
 
 		return combined
 			.map((msg) => {
@@ -88,14 +78,17 @@ export default function ChatContent({ chatId }) {
 					id: msg.id || generateUUID(),
 					text: msg.text,
 					timestamp,
-					time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+					time: new Date(timestamp).toLocaleTimeString([], {
+						hour: '2-digit',
+						minute: '2-digit',
+					}),
 					role,
 					senderName:
 						role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`.trim(),
 				};
 			})
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [smsList, localMessages, incomingMessages, getRole, chatId]);
+	}, [smsList, localMessages, getRole, chatId]);
 
 	const messagesWithDividers = useMemo(() => injectDayDividers(allMessages), [allMessages]);
 

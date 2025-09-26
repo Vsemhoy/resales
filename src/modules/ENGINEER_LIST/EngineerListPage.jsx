@@ -669,6 +669,7 @@ const EngineerListPage = (props) => {
 					>
 						<Spin spinning={isLoading}>
 							<EngineerListTable
+								fetchBids={fetchBids}
 								activeRole={activeRole}
 								companies={companies}
 								specs={specs}

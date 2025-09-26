@@ -1,11 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { PRODMODE } from '../../config/config.js';
 
 const getWebSocketUrl = () => {
-	if (!PRODMODE) {
-		return 'ws://localhost:5003'; // для dev режима
-	}
-	return 'ws://192.168.1.16:5003'; // твой BFF WebSocket сервер
+	// Всегда подключаемся к локальному BFF WebSocket серверу
+	return 'ws://192.168.1.16:5003';
 };
 
 export const useChatSocket = ({ chatId, onNewMessage }) => {
@@ -18,16 +15,14 @@ export const useChatSocket = ({ chatId, onNewMessage }) => {
 
 		ws.current.onopen = () => {
 			console.log('[useChatSocket] WS connected');
-			// Можно отправить приветственное сообщение, например подписку на chatId
+			// Подписка на конкретный чат
 			ws.current.send(JSON.stringify({ action: 'subscribe', chatId }));
 		};
 
 		ws.current.onmessage = (event) => {
 			try {
 				const data = JSON.parse(event.data);
-
-				// Предположим, что сервер шлёт объект { type: 'new_message', payload: { ... } }
-				if (data.type === 'new_message' && data.payload.chat_id === chatId) {
+				if (data.action === 'CHAT_MESSAGE' && data.payload?.chat_id === chatId) {
 					onNewMessage && onNewMessage(data.payload);
 				}
 			} catch (e) {

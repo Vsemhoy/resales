@@ -4,42 +4,41 @@ import { MessageOutlined } from '@ant-design/icons';
 import { MOCK } from '../mock/mock.js';
 import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
-import { useUserData } from '../../../context/UserDataContext';
+import { useUserData } from '../../../context/UserDataContext.js';
+import { useChatSocket } from '../../../hooks/sms/useChatSocket.js'; // новый хук
 import styles from './style/Chat.module.css';
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
+	const [liveMessages, setLiveMessages] = useState([]);
 
-	const {
-		data: smsList,
-		loading,
-		error,
-	} = useSms({
-		url: '/api/sms',
-		mock: MOCK,
-	});
-
+	const { data: smsList, loading, error } = useSms({ url: '/api/sms', mock: MOCK });
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id || NaN;
 
-	// ✅ Заменили useCompanion на явную логику
 	const getCompanion = useCallback(
 		(sms) => {
 			if (sms.from.id === currentUserId && sms.to.id === currentUserId) {
-				return { name: 'Вы', surname: '' }; 
+				return { name: 'Вы', surname: '' };
 			}
 			return sms.from.id === currentUserId ? sms.to : sms.from;
 		},
 		[currentUserId]
 	);
 
-	const smsData = useMemo(() => {
-		if (!Array.isArray(smsList) || smsList.length === 0) {
-			return { hasSms: false, messages: [] };
-		}
+	// Подключаем WS для live сообщений
+	useChatSocket({
+		chatId: currentUserId, // или другой ID чата, если нужно
+		onNewMessage: (msg) => setLiveMessages((prev) => [msg.payload, ...prev]),
+	});
 
-		const messages = smsList.map((sms) => {
+	const smsData = useMemo(() => {
+		const combined = [...(smsList || []), ...liveMessages];
+
+		if (!combined.length) return { hasSms: false, messages: [] };
+
+		const messages = combined.map((sms) => {
 			const companion = getCompanion(sms);
 			return {
 				id: sms.id,
@@ -53,7 +52,7 @@ export const ChatBtn = () => {
 			hasSms: messages.length > 0,
 			messages,
 		};
-	}, [smsList, getCompanion]);
+	}, [smsList, liveMessages, getCompanion]);
 
 	const menuItems = useMemo(() => {
 		if (!smsData.hasSms) return [];
@@ -62,12 +61,9 @@ export const ChatBtn = () => {
 		const count = messages.length;
 
 		const label = (() => {
-			if (count === 1) {
-				return `${messages[0].name} ${messages[0].surname}`.trim();
-			}
-			if (count === 2) {
+			if (count === 1) return `${messages[0].name} ${messages[0].surname}`.trim();
+			if (count === 2)
 				return `${messages[0].name} ${messages[0].surname} и ${messages[1].name} ${messages[1].surname}`.trim();
-			}
 			return `${messages
 				.slice(0, 2)
 				.map((m) => `${m.name} ${m.surname}`.trim())
@@ -95,14 +91,8 @@ export const ChatBtn = () => {
 		setIsModalOpen(true);
 		setDropdownVisible(false);
 	};
-
-	const handleOk = () => {
-		setIsModalOpen(false);
-	};
-
-	const handleCancel = () => {
-		setIsModalOpen(false);
-	};
+	const handleOk = () => setIsModalOpen(false);
+	const handleCancel = () => setIsModalOpen(false);
 
 	return (
 		<Space style={{ padding: 0 }}>

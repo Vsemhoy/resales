@@ -1,11 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
-import { useChatWebSocket } from '../../../hooks/sms/useChatWebSocket';
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
@@ -20,26 +19,12 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		mock: MOCK,
 	});
 
-	const [incomingMessages, setIncomingMessages] = useState([]);
-
-	// WebSocket для входящих сообщений
-	useChatWebSocket({
-		userId: currentUserId,
-		onMessage: (message) => {
-			if (message.action === 'NEWMESSAGE' && message.data) {
-				setIncomingMessages((prev) => [...prev, message.data]);
-			}
-		},
-	});
-
 	const getCompanion = useCompanion(currentUserId);
 
 	const chats = useMemo(() => {
-		const allSms = [...smsList, ...incomingMessages];
-
 		const normalizedSearch = search.toLowerCase();
 
-		const filtered = allSms.filter((sms) => {
+		const filtered = smsList.filter((sms) => {
 			const companion = getCompanion(sms);
 			if (companion === 'self') return true;
 
@@ -79,7 +64,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		});
 
 		return result;
-	}, [smsList, search, getCompanion, currentUserId, incomingMessages]);
+	}, [smsList, search, getCompanion, currentUserId]);
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;

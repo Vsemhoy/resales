@@ -656,6 +656,9 @@ const BidListPage = (props) => {
 			return newParams;
 		});
 	};
+	const handleRerenderPage = () => {
+		fetchBids().then();
+	};
 	const backUrl = () => {
 		return (
 			`/${fromPage}` +
@@ -875,6 +878,8 @@ const BidListPage = (props) => {
 								on_preview_open={handlePreviewOpen}
 								on_set_sort_orders={handleUpdateOrderBox}
 								base_companies={filterCompaniesSelect}
+								userdata={userdata}
+								rerenderPage={handleRerenderPage}
 							/>
 						</Spin>
 						<div className={'sa-space-panel sa-pa-12'}></div>
