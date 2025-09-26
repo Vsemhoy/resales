@@ -11,7 +11,7 @@ import { Button, Empty } from 'antd';
 import { ExclamationTriangleIcon, IdentificationIcon } from '@heroicons/react/24/outline';
 import OPMTanZendToleranceSection from './subsections/OPMTanZendToleranceSection';
 
-const OrgPageMainTabToleranceSection = (props) => {
+const OrgPage_MainTab_Tolerance_Section = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 	const [filterData, setFilterData] = useState([]);
 
@@ -457,4 +457,4 @@ const OrgPageMainTabToleranceSection = (props) => {
 	);
 };
 
-export default OrgPageMainTabToleranceSection;
+export default OrgPage_MainTab_Tolerance_Section;
