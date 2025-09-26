@@ -26,19 +26,22 @@ const BidDuplicationDrawer = (props) => {
     }, [props.bidType]);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoadingAutoComplete(true);
-            fetchOrgs().then(() => {
-                setTimeout(() => setIsLoadingAutoComplete(false), 500);
-            });
-        }, 500);
-        return () => clearTimeout(timer);
+        if (props.isOpenDrawer) {
+            const timer = setTimeout(() => {
+                setIsLoadingAutoComplete(true);
+                fetchOrgs().then(() => {
+                    setTimeout(() => setIsLoadingAutoComplete(false), 500);
+                });
+            }, 500);
+            return () => clearTimeout(timer);
+        }
     }, [searchText]);
 
     const fetchOrgs = async () => {
         if (PRODMODE) {
+            const path = `/sales/data/getorgsuggestions`;
             try {
-                let response = await PROD_AXIOS_INSTANCE.post(`/sales/data/getorgsuggestions`, {
+                let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
                         text: searchText
                     },
@@ -51,6 +54,7 @@ const BidDuplicationDrawer = (props) => {
                 }
             } catch (e) {
                 console.log(e);
+                props.error_alert(path, e);
             }
         } else {
             if (searchText) {
@@ -63,8 +67,9 @@ const BidDuplicationDrawer = (props) => {
 
     const createDuplicate = async (type) => {
         if (PRODMODE) {
+            const path = `/sales/data/makebid`;
             try {
-                let response = await PROD_AXIOS_INSTANCE.post(`/sales/data/makebid`, {
+                let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
                         bid: bidId,
                         org: selectedOrg.orgData.value,
@@ -77,6 +82,7 @@ const BidDuplicationDrawer = (props) => {
                 }
             } catch (e) {
                 console.log(e);
+                props.error_alert(path, e);
             }
         }
     };

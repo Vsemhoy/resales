@@ -43,8 +43,13 @@ const OrgPageSectionRow = (props) => {
   const [localValues, setLocalValues] = useState({}); // теперь ключи — это `name`
   const [errors, setErrors] = useState({});
 
-
+	// Контейнер для хранения различных списков по ключам
   const [transContainer, setTransContainer] = useState({});
+
+	// Переменные для хранения параметра ввода в поле с автозаполнением
+	// Применяется только к изменяемому полю (их может быть несколько) и на другие не влияет
+	const [tempAutofill, setTempAutoFill] = useState('');
+	const [tempAutofillKey, setTempAutoFillKey] = useState('');
 
 	// Дебаунс для отправки изменений
 	const debouncedOnChange = useMemo(() => {
@@ -456,14 +461,15 @@ const OrgPageSectionRow = (props) => {
             onSearch={(text)=> {
               let filteredOptions = [];
               let cmod = transContainer;
-              if (field.options){
-                filteredOptions = field.options.filter(name =>
-                  name.toLowerCase().includes(text.toLowerCase())
+              if (field.options && text !== null){
+                filteredOptions = field.options?.filter(item =>
+                  item.label.toLowerCase().includes(text?.toLowerCase())
                 );
-
-                cmod[field.name] = filteredOptions.map(name => ({
-                    value: name,
-                    label: name,
+								// Список подгоняется в зависимости от того, что введено пользователем
+                cmod[field.name] = filteredOptions?.map(obj => ({
+                    key: obj.key,
+                    value: obj.label,
+                    label: obj.label,
                   }));
                   setTransContainer(cmod);
                 } else {
@@ -471,31 +477,35 @@ const OrgPageSectionRow = (props) => {
                   setTransContainer(cmod);
                 }
               }}
+							onBlur={(e)=>{
+								console.log(e);
+
+								const val = e?.target?.value ?? e;
+                let obj = {};
+                obj[field.name] = val?.trim();
+                if (props.on_blur ){
+                  props.on_blur(obj);
+                }
+							}}
             // onChange={handleChange}
             onChange={(e)=>{
               // console.log(e);
               const val = e?.target?.value ?? e;
-                let obj = {};
-                obj[field.name] = val;
-                if (props.on_blur && !props.on_change){
-                  props.on_blur(obj);
-                }
-                if (props.on_change){
-                  props.on_change(obj);
-                }
+							if (val !== tempAutofill){
+
+								let obj = {};
+								obj[field.name] = val;
+								if (props.on_change){
+									props.on_change(obj);
+								}
+								setTempAutoFill(val);
+								setTempAutoFillKey(field.name);
+							}
            
             }}
-            onBlur={(e)=>{
-              console.log(e);
-              const val = e?.target?.value ?? e;
-              let obj = {};
-              obj[field.name] = val?.trim();
-              if (props.on_blur){
-                console.log("BLURER");
-                props.on_blur(obj);
-              }
-            }}
-            value={value}
+						// Как только что-то меняется в поле, его значение начинает браться не снаружи,
+						// а из временного стейта, в ином случае будет слетать курсор
+            value={tempAutofillKey === field.name ? tempAutofill : value}
             placeholder={field.placeholder}
             // allowClear
             notFoundContent="Ничего не найдено :("
