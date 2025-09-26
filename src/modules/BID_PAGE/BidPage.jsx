@@ -2438,6 +2438,12 @@ const BidPage = (props) => {
 							  closeDrawer={() => setIsBidHistoryDrawerOpen(false)}
 							  bidId={bidId}
 							  bidActions={bidActions}
+							  error_alert={(path, e) => {
+								  setIsAlertVisible(true);
+								  setAlertMessage(`Произошла ошибка! ${path}`);
+								  setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+								  setAlertType('error');
+							  }}
 			/>
 			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
 							closeDrawer={() => setIsBidFilesDrawerOpen(false)}

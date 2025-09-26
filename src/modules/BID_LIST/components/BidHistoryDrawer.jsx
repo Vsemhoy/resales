@@ -7,6 +7,7 @@ import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {ACTION_OPTIONS, LOGS} from "../../BID_PAGE/mock/mock";
 
 const BidHistoryDrawer = (props) => {
+    const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [items, setItems] = useState([]);
@@ -59,7 +60,7 @@ const BidHistoryDrawer = (props) => {
     ];
 
     useEffect(() => {
-        console.log('drawer')
+        setIsMounted(true);
     }, []);
     useEffect(() => {
         if (props.bidId) {
@@ -72,18 +73,25 @@ const BidHistoryDrawer = (props) => {
         }
     }, [props.bidActions]);
     useEffect(() => {
-        if (bidId) {
+        if (bidId && isMounted && props.isOpenDrawer) {
             fetchActionOptions().then();
         }
-    }, [bidId]);
+    }, [bidId, props.isOpenDrawer]);
+    useEffect(() => {
+        if (page && bidId && isMounted && props.isOpenDrawer) {
+            fetchLogs(page).then();
+        }
+    }, [page, props.isOpenDrawer]);
     useEffect(() => {
         if (actionOptions) {
             createTabs().then();
         }
     }, [actionOptions]);
 
+
     const fetchActionOptions = async () => {
         if (PRODMODE) {
+            const path = `/api/sales/bidselects`;
             try {
                 const format_data = {
                     _token: CSRF_TOKEN,
@@ -91,51 +99,51 @@ const BidHistoryDrawer = (props) => {
                         action_enum: 1,
                     },
                 };
-                const selects_response = await PROD_AXIOS_INSTANCE.post(
-                    "/api/sales/bidselects",
-                    format_data,
-                );
+                const selects_response = await PROD_AXIOS_INSTANCE.post(path, format_data,);
                 if (selects_response) {
                     setActionOptions(selects_response.data.selects.action_enum);
                 }
             } catch (e) {
                 console.log(e);
+                props.error_alert(path, e);
             }
         } else {
             setActionOptions(ACTION_OPTIONS);
         }
     };
-    const fetchLogs = async (action_type) => {
+    const fetchLogs = async () => {
         if (PRODMODE) {
+            const path = `api/sales/bidlog/${bidId}?_token=${CSRF_TOKEN}&action_type=${page}`;
             try {
                 setIsLoading(true);
-                let response = await PROD_AXIOS_INSTANCE.get(`api/sales/bidlog/${bidId}?_token=${CSRF_TOKEN}&action_type=${action_type}`);
+                let response = await PROD_AXIOS_INSTANCE.get(path);
                 if (response) {
-                    return response.data.logs;
+                    setLogs(response.data.logs);
                 }
-                return [];
             } catch (e) {
                 console.log(e);
-                return [];
+                props.error_alert(path, e);
+                setLogs([]);
             } finally {
                 setIsLoading(false);
             }
         } else {
-            return LOGS;
+            setIsLoading(true);
+            setLogs(LOGS);
+            setTimeout(() => setIsLoading(false), 500);
         }
     };
     const createTabs = async () => {
         const tabs = [];
 
         for (const option of actionOptions) {
-            const logsData = await fetchLogs(option.value);
             tabs.push({
                 key: option.value.toString(),
                 label: <Tooltip title={option.label}>{option.label}</Tooltip>,
                 children: (
                     <Table
                         columns={table_columns}
-                        dataSource={logsData}
+                        dataSource={logs}
                         size={"small"}
                         pagination={false}
                         bordered={true}
