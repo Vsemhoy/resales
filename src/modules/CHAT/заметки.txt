@@ -11,3 +11,6 @@
 2. Ответ
 3. WS
 3. Файлы
+
+
+ЛАСТОВЫЙ КУСОК КОДА: 	console.log('Data snapshot:', JSON.parse(JSON.stringify(data)));
