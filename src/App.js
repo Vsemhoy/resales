@@ -1,6 +1,6 @@
 import './App.css';
 
-import { useRef, useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE } from './config/config';
 
@@ -34,20 +34,13 @@ export const App = () => {
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [topRole, setTopRole] = useState('');
 
-	const mainSocketRef = useRef(null);
-	const skudSocketRef = useRef(null);
-	const userRef = useRef(userdata);
-
-	useEffect(() => {
-		userRef.current = userdata;
-	}, [userdata]);
-
 	useEffect(() => {
 		if (PRODMODE) {
 			get_userdata();
 		} else {
 			setUserdata(MS_USER);
 			setTopRole([7, 8, 20].includes(MS_USER.user?.id_departament) ? '/engineer' : '/orgs');
+			setPageLoaded(true);
 		}
 	}, []);
 
@@ -56,137 +49,19 @@ export const App = () => {
 	}, [topRole]);
 
 	const get_userdata = async () => {
-		if (PRODMODE) {
-			try {
-				let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
-				setUserdata(response.data);
-				setTopRole(
-					[7, 8, 20].includes(response?.data?.user?.id_departament) ? '/engineer' : '/orgs'
-				);
-			} catch (e) {
-				console.log(e);
-			} finally {
-				setPageLoaded(true);
-			}
-		} else {
+		try {
+			let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
+			setUserdata(response.data);
+			setTopRole([7, 8, 20].includes(response?.data?.user?.id_departament) ? '/engineer' : '/orgs');
+		} catch (e) {
+			console.error(e);
+		} finally {
 			setPageLoaded(true);
 		}
 	};
 
-	/** ---------- MAIN WebSocket ---------- */
-	const handleMainWSMessage = useCallback((event) => {
-		try {
-			const message = JSON.parse(event.data);
-			console.log('[WS-MAIN] Message received:', message);
+	if (!pageLoaded) return null; // можно заменить на спиннер загрузки
 
-			switch (message.action) {
-				case 'PING':
-					console.log('[WS-MAIN] PING received');
-					break;
-				case 'NEWMESSAGE':
-					console.log('[WS-MAIN] New message:', message.text);
-					break;
-				case 'NOTIFY':
-					console.log('[WS-MAIN] Notification:', message.title, message.text);
-					break;
-				default:
-					console.warn('[WS-MAIN] Unknown action:', message.action);
-			}
-		} catch (error) {
-			console.error('[WS-MAIN] Failed to parse message:', error);
-		}
-	}, []);
-
-	const connectMainWebSocket = useCallback(() => {
-		if (!userdata?.user || mainSocketRef.current) return;
-
-		const socket = new WebSocket(`ws://${window.location.hostname}:5001`);
-		mainSocketRef.current = socket;
-
-		socket.onopen = () => {
-			console.log('[WS-MAIN] Connected');
-		};
-
-		socket.onmessage = handleMainWSMessage;
-
-		socket.onclose = () => {
-			console.warn('[WS-MAIN] Connection closed');
-			mainSocketRef.current = null;
-		};
-
-		socket.onerror = (error) => {
-			console.error('[WS-MAIN] Error:', error);
-			socket.close();
-			mainSocketRef.current = null;
-		};
-	}, [userdata, handleMainWSMessage]);
-
-	/** ---------- SKUD WebSocket ---------- */
-	const handleSkudWSMessage = useCallback((event) => {
-		try {
-			const message = JSON.parse(event.data);
-			console.log('[WS-SKUD] Message received:', message);
-
-			switch (message.action) {
-				case 'SKUD_PING':
-					console.log('[WS-SKUD] PING received');
-					break;
-				case 'EVENT_ENTRY':
-					console.log(`[WS-SKUD] Сотрудник ${message.employee_name} вошёл в ${message.door}`);
-					break;
-				case 'ACCESS_DENIED':
-					console.warn(`[WS-SKUD] Доступ отказан для ${message.employee_name} (${message.reason})`);
-					break;
-				default:
-					console.warn('[WS-SKUD] Unknown action:', message.action);
-			}
-		} catch (error) {
-			console.error('[WS-SKUD] Failed to parse message:', error);
-		}
-	}, []);
-
-	const connectSkudWebSocket = useCallback(() => {
-		if (!userdata?.user || skudSocketRef.current) return;
-
-		const socket = new WebSocket(`ws://${window.location.hostname}:5002`);
-		skudSocketRef.current = socket;
-
-		socket.onopen = () => {
-			console.log('[WS-SKUD] Connected');
-		};
-
-		socket.onmessage = handleSkudWSMessage;
-
-		socket.onclose = () => {
-			console.warn('[WS-SKUD] Connection closed');
-			skudSocketRef.current = null;
-		};
-
-		socket.onerror = (error) => {
-			console.error('[WS-SKUD] Error:', error);
-			socket.close();
-			skudSocketRef.current = null;
-		};
-	}, [userdata, handleSkudWSMessage]);
-
-	/** ---------- Инициализация обоих сокетов ---------- */
-	useEffect(() => {
-		connectMainWebSocket();
-		connectSkudWebSocket();
-
-		return () => {
-			if (mainSocketRef.current) {
-				mainSocketRef.current.close();
-				mainSocketRef.current = null;
-			}
-			if (skudSocketRef.current) {
-				skudSocketRef.current.close();
-				skudSocketRef.current = null;
-			}
-		};
-	}, [connectMainWebSocket, connectSkudWebSocket]);
-
-	/** ---------- UI ---------- */
 	return (
 		<div className="App">
 			<UserDataProvider>
