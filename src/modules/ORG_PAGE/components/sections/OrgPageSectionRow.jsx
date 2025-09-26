@@ -340,7 +340,7 @@ const OrgPageSectionRow = (props) => {
 						}}
 					/>
 				);
-
+ 
 			case 'checkbox':
 				return (
 					<Checkbox
