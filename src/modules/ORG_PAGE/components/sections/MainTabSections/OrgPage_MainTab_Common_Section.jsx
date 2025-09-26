@@ -3,7 +3,7 @@ import OrgPageSectionRow, { OPS_TYPE } from '../OrgPageSectionRow';
 import { PRODMODE } from '../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTMOCK';
 
-const OrgPageMainTabCommonSection = (props) => {
+const OrgPage_MainTab_Common_Section = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 	
 
@@ -300,4 +300,4 @@ const OrgPageMainTabCommonSection = (props) => {
 	);
 };
 
-export default OrgPageMainTabCommonSection;
+export default OrgPage_MainTab_Common_Section;

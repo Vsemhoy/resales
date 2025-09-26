@@ -4,7 +4,7 @@ import { PRODMODE } from '../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTMOCK';
 import { ShortName } from '../../../../../components/helpers/TextHelpers';
 
-const OrgPageMainTabDepartSection = (props) => {
+const OrgPage_MainTab_Depart_Section = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 	const [filterData, setFilterData] = useState([]);
 
@@ -154,6 +154,13 @@ const OrgPageMainTabDepartSection = (props) => {
 					},
 				]}
         on_blur={(data)=>{
+						if (data.id8an_statusmoney){
+							setStatusmoney(data.id8an_statusmoney);
+						}
+						if (data.id8an_conveyance){
+							setConveyance(data.id8an_conveyance);
+						}
+
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -190,6 +197,12 @@ const OrgPageMainTabDepartSection = (props) => {
 				]}
         on_blur={(data)=>{
           if (props.on_blur){
+						if (data.list_comment){
+							setList_comment(data.list_comment);
+						}
+						if (data.id_orgs8an_list){
+							setId_orgs8an_list(data.id_orgs8an_list);
+						}
             props.on_blur(data);
           }
         }}
@@ -198,4 +211,4 @@ const OrgPageMainTabDepartSection = (props) => {
 	);
 };
 
-export default OrgPageMainTabDepartSection;
+export default OrgPage_MainTab_Depart_Section;
