@@ -328,7 +328,7 @@ const FindSimilarDrawer = (props) => {
                         return 0;
                 }
             };
-            const getSearchType = (text) => {
+            const fetchSearchType = (text) => {
                 switch (text) {
                     case "ВЕЗДЕ":
                         return 1;
@@ -357,7 +357,7 @@ const FindSimilarDrawer = (props) => {
                                 bid_models: similarData,
                                 mondatoryAll,
                                 notMe: notSelf,
-                                searchType: getSearchType(searchType),
+                                searchType: fetchSearchType(searchType),
                                 dates,
                                 searchText: text,
                                 limit,
@@ -378,10 +378,12 @@ const FindSimilarDrawer = (props) => {
                 }
             }
         };
-        const delayInputTimeoutId = setTimeout(() => {
-            /*PRODMODE && similarData.length > 1 && */ similar_data();
-        }, 1000);
-        return () => clearTimeout(delayInputTimeoutId);
+        if (props.isOpenDrawer) {
+            const delayInputTimeoutId = setTimeout(() => {
+                /*PRODMODE && similarData.length > 1 && */ similar_data();
+            }, 1000);
+            return () => clearTimeout(delayInputTimeoutId);
+        }
     }, [
         dates,
         type,
@@ -395,6 +397,7 @@ const FindSimilarDrawer = (props) => {
         range,
         notMatchLimit,
         notCompany,
+        props.isOpenDrawer
     ]);
 
     const change = (value, id, type) => {
