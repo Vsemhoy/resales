@@ -2433,6 +2433,12 @@ const BidPage = (props) => {
 								  closeDrawer={() => setIsBidDuplicateDrawerOpen(false)}
 								  bidId={bidId}
 								  bidType={bidType}
+								  error_alert={(path, e) => {
+									  setIsAlertVisible(true);
+									  setAlertMessage(`Произошла ошибка! ${path}`);
+									  setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+									  setAlertType('error');
+								  }}
 			/>
 			<BidHistoryDrawer isOpenDrawer={isBidHistoryDrawerOpen}
 							  closeDrawer={() => setIsBidHistoryDrawerOpen(false)}
@@ -2448,6 +2454,12 @@ const BidPage = (props) => {
 			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
 							closeDrawer={() => setIsBidFilesDrawerOpen(false)}
 							bidId={bidId}
+							error_alert={(path, e) => {
+								setIsAlertVisible(true);
+								setAlertMessage(`Произошла ошибка! ${path}`);
+								setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+								setAlertType('error');
+							}}
 			/>
 			<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
 							   closeDrawer={() => setIsFindSimilarDrawerOpen(false)}

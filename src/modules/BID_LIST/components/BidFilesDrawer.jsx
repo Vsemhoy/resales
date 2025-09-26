@@ -48,8 +48,9 @@ const BidFilesDrawer = (props) => {
 
     const fetchFiles = async () => {
         if (PRODMODE) {
+            const path = `/api/sales/doclist`;
             try {
-                const response = await PROD_AXIOS_INSTANCE.post("/api/sales/doclist", {
+                const response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
                         bid_id: props.bidId,
                     },
@@ -71,6 +72,7 @@ const BidFilesDrawer = (props) => {
                 }
             } catch (e) {
                 console.log(e);
+                props.error_alert(path, e);
             }
         } else {
             setFiles(
@@ -89,6 +91,7 @@ const BidFilesDrawer = (props) => {
     };
     const fetchDownloadFile = async (template_id, id, type) => {
         if (PRODMODE) {
+            const path = `/api/sales/makedoc`;
             try {
                 const data = {
                     data: {
@@ -101,12 +104,13 @@ const BidFilesDrawer = (props) => {
                     _token: CSRF_TOKEN,
                 };
                 const config = { timeout: 50000 };
-                const response = await PROD_AXIOS_INSTANCE.post("/api/sales/makedoc", data, config,);
+                const response = await PROD_AXIOS_INSTANCE.post(path, data, config,);
                 const parts = response.data.data.file_link.split('/');
                 const withSlash = '/' + parts.slice(1).join('/');
                 window.open(`${withSlash}`, "_blank", "noopener,noreferrer",);
             } catch (e) {
                 console.log(e);
+                props.error_alert(path, e);
             }
         }
     };
