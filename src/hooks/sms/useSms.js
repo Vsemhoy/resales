@@ -28,9 +28,8 @@ export function useSms({ chatId = null, mock = null }) {
 			// В PRODMODE — POST запрос на сервер с chatId в теле
 			try {
 				const response = await PROD_AXIOS_INSTANCE.post('/api/sms', { _token: CSRF_TOKEN });
-				const json = await response.json();
 
-				const allSms = json?.content?.sms || [];
+				const allSms = response?.content?.sms || [];
 				const filtered = chatId ? allSms.filter((msg) => msg.chat_id === chatId) : allSms;
 				setData(filtered);
 			} catch (err) {
@@ -43,6 +42,7 @@ export function useSms({ chatId = null, mock = null }) {
 
 		loadData();
 	}, [chatId, mock]);
+	console.log('Data snapshot:', JSON.parse(JSON.stringify(data)));
 
 	return {
 		data,
