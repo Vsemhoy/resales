@@ -13,7 +13,7 @@ import {
 	Select,
 	Spin,
 	Tag,
-	Tooltip,
+	Tooltip, Alert,
 } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
@@ -29,6 +29,11 @@ const BidListPage = (props) => {
 	const { userdata } = props;
 
 	const [searchParams, setSearchParams] = useSearchParams();
+
+	const [isAlertVisible, setIsAlertVisible] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertDescription, setAlertDescription] = useState('');
+	const [alertType, setAlertType] = useState('');
 
 	const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -167,7 +172,6 @@ const BidListPage = (props) => {
 		handleSearchParamsChange('currentPage', currentPage);
 		handleSearchParamsChange('onPage', onPage);
 	}, []);
-
 	useEffect(() => {
 		if (isMounted && currentPage && onPage && filterBox && orderBox) {
 			const timer = setTimeout(() => {
@@ -180,7 +184,6 @@ const BidListPage = (props) => {
 			return () => clearTimeout(timer);
 		}
 	}, [currentPage, onPage, filterBox, orderBox]);
-
 	useEffect(() => {
 		if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
 			setBaseCompanies(userdata.companies);
@@ -199,7 +202,6 @@ const BidListPage = (props) => {
 			setActiveRole(userdata.user.sales_role);
 		}
 	}, [userdata]);
-
 	useEffect(() => {
 		setCompanies(
 			baseCompanies.map((item) => ({
@@ -209,16 +211,13 @@ const BidListPage = (props) => {
 			}))
 		);
 	}, [baseCompanies]);
-
 	useEffect(() => {
 		if (!isPreviewOpen) {
 		}
 	}, [isPreviewOpen]);
-
 	useEffect(() => {
 		makeFilterMenu();
 	}, [filterBox, orderBox]);
-
 	useEffect(() => {
 		if (filterBox.manager && userInfo && +filterBox.manager === +userInfo.id) {
 			setMyBids(true);
@@ -228,6 +227,15 @@ const BidListPage = (props) => {
 			}, 500);
 		}
 	}, [filterBox]);
+	useEffect(() => {
+		if (isAlertVisible && alertType !== 'error') {
+			const timer = setTimeout(() => {
+				setIsAlertVisible(false);
+			}, 3000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [isAlertVisible]);
 
 	const fetchInfo = async () => {
 		setIsLoading(true);
@@ -235,11 +243,11 @@ const BidListPage = (props) => {
 		await fetchBids();
 		setIsLoading(false);
 	};
-
 	const fetchFilterSelects = async () => {
 		if (PRODMODE) {
+			const path = `/api/sales/filterlist`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/filterlist', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,
 				});
 				if (response.data) {
@@ -259,6 +267,10 @@ const BidListPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			setFilterStep(FILTERS.step);
@@ -275,7 +287,6 @@ const BidListPage = (props) => {
 			setFilterCompaniesSelect(FILTERS.companies);
 		}
 	};
-
 	const fetchBids = async () => {
 		if (PRODMODE) {
 			let dates = null;
@@ -311,8 +322,9 @@ const BidListPage = (props) => {
 				sort_orders: prepareOrderBox(orderBox),
 			};
 			console.log(data);
+			const path = `/sales/data/offerlist`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/sales/data/offerlist', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data,
 					_token: CSRF_TOKEN,
 				});
@@ -326,6 +338,10 @@ const BidListPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		} else {
 			console.log(123);
@@ -333,11 +349,11 @@ const BidListPage = (props) => {
 			setTotal(33000);
 		}
 	};
-
 	const fetchChangeRole = async (sales_role) => {
 		if (PRODMODE) {
+			const path = `/auth/me`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/auth/me', {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					place: sales_role,
 					_token: CSRF_TOKEN,
 				});
@@ -349,6 +365,10 @@ const BidListPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 			}
 		}
 	};
@@ -368,7 +388,6 @@ const BidListPage = (props) => {
 			}
 		});
 	};
-
 	const handleActivateSorter = (key, order) => {
 		if (order === 0) {
 			setSortOrders([]);
@@ -376,13 +395,11 @@ const BidListPage = (props) => {
 			setSortOrders([{ key: key, order: order }]);
 		}
 	};
-
 	const handlePreviewOpen = (item, state) => {
 		console.log('HELLO', item);
 		setPreviewItem(item);
 		setIsPreviewOpen(true);
 	};
-
 	const prepareSelectOptions = (options) => {
 		if (options && options.length > 0) {
 			return options.map((option) => {
@@ -400,7 +417,6 @@ const BidListPage = (props) => {
 			return [];
 		}
 	};
-
 	const handleUpdateFilterBoxHeader = (newFilterBox) => {
 		const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
 
@@ -490,7 +506,6 @@ const BidListPage = (props) => {
 			setFilterBox(filterBoxUpd);
 		}
 	};
-
 	function areObjectsEqual(obj1, obj2) {
 		const keys = Object.keys(obj1);
 
@@ -580,29 +595,24 @@ const BidListPage = (props) => {
 		}
 		setFilterSortClearMenu(clearItems);
 	};
-
 	const handleUpdateOrderBox = (newOrderBox) => {
 		if (!arraysEqualIgnore(orderBox, newOrderBox)) {
 			setOrderBox(newOrderBox);
 			handleSearchParamsSortChange(newOrderBox);
 		}
 	};
-
 	const handleClearAllFilterBox = () => {
 		setFilterBox(initialFilterBox);
 		setTimeout(() => handleSearchParamsZeroing(initialFilterBox), 1000);
 	};
-
 	const handleClearOrderBox = () => {
 		setOrderBox([]);
 		handleSearchParamsSortChange([]);
 	};
-
 	const handleClearAllBoxes = () => {
 		handleClearAllFilterBox();
 		handleClearOrderBox();
 	};
-
 	const handleSearchParamsZeroing = (obj) => {
 		setSearchParams((prevParams) => {
 			const newParams = new URLSearchParams(prevParams);
@@ -880,12 +890,35 @@ const BidListPage = (props) => {
 								base_companies={filterCompaniesSelect}
 								userdata={userdata}
 								rerenderPage={handleRerenderPage}
+								error_alert={(path, e) => {
+									setIsAlertVisible(true);
+									setAlertMessage(`Произошла ошибка! ${path}`);
+									setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+									setAlertType('error');
+								}}
 							/>
 						</Spin>
 						<div className={'sa-space-panel sa-pa-12'}></div>
 					</div>
 				</Content>
 			</Layout>
+			{isAlertVisible && (
+				<Alert
+					message={alertMessage}
+					description={alertDescription}
+					type={alertType}
+					showIcon
+					closable
+					style={{
+						position: 'fixed',
+						top: 20,
+						right: 20,
+						zIndex: 9999,
+						width: 350,
+					}}
+					onClose={() => setIsAlertVisible(false)}
+				/>
+			)}
 		</div>
 	);
 };
