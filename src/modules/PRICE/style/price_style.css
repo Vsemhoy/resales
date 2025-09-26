@@ -1,0 +1,10 @@
+.ant-tree-list-holder-inner {
+    background-color: aliceblue !important;
+}
+.ant-table-small {
+    background: #e6f4ff !important;
+    border: 1px solid rgba(33, 120, 250, 0.7) !important;
+}
+.ant-table-cell {
+    color: black !important;
+}
