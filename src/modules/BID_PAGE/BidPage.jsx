@@ -2391,7 +2391,7 @@ const BidPage = (props) => {
 				width={'830px'}
 				styles={{
 					body: {
-						height: "40vh",
+						height: "450px",
 						overflowY: "auto",
 						width: '100%',
 						display: 'flex',

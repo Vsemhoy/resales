@@ -418,8 +418,10 @@ const BidListTable = (props) => {
 							data={bid}
 							is_active={isPreviewOpen && previewItem === bid.id}
 							on_double_click={handlePreviewOpen}
-							key={index}
+							key={`bid-row-${bid.id}`}
 							company_color={props.base_companies?.find((item) => item.id === bid.id_company)?.color}
+							userdata={props?.userdata}
+							rerenderPage={props.rerenderPage}
 						/>
 					)) : (
 						<Empty/>
