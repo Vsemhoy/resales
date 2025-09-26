@@ -65,29 +65,21 @@ const BidListRow = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				/*setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');*/
+				props.error_alert(path, e);
 			}
 		}
 	};
 	const fetchDeleteBid = async () => {
 		if (PRODMODE) {
-			const path = `/sales/data/deletebid/${data.id}`;
+			const path = `/api/sales/deletebid/${data.id}`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					_token: CSRF_TOKEN,
-				});
+				let response = await PROD_AXIOS_INSTANCE.delete(path);
 				if (response.data) {
 					props.rerenderPage();
 				}
 			} catch (e) {
 				console.log(e);
-				/*setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');*/
+				props.error_alert(path, e);
 			}
 		}
 	};
@@ -105,7 +97,7 @@ const BidListRow = (props) => {
 				label: <div onClick={() => fetchNewBid(2)}>Дублировать Счет</div>,
 			},
 		];
-		if (acls.includes(55) && (data.id_company < 2 || data.id_company === props?.userdata?.user?.active_company)) {
+		if (acls.includes(63) && (data.id_company < 2 || data.id_company === props?.userdata?.user?.active_company)) {
 			arr.push({
 				key: '3',
 				icon: <ArchiveBoxXMarkIcon height="18px" />,
