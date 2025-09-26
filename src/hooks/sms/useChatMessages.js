@@ -21,6 +21,7 @@ export const useChatMessages = ({ chatId = null, mock = {} }) => {
 		userdata: { chatId }, // можно пробрасывать chatId
 		logPrefix: 'ChatWS',
 		onMessage: (msg) => {
+
 			try {
 				if (msg.action === 'CHAT_MESSAGE' && msg.payload) {
 					if (!chatId || msg.payload.chat_id === chatId) {

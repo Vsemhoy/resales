@@ -62,6 +62,7 @@ export default function ChatContent({ chatId }) {
 	const [localMessages, setLocalMessages] = useState([]);
 
 	// объединяем сообщения из useChatMessages и локальные (до подтверждения с сервера)
+
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
 		const combined = [...smsList, ...filteredLocal];
