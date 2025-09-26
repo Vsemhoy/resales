@@ -99,7 +99,7 @@ const OrgPage_MainTab_Depart_Section = (props) => {
 						value: author,
 						max: 50,
 						required: true,
-						nullable: false,
+						allowClear: false,
 						placeholder: '',
 						name: 'username',
 					},
@@ -134,8 +134,7 @@ const OrgPage_MainTab_Depart_Section = (props) => {
               label: item.name,
             })),
 						max: 1150,
-						required: true,
-						nullable: false,
+						required: false,
 						placeholder: '',
 						name: 'id8an_statusmoney',
 					},
@@ -151,13 +150,15 @@ const OrgPage_MainTab_Depart_Section = (props) => {
               label: item.name,
             })),
 						name: 'id8an_conveyance',
+						 allowClear: true,
 					},
 				]}
         on_blur={(data)=>{
-						if (data.id8an_statusmoney){
+					console.log('COOOCOCO', data);
+						if (data.id8an_statusmoney !== undefined){
 							setStatusmoney(data.id8an_statusmoney);
 						}
-						if (data.id8an_conveyance){
+						if (data.id8an_conveyance !== undefined){
 							setConveyance(data.id8an_conveyance);
 						}
 
@@ -181,8 +182,8 @@ const OrgPage_MainTab_Depart_Section = (props) => {
               label: item.name,
             })),
 						max: 1150,
-						required: true,
-						nullable: false,
+						required: false,
+						allowClear: true,
 						placeholder: '',
 						name: 'id_orgs8an_list',
 					},
@@ -197,10 +198,10 @@ const OrgPage_MainTab_Depart_Section = (props) => {
 				]}
         on_blur={(data)=>{
           if (props.on_blur){
-						if (data.list_comment){
+						if (data.list_comment !== undefined){
 							setList_comment(data.list_comment);
 						}
-						if (data.id_orgs8an_list){
+						if (data.id_orgs8an_list !== undefined){
 							setId_orgs8an_list(data.id_orgs8an_list);
 						}
             props.on_blur(data);
