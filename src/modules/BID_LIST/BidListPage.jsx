@@ -13,7 +13,7 @@ import {
 	Select,
 	Spin,
 	Tag,
-	Tooltip, Alert,
+	Tooltip, Alert, message,
 } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
@@ -890,6 +890,12 @@ const BidListPage = (props) => {
 								base_companies={filterCompaniesSelect}
 								userdata={userdata}
 								rerenderPage={handleRerenderPage}
+								success_alert={(message) => {
+									setIsAlertVisible(true);
+									setAlertMessage(`Успех!`);
+									setAlertDescription(message);
+									setAlertType('success');
+								}}
 								error_alert={(path, e) => {
 									setIsAlertVisible(true);
 									setAlertMessage(`Произошла ошибка! ${path}`);

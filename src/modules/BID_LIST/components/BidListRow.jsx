@@ -61,6 +61,7 @@ const BidListRow = (props) => {
 					_token: CSRF_TOKEN,
 				});
 				if (response.data) {
+					props.rerenderPage();
 					window.open(`${BASE_ROUTE}/bids/${response.data.item_id}`, '_blank');
 				}
 			} catch (e) {
@@ -78,6 +79,7 @@ const BidListRow = (props) => {
 				});
 				if (response.data) {
 					props.rerenderPage();
+					props.success_alert(path, response.data.message);
 				}
 			} catch (e) {
 				console.log(e);

@@ -422,6 +422,7 @@ const BidListTable = (props) => {
 							company_color={props.base_companies?.find((item) => item.id === bid.id_company)?.color}
 							userdata={props?.userdata}
 							rerenderPage={props.rerenderPage}
+							success_alert={props.success_alert}
 							error_alert={props.error_alert}
 						/>
 					)) : (
