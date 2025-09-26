@@ -192,16 +192,7 @@ const EngineerListPage = (props) => {
 				});
 				if (response.data) {
 					const filters = response.data.content;
-					// setFilterStep(filters.step);
-					// setFilterProtectionProject(filters.protection_project);
-					// setFilterBidType(filters.type_select);
-					// setFilterPaySelect(filters.pay_select);
-					// setFilterAdminAcceptSelect(filters.admin_accept_select);
-					// setFilterPackageSelect(filters.package_select);
-					setFilterStatusSelect(filters.price_select);
-					// setFilterBidCurrencySelect(filters.bid_currency_select);
-					// setFilterNdsSelect(filters.nds_select);
-					// setFilterCompleteSelect(filters.complete_select);
+					setFilterStatusSelect(filters.statuses);
 					setFilterCompaniesSelect(filters.companies);
 					setBaseCompanies(filters.companies);
 				}
@@ -209,16 +200,7 @@ const EngineerListPage = (props) => {
 				console.log(e);
 			}
 		} else {
-			// setFilterStep(FILTERS.step);
-			// setFilterProtectionProject(FILTERS.protection_project);
-			// setFilterBidType(FILTERS.type_select);
-			// setFilterPaySelect(FILTERS.pay_select);
-			// setFilterAdminAcceptSelect(FILTERS.admin_accept_select);
-			// setFilterPackageSelect(FILTERS.package_select);
 			setFilterStatusSelect(FILTERS.statuses);
-			// setFilterBidCurrencySelect(FILTERS.bid_currency_select);
-			// setFilterNdsSelect(FILTERS.nds_select);
-			// setFilterCompleteSelect(FILTERS.complete_select);
 			setFilterCompaniesSelect(FILTERS.companies);
 			setBaseCompanies(FILTERS.companies);
 		}
