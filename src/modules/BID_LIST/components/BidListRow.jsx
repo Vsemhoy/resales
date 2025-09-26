@@ -61,6 +61,7 @@ const BidListRow = (props) => {
 					_token: CSRF_TOKEN,
 				});
 				if (response.data) {
+					props.rerenderPage();
 					window.open(`${BASE_ROUTE}/bids/${response.data.item_id}`, '_blank');
 				}
 			} catch (e) {
@@ -73,9 +74,12 @@ const BidListRow = (props) => {
 		if (PRODMODE) {
 			const path = `/api/sales/deletebid/${data.id}`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.delete(path);
+				let response = await PROD_AXIOS_INSTANCE.delete(path, {
+					_token: CSRF_TOKEN,
+				});
 				if (response.data) {
 					props.rerenderPage();
+					props.success_alert(path, response.data.message);
 				}
 			} catch (e) {
 				console.log(e);
@@ -88,19 +92,19 @@ const BidListRow = (props) => {
 		const arr = [
 			{
 				key: '1',
-				icon: <NewspaperIcon height="18px" />,
+				icon: <NewspaperIcon height="18px" onClick={() => fetchNewBid(1)}/>,
 				label: <div onClick={() => fetchNewBid(1)}>Дублировать КП</div>,
 			},
 			{
 				key: '2',
-				icon: <DocumentCurrencyDollarIcon height="18px" />,
+				icon: <DocumentCurrencyDollarIcon height="18px" onClick={() => fetchNewBid(2)}/>,
 				label: <div onClick={() => fetchNewBid(2)}>Дублировать Счет</div>,
 			},
 		];
 		if (acls.includes(63) && (data.id_company < 2 || data.id_company === props?.userdata?.user?.active_company)) {
 			arr.push({
 				key: '3',
-				icon: <ArchiveBoxXMarkIcon height="18px" />,
+				icon: <ArchiveBoxXMarkIcon height="18px" onClick={fetchDeleteBid}/>,
 				label: <div onClick={fetchDeleteBid}>Удалить</div>,
 			});
 		}
