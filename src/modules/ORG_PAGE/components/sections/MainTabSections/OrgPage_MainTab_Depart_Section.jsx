@@ -79,7 +79,7 @@ const OrgPage_MainTab_Depart_Section = (props) => {
 	}, []);
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
+		<div className={'sk-omt-stack'} style={{ borderLeft: '0px solid ' + props.color }}>
 			{/* <OrgPageSectionRow
             edit_mode={editMode}
             key={'fklasdjl'}
@@ -175,7 +175,7 @@ const OrgPage_MainTab_Depart_Section = (props) => {
 					{
 						type: 'select',
 						value: id_orgs8an_list,
-						options: filterData?.rate_lists?.map((item)=>({
+						options: selects?.rate_lists?.map((item)=>({
               key: "fssebli_" + item.id,
               value: item.id,
               label: item.name,

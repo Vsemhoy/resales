@@ -181,7 +181,7 @@ const OrgPage_MainTab_Payers_Section = (props) => {
 
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
+		<div className={'sk-omt-stack'} >
 
       <div>
       {requisites.map((item)=>(
