@@ -97,17 +97,23 @@ const OrgCallEditorSectionBox = (props) => {
     if (props.org_users) {
      
       let usess = [];
+      let uids = [];
       let fusers = props.org_users.filter((item)=>
         !item.lastname || !item.name || !item.middlename
       );
 
       for (let i = 0; i < fusers.length; i++) {
         const element = fusers[i];
-        let nm = `${element.lastname + (element.name ? ' ' : '') +  element.name + (element.middlename ? ' ' : '') +  element.middlename }`;
+        if (!uids.includes(element.id)){
+          let nm = `${element.lastname + (element.name ? ' ' : '') +  element.name + (element.middlename ? ' ' : '') +  element.middlename }`;
+          usess.push({
+            key: 'kjfealllo' + element.id,
+            value: element.value,
+            label: nm
+          });
 
-        if (!usess.includes(nm.trim())){
-          usess.push(nm.trim());
         }
+
       }
       setOrgUsers(usess);
     }
@@ -174,8 +180,13 @@ const OrgCallEditorSectionBox = (props) => {
     if (foundUser.contactstelephones.length){
       for (let index = 0; index < foundUser.contactstelephones.length; index++) {
         const element = foundUser.contactstelephones[index];
+        console.log('contactstelephones', element);
         if (!of.includes(element.number)){
-          of.push(element.number);
+          of.push({
+            key: 'fofofofof_' + element.id,
+            value: element.number + `${element.ext !== "" ? (" (" + element.ext + ")") : ""}`,
+            label: element.number + `${element.ext !== "" ? (" (" + element.ext + ")") : ""}`,
+          });
         }
       }
     }
@@ -183,8 +194,13 @@ const OrgCallEditorSectionBox = (props) => {
     if (foundUser.contactmobiles.length){
       for (let index = 0; index < foundUser.contactmobiles.length; index++) {
         const element = foundUser.contactmobiles[index];
+        console.log('contactmobiles',element);
         if (!of.includes(element.number)){
-        of.push(element.number);
+        of.push({
+          key: 'fofofofof_' + element.id,
+          value: element.number,
+          label: element.number,
+        });
         }
       }
     }
@@ -211,7 +227,7 @@ const OrgCallEditorSectionBox = (props) => {
     } else if (changed_data.id8ref_departaments !== undefined) {
       setDepart(changed_data.id8ref_departaments);
     } else if (changed_data.subscriber !== undefined) {
-      setSubscriber(changed_data.subscriber.trim());
+      setSubscriber(changed_data.subscriber);
     } else if (changed_data.post !== undefined) {
       setPost(changed_data.post.trim());
       } else if (changed_data.date !== undefined) {
@@ -357,6 +373,7 @@ const OrgCallEditorSectionBox = (props) => {
           },
         ]}
         // on_change={handleChangeData}
+        on_change={(v)=>{setSubscriber(v.subscriber)}}
         on_blur={handleChangeData}
       />
 
