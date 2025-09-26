@@ -51,6 +51,8 @@ export default function ChatContent({ chatId }) {
 	const currentUserId = userdata?.user?.id;
 
 	const getRole = useCompanion(currentUserId);
+
+	// получаем историю + live через useChatMessages
 	const { data: smsList = [], loading, error } = useChatMessages({ chatId, mock: MOCK });
 
 	const { sendSms, loading: sending } = useSendSms();
@@ -59,7 +61,7 @@ export default function ChatContent({ chatId }) {
 	const [showPicker, setShowPicker] = useState(false);
 	const [localMessages, setLocalMessages] = useState([]);
 
-	// 📦 Объединяем сообщения из API и локальные
+	// объединяем сообщения из useChatMessages и локальные (до подтверждения с сервера)
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
 		const combined = [...smsList, ...filteredLocal];
@@ -75,7 +77,10 @@ export default function ChatContent({ chatId }) {
 					id: msg.id || generateUUID(),
 					text: msg.text,
 					timestamp,
-					time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+					time: new Date(timestamp).toLocaleTimeString([], {
+						hour: '2-digit',
+						minute: '2-digit',
+					}),
 					role,
 					senderName:
 						role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`.trim(),
