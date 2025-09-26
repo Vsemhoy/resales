@@ -207,7 +207,7 @@ const EngineerListPage = (props) => {
 			setFilterCompaniesSelect(FILTERS.companies);
 			setBaseCompanies(FILTERS.companies);
 		}
-	};
+	}; 
 
 	const fetchBids = async () => {
 		if (PRODMODE) {
