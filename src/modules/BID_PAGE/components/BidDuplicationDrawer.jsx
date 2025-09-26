@@ -26,13 +26,15 @@ const BidDuplicationDrawer = (props) => {
     }, [props.bidType]);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoadingAutoComplete(true);
-            fetchOrgs().then(() => {
-                setTimeout(() => setIsLoadingAutoComplete(false), 500);
-            });
-        }, 500);
-        return () => clearTimeout(timer);
+        if (props.isOpenDrawer) {
+            const timer = setTimeout(() => {
+                setIsLoadingAutoComplete(true);
+                fetchOrgs().then(() => {
+                    setTimeout(() => setIsLoadingAutoComplete(false), 500);
+                });
+            }, 500);
+            return () => clearTimeout(timer);
+        }
     }, [searchText]);
 
     const fetchOrgs = async () => {
