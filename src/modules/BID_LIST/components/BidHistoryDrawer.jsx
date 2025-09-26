@@ -10,10 +10,9 @@ const BidHistoryDrawer = (props) => {
     const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [items, setItems] = useState([]);
-    const [actionOptions, setActionOptions] = useState(null);
     const [logs, setLogs] = useState([]);
     const [bidId, setBidId] = useState(null);
+    const [actionOptions, setActionOptions] = useState(null);
     const [bidActions, setBidActions] = useState({
         'create': null,
         'update': null,
@@ -62,32 +61,30 @@ const BidHistoryDrawer = (props) => {
     useEffect(() => {
         setIsMounted(true);
     }, []);
+
     useEffect(() => {
         if (props.bidId) {
             setBidId(props.bidId);
         }
     }, [props.bidId]);
+
     useEffect(() => {
         if (props.bidActions) {
             setBidActions(props.bidActions);
         }
     }, [props.bidActions]);
+
     useEffect(() => {
         if (bidId && isMounted && props.isOpenDrawer) {
             fetchActionOptions().then();
         }
     }, [bidId, props.isOpenDrawer]);
+
     useEffect(() => {
         if (page && bidId && isMounted && props.isOpenDrawer) {
-            fetchLogs(page).then();
+            fetchLogs().then();
         }
-    }, [page, props.isOpenDrawer]);
-    useEffect(() => {
-        if (actionOptions) {
-            createTabs().then();
-        }
-    }, [actionOptions]);
-
+    }, [page, bidId, props.isOpenDrawer]);
 
     const fetchActionOptions = async () => {
         if (PRODMODE) {
@@ -99,18 +96,19 @@ const BidHistoryDrawer = (props) => {
                         action_enum: 1,
                     },
                 };
-                const selects_response = await PROD_AXIOS_INSTANCE.post(path, format_data,);
+                const selects_response = await PROD_AXIOS_INSTANCE.post(path, format_data);
                 if (selects_response) {
                     setActionOptions(selects_response.data.selects.action_enum);
                 }
             } catch (e) {
                 console.log(e);
-                props.error_alert(path, e);
+                props.error_alert?.(path, e);
             }
         } else {
             setActionOptions(ACTION_OPTIONS);
         }
     };
+
     const fetchLogs = async () => {
         if (PRODMODE) {
             const path = `api/sales/bidlog/${bidId}?_token=${CSRF_TOKEN}&action_type=${page}`;
@@ -120,11 +118,11 @@ const BidHistoryDrawer = (props) => {
                 if (response) {
                     setLogs(response.data.logs);
                 }
+                setIsLoading(false);
             } catch (e) {
                 console.log(e);
-                props.error_alert(path, e);
+                props.error_alert?.(path, e);
                 setLogs([]);
-            } finally {
                 setIsLoading(false);
             }
         } else {
@@ -133,83 +131,101 @@ const BidHistoryDrawer = (props) => {
             setTimeout(() => setIsLoading(false), 500);
         }
     };
-    const createTabs = async () => {
-        const tabs = [];
 
-        for (const option of actionOptions) {
-            tabs.push({
-                key: option.value.toString(),
-                label: <Tooltip title={option.label}>{option.label}</Tooltip>,
-                children: (
-                    <Table
-                        columns={table_columns}
-                        dataSource={logs}
-                        size={"small"}
-                        pagination={false}
-                        bordered={true}
-                        scroll={{y: 500}}
-                        loading={isLoading}
-                    />
-                ),
-            });
-        }
+    const generateTabs = () => {
+        if (!actionOptions) return [];
 
-        setItems(tabs);
+        return actionOptions.map((option) => ({
+            key: option.value.toString(),
+            label: (
+                <Tooltip title={option.label}>
+                    <span>{option.label}</span>
+                </Tooltip>
+            ),
+            children: (
+                <Table
+                    columns={table_columns}
+                    dataSource={parseInt(option.value) === page ? logs : []}
+                    size={"small"}
+                    pagination={false}
+                    bordered={true}
+                    scroll={{y: 500}}
+                    loading={isLoading && parseInt(option.value) === page}
+                />
+            ),
+        }));
     };
+
+    const timelineItems = [
+        {
+            children: (
+                <div className={'sa-timeline__container'}>
+                    <div className={'sa-timeline__subtitle'}>Заявка создана</div>
+                    <div className={'sa-timeline__title'}>
+                        {bidActions.create?.date ?
+                            dayjs(bidActions.create?.date * 1000).format("DD.MM.YYYY HH:mm:ss") :
+                            '-'
+                        }
+                    </div>
+                    <div className={'sa-timeline__text'}>{bidActions.create?.username}</div>
+                </div>
+            ),
+            color: "green",
+            dot: <CheckCircleOutlined style={{fontSize: "16px"}}/>,
+        },
+        {
+            children: (
+                <div className={'sa-timeline__container'}>
+                    <div className={'sa-timeline__subtitle'}>Заявка обновлена</div>
+                    <div className={'sa-timeline__title'}>
+                        {bidActions.update?.date ?
+                            dayjs(bidActions.update?.date * 1000).format("DD.MM.YYYY HH:mm:ss") :
+                            '-'
+                        }
+                    </div>
+                    <div className={'sa-timeline__text'}>{bidActions.update?.username}</div>
+                </div>
+            ),
+            color: "blue",
+            dot: <RedoOutlined style={{fontSize: "16px"}}/>,
+        },
+        {
+            children: (
+                <div className={'sa-timeline__container'}>
+                    <div className={'sa-timeline__subtitle'}>Последний просмотр</div>
+                    <div className={'sa-timeline__title'}>
+                        {bidActions.view?.date ?
+                            dayjs(bidActions.view?.date * 1000).format("DD.MM.YYYY HH:mm:ss") :
+                            '-'
+                        }
+                    </div>
+                    <div className={'sa-timeline__text'}>{bidActions.view?.username}</div>
+                </div>
+            ),
+            color: "purple",
+            dot: <EyeOutlined style={{fontSize: "16px"}}/>,
+        },
+    ];
 
     return (
         <Drawer
             title={`История действий`}
             placement="right"
             width={600}
-            onClose={() => props.closeDrawer()}
+            onClose={() => props.closeDrawer?.()}
             open={props.isOpenDrawer}
         >
             <div style={{userSelect: "none"}}>
                 <Timeline
                     mode="left"
-                    items={[
-                        {
-                            children: (
-                                <div className={'sa-timeline__container'}>
-                                    <div className={'sa-timeline__subtitle'}>Заявка создана</div>
-                                    <div className={'sa-timeline__title'}>{bidActions.create?.date ? dayjs(bidActions.create?.date * 1000).format("DD.MM.YYYY HH:mm:ss") : '-'}</div>
-                                    <div className={'sa-timeline__text'}>{bidActions.create?.username}</div>
-                                </div>
-                            ),
-                            color: "green",
-                            dot: <CheckCircleOutlined style={{fontSize: "16px"}}/>,
-                        },
-                        {
-                            children: (
-                                <div className={'sa-timeline__container'}>
-                                    <div className={'sa-timeline__subtitle'}>Заявка обновлена</div>
-                                    <div className={'sa-timeline__title'}>{bidActions.update?.date ? dayjs(bidActions.update?.date * 1000).format("DD.MM.YYYY HH:mm:ss") : '-'}</div>
-                                    <div className={'sa-timeline__text'}>{bidActions.update?.username}</div>
-                                </div>
-                            ),
-                            color: "blue",
-                            dot: <RedoOutlined style={{fontSize: "16px"}}/>,
-                        },
-                        {
-                            children: (
-                                <div className={'sa-timeline__container'}>
-                                    <div className={'sa-timeline__subtitle'}>Последний просмотр</div>
-                                    <div className={'sa-timeline__title'}>{bidActions.view?.date ? dayjs(bidActions.view?.date * 1000).format("DD.MM.YYYY HH:mm:ss") : '-'}</div>
-                                    <div className={'sa-timeline__text'}>{bidActions.view?.username}</div>
-                                </div>
-                            ),
-                            color: "purple",
-                            dot: <EyeOutlined style={{fontSize: "16px"}}/>,
-                        },
-                    ]}
+                    items={timelineItems}
                 />
-                <div className={''}>
+                <div>
                     <Tabs
                         size={"small"}
                         type="card"
                         activeKey={page.toString()}
-                        items={items}
+                        items={generateTabs()}
                         onTabClick={(key) => setPage(parseInt(key))}
                     />
                 </div>
