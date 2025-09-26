@@ -7,6 +7,7 @@ import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {ACTION_OPTIONS, LOGS} from "../../BID_PAGE/mock/mock";
 
 const BidHistoryDrawer = (props) => {
+    const [isMounted, setIsMounted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [items, setItems] = useState([]);
@@ -59,7 +60,7 @@ const BidHistoryDrawer = (props) => {
     ];
 
     useEffect(() => {
-        console.log('drawer')
+        setIsMounted(true);
     }, []);
     useEffect(() => {
         if (props.bidId) {
@@ -72,20 +73,21 @@ const BidHistoryDrawer = (props) => {
         }
     }, [props.bidActions]);
     useEffect(() => {
-        if (bidId) {
+        if (bidId && isMounted && props.isOpenDrawer) {
             fetchActionOptions().then();
         }
-    }, [bidId]);
+    }, [bidId, props.isOpenDrawer]);
+    useEffect(() => {
+        if (page && bidId && isMounted && props.isOpenDrawer) {
+            fetchLogs(page).then();
+        }
+    }, [page, props.isOpenDrawer]);
     useEffect(() => {
         if (actionOptions) {
             createTabs().then();
         }
     }, [actionOptions]);
-    useEffect(() => {
-        if (page) {
-            fetchLogs(page).then();
-        }
-    }, [page]);
+
 
     const fetchActionOptions = async () => {
         if (PRODMODE) {
@@ -126,7 +128,9 @@ const BidHistoryDrawer = (props) => {
                 setIsLoading(false);
             }
         } else {
+            setIsLoading(true);
             setLogs(LOGS);
+            setTimeout(() => setIsLoading(false), 500);
         }
     };
     const createTabs = async () => {
