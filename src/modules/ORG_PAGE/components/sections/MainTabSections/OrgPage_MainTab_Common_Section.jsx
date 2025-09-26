@@ -66,7 +66,7 @@ const OrgPage_MainTab_Common_Section = (props) => {
 	// }, []);
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
+		<div className={'sk-omt-stack'} style={{ borderLeft: '0px solid ' + props.color }}>
 			{/* <OrgPageSectionRow
             edit_mode={editMode}
             key={'fklasdjl'}

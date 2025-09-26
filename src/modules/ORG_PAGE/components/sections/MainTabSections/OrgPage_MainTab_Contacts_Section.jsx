@@ -776,7 +776,7 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
+		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid #d6dbdd' }}>
 
 			<OrgPageSectionRow
         key={'faksdj_dk' + itemId}

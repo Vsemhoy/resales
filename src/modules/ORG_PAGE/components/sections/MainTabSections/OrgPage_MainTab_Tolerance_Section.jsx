@@ -357,36 +357,38 @@ const OrgPage_MainTab_Tolerance_Section = (props) => {
 
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
+		<div className={'sk-omt-stack'} style={{ borderLeft: '0px solid ' + props?.color }}>
 
+		{(anZendLicenses.length > 0 || anZendTolerances.length > 0) && (
 
-      <div className={'sa-tolerance-old-v'}>
-      {anZendLicenses.map((item)=>{
-        item.document_type = 1;
-        item.type = parseInt(item.id8an_typelicenses);
-        return (
-        <OPMTanZendToleranceSection
-          key={'OPMTCcontactemailsSection_1_' + item.id}
-          data={item}
-          edit_mode={editMode}
-          on_change={handleUpdateAnZendLicenseUnit}
-		  selects={selects}
-        />
-      )})}
+				<div className={'sa-tolerance-old-v'}>
+				{anZendLicenses.map((item)=>{
+					item.document_type = 1;
+					item.type = parseInt(item.id8an_typelicenses);
+					return (
+					<OPMTanZendToleranceSection
+						key={'OPMTCcontactemailsSection_1_' + item.id}
+						data={item}
+						edit_mode={editMode}
+						on_change={handleUpdateAnZendLicenseUnit}
+				selects={selects}
+					/>
+				)})}
 
-      {anZendTolerances.map((item)=>{
-        item.document_type = 2;
-        item.type = parseInt(item.id8an_typetolerance);
-        return (
-        <OPMTanZendToleranceSection
-          key={'OPMTCcontactemailsSection_2_' + item.id}
-          data={item}
-          edit_mode={editMode}
-          on_change={handleUpdateAnZendToleranceUnit}
-		  		selects={selects}
-        />
-      )})}
-	  </div>
+				{anZendTolerances.map((item)=>{
+					item.document_type = 2;
+					item.type = parseInt(item.id8an_typetolerance);
+					return (
+					<OPMTanZendToleranceSection
+						key={'OPMTCcontactemailsSection_2_' + item.id}
+						data={item}
+						edit_mode={editMode}
+						on_change={handleUpdateAnZendToleranceUnit}
+						selects={selects}
+					/>
+				)})}
+			</div>
+		)}
 
       <div>
       {tolerances.map((item)=>(
