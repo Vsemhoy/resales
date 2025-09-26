@@ -68,7 +68,8 @@ const EngineerListPage = (props) => {
 		status: null,
 		bid_id: null,
 		manager: null,
-		created_at: null
+		created_at: null,
+		comment: null,
 	});
 	const [orderBox, setOrderBox] = useState({});
 
@@ -217,6 +218,7 @@ const EngineerListPage = (props) => {
 				id: filterBox.bid_id,
 				man: filterBox.manager,
 				created_at: filterBox.created_at,
+				comment: filterBox.comment,
 				sort_orders: orderBox,
 			};
 			try {
