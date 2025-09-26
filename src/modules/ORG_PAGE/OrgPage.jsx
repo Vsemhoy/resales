@@ -495,7 +495,7 @@ const OrgPage = (props) => {
   	const get_departs = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/admin/staff/data/getdepartments', {
+				let response = await PROD_AXIOS_INSTANCE.post('/api/timeskud/claims/getdepartments', {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
