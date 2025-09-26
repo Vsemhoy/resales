@@ -79,7 +79,7 @@ const BidListRow = (props) => {
 				});
 				if (response.data) {
 					props.rerenderPage();
-					props.success_alert(path, response.data.message);
+					props.success_alert(response.data.message);
 				}
 			} catch (e) {
 				console.log(e);
