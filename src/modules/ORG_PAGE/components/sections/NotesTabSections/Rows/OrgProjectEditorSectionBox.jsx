@@ -37,7 +37,8 @@ const OrgNoteEditorSectionBox = (props) => {
     const [typeEac,     setTypeEac] = useState('');
     const [dateEnd,     setDateEnd] = useState(null);
     const [erector,     setErector] = useState('');
-    const [linkbidId,   setLinkbidId] = useState([]);
+    // const [linkbidId,   setLinkbidId] = useState([]);
+    const [bidsId,      setBidsId] = useState([]);
     const [dateCreate,  setDateCreate] = useState( dayjs().unix() ); 
     const [idCompany,   setIdCompany] = useState('');
     const [authorId,    setAuthorId] = useState(null);
@@ -96,7 +97,8 @@ const OrgNoteEditorSectionBox = (props) => {
         setDateEnd(props.data.date_end);
         setErector(props.data.erector_id);
         setSearchErector(props.data.erector_id);
-        setLinkbidId(props.data?.bidsId );
+        // setLinkbidId(props.data?.bidsId );
+        setBidsId(props.data?.bidsId );
         setDateCreate(props.data.date_create);
         setIdCompany(props.data.id_company);
         setDeleted(props.data.deleted);
@@ -129,6 +131,7 @@ const OrgNoteEditorSectionBox = (props) => {
 
 
 const handleChangeData = (changed_data) => {
+  console.log('CALL ON CHANGE', changed_data);
     if (changed_data.id_orgs !== undefined) {
         setOrgId(changed_data.id_orgs);
     } else if (changed_data.id8an_projecttype !== undefined) {
@@ -163,8 +166,10 @@ const handleChangeData = (changed_data) => {
         setDateEnd(changed_data.date_end);
     } else if (changed_data.erector_id !== undefined) {
         setErector(changed_data.erector_id);
+    // } else if (changed_data.bidsId !== undefined) {
+    //     setLinkbidId(changed_data.bidsId);
     } else if (changed_data.bidsId !== undefined) {
-        setLinkbidId(changed_data.bidsId);
+        setBidsId(changed_data.bidsId);
     } else if (changed_data.date_create !== undefined) {
         setDateCreate(changed_data.date_create);
     } else if (changed_data.id_company !== undefined) {
@@ -198,7 +203,7 @@ const handleChangeData = (changed_data) => {
             result.typepaec = typeEac; // typepaec → typeEac
             result.date_end = dateEnd;
             result.erector_id = erector; // erector_id → erector
-            result.bidsId = linkbidId; // linkbid_id → linkbidId
+            result.bidsId     = bidsId; // linkbid_id → linkbidId
             result.date_create = dateCreate;
             result.id_company = idCompany; // id_company → idCompany
             result.author_id = authorId; // author_id → authorId
@@ -216,7 +221,7 @@ const handleChangeData = (changed_data) => {
     }, [orgId, projType, name, equipment, customer,
       address, stage, contactperson, date,
       cost, bonus, comment, typeEac,
-      dateEnd, erector, linkbidId, idCompany,
+      dateEnd, erector, bidsId, idCompany,
       authorId, author
     ]);
 
@@ -563,12 +568,12 @@ const handleChangeData = (changed_data) => {
                 {
                   options: mountBidList,
                   type: OPS_TYPE.MSELECT,
-                  value: linkbidId,
+                  value: bidsId,
                   max: Number.MAX_SAFE_INTEGER,
                   required: false,
                   nullable: true,
                   placeholder: 'ID коммерческого предложения',
-                  name: 'linkbid_id',
+                  name: 'bidsId',
                   link: '/bids/',
                   blank: true,
                   showSearch: true,
@@ -576,7 +581,7 @@ const handleChangeData = (changed_data) => {
                 },
             ]}
             // on_change={handleChangeData}
-            // on_blur={handleChangeData}
+            on_blur={handleChangeData}
             // on_change={(data)=>{console.log(data)}}
             on_change={handleChangeData}
         />

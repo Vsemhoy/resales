@@ -13,7 +13,7 @@ import OPMTCcontactmessangersSection from './subsections/OPMTCcontactmessangersS
 import dayjs from 'dayjs';
 import { compareObjects } from '../../../../../components/helpers/CompareHelpers';
 
-const OrgPageMainTabContactsSection = (props) => {
+const OrgPage_MainTab_Contacts_Section = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 	const [filterData, setFilterData] = useState([]);
 
@@ -123,7 +123,7 @@ const OrgPageMainTabContactsSection = (props) => {
       result.contactemails =      contactemails.concat(newContactemails);
       result.contactmessangers =  contactmessangers.concat(newContactmessangers);
 
-			console.log('OrgPageMainTabContactsSection', result);
+			console.log('OrgPage_MainTab_Contacts_Section', result);
 
 			if (props.on_change) {
 				props.on_change(itemId, result);
@@ -1087,4 +1087,4 @@ const OrgPageMainTabContactsSection = (props) => {
 	);
 };
 
-export default OrgPageMainTabContactsSection;
+export default OrgPage_MainTab_Contacts_Section;

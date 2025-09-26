@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import OrgPageMainTabCommonSection from '../components/sections/MainTabSections/OrgPageMainTabCommonSection';
-import OrgPageMainTabDepartSection from '../components/sections/MainTabSections/OrgPageMainTabDepartSection';
-import OrgPageMainTabContactsSection from '../components/sections/MainTabSections/OrgPageMainTabContactsSection';
-import OrgPageMainTabContactinfoSection from '../components/sections/MainTabSections/OrgPageMainTabContactinfoSection';
-import OrgPageMainTabPayersSection from '../components/sections/MainTabSections/OrgPageMainTabPayersSection';
+
 import { Badge, Button, Collapse, Empty } from 'antd';
 import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { forIn } from 'lodash';
-import OrgPageMainTabToleranceSection from '../components/sections/MainTabSections/OrgPageMainTabToleranceSection';
+
 import { PlusCircleOutlined } from '@ant-design/icons';
+import OrgPage_MainTab_Contacts_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Contacts_Section';
+import OrgPage_MainTab_Common_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Common_Section';
+import OrgPage_MainTab_Depart_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Depart_Section';
+import OrgPage_MainTab_Contactinfo_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Contactinfo_Section';
+import OrgPage_MainTab_Tolerance_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Tolerance_Section';
+import OrgPage_MainTab_Payers_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Payers_Section';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -64,7 +66,7 @@ const MainTabPage = (props) => {
 
   useEffect(() => {
     let contics = [];
-    setOriginalData(JSON.parse(JSON.stringify(props.base_data)));
+    // setOriginalData(JSON.parse(JSON.stringify(props.base_data)));
     if (baseData?.contacts){
       contics = baseData.contacts.map((item)=>({
         key: "controw_org_" + item.id,
@@ -111,7 +113,7 @@ const MainTabPage = (props) => {
         
         </div>,
         children: <div className={`${item.deleted ? 'ant-collapse-content-box-deleted' : ''}`}> 
-        <OrgPageMainTabContactsSection
+        <OrgPage_MainTab_Contacts_Section
             color={item.deleted ? '#e50000' : '#f39821ff' }
             edit_mode={editMode}
             data={item}
@@ -121,7 +123,7 @@ const MainTabPage = (props) => {
       }))
     }
     setStructureContacts(contics);
-  }, [show, editMode, baseData]);
+  }, [show, editMode, baseData?.contacts]);
 
 
 
@@ -169,7 +171,7 @@ const MainTabPage = (props) => {
       {
         key: 'mainorgsec_11',
         label: <div className={`sa-flex-space`}><div>Общая информация</div><div></div></div>,
-        children: <OrgPageMainTabCommonSection
+        children: <OrgPage_MainTab_Common_Section
           color={'#2196f3'}
           edit_mode={editMode}
           data={baseData}
@@ -180,7 +182,7 @@ const MainTabPage = (props) => {
       {
         key: 'mainorgsec_12',
         label: <div className={`sa-flex-space`}><div>Информация отдела</div><div></div></div>,
-        children: <OrgPageMainTabDepartSection
+        children: <OrgPage_MainTab_Depart_Section
           color={'blueviolet'}
           edit_mode={editMode}
           data={baseData}
@@ -193,7 +195,7 @@ const MainTabPage = (props) => {
         label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div>
        
         </div>,
-        children: <OrgPageMainTabContactinfoSection
+        children: <OrgPage_MainTab_Contactinfo_Section
           color={'#799119ff'}
           edit_mode={editMode} 
           data={baseData}
@@ -248,7 +250,7 @@ const MainTabPage = (props) => {
           </div>
 
         </div>,
-          children: baseData ? ( <OrgPageMainTabToleranceSection
+          children: baseData ? ( <OrgPage_MainTab_Tolerance_Section
           color={'#30c97aff'}
           edit_mode={editMode} 
           data={baseData}
@@ -324,7 +326,7 @@ const MainTabPage = (props) => {
             </Button>
         )}
         </div>,
-        children: <OrgPageMainTabPayersSection
+        children: <OrgPage_MainTab_Payers_Section
           color={'#f0f321ff'}
           edit_mode={editMode} 
           data={baseData}
@@ -336,7 +338,8 @@ const MainTabPage = (props) => {
     ];
 
     setStructureItems(secids);
-  },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
+  },[show, editMode, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance, structureContacts]);
+  // },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
 
 
 
@@ -415,15 +418,22 @@ const MainTabPage = (props) => {
       setEditedContactIds([...editedContactIds, id]);
     }
 
-    let ndt = JSON.parse(JSON.stringify(baseData)); // В ином случае не вызовется коллбэк
+    let ndt = baseData;// JSON.parse(JSON.stringify(baseData)); // В ином случае не вызовется коллбэк
     let newContacts = [];
     newContacts = contacts.map((item) => (item.id === id ? updata : item));
 
     ndt.contacts = newContacts;
-    setBaseData(ndt);
+    // setBaseData(ndt);
 
     console.log("UPDATE CONTACT");
   }
+
+
+
+
+
+
+
 
 
 
