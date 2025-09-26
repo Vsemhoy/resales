@@ -66,6 +66,9 @@ const EngineerListPage = (props) => {
 	const [filterBox, setFilterBox] = useState({
 		id_company: null,
 		status: null,
+		bid_id: null,
+		manager: null,
+		created_at: null
 	});
 	const [orderBox, setOrderBox] = useState({});
 
@@ -211,6 +214,9 @@ const EngineerListPage = (props) => {
 			const data = {
 				id_company: filterBox.id_company,
 				status: filterBox.status,
+				id: filterBox.bid_id,
+				man: filterBox.manager,
+				created_at: filterBox.created_at,
 				sort_orders: orderBox,
 			};
 			try {
