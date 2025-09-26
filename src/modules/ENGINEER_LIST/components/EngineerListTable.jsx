@@ -128,9 +128,10 @@ const EngineerListTable = (props) => {
 	}
 
 	const handleSpecificationFinal = async () => {
+		console.log(openAddIntoBidSpecificationId);
 		if (PRODMODE){
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/final/' + setOpenAddIntoBidSpecificationId, {
+				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/final/' + openAddIntoBidSpecificationId, {
 					_token: CSRF_TOKEN,
 					data: {}
 				});
