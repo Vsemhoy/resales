@@ -6,7 +6,6 @@ import { useUserData } from '../../../context/UserDataContext';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { useChatMessages } from '../../../hooks/sms/useChatMessages';
-import { useChatWebSocket } from '../../../hooks/sms/useChatWebSocket';
 import { nanoid } from 'nanoid';
 import { ChatDivider } from './ChatDivider';
 import styles from './style/Chat.module.css';
@@ -59,23 +58,11 @@ export default function ChatContent({ chatId }) {
 	const [text, setText] = useState('');
 	const [showPicker, setShowPicker] = useState(false);
 	const [localMessages, setLocalMessages] = useState([]);
-	const [incomingMessages, setIncomingMessages] = useState([]);
 
-	// 🔌 Подключаем WebSocket
-	useChatWebSocket({
-		userId: currentUserId,
-		onMessage: (message) => {
-			if (message?.action === 'NEWMESSAGE' && message.data?.chat_id === chatId) {
-				setIncomingMessages((prev) => [...prev, message.data]);
-			}
-		},
-	});
-
-	// 📦 Объединяем сообщения из API, WebSocket и локальные
+	// 📦 Объединяем сообщения из API и локальные
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
-		const filteredIncoming = incomingMessages.filter((msg) => msg.chat_id === chatId);
-		const combined = [...smsList, ...filteredIncoming, ...filteredLocal];
+		const combined = [...smsList, ...filteredLocal];
 
 		return combined
 			.map((msg) => {
@@ -95,7 +82,7 @@ export default function ChatContent({ chatId }) {
 				};
 			})
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [smsList, localMessages, incomingMessages, getRole, chatId]);
+	}, [smsList, localMessages, getRole, chatId]);
 
 	const messagesWithDividers = useMemo(() => injectDayDividers(allMessages), [allMessages]);
 
