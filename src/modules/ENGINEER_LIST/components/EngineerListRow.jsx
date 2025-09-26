@@ -87,10 +87,14 @@ const EngineerListRow = (props) => {
 						<div style={{ display: 'flex', gap: '8px' }}>
 							{(props.activeRole === 1 || props.superUser === 1) && (
 								<>
-									<Button type={'primary'} style={{ width: '100px' }}>
+									<Button type={'primary'} style={{ width: '100px' }}
+											onClick={() => {props.setOpenCopySpecification(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
+									>
 										Копировать
 									</Button>
-									<Button type={'primary'} danger>
+									<Button type={'primary'} danger
+											onClick={() => {props.handleSpecificationFinal(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
+									>
 										Отправить
 									</Button>
 								</>
@@ -98,11 +102,14 @@ const EngineerListRow = (props) => {
 
 							{(props.activeRole === 2 || props.superUser === 1) && (
 								<>
-									<Button type={'primary'} style={{ width: '100px' }}>
-										КП
+									<Button type={'primary'} style={{ width: '100px' }}
+									>
+										Создать КП
 									</Button>
-									<Button type={'primary'} danger>
-										СЧЕТ
+									<Button type={'primary'} danger
+											onClick={() => {props.setOpenAddIntoBidSpecification(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
+									>
+										Добавить в КП
 									</Button>
 								</>
 							)}
