@@ -58,7 +58,7 @@ const OrgCallEditorSectionBox = (props) => {
       // if (props.data.id_orgs !== org){
       setOrg(props.data.id_orgs);
       setTheme(props.data.theme);
-      setNote(props.data.note);
+      setNote(props.data.notes);
       setDate(props.data.date);
       setCreator(props.data.id8staff_list);
       setDeleted(props.data.deleted);
@@ -204,8 +204,8 @@ const OrgCallEditorSectionBox = (props) => {
     console.log('changed_data', changed_data)
     if (changed_data.theme !== undefined) {
       setTheme(changed_data.theme);
-    } else if (changed_data.note !== undefined) {
-      setNote(changed_data.note);
+    } else if (changed_data.notes !== undefined) {
+      setNote(changed_data.notes);
     } else if (changed_data.id8staff_list !== undefined) {
       setCreator(changed_data.id8staff_list);
     } else if (changed_data.id8ref_departaments !== undefined) {
