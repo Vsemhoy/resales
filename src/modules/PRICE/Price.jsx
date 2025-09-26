@@ -11,7 +11,9 @@ import * as XLSX from 'xlsx';
 
 import style from './style/price.module.css';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
-import { DS_CURRENCY } from './mock/mock';
+import {DS_CURRENCY, PRICE} from './mock/mock';
+
+import './style/price_style.css'
 
 const Price = () => {
 	const defaultCheckedList = ['Предпродажа', 'Проектная', 'Прайс 20', 'Прайс 30'];
@@ -192,43 +194,49 @@ const Price = () => {
 
 	useEffect(() => {
 		const get_fields = async () => {
-			const format_data = {
-				_token: CSRF_TOKEN,
-			};
-			try {
-				setLoading(true);
-				let fields_req = await PROD_AXIOS_INSTANCE.post(`api/sales/price`, format_data);
-				if (fields_req) {
-					setData(fields_req.data.data[0].childs);
+			if (PRODMODE) {
+				const format_data = {
+					_token: CSRF_TOKEN,
+				};
+				try {
+					setLoading(true);
+					let fields_req = await PROD_AXIOS_INSTANCE.post(`api/sales/price`, format_data);
+					if (fields_req) {
+						setData(fields_req.data.data[0].childs);
+					}
+				} catch (e) {
+					console.log(e);
+				} finally {
+					setLoading(false);
 				}
-			} catch (e) {
-				console.log(e);
-			} finally {
-				setLoading(false);
+			} else {
+				setData(PRICE.childs);
 			}
 		};
 		const get_currency = async () => {
-			try {
-				setLoading(true);
-				const format_data = {
-					_token: CSRF_TOKEN,
-					data: {},
-				};
-				const currency_response = await PROD_AXIOS_INSTANCE.post(
-					`api/currency/getcurrency`,
-					format_data
-				);
-				if (currency_response) {
-					setCurrency(currency_response.data);
+			if (PRODMODE) {
+				try {
+					setLoading(true);
+					const format_data = {
+						_token: CSRF_TOKEN,
+						data: {},
+					};
+					const currency_response = await PROD_AXIOS_INSTANCE.post(
+						`api/currency/getcurrency`,
+						format_data
+					);
+					if (currency_response) {
+						setCurrency(currency_response.data);
+					}
+				} catch (e) {
+					console.log(e);
+				} finally {
+					setLoading(false);
 				}
-			} catch (e) {
-				console.log(e);
-			} finally {
-				setLoading(false);
 			}
 		};
-		PRODMODE && get_fields();
-		PRODMODE && get_currency();
+		get_fields().then();
+		get_currency().then();
 	}, []);
 
 	useEffect(() => {
@@ -324,15 +332,7 @@ const Price = () => {
 	if (loading) return <Spin tip="Загрузка прайс-листа..." />;
 
 	return (
-		<div
-			style={{
-				padding: 20,
-				marginTop: '150px',
-				width: '100%',
-				// maxWidth: "1920px",
-				overflow: 'auto',
-			}}
-		>
+		<div style={{backgroundColor: 'aliceblue', width: '100%', height: 'calc(100vh - 50px)'}}>
 			<div className={style.switch__currency}>
 				<div>
 					<Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
