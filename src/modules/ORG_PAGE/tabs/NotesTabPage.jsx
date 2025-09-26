@@ -175,7 +175,7 @@ const NotesTabPage = (props) => {
 							data={item}
 							on_delete={handleDeleteRealUnit}
 							on_change={handleUpdateRealUnit}
-							edit_mode={editMode}
+							// edit_mode={editMode}
 							// selects_data={props.selects_data}
 						/>
 					),
@@ -187,7 +187,7 @@ const NotesTabPage = (props) => {
 			setStructureItems([]);
 		}
 		setLoading(false);
-	}, [baseData, editMode]);
+	}, [baseData]);
 
 	useEffect(() => {
 		console.log('ORIGGINAL DATA', baseData, originalData);

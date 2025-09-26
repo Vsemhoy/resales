@@ -13,7 +13,7 @@ import OPMTinfoContactAddressSection from './subsections/OPMTinfoContactAddressS
 
 
 
-const OrgPageMainTabContactinfoSection = (props) => {
+const OrgPage_MainTab_Contactinfo_Section = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 
   const [itemId,         setItemId]           = useState(0);
@@ -657,7 +657,8 @@ const OrgPageMainTabContactinfoSection = (props) => {
 						type: OPS_TYPE.SELECT,
 						value: id8org_towns,
 						max: 2150,
-            options: selects?.towns.filter((item)=>item.id_region === id8org_regions).map((item)=>({
+            // options: selects?.towns.filter((item)=>item.id_region === id8org_regions).map((item)=>({
+            options: selects?.towns.map((item)=>({
               key: "twnitm_" + item.value,
               value: parseInt(item.value),
               label: item.name
@@ -685,7 +686,25 @@ const OrgPageMainTabContactinfoSection = (props) => {
 					}
 				]}
         
+
+        // on_change={(data)=>{
+        //   console.log(data);
+        // }}
         on_blur={(data)=>{
+          console.log(data, selects.towns);
+          if (data.id8org_towns) { setId8org_towns(data.id8org_towns);
+            let ttown = selects?.towns.find((item)=> item.value === data.id8org_towns);
+            if (ttown){
+              console.log('FIND TOWN', ttown);
+              if (ttown.id_region !== id8org_regions){
+                setId8org_regions(ttown.id_region);
+              }
+            }
+
+           };
+          if (data.id8org_regions) {setId8org_regions(data.id8org_regions) };
+
+
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -799,6 +818,7 @@ const OrgPageMainTabContactinfoSection = (props) => {
 				]}
         
         on_blur={(data)=>{
+          if (data.site) {setSite(data.site) };
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -873,4 +893,4 @@ const OrgPageMainTabContactinfoSection = (props) => {
 	);
 };
 
-export default OrgPageMainTabContactinfoSection;
+export default OrgPage_MainTab_Contactinfo_Section;
