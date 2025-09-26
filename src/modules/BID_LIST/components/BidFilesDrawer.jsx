@@ -38,13 +38,13 @@ const BidFilesDrawer = (props) => {
     ];
 
     useEffect(() => {
-        if (props.bidId) {
+        if (props.bidId && props.isOpenDrawer) {
             setIsLoading(true);
             fetchFiles().then(() => {
                 setIsLoading(false);
             });
         }
-    }, [props.bidId]);
+    }, [props.bidId, props.isOpenDrawer]);
 
     const fetchFiles = async () => {
         if (PRODMODE) {
