@@ -44,6 +44,12 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 
 	useEffect(() => {
 		seteditMode(props.edit_mode);
+    if (!props.edit_mode){
+      setNewAddresses([]);
+      setNewEmails([]);
+      setNewLegaladdresses([]);
+      setNewPhones([]);
+    }
 	}, [props.edit_mode]);
 
 
