@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './components/style/orglistpage.css';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import {
 	Affix,
@@ -541,6 +541,41 @@ const OrgListPage = (props) => {
 	//   updateURL(filterBox,orderBox,currentPage,onPage,previewItem,tab);
 	// }
 
+
+	const handleCreateNewOrg = async ()=>{
+		try {
+				const format_data = {
+					
+					_token: CSRF_TOKEN,
+				
+				};
+				let new_bid_response = await PROD_AXIOS_INSTANCE.post(
+					"/api/sales/orgcreate",
+					format_data,
+				);
+				if (new_bid_response) {
+					window.open(
+						window.location.origin + '/' + HTTP_ROOT + '/orgs/' +
+						new_bid_response.data.org_id, 
+						"_blank"
+					);
+					// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
+				}
+			} catch (e) {
+				console.log(e);
+				if (!PRODMODE){
+					window.open(
+							'/orgs/' +
+							targetRowId, 
+							"_blank"
+						);
+				}
+			}
+			get_orglist_async();
+	}
+
+
+
 	return (
 		<div
 			className={`app-page ${openedFilters ? 'sa-filer-opened' : ''}`}
@@ -604,8 +639,10 @@ const OrgListPage = (props) => {
 								</Tag>
 							</div>
 							<div style={{ display: 'flex', alignItems: 'end' }}>
-								{userdata?.user?.sales_role === 1 && (
-									<Button type={'primary'} icon={<PlusOutlined />}>
+								{userdata?.user?.sales_role === 1 && userdata?.acls?.includes(60) && (
+									<Button type={'primary'} icon={<PlusOutlined />}
+										onClick={handleCreateNewOrg}
+									>
 										Добавить
 									</Button>
 								)}

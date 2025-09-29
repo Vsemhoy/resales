@@ -143,6 +143,15 @@ const OrgPageSectionRow = (props) => {
 		});
 	};
 
+
+
+
+
+
+
+
+
+
 	// Рендер одного поля
 	const renderField = (field, value, onChange) => {
 		const isRequired = field.required && !field.nullable;
@@ -234,13 +243,16 @@ const OrgPageSectionRow = (props) => {
 			case 'email':
 				return (
 					<Input
-						variant="borderless"
+						variant={field.required ? '' : 'borderless'}
 						size="small"
 						{...commonProps}
 						type={field.type}
 						placeholder={field.placeholder ? field.placeholder : isRequired ? 'Обязательно' : ''}
 						allowClear={field.nullable}
 						maxLength={field.max}
+						required={field.required}
+						// status="error"
+						
 					/>
 				);
 

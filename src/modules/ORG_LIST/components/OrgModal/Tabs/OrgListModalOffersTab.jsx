@@ -1,7 +1,7 @@
 import { Button, Pagination, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../../../config/config';
 import { MODAL_OFFERS_LIST } from '../../mock/MODALOFFERSTABMOCK';
 import OrgOfferModalRow from './TabComponents/RowTemplates/OrgOfferModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
@@ -105,6 +105,44 @@ const OrgListModalOffersTab = (props) => {
 		}
 	}, [orgName]);
 
+
+
+		const create_bid = async (type, org_id) => {
+				try {
+					const format_data = {
+						
+						_token: CSRF_TOKEN,
+						data: {
+							org: org_id,
+							type: type,
+						},
+					};
+					let new_bid_response = await PROD_AXIOS_INSTANCE.post(
+						"/sales/data/makebid",
+						format_data,
+					);
+					if (new_bid_response) {
+						window.open(
+							window.location.origin + '/' + HTTP_ROOT + '/bids/' +
+							new_bid_response.data.bid.id, 
+							"_blank"
+						);
+						// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
+					}
+				} catch (e) {
+					console.log(e);
+					if (!PRODMODE){
+						window.open(
+								'/bids/' +
+								type, 
+								"_blank"
+							);
+					}
+				}
+				get_org_data_action(orgId, currentPage, onPage);
+			};
+
+
 	return (
 		<Spin spinning={loading}>
 			<div className={'sa-orgtab-container'}>
@@ -132,8 +170,13 @@ const OrgListModalOffersTab = (props) => {
 							Всего {dataList.length}
 						</Tag>
 					</div>
-					<div>
-						{/* Здесь будут фильтры */}
+					<div className={'sa-flex-gap'}>
+											{/* Здесь будут фильтры */}
+											<Button 
+											size={'small'}
+												onClick={()=>{create_bid(orgId, 1)}}>
+												Создать КП
+											</Button>
 						<NavLink to={navigateLink}>
 							<Button size={'small'}>Открыть в полном списке</Button>
 						</NavLink>
