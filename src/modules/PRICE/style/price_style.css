@@ -32,7 +32,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
+    /*justify-content: center;*/
     gap: 10px;
     margin-top: 20px;
     margin-right: 12px;
@@ -41,6 +41,7 @@
     border-radius: 6px;
     position: sticky;
     top: 120px;
+    height: 196px;
 }
 .sa-price-grid-cell {
     text-align: left;
@@ -67,4 +68,11 @@
 }
 .ant-tree-treenode[aria-expanded] .ant-tree-node-content-wrapper {
     width: auto !important;
+}
+
+.sa-price-page .ant-alert-message {
+    text-align: left !important;
+}
+.sa-price-page .ant-alert-description {
+    text-align: justify !important;
 }

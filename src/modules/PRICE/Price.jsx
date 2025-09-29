@@ -5,7 +5,7 @@ import { PRODMODE, CSRF_TOKEN } from '../../config/config';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
 
-import {Tree, Button, Spin, message, Table, Tag, Switch, Divider, Checkbox, Layout, Affix} from 'antd';
+import {Tree, Button, Spin, message, Table, Tag, Switch, Divider, Checkbox, Layout, Affix, Alert} from 'antd';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 
@@ -53,6 +53,11 @@ const Price = () => {
 	const [checkedList, setCheckedList] = useState(defaultCheckedList);
 	const [data, setData] = useState([]);
 
+	const [isAlertVisible, setIsAlertVisible] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertDescription, setAlertDescription] = useState('');
+	const [alertType, setAlertType] = useState('');
+
 	useEffect(() => {
 		fetchFields().then();
 		fetchCurrency().then();
@@ -62,21 +67,35 @@ const Price = () => {
 		const treeNodes = mapDataToTreeNodes(data);
 		setTreeData(treeNodes);
 	}, [data, checkedList, currentCurrency]);
+	useEffect(() => {
+		if (isAlertVisible && alertType !== 'error') {
+			const timer = setTimeout(() => {
+				setIsAlertVisible(false);
+			}, 3000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [isAlertVisible]);
 
 	const fetchFields = async () => {
 		if (PRODMODE) {
 			const format_data = {
 				_token: CSRF_TOKEN,
 			};
+			const path = `api/sales/price`;
 			try {
 				setLoading(true);
-				let fields_req = await PROD_AXIOS_INSTANCE.post(`api/sales/price`, format_data);
+				let fields_req = await PROD_AXIOS_INSTANCE.post(path, format_data);
 				if (fields_req) {
 					setData(fields_req.data.data[0].childs);
 				}
+				setLoading(false);
 			} catch (e) {
 				console.log(e);
-			} finally {
+				setIsAlertVisible(true);
+				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 				setLoading(false);
 			}
 		} else {
@@ -85,22 +104,24 @@ const Price = () => {
 	};
 	const fetchCurrency = async () => {
 		if (PRODMODE) {
+			const path = `api/currency/getcurrency`;
 			try {
 				setLoading(true);
 				const format_data = {
 					_token: CSRF_TOKEN,
 					data: {},
 				};
-				const currency_response = await PROD_AXIOS_INSTANCE.post(
-					`api/currency/getcurrency`,
-					format_data
-				);
+				const currency_response = await PROD_AXIOS_INSTANCE.post(path, format_data);
 				if (currency_response) {
 					setCurrency(currency_response.data);
 				}
+				setLoading(false);
 			} catch (e) {
 				console.log(e);
-			} finally {
+				setIsAlertVisible(true);
+				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
 				setLoading(false);
 			}
 		}
@@ -227,7 +248,10 @@ const Price = () => {
 	}
 	const handleExport = () => {
 		if (checkedKeys.length === 0) {
-			message.warning('Выберите хотя бы один элемент для экспорта');
+			setIsAlertVisible(true);
+			setAlertMessage('Внимание!');
+			setAlertDescription('Выберите хотя бы один элемент для экспорта');
+			setAlertType('warning');
 			return;
 		}
 
@@ -248,7 +272,10 @@ const Price = () => {
 		const selectedModels = findModelsByKeys(treeData, checkedKeys);
 
 		if (selectedModels.length === 0) {
-			message.warning('Выбранные элементы не содержат моделей для экспорта');
+			setIsAlertVisible(true);
+			setAlertMessage('Внимание!');
+			setAlertDescription('Выбранные элементы не содержат моделей для экспорта');
+			setAlertType('warning');
 			return;
 		}
 
@@ -256,9 +283,9 @@ const Price = () => {
 		const rows = selectedModels.map((m) => {
 			// Начинаем с базового объекта
 			const obj = {
-				ID: m.id,
-				Название: m.name,
-				Описание: m.descr,
+				'ID': m.id,
+				'Название': m.name,
+				'Описание': m.descr,
 			};
 
 			// Функция для удобного добавления свойства, если оно есть в checkedList
@@ -270,13 +297,13 @@ const Price = () => {
 
 			// Добавляем свойства с проверкой
 			addIfChecked(
-				'Предпродажа',
+				'Розница',
 				`${
 					currentCurrency ? convertToRub(m.prices.price_0, m.currency) : m.prices.price_0
 				} ${getCurrencySymbol(m.currency)}`
 			);
 			addIfChecked(
-				'Проектная',
+				'Прайс 10',
 				`${
 					currentCurrency ? convertToRub(m.prices.price_10, m.currency) : m.prices.price_10
 				} ${getCurrencySymbol(m.currency)}`
@@ -388,6 +415,23 @@ const Price = () => {
 						</div>
 					</Sider>
 				</Layout>
+				{isAlertVisible && (
+					<Alert
+						message={alertMessage}
+						description={alertDescription}
+						type={alertType}
+						showIcon
+						closable
+						style={{
+							position: 'fixed',
+							top: 20,
+							right: 20,
+							zIndex: 9999,
+							width: 350,
+						}}
+						onClose={() => setIsAlertVisible(false)}
+					/>
+				)}
 			</div>
 		</Spin>
 	);
