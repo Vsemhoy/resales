@@ -160,7 +160,7 @@ const Price = () => {
 										>
 											Розница:{' '}
 											<span style={{background: '#fff', fontWeight: 600}}>
-											{model.prices.price_0}{getCurrencySymbol()}
+											{model.prices.price_0}{getCurrencySymbol(model.currency)}
 										</span>
 										</Tag>
 									</div>
@@ -178,7 +178,7 @@ const Price = () => {
 										>
 											Прайс 10:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_10}{getCurrencySymbol()}
+											{model.prices.price_10}{getCurrencySymbol(model.currency)}
 										</span>
 										</Tag>
 									</div>
@@ -196,7 +196,7 @@ const Price = () => {
 										>
 											Прайс 20:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_20}{getCurrencySymbol()}
+											{model.prices.price_20}{getCurrencySymbol(model.currency)}
 										</span>
 										</Tag>
 									</div>
@@ -214,7 +214,7 @@ const Price = () => {
 										>
 											Прайс 30:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_30}{getCurrencySymbol()}
+											{model.prices.price_30}{getCurrencySymbol(model.currency)}
 										</span>
 										</Tag>
 									</div>

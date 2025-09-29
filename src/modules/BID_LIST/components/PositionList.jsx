@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Table, Tag } from 'antd';
-
-//import { exportToExcel } from "react-json-to-excel";
 import style from './style/main.module.css';
 
 import { PROD_API_URL, PROD_AXIOS_INSTANCE } from '../../../config/Api';
@@ -135,7 +133,25 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 		}
 	};
 	const handleExport = () => {
-		console.log(positions)
+		console.log(positions);
+		const rows = positions.map((m) => {
+			// Начинаем с базового объекта
+			const obj = {
+				'ID': m.model_id,
+				'Название': m.model_name,
+				'Количество': m.model_count,
+				'Процент': m.percent,
+				'Цена': m.price,
+			};
+			return obj;
+		});
+		const ws = XLSX.utils.json_to_sheet(rows);
+		const wb = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, 'Спецификация');
+		XLSX.writeFile(
+			wb,
+			`${dayjs().format('DD.MM.YYYY')}. ${bidId}-Спецификация.xlsx`
+		);
 	};
 
 	return (
