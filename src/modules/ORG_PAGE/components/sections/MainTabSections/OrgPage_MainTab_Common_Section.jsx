@@ -38,7 +38,7 @@ const OrgPage_MainTab_Common_Section = (props) => {
       setName(props.data?.name);
       // setSite(props.data?.site);
       setMiddlename(props.data?.middlename);
-      setId8an_fs(props.data?.id8an_fs);
+      setId8an_fs(props.data?.id8an_fs ? parseInt(props.data?.id8an_fs) : 0);
       setId8an_profiles(props.data?.id8an_profiles);
       setInn(props.data?.inn);
       setSource(props.data?.source);
@@ -52,6 +52,10 @@ const OrgPage_MainTab_Common_Section = (props) => {
 
   }, [props.data, selects]);
 
+
+	useEffect(() => {
+		console.log(id8an_fs);
+	}, [id8an_fs]);
 
 	useEffect(() => {
 		seteditMode(props.edit_mode);
@@ -98,7 +102,7 @@ const OrgPage_MainTab_Common_Section = (props) => {
 			/>
 
 			<OrgPageSectionRow
-				key={'opmaincom_233'}
+				key={'opmaincom_23g3'}
 				edit_mode={editMode}
 				titles={['Форма собственности', 'ИНН']}
 				datas={[
@@ -106,7 +110,7 @@ const OrgPage_MainTab_Common_Section = (props) => {
 						type: OPS_TYPE.SELECT,
 						value: id8an_fs,
 						options: selects?.fss?.map((item)=>({
-              key: "fsse_" + item.id,
+              key: "fsse_leu_" + item.id,
               value: item.id,
               label: item.name,
             })),
@@ -114,8 +118,18 @@ const OrgPage_MainTab_Common_Section = (props) => {
 						required: true,
 						nullable: false,
 						placeholder: '',
+            showSearch: 'true',
+						on_change: (data)=>{
+							if (props.on_blur){
+								if (data.id8an_fs !== undefined){
+									console.log('data', data);
+									setId8an_fs(data.id8an_fs);
+								}
+								props.on_blur(data);
+							}
+						},
 						name: 'id8an_fs',
-            showSearch: 'true'
+						
 					},
 					{
 						type: OPS_TYPE.STRING,
@@ -127,10 +141,17 @@ const OrgPage_MainTab_Common_Section = (props) => {
 					},
 				]}
         on_blur={(data)=>{
+					console.log('data', data)
           if (props.on_blur){
             props.on_blur(data);
           }
         }}
+				// on_change={(data)=>{
+					//   if (data.id8an_fs !== undefined && props.on_blur){
+						//     props.on_blur(data);
+						//   }
+						// }}
+
 			/>
 
 			<OrgPageSectionRow
@@ -212,7 +233,7 @@ const OrgPage_MainTab_Common_Section = (props) => {
             })),
 					},
 				]}
-        on_blur={(data)=>{
+        on_change={(data)=>{
           if (props.on_blur){
             props.on_blur(data);
           }

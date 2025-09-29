@@ -11,8 +11,8 @@ const OrgPage_MainTab_Depart_Section = (props) => {
   const [itemId,         setItemId]           = useState(0);
   const [statusmoney, setStatusmoney]         = useState(0);
   const [conveyance, setConveyance]           = useState(0);
-  const [id_orgs8an_list, setId_orgs8an_list] = useState(0);
-  const [list_comment,       setList_comment] = useState('');
+  const [typeList, setTypeList] = useState(0);
+  const [listComment,       setListComment] = useState('');
 
   const [author, setAuthor] = useState(''); //id8staff_list7author
   const [curator, setCurator] = useState('');
@@ -41,10 +41,14 @@ const OrgPage_MainTab_Depart_Section = (props) => {
         setCurator('');
       };
 
+			console.log('IIIIIIIIIIIIIIIIIIIIIIIIII');
+			console.log(props.data);
+
       setStatusmoney(props.data?.id8an_statusmoney);
       setConveyance(props.data?.id8an_conveyance);
-      setId_orgs8an_list(props.data?.id_orgs8an_list);
-      setList_comment(props.data?.list_comment);
+			
+      setTypeList(props.data?.list?.id8an_typelist ? props.data?.list?.id8an_typelist : 0);
+      setListComment(props.data?.list?.comment ? props.data?.list?.comment : '');
 
       // setName(props.data?.name);
       // setSite(props.data?.site);
@@ -64,7 +68,19 @@ const OrgPage_MainTab_Depart_Section = (props) => {
   }, [props.data, selects]);
 
 
-
+	useEffect(() => {
+		if (props.on_blur){
+			let obb = {};
+			obb.list = 
+			{
+				id8an_typelist: typeList,
+				comment: listComment,
+				id_orgs: itemId,
+			}
+			console.log(obb);
+			props.on_blur(obb);
+		}
+	}, [typeList, listComment]);
 
 
 	useEffect(() => {
@@ -175,7 +191,7 @@ const OrgPage_MainTab_Depart_Section = (props) => {
 				datas={[
 					{
 						type: 'select',
-						value: id_orgs8an_list,
+						value: typeList,
 						options: selects?.rate_lists?.map((item)=>({
               key: "fssebli_" + item.id,
               value: item.id,
@@ -185,26 +201,26 @@ const OrgPage_MainTab_Depart_Section = (props) => {
 						required: false,
 						allowClear: true,
 						placeholder: '',
-						name: 'id_orgs8an_list',
+						name: 'id8an_typelist',
 					},
 					{
 						type: OPS_TYPE.STRING,
-						value: list_comment,
+						value: listComment,
 						min: 0,
 						max: 1200,
 						placeholder: '',
-						name: 'list_comment',
+						name: 'comment',
 					},
 				]}
         on_blur={(data)=>{
           if (props.on_blur){
-						if (data.list_comment !== undefined){
-							setList_comment(data.list_comment);
+						console.log(data);
+						if (data.id8an_typelist !== undefined){
+							setTypeList(data.id8an_typelist);
 						}
-						if (data.id_orgs8an_list !== undefined){
-							setId_orgs8an_list(data.id_orgs8an_list);
+						if (data.comment !== undefined){
+							setListComment(data.comment);
 						}
-            props.on_blur(data);
           }
         }}
 			/>

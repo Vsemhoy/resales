@@ -133,7 +133,7 @@ const MainTabPage = (props) => {
       const updatedData = { ...prevData };
       
       for (let key in changed_data) {
-        if (changed_data.hasOwnProperty(key) && prevData.hasOwnProperty(key)) {
+        if (changed_data.hasOwnProperty(key) && prevData?.hasOwnProperty(key)) {
           updatedData[key] = changed_data[key];
           setDataModified(true);
         }
