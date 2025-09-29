@@ -53,7 +53,6 @@ const OrgCallEditorSectionBox = (props) => {
   useEffect(() => {
     if (props.data?.id) {
       setObjectResult(props.data);
-      console.log('==++++++++++++++++++++++   ', props.data);
       setId(props.data.id);
       // if (props.data.id_orgs !== org){
       setOrg(props.data.id_orgs);
@@ -194,7 +193,6 @@ const OrgCallEditorSectionBox = (props) => {
     if (foundUser.contactmobiles.length){
       for (let index = 0; index < foundUser.contactmobiles.length; index++) {
         const element = foundUser.contactmobiles[index];
-        console.log('contactmobiles',element);
         if (!of.includes(element.number)){
         of.push({
           key: 'fofofofof_' + element.id,
@@ -260,7 +258,6 @@ const OrgCallEditorSectionBox = (props) => {
       resultObject.phone = phone;
       resultObject.next_call_date = nexCallDate;
 
-      console.log('result', resultObject)
 
       if (props.on_change) {
         props.on_change(id, resultObject);
