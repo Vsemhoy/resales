@@ -223,18 +223,7 @@ const OrgPage = (props) => {
 		document.body.classList.remove('sa-org-modal-open');
 	}, [open]);
 
-	useEffect(() => {
-		// if (window.history.length < 3){
-		//     console.log('HELLLOO');
-		//     setBackeReturnPath("/orgs");
-		// };
-		// setBackeReturnPath(returnPath);
-		// console.log('returnPath', searchParams.get('mode'))отмена
-		// if (searchParams.get('mode')){
-		//     setEditMode(searchParams.get('mode') === 'edit');
-		// }
-		// console.log('first', dayjs().millisecond())
-	}, []);
+
 
 	useEffect(() => {
 		if (userdata !== null && userdata.companies && userdata.companies.lenght > 0) {
@@ -273,7 +262,6 @@ const OrgPage = (props) => {
 
 	const handleDiscard = () => {
 		if (isSmthChanged){
-			console.log('HADIDSLDFJSLKDJ ');
 			let itt  = itemId;
 			if (PRODMODE) {
 				setItemId(0);
@@ -566,15 +554,21 @@ const OrgPage = (props) => {
 	};
 
 	useEffect(() => {
-		get_notes_data_action(item_id);
+		if (PRODMODE){
+			get_notes_data_action(item_id);
+		}
 	}, [pageNotes]);
 
 	useEffect(() => {
-		get_org_calls_action(item_id);
+		if (PRODMODE){
+			get_org_calls_action(item_id);
+		}
 	}, [pageCalls]);
 
 	useEffect(() => {
-		get_projects_data_action(item_id);
+		if (PRODMODE){
+			get_projects_data_action(item_id);
+		}
 	}, [pageProject]);
 
 	const handleSaveData = () => {
@@ -609,11 +603,13 @@ const OrgPage = (props) => {
 	};
 
 	useEffect(() => {
+		if (editMode === false){ return; }
 		console.log(tempMainData, tempNotesData, tempCallsData);
 		console.log('isSmthChanged',isSmthChanged);
 	}, [isSmthChanged]);
 
 	const handleMaintabObjectDataChange = (key, dataarr) => {
+		if (!editMode){ return; }
 		if (key === 'emails'){
 			setTempMain_emails(dataarr);
 		} else if (key === 'licenses'){
@@ -637,6 +633,7 @@ const OrgPage = (props) => {
 	};
 
 	useEffect(() => {
+		if (!editMode){ return; }
 		let copyData = tempMainData ?  JSON.parse(JSON.stringify(tempMainData)) : {};
 			if (copyData){
 				copyData.active_licenses =     tempMain_an_licenses;
@@ -678,10 +675,8 @@ const OrgPage = (props) => {
 				copyData.requisites =          tempMain_an_requisites;
 				
 				setTempMainData(copyData);
-				console.log('HASE   data');
 			} else {
 				setTempMainData(null);
-				console.log('NULL   data');
 			}
 
 		} else if (tab_name === 'projects'){
@@ -729,7 +724,6 @@ const OrgPage = (props) => {
 		]);
 
 	const customClick = (button_id) => {
-		console.log(button_id);
 		if (button_id === 1){
 			handleDiscard();
 		}

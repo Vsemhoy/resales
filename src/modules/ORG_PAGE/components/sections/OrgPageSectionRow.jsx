@@ -218,7 +218,7 @@ const OrgPageSectionRow = (props) => {
 			disabled: false,
 			style: { width: '100%' },
 			onBlur: (e) => {
-				console.log('BLUR');
+				// console.log('BLUR');
 
         if (props.on_blur){
           const val = e?.target?.value ?? e;
@@ -340,7 +340,7 @@ const OrgPageSectionRow = (props) => {
 						}}
 					/>
 				);
-
+ 
 			case 'checkbox':
 				return (
 					<Checkbox
@@ -469,7 +469,6 @@ const OrgPageSectionRow = (props) => {
                 }
               }}
 							onBlur={(e)=>{
-								console.log(e);
 
 								const val = e?.target?.value ?? e;
                 let obj = {};

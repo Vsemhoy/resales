@@ -144,11 +144,8 @@ const MainTabPage = (props) => {
 
 
   const updateCompanyObject = (key, changed_data) => {
-    console.log('UPCHANGEDE OBJECT MainTabPage ', key, changed_data);
-
     if (props.on_change_main_data_part)
     {
-      console.log('CALL TO ON CHANGE CALLBIK');
       props.on_change_main_data_part(key, changed_data);
     }
   };
@@ -157,7 +154,6 @@ const MainTabPage = (props) => {
   useEffect(() => {
     if (props.on_change_data)
     {
-      console.log('CALL TO ON CHANGE CALLBIK');
       props.on_change_data('main', baseData);
     }
   }, [baseData]);
@@ -321,7 +317,6 @@ const MainTabPage = (props) => {
               onClick={(ev) => {
                 ev.stopPropagation();
                 setCallToAddRequisite(dayjs().unix());
-                console.log(dayjs().unix());
                 setTimeout(() => {
                   setCallToAddRequisite(null);
                 }, 300);
@@ -411,7 +406,6 @@ const MainTabPage = (props) => {
 
 
   const handleUpdateContactData = (id, updata) => {
-    console.log('HUCON');
     let contacts = baseData.contacts;
     // let ordata = contacts.find((item)=> item.id === id);
 
@@ -431,7 +425,6 @@ const MainTabPage = (props) => {
     ndt.contacts = newContacts;
     // setBaseData(ndt);
 
-    console.log("UPDATE CONTACT");
   }
 
 

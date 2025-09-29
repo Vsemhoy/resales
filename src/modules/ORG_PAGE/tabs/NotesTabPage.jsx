@@ -143,7 +143,6 @@ const NotesTabPage = (props) => {
 											variant="filled"
 											onClick={(ev) => {
 												ev.stopPropagation();
-												console.log(item.id);
 												handleDeleteRealUnit(item.id, 0);
 											}}
 										>
@@ -157,7 +156,6 @@ const NotesTabPage = (props) => {
 											variant="outlined"
 											onClick={(ev) => {
 												ev.stopPropagation();
-												console.log(item.id);
 												handleDeleteRealUnit(item.id, 1);
 											}}
 											icon=<TrashIcon height={'20px'} />
@@ -190,7 +188,6 @@ const NotesTabPage = (props) => {
 	}, [baseData]);
 
 	useEffect(() => {
-		console.log('ORIGGINAL DATA', baseData, originalData);
 		setOriginalData(
 			props.base_data?.notes ? JSON.parse(JSON.stringify(props.base_data.notes)) : []
 		);
@@ -206,7 +203,6 @@ const NotesTabPage = (props) => {
 		let secids = [];
 		setNewStructureItems(
 			temporaryUnits.map((item) => {
-				console.log(item);
 				let nkey = 'new_norprow_' + item.id;
 				secids.push(nkey);
 				return {
@@ -230,7 +226,6 @@ const NotesTabPage = (props) => {
 								size="small"
 								onClick={(ev) => {
 									ev.stopPropagation();
-									console.log(item.id);
 									handleDeleteBlankUnit(item.id);
 								}}
 								icon=<TrashIcon height={'20px'} />
@@ -254,7 +249,6 @@ const NotesTabPage = (props) => {
 			})
 		);
 		// secids.reverse();
-		console.log(secids);
 		if (JSON.stringify(openedNewSections) !== JSON.stringify(secids)) {
 			setOpenedNewSections(secids);
 		}
@@ -345,7 +339,6 @@ const NotesTabPage = (props) => {
 		if (!editMode) {
 			return;
 		}
-		console.log('id, data', id, data, temporaryUnits);
 		setTemporaryUnits((prevUnits) => {
 			const exists = prevUnits.some((item) => item.id === id);
 
@@ -362,7 +355,6 @@ const NotesTabPage = (props) => {
 	const handleUpdateRealUnit = (id, data) => {
 		// let udata = originalData.filter((item) => item.id !== id);
 		// udata.push(data);
-		console.log('CALL TU REAL UPDATE');
 		if (!editMode) {
 			return;
 		}
@@ -392,7 +384,6 @@ const NotesTabPage = (props) => {
       data.command = '';
 		}
 
-		console.log(data);
 
 		setBaseData((prevUnits) => {
 			const exists = prevUnits.some((item) => item.id === id);
@@ -406,7 +397,6 @@ const NotesTabPage = (props) => {
 
 	// если в call_to_save не null, а timestamp, отправляем данные на обновление
 	useEffect(() => {
-		console.log('basedata', baseData, temporaryUnits);
 		if (props.call_to_save !== null && props.on_save !== null) {
 			props.on_save(baseData, temporaryUnits);
 		}
