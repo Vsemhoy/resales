@@ -16,7 +16,6 @@ import BidListPage from './modules/BID_LIST/BidListPage';
 import BidPage from './modules/BID_PAGE/BidPage';
 import BidPdfCreator from './modules/BID_PAGE/components/print/BidPdfCreator';
 import Price from './modules/PRICE/Price';
-import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor';
 import CuratorPage from './modules/CURATOR/CuratorPage';
 import EngineerListPage from './modules/ENGINEER_LIST/EngineerListPage';
 import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';

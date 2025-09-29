@@ -86,7 +86,7 @@ const OPMTCcontactmessangersSection = (props) => {
       <OrgPageSectionRow
 				key={'fakmmfdfj_hhls_dk' + id}
 				edit_mode={editMode}
-				titles={['Мессенджер - Ключ api','Id мессенджера']}
+				titles={['Идентификатор пользователя','Мессенджер']}
 				datas={[
 					{
 						type: OPS_TYPE.STRING,
@@ -94,15 +94,15 @@ const OPMTCcontactmessangersSection = (props) => {
 						max: 255,
 						required: false,
 						nullable: true,
-						placeholder: '',
+						placeholder: '@contact_id',
 						name: 'identifier',
 					},
 					{
 						type: OPS_TYPE.UINTEGER,
-						value: messangers_id,
+						value: messangers_id ? messangers_id : '',
 						min: 0,
 						max: 99999999999999999,
-						placeholder: '',
+						placeholder: 'Telegram',
 						name: 'messangers_id',
 					},
 				]}

@@ -223,18 +223,7 @@ const OrgPage = (props) => {
 		document.body.classList.remove('sa-org-modal-open');
 	}, [open]);
 
-	useEffect(() => {
-		// if (window.history.length < 3){
-		//     console.log('HELLLOO');
-		//     setBackeReturnPath("/orgs");
-		// };
-		// setBackeReturnPath(returnPath);
-		// console.log('returnPath', searchParams.get('mode'))отмена
-		// if (searchParams.get('mode')){
-		//     setEditMode(searchParams.get('mode') === 'edit');
-		// }
-		// console.log('first', dayjs().millisecond())
-	}, []);
+
 
 	useEffect(() => {
 		if (userdata !== null && userdata.companies && userdata.companies.lenght > 0) {
@@ -273,7 +262,6 @@ const OrgPage = (props) => {
 
 	const handleDiscard = () => {
 		if (isSmthChanged){
-			console.log('HADIDSLDFJSLKDJ ');
 			let itt  = itemId;
 			if (PRODMODE) {
 				setItemId(0);
@@ -566,15 +554,21 @@ const OrgPage = (props) => {
 	};
 
 	useEffect(() => {
-		get_notes_data_action(item_id);
+		if (PRODMODE){
+			get_notes_data_action(item_id);
+		}
 	}, [pageNotes]);
 
 	useEffect(() => {
-		get_org_calls_action(item_id);
+		if (PRODMODE){
+			get_org_calls_action(item_id);
+		}
 	}, [pageCalls]);
 
 	useEffect(() => {
-		get_projects_data_action(item_id);
+		if (PRODMODE){
+			get_projects_data_action(item_id);
+		}
 	}, [pageProject]);
 
 	const handleSaveData = () => {
@@ -609,11 +603,16 @@ const OrgPage = (props) => {
 	};
 
 	useEffect(() => {
+		if (editMode === false){ return; }
 		console.log(tempMainData, tempNotesData, tempCallsData);
 		console.log('isSmthChanged',isSmthChanged);
 	}, [isSmthChanged]);
 
 	const handleMaintabObjectDataChange = (key, dataarr) => {
+		if (!editMode){ return; }
+		console.log('MAIN TAB OBJECT SETTER');
+		console.log(key, "-", dataarr);
+
 		if (key === 'emails'){
 			setTempMain_emails(dataarr);
 		} else if (key === 'licenses'){
@@ -626,17 +625,17 @@ const OrgPage = (props) => {
 			setTempMain_an_requisites(dataarr);
 		} else if (key === 'phones'){
 			setTempMain_phones(dataarr);
-		} else if (key === 'addresses'){
+		} else if (key === 'address'){
 			setTempMain_addresses(dataarr);
 		} else if (key === 'legaladdresses'){
 			setTempMain_legalAddresses(dataarr);
 		} else if (key === 'emails'){
 			setTempMain_emails(dataarr);
 		}
-		console.log('MAIN SETTER');
 	};
 
 	useEffect(() => {
+		if (!editMode){ return; }
 		let copyData = tempMainData ?  JSON.parse(JSON.stringify(tempMainData)) : {};
 			if (copyData){
 				copyData.active_licenses =     tempMain_an_licenses;
@@ -678,10 +677,8 @@ const OrgPage = (props) => {
 				copyData.requisites =          tempMain_an_requisites;
 				
 				setTempMainData(copyData);
-				console.log('HASE   data');
 			} else {
 				setTempMainData(null);
-				console.log('NULL   data');
 			}
 
 		} else if (tab_name === 'projects'){
@@ -729,7 +726,6 @@ const OrgPage = (props) => {
 		]);
 
 	const customClick = (button_id) => {
-		console.log(button_id);
 		if (button_id === 1){
 			handleDiscard();
 		}
@@ -738,21 +734,31 @@ const OrgPage = (props) => {
 
 	// Очистка данных для сохранения (измененных)
 	const clearTemps = () => {
-			if (tempMainData){
+			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
+				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
 				setTempMainData(null);
-				get_main_data_action();
+				setTempMain_an_requisites(null);
+				setTempMain__an_licenses(null);
+				setTempMain_an_tolerances(null);
+				setTempMain_bo_licenses(null);
+				setTempMain_emails(null);
+				setTempMain_legalAddresses(null);
+				setTempMain_phones(null);
+				setTempMain_addresses(null);
+
+				get_main_data_action(itemId);
 			}
 			if (tempProjectsData && tempProjectsData.length > 0){
 					setTempProjectsData(null);
-					get_projects_data_action();
+					get_projects_data_action(itemId);
 				}
 				if (tempCallsData && tempCallsData.length > 0){
 					setTempCallsData(null);
-					get_org_calls_action();
+					get_org_calls_action(itemId);
 				}
 				if (tempNotesData && tempNotesData.length > 0){
 					setTempNotesData(null);
-					get_notes_data_action();
+					get_notes_data_action(itemId);
 				}
 
 

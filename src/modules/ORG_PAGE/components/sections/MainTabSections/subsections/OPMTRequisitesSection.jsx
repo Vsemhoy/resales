@@ -82,7 +82,6 @@ const OPMTRequisitesSection = (props) => {
       let resultObject = objectResult;
 
       resultObject.id_orgs    = id_orgs;
-      resultObject.document_type = inn;
       resultObject.nameorg          = nameorg;
       resultObject.kpp    = kpp;
       resultObject.inn    = inn;

@@ -218,7 +218,7 @@ const OrgPageSectionRow = (props) => {
 			disabled: false,
 			style: { width: '100%' },
 			onBlur: (e) => {
-				console.log('BLUR');
+				// console.log('BLUR');
 
         if (props.on_blur){
           const val = e?.target?.value ?? e;
@@ -340,7 +340,7 @@ const OrgPageSectionRow = (props) => {
 						}}
 					/>
 				);
-
+ 
 			case 'checkbox':
 				return (
 					<Checkbox
@@ -358,36 +358,27 @@ const OrgPageSectionRow = (props) => {
             allowClear={field.allowClear ? field.allowClear : false}
             showSearch={field.showSearch ? field.showSearch : false}
             optionFilterProp="children"
-            // optionFilterProp="label"
-            //     filterSort={(optionA, optionB) =>
-            //       (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-            //     }
-			onSearch={field?.on_search}
+						
+						onSearch={field?.on_search}
             size='small'
             variant="borderless"
             value={value}
             onChange={ (e) => {
               if (props.on_blur){
-                const val = e?.target?.value ?? e;
-                console.log(val);
+                const val = e || null;
+				
                 let obj = {};
                 obj[field.name] = val;
+				
                 props.on_blur(obj);
               }else{
                   onChange(field.name, e, field)
               }
             }}
+						
       
             style={{ width: '100%' }}
-            // onBlur={ (e) => {
-            //   if (props.on_blur){
-            //     const val = e?.target?.value ?? e;
-            //     console.log(val);
-            //     let obj = {};
-            //     obj[field.name] = val;
-            //     props.on_blur(obj);
-            //   }
-            // }}
+
           >
             {field.options?.map((opt) => (
               <Option key={opt.value} value={opt.value}>
@@ -478,7 +469,6 @@ const OrgPageSectionRow = (props) => {
                 }
               }}
 							onBlur={(e)=>{
-								console.log(e);
 
 								const val = e?.target?.value ?? e;
                 let obj = {};
@@ -612,7 +602,7 @@ const OrgPageSectionRow = (props) => {
 								<EnterOutlined />
 							</span>
 							<span>
-								<i>Комментарий</i>
+								<i>{commentConfig.label ? commentConfig.label : "Комментарий"}</i>
 							</span>
 						</div>
 						<div className="sk-omt-content">

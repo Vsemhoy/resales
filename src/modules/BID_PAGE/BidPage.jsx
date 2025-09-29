@@ -724,7 +724,7 @@ const BidPage = (props) => {
 						setIsAlertVisible(true);
 						setAlertMessage('Заполните поля!');
 						setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
-						setAlertType('error');
+						setAlertType('warning');
 					}
 				} else if (newPlace && newPlace === 3) {
 					if (isAdminDone()) {
@@ -734,7 +734,7 @@ const BidPage = (props) => {
 						setIsAlertVisible(true);
 						setAlertMessage('Заполните поля!');
 						setAlertDescription('Количество моделей должно быть равно количеству на складе');
-						setAlertType('error');
+						setAlertType('warning');
 					}
 				}
 			} catch (e) {
@@ -1687,7 +1687,7 @@ const BidPage = (props) => {
 																		setIsAlertVisible(true);
 																		setAlertMessage('Заполните поля!');
 																		setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
-																		setAlertType('error');
+																		setAlertType('warning');
 																		setIsLoadingChangePlaceBtn('');
 																	}
 																}
@@ -1735,7 +1735,7 @@ const BidPage = (props) => {
 																		setIsAlertVisible(true);
 																		setAlertMessage('Заполните поля!');
 																		setAlertDescription('Количество моделей должно быть равно количеству на складе');
-																		setAlertType('error');
+																		setAlertType('warning');
 																		setIsLoadingChangePlaceBtn('');
 																	}
 																}
@@ -2391,7 +2391,7 @@ const BidPage = (props) => {
 				width={'830px'}
 				styles={{
 					body: {
-						height: "40vh",
+						height: "450px",
 						overflowY: "auto",
 						width: '100%',
 						display: 'flex',

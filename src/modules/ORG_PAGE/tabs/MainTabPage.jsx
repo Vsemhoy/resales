@@ -76,6 +76,7 @@ const MainTabPage = (props) => {
         ) , marginBottom: item.deleted ? '3px ' : (
           item.command === 'create' ? '3px' : '0px'
         )},
+        
         label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}><div>{item.lastname} {item.name} {item.middlename} <span style={{color: 'gray', fontWeight: 100}}>({item.id})</span></div>
         {editMode && (
         <div className={'sa-flex-gap'}>
@@ -132,7 +133,7 @@ const MainTabPage = (props) => {
       const updatedData = { ...prevData };
       
       for (let key in changed_data) {
-        if (changed_data.hasOwnProperty(key) && prevData.hasOwnProperty(key)) {
+        if (changed_data.hasOwnProperty(key) && prevData?.hasOwnProperty(key)) {
           updatedData[key] = changed_data[key];
           setDataModified(true);
         }
@@ -143,11 +144,8 @@ const MainTabPage = (props) => {
 
 
   const updateCompanyObject = (key, changed_data) => {
-    console.log('UPCHANGEDE OBJECT MainTabPage ', key, changed_data);
-
     if (props.on_change_main_data_part)
     {
-      console.log('CALL TO ON CHANGE CALLBIK');
       props.on_change_main_data_part(key, changed_data);
     }
   };
@@ -156,7 +154,6 @@ const MainTabPage = (props) => {
   useEffect(() => {
     if (props.on_change_data)
     {
-      console.log('CALL TO ON CHANGE CALLBIK');
       props.on_change_data('main', baseData);
     }
   }, [baseData]);
@@ -170,6 +167,7 @@ const MainTabPage = (props) => {
     let secids = [
       {
         key: 'mainorgsec_11',
+        style:{boxShadow: '#6cc1c1ff -9px 0px 0px -0.5px'},
         label: <div className={`sa-flex-space`}><div>Общая информация</div><div></div></div>,
         children: <OrgPage_MainTab_Common_Section
           color={'#2196f3'}
@@ -181,6 +179,7 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_12',
+        style:{boxShadow: '#6c7cd4ff -9px 0px 0px -0.5px'},
         label: <div className={`sa-flex-space`}><div>Информация отдела</div><div></div></div>,
         children: <OrgPage_MainTab_Depart_Section
           color={'blueviolet'}
@@ -192,6 +191,7 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_13',
+        style:{boxShadow: '#8f5fbbff -9px 0px 0px -0.5px'},
         label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div>
        
         </div>,
@@ -206,6 +206,7 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_131',
+        style: {boxShadow: '#f7ab49ff -9px 0px 0px -0.5px'},
         label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Лицензии/Допуски 
 
           <Badge 
@@ -262,8 +263,8 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_14',
+        style: {boxShadow: '#ca6f7eff -9px 0px 0px -0.5px'},
         label: <div className={`sa-flex-space`}><div  className={`sa-flex`}>Контактные лица  
-
         <Badge 
           count={baseData?.contacts?.length}
             color="blue"
@@ -301,6 +302,7 @@ const MainTabPage = (props) => {
       },
       {
         key: 'mainorgsec_15',
+        style: {boxShadow: '#87c16cff -9px 0px 0px -0.5px'},
         label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Фирмы/плательщики   
           <Badge 
             count={baseData?.requisites?.length}
@@ -315,7 +317,6 @@ const MainTabPage = (props) => {
               onClick={(ev) => {
                 ev.stopPropagation();
                 setCallToAddRequisite(dayjs().unix());
-                console.log(dayjs().unix());
                 setTimeout(() => {
                   setCallToAddRequisite(null);
                 }, 300);
@@ -405,7 +406,6 @@ const MainTabPage = (props) => {
 
 
   const handleUpdateContactData = (id, updata) => {
-    console.log('HUCON');
     let contacts = baseData.contacts;
     // let ordata = contacts.find((item)=> item.id === id);
 
@@ -425,7 +425,6 @@ const MainTabPage = (props) => {
     ndt.contacts = newContacts;
     // setBaseData(ndt);
 
-    console.log("UPDATE CONTACT");
   }
 
 

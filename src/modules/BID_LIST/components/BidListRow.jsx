@@ -16,47 +16,100 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import PositionList from './PositionList';
-import {BASE_ROUTE} from "../../../config/config";
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 
 const BidListRow = (props) => {
 	const navigate = useNavigate();
 
 	const [active, setActive] = useState(false);
 	const [compColor, setCompColor] = useState('#00000000');
-	const menu = (
-		<Menu>
-			<Menu.Item key="1" icon={<ArrowRightEndOnRectangleIcon height={'18px'} />}>
-				Запросить кураторство
-			</Menu.Item>
-			<Menu.Item key="2" icon={<ArrowRightStartOnRectangleIcon height={'18px'} />}>
-				Передать кураторство
-			</Menu.Item>
-			<Menu.Item key="3" icon={<NewspaperIcon height={'18px'} />}>
-				Создать КП
-			</Menu.Item>
-			<Menu.Item key="4" icon={<DocumentCurrencyDollarIcon height={'18px'} />}>
-				Создать Счёт
-			</Menu.Item>
-			<Menu.Item key="5" icon={<ArchiveBoxXMarkIcon height={'18px'} />}>
-				Удалить
-			</Menu.Item>
-		</Menu>
-	);
-
 	const [data, setData] = useState(props.data);
+	const [acls, setAcls] = useState(null);
+	const [menuItems, setMenuItems] = useState([]);
 
 	useEffect(() => {
 		setData(props.data);
 	}, [props.data]);
-
 	useEffect(() => {
 		setActive(props.is_active);
 	}, [props.is_active]);
-
 	useEffect(() => {
 		setCompColor(props.company_color);
 	}, [props.company_color]);
+	useEffect(() => {
+		if (props.userdata && props?.userdata?.acls) {
+			setAcls(props?.userdata?.acls);
+		}
+	}, [props.userdata]);
+	useEffect(() => {
+		if (acls && acls.length > 0) {
+			setMenuItems(getMenu());
+		}
+	}, [acls]);
 
+	const fetchNewBid = async (type) => {
+		if (PRODMODE) {
+			const path = `/sales/data/makebid`;
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
+					data: {
+						bid: data.id,
+						org: data.org_id,
+						type: type
+					},
+					_token: CSRF_TOKEN,
+				});
+				if (response.data) {
+					props.rerenderPage();
+					window.open(`${BASE_ROUTE}/bids/${response.data.item_id}`, '_blank');
+				}
+			} catch (e) {
+				console.log(e);
+				props.error_alert(path, e);
+			}
+		}
+	};
+	const fetchDeleteBid = async () => {
+		if (PRODMODE) {
+			const path = `/api/sales/deletebid/${data.id}`;
+			try {
+				let response = await PROD_AXIOS_INSTANCE.delete(path, {
+					_token: CSRF_TOKEN,
+				});
+				if (response.data) {
+					props.rerenderPage();
+					props.success_alert(response.data.message);
+				}
+			} catch (e) {
+				console.log(e);
+				props.error_alert(path, e);
+			}
+		}
+	};
+
+	const getMenu = () => {
+		const arr = [
+			{
+				key: '1',
+				icon: <NewspaperIcon height="18px" onClick={() => fetchNewBid(1)}/>,
+				label: <div onClick={() => fetchNewBid(1)}>Дублировать КП</div>,
+			},
+			{
+				key: '2',
+				icon: <DocumentCurrencyDollarIcon height="18px" onClick={() => fetchNewBid(2)}/>,
+				label: <div onClick={() => fetchNewBid(2)}>Дублировать Счет</div>,
+			},
+		];
+		if (acls.includes(63) && (data.id_company < 2 || data.id_company === props?.userdata?.user?.active_company)) {
+			arr.push({
+				key: '3',
+				icon: <ArchiveBoxXMarkIcon height="18px" onClick={fetchDeleteBid}/>,
+				label: <div onClick={fetchDeleteBid}>Удалить</div>,
+			});
+		}
+		return arr;
+	};
 	const handleDoubleClick = () => {
 		if (props.on_double_click) {
 			props.on_double_click(data);
@@ -65,10 +118,9 @@ const BidListRow = (props) => {
 	};
 
 	return (
-		<Dropdown overlay={menu} trigger={['contextMenu']}>
+		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
 			<div
 				className={`sa-table-box-bids sa-table-box-row ${active ? 'active' : ''}`}
-				key={props.key}
 				style={{ color: compColor, cursor: 'pointer' }}
 				onDoubleClick={handleDoubleClick}
 			>
@@ -138,11 +190,16 @@ const BidListRow = (props) => {
 					<div>
 						<Tooltip
 							placement="leftTop"
-							title={<PositionList bidId={data.id} path={'/sales/data/getbidmodels'} />}
+							title={<PositionList bidId={data.id} fetch_path={'/sales/data/getbidmodels'} error_alert={props.error_alert}/>}
 							color="white"
-							overlayInnerStyle={{
-								color: 'black',
-								border: '1px solid #d9d9d9',
+							styles={{
+								body: {
+									color: 'black',
+									border: '1px solid #d9d9d9',
+								},
+								root: {
+									maxWidth: '400px'
+								}
 							}}
 						>
 							<Tag color={'purple'}>{data.models_count}</Tag>
@@ -153,18 +210,22 @@ const BidListRow = (props) => {
 					<div>
 						<Tooltip
 							placement="leftTop"
-							title={<PositionList bidId={data.id} path={'/api/sales/doclist'} />}
+							title={<PositionList bidId={data.id} fetch_path={'/api/sales/doclist'} error_alert={props.error_alert}/>}
 							color="white"
 							style={{
 								maxWidth: '300px',
 								overflow: 'hidden',
 								wordWrap: 'break-word',
 							}}
-							overlayInnerStyle={{
-								color: 'black',
-								border: '1px solid #d9d9d9',
+							styles={{
+								body: {
+									color: 'black',
+									border: '1px solid #d9d9d9',
+								},
+								root: {
+									maxWidth: '400px'
+								}
 							}}
-							overlayStyle={{ maxWidth: '400px' }}
 						>
 							<Tag color={'cyan'}>{data.files_count}</Tag>
 						</Tooltip>

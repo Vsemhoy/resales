@@ -368,7 +368,6 @@ const ProjectsTabPage = (props) => {
     if (!editMode) {
       return;
     }
-    console.log("id, data", id, data, temporaryUnits);
     setTemporaryUnits((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
 
@@ -385,8 +384,6 @@ const ProjectsTabPage = (props) => {
   const handleUpdateRealUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('data', data)
-    console.log("CALL TU REAL UPDATE");
     if (!editMode) {
       return;
     }
@@ -416,8 +413,6 @@ const ProjectsTabPage = (props) => {
       data.command = "";
     }
 
-    console.log(data);
-
     setBaseData((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -430,7 +425,6 @@ const ProjectsTabPage = (props) => {
 
   // если в call_to_save не null, а timestamp, отправляем данные на обновление
   useEffect(() => {
-    console.log("basedata", baseData, temporaryUnits);
     if (props.call_to_save !== null && props.on_save !== null) {
       props.on_save(baseData, temporaryUnits);
     }
@@ -440,7 +434,6 @@ const ProjectsTabPage = (props) => {
 
   /** Отптавка данных родительскому компоненту */
   useEffect(() => {
-    console.log('HELLL');
     if (editMode && props.on_change_data){
       if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
         props.on_change_data('projects', baseData.concat(temporaryUnits))

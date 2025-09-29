@@ -646,7 +646,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
+		<div className={'sk-omt-stack'} style={{ borderLeft: '0px solid ' + props.color }}>
 
 			<OrgPageSectionRow
         key={'opcontin_112'}
@@ -848,17 +848,20 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
                   handleAddAddress();
                 }}
                 >Адрес</Button>
-                <Button
-                title='Добавить юр. адрес'
-                size='small'
-                icon={<BuildingLibraryIcon height={'20px'}/>}
-                color="primary"
-                variant="outlined"
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  handleAddLegalad();
-                }}
-                >Юр. Адрес</Button>
+                {legaladdresses.length + newLegaladdresses < 1 && (
+                  <Button
+                  title='Добавить юр. адрес'
+                  size='small'
+                  icon={<BuildingLibraryIcon height={'20px'}/>}
+                  color="primary"
+                  variant="outlined"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddLegalad();
+                  }}
+                  >Юр. Адрес</Button>
+                )}
+
               <Button
                 title='Добавить контактный телефон'
                 size='small'

@@ -70,7 +70,6 @@ const CallsTabPage = (props) => {
 	}, [props.departaments]);
 
 	useEffect(() => {
-		console.log(props.main_data);
 		if (props.main_data && props.main_data.contacts) {
 			setOrgUsers(props.main_data.contacts);
 		} else {
@@ -80,7 +79,6 @@ const CallsTabPage = (props) => {
 
 
 	useEffect(() => {
-		console.log(baseData, editedItemsIds.length);
 		if (editMode && props.on_change_data){
 			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
 				props.on_change_data('calls', baseData.concat(temporaryUnits))
@@ -155,7 +153,6 @@ const CallsTabPage = (props) => {
 		}
 
 		result.sort((a, b) => dayjs(a).isAfter(dayjs(b)));
-		console.log('JOINED CALLS ', result);
 		return result;
 	};
 
@@ -343,7 +340,6 @@ const CallsTabPage = (props) => {
 
 	const handleAddUnitBlank = (type) => {
 		setNewLoading(true);
-		console.log('ADDED NEW DDDDDDDDDD');
 		setTimeout(() => {
 			let spawn = {
 				_type: type,
@@ -378,7 +374,6 @@ const CallsTabPage = (props) => {
 			};
 
 			setTemporaryUnits((prevItems) => [spawn, ...prevItems]);
-			console.log(spawn);
 		}, 760);
 	};
 
@@ -427,7 +422,6 @@ const CallsTabPage = (props) => {
 		if (!editMode) {
 			return;
 		}
-		console.log('id, data', id, data, temporaryUnits);
 		setTemporaryUnits((prevUnits) => {
 			const exists = prevUnits.some((item) => item.id === id);
 
@@ -445,7 +439,6 @@ const CallsTabPage = (props) => {
 	const handleUpdateRealUnit = (id, data) => {
 		// let udata = originalData.filter((item) => item.id !== id);
 		// udata.push(data);
-		console.log('CALL TU REAL UPDATE', originalData, editMode, editedItemsIds);
 		if (!editMode) {
 			return;
 		}
@@ -456,8 +449,6 @@ const CallsTabPage = (props) => {
 
 		originalData.forEach((element) => {
 			if (element.id === id) {
-				console.log(element, data);
-				console.log(originalData);
 				is_original = compareObjects(element, data, {
 					excludeFields: excluders,
 					compareArraysDeep: false,
@@ -477,8 +468,6 @@ const CallsTabPage = (props) => {
 			}
       		data.command = '';
 		}
-
-		console.log(is_original, id);
 
 		setBaseData((prevUnits) => {
 			const exists = prevUnits.some((item) => item.id === id);

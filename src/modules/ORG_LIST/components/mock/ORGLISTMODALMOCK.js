@@ -48,6 +48,19 @@ export const ORGLIST_MODAL_MOCK_MAINTAB = {
 	profsound: null,
 	date_create: '0000-00-00 00:00:00',
 	id_company: 1,
+
+list: {
+		id: 2199,
+		id_orgs: 3584,
+		id8an_typelist: 1,
+		comment:
+			'Частичное совпадение имени с организацией: Системы безопасности[2985](Системы Безопасности , Системы безопасности)',
+		typelist: {
+			id: 1,
+			name: 'черный список',
+		},
+	},
+
 	// contacts: [
 	// 	{
 	// 		id: 22047,
@@ -1015,15 +1028,5 @@ export const ORGLIST_MODAL_MOCK_MAINTAB = {
 		},
 	],
 
-	list: {
-		id: 2199,
-		id_orgs: 3584,
-		id8an_typelist: 1,
-		comment:
-			'Частичное совпадение имени с организацией: Системы безопасности[2985](Системы Безопасности , Системы безопасности)',
-		typelist: {
-			id: 1,
-			name: 'черный список',
-		},
-	},
+	
 };
