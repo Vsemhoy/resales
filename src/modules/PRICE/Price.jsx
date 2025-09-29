@@ -287,7 +287,7 @@ const Price = () => {
 
 			// Функция для удобного добавления свойства, если оно есть в checkedList
 			const addIfChecked = (key, value) => {
-				if (checkedList && checkedList.find(c => c.name === key)) {
+				if (checkedList && checkedList.find(c => c.name === key)?.checked) {
 					obj[key] = value;
 				}
 			};
