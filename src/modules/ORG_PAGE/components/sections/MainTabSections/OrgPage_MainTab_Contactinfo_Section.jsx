@@ -97,8 +97,9 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 
 
   useEffect(() => {
+    console.log(objectResult.id);
     const timer = setTimeout(() => {
-      if (objectResult.id == null) {
+      if (objectResult.id == null || !editMode) {
         // Объект ещё не смонтировался. воизбежание гонок
         return;
       }
@@ -116,7 +117,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 
     useEffect(() => {
     const timer = setTimeout(() => {
-      if (objectResult.id == null) {
+      if (objectResult.id == null || !editMode) {
         // Объект ещё не смонтировался. воизбежание гонок
         return;
       }
@@ -135,7 +136,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 
     useEffect(() => {
     const timer = setTimeout(() => {
-      if (objectResult.id == null) {
+      if (objectResult.id == null || !editMode) {
         // Объект ещё не смонтировался. воизбежание гонок
         return;
       }
@@ -153,7 +154,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 
     useEffect(() => {
     const timer = setTimeout(() => {
-      if (objectResult.id == null) {
+      if (objectResult.id == null || !editMode) {
         // Объект ещё не смонтировался. воизбежание гонок
         return;
       }
@@ -647,8 +648,14 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 
 
 
-
-
+  // Если изменен город, то нужно изменить и регион
+  useEffect(() => {
+    if (props.on_blur){
+      setTimeout(() => {
+        props.on_blur({id8org_regions: id8org_regions})
+      }, 600);
+    }
+  }, [id8org_regions]);
 
 
 	return (
@@ -697,7 +704,6 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
         //   console.log(data);
         // }}
         on_blur={(data)=>{
-          console.log(data, selects.towns);
           if (data.id8org_towns) { setId8org_towns(data.id8org_towns);
             let ttown = selects?.towns.find((item)=> item.value === data.id8org_towns);
             if (ttown){
@@ -712,6 +718,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 
           if (props.on_blur){
             props.on_blur(data);
+
           }
         }}
 			/>
