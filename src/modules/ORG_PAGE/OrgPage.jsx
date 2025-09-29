@@ -734,21 +734,31 @@ const OrgPage = (props) => {
 
 	// Очистка данных для сохранения (измененных)
 	const clearTemps = () => {
-			if (tempMainData){
+			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
+				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
 				setTempMainData(null);
-				get_main_data_action();
+				setTempMain_an_requisites(null);
+				setTempMain__an_licenses(null);
+				setTempMain_an_tolerances(null);
+				setTempMain_bo_licenses(null);
+				setTempMain_emails(null);
+				setTempMain_legalAddresses(null);
+				setTempMain_phones(null);
+				setTempMain_addresses(null);
+
+				get_main_data_action(itemId);
 			}
 			if (tempProjectsData && tempProjectsData.length > 0){
 					setTempProjectsData(null);
-					get_projects_data_action();
+					get_projects_data_action(itemId);
 				}
 				if (tempCallsData && tempCallsData.length > 0){
 					setTempCallsData(null);
-					get_org_calls_action();
+					get_org_calls_action(itemId);
 				}
 				if (tempNotesData && tempNotesData.length > 0){
 					setTempNotesData(null);
-					get_notes_data_action();
+					get_notes_data_action(itemId);
 				}
 
 
