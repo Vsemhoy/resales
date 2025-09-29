@@ -43,6 +43,8 @@ const OPMTinfoContactLegalAddressSection = (props) => {
       setPost_index(changed_data.post_index);
     } else if (changed_data.address !== undefined) {
       setAddress(changed_data.address);
+    } else if (changed_data.comment !== undefined) {
+      setComment(changed_data.comment);
     } 
   }
 
