@@ -5,18 +5,15 @@ import { PRODMODE, CSRF_TOKEN } from '../../config/config';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
 
-import {Tree, Button, Spin, message, Table, Tag, Switch, Divider, Checkbox, Layout, Affix, Alert} from 'antd';
-import axios from 'axios';
+import {Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Affix, Alert} from 'antd';
 import * as XLSX from 'xlsx';
 
-import style from './style/price.module.css';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import {DS_CURRENCY, PRICE} from './mock/mock';
 
 import './style/price_style.css'
 import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
 import {FilterOutlined} from "@ant-design/icons";
-import BidListSiderFilters from "../BID_LIST/components/BidListSiderFilters";
 import Sider from "antd/es/layout/Sider";
 import {Content} from "antd/es/layout/layout";
 
@@ -290,7 +287,7 @@ const Price = () => {
 
 			// Функция для удобного добавления свойства, если оно есть в checkedList
 			const addIfChecked = (key, value) => {
-				if (checkedList && checkedList.includes(key)) {
+				if (checkedList && checkedList.find(c => c.name === key)) {
 					obj[key] = value;
 				}
 			};
