@@ -602,7 +602,7 @@ const OrgPageSectionRow = (props) => {
 								<EnterOutlined />
 							</span>
 							<span>
-								<i>Комментарий</i>
+								<i>{commentConfig.label ? commentConfig.label : "Комментарий"}</i>
 							</span>
 						</div>
 						<div className="sk-omt-content">

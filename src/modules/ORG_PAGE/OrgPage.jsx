@@ -610,6 +610,9 @@ const OrgPage = (props) => {
 
 	const handleMaintabObjectDataChange = (key, dataarr) => {
 		if (!editMode){ return; }
+		console.log('MAIN TAB OBJECT SETTER');
+		console.log(key, "-", dataarr);
+
 		if (key === 'emails'){
 			setTempMain_emails(dataarr);
 		} else if (key === 'licenses'){
@@ -622,14 +625,13 @@ const OrgPage = (props) => {
 			setTempMain_an_requisites(dataarr);
 		} else if (key === 'phones'){
 			setTempMain_phones(dataarr);
-		} else if (key === 'addresses'){
+		} else if (key === 'address'){
 			setTempMain_addresses(dataarr);
 		} else if (key === 'legaladdresses'){
 			setTempMain_legalAddresses(dataarr);
 		} else if (key === 'emails'){
 			setTempMain_emails(dataarr);
 		}
-		console.log('MAIN SETTER');
 	};
 
 	useEffect(() => {

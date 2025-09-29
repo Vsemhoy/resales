@@ -848,17 +848,20 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
                   handleAddAddress();
                 }}
                 >Адрес</Button>
-                <Button
-                title='Добавить юр. адрес'
-                size='small'
-                icon={<BuildingLibraryIcon height={'20px'}/>}
-                color="primary"
-                variant="outlined"
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  handleAddLegalad();
-                }}
-                >Юр. Адрес</Button>
+                {legaladdresses.length + newLegaladdresses < 1 && (
+                  <Button
+                  title='Добавить юр. адрес'
+                  size='small'
+                  icon={<BuildingLibraryIcon height={'20px'}/>}
+                  color="primary"
+                  variant="outlined"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddLegalad();
+                  }}
+                  >Юр. Адрес</Button>
+                )}
+
               <Button
                 title='Добавить контактный телефон'
                 size='small'
