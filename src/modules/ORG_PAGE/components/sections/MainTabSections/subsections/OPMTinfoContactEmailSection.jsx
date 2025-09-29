@@ -41,6 +41,8 @@ const OPMTinfoContactEmailSection = (props) => {
       setComment(changed_data.comment);
     } else if (changed_data.email !== undefined) {
       setEmail(changed_data.email);
+    } else if (changed_data.comment !== undefined) {
+      setComment(changed_data.comment);
     } 
   }
 
