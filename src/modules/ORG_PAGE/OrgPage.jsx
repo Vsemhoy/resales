@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
+import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import {
 	NavLink,
 	Outlet,

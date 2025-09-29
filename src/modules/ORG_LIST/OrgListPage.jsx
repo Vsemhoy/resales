@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import './components/style/orglistpage.css';
-import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
+import { BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import {
 	Affix,
@@ -555,18 +555,16 @@ const OrgListPage = (props) => {
 				);
 				if (new_bid_response) {
 					window.open(
-						window.location.origin + '/' + HTTP_ROOT + '/orgs/' +
+						BASE_ROUTE + '/orgs/' +
 						new_bid_response.data.org_id, 
 						"_blank"
 					);
-					// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
 				}
 			} catch (e) {
 				console.log(e);
 				if (!PRODMODE){
 					window.open(
-							'/orgs/' +
-							targetRowId, 
+							'/orgs/' + targetRowId, 
 							"_blank"
 						);
 				}

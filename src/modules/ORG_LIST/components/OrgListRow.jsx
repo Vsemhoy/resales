@@ -164,7 +164,6 @@ const OrgListRow = (props) => {
 						// 	"_blank"
 						// );
 						alert("Заявка на кураторство отправлена");
-						// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
 					}
 				} catch (e) {
 					console.log(e);
@@ -232,7 +231,6 @@ const OrgListRow = (props) => {
             new_bid_response.data.bid.id, 
             "_blank"
           );
-					// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
         }
       } catch (e) {
         console.log(e);
