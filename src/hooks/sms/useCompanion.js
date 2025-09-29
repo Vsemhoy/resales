@@ -1,15 +1,17 @@
 import { useCallback } from 'react';
+import { useUserData } from '../../context/UserDataContext';
 
-export const useCompanion = (currentUserId) => {
+export const useCompanion = () => {
+	const { userdata } = useUserData();
+	const currentUserId = userdata?.user?.id;
+
 	return useCallback(
 		(sms) => {
-			if (!sms || typeof sms.chat_id !== 'number') return null;
-
-			if (sms.from.id === currentUserId && sms.to.id === currentUserId) {
-				return 'self';
+			if (!sms || !currentUserId) return null;
+			if (sms.from.id === currentUserId) {
+				return sms.to.id === currentUserId ? 'self' : sms.to;
 			}
-
-			return sms.from.id === currentUserId ? sms.to : sms.from;
+			return sms.from;
 		},
 		[currentUserId]
 	);

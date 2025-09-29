@@ -48,7 +48,7 @@ const OPMTtoleranceSection = (props) => {
 
 
   useEffect(() => {
-    console.log('props.selects', props.selects)
+    // //console.log('props.selects', props.selects)
     let arrak = [];
     if (props.selects){
       setSelects(props.selects);
@@ -68,13 +68,13 @@ const OPMTtoleranceSection = (props) => {
         }
       }
     }
-    console.log('ARRAK', arrak);
+    // //console.log('ARRAK', arrak);
     setOptions(arrak);
   }, [props.selects, docType]);
 
 
   const handleChangeData = (changed_data) => {
-    console.log('changed_data', changed_data)
+    // //console.log('changed_data', changed_data)
     if (changed_data.id_an_orgs !== undefined) {
       setId_an_orgs(changed_data.id_an_orgs);
 
@@ -122,7 +122,7 @@ const OPMTtoleranceSection = (props) => {
       resultObject.comment = comment;
       resultObject.deleted = deleted;
 
-      console.log('result', resultObject)
+      //console.log('result', resultObject)
 
       if (props.on_change) {
         props.on_change(id, resultObject);
@@ -143,9 +143,9 @@ const OPMTtoleranceSection = (props) => {
 
   useEffect(() => {
     if (deleted){
-      console.log('ALARM', props)
+      //console.log('ALARM', props)
       if (props.on_delete){
-        console.log(id)
+        //console.log(id)
         props.on_delete(id, !deleted);
       }
     }

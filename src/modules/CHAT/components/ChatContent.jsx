@@ -52,16 +52,12 @@ export default function ChatContent({ chatId }) {
 
 	const getRole = useCompanion(currentUserId);
 
-	// получаем историю + live через useChatMessages
 	const { data: smsList = [], loading, error } = useChatMessages({ chatId, mock: MOCK });
-
 	const { sendSms, loading: sending } = useSendSms();
 
-	const [text, setText] = useState('');
+	const [inputValue, setInputValue] = useState(''); // локальный state для Input
 	const [showPicker, setShowPicker] = useState(false);
 	const [localMessages, setLocalMessages] = useState([]);
-
-	// объединяем сообщения из useChatMessages и локальные (до подтверждения с сервера)
 
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
@@ -93,32 +89,29 @@ export default function ChatContent({ chatId }) {
 	const messagesWithDividers = useMemo(() => injectDayDividers(allMessages), [allMessages]);
 
 	const handleSend = useCallback(async () => {
-		if (!text.trim()) return;
+		const trimmed = inputValue.trim();
+		if (!trimmed) return;
 
 		const newLocalMsg = {
 			id: generateUUID(),
 			chat_id: chatId,
-			text: text.trim(),
+			text: trimmed,
 			timestamp: Date.now(),
 		};
 
 		setLocalMessages((prev) => [...prev, newLocalMsg]);
-		setText('');
+		setInputValue(''); // очищаем локальный Input
 
 		try {
-			await sendSms({
-				to: chatId,
-				text: newLocalMsg.text,
-				answer: null,
-			});
+			await sendSms({ to: chatId, text: trimmed, answer: null });
 		} catch (err) {
 			message.error('Ошибка при отправке сообщения');
 			console.error('Ошибка при отправке сообщения:', err);
 		}
-	}, [text, chatId, sendSms]);
+	}, [inputValue, chatId, sendSms]);
 
 	const onEmojiClick = useCallback((emojiData) => {
-		setText((prev) => prev + emojiData.emoji);
+		setInputValue((prev) => prev + emojiData.emoji);
 		setShowPicker(false);
 	}, []);
 
@@ -177,8 +170,8 @@ export default function ChatContent({ chatId }) {
 					<Button icon={<FileAddOutlined />} />
 
 					<Input
-						value={text}
-						onChange={(e) => setText(e.target.value)}
+						value={inputValue}
+						onChange={(e) => setInputValue(e.target.value)}
 						placeholder="Введите сообщение..."
 						style={{ flex: 1 }}
 						onPressEnter={handleSend}

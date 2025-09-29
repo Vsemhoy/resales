@@ -47,7 +47,7 @@ const OPMTRequisitesSection = (props) => {
 
 
   const handleChangeData = (changed_data) => {
-    console.log('changed_data', changed_data)
+    // console.log('changed_data', changed_data)
     if (changed_data.id_orgs !== undefined) {
       setId_orgs(changed_data.id_orgs);
 
@@ -88,7 +88,7 @@ const OPMTRequisitesSection = (props) => {
       resultObject.requisites = requisites;
       resultObject.deleted = deleted;
 
-      console.log('result', resultObject)
+      // console.log('result', resultObject)
 
       if (props.on_change) {
         props.on_change(id, resultObject);
@@ -107,7 +107,7 @@ const OPMTRequisitesSection = (props) => {
 
   useEffect(() => {
     if (deleted){
-      console.log('ALARM', props)
+      // console.log('ALARM', props)
       if (props.on_delete){
         console.log(id)
         props.on_delete(id, !deleted);

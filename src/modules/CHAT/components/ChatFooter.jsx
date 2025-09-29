@@ -47,7 +47,7 @@ export default function ChatFooter({ draggable, setDraggable, position, setPosit
 	return (
 		<>
 			<p>WS status: {connected ? 'Connected' : 'Disconnected'}</p>
-			<button onClick={() => sendMessage({ text: 'Hello' })}>Send</button>
+			<button onClick={() => console.log('Hello')}>Send</button>
 			<footer hidden className={styles['chat-footer']}>
 				<Space.Compact>
 					<Popover
