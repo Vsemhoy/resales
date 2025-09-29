@@ -8,8 +8,13 @@ import {
 	LockOutlined,
 	EyeInvisibleOutlined,
 } from '@ant-design/icons';
+import { useChatSocket } from '../../../context/ChatSocketContext';
 
 export default function ChatFooter({ draggable, setDraggable, position, setPosition }) {
+	const { ws, connected } = useChatSocket();
+	const sendMessage = (msg) => {
+		if (ws && connected) ws.send(JSON.stringify(msg));
+	};
 	const cyclePosition = () => {
 		const nextPosition = {
 			topLeft: 'topRight',
@@ -40,35 +45,39 @@ export default function ChatFooter({ draggable, setDraggable, position, setPosit
 	);
 
 	return (
-		<footer hidden className={styles['chat-footer']}>
-			<Space.Compact>
-				<Popover
-					content={draggable ? 'Отключить перетаскивание' : 'Включить перетаскивание'}
-					trigger="hover"
-				>
-					<Button
-						type="default"
-						onClick={() => {
-							setDraggable(!draggable);
-							console.log('draggable =', !draggable);
-						}}
+		<>
+			<p>WS status: {connected ? 'Connected' : 'Disconnected'}</p>
+			<button onClick={() => sendMessage({ text: 'Hello' })}>Send</button>
+			<footer hidden className={styles['chat-footer']}>
+				<Space.Compact>
+					<Popover
+						content={draggable ? 'Отключить перетаскивание' : 'Включить перетаскивание'}
+						trigger="hover"
 					>
-						<DragOutlined />
-					</Button>
-				</Popover>
+						<Button
+							type="default"
+							onClick={() => {
+								setDraggable(!draggable);
+								console.log('draggable =', !draggable);
+							}}
+						>
+							<DragOutlined />
+						</Button>
+					</Popover>
 
-				<Popover content="Переместить окно по углам экрана" trigger="hover">
-					<Button type="default" onClick={cyclePosition}>
-						<DragOutlined style={{ transform: 'rotate(45deg)' }} />
-					</Button>
-				</Popover>
+					<Popover content="Переместить окно по углам экрана" trigger="hover">
+						<Button type="default" onClick={cyclePosition}>
+							<DragOutlined style={{ transform: 'rotate(45deg)' }} />
+						</Button>
+					</Popover>
 
-				<Popover content={settingsContent} trigger="hover" title="Настройки чата">
-					<Button type="default">
-						<SettingOutlined />
-					</Button>
-				</Popover>
-			</Space.Compact>
-		</footer>
+					<Popover content={settingsContent} trigger="hover" title="Настройки чата">
+						<Button type="default">
+							<SettingOutlined />
+						</Button>
+					</Popover>
+				</Space.Compact>
+			</footer>
+		</>
 	);
 }

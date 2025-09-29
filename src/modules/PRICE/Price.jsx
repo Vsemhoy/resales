@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { PRODMODE, CSRF_TOKEN } from '../../config/config';
 
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
 
-import { Tree, Button, Spin, message, Table, Tag, Switch, Divider, Checkbox } from 'antd';
-import axios from 'axios';
+import { Tree, Button, Spin, message, Table, Tag, Switch, Checkbox } from 'antd';
+// import axios from 'axios';
 import * as XLSX from 'xlsx';
 
 import style from './style/price.module.css';

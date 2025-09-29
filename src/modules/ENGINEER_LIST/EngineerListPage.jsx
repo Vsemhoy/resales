@@ -13,20 +13,21 @@ import {
 	message,
 	Spin,
 	Tag,
-	Tooltip, Alert,
+	Tooltip,
+	Alert,
 } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { CaretLeftFilled, CloseOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
-import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
+// import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import EngineerListTable from './components/EngineerListTable';
 import EngineerListSiderFilters from './components/EngineerListSiderFilters';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { BID_LIST, FILTERS, ORDERS, ORDERSSTATUS, SPECS_LIST } from './mock/mock';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
-import { c } from 'react/compiler-runtime';
+// import { c } from 'react/compiler-runtime';
 import OrderListSider from './components/OrderListSider';
-import NewOrderModal from "./components/NewOrderModal";
+import NewOrderModal from './components/NewOrderModal';
 
 const EngineerListPage = (props) => {
 	const { userdata } = props;
@@ -45,13 +46,13 @@ const EngineerListPage = (props) => {
 	const [filterProtectionProject, setFilterProtectionProject] = useState([]);
 	const [filterBidType, setFilterBidType] = useState([]);
 	/* в фильтрах sider */
-	const [filterPaySelect, setFilterPaySelect] = useState([]);
-	const [filterAdminAcceptSelect, setFilterAdminAcceptSelect] = useState([]);
-	const [filterPackageSelect, setFilterPackageSelect] = useState([]);
+	// const [filterPaySelect, setFilterPaySelect] = useState([]);
+	// const [filterAdminAcceptSelect, setFilterAdminAcceptSelect] = useState([]);
+	// const [filterPackageSelect, setFilterPackageSelect] = useState([]);
 	const [filterStatusSelect, setFilterStatusSelect] = useState([]);
-	const [filterBidCurrencySelect, setFilterBidCurrencySelect] = useState([]);
-	const [filterNdsSelect, setFilterNdsSelect] = useState([]);
-	const [filterCompleteSelect, setFilterCompleteSelect] = useState([]);
+	// const [filterBidCurrencySelect, setFilterBidCurrencySelect] = useState([]);
+	// const [filterNdsSelect, setFilterNdsSelect] = useState([]);
+	// const [filterCompleteSelect, setFilterCompleteSelect] = useState([]);
 	const [filterCompaniesSelect, setFilterCompaniesSelect] = useState([]);
 
 	const [filterSortClearMenu, setFilterSortClearMenu] = useState([]);
@@ -142,10 +143,10 @@ const EngineerListPage = (props) => {
 			setIsOneRole(found.length === 1);
 		}
 		if (userdata !== null && userdata.user && userdata.user.id_departament) {
-			if ([7,8,20].includes(userdata.user.id_departament)) {
-			  setActiveRole(1);
+			if ([7, 8, 20].includes(userdata.user.id_departament)) {
+				setActiveRole(1);
 			} else {
-			  setActiveRole(2);
+				setActiveRole(2);
 			}
 		}
 	}, [userdata]);
@@ -457,7 +458,7 @@ const EngineerListPage = (props) => {
 		setModalReason(text);
 	};
 
-	const [modalText, setModalText] = useState("");
+	const [modalText, setModalText] = useState('');
 	const [modalFileList, setModalFileList] = useState([]);
 
 	const handleSetModalText = (text) => {
@@ -467,14 +468,14 @@ const EngineerListPage = (props) => {
 	const handleModalCancel = () => {
 		console.log('HERE: handleModalCancel');
 		setBlockNewSpec(false);
-		setModalText("");
+		setModalText('');
 		setModalFileList([]);
 	};
 	const handleModalOk = (text, files) => {
 		console.log('HERE: handleModalOk', text);
 		setModalText(text);
 		setModalFileList(files);
-		console.log(files)
+		console.log(files);
 
 		fetchCreateNewOrder(files, text).then(() => {
 			setBlockNewSpec(false);
@@ -485,10 +486,10 @@ const EngineerListPage = (props) => {
 		if (PRODMODE) {
 			const formData = new FormData();
 			formData.append('_token', CSRF_TOKEN);
-			formData.append('data', JSON.stringify({text: text}));
+			formData.append('data', JSON.stringify({ text: text }));
 
-			console.log("Files: ", files);
-			console.log("Text: ", text);
+			console.log('Files: ', files);
+			console.log('Text: ', text);
 
 			files.forEach((file, index) => {
 				formData.append('files[]', file.originFileObj || file);
@@ -497,20 +498,23 @@ const EngineerListPage = (props) => {
 			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
-				}
+				},
 			});
 			success('Заявка успешно создана');
 		} else {
 			success('Заявка успешно создана');
 		}
-	}
+	};
 
 	const acceptOrder = async (order_id, engineer) => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/accept/' + order_id, {
-					_token: CSRF_TOKEN,
-				})
+				let response = await PROD_AXIOS_INSTANCE.post(
+					'/api/sales/engineer/orders/accept/' + order_id,
+					{
+						_token: CSRF_TOKEN,
+					}
+				);
 
 				setIsAlertVisible(true);
 				setAlertMessage('Успех!');
@@ -520,7 +524,7 @@ const EngineerListPage = (props) => {
 				const updatedOrders = orders.filter((order) => order.id !== order_id);
 				setOrders(updatedOrders);
 			} catch (e) {
-				console.log(e)
+				console.log(e);
 				setIsAlertVisible(true);
 				setAlertMessage('Произошла ошибка!');
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
@@ -535,8 +539,7 @@ const EngineerListPage = (props) => {
 			const updatedOrders = orders.filter((order) => order.id !== order_id);
 			setOrders(updatedOrders);
 		}
-	}
-
+	};
 
 	return (
 		<div className={`app-page sa-app-page ${isOpenedFilters ? 'sa-filer-opened' : ''}`}>
