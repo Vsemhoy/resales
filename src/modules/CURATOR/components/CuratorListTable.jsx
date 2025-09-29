@@ -1,15 +1,15 @@
-import { Affix, DatePicker, Input, Select } from 'antd';
+// import { Affix, DatePicker, Input, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
-import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
+// import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import CuratorListRow from './CuratorListRow';
 
 const CuratorListTable = (props) => {
 	const [sortOrders, setSortOrders] = useState([]);
 
-	const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-	const [previewItem, setPreviewItem] = useState(null);
+	// const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+	// const [previewItem, setPreviewItem] = useState(null);
 
-	const handleRowDblClick = (id) => {};
+	// const handleRowDblClick = (id) => {};
 
 	const handlePreviewOpen = (item, state) => {
 		console.log('HEllo');

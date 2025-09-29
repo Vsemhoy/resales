@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { PRODMODE, CSRF_TOKEN } from '../../config/config';
 
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
 
-import {Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Affix, Alert} from 'antd';
+import { Tree, Button, Spin, message, Table, Tag, Switch, Checkbox } from 'antd';
+// import axios from 'axios';
 import * as XLSX from 'xlsx';
 
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
@@ -160,7 +161,7 @@ const Price = () => {
 										>
 											Розница:{' '}
 											<span style={{background: '#fff', fontWeight: 600}}>
-											{model.prices.price_0}{getCurrencySymbol()}
+											{model.prices.price_0}{getCurrencySymbol(model.currency)}
 										</span>
 										</Tag>
 									</div>
@@ -178,7 +179,7 @@ const Price = () => {
 										>
 											Прайс 10:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_10}{getCurrencySymbol()}
+											{model.prices.price_10}{getCurrencySymbol(model.currency)}
 										</span>
 										</Tag>
 									</div>
@@ -196,7 +197,7 @@ const Price = () => {
 										>
 											Прайс 20:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_20}{getCurrencySymbol()}
+											{model.prices.price_20}{getCurrencySymbol(model.currency)}
 										</span>
 										</Tag>
 									</div>
@@ -214,7 +215,7 @@ const Price = () => {
 										>
 											Прайс 30:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_30}{getCurrencySymbol()}
+											{model.prices.price_30}{getCurrencySymbol(model.currency)}
 										</span>
 										</Tag>
 									</div>
@@ -287,7 +288,7 @@ const Price = () => {
 
 			// Функция для удобного добавления свойства, если оно есть в checkedList
 			const addIfChecked = (key, value) => {
-				if (checkedList && checkedList.find(c => c.name === key)) {
+				if (checkedList && checkedList.find(c => c.name === key)?.checked) {
 					obj[key] = value;
 				}
 			};
