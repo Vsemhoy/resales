@@ -572,6 +572,7 @@ const OrgPage = (props) => {
 		}
 	}, [pageProject]);
 
+
 	const handleSaveData = () => {
 		setBlockOnSave(true);
 		setSaveProcess(5);
@@ -583,6 +584,7 @@ const OrgPage = (props) => {
 
 		let saveData = {};
 		setTimeout(() => {
+			console.log('tempMainData', tempMainData)
 			if (tempMainData){
 				saveData.orgData = tempMainData;
 			}
@@ -596,10 +598,10 @@ const OrgPage = (props) => {
 				saveData.notes = tempNotesData;
 			}
 			
+			update_data_action(saveData);
+			console.log('SAVEDATA FIN', saveData);
 		}, 2000);
-			
-		update_data_action(saveData);
-		console.log('SAVEDATA FIN', saveData);
+		
 
 
 			setIsSmthChanged(false);
@@ -678,7 +680,7 @@ const OrgPage = (props) => {
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
-				
+				console.log('SET COPY DATA')
 				setTempMainData(copyData);
 			} else {
 				setTempMainData(baseMainData);
