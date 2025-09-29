@@ -29,11 +29,10 @@
 	justify-content: center;
 }
 .price__cont {
-	display: flex;
+	/*display: flex;
 	width: 1300px;
 	margin: 50px auto;
-	/*border: 1px solid #eaeaea;*/
-	padding: 20px;
+	padding: 20px;*/
 }
 .price__model__name {
 	width: 300px;
