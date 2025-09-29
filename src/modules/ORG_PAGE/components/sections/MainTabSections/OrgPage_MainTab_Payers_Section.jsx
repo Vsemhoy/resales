@@ -24,6 +24,9 @@ const OrgPage_MainTab_Payers_Section = (props) => {
 	const [selects, setSelects] = useState(null);
 
 	useEffect(() => {
+		if (!props.edit_mode){
+			setNewRequisites([]);
+		}
 		seteditMode(props.edit_mode);
 	}, [props.edit_mode]);
 

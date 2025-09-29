@@ -34,6 +34,10 @@ const OrgPage_MainTab_Tolerance_Section = (props) => {
 	const [selects, setSelects] = useState(null);
 
 	useEffect(() => {
+		if (!props.edit_mode){
+			// setNewLicenses([]);
+			setNewTolerances([]);
+		}
 		seteditMode(props.edit_mode);
 	}, [props.edit_mode]);
 
