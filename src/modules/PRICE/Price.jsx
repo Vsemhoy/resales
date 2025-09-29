@@ -30,18 +30,22 @@ const Price = () => {
 	const [isOpenedFilters, setIsOpenedFilters] = useState(true);
 	const defaultCheckedList = [
 		{
+			id: 1,
 			name: 'Розница',
 			checked: true,
 		},
 		{
+			id: 2,
 			name: 'Прайс 10',
 			checked: true,
 		},
 		{
+			id: 3,
 			name: 'Прайс 20',
 			checked: true,
 		},
 		{
+			id: 4,
 			name: 'Прайс 30',
 			checked: true,
 		},
@@ -125,70 +129,78 @@ const Price = () => {
 							<div className={'sa-price-option'}>
 								<div className={'sa-price-grid-cell'} style={{alignItems: 'center'}}>{model.name}</div>
 								<div className={'sa-price-grid-cell'}>{model.descr}</div>
-								<div className={'sa-price-tag'}>
-									<Tag
-										color={'green'}
-										style={{
-											width: '100%',
-											display: 'inline-block',
-											textAlign: 'center',
-											lineHeight: '27px'
-										}}
-									>
-										Розница:{' '}
-										<span style={{ background: '#fff', fontWeight: 600 }}>
-										{model.prices.price_0}
-									</span>
-									</Tag>
-								</div>
-								<div className={'sa-price-tag'}>
-									<Tag
-										color={'geekblue'}
-										style={{
-											width: '100%',
-											display: 'inline-block',
-											textAlign: 'center',
-											lineHeight: '27px'
-										}}
-									>
-										Прайс 10:{' '}
-										<span style={{ background: '#fff', fontWeight: 600 }}>
-										{model.prices.price_10}
-									</span>
-									</Tag>
-								</div>
-								<div className={'sa-price-tag'}>
-									<Tag
-										color={'gold'}
-										style={{
-											width: '100%',
-											display: 'inline-block',
-											textAlign: 'center',
-											lineHeight: '27px'
-										}}
-									>
-										Прайс 20:{' '}
-										<span style={{ background: '#fff', fontWeight: 600 }}>
-										{model.prices.price_20}
-									</span>
-									</Tag>
-								</div>
-								<div className={'sa-price-tag'}>
-									<Tag
-										color={'volcano'}
-										style={{
-											width: '100%',
-											display: 'inline-block',
-											textAlign: 'center',
-											lineHeight: '27px'
-										}}
-									>
-										Прайс 30:{' '}
-										<span style={{ background: '#fff', fontWeight: 600 }}>
-										{model.prices.price_30}
-									</span>
-									</Tag>
-								</div>
+								{checkedList.find(c => c.id === 1)?.checked && (
+									<div className={'sa-price-tag'}>
+										<Tag
+											color={'green'}
+											style={{
+												width: '100%',
+												display: 'inline-block',
+												textAlign: 'center',
+												lineHeight: '27px'
+											}}
+										>
+											Розница:{' '}
+											<span style={{background: '#fff', fontWeight: 600}}>
+											{model.prices.price_0}{getCurrencySymbol()}
+										</span>
+										</Tag>
+									</div>
+								)}
+								{checkedList.find(c => c.id === 2)?.checked && (
+									<div className={'sa-price-tag'}>
+										<Tag
+											color={'geekblue'}
+											style={{
+												width: '100%',
+												display: 'inline-block',
+												textAlign: 'center',
+												lineHeight: '27px'
+											}}
+										>
+											Прайс 10:{' '}
+											<span style={{ background: '#fff', fontWeight: 600 }}>
+											{model.prices.price_10}{getCurrencySymbol()}
+										</span>
+										</Tag>
+									</div>
+								)}
+								{checkedList.find(c => c.id === 3)?.checked && (
+									<div className={'sa-price-tag'}>
+										<Tag
+											color={'gold'}
+											style={{
+												width: '100%',
+												display: 'inline-block',
+												textAlign: 'center',
+												lineHeight: '27px'
+											}}
+										>
+											Прайс 20:{' '}
+											<span style={{ background: '#fff', fontWeight: 600 }}>
+											{model.prices.price_20}{getCurrencySymbol()}
+										</span>
+										</Tag>
+									</div>
+								)}
+								{checkedList.find(c => c.id === 4)?.checked && (
+									<div className={'sa-price-tag'}>
+										<Tag
+											color={'volcano'}
+											style={{
+												width: '100%',
+												display: 'inline-block',
+												textAlign: 'center',
+												lineHeight: '27px'
+											}}
+										>
+											Прайс 30:{' '}
+											<span style={{ background: '#fff', fontWeight: 600 }}>
+											{model.prices.price_30}{getCurrencySymbol()}
+										</span>
+										</Tag>
+									</div>
+								)}
 							</div>
 						),
 						isLeaf: true,
