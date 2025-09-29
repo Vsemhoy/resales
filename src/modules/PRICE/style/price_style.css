@@ -27,6 +27,7 @@
 }
 .sa-price-tree-container {
     margin: 20px 12px 0 12px;
+    min-height: 196px;
 }
 .sa-price-sider {
     display: flex;
