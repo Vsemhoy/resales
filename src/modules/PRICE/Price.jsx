@@ -22,6 +22,7 @@ const Price = () => {
 	const [treeData, setTreeData] = useState([]);
 	const [checkedKeys, setCheckedKeys] = useState([]);
 	const [loading, setLoading] = useState(false);
+	const [smallLoading, setSmallLoading] = useState(false);
 	const [currentCurrency, setCurrentCurrency] = useState(false);
 
 	const [isOpenedFilters, setIsOpenedFilters] = useState(true);
@@ -61,8 +62,10 @@ const Price = () => {
 		setCheckedList(defaultCheckedList);
 	}, []);
 	useEffect(() => {
+		setSmallLoading(true);
 		const treeNodes = mapDataToTreeNodes(data);
 		setTreeData(treeNodes);
+		setTimeout(() => setSmallLoading(false), 500);
 	}, [data, checkedList, currentCurrency]);
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
@@ -377,13 +380,15 @@ const Price = () => {
 				<Layout className={'sa-layout sa-w-100'}>
 					<Content>
 						<div className={'sa-price-tree-container'}>
-							<Tree
-								checkable
-								selectable={false}
-								treeData={treeData}
-								checkedKeys={checkedKeys}
-								onCheck={(keys) => setCheckedKeys(keys)}
-							/>
+							<Spin spinning={smallLoading}>
+								<Tree
+									checkable
+									selectable={false}
+									treeData={treeData}
+									checkedKeys={checkedKeys}
+									onCheck={(keys) => setCheckedKeys(keys)}
+								/>
+							</Spin>
 						</div>
 					</Content>
 					<Sider
