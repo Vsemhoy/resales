@@ -190,7 +190,7 @@ const BidListRow = (props) => {
 					<div>
 						<Tooltip
 							placement="leftTop"
-							title={<PositionList bidId={data.id} path={'/sales/data/getbidmodels'} />}
+							title={<PositionList bidId={data.id} fetch_path={'/sales/data/getbidmodels'} error_alert={props.error_alert}/>}
 							color="white"
 							styles={{
 								body: {
@@ -210,7 +210,7 @@ const BidListRow = (props) => {
 					<div>
 						<Tooltip
 							placement="leftTop"
-							title={<PositionList bidId={data.id} path={'/api/sales/doclist'} />}
+							title={<PositionList bidId={data.id} fetch_path={'/api/sales/doclist'} error_alert={props.error_alert}/>}
 							color="white"
 							style={{
 								maxWidth: '300px',
