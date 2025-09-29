@@ -507,7 +507,8 @@ const OrgPage = (props) => {
 					data: dataToUpdate,
 					_token: CSRF_TOKEN,
 				});
-				if (response){
+				console.log('response.status', response.status)
+				if (response.status === 200){
           // При успешной записи - очищаем все временные списки и загружаем данные заново
 					clearTemps();
 
@@ -580,8 +581,8 @@ const OrgPage = (props) => {
 			setBlockOnSave(false);
 		}, 2000);
 
-
 		let saveData = {};
+		setTimeout(() => {
 			if (tempMainData){
 				saveData.orgData = tempMainData;
 			}
@@ -595,6 +596,8 @@ const OrgPage = (props) => {
 				saveData.notes = tempNotesData;
 			}
 			
+		}, 2000);
+			
 		update_data_action(saveData);
 		console.log('SAVEDATA FIN', saveData);
 
@@ -605,7 +608,7 @@ const OrgPage = (props) => {
 	useEffect(() => {
 		if (editMode === false){ return; }
 		console.log(tempMainData, tempNotesData, tempCallsData);
-		console.log('isSmthChanged',isSmthChanged);
+		console.log('isSmthChanged', isSmthChanged);
 	}, [isSmthChanged]);
 
 	const handleMaintabObjectDataChange = (key, dataarr) => {
@@ -615,11 +618,11 @@ const OrgPage = (props) => {
 
 		if (key === 'emails'){
 			setTempMain_emails(dataarr);
-		} else if (key === 'licenses'){
+		} else if (key === 'active_licenses'){
 			setTempMain__an_licenses(dataarr);
-		} else if (key === 'tolerances'){
+		} else if (key === 'active_tolerance'){
 			setTempMain_an_tolerances(dataarr);
-		} else if (key === 'bo_licenses'){
+		} else if (key === 'active_licenses_bo'){
 			setTempMain_bo_licenses(dataarr);
 		} else if (key === 'requisites'){
 			setTempMain_an_requisites(dataarr);
@@ -636,7 +639,7 @@ const OrgPage = (props) => {
 
 	useEffect(() => {
 		if (!editMode){ return; }
-		let copyData = tempMainData ?  JSON.parse(JSON.stringify(tempMainData)) : {};
+		let copyData = tempMainData ? tempMainData :  JSON.parse(JSON.stringify(baseMainData));
 			if (copyData){
 				copyData.active_licenses =     tempMain_an_licenses;
 				copyData.active_tolerance =    tempMain_an_tolerances;
@@ -664,7 +667,7 @@ const OrgPage = (props) => {
 
 	const handleTabDataChange = (tab_name, data) => {
 		console.log('END POOINT', tab_name, data);
-		if (tab_name === 'main' && data && data.active_licenses){
+		if (tab_name === 'main' && data){
 			let copyData = JSON.parse(JSON.stringify(data));
 			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
 				copyData.active_licenses =     tempMain_an_licenses;
@@ -678,7 +681,7 @@ const OrgPage = (props) => {
 				
 				setTempMainData(copyData);
 			} else {
-				setTempMainData(null);
+				setTempMainData(baseMainData);
 			}
 
 		} else if (tab_name === 'projects'){
@@ -734,6 +737,10 @@ const OrgPage = (props) => {
 
 	// Очистка данных для сохранения (измененных)
 	const clearTemps = () => {
+		let iid = itemId;
+		setTimeout(() => {
+			setItemId(iid);
+		}, 300);
 			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
 				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
 				setTempMainData(null);
@@ -746,19 +753,19 @@ const OrgPage = (props) => {
 				setTempMain_phones(null);
 				setTempMain_addresses(null);
 
-				get_main_data_action(itemId);
+				get_main_data_action(iid);
 			}
 			if (tempProjectsData && tempProjectsData.length > 0){
 					setTempProjectsData(null);
-					get_projects_data_action(itemId);
+					get_projects_data_action(iid);
 				}
 				if (tempCallsData && tempCallsData.length > 0){
 					setTempCallsData(null);
-					get_org_calls_action(itemId);
+					get_org_calls_action(iid);
 				}
 				if (tempNotesData && tempNotesData.length > 0){
 					setTempNotesData(null);
-					get_notes_data_action(itemId);
+					get_notes_data_action(iid);
 				}
 
 
@@ -813,13 +820,7 @@ const OrgPage = (props) => {
 						format_data,
 					);
 					if (new_bid_response) {
-						// window.open(
-						// 	window.location.origin + '/' + HTTP_ROOT + '/bids/' +
-						// 	new_bid_response.data.bid.id, 
-						// 	"_blank"
-						// );
 						alert("Заявка на кураторство отправлена");
-						// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
 					}
 				} catch (e) {
 					console.log(e);

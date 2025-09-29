@@ -94,10 +94,10 @@ const OPMTtoleranceSection = (props) => {
       setDeleted(changed_data.deleted);
 
     } else if (changed_data.start_date !== undefined) {
-      setStart_date(changed_data.start_date === null ? null : changed_data.start_date.unix());
+      setStart_date(changed_data.start_date === null ? null : dayjs(changed_data.start_date).unix());
 
     } else if (changed_data.end_date !== undefined) {
-      setEnd_date(changed_data.end_date === null ? null : changed_data.end_date.unix());
+      setEnd_date(changed_data.end_date === null ? null : dayjs(changed_data.end_date).unix());
 
     } else if (changed_data.id_an_orgs !== undefined) {
       setId_an_orgs(changed_data.id_an_orgs);

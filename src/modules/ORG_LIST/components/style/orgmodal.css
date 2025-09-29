@@ -297,3 +297,14 @@ div.sa-outlet-body > div > div > .ant-collapse-item {
 .sa-outlet-body > div >  .ant-collapse:last-child {
 	margin-bottom: 20vh;
 }
+
+
+.sk-omt-row-editor .sa-required-field-block {
+	color: #f5222d;
+	/* background-color: red; */
+}
+.sk-omt-row-editor .sa-required-field-block .sk-omt-content, 
+.sk-omt-row-editor .sa-required-field-block .sk-omt-legend {
+	/* background-color: #f5222d; */
+	border-bottom: 1px solid red;
+}
