@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
 import {
 	NavLink,
 	Outlet,
@@ -798,6 +798,36 @@ const OrgPage = (props) => {
 	}
 
 
+	const handleCallBecomeCurator = async () => {
+			// http://192.168.1.16/api/curators/create
+			try {
+					const format_data = {
+						
+						_token: CSRF_TOKEN,
+						data: {
+							id_org: itemId,
+						},
+					};
+					let new_bid_response = await PROD_AXIOS_INSTANCE.post(
+						"/api/curators/create",
+						format_data,
+					);
+					if (new_bid_response) {
+						// window.open(
+						// 	window.location.origin + '/' + HTTP_ROOT + '/bids/' +
+						// 	new_bid_response.data.bid.id, 
+						// 	"_blank"
+						// );
+						alert("Заявка на кураторство отправлена");
+						// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
+					}
+				} catch (e) {
+					console.log(e);
+					
+			}
+	}
+
+
 	return (
 		<>
 			<div className="app-page">
@@ -847,7 +877,7 @@ const OrgPage = (props) => {
                                 <XMarkIcon height={'22px'}/> Просмотр
                             </div>
                         )} */}
-								{isSmthChanged && (
+								{editMode && isSmthChanged && (
 									<div style={{display: 'flex', alignItems: 'flex-end', paddingRight: '12px'}}>
 										<Tooltip title={'Не забудьте сохранить'}>
 											<Tag color='red-inverse'>Есть несохраненные данные</Tag>
@@ -855,6 +885,13 @@ const OrgPage = (props) => {
 									</div>
 								)}
 
+								{!editMode && (
+									<Button 
+
+										onClick={handleCallBecomeCurator}>
+											Запрос.Кураторство
+										</Button>
+								)}
 
 								{editMode ? (
 									<div>
@@ -884,6 +921,7 @@ const OrgPage = (props) => {
 										</Button>
 									</div>
 								) : (
+
 									<Button
 									color="primary"
 										variant="outlined"
