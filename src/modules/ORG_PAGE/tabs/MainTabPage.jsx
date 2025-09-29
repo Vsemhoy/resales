@@ -203,8 +203,8 @@ const MainTabPage = (props) => {
           // on_blur={(ee)=>(console.log("BLUUUUUUUUUUURRRRRRR", ee))}
           // on_blur={props.on_change_main_data_part} // Изменение строк
           on_blur={updateCompanyData} // Изменение строк
-          // on_change={updateCompanyObject} // Изменение объектов
-          on_change={(ee)=>(console.log("CCHHHHHHHHHHHHHHHAAAAAAAAAAA", ee))} // Изменение объектов
+          on_change={updateCompanyObject} // Изменение объектов
+          // on_change={(ee)=>(console.log("CCHHHHHHHHHHHHHHHAAAAAAAAAAA", ee))} // Изменение объектов
           />
       },
       {

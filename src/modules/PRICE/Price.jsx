@@ -5,7 +5,7 @@ import { PRODMODE, CSRF_TOKEN } from '../../config/config';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
 
-import { Tree, Button, Spin, message, Table, Tag, Switch, Checkbox } from 'antd';
+import { Tree, Button, Spin, message, Table, Tag, Switch, Checkbox, Layout, Alert, Affix } from 'antd';
 // import axios from 'axios';
 import * as XLSX from 'xlsx';
 

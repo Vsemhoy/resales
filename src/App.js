@@ -114,15 +114,6 @@ export const App = () => {
 								<Route path="/price" element={<Price userdata={userdata} />} />
 
 								<Route
-									path={BASE_ROUTE + '/curator/exmonitor'}
-									element={<CuratorExpiredMonitor userdata={userdata} />}
-								/>
-								<Route
-									path="/curator/exmonitor"
-									element={<CuratorExpiredMonitor userdata={userdata} />}
-								/>
-
-								<Route
 									path={BASE_ROUTE + '/curator'}
 									element={<CuratorPage userdata={userdata} />}
 								/>
