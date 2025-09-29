@@ -46,10 +46,7 @@
     text-align: left;
     font-weight: 500;
     display: flex;
-    /*align-items: center;*/
     overflow: hidden;
-    /*white-space: nowrap;*/
-    /*text-overflow: ellipsis;*/
 }
 .sa-price-tag {
     width: 100%;
