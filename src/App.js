@@ -17,7 +17,6 @@ import BidListPage from './modules/BID_LIST/BidListPage';
 import BidPage from './modules/BID_PAGE/BidPage';
 import BidPdfCreator from './modules/BID_PAGE/components/print/BidPdfCreator';
 import Price from './modules/PRICE/Price';
-import CuratorExpiredMonitor from './modules/CURATOR_TOOLS/CuratorExpiredMonitor';
 import CuratorPage from './modules/CURATOR/CuratorPage';
 import EngineerListPage from './modules/ENGINEER_LIST/EngineerListPage';
 import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
@@ -110,15 +109,6 @@ export const App = () => {
 
 							<Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />
 							<Route path="/price" element={<Price userdata={userdata} />} />
-
-							<Route
-								path={BASE_ROUTE + '/curator/exmonitor'}
-								element={<CuratorExpiredMonitor userdata={userdata} />}
-							/>
-							<Route
-								path="/curator/exmonitor"
-								element={<CuratorExpiredMonitor userdata={userdata} />}
-							/>
 
 							<Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata} />} />
 							<Route path="/curator" element={<CuratorPage userdata={userdata} />} />

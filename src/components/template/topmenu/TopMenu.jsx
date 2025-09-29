@@ -193,18 +193,6 @@ const TopMenu = () => {
 						</NavLink>
 					)}
 
-
-					{userdata && userdata.user && userdata.user.super ? (
-						<NavLink to="/orgs/534">
-							<div className={'sa-topmenu-button'}>Заявка</div>
-						</NavLink>
-					) : null}
-
-					{userdata && userdata.user && userdata.user.super ? (
-						<NavLink to="/curator/exmonitor">
-							<div className={'sa-topmenu-button'}>Exmo</div>
-						</NavLink>
-					) : null}
 					{topRole === 2 && (
 						<NavLink to="/curator">
 							<div className={'sa-topmenu-button'}>Кураторство</div>
@@ -215,7 +203,7 @@ const TopMenu = () => {
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
 
-          {userdata && userdata.user && userdata.user.super ? (
+          			{userdata && userdata.user && userdata.user.super ? (
 						<NavLink to="/dev/icons/antdicons">
 							<div className={'sa-topmenu-button'}>DEV</div>
 						</NavLink>

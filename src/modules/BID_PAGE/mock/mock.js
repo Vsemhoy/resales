@@ -597,147 +597,37 @@ export const BID_INFO = {
     },
     "bid_models": [
         {
-            "id": 977889,
-            "model_id": 1516,
+            "id": 978342,
+            "model_id": 10,
             "model_count": 1,
-            "model_name": "EP-6216",
-            "currency": 0,
-            "sort": 0,
-            "presence": 3,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977890,
-            "model_id": 33,
-            "model_count": 187,
-            "model_name": "SWS-03 ( i )",
+            "model_name": "TS-1",
             "currency": 0,
             "sort": 1,
             "presence": -2,
             "percent": 0,
-            "sklad": 187
+            "sklad": null
         },
         {
-            "id": 977891,
-            "model_id": 1437,
+            "id": 978344,
+            "model_id": 19,
             "model_count": 1,
-            "model_name": "PB-6207",
+            "model_name": "HS-20",
             "currency": 0,
             "sort": 2,
-            "presence": 3,
+            "presence": -2,
             "percent": 0,
-            "sklad": 1
+            "sklad": null
         },
         {
-            "id": 977892,
-            "model_id": 1143,
+            "id": 978357,
+            "model_id": 33,
             "model_count": 1,
-            "model_name": "RME-6108",
+            "model_name": "SWS-03 ( i )",
             "currency": 0,
             "sort": 3,
-            "presence": 3,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977893,
-            "model_id": 1526,
-            "model_count": 1,
-            "model_name": "PO-6106",
-            "currency": 0,
-            "sort": 4,
             "presence": -2,
             "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977894,
-            "model_id": 1527,
-            "model_count": 1,
-            "model_name": "PP-6213",
-            "currency": 0,
-            "sort": 5,
-            "presence": -2,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977895,
-            "model_id": 2009,
-            "model_count": 1,
-            "model_name": "PV-6232A",
-            "currency": 0,
-            "sort": 6,
-            "presence": -2,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977896,
-            "model_id": 1438,
-            "model_count": 1,
-            "model_name": "SC-6224",
-            "currency": 0,
-            "sort": 7,
-            "presence": 3,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977897,
-            "model_id": 1439,
-            "model_count": 1,
-            "model_name": "AFD-6218",
-            "currency": 0,
-            "sort": 8,
-            "presence": -2,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977898,
-            "model_id": 1441,
-            "model_count": 1,
-            "model_name": "PD-6359",
-            "currency": 0,
-            "sort": 9,
-            "presence": 3,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977899,
-            "model_id": 1142,
-            "model_count": 1,
-            "model_name": "ECS-6216P",
-            "currency": 0,
-            "sort": 10,
-            "presence": -2,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977900,
-            "model_id": 1140,
-            "model_count": 1,
-            "model_name": "RM-6024",
-            "currency": 0,
-            "sort": 11,
-            "presence": 3,
-            "percent": 0,
-            "sklad": 1
-        },
-        {
-            "id": 977901,
-            "model_id": 1740,
-            "model_count": 1,
-            "model_name": "DPA- 600D",
-            "currency": 0,
-            "sort": 12,
-            "presence": 3,
-            "percent": 0,
-            "sklad": 1
+            "sklad": 0
         }
     ],
     /*"openmode": {
