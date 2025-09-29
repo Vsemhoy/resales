@@ -48,6 +48,10 @@ const OrgPage_MainTab_Tolerance_Section = (props) => {
 		}
 	}, [props.selects]);
 
+	useEffect(() => {
+	  setNewTolerances([]);
+	}, [props.item_id]);
+
 
 	useEffect(() => {
 		if (props.data?.id){

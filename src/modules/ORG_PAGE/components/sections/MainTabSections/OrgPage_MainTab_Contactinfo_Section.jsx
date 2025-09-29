@@ -822,10 +822,10 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 						type: OPS_TYPE.STRING,
 						value: site,
 						max: 150,
-						required: false,
 						nullable: true,
 						placeholder: '',
 						name: 'site',
+            required: true,
 					}
 				]}
         

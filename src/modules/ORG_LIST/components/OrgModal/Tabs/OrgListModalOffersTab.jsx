@@ -1,7 +1,7 @@
 import { Button, Pagination, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
-import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../../../config/config';
+import { BASE_ROUTE, CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
 import { MODAL_OFFERS_LIST } from '../../mock/MODALOFFERSTABMOCK';
 import OrgOfferModalRow from './TabComponents/RowTemplates/OrgOfferModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
@@ -123,11 +123,10 @@ const OrgListModalOffersTab = (props) => {
 					);
 					if (new_bid_response) {
 						window.open(
-							window.location.origin + '/' + HTTP_ROOT + '/bids/' +
+							BASE_ROUTE + '/bids/' +
 							new_bid_response.data.bid.id, 
 							"_blank"
 						);
-						// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
 					}
 				} catch (e) {
 					console.log(e);

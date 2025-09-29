@@ -137,6 +137,7 @@ const OrgPage_MainTab_Common_Section = (props) => {
 						min: 0,
 						max: 30,
 						placeholder: '',
+						required: true,
 						name: 'inn',
 					},
 				]}

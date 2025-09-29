@@ -37,6 +37,9 @@ const OrgPage_MainTab_Payers_Section = (props) => {
 		}
 	}, [props.selects]);
 
+	useEffect(() => {
+		setNewRequisites([]);
+	}, [props.item_id]);
 
 	useEffect(() => {
 		if (props.data?.id){

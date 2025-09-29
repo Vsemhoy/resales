@@ -1,7 +1,7 @@
 import { Button, Pagination, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OrgBidTabRow from './TabComponents/OrgBidTabRow';
-import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../../../config/config';
+import { BASE_ROUTE, CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
 import { OM_ORG_BIDS } from '../../mock/ORGLISTMOCK';
 import { NavLink } from 'react-router-dom';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
@@ -125,11 +125,10 @@ const OrgListModalBillsTab = (props) => {
 					);
 					if (new_bid_response) {
 						window.open(
-							window.location.origin + '/' + HTTP_ROOT + '/bids/' +
+							BASE_ROUTE + '/bids/' +
 							new_bid_response.data.bid.id, 
 							"_blank"
 						);
-						// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
 					}
 				} catch (e) {
 					console.log(e);
