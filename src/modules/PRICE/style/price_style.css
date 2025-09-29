@@ -29,6 +29,7 @@
     margin: 20px 12px 0 12px;
     min-height: 196px;
     background-color: #fdfdfd;
+    border-radius: 6px;
 }
 .sa-price-sider {
     display: flex;
