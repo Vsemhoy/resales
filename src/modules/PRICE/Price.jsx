@@ -5,18 +5,18 @@ import { PRODMODE, CSRF_TOKEN } from '../../config/config';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
 
-import { Tree, Button, Spin, message, Table, Tag, Switch, Checkbox, Layout, Alert, Affix } from 'antd';
+import { Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix } from 'antd';
 // import axios from 'axios';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-community';
 
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
-import {DS_CURRENCY, PRICE} from './mock/mock';
+import { DS_CURRENCY, PRICE } from './mock/mock';
 
-import './style/price_style.css'
-import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
-import {FilterOutlined} from "@ant-design/icons";
-import Sider from "antd/es/layout/Sider";
-import {Content} from "antd/es/layout/layout";
+import './style/price_style.css';
+import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
+import { FilterOutlined } from '@ant-design/icons';
+import Sider from 'antd/es/layout/Sider';
+import { Content } from 'antd/es/layout/layout';
 
 const Price = () => {
 	const [currency, setCurrency] = useState(PRODMODE ? null : DS_CURRENCY);
@@ -141,14 +141,16 @@ const Price = () => {
 
 			if (item.models) {
 				item.models.forEach((model, mIndex) => {
-					console.log(model)
+					console.log(model);
 					children.push({
 						key: `${key}-model-${mIndex}-${model.id}`,
 						title: (
 							<div className={'sa-price-option'}>
-								<div className={'sa-price-grid-cell'} style={{alignItems: 'center'}}>{model.name}</div>
+								<div className={'sa-price-grid-cell'} style={{ alignItems: 'center' }}>
+									{model.name}
+								</div>
 								<div className={'sa-price-grid-cell'}>{model.descr}</div>
-								{checkedList.find(c => c.id === 1)?.checked && (
+								{checkedList.find((c) => c.id === 1)?.checked && (
 									<div className={'sa-price-tag'}>
 										<Tag
 											color={'green'}
@@ -156,17 +158,18 @@ const Price = () => {
 												width: '100%',
 												display: 'inline-block',
 												textAlign: 'center',
-												lineHeight: '27px'
+												lineHeight: '27px',
 											}}
 										>
 											Розница:{' '}
-											<span style={{background: '#fff', fontWeight: 600}}>
-											{model.prices.price_0}{getCurrencySymbol(model.currency)}
-										</span>
+											<span style={{ background: '#fff', fontWeight: 600 }}>
+												{model.prices.price_0}
+												{getCurrencySymbol(model.currency)}
+											</span>
 										</Tag>
 									</div>
 								)}
-								{checkedList.find(c => c.id === 2)?.checked && (
+								{checkedList.find((c) => c.id === 2)?.checked && (
 									<div className={'sa-price-tag'}>
 										<Tag
 											color={'geekblue'}
@@ -174,17 +177,18 @@ const Price = () => {
 												width: '100%',
 												display: 'inline-block',
 												textAlign: 'center',
-												lineHeight: '27px'
+												lineHeight: '27px',
 											}}
 										>
 											Прайс 10:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_10}{getCurrencySymbol(model.currency)}
-										</span>
+												{model.prices.price_10}
+												{getCurrencySymbol(model.currency)}
+											</span>
 										</Tag>
 									</div>
 								)}
-								{checkedList.find(c => c.id === 3)?.checked && (
+								{checkedList.find((c) => c.id === 3)?.checked && (
 									<div className={'sa-price-tag'}>
 										<Tag
 											color={'gold'}
@@ -192,17 +196,18 @@ const Price = () => {
 												width: '100%',
 												display: 'inline-block',
 												textAlign: 'center',
-												lineHeight: '27px'
+												lineHeight: '27px',
 											}}
 										>
 											Прайс 20:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_20}{getCurrencySymbol(model.currency)}
-										</span>
+												{model.prices.price_20}
+												{getCurrencySymbol(model.currency)}
+											</span>
 										</Tag>
 									</div>
 								)}
-								{checkedList.find(c => c.id === 4)?.checked && (
+								{checkedList.find((c) => c.id === 4)?.checked && (
 									<div className={'sa-price-tag'}>
 										<Tag
 											color={'volcano'}
@@ -210,13 +215,14 @@ const Price = () => {
 												width: '100%',
 												display: 'inline-block',
 												textAlign: 'center',
-												lineHeight: '27px'
+												lineHeight: '27px',
 											}}
 										>
 											Прайс 30:{' '}
 											<span style={{ background: '#fff', fontWeight: 600 }}>
-											{model.prices.price_30}{getCurrencySymbol(model.currency)}
-										</span>
+												{model.prices.price_30}
+												{getCurrencySymbol(model.currency)}
+											</span>
 										</Tag>
 									</div>
 								)}
@@ -243,7 +249,7 @@ const Price = () => {
 				dataRef: item,
 			};
 		});
-	}
+	};
 	const handleExport = () => {
 		if (checkedKeys.length === 0) {
 			setIsAlertVisible(true);
@@ -281,14 +287,14 @@ const Price = () => {
 		const rows = selectedModels.map((m) => {
 			// Начинаем с базового объекта
 			const obj = {
-				'ID': m.id,
-				'Название': m.name,
-				'Описание': m.descr,
+				ID: m.id,
+				Название: m.name,
+				Описание: m.descr,
 			};
 
 			// Функция для удобного добавления свойства, если оно есть в checkedList
 			const addIfChecked = (key, value) => {
-				if (checkedList && checkedList.find(c => c.name === key)?.checked) {
+				if (checkedList && checkedList.find((c) => c.name === key)?.checked) {
 					obj[key] = value;
 				}
 			};
@@ -334,15 +340,16 @@ const Price = () => {
 	return (
 		<Spin tip="Загрузка прайс-листа..." spinning={loading}>
 			<div className={'sa-price-page'}>
-
 				<Affix offsetTop={0}>
-					<div style={{padding: '0', backgroundColor: '#b4c9e1', position: 'sticky', top: 0}}>
+					<div style={{ padding: '0', backgroundColor: '#b4c9e1', position: 'sticky', top: 0 }}>
 						<div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
 							<div className={'sa-header-label-container'}>
 								<div className={'sa-header-label-container-small'}>
-									<h1 className={'sa-header-label'} style={{textAlign: 'left'}}>Прайс-лист</h1>
+									<h1 className={'sa-header-label'} style={{ textAlign: 'left' }}>
+										Прайс-лист
+									</h1>
 									<div>
-										<CurrencyMonitorBar/>
+										<CurrencyMonitorBar />
 									</div>
 								</div>
 								<div className={'sa-header-label-container-small'}>
@@ -351,7 +358,7 @@ const Price = () => {
 											Экспортировать выбранное в Excel
 										</Button>
 									</div>
-									<div style={{display: 'flex', alignItems: 'end'}}>
+									<div style={{ display: 'flex', alignItems: 'end' }}>
 										<Button
 											onClick={() => {
 												setIsOpenedFilters(!isOpenedFilters);
@@ -363,7 +370,7 @@ const Price = () => {
 											}`}
 											color={'default'}
 											variant={isOpenedFilters ? 'solid' : 'outlined'}
-											icon={<FilterOutlined/>}
+											icon={<FilterOutlined />}
 										>
 											Доп Фильтры
 										</Button>
@@ -373,7 +380,6 @@ const Price = () => {
 						</div>
 					</div>
 				</Affix>
-
 
 				<Layout className={'sa-layout sa-w-100'}>
 					<Content>
@@ -391,14 +397,15 @@ const Price = () => {
 						collapsed={!isOpenedFilters}
 						collapsedWidth={0}
 						width={'170px'}
-						style={{backgroundColor: '#ffffff', overflow: 'hidden'}}
+						style={{ backgroundColor: '#ffffff', overflow: 'hidden' }}
 					>
 						<div className={'sa-sider'}>
 							{isOpenedFilters && (
 								<div className={'sa-price-sider'}>
 									{checkedList.map((option, idx) => (
-										<Checkbox onChange={(e) => onChangeCheckbox(e.target.checked, idx)}
-												  checked={option.checked}
+										<Checkbox
+											onChange={(e) => onChangeCheckbox(e.target.checked, idx)}
+											checked={option.checked}
 										>
 											{option.name}
 										</Checkbox>
