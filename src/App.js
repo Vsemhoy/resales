@@ -22,7 +22,7 @@ import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
 import AntdIconsPage from './modules/DEV/Icons/AntdIconsPage';
 import HeroIconsPage24 from './modules/DEV/Icons/HeroIconsPage24';
 import CustomIconPage from './modules/DEV/Icons/CustomIconsPage';
-
+import { WebSocketDebug } from './components/helpers/WebSocketDebug';
 import { ChatSocketProvider } from './context/ChatSocketContext';
 import { UserDataProvider } from './context/UserDataContext';
 import { PROD_AXIOS_INSTANCE } from './config/Api';
@@ -46,7 +46,7 @@ export const App = () => {
 	}, []);
 
 	useEffect(() => {
-		// console.log('topRole: ', topRole);
+		console.log('topRole: ', topRole);
 	}, [topRole]);
 
 	const get_userdata = async () => {
@@ -61,30 +61,23 @@ export const App = () => {
 		}
 	};
 
+	const devMenu = [
+		{
+			key: 'gsdfgsdgsd3',
+			label: <span>Developer mode menu</span>,
+			disabled: true,
+		},
+		{
+			key: 'devmenu_1',
+			label: <NavLink to={'/dev/icons/heroicons24'}>Иконки</NavLink>,
+		},
 
-  const devMenu = [
-    {
-      key: 'gsdfgsdgsd3',
-      label: (
-        <span>Developer mode menu</span>
-      ),
-      disabled: true,
-    },
-  {
-    key: 'devmenu_1',
-    label: (
-      <NavLink to={'/dev/icons/heroicons24'} >Иконки</NavLink>
-    ),
-  },
-
-  {
-    key: 'devmenu_1',
-    label: (
-      <NavLink to={'/dev/icons/customicons'} >Сообщить о нарушении</NavLink>
-    ),
-    danger: true,
-  },
-];
+		{
+			key: 'devmenu_1',
+			label: <NavLink to={'/dev/icons/customicons'}>Сообщить о нарушении</NavLink>,
+			danger: true,
+		},
+	];
 
 	if (!pageLoaded) return null; // можно заменить на спиннер загрузки
 
@@ -94,6 +87,7 @@ export const App = () => {
 				<BrowserRouter basename={BASE_NAME}>
 					<div className="App">
 						<TopMenu userdata={userdata} changed_user_data={setUserdata} />
+						<WebSocketDebug />
 						<div>
 							<Routes>
 								<Route path="/" element={<Navigate to={topRole} replace />} />
@@ -175,20 +169,21 @@ export const App = () => {
 								<Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
 							</Routes>
 
-          {!PRODMODE && (
-            <Dropdown menu={{ items: devMenu }}>
-							<div style={{
-								position: 'fixed',
-								bottom: '0px',
-								color: 'orangered',
-								opacity: '0.9',
-                
-							}}
-								title='DEV MODE'>
-									<ExclamationTriangleIcon height={'64px'} />
-								</div>
-              </Dropdown>
-						)}
+							{!PRODMODE && (
+								<Dropdown menu={{ items: devMenu }}>
+									<div
+										style={{
+											position: 'fixed',
+											bottom: '0px',
+											color: 'orangered',
+											opacity: '0.9',
+										}}
+										title="DEV MODE"
+									>
+										<ExclamationTriangleIcon height={'64px'} />
+									</div>
+								</Dropdown>
+							)}
 						</div>
 					</div>
 				</BrowserRouter>

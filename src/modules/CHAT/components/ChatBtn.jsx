@@ -123,3 +123,30 @@ export const ChatBtn = () => {
 		</Space>
 	);
 };
+
+// <Space style={{ padding: 0 }}>
+// 	<Dropdown
+// 		menu={{ items: menuItems }}
+// 		trigger={['hover']}
+// 		open={dropdownVisible}
+// 		onOpenChange={setDropdownVisible}
+// 	>
+// 		<div>
+// 			<Button
+// 				style={{ background: 'transparent' }}
+// 				type="primary"
+// 				onClick={showModal}
+// 				loading={loading}
+// 			>
+// 				<MessageOutlined />
+// 				{smsData.hasSms && (
+// 					<span className={styles['notification-badge']}>{smsData.messages.length}</span>
+// 				)}
+// 			</Button>
+// 		</div>
+// 	</Dropdown>
+
+// 	<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData} />
+
+// 	{error && <span style={{ color: 'red', fontSize: 12 }}>Ошибка загрузки сообщений</span>}
+// </Space>

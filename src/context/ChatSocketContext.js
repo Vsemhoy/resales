@@ -5,75 +5,130 @@ const ChatSocketContext = createContext(null);
 export const ChatSocketProvider = ({ children, url }) => {
 	const wsRef = useRef(null);
 	const reconnectTimer = useRef(null);
+	const reconnectAttempts = useRef(0);
+	const maxReconnectAttempts = 5;
 
 	const [connected, setConnected] = useState(false);
 	const [messages, setMessages] = useState([]);
+	const [connectionStatus, setConnectionStatus] = useState('disconnected');
 
-	// --- безопасная отправка сообщений
+	// Функция отправки сообщения через ref (работает всегда)
 	const sendMessage = useCallback((data) => {
 		if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
 			wsRef.current.send(JSON.stringify(data));
+			console.log('[WS] Sent:', data);
 		} else {
-			console.warn('[WS] socket is not ready');
+			console.warn('[WS] Cannot send - socket not ready');
 		}
 	}, []);
 
-	// --- создание сокета (с защитой от StrictMode)
 	const connect = useCallback(() => {
-		if (wsRef.current) return; // если уже есть соединение — выходим
+		if (
+			wsRef.current?.readyState === WebSocket.OPEN ||
+			wsRef.current?.readyState === WebSocket.CONNECTING
+		) {
+			return;
+		}
 
-		const ws = new WebSocket(url);
-		wsRef.current = ws;
+		if (reconnectAttempts.current >= maxReconnectAttempts) {
+			console.warn('[WS] Max reconnection attempts reached');
+			setConnectionStatus('failed');
+			return;
+		}
 
-		ws.onopen = () => {
-			console.log('[WS] connected');
-			setConnected(true);
-		};
+		console.log(`[WS] Connecting to ${url} (attempt ${reconnectAttempts.current + 1})`);
+		setConnectionStatus('connecting');
 
-		ws.onclose = () => {
-			console.log('[WS] closed');
-			setConnected(false);
-			wsRef.current = null;
+		// Получаем CSRF токен из meta тега
+		const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-			// авто-реconnect через 3 секунды
-			if (!reconnectTimer.current) {
-				reconnectTimer.current = setTimeout(() => {
-					reconnectTimer.current = null;
-					connect();
-				}, 3000);
-			}
-		};
+		// Создаем URL с токеном в query параметрах
+		const urlWithAuth = `${url}?csrf_token=${encodeURIComponent(csrfToken || '')}`;
 
-		ws.onerror = (err) => {
-			console.error('[WS] error', err);
-		};
+		console.log('[WS] Connecting with CSRF token:', csrfToken ? 'yes' : 'no');
 
-		ws.onmessage = (event) => {
-			try {
-				const data = JSON.parse(event.data);
-				setMessages((prev) => [data, ...prev]); // новые сверху
-			} catch (e) {
-				console.error('[WS] message parse error', e);
-			}
-		};
+		try {
+			const ws = new WebSocket(urlWithAuth);
+			wsRef.current = ws;
+
+			ws.onopen = () => {
+				console.log('[WS] ✅ Connected successfully');
+				setConnected(true);
+				setConnectionStatus('connected');
+				reconnectAttempts.current = 0;
+			};
+
+			ws.onclose = (event) => {
+				console.log(`[WS] ❌ Closed:`, event.code, event.reason);
+				setConnected(false);
+				setConnectionStatus('disconnected');
+				wsRef.current = null;
+
+				reconnectAttempts.current++;
+
+				if (!reconnectTimer.current && reconnectAttempts.current < maxReconnectAttempts) {
+					const delay = Math.min(3000 * reconnectAttempts.current, 15000);
+					console.log(`[WS] Reconnecting in ${delay}ms...`);
+					reconnectTimer.current = setTimeout(() => {
+						reconnectTimer.current = null;
+						connect();
+					}, delay);
+				}
+			};
+
+			ws.onerror = (error) => {
+				console.error('[WS] 🚨 Error:', error);
+				setConnectionStatus('error');
+			};
+
+			ws.onmessage = (event) => {
+				try {
+					const data = JSON.parse(event.data);
+					console.log('[WS] 📨 Received:', data);
+
+					// Добавляем все сообщения в стейт для отладки
+					setMessages((prev) => [data, ...prev]);
+				} catch (e) {
+					console.error('[WS] Message parse error:', e);
+				}
+			};
+		} catch (error) {
+			console.error('[WS] 🚨 Connection failed:', error);
+			setConnectionStatus('error');
+		}
 	}, [url]);
 
-	// --- подключение один раз
 	useEffect(() => {
 		connect();
 
 		return () => {
-			if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
-			wsRef.current?.close();
-			wsRef.current = null;
+			if (reconnectTimer.current) {
+				clearTimeout(reconnectTimer.current);
+				reconnectTimer.current = null;
+			}
+			if (wsRef.current) {
+				wsRef.current.close();
+				wsRef.current = null;
+			}
 		};
 	}, [connect]);
 
-	return (
-		<ChatSocketContext.Provider value={{ ws: wsRef.current, connected, messages, sendMessage }}>
-			{children}
-		</ChatSocketContext.Provider>
-	);
+	const value = {
+		connected,
+		messages,
+		sendMessage,
+		connectionStatus,
+		reconnect: () => {
+			reconnectAttempts.current = 0;
+			if (wsRef.current) {
+				wsRef.current.close();
+			} else {
+				connect();
+			}
+		},
+	};
+
+	return <ChatSocketContext.Provider value={value}>{children}</ChatSocketContext.Provider>;
 };
 
 export const useChatSocket = () => {
