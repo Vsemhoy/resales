@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from 'react';
-
 import { PRODMODE, CSRF_TOKEN } from '../../config/config';
-
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
-
-import { Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix } from 'antd';
-// import axios from 'axios';
-import * as XLSX from 'xlsx-community';
-
+import {Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix} from 'antd';
+import * as XLSX from 'xlsx';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
-import { DS_CURRENCY, PRICE } from './mock/mock';
+import {DS_CURRENCY, PRICE} from './mock/mock';
+import './style/price_style.css'
+import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
+import {FilterOutlined} from "@ant-design/icons";
+import Sider from "antd/es/layout/Sider";
+import {Content, Header} from "antd/es/layout/layout";
 
-import './style/price_style.css';
-import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
-import { FilterOutlined } from '@ant-design/icons';
-import Sider from 'antd/es/layout/Sider';
-import { Content } from 'antd/es/layout/layout';
 
 const Price = () => {
 	const [currency, setCurrency] = useState(PRODMODE ? null : DS_CURRENCY);
@@ -343,87 +338,99 @@ const Price = () => {
 	return (
 		<Spin tip="Загрузка прайс-листа..." spinning={loading}>
 			<div className={'sa-price-page'}>
-				<Affix offsetTop={0}>
-					<div style={{ padding: '0', backgroundColor: '#b4c9e1', position: 'sticky', top: 0 }}>
-						<div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
-							<div className={'sa-header-label-container'}>
-								<div className={'sa-header-label-container-small'}>
-									<h1 className={'sa-header-label'} style={{ textAlign: 'left' }}>
-										Прайс-лист
-									</h1>
-									<div>
-										<CurrencyMonitorBar />
+				<Layout className={'sa-layout sa-w-100'}>
+					<Affix>
+						<Header style={{
+							padding: '0',
+							paddingBottom: '10px',
+							backgroundColor: '#b4c9e1',
+						}}>
+							<div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
+								<div className={'sa-header-label-container'}>
+									<div className={'sa-header-label-container-small'}>
+										<h1 className={'sa-header-label'} style={{textAlign: 'left'}}>Прайс-лист</h1>
+										<div>
+											<CurrencyMonitorBar/>
+										</div>
 									</div>
-								</div>
-								<div className={'sa-header-label-container-small'}>
-									<div className={'sa-vertical-flex'}>
-										<Button onClick={handleExport} type="primary">
-											Экспортировать выбранное в Excel
-										</Button>
-									</div>
-									<div style={{ display: 'flex', alignItems: 'end' }}>
-										<Button
-											onClick={() => {
-												setIsOpenedFilters(!isOpenedFilters);
-											}}
-											className={`${
-												isOpenedFilters
-													? 'sa-default-solid-btn-color'
-													: 'sa-default-outlined-btn-color'
-											}`}
-											color={'default'}
-											variant={isOpenedFilters ? 'solid' : 'outlined'}
-											icon={<FilterOutlined />}
-										>
-											Доп Фильтры
-										</Button>
+									<div className={'sa-header-label-container-small'}>
+										<div className={'sa-vertical-flex'}>
+											<Button onClick={handleExport} type="primary">
+												Экспортировать выбранное в Excel
+											</Button>
+										</div>
+										<div style={{display: 'flex', alignItems: 'end'}}>
+											<Button
+												onClick={() => {
+													setIsOpenedFilters(!isOpenedFilters);
+												}}
+												className={`${
+													isOpenedFilters
+														? 'sa-default-solid-btn-color'
+														: 'sa-default-outlined-btn-color'
+												}`}
+												color={'default'}
+												variant={isOpenedFilters ? 'solid' : 'outlined'}
+												icon={<FilterOutlined/>}
+											>
+												Доп Фильтры
+											</Button>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-				</Affix>
+						</Header>
+					</Affix>
 
-				<Layout className={'sa-layout sa-w-100'}>
-					<Content>
-						<div className={'sa-price-tree-container'}>
-							<Spin spinning={smallLoading}>
-								<Tree
-									checkable
-									selectable={false}
-									treeData={treeData}
-									checkedKeys={checkedKeys}
-									onCheck={(keys) => setCheckedKeys(keys)}
-								/>
-							</Spin>
-						</div>
-					</Content>
-					<Sider
-						collapsed={!isOpenedFilters}
-						collapsedWidth={0}
-						width={'170px'}
-						style={{ backgroundColor: '#ffffff', overflow: 'hidden' }}
-					>
-						<div className={'sa-sider'}>
-							{isOpenedFilters && (
-								<div className={'sa-price-sider'}>
-									{checkedList.map((option, idx) => (
-										<Checkbox
-											onChange={(e) => onChangeCheckbox(e.target.checked, idx)}
-											checked={option.checked}
-										>
-											{option.name}
-										</Checkbox>
-									))}
-									<Switch
-										checkedChildren="Рубли"
-										unCheckedChildren="Валюта"
-										onChange={(_) => setCurrentCurrency((prev) => !prev)}
+					<Layout className={'sa-layout sa-w-100'}>
+						<Content>
+							<div className={'sa-price-tree-container'}>
+								<Spin spinning={smallLoading}>
+									<Tree
+										checkable
+										selectable={false}
+										treeData={treeData}
+										checkedKeys={checkedKeys}
+										onCheck={(keys) => setCheckedKeys(keys)}
 									/>
+								</Spin>
+							</div>
+						</Content>
+
+						<Sider
+							collapsed={!isOpenedFilters}
+							collapsedWidth={0}
+							width={'170px'}
+							style={{
+								backgroundColor: '#ffffff',
+								overflow: 'hidden',
+								position: 'sticky',
+								top: '100px',
+								zIndex: 1
+							}}
+						>
+							<Affix offsetTop={140}>
+								<div className={'sa-sider'}>
+									{isOpenedFilters && (
+										<div className={'sa-price-sider'}>
+											{checkedList.map((option, idx) => (
+												<Checkbox onChange={(e) => onChangeCheckbox(e.target.checked, idx)}
+														  checked={option.checked}
+												>
+													{option.name}
+												</Checkbox>
+											))}
+											<Switch
+												checkedChildren="Рубли"
+												unCheckedChildren="Валюта"
+												onChange={(_) => setCurrentCurrency((prev) => !prev)}
+											/>
+										</div>
+									)}
 								</div>
-							)}
-						</div>
-					</Sider>
+							</Affix>
+						</Sider>
+					</Layout>
 				</Layout>
 				{isAlertVisible && (
 					<Alert
