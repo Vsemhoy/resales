@@ -3,7 +3,7 @@ import { PRODMODE, CSRF_TOKEN } from '../../config/config';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
 import {Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix} from 'antd';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-community';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import {DS_CURRENCY, PRICE} from './mock/mock';
 import './style/price_style.css'
