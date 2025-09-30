@@ -46,12 +46,19 @@ const OPMTCcontactmessangersSection = (props) => {
     } 
   }
 
-  useEffect(() => {
-    if (props.selects){
-      console.log('SE LE CT BI',props.selects);
-      setSelects(props.selects);
-    }
-  }, [props.selects]);
+  // useEffect(() => {
+  //   if (props.selects){
+  //     console.clear();
+  //     console.log('SE LE CT BI',props.selects);
+  //     setSelects(props.selects);
+  //   }
+  // }, [props.selects]);
+
+      useEffect(() => {
+        if (props.selects){
+          setSelects(props.selects);
+        }
+      }, [props.selects, editMode]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -96,22 +103,26 @@ const OPMTCcontactmessangersSection = (props) => {
 				titles={['Идентификатор пользователя','Мессенджер']}
 				datas={[
 					{
-						type: OPS_TYPE.SELECT,
+						type: OPS_TYPE.STRING,
 						value: identifier,
 						max: 255,
 						required: false,
 						nullable: true,
 						placeholder: '@contact_id',
 						name: 'identifier',
-            options: selects
 					},
 					{
-						type: OPS_TYPE.UINTEGER,
-						value: messangers_id ? messangers_id : '',
+						type: OPS_TYPE.SELECT,
+						value: messangers_id ? messangers_id : 1,
 						min: 0,
 						max: 99999999999999999,
 						placeholder: 'Telegram',
-						name: 'messangers_id',
+            options: selects?.messangers?.map((item)=>({
+              key: 'messsages_' + item.id,
+              value: item.id,
+              label: item.name
+            })),
+            name: 'messangers_id',
 					},
 				]}
         

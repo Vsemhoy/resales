@@ -178,11 +178,11 @@ const OPMTRequisitesSection = (props) => {
           type: OPS_TYPE.TEXTAREA,
           value: requisites,
           max: 2500,
-          required: false,
-          nullable: true,
+          required: true,
+          
           placeholder: '',
           name: 'requisites',
-          label: 'реквизиты'
+          label: 'реквизиты',
         }}
         action={<div
         className='sa-omt-filler'

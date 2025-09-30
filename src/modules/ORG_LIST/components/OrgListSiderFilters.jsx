@@ -118,7 +118,7 @@ const OrgListSiderFilter = (props) => {
 				setFilterCompany(null);
 			}
 			if (props.filters_data.regions) {
-				setFilterRegion(parseInt(props.filters_data.regions));
+				setFilterRegion(props.filters_data.regions);
 			} else {
 				setFilterRegion(null);
 			}

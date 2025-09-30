@@ -1,3 +1,5 @@
+import { message } from "antd";
+
 export const FILTERPRESETLIST = [
 	{
 		key: 'sf4523',
@@ -13889,6 +13891,28 @@ export const OM_ORG_FILTERDATA = {
       id: 25,
       name: 'Троллейбус'
     },
+  ],
+   messangers: [
+      {
+          "id": 1,
+          "name": "Viber"
+      },
+      {
+          "id": 2,
+          "name": "Wa"
+      },
+      {
+          "id": 3,
+          "name": "Telegram"
+      },
+      {
+          "id": 4,
+          "name": "WeChat"
+      },
+      {
+          "id": 5,
+          "name": "Не выбрано"
+      }
   ]
 };
 

@@ -57,10 +57,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
   const [editedHomephonesIds,    setEditedHomephonesIds]    = useState([]);
 
   const [selects, setSelects] = useState(null);
-  
+
   useEffect(() => {
     if (props.selects){
-      console.log('SE LE CT BI',props.selects);
       setSelects(props.selects);
     }
   }, [props.selects]);
@@ -960,6 +959,7 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateMessangerUnit}
+          selects={selects}
         />
       ))}</div>
 
@@ -1022,6 +1022,7 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
             edit_mode={editMode}
             on_delete={handleDeleteNewMessanger}
             on_change={handleUpdateNewMessangerUnit}
+            selects={selects}
           />
         ))}</div>
       )}
