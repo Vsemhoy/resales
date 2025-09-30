@@ -46,7 +46,7 @@ export const App = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log('topRole: ', topRole);
+		// console.log('topRole: ', topRole);
 	}, [topRole]);
 
 	const get_userdata = async () => {
@@ -89,12 +89,10 @@ export const App = () => {
 	if (!pageLoaded) return null; // можно заменить на спиннер загрузки
 
 	return (
-		<div className="App">
-			<UserDataProvider>
-				<ChatSocketProvider
-					url={`ws://192.168.1.16:5003/ws?chatId=${userdata.user?.id}`}
-				>
-					<BrowserRouter basename={BASE_NAME}>
+		<UserDataProvider>
+			<ChatSocketProvider url={`ws://192.168.1.16:5003`}>
+				<BrowserRouter basename={BASE_NAME}>
+					<div className="App">
 						<TopMenu userdata={userdata} changed_user_data={setUserdata} />
 						<div>
 							<Routes>
@@ -192,11 +190,9 @@ export const App = () => {
               </Dropdown>
 						)}
 						</div>
-					</BrowserRouter>
-				</ChatSocketProvider>
-			</UserDataProvider>
-
-
-		</div>
+					</div>
+				</BrowserRouter>
+			</ChatSocketProvider>
+		</UserDataProvider>
 	);
 };

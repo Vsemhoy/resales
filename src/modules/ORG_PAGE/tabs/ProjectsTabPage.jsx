@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ANTD_PAGINATION_LOCALE } from "../../../config/Localization";
 import { Button, Collapse, Pagination, Spin } from "antd";
-import OrgNoteModalRow from "../../ORG_LIST/components/OrgModal/Tabs/TabComponents/RowTemplates/OrgNoteModalRow";
+// import OrgNoteModalRow from "../../ORG_LIST/components/OrgModal/Tabs/TabComponents/RowTemplates/OrgNoteModalRow";
 import dayjs from "dayjs";
 import { getMonthName } from "../../../components/helpers/TextHelpers";
 import { PlusCircleFilled, PlusOutlined } from "@ant-design/icons";
