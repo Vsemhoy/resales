@@ -56,8 +56,14 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
   const [editedMobilephonesIds,  setEditedMobilephonesIds]  = useState([]);
   const [editedHomephonesIds,    setEditedHomephonesIds]    = useState([]);
 
-
-
+  const [selects, setSelects] = useState(null);
+  
+  useEffect(() => {
+    if (props.selects){
+      console.log('SE LE CT BI',props.selects);
+      setSelects(props.selects);
+    }
+  }, [props.selects]);
 
   useEffect(() => {
     if (props.data?.id){

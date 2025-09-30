@@ -15,7 +15,7 @@ const OrgModalCommonSection = (props) => {
 	}, [props.data]);
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid seagreen' }}>
+		<div className={'sk-omt-stack'} >
 			<OrgModalRow
 				key={'orgmodalrowcname_1'}
 				titles={['Название организации']}

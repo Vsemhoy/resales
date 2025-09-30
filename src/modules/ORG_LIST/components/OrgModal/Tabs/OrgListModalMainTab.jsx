@@ -13,6 +13,8 @@ import OrgModalSupplyContractSection from './MainTabSections/OrgModalSupplyContr
 import { ORGLIST_MODAL_MOCK_MAINTAB } from '../../mock/ORGLISTMODALMOCK';
 import { ORG_DEF_DATA } from '../../mock/ORGDEFDATA';
 import { ChevronDoubleDownIcon, ChevronDoubleUpIcon } from '@heroicons/react/24/solid';
+import OrgModalToleranceSection from './MainTabSections/OrgModalToleranceSection';
+
 
 const OrgListMainTab = (props) => {
 	const [orgId, setOrgId] = useState(null);
@@ -170,21 +172,31 @@ const OrgListMainTab = (props) => {
 
 	const structureItems = [
 		{
+			style: { borderLeft: '#6cc1c1 9px solid' },
 			key: 'st_commoninfo',
 			label: 'Общая информация',
 			children: <OrgModalCommonSection data={baseOrgData} selects_data={props.selects_data} />,
 		},
 		{
+			style: { borderLeft: '#6c7cd4 9px solid' },
 			key: 'st_departinfo',
 			label: 'Информация отдела',
 			children: <OrgModalDepartSection data={baseOrgData} selects_data={props.selects_data} />,
 		},
 		{
+			style: { borderLeft: '#8f5fbb 9px solid' },
 			key: 'st_contactinfo',
 			label: 'Контактная информация',
 			children: <OrgModalContactinfoSection data={baseOrgData} selects_data={props.selects_data} />,
 		},
+				{
+					style: { borderLeft: '#f7ab49 9px solid' },
+			key: 'st_licdopusk',
+			label: 'Лицензии и допуски',
+			children: <OrgModalToleranceSection data={baseOrgData} selects_data={props.selects_data} />,
+		},
 		{
+			style: { borderLeft: '#ca6f7e 9px solid' },
 			key: 'st_contacts',
 			label: (
 				<div className={'sa-flex-space'}>
@@ -234,6 +246,7 @@ const OrgListMainTab = (props) => {
 			),
 		},
 		{
+			style: { borderLeft: '#87c16cff 9px solid' },
 			key: 'st_firmspayers',
 			label: `Фирмы/плательщики  (${baseOrgData.requisites?.length})`,
 			children: <OrgModalPayersSection data={baseOrgData} selects_data={props.selects_data} />,

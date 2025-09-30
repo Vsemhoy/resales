@@ -15,7 +15,7 @@ const OrgModalPayersSection = (props) => {
 	}, [props.data]);
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid yellow' }}>
+		<div className={'sk-omt-stack'}>
 			{orgData.requisites && orgData.requisites.length > 0 && (
 				<>
 					{orgData.requisites.map((req) => {

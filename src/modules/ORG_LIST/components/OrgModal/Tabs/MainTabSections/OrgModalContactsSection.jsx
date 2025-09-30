@@ -22,7 +22,7 @@ const OrgModalContactsSection = (props) => {
 	}, [props]);
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid orange' }}>
+		<div className={'sk-omt-stack'}>
 			<OrgModalRow
 				key={contactId + 'rowfla00722'}
 				titles={['Имя', 'Отчество']}

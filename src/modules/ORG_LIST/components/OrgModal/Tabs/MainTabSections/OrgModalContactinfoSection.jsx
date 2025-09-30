@@ -14,7 +14,7 @@ const OrgModalContactinfoSection = (props) => {
 	}, [props.data]);
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid blueviolet' }}>
+		<div className={'sk-omt-stack'}>
 			<OrgModalRow
 				key={'rowfla00322'}
 				titles={['Город', 'Регион']}
