@@ -184,7 +184,7 @@ export const generateGradientBackground = (colors) => {
 		result += prev + ' ' + (steps * i - 0.1) + '%, ';
 		result += current + ' ' + steps * i + '%, ';
 	}
-	result += colors[colors.length - 1] + ' ' + ' 100%';
+	result += `colors[colors.length - 1] + ' ' + ' 100%'`;
 	result += ')';
 	console.log(result);
 	return result;

@@ -63,7 +63,7 @@ export const App = () => {
 
 	return (
 		<UserDataProvider>
-			<ChatSocketProvider url={`ws://192.168.1.16:5003/ws?chatId=${userdata?.user?.id}`}>
+			<ChatSocketProvider url={`ws://192.168.1.16:5003`}>
 				<BrowserRouter basename={BASE_NAME}>
 					<div className="App">
 						<TopMenu userdata={userdata} changed_user_data={setUserdata} />
