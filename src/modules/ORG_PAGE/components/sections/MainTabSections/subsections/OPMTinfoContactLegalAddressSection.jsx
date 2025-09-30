@@ -110,6 +110,8 @@ const OPMTinfoContactLegalAddressSection = (props) => {
 						max: 99999999999999999,
 						placeholder: '',
 						name: 'post_index',
+            required: true,
+            placeholder: 'Обязательно к заполнению'
 					},
 				]}
         comment={{

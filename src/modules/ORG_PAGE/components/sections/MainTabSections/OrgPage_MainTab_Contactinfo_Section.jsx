@@ -705,6 +705,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
         // }}
         on_blur={(data)=>{
           if (data.id8org_towns) { setId8org_towns(data.id8org_towns);
+            
             let ttown = selects?.towns.find((item)=> item.value === data.id8org_towns);
             if (ttown){
               if (ttown.id_region !== id8org_regions){
@@ -822,10 +823,10 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 						type: OPS_TYPE.STRING,
 						value: site,
 						max: 150,
-						required: false,
 						nullable: true,
 						placeholder: '',
 						name: 'site',
+            required: true,
 					}
 				]}
         

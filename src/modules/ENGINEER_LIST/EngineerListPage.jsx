@@ -660,6 +660,7 @@ const EngineerListPage = (props) => {
 										onChange={setCurrentPage}
 										showQuickJumper
 										locale={ANTD_PAGINATION_LOCALE}
+										size={isOpenedFilters ? 'small' : 'middle'}
 									/>
 								</div>
 							</div>

@@ -143,6 +143,15 @@ const OrgPageSectionRow = (props) => {
 		});
 	};
 
+
+
+
+
+
+
+
+
+
 	// Рендер одного поля
 	const renderField = (field, value, onChange) => {
 		const isRequired = field.required && !field.nullable;
@@ -234,13 +243,16 @@ const OrgPageSectionRow = (props) => {
 			case 'email':
 				return (
 					<Input
-						variant="borderless"
+						variant={'borderless'}
 						size="small"
 						{...commonProps}
 						type={field.type}
 						placeholder={field.placeholder ? field.placeholder : isRequired ? 'Обязательно' : ''}
 						allowClear={field.nullable}
 						maxLength={field.max}
+						required={field.required}
+						// status="error"
+						
 					/>
 				);
 
@@ -521,7 +533,7 @@ const OrgPageSectionRow = (props) => {
 		<div className={`sk-omt-row-wrapper ${editMode ? 'sk-omt-row-editor' : ''}`}>
 			{/* Основная строка */}
 			<div className={`sk-omt-row omt-${columns}-col`}>
-				<div>
+				<div className={`${fields[0]?.required && !localValues[fields[0]?.name] ? 'sa-required-field-block' : ''}`}>
 					<div className="sk-omt-legend sa-flex-space">
 						<span style={{ paddingLeft: '6px' }}>
 							{commentConfig && (
@@ -563,8 +575,10 @@ const OrgPageSectionRow = (props) => {
 							)}
 							<div className="sk-omt-legend sa-flex-space">{titles[2]}</div>
 							{fields[2]?.name && (
+								<div className={`${fields[2]?.required  && !localValues[fields[2]?.name] ? 'sa-required-field-block' : ''}`}>
 								<div className="sk-omt-content">
 									{renderField(fields[2], localValues[fields[2].name], handleChange)}
+								</div>
 								</div>
 							)}
 						</div>
@@ -572,7 +586,7 @@ const OrgPageSectionRow = (props) => {
 				</div>
 
 				{titles.length > 1 && fields[1]?.name && (
-					<div>
+					<div className={`${fields[1]?.required && !localValues[fields[1]?.name] ? 'sa-required-field-block' : ''}`}>
 						<div className="sk-omt-legend sa-flex-space">
 							<span></span>
 							<span>{titles[1]}</span>
@@ -596,7 +610,7 @@ const OrgPageSectionRow = (props) => {
 			{/* Блок комментария */}
 			{commentConfig && opened && (
 				<div className="sk-omt-row omt-1-col">
-					<div>
+					<div className={`${commentConfig?.required && !localValues[commentConfig?.name] ? 'sa-required-field-block' : ''}`}>
 						<div className="sk-omt-legend sa-flex-space">
 							<span className="sk-comment-arrow-sign">
 								<EnterOutlined />

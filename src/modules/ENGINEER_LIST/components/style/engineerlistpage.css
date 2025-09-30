@@ -4,7 +4,13 @@
 }
 
 .sa-filer-opened .sa-table-box-engineers {
-	grid-template-columns: 100px 150px 150px 1fr 150px 250px !important;
+	grid-template-columns:  minmax(50px,80px)
+							minmax(50px,150px)
+							minmax(40px,130px)
+							minmax(100px,1fr)
+							minmax(50px,120px)
+							minmax(50px,150px)
+							!important;
 }
 .sa-filer-opened .sa-table-box-engineers > *:nth-child(9) {
 	display: none;

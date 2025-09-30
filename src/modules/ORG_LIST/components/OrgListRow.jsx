@@ -20,6 +20,8 @@ import {
 import { getBidsItems, getCallsItems, getMeetingsItems } from './hooks/AlansOrgHooks';
 import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
 import { useURLParams } from '../../../components/helpers/UriHelpers';
+import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../config/config';
+import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 
 const OrgListRow = (props) => {
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
@@ -85,7 +87,7 @@ const OrgListRow = (props) => {
 							key: 'Can_create_offer',
 							icon: <ArchiveBoxXMarkIcon height="18px" />,
 							label: <div
-								onClick={handleDeletOrg}
+								onClick={()=>{create_bid(1, orgData.id)}}
 							>Создать КП</div>,
 						},
 				);
@@ -94,7 +96,7 @@ const OrgListRow = (props) => {
 							key: 'Can_create_bid',
 							icon: <ArchiveBoxXMarkIcon height="18px" />,
 							label: <div
-								onClick={handleDeletOrg}
+								onClick={()=>{create_bid(2, orgData.id)}}
 							>Создать счёт</div>,
 						},
 				)
@@ -140,8 +142,33 @@ const OrgListRow = (props) => {
 	};
 
 
-	const handleCallBecomeCurator = () => {
+	const handleCallBecomeCurator = async () => {
 		console.log('curator of', orgData.id);
+			// http://192.168.1.16/api/curators/create
+			try {
+					const format_data = {
+						
+						_token: CSRF_TOKEN,
+						data: {
+							id_org: orgData.id,
+						},
+					};
+					let new_bid_response = await PROD_AXIOS_INSTANCE.post(
+						"/api/curators/create",
+						format_data,
+					);
+					if (new_bid_response) {
+						// window.open(
+						// 	window.location.origin + '/' + HTTP_ROOT + '/bids/' +
+						// 	new_bid_response.data.bid.id, 
+						// 	"_blank"
+						// );
+						alert("Заявка на кураторство отправлена");
+					}
+				} catch (e) {
+					console.log(e);
+					
+			}
 	}
 
 		const handleDeletOrg = () => {
@@ -182,6 +209,41 @@ const OrgListRow = (props) => {
 			state: { from: window.location.pathname + window.location.search },
 		});
 	};
+
+
+	const create_bid = async (type, org_id) => {
+      try {
+        const format_data = {
+          
+          _token: CSRF_TOKEN,
+          data: {
+            org: org_id,
+            type: type,
+          },
+        };
+        let new_bid_response = await PROD_AXIOS_INSTANCE.post(
+          "/sales/data/makebid",
+          format_data,
+        );
+        if (new_bid_response) {
+          window.open(
+            window.location.origin + '/' + HTTP_ROOT + '/bids/' +
+            new_bid_response.data.bid.id, 
+            "_blank"
+          );
+        }
+      } catch (e) {
+        console.log(e);
+				if (!PRODMODE){
+					window.open(
+							'/bids/' +
+							type, 
+							"_blank"
+						);
+				}
+      }
+    };
+
 
 	return (
 		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']} key={`orgrow_${orgData.id}`}>

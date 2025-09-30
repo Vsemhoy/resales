@@ -9,10 +9,11 @@ import { Button, Dropdown, Menu, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-	DollarOutlined,
+	CopyOutlined,
+	DollarOutlined, FileAddOutlined,
 	FileDoneOutlined,
-	LogoutOutlined,
-	SafetyOutlined,
+	LogoutOutlined, ProfileOutlined,
+	SafetyOutlined, SendOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import PositionList from './PositionList';
@@ -86,32 +87,33 @@ const EngineerListRow = (props) => {
 					<div>
 						<div style={{ display: 'flex', gap: '8px' }}>
 							{(props.activeRole === 1 || props.superUser === 1) && (
-								<>
-									<Button type={'primary'} style={{ width: '100px' }}
-											onClick={() => {props.setOpenCopySpecification(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
-									>
-										Копировать
-									</Button>
-									<Button type={'primary'} danger
-											onClick={() => {props.handleSpecificationFinal(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
-									>
-										Отправить
-									</Button>
-								</>
+								<div style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
+									<Tooltip title={'Копировать'}>
+										<Button type={'primary'} style={{ width: '32px' }} icon={<CopyOutlined />}
+												onClick={() => {props.setOpenCopySpecification(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
+										></Button>
+									</Tooltip>
+									<Tooltip title={'Отправить'}>
+										<Button type={'primary'} style={{ width: '32px' }} danger icon={<SendOutlined />}
+												onClick={() => {props.handleSpecificationFinal(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
+										></Button>
+									</Tooltip>
+								</div>
 							)}
 
 							{(props.activeRole === 2 || props.superUser === 1) && (
-								<>
-									<Button type={'primary'} style={{ width: '100px' }}
-									>
-										Создать КП
-									</Button>
-									<Button type={'primary'} danger
-											onClick={() => {props.setOpenAddIntoBidSpecification(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
-									>
-										Добавить в КП
-									</Button>
-								</>
+								<div style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
+									<Tooltip title={'Создать КП'}>
+										<Button type={'primary'} style={{ width: '32px' }} icon={<ProfileOutlined />}
+										></Button>
+									</Tooltip>
+									<Tooltip title={'Добавить в КП'}>
+										<Button type={'primary'} style={{ width: '32px' }} danger icon={<FileAddOutlined />}
+												onClick={() => {props.setOpenAddIntoBidSpecification(true); props.setOpenAddIntoBidSpecificationId(data.id)}}
+										></Button>
+									</Tooltip>
+
+								</div>
 							)}
 						</div>
 					</div>
