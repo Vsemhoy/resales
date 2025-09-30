@@ -31,6 +31,7 @@ const OrgModalPayersSection = (props) => {
 									datas={[req.nameorg]}
 									comment={req.requisites}
 									comment_title={'Реквизиты'}
+									
 								/>
 								<OrgModalRow
 									key={'rowfla00228' + req.id + 'extra'}
