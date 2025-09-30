@@ -5,7 +5,7 @@ import { Collapse, Pagination, Spin } from 'antd';
 import { MODAL_NOTES_LIST } from '../../mock/MODALNOTESTABMOCK';
 import OrgNoteModalRow from './TabComponents/RowTemplates/OrgNoteModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
-import { PencilIcon } from '@heroicons/react/24/solid';
+// import { PencilIcon } from '@heroicons/react/24/solid';
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../../../components/helpers/TextHelpers';
 

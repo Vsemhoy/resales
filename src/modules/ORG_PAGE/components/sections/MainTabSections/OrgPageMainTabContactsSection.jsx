@@ -13,7 +13,7 @@ import OPMTCcontactmessangersSection from './subsections/OPMTCcontactmessangersS
 import dayjs from 'dayjs';
 import { compareObjects } from '../../../../../components/helpers/CompareHelpers';
 
-const OrgPage_MainTab_Contacts_Section = (props) => {
+const OrgPageMainTabContactsSection = (props) => {
 	const [editMode, seteditMode] = useState(props.edit_mode ? props.edit_mode : false);
 	const [filterData, setFilterData] = useState([]);
 
@@ -100,13 +100,6 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 		}
 	}, []);
 
-    useEffect(() => {
-      setNewContactemails([]);
-      setNewContacthomephones([]);
-      setNewContactmessangers([]);
-      setNewContactmobiles([]);
-      setNewContactstelephones([]);
-    }, [props.item_id]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -130,7 +123,7 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
       result.contactemails =      contactemails.concat(newContactemails);
       result.contactmessangers =  contactmessangers.concat(newContactmessangers);
 
-			console.log('OrgPage_MainTab_Contacts_Section', result);
+			console.log('OrgPageMainTabContactsSection', result);
 
 			if (props.on_change) {
 				props.on_change(itemId, result);
@@ -783,7 +776,7 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 
 
 	return (
-		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid #d6dbdd' }}>
+		<div className={'sk-omt-stack'} style={{ borderLeft: '4px solid ' + props.color }}>
 
 			<OrgPageSectionRow
         key={'faksdj_dk' + itemId}
@@ -904,9 +897,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 			/>
 
       <div>
-      {contactstelephones.map((item)=>(
+      {contactstelephones.map((item, idx)=>(
         <OPMTCcontactstelephonesSection
-        key={'OPMTCcontactstelephonesSection' + item.id}
+        key={'OPMTCcontactstelephonesSection' + item.id + '_' + idx}
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateContactUnit}
@@ -915,9 +908,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 
 
       <div>
-      {contactmobiles.map((item)=>(
+      {contactmobiles.map((item, idx)=>(
         <OPMTCcontactmobilesSection
-        key={'OPMTCcontactmobilesSection' + item.id}
+        key={'OPMTCcontactmobilesSection' + item.id + '_' + idx}
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateMobileUnit}
@@ -926,9 +919,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 
 
       <div>
-      {contacthomephones.map((item)=>(
+      {contacthomephones.map((item, idx)=>(
         <OPMTCcontacthomephonesSection
-          key={'OPMTCcontacthomephonesSection' + item.id}
+          key={'OPMTCcontacthomephonesSection' + item.id + '_' + idx}
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateHomePhoneUnit}
@@ -937,9 +930,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 
 
       <div>
-      {contactemails.map((item)=>(
+      {contactemails.map((item, idx)=>(
         <OPMTCcontactemailsSection
-          key={'OPMTCcontactemailsSection' + item.id}
+          key={'OPMTCcontactemailsSection' + item.id + '_' + idx}
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateEmailUnit}
@@ -948,9 +941,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 
       
       <div>
-      {contactmessangers.map((item)=>(
+      {contactmessangers.map((item, idx)=>(
         <OPMTCcontactmessangersSection
-          key={'OPMTCcontactmessangersSection' + item.id}
+          key={'OPMTCcontactmessangersSection' + item.id + '_' + idx}
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateMessangerUnit}
@@ -960,9 +953,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 
       {newContactstelephones.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
-        {newContactstelephones.map((item)=>(
+        {newContactstelephones.map((item, idx)=>(
           <OPMTCcontactstelephonesSection
-            key={'newOPMTCcontactstelephonesSection' + item.id}
+            key={'newOPMTCcontactstelephonesSection' + item.id + '_' + idx}
             data={item}
             edit_mode={editMode}
             on_delete={handleDeleteNewContact}
@@ -972,9 +965,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
       )}
       {newContactmobiles.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
-        {newContactmobiles.map((item)=>(
+        {newContactmobiles.map((item, idx)=>(
           <OPMTCcontactmobilesSection
-            key={'newOPMTCcontactmobilesSection' + item.id}
+            key={'newOPMTCcontactmobilesSection' + item.id + '_' + idx}
             data={item}
             edit_mode={editMode}
             on_delete={handleDeleteNewMobile}
@@ -984,9 +977,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
       )}
       {newContacthomephones.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
-        {newContacthomephones.map((item)=>(
+        {newContacthomephones.map((item, idx)=>(
           <OPMTCcontacthomephonesSection
-            key={'newOPMTCcontactHommiesSection' + item.id}
+            key={'newOPMTCcontactHommiesSection' + item.id + '_' + idx}
             data={item}
             edit_mode={editMode}
             on_delete={handleDeleteNewHomePhone}
@@ -997,9 +990,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 
       {newContactemails.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
-        {newContactemails.map((item)=>(
+        {newContactemails.map((item, idx)=>(
           <OPMTCcontactemailsSection
-            key={'newOPMTCcontactemailsSection' + item.id}
+            key={'newOPMTCcontactemailsSection' + item.id + '_' + idx}
             data={item}
             edit_mode={editMode}
             on_delete={handleDeleteNewEmail}
@@ -1009,9 +1002,9 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
       )}
       {newContactmessangers.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
-        {newContactmessangers.map((item)=>(
+        {newContactmessangers.map((item, idx)=>(
           <OPMTCcontactmessangersSection
-            key={'newOPMTCcontactmessangersSection' + item.id}
+            key={'newOPMTCcontactmessangersSection' + item.id + '_' + idx}
             data={item}
             edit_mode={editMode}
             on_delete={handleDeleteNewMessanger}
@@ -1094,4 +1087,4 @@ const OrgPage_MainTab_Contacts_Section = (props) => {
 	);
 };
 
-export default OrgPage_MainTab_Contacts_Section;
+export default OrgPageMainTabContactsSection;

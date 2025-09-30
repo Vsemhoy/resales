@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './style/topmenu.css';
 import { ChatBtn } from '../../../modules/CHAT/components/ChatBtn';
 import { NavLink } from 'react-router-dom';
-import {BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE} from '../../../config/config';
+import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE } from '../../../config/config';
 import { CloseCircleOutlined, HomeFilled, WechatWorkOutlined } from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
@@ -26,7 +26,6 @@ const TopMenu = () => {
 	const [topRole, setTopRole] = useState(1);
 
 	useEffect(() => {
-		 console.log('userdata structure:', userdata);
 		if (!userdata || userdata.length === 0) {
 			return;
 		}
@@ -35,10 +34,14 @@ const TopMenu = () => {
 		let activeCompany = userdata.user?.active_company;
 		let roles = [];
 
-		if (userdata.user?.id_departament === 7 || userdata.user?.id_departament === 8 || userdata.user?.id_departament === 20) {
-			setTopRole(1)
+		if (
+			userdata.user?.id_departament === 7 ||
+			userdata.user?.id_departament === 8 ||
+			userdata.user?.id_departament === 20
+		) {
+			setTopRole(1);
 		} else {
-			setTopRole(2)
+			setTopRole(2);
 		}
 		if (!activeRole || activeRole === 0) {
 			changeUserRole(1);
@@ -175,19 +178,19 @@ const TopMenu = () => {
 						</div>
 					</NavLink>
 
-					{topRole === 2 &&(
+					{topRole === 2 && (
 						<NavLink to="/orgs">
 							<div className={'sa-topmenu-button'}>Организации</div>
 						</NavLink>
 					)}
 
-					{topRole === 2 &&(
+					{topRole === 2 && (
 						<NavLink to="/bids">
 							<div className={'sa-topmenu-button'}>Заявки</div>
 						</NavLink>
 					)}
 
-					{topRole === 2 &&(
+					{topRole === 2 && (
 						<NavLink to="/price">
 							<div className={'sa-topmenu-button'}>Прайс</div>
 						</NavLink>
@@ -203,7 +206,7 @@ const TopMenu = () => {
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
 
-          			{userdata && userdata.user && userdata.user.super ? (
+					{userdata && userdata.user && userdata.user.super ? (
 						<NavLink to="/dev/icons/antdicons">
 							<div className={'sa-topmenu-button'}>DEV</div>
 						</NavLink>

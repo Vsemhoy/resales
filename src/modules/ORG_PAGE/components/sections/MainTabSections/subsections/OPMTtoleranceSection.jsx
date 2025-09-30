@@ -48,7 +48,7 @@ const OPMTtoleranceSection = (props) => {
 
 
   useEffect(() => {
-    console.log('props.selects', props.selects)
+    // //console.log('props.selects', props.selects)
     let arrak = [];
     if (props.selects){
       setSelects(props.selects);
@@ -68,13 +68,13 @@ const OPMTtoleranceSection = (props) => {
         }
       }
     }
-    console.log('ARRAK', arrak);
+    // //console.log('ARRAK', arrak);
     setOptions(arrak);
   }, [props.selects, docType]);
 
 
   const handleChangeData = (changed_data) => {
-    console.log('changed_data', changed_data)
+    // //console.log('changed_data', changed_data)
     if (changed_data.id_an_orgs !== undefined) {
       setId_an_orgs(changed_data.id_an_orgs);
 
@@ -94,10 +94,10 @@ const OPMTtoleranceSection = (props) => {
       setDeleted(changed_data.deleted);
 
     } else if (changed_data.start_date !== undefined) {
-      setStart_date(changed_data.start_date === null ? null : changed_data.start_date.unix());
+      setStart_date(changed_data.start_date === null ? null : dayjs(changed_data.start_date).unix());
 
     } else if (changed_data.end_date !== undefined) {
-      setEnd_date(changed_data.end_date === null ? null : changed_data.end_date.unix());
+      setEnd_date(changed_data.end_date === null ? null : dayjs(changed_data.end_date).unix());
 
     } else if (changed_data.id_an_orgs !== undefined) {
       setId_an_orgs(changed_data.id_an_orgs);
@@ -122,7 +122,7 @@ const OPMTtoleranceSection = (props) => {
       resultObject.comment = comment;
       resultObject.deleted = deleted;
 
-      console.log('result', resultObject)
+      //console.log('result', resultObject)
 
       if (props.on_change) {
         props.on_change(id, resultObject);
@@ -143,9 +143,9 @@ const OPMTtoleranceSection = (props) => {
 
   useEffect(() => {
     if (deleted){
-      console.log('ALARM', props)
+      //console.log('ALARM', props)
       if (props.on_delete){
-        console.log(id)
+        //console.log(id)
         props.on_delete(id, !deleted);
       }
     }

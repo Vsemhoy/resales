@@ -6,11 +6,10 @@ ul {
 	margin: 0;
 }
 
-:global(.ant-modal-wrap) {
+/* :global(.ant-modal-wrap) {
 	overflow: hidden !important;
 	/* pointer-events: none !important; */
-	z-index: 9999999;
-}
+/* z-index: 9999999;} */
 
 .draggableWrapper :global(.ant-modal-content) {
 	padding: 0;

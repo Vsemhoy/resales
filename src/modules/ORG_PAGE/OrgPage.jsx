@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
+import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import {
 	NavLink,
 	Outlet,
@@ -9,9 +9,9 @@ import {
 	useParams,
 	useSearchParams,
 } from 'react-router-dom';
-import { Affix, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
+import { Affix, Alert, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
 
-import { ArrowSmallLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowSmallLeftIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import {
 	ArrowLeftCircleIcon,
 	ClipboardDocumentCheckIcon,
@@ -170,6 +170,22 @@ const OrgPage = (props) => {
 		},
 
 	]);
+
+
+	const [isAlertVisible, setIsAlertVisible] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertDescription, setAlertDescription] = useState('');
+	const [alertType, setAlertType] = useState('');
+
+	useEffect(() => {
+		if (isAlertVisible && alertType !== 'error') {
+			const timer = setTimeout(() => {
+				setIsAlertVisible(false);
+			}, 3000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [isAlertVisible]);
 
 
 	useEffect(() => {
@@ -507,13 +523,26 @@ const OrgPage = (props) => {
 					data: dataToUpdate,
 					_token: CSRF_TOKEN,
 				});
-				if (response){
+				console.log('response.status', response.status)
+				if (response.status === 200){
           // При успешной записи - очищаем все временные списки и загружаем данные заново
 					clearTemps();
-
-        }
+					setIsAlertVisible(true);
+					setAlertMessage(`Успех!`);
+					setAlertDescription(response.message || 'Данные успешно обновлены');
+					setAlertType('success');
+        } else {
+					setIsAlertVisible(true);
+					setAlertMessage(`Произошла ошибка!`);
+					setAlertDescription(response.message || 'Неизвестная ошибка сервера');
+					setAlertType('error');
+				}
 			} catch (e) {
 				console.log(e);
+					setIsAlertVisible(true);
+					setAlertMessage(`Ошибка на стороне сервера`);
+					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+					setAlertType('error');
 			} finally {
 				// setLoadingOrgs(false)
 
@@ -522,6 +551,7 @@ const OrgPage = (props) => {
 			//setUserAct(USDA);
 			console.log('SEND', dataToUpdate);
 		}
+
 	};
 
 	/** ----------------------- FETCHES -------------------- */
@@ -571,6 +601,7 @@ const OrgPage = (props) => {
 		}
 	}, [pageProject]);
 
+
 	const handleSaveData = () => {
 		setBlockOnSave(true);
 		setSaveProcess(5);
@@ -580,8 +611,9 @@ const OrgPage = (props) => {
 			setBlockOnSave(false);
 		}, 2000);
 
-
 		let saveData = {};
+		setTimeout(() => {
+			console.log('tempMainData', tempMainData)
 			if (tempMainData){
 				saveData.orgData = tempMainData;
 			}
@@ -595,8 +627,10 @@ const OrgPage = (props) => {
 				saveData.notes = tempNotesData;
 			}
 			
-		update_data_action(saveData);
-		console.log('SAVEDATA FIN', saveData);
+			update_data_action(saveData);
+			console.log('SAVEDATA FIN', saveData);
+		}, 2000);
+		
 
 
 			setIsSmthChanged(false);
@@ -605,7 +639,7 @@ const OrgPage = (props) => {
 	useEffect(() => {
 		if (editMode === false){ return; }
 		console.log(tempMainData, tempNotesData, tempCallsData);
-		console.log('isSmthChanged',isSmthChanged);
+		console.log('isSmthChanged', isSmthChanged);
 	}, [isSmthChanged]);
 
 	const handleMaintabObjectDataChange = (key, dataarr) => {
@@ -615,11 +649,11 @@ const OrgPage = (props) => {
 
 		if (key === 'emails'){
 			setTempMain_emails(dataarr);
-		} else if (key === 'licenses'){
+		} else if (key === 'active_licenses'){
 			setTempMain__an_licenses(dataarr);
-		} else if (key === 'tolerances'){
+		} else if (key === 'active_tolerance'){
 			setTempMain_an_tolerances(dataarr);
-		} else if (key === 'bo_licenses'){
+		} else if (key === 'active_licenses_bo'){
 			setTempMain_bo_licenses(dataarr);
 		} else if (key === 'requisites'){
 			setTempMain_an_requisites(dataarr);
@@ -636,7 +670,7 @@ const OrgPage = (props) => {
 
 	useEffect(() => {
 		if (!editMode){ return; }
-		let copyData = tempMainData ?  JSON.parse(JSON.stringify(tempMainData)) : {};
+		let copyData = tempMainData ? tempMainData :  JSON.parse(JSON.stringify(baseMainData));
 			if (copyData){
 				copyData.active_licenses =     tempMain_an_licenses;
 				copyData.active_tolerance =    tempMain_an_tolerances;
@@ -664,7 +698,7 @@ const OrgPage = (props) => {
 
 	const handleTabDataChange = (tab_name, data) => {
 		console.log('END POOINT', tab_name, data);
-		if (tab_name === 'main' && data && data.active_licenses){
+		if (tab_name === 'main' && data){
 			let copyData = JSON.parse(JSON.stringify(data));
 			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
 				copyData.active_licenses =     tempMain_an_licenses;
@@ -675,10 +709,10 @@ const OrgPage = (props) => {
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
-				
+				console.log('SET COPY DATA', copyData)
 				setTempMainData(copyData);
 			} else {
-				setTempMainData(null);
+				setTempMainData(baseMainData);
 			}
 
 		} else if (tab_name === 'projects'){
@@ -734,6 +768,10 @@ const OrgPage = (props) => {
 
 	// Очистка данных для сохранения (измененных)
 	const clearTemps = () => {
+		let iid = itemId;
+		setTimeout(() => {
+			setItemId(iid);
+		}, 300);
 			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
 				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
 				setTempMainData(null);
@@ -746,19 +784,19 @@ const OrgPage = (props) => {
 				setTempMain_phones(null);
 				setTempMain_addresses(null);
 
-				get_main_data_action(itemId);
+				get_main_data_action(iid);
 			}
 			if (tempProjectsData && tempProjectsData.length > 0){
 					setTempProjectsData(null);
-					get_projects_data_action(itemId);
+					get_projects_data_action(iid);
 				}
 				if (tempCallsData && tempCallsData.length > 0){
 					setTempCallsData(null);
-					get_org_calls_action(itemId);
+					get_org_calls_action(iid);
 				}
 				if (tempNotesData && tempNotesData.length > 0){
 					setTempNotesData(null);
-					get_notes_data_action(itemId);
+					get_notes_data_action(iid);
 				}
 
 
@@ -813,13 +851,7 @@ const OrgPage = (props) => {
 						format_data,
 					);
 					if (new_bid_response) {
-						// window.open(
-						// 	window.location.origin + '/' + HTTP_ROOT + '/bids/' +
-						// 	new_bid_response.data.bid.id, 
-						// 	"_blank"
-						// );
 						alert("Заявка на кураторство отправлена");
-						// navigate('/' + HTTP_ROOT + '/bids/' + new_bid_response.data.bid.id, "blank" );
 					}
 				} catch (e) {
 					console.log(e);
@@ -886,8 +918,7 @@ const OrgPage = (props) => {
 								)}
 
 								{!editMode && (
-									<Button 
-
+									<Button style={{marginRight: '12px'}}
 										onClick={handleCallBecomeCurator}>
 											Запрос.Кураторство
 										</Button>
@@ -1048,6 +1079,23 @@ const OrgPage = (props) => {
 					customButtons={customModalColumns}
 					open={isOpenCustomModal}
 				/>
+				{isAlertVisible && (
+				<Alert
+					message={alertMessage}
+					description={alertDescription}
+					type={alertType}
+					showIcon
+					closable
+					style={{
+						position: 'fixed',
+						top: 20,
+						right: 20,
+						zIndex: 9999,
+						width: 350,
+					}}
+					onClose={() => setIsAlertVisible(false)}
+				/>
+			)}
 			</div>
 		</>
 	);
