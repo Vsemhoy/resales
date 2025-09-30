@@ -179,10 +179,17 @@ export const App = () => {
             <Dropdown menu={{ items: devMenu }}>
 							<div style={{
 								position: 'fixed',
-								bottom: '0px',
+								bottom: '5px',
 								color: 'orangered',
-								opacity: '0.9',
-                
+								opacity: 1,
+								backgroundColor: '#fff',
+								borderRadius: '6px',
+								left: '5px',
+								display: 'flex',
+								outline: '2px solid orangered',
+								alignItems: 'center',
+								justifyContent: 'center',
+								cursor: 'pointer',
 							}}
 								title='DEV MODE'>
 									<ExclamationTriangleIcon height={'64px'} />
