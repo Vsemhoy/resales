@@ -141,7 +141,12 @@ const OrgPage_MainTab_Common_Section = (props) => {
 						name: 'inn',
 					},
 				]}
+				
         on_blur={(data)=>{
+					if (data.id8an_fs !== undefined){
+									console.log('data CHANGE', data);
+									setId8an_fs(data.id8an_fs);
+								}
 					console.log('data', data)
           if (props.on_blur){
             props.on_blur(data);
