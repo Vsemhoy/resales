@@ -7,7 +7,7 @@ import {
 import { ShieldCheckIcon } from '@heroicons/react/24/solid';
 import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
-import { NavLink } from 'react-router-dom';
+// import { NavLink } from 'react-router-dom';
 
 export const getBidsItems = (bids) => {
 	return [
@@ -43,7 +43,7 @@ export const getBidsItems = (bids) => {
 						label: <Label />,
 						icon: <DocumentCurrencyDollarIcon height={'18px'} />,
 					};
-				})
+			  })
 			: []),
 	];
 };
@@ -82,7 +82,7 @@ export const getCallsItems = (calls) => {
 						label: <Label />,
 						icon: <PhoneArrowUpRightIcon height={'18px'} />,
 					};
-				})
+			  })
 			: []),
 	];
 };
@@ -123,7 +123,7 @@ export const getMeetingsItems = (meetings) => {
 						label: <Label />,
 						icon: <BriefcaseIcon height={'18px'} />,
 					};
-				})
+			  })
 			: []),
 	];
 };
@@ -162,7 +162,7 @@ const getLicensesItems = (licenses) => {
 							label: <Label />,
 							icon: <ShieldCheckIcon height={'18px'} />,
 						};
-					})
+				  })
 				: [])
 		);
 	}
@@ -198,7 +198,7 @@ const getLicensesItems = (licenses) => {
 							label: <Label />,
 							icon: <TrophyIcon height={'18px'} />,
 						};
-					})
+				  })
 				: [])
 		);
 	}

@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import { Badge, Button, Collapse, Empty } from 'antd';
-import { CameraIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+	CameraIcon,
+	DevicePhoneMobileIcon,
+	EnvelopeIcon,
+	PaperAirplaneIcon,
+	PhoneIcon,
+	TrashIcon,
+} from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { forIn } from 'lodash';
 
@@ -20,20 +27,16 @@ const MainTabPage = (props) => {
   const [show, setShow] = useState(false);
   const [itemId, setItemId] = useState(props.item_id);
 
-  const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
 
-  const [newLoading, setNewLoading] = useState(false);
+	const [newLoading, setNewLoading] = useState(false);
+
 
   // Структурированные в коллапсы юниты
   const [structureItems, setStructureItems] = useState([]);
   const [structureContacts, setStructureContacts] = useState([]);
-
   const [baseData, setBaseData] = useState([]);
-
-
-
-  const [editedContactIds, setEditedContactIds] = useState([]);
-
+	const [editedContactIds, setEditedContactIds] = useState([]);
 
   const [dataModified, setDataModified] = useState(false);
 
@@ -41,10 +44,14 @@ const MainTabPage = (props) => {
   const [callToAddLicense, setCallToAddLicense] = useState(null);
   const [callToAddTolerance, setCallToAddTolerance] = useState(null);
 
-  const [selects, setSelects] = useState(null);
-  useEffect(() => {
-    setSelects(props.selects);
-  }, [props.selects]);
+	const [callToAddRequisite, setCallToAddRequisite] = useState(null);
+	const [callToAddLicense, setCallToAddLicense] = useState(null);
+	const [callToAddTolerance, setCallToAddTolerance] = useState(null);
+
+	const [selects, setSelects] = useState(null);
+	useEffect(() => {
+		setSelects(props.selects);
+	}, [props.selects]);
 
   useEffect(() => {
     setShow(props.show);

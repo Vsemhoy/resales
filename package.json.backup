@@ -21,18 +21,9 @@
 		"react-dom": "^19.1.0",
 		"react-draggable": "^4.5.0",
 		"react-router-dom": "^7.6.3",
+		"react-scripts": "5.0.1",
 		"web-vitals": "^2.1.4",
-		"xlsx-community": "^0.16.9002"
-	},
-	"resolutions": {
-		"**/xlsx": "^0.18.5",
-		"**/nth-check": "^2.0.1",
-		"**/postcss": "^8.4.31"
-	},
-	"overrides": {
-		"xlsx": "^0.18.5",
-		"nth-check": "^2.0.1",
-		"postcss": "^8.4.31"
+		"xlsx": "^0.18.5"
 	},
 	"scripts": {
 		"start": "react-scripts start",
@@ -41,8 +32,7 @@
 		"eject": "react-scripts eject",
 		"push-all-changes": "git add . && git commit -m\"update\" && git push origin",
 		"push-all-bogdan": "git add . && git commit -m\"update\" && git push origin master:bogdan",
-		"fetch-all": "git fetch origin && git merge origin/master",
-		"postinstall": "npm audit --audit-level=high"
+		"fetch-all": "git fetch origin && git merge origin/master"
 	},
 	"eslintConfig": {
 		"extends": [
@@ -61,8 +51,5 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
-	},
-	"devDependencies": {
-		"react-scripts": "^5.0.1"
 	}
 }

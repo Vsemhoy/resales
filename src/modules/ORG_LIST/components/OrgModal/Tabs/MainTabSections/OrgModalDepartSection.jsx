@@ -3,10 +3,10 @@ import OrgModalRow from './OrgModalRow';
 import { ORG_DEF_DATA } from '../../../mock/ORGDEFDATA';
 import {
 	FullNameWithOccupy,
-	ShortName,
+	// ShortName,
 	TextWithLineBreaks,
 } from '../../../../../../components/helpers/TextHelpers';
-import { Tooltip } from 'antd';
+// import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 
 const OrgModalDepartSection = (props) => {

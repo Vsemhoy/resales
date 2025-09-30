@@ -1,55 +1,59 @@
-import { useEffect, useState, useMemo } from 'react';
-import { PRODMODE } from '../../config/config.js';
+import { useMemo } from 'react';
 import { useSms } from './useSms';
-import { useWebSocket } from './useWebSocket.js';
+import { useChatSocket } from '../../context/ChatSocketContext';
 
 export const useChatMessages = ({ chatId = null, mock = {} }) => {
 	const { data: history, loading, error } = useSms({ chatId, mock });
-	const [liveMessages, setLiveMessages] = useState([]);
-	const [wsError, setWsError] = useState(null);
+	const { messages: liveMessages, connected } = useChatSocket();
 
-	// Подключаем WebSocket только в PRODMODE
-	useEffect(() => {
-		if (!PRODMODE) {
-			setLiveMessages([]);
-			return;
-		}
-	}, []);
+	console.log('[useChatMessages] chatId:', chatId);
+	console.log('[useChatMessages] SMS history loaded:', history?.length);
+	console.log('[useChatMessages] WS connected:', connected);
+	console.log('[useChatMessages] total live messages received:', liveMessages.length);
 
-	useWebSocket({
-		url: '192.168.1.16:5003',
-		userdata: { chatId }, // можно пробрасывать chatId
-		logPrefix: 'ChatWS',
-		onMessage: (msg) => {
+	// --- фильтруем сообщения по chatId
+	const filteredLiveMessages = useMemo(() => {
+		const filtered = liveMessages
+			.filter(
+				(msg) =>
+					msg.action === 'CHAT_MESSAGE' &&
+					msg.payload &&
+					(!chatId || msg.payload.chat_id === chatId)
+			)
+			.map((msg) => msg.payload);
 
-			try {
-				if (msg.action === 'CHAT_MESSAGE' && msg.payload) {
-					if (!chatId || msg.payload.chat_id === chatId) {
-						setLiveMessages((prev) => [...prev, msg.payload]);
-					}
-				}
-			} catch (e) {
-				console.error('[useChatMessages] Ошибка парсинга:', e);
-				setWsError('WebSocket parse error');
-			}
-		},
-	});
+		console.log(
+			'[useChatMessages] filtered live messages for chatId',
+			chatId,
+			':',
+			filtered.length
+		);
 
-	// объединяем историю и live
+		return filtered;
+	}, [liveMessages, chatId]);
+
+	// --- объединяем историю и live-сообщения
 	const allMessages = useMemo(() => {
 		const map = new Map();
 		(history || []).forEach((msg) => map.set(msg.id, msg));
-		liveMessages.forEach((msg) => map.set(msg.id, msg));
-		return Array.from(map.values()).sort((a, b) => {
+		filteredLiveMessages.forEach((msg) => map.set(msg.id, msg));
+
+		const sorted = Array.from(map.values()).sort((a, b) => {
 			const aTime = a.updated_at || a.created_at;
 			const bTime = b.updated_at || b.created_at;
 			return aTime - bTime;
 		});
-	}, [history, liveMessages]);
+
+		console.log('[useChatMessages] allMessages combined & sorted:', sorted.length);
+		return sorted;
+	}, [history, filteredLiveMessages]);
+
+	console.log('[useChatMessages] returning data:', allMessages.length);
 
 	return {
 		data: allMessages,
 		loading,
-		error: error || wsError,
+		error: error,
+		connected,
 	};
 };

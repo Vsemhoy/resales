@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Table, Tag } from 'antd';
+import { Button, Table } from 'antd';
 import style from './style/main.module.css';
 
-import { PROD_API_URL, PROD_AXIOS_INSTANCE } from '../../../config/Api';
+import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
 import { DownloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import * as XLSX from "xlsx";
+import * as XLSX from 'xlsx-community';
 
 const PositionList = ({ bidId, fetch_path, error_alert }) => {
 	const [tableHeader, setTableHeader] = useState('');
@@ -137,21 +137,18 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 		const rows = positions.map((m) => {
 			// Начинаем с базового объекта
 			const obj = {
-				'ID': m.model_id,
-				'Название': m.model_name,
-				'Количество': m.model_count,
-				'Процент': m.percent,
-				'Цена': m.price,
+				ID: m.model_id,
+				Название: m.model_name,
+				Количество: m.model_count,
+				Процент: m.percent,
+				Цена: m.price,
 			};
 			return obj;
 		});
 		const ws = XLSX.utils.json_to_sheet(rows);
 		const wb = XLSX.utils.book_new();
 		XLSX.utils.book_append_sheet(wb, ws, 'Спецификация');
-		XLSX.writeFile(
-			wb,
-			`${dayjs().format('DD.MM.YYYY')}. ${bidId}-Спецификация.xlsx`
-		);
+		XLSX.writeFile(wb, `${dayjs().format('DD.MM.YYYY')}. ${bidId}-Спецификация.xlsx`);
 	};
 
 	return (
@@ -168,10 +165,9 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 			</div>
 			{positions && (
 				<div className={style.add__btn}>
-					<Button
-						onClick={() => handleExport()}
-						size={'small'}
-					>Экспорт в EXCEL</Button>
+					<Button onClick={() => handleExport()} size={'small'}>
+						Экспорт в EXCEL
+					</Button>
 				</div>
 			)}
 		</div>

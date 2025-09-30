@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-
+// let chatId = 46; //ЗАГЛУШКА
 const getWebSocketUrl = () => {
 	// Всегда подключаемся к локальному BFF WebSocket серверу
 	return 'ws://192.168.1.16:5003';

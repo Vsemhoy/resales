@@ -4,10 +4,12 @@ const ChatSocketContext = createContext(null);
 
 export const ChatSocketProvider = ({ children, url }) => {
 	const wsRef = useRef(null);
+	const reconnectTimer = useRef(null);
+
 	const [connected, setConnected] = useState(false);
 	const [messages, setMessages] = useState([]);
 
-	// безопасная отправка
+	// --- безопасная отправка сообщений
 	const sendMessage = useCallback((data) => {
 		if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
 			wsRef.current.send(JSON.stringify(data));
@@ -16,36 +18,56 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, []);
 
-	useEffect(() => {
-		wsRef.current = new WebSocket(url);
+	// --- создание сокета (с защитой от StrictMode)
+	const connect = useCallback(() => {
+		if (wsRef.current) return; // если уже есть соединение — выходим
 
-		wsRef.current.onopen = () => {
+		const ws = new WebSocket(url);
+		wsRef.current = ws;
+
+		ws.onopen = () => {
 			console.log('[WS] connected');
 			setConnected(true);
 		};
 
-		wsRef.current.onclose = () => {
+		ws.onclose = () => {
 			console.log('[WS] closed');
 			setConnected(false);
+			wsRef.current = null;
+
+			// авто-реconnect через 3 секунды
+			if (!reconnectTimer.current) {
+				reconnectTimer.current = setTimeout(() => {
+					reconnectTimer.current = null;
+					connect();
+				}, 3000);
+			}
 		};
 
-		wsRef.current.onerror = (err) => {
+		ws.onerror = (err) => {
 			console.error('[WS] error', err);
 		};
 
-		wsRef.current.onmessage = (event) => {
+		ws.onmessage = (event) => {
 			try {
 				const data = JSON.parse(event.data);
-				setMessages((prev) => [data, ...prev]); // складываем новые сообщения
+				setMessages((prev) => [data, ...prev]); // новые сверху
 			} catch (e) {
 				console.error('[WS] message parse error', e);
 			}
 		};
+	}, [url]);
+
+	// --- подключение один раз
+	useEffect(() => {
+		connect();
 
 		return () => {
+			if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
 			wsRef.current?.close();
+			wsRef.current = null;
 		};
-	}, [url]);
+	}, [connect]);
 
 	return (
 		<ChatSocketContext.Provider value={{ ws: wsRef.current, connected, messages, sendMessage }}>
@@ -56,6 +78,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 export const useChatSocket = () => {
 	const context = useContext(ChatSocketContext);
-	if (!context) throw new Error('useChatSocket must be used within ChatSocketProvider');
+	if (!context) {
+		throw new Error('useChatSocket must be used within ChatSocketProvider');
+	}
 	return context;
 };
