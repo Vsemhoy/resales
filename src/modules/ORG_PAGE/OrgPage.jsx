@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom';
 import { Affix, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
 
-import { ArrowSmallLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowSmallLeftIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import {
 	ArrowLeftCircleIcon,
 	ClipboardDocumentCheckIcon,
@@ -889,8 +889,7 @@ const OrgPage = (props) => {
 								)}
 
 								{!editMode && (
-									<Button 
-
+									<Button style={{marginRight: '12px'}}
 										onClick={handleCallBecomeCurator}>
 											Запрос.Кураторство
 										</Button>

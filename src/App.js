@@ -1,7 +1,7 @@
 import './App.css';
 
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE } from './config/config';
 import './assets/theme.css';
 import './assets/layout.css';
@@ -27,6 +27,8 @@ import { ChatSocketProvider } from './context/ChatSocketContext';
 import { UserDataProvider } from './context/UserDataContext';
 import { PROD_AXIOS_INSTANCE } from './config/Api';
 import { MS_USER } from './mock/MAINSTATE';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
+import { Dropdown } from 'antd';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState([]);
@@ -58,6 +60,31 @@ export const App = () => {
 			setPageLoaded(true);
 		}
 	};
+
+
+  const devMenu = [
+    {
+      key: 'gsdfgsdgsd3',
+      label: (
+        <span>Developer mode menu</span>
+      ),
+      disabled: true,
+    },
+  {
+    key: 'devmenu_1',
+    label: (
+      <NavLink to={'/dev/icons/heroicons24'} >Иконки</NavLink>
+    ),
+  },
+
+  {
+    key: 'devmenu_1',
+    label: (
+      <NavLink to={'/dev/icons/customicons'} >Сообщить о нарушении</NavLink>
+    ),
+    danger: true,
+  },
+];
 
 	if (!pageLoaded) return null; // можно заменить на спиннер загрузки
 
@@ -149,10 +176,27 @@ export const App = () => {
 								/>
 								<Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
 							</Routes>
+
+          {!PRODMODE && (
+            <Dropdown menu={{ items: devMenu }}>
+							<div style={{
+								position: 'fixed',
+								bottom: '0px',
+								color: 'orangered',
+								opacity: '0.9',
+                
+							}}
+								title='DEV MODE'>
+									<ExclamationTriangleIcon height={'64px'} />
+								</div>
+              </Dropdown>
+						)}
 						</div>
 					</BrowserRouter>
 				</ChatSocketProvider>
 			</UserDataProvider>
+
+
 		</div>
 	);
 };
