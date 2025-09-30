@@ -95,6 +95,11 @@ const OrgPage_MainTab_Common_Section = (props) => {
 					}
 				]}
         on_blur={(data)=>{
+					if (data.name !== undefined){
+						console.log('data CHANGE', data);
+						setName(data.name);
+					};
+
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -144,9 +149,14 @@ const OrgPage_MainTab_Common_Section = (props) => {
 				
         on_blur={(data)=>{
 					if (data.id8an_fs !== undefined){
-									console.log('data CHANGE', data);
-									setId8an_fs(data.id8an_fs);
-								}
+						console.log('data CHANGE', data);
+						setId8an_fs(data.id8an_fs);
+					};
+					if (data.inn !== undefined){
+						console.log('data CHANGE', data);
+						setInn(data.inn);
+					};
+
 					console.log('data', data)
           if (props.on_blur){
             props.on_blur(data);
@@ -177,6 +187,11 @@ const OrgPage_MainTab_Common_Section = (props) => {
 					}
 				]}
         on_blur={(data)=>{
+					if (data.kindofactivity !== undefined){
+						console.log('data CHANGE', data);
+						setKindofactivity(data.kindofactivity);
+					};
+					
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -199,6 +214,10 @@ const OrgPage_MainTab_Common_Section = (props) => {
 					}
 				]}
         on_blur={(data)=>{
+					if (data.middlename !== undefined){
+						console.log('data CHANGE', data);
+						setMiddlename(data.middlename);
+					};
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -240,6 +259,14 @@ const OrgPage_MainTab_Common_Section = (props) => {
 					},
 				]}
         on_change={(data)=>{
+					if (data.id8an_profiles !== undefined){
+						console.log('data CHANGE', data);
+						setId8an_profiles(data.id8an_profiles);
+					};
+					if (data.profsound !== undefined){
+						console.log('data CHANGE', data);
+						setProfsound(data.profsound);
+					};
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -272,6 +299,9 @@ const OrgPage_MainTab_Common_Section = (props) => {
 				]}
         
         on_blur={(data)=>{
+					if (data.profsound !== undefined){
+						setSource(data.source);
+					};
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -294,6 +324,9 @@ const OrgPage_MainTab_Common_Section = (props) => {
 					}
 				]}
         on_blur={(data)=>{
+					if (data.comment !== undefined){
+						setComment(data.comment);
+					};
           if (props.on_blur){
             props.on_blur(data);
           }
@@ -316,6 +349,9 @@ const OrgPage_MainTab_Common_Section = (props) => {
 					}
 				]}
         on_blur={(data)=>{
+					if (data.commentinlist !== undefined){
+						setCommentinlist(data.commentinlist);
+					};
           if (props.on_blur){
             props.on_blur(data);
           }

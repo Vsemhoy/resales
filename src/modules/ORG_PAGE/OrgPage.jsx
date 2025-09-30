@@ -680,7 +680,7 @@ const OrgPage = (props) => {
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
-				console.log('SET COPY DATA')
+				console.log('SET COPY DATA', copyData)
 				setTempMainData(copyData);
 			} else {
 				setTempMainData(baseMainData);
