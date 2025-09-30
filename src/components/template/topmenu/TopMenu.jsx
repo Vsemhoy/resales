@@ -17,6 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { useUserData } from '../../../context/UserDataContext'; // импортируем хук
+import { WebSocketDebug } from '../../helpers/WebSocketDebug';
 
 const TopMenu = () => {
 	// Получаем данные из контекста
@@ -24,6 +25,7 @@ const TopMenu = () => {
 	const [roleMenu, setRoleMenu] = useState([]);
 	const [companiesMenu, setCompanieseMenu] = useState([]);
 	const [topRole, setTopRole] = useState(1);
+	const [showDebugger, setShowDebugger] = useState(false);
 
 	useEffect(() => {
 		if (!userdata || userdata.length === 0) {
@@ -206,11 +208,41 @@ const TopMenu = () => {
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
 
+					{/* DEBUGGER */}
 					{userdata && userdata.user && userdata.user.super ? (
-						<NavLink to="/dev/icons/antdicons">
-							<div className={'sa-topmenu-button'}>DEV</div>
-						</NavLink>
+						<div
+							style={{
+								position: 'relative',
+								display: 'inline-block',
+							}}
+						>
+							<div
+								className={'sa-topmenu-button'}
+								style={{
+									color: 'transparent',
+									backgroundColor: showDebugger ? '#f0f0f0' : 'transparent',
+									cursor: 'pointer',
+								}}
+								onClick={() => setShowDebugger(!showDebugger)}
+							>
+								DEBUGGER
+							</div>
+							{showDebugger && (
+								<div
+									style={{
+										position: 'absolute',
+										top: '100%',
+										right: 0,
+										zIndex: 10000,
+										marginTop: '5px',
+									}}
+								>
+									<WebSocketDebug />
+								</div>
+							)}
+						</div>
 					) : null}
+					{/* DEBUGGER */}
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
