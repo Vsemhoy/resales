@@ -168,7 +168,6 @@ export const App = () => {
 								/>
 								<Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
 							</Routes>
-
 							{!PRODMODE && (
 								<Dropdown menu={{ items: devMenu }}>
 									<div

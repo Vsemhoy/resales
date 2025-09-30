@@ -112,7 +112,7 @@
 	background-color: #dae9fb;
 }
 .sk-omt-row > div:hover .sk-omt-content {
-	background-color: rgba(0, 0, 0, 0.056);
+	background-color: rgba(0, 0, 0, 0.021);
 }
 
 .sk-omt-content-epanded {
@@ -267,12 +267,38 @@
 	background-color: #e3e8ea;
 	/* overflow: hidden; */
 }
+.sa-org-contactstack-box {
+	padding: 3px;
+}
 
 /* .sa-outlet-body > div > div > div > div >  */
 .sa-org-modal-body  > div > div >  div > div >  .ant-collapse-item ,
 div.sa-outlet-body > div > div > .ant-collapse-item {
-	border-bottom: #e4e4e4 12px solid;
+	/* border-bottom: #e4e4e4 12px solid; */
+	    margin-bottom: 16px;
 }
+.sa-orgpage-body .ant-collapse.ant-collapse-icon-position-start {
+	background-color: #e3e8ea;
+}
+.sa-orgpage-body .ant-collapse.ant-collapse-icon-position-start > .ant-collapse-item {
+	background-color: #ffffff;
+}
+
+.sa-orgpage-body .ant-collapse.ant-collapse-icon-position-start {
+	background-color: #e3e8ea;
+}
+
+.sa-org-modal-body .ant-collapse {
+	background-color: #e7ebef;
+}
+.sa-org-modal-body .ant-collapse  > .ant-collapse-item {
+	background-color: #ffffff ;
+	transition: all 0.2s;
+}
+.sa-org-modal-body .ant-collapse > .ant-collapse-item:hover  {
+	background-color: #f8f9fa ;
+}
+	
 
 .ant-collapse-header-text .sa-flex-space > div:first-child {
 	font-weight: 600;
@@ -287,6 +313,8 @@ div.sa-outlet-body > div > div > .ant-collapse-item {
 .sa-outlet-body .ant-collapse {
 	border-radius: 0px !important;
 }
+
+
 
 
 .sa-tolerance-old-v {

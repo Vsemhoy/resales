@@ -16,6 +16,8 @@ const OPMTCcontactmessangersSection = (props) => {
 
   const [objectResult, setObjectResult] = useState({});
 
+  const [selects, setSelects] = useState(null);
+
   useEffect(() => {
     if (props.data?.id){
       setObjectResult(props.data);
@@ -44,7 +46,12 @@ const OPMTCcontactmessangersSection = (props) => {
     } 
   }
 
-
+  useEffect(() => {
+    if (props.selects){
+      console.log('SE LE CT BI',props.selects);
+      setSelects(props.selects);
+    }
+  }, [props.selects]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -89,13 +96,14 @@ const OPMTCcontactmessangersSection = (props) => {
 				titles={['Идентификатор пользователя','Мессенджер']}
 				datas={[
 					{
-						type: OPS_TYPE.STRING,
+						type: OPS_TYPE.SELECT,
 						value: identifier,
 						max: 255,
 						required: false,
 						nullable: true,
 						placeholder: '@contact_id',
 						name: 'identifier',
+            options: selects
 					},
 					{
 						type: OPS_TYPE.UINTEGER,
