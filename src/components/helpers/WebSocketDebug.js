@@ -67,7 +67,6 @@ export const WebSocketDebug = () => {
 			<div>Connected: {connected ? 'Yes ✅' : 'No ❌'}</div>
 			<div>Messages: {messages.length}</div>
 
-			{/* Кнопки в две колонки */}
 			<div
 				style={{
 					display: 'grid',
@@ -159,7 +158,6 @@ export const WebSocketDebug = () => {
 				🔄 Reconnect
 			</button>
 
-			{/* Показ последних сообщений */}
 			<div
 				style={{
 					marginTop: '10px',
