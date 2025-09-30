@@ -9,7 +9,7 @@ import {
 	useParams,
 	useSearchParams,
 } from 'react-router-dom';
-import { Affix, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
+import { Affix, Alert, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
 
 import { ArrowSmallLeftIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import {
@@ -170,6 +170,22 @@ const OrgPage = (props) => {
 		},
 
 	]);
+
+
+	const [isAlertVisible, setIsAlertVisible] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertDescription, setAlertDescription] = useState('');
+	const [alertType, setAlertType] = useState('');
+
+	useEffect(() => {
+		if (isAlertVisible && alertType !== 'error') {
+			const timer = setTimeout(() => {
+				setIsAlertVisible(false);
+			}, 3000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [isAlertVisible]);
 
 
 	useEffect(() => {
@@ -511,10 +527,22 @@ const OrgPage = (props) => {
 				if (response.status === 200){
           // При успешной записи - очищаем все временные списки и загружаем данные заново
 					clearTemps();
-
-        }
+					setIsAlertVisible(true);
+					setAlertMessage(`Успех!`);
+					setAlertDescription(response.message || 'Данные успешно обновлены');
+					setAlertType('success');
+        } else {
+					setIsAlertVisible(true);
+					setAlertMessage(`Произошла ошибка!`);
+					setAlertDescription(response.message || 'Неизвестная ошибка сервера');
+					setAlertType('error');
+				}
 			} catch (e) {
 				console.log(e);
+					setIsAlertVisible(true);
+					setAlertMessage(`Ошибка на стороне сервера`);
+					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+					setAlertType('error');
 			} finally {
 				// setLoadingOrgs(false)
 
@@ -523,6 +551,7 @@ const OrgPage = (props) => {
 			//setUserAct(USDA);
 			console.log('SEND', dataToUpdate);
 		}
+
 	};
 
 	/** ----------------------- FETCHES -------------------- */
@@ -1050,6 +1079,23 @@ const OrgPage = (props) => {
 					customButtons={customModalColumns}
 					open={isOpenCustomModal}
 				/>
+				{isAlertVisible && (
+				<Alert
+					message={alertMessage}
+					description={alertDescription}
+					type={alertType}
+					showIcon
+					closable
+					style={{
+						position: 'fixed',
+						top: 20,
+						right: 20,
+						zIndex: 9999,
+						width: 350,
+					}}
+					onClose={() => setIsAlertVisible(false)}
+				/>
+			)}
 			</div>
 		</>
 	);
