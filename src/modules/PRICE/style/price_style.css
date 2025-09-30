@@ -1,8 +1,8 @@
 .sa-price-page {
     width: 100%;
-    height: calc(100vh - 50px);
+    /*height: calc(100vh - 50px);*/
     padding-top: 10px;
-    overflow-y: auto;
+    /*overflow-y: auto;*/
 }
 .ant-tree-list-holder-inner {
     /*background-color: aliceblue !important;*/
@@ -26,7 +26,7 @@
     width: 100%;
 }
 .sa-price-tree-container {
-    margin: 20px 12px 0 12px;
+    margin: 0 12px 0 12px;
     min-height: 196px;
     background-color: #fdfdfd;
     border-radius: 6px;
@@ -37,7 +37,7 @@
     align-items: flex-start;
     /*justify-content: center;*/
     gap: 10px;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     margin-right: 12px;
     padding: 5px;
     background-color: var(--sider-bg-color);
@@ -78,4 +78,8 @@
 }
 .sa-price-page .ant-alert-description {
     text-align: justify !important;
+}
+
+.sa-price-page .ant-layout-header {
+    height: auto !important;
 }
