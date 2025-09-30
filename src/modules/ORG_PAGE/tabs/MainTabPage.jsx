@@ -44,9 +44,7 @@ const MainTabPage = (props) => {
   const [callToAddLicense, setCallToAddLicense] = useState(null);
   const [callToAddTolerance, setCallToAddTolerance] = useState(null);
 
-	const [callToAddRequisite, setCallToAddRequisite] = useState(null);
-	const [callToAddLicense, setCallToAddLicense] = useState(null);
-	const [callToAddTolerance, setCallToAddTolerance] = useState(null);
+
 
 	const [selects, setSelects] = useState(null);
 	useEffect(() => {
