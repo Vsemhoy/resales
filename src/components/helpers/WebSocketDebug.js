@@ -24,7 +24,8 @@ export const WebSocketDebug = () => {
 			action: 'laravel_request',
 			requestId: requestId,
 			endpoint: '/api/sms',
-			method: 'GET',
+			method: 'POST', // ИЗМЕНИЛ НА POST
+			data: {}, // ДОБАВИЛ ПУСТОЙ ОБЪЕКТ ДЛЯ POST
 		});
 		console.log('🗂️ Sent Laravel request:', requestId);
 	};

@@ -87,7 +87,7 @@ export const App = () => {
 				<BrowserRouter basename={BASE_NAME}>
 					<div className="App">
 						<TopMenu userdata={userdata} changed_user_data={setUserdata} />
-						<WebSocketDebug />
+						<WebSocketDebug hidden />
 						<div>
 							<Routes>
 								<Route path="/" element={<Navigate to={topRole} replace />} />
