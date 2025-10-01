@@ -24,30 +24,29 @@ export const useSendSms = () => {
 				return { success: true, mock: true };
 			}
 
-			// ПРАВИЛЬНАЯ структура для Laravel
+			// ВОЗВРАЩАЕМ старую рабочую структуру FormData!
 			const formData = new FormData();
 			formData.append('_token', CSRF_TOKEN);
-			formData.append('to', to);
-			formData.append('text', text);
-			if (answer) {
-				formData.append('answer', answer);
-			}
+			formData.append(
+				'data',
+				JSON.stringify({
+					to,
+					text,
+					answer,
+				})
+			);
 
 			console.log('[useSendSms] Отправка данных:', { to, text, answer });
 
-			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-			});
+			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
 
 			console.log('[useSendSms] Ответ от сервера:', response);
 
-			if (response.data?.success || response.status === 200) {
+			if (response.status === 200) {
 				setSuccess(true);
 				return { success: true, data: response.data };
 			} else {
-				throw new Error('Сервер вернул некорректный ответ');
+				throw new Error('Сервер вернул некорректный статус: ' + response.status);
 			}
 		} catch (err) {
 			console.error('[useSendSms] Ошибка:', err);
