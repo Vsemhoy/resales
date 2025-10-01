@@ -250,11 +250,7 @@ const OrgCallEditorSectionBox = (props) => {
       setResult(changed_data.result);
     }  else if (changed_data._savecontact !== undefined) {
       setSaveContact(changed_data._savecontact);
-    } else if (changed_data.next_call_date !== undefined) {
-      setNextCallDate(changed_data.next_call_date);
-    } else if (changed_data.next_type){
-      setNextType(changed_data.next_type);
-    }
+    }  
   }
 
 
@@ -294,6 +290,7 @@ const OrgCallEditorSectionBox = (props) => {
       result,     
       saveContact,
       nexCallDate,
+      nexType
   ]);
 
 
@@ -496,7 +493,14 @@ const OrgCallEditorSectionBox = (props) => {
             options: nexVariants
           }
         ]}
-        on_change={handleChangeData}
+        on_change={(changed_data)=>{
+          if (changed_data.next_call_date !== undefined) {
+            setNextCallDate(changed_data.next_call_date);
+          } 
+          if (changed_data.next_type !== undefined){
+            setNextType(changed_data.next_type);
+          }
+        }}
         // on_blur={handleChangeData}
       />
 
