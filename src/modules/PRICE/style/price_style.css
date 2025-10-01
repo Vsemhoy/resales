@@ -17,7 +17,7 @@
 .sa-price-option {
     display: grid;
     grid-template-rows: 50px;
-    grid-template-columns: minmax(150px, 0.7fr) minmax(150px, 2fr) repeat(4, minmax(50px, 150px));
+    grid-template-columns: minmax(100px, 0.7fr) minmax(150px, 2fr) repeat(5, minmax(50px, 200px));
     grid-gap: 10px;
     padding: 5px;
     background: #e6f4ff !important;
