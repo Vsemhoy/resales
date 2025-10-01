@@ -225,7 +225,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
       if (!exists) {
         return [...prevUnits, data];
       } else {
-        return prevUnits.map((item) => (item.id === id ? data : item));
+        return prevUnits?.map((item) => (item.id === id ? data : item));
       }
     });
   };
@@ -725,7 +725,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 			/>
 
       <div>
-      {addresses.map((item)=>(
+      {addresses?.map((item)=>(
         <OPMTinfoContactAddressSection
           key={'OPMTinfoContactAddressSection' + item.id}
           data={item}
@@ -733,7 +733,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
           on_change={handleUpdateAddressUnit}
         />
       ))}</div>
-      {newAddresses.length > 0 && (
+      {newAddresses?.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newAddresses.map((item)=>(
           <OPMTinfoContactAddressSection
@@ -747,7 +747,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
       )}
 
       <div>
-      {legaladdresses.map((item)=>(
+      {legaladdresses?.map((item)=>(
         <OPMTinfoContactLegalAddressSection
           key={'OPMTinfoContactLegalAddressSection' + item.id}
           data={item}
@@ -757,7 +757,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
       ))}</div>
       {newLegaladdresses.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
-        {newLegaladdresses.map((item)=>(
+        {newLegaladdresses?.map((item)=>(
           <OPMTinfoContactLegalAddressSection
             key={'newOPMTinfoContactLegalAddressSection' + item.id}
             data={item}
@@ -769,7 +769,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
       )}
 
       <div>
-      {phones.map((item)=>(
+      {phones?.map((item)=>(
         <OPMTinfoContactPhoneSection
           key={'OPMTCcontactemailsSection' + item.id}
           data={item}
@@ -779,7 +779,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
       ))}</div>
       {newPhones.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
-        {newPhones.map((item)=>(
+        {newPhones?.map((item)=>(
           <OPMTinfoContactPhoneSection
             key={'newOPMTinfoContactEmailSection' + item.id}
             data={item}
@@ -791,7 +791,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
       )}
 
       <div>
-      {emails.map((item)=>(
+      {emails?.map((item)=>(
         <OPMTinfoContactEmailSection
           key={'OPMTinfoContactEmailSection' + item.id}
           data={item}
@@ -801,7 +801,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
       ))}</div>
       {newEmails.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
-        {newEmails.map((item)=>(
+        {newEmails?.map((item)=>(
           <OPMTinfoContactEmailSection
             key={'newOPMTinfoContactEmailSection' + item.id}
             data={item}
