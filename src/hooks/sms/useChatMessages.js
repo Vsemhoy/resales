@@ -1,40 +1,77 @@
-import { useMemo } from 'react';
-import { useSms } from './useSms';
-// import { useChatSocket } from '../../context/ChatSocketContext'; // ЗАКОММЕНТИРОВАТЬ
+// hooks/sms/useChatMessages.js
+import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
+import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
+import { useState, useEffect, useCallback } from 'react';
 
-export const useChatMessages = ({ chatId = null, mock = {} }) => {
-	// ВКЛЮЧАЕМ POLLING ДЛЯ АКТИВНЫХ ЧАТОВ
-	const {
-		data: history,
-		loading,
-		error,
-		refetch,
-	} = useSms({
-		chatId,
-		mock,
-		enablePolling: !!chatId, // Polling только когда чат открыт
-	});
+export function useChatMessages({ chatId, mock = null }) {
+	const [data, setData] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
-	console.log('[useChatMessages] chatId:', chatId);
-	console.log('[useChatMessages] SMS history loaded:', history?.length);
+	const loadData = useCallback(
+		async (signal) => {
+			if (!chatId) {
+				setData([]);
+				setLoading(false);
+				return;
+			}
 
-	const allMessages = useMemo(() => {
-		const sorted = (history || []).sort((a, b) => {
-			const aTime = a.updated_at || a.created_at;
-			const bTime = b.updated_at || b.created_at;
-			return aTime - bTime;
-		});
+			setError(null);
 
-		console.log('[useChatMessages] allMessages from HTTP:', sorted.length);
-		return sorted;
-	}, [history]);
+			// DEV: используем мок
+			if (!PRODMODE && mock) {
+				try {
+					const allSms = Array.isArray(mock?.content?.sms) ? mock.content.sms : [];
+					const filtered = allSms.filter((msg) => msg.chat_id === parseInt(chatId));
+					setData(filtered);
+				} catch (e) {
+					console.error('[useChatMessages] Ошибка мок-данных:', e);
+					setError('Ошибка мок-данных');
+					setData([]);
+				} finally {
+					setLoading(false);
+				}
+				return;
+			}
 
-	console.log('[useChatMessages] returning data:', allMessages.length);
+			// PROD: запрашиваем сообщения конкретного чата
+			try {
+				const response = await PROD_AXIOS_INSTANCE.post(
+					`/api/sms/${chatId}`, // Ручка для конкретного чата
+					{ _token: CSRF_TOKEN },
+					{ signal }
+				);
+
+				const payload = response?.data ?? {};
+				const chatSms = Array.isArray(payload?.content?.sms) ? payload.content.sms : [];
+
+				console.log(`[useChatMessages] Загружено ${chatSms.length} сообщений для чата ${chatId}`);
+				setData(chatSms);
+			} catch (err) {
+				const isAbort = err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED';
+				if (!isAbort) {
+					console.error(`[useChatMessages] Ошибка для чата ${chatId}:`, err);
+					setError(`Не удалось загрузить сообщения чата`);
+					setData([]);
+				}
+			} finally {
+				if (!signal?.aborted) setLoading(false);
+			}
+		},
+		[chatId, mock]
+	);
+
+	// Первоначальная загрузка
+	useEffect(() => {
+		const controller = new AbortController();
+		loadData(controller.signal);
+		return () => controller.abort();
+	}, [loadData]);
 
 	return {
-		data: allMessages,
+		data,
 		loading,
-		error: error,
-		refetch, // ДОБАВЛЯЕМ ФУНКЦИЮ ДЛЯ РУЧНОГО ОБНОВЛЕНИЯ
+		error,
+		refetch: () => loadData(),
 	};
-};
+}
