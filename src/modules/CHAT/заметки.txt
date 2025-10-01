@@ -13,4 +13,4 @@
 3. Файлы
 
 
-ЛАСТОВЫЙ КУСОК КОДА: 	console.log('Data snapshot:', JSON.parse(JSON.stringify(data)));
+5. Добавим Polling в useSms.js

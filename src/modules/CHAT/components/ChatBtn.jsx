@@ -1,21 +1,41 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Button, Dropdown, Space } from 'antd';
-import { MessageOutlined } from '@ant-design/icons';
+import { MessageOutlined, SyncOutlined } from '@ant-design/icons';
 import { MOCK } from '../mock/mock.js';
 import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
 import { useUserData } from '../../../context/UserDataContext.js';
-import { useChatSocket } from '../../../hooks/sms/useChatSocket.js'; // новый хук
 import styles from './style/Chat.module.css';
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
-	const [liveMessages, setLiveMessages] = useState([]);
+	const [lastUpdate, setLastUpdate] = useState(Date.now());
 
-	const { data: smsList, loading, error } = useSms({ url: '/api/sms', mock: MOCK });
+	const {
+		data: smsList,
+		loading,
+		error,
+		refetch,
+	} = useSms({
+		url: '/api/sms',
+		mock: MOCK,
+		enablePolling: true, // ВКЛЮЧАЕМ POLLING
+	});
+
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id || NaN;
+
+	// Ручное обновление по клику на бейдж
+	const handleManualRefresh = useCallback(
+		(e) => {
+			e.stopPropagation();
+			console.log('Ручное обновление сообщений...');
+			setLastUpdate(Date.now());
+			refetch();
+		},
+		[refetch]
+	);
 
 	const getCompanion = useCallback(
 		(sms) => {
@@ -27,14 +47,8 @@ export const ChatBtn = () => {
 		[currentUserId]
 	);
 
-	// Подключаем WS для live сообщений
-	useChatSocket({
-		chatId: currentUserId, // или другой ID чата, если нужно
-		onNewMessage: (msg) => setLiveMessages((prev) => [msg.payload, ...prev]),
-	});
-
 	const smsData = useMemo(() => {
-		const combined = [...(smsList || []), ...liveMessages];
+		const combined = [...(smsList || [])];
 
 		if (!combined.length) return { hasSms: false, messages: [] };
 
@@ -45,14 +59,18 @@ export const ChatBtn = () => {
 				name: companion?.name || null,
 				surname: companion?.surname || null,
 				content: sms.text || '(без текста)',
+				timestamp: sms.updated_at || sms.created_at,
 			};
 		});
 
+		// Сортируем по времени (новые сверху)
+		messages.sort((a, b) => b.timestamp - a.timestamp);
+
 		return {
 			hasSms: messages.length > 0,
-			messages,
+			messages: messages.slice(0, 10), // Показываем только последние 10
 		};
-	}, [smsList, liveMessages, getCompanion]);
+	}, [smsList, getCompanion]);
 
 	const menuItems = useMemo(() => {
 		if (!smsData.hasSms) return [];
@@ -78,14 +96,24 @@ export const ChatBtn = () => {
 						<Space direction="vertical" size={4}>
 							<Space size={2} wrap>
 								<span className={styles['sms-counter']}>{label}</span>
+								<Button
+									type="text"
+									size="small"
+									icon={<SyncOutlined />}
+									onClick={handleManualRefresh}
+									title="Обновить"
+								/>
 							</Space>
+							<div style={{ fontSize: '10px', color: '#888' }}>
+								Обновлено: {new Date(lastUpdate).toLocaleTimeString()}
+							</div>
 						</Space>
 					</div>
 				),
 				onClick: () => console.log('Переход к сообщениям'),
 			},
 		];
-	}, [smsData]);
+	}, [smsData, lastUpdate, handleManualRefresh]);
 
 	const showModal = () => {
 		setIsModalOpen(true);
@@ -111,7 +139,13 @@ export const ChatBtn = () => {
 					>
 						<MessageOutlined />
 						{smsData.hasSms && (
-							<span className={styles['notification-badge']}>{smsData.messages.length}</span>
+							<span
+								className={styles['notification-badge']}
+								onClick={handleManualRefresh}
+								title="Кликните для обновления"
+							>
+								{smsData.messages.length}
+							</span>
 						)}
 					</Button>
 				</div>
@@ -123,30 +157,3 @@ export const ChatBtn = () => {
 		</Space>
 	);
 };
-
-// <Space style={{ padding: 0 }}>
-// 	<Dropdown
-// 		menu={{ items: menuItems }}
-// 		trigger={['hover']}
-// 		open={dropdownVisible}
-// 		onOpenChange={setDropdownVisible}
-// 	>
-// 		<div>
-// 			<Button
-// 				style={{ background: 'transparent' }}
-// 				type="primary"
-// 				onClick={showModal}
-// 				loading={loading}
-// 			>
-// 				<MessageOutlined />
-// 				{smsData.hasSms && (
-// 					<span className={styles['notification-badge']}>{smsData.messages.length}</span>
-// 				)}
-// 			</Button>
-// 		</div>
-// 	</Dropdown>
-
-// 	<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData} />
-
-// 	{error && <span style={{ color: 'red', fontSize: 12 }}>Ошибка загрузки сообщений</span>}
-// </Space>
