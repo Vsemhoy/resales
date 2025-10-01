@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './style/topmenu.css';
-import { ChatBtn } from '../../../modules/1CHAT/components/ChatBtn';
+import ChatBtn111 from '../../../modules/CHAT/components/ChatBtn';
+import ChatBtn222 from '../../../modules/1CHAT/components/ChatBtn';
 import { NavLink } from 'react-router-dom';
 import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE } from '../../../config/config';
 import { CloseCircleOutlined, HomeFilled, WechatWorkOutlined } from '@ant-design/icons';
@@ -241,7 +242,8 @@ const TopMenu = () => {
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
-					<ChatBtn sms={sms} />
+					<ChatBtn111 sms={sms} />
+					<ChatBtn222 sms={sms} />
 					<Dropdown menu={{ items: userMenu }}>
 						<div className={'sa-flex-gap'}>
 							{ShortName(userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname)}

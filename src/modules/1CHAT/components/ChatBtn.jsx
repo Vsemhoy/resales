@@ -13,7 +13,6 @@ import { ChatModal } from './ChatModal.jsx';
 export const ChatBtn = () => {
 	return (
 		<>
-			<h1>NewChatBtn</h1>
 			<Space style={{ padding: 0 }}>
 				<Dropdown
 					// menu={{ items: menuItems }}
