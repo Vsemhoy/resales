@@ -77,6 +77,8 @@ const tabNames = [
  * 10. Раскидать данные, собрать данные
  */
 
+
+
 const OrgPage = (props) => {
 	const { userdata } = props;
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
@@ -187,6 +189,10 @@ const OrgPage = (props) => {
 		}
 	}, [isAlertVisible]);
 
+	useEffect(()=>{
+		alert(itemId);
+	}, [itemId])
+
 
 	useEffect(() => {
 		setLoading(true);
@@ -286,7 +292,7 @@ const OrgPage = (props) => {
 				setTimeout(() => {
 					setBaseMainData(null);
 					setItemId(itt);
-				}, 300);
+				}, 1200);
 				setTimeout(() => {
 					
 					get_main_data_action(itt);
@@ -296,8 +302,11 @@ const OrgPage = (props) => {
 
 				}, 500);
 				} else {
-					setItemId(0);
-					setBaseMainData(null);
+					setTimeout(() => {
+						setItemId(0);
+						setBaseMainData(null);
+						
+					}, 1200);
 
 					setItemId(itt);
 					setTimeout(() => {
@@ -559,6 +568,7 @@ const OrgPage = (props) => {
 		} else {
 			//setUserAct(USDA);
 			console.log('SEND', dataToUpdate);
+			clearTemps();
 		}
 
 	};
@@ -639,8 +649,6 @@ const OrgPage = (props) => {
 			update_data_action(saveData);
 			console.log('SAVEDATA FIN', saveData);
 		}, 2000);
-		
-
 
 			setIsSmthChanged(false);
 	};
@@ -781,6 +789,7 @@ const OrgPage = (props) => {
 		setItemId(0);
 		setTimeout(() => {
 			setItemId(iid);
+			
 		}, 1200);
 			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
 				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
