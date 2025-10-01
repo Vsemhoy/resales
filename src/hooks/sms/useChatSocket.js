@@ -1,7 +1,8 @@
+// ВРЕМЕННО ЗАКОММЕНТИРОВАНО ДЛЯ MVP
+/*
 import { useEffect, useRef } from 'react';
-// let chatId = 46; //ЗАГЛУШКА
+
 const getWebSocketUrl = () => {
-	// Всегда подключаемся к локальному BFF WebSocket серверу
 	return 'ws://192.168.1.16:5003';
 };
 
@@ -15,7 +16,6 @@ export const useChatSocket = ({ chatId, onNewMessage }) => {
 
 		ws.current.onopen = () => {
 			console.log('[useChatSocket] WS connected');
-			// Подписка на конкретный чат
 			ws.current.send(JSON.stringify({ action: 'subscribe', chatId }));
 		};
 
@@ -42,4 +42,15 @@ export const useChatSocket = ({ chatId, onNewMessage }) => {
 			ws.current?.close();
 		};
 	}, [chatId, onNewMessage]);
+};
+*/
+
+// ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ MVP
+export const useChatSocket = () => {
+	return {
+		messages: [],
+		connected: false,
+		ws: null,
+		sendMessage: () => console.warn('WebSocket временно отключен для MVP'),
+	};
 };

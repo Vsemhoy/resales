@@ -8,13 +8,13 @@ import {
 	LockOutlined,
 	EyeInvisibleOutlined,
 } from '@ant-design/icons';
-import { useChatSocket } from '../../../context/ChatSocketContext';
+// import { useChatSocket } from '../../../context/ChatSocketContext';
 
 export default function ChatFooter({ draggable, setDraggable, position, setPosition }) {
-	const { ws, connected } = useChatSocket();
-	const sendMessage = (msg) => {
-		if (ws && connected) ws.send(JSON.stringify(msg));
-	};
+	// const { ws, connected } = useChatSocket();
+	// const sendMessage = (msg) => {
+	// 	if (ws && connected) ws.send(JSON.stringify(msg));
+	// };
 	const cyclePosition = () => {
 		const nextPosition = {
 			topLeft: 'topRight',
@@ -45,8 +45,8 @@ export default function ChatFooter({ draggable, setDraggable, position, setPosit
 	);
 
 	return (
-		<>
-			<p>WS status: {connected ? 'Connected' : 'Disconnected'}</p>
+		<div hidden>
+			{/* <p>WS status: {connected ? 'Connected' : 'Disconnected'}</p> */}
 			<button onClick={() => console.log('Hello')}>Send</button>
 			<footer hidden className={styles['chat-footer']}>
 				<Space.Compact>
@@ -78,6 +78,6 @@ export default function ChatFooter({ draggable, setDraggable, position, setPosit
 					</Popover>
 				</Space.Compact>
 			</footer>
-		</>
+		</div>
 	);
 }
