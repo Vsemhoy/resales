@@ -38,10 +38,10 @@ const NotesTabPage = (props) => {
 	useEffect(() => {
 		if (editMode && props.on_change_data){
 			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
-				props.on_change_data('notes', baseData.concat(temporaryUnits))
+				props.on_change_data('notes', temporaryUnits)
 			}
 		}
-	}, [baseData]);
+	}, [temporaryUnits]);
 
 	useEffect(() => {
 		setShow(props.show);
