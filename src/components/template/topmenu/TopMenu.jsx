@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './style/topmenu.css';
-import { ChatBtn } from '../../../modules/CHAT/components/ChatBtn';
+import { ChatBtn } from '../../../modules/1CHAT/components/ChatBtn';
 import { NavLink } from 'react-router-dom';
 import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE } from '../../../config/config';
 import { CloseCircleOutlined, HomeFilled, WechatWorkOutlined } from '@ant-design/icons';
@@ -20,7 +20,6 @@ import { useUserData } from '../../../context/UserDataContext'; // импорт�
 import { WebSocketDebug } from '../../helpers/WebSocketDebug';
 
 const TopMenu = () => {
-	// Получаем данные из контекста
 	const { userdata, setUserdata } = useUserData();
 	const [roleMenu, setRoleMenu] = useState([]);
 	const [companiesMenu, setCompanieseMenu] = useState([]);
@@ -36,11 +35,7 @@ const TopMenu = () => {
 		let activeCompany = userdata.user?.active_company;
 		let roles = [];
 
-		if (
-			userdata.user?.id_departament === 7 ||
-			userdata.user?.id_departament === 8 ||
-			userdata.user?.id_departament === 20
-		) {
+		if ([7, 8, 20].includes(userdata.user?.id_departament)) {
 			setTopRole(1);
 		} else {
 			setTopRole(2);

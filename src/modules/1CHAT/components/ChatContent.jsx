@@ -23,6 +23,7 @@ export default function ChatContent({ chatId }) {
 
 	const getRole = useCompanion(currentUserId);
 
+	// ЗАМЕНЯЕМ useChatMessages на useSms + ручную фильтрацию
 	const {
 		data: allSmsList = [],
 		loading,

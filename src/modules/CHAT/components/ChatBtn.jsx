@@ -28,7 +28,7 @@ export const ChatBtn = () => {
 	// УБИРАЕМ дублирующий useEffect - используем только usePolling
 	usePolling(
 		() => {
-			console.log('Автообновление списка чатов...');
+			// console.log('Автообновление списка чатов...');
 			refetch();
 			setLastUpdate(Date.now());
 		},
@@ -43,7 +43,7 @@ export const ChatBtn = () => {
 	const handleManualRefresh = useCallback(
 		(e) => {
 			e?.stopPropagation();
-			console.log('Ручное обновление сообщений...');
+			// console.log('Ручное обновление сообщений...');
 			setLastUpdate(Date.now());
 			refetch();
 		},
@@ -123,7 +123,9 @@ export const ChatBtn = () => {
 						</Space>
 					</div>
 				),
-				onClick: () => console.log('Переход к сообщениям'),
+				onClick: () => {
+					/* console.log('Переход к сообщениям') */
+				},
 			},
 		];
 	}, [smsData, lastUpdate, handleManualRefresh]);

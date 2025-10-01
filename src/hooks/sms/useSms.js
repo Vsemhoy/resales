@@ -1,90 +1,74 @@
-// hooks/sms/useSms.js
+import { useEffect, useState } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
-import { useState, useEffect, useCallback } from 'react';
 
-/**
- * useSms БЕЗ встроенного polling
- */
-export function useSms({ chatId = null, mock = null }) {
+export const useSms = ({ chatId = null, mock = {} }) => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	// useCallback чтобы функция не пересоздавалась на каждом рендере
-	const loadData = useCallback(
-		async (signal) => {
+	useEffect(() => {
+		const fetchData = async () => {
+			setLoading(true);
 			setError(null);
 
-			// DEV: используем мок, если он передан
-			if (!PRODMODE && mock) {
-				try {
-					const allSms = Array.isArray(mock?.content?.sms)
-						? mock.content.sms
-						: Array.isArray(mock?.sms)
-						? mock.sms
-						: [];
-					const filtered = chatId ? allSms.filter((msg) => msg.chat_id === chatId) : allSms;
-					setData(filtered);
-				} catch (e) {
-					console.error('[useSms] Ошибка при разборе мок-данных:', e);
-					setError('Ошибка при загрузке мок-данных');
-					setData([]);
-				} finally {
-					setLoading(false);
-				}
-				return;
-			}
-
-			// PROD: запрашиваем у бекенда
 			try {
-				const response = await PROD_AXIOS_INSTANCE.post(
-					'/api/sms',
-					{ _token: CSRF_TOKEN },
-					{ signal }
-				);
+				let responseData = [];
 
-				const payload = response?.data ?? {};
-				const allSms = Array.isArray(payload?.content?.sms)
-					? payload.content.sms
-					: Array.isArray(payload?.sms)
-					? payload.sms
-					: Array.isArray(payload?.data?.sms)
-					? payload.data.sms
-					: Array.isArray(payload)
-					? payload
-					: [];
+				if (PRODMODE) {
+					try {
+						const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
+						const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
+							data: {},
+							_token: CSRF_TOKEN,
+						});
 
-				const filtered = chatId ? allSms.filter((msg) => msg.chat_id === chatId) : allSms;
-				setData(filtered);
-			} catch (err) {
-				const isAbort = err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED';
-				if (!isAbort) {
-					console.error('[useSms] Ошибка при запросе сообщений:', err);
-					setError('Не удалось загрузить сообщения');
-					setData([]);
+						console.log(`[useSms] Ответ от сервера (${endpoint}):`, response.data);
+
+						const sms = response?.data?.content?.sms;
+
+						if (Array.isArray(sms)) {
+							responseData = sms;
+						} else {
+							console.warn(`[useSms] СМС в ответе сервера по ${endpoint} не является массивом`);
+						}
+					} catch (err) {
+						console.error(
+							`[useSms] Ошибка при запросе ${chatId ? `/api/sms/${chatId}` : '/api/sms'}:`,
+							err
+						);
+						throw new Error('Не удалось загрузить SMS с сервера');
+					}
+				} else {
+					console.log('[useSms] Используются MOCK-данные (dev mode)');
+					const mockData = typeof mock === 'function' ? mock() : mock;
+
+					console.log('[useSms] MOCK-данные:', mockData);
+
+					// Для chatId можно расширить мок или фильтровать
+					const sms = chatId
+						? mockData?.content?.sms.filter((msg) => msg.chat_id === chatId)
+						: mockData?.content?.sms;
+
+					if (Array.isArray(sms)) {
+						responseData = sms;
+					} else {
+						console.warn('[useSms] MOCK-данные не содержат массив sms');
+					}
 				}
+
+				setData(responseData);
+			} catch (err) {
+				console.error('[useSms] Ошибка при загрузке данных:', err);
+				setError(err.message || 'Неизвестная ошибка');
+				setData([]);
 			} finally {
-				if (!signal?.aborted) setLoading(false);
+				setLoading(false);
 			}
-		},
-		[chatId, mock]
-	);
-
-	// Первоначальная загрузка
-	useEffect(() => {
-		const controller = new AbortController();
-		loadData(controller.signal);
-
-		return () => {
-			controller.abort();
 		};
-	}, [loadData]);
 
-	return {
-		data,
-		loading,
-		error,
-		refetch: () => loadData(),
-	};
-}
+		fetchData();
+	}, [chatId, mock]);
+
+	return { data, loading, error };
+};
