@@ -537,7 +537,7 @@ const OrgPageSectionRow = (props) => {
 					<div className="sk-omt-legend sa-flex-space">
 						<span style={{ paddingLeft: '6px' }}>
 							{commentConfig && (
-								<div className={`sk-omt-comment-trigger ${commentConfig.value !== null && commentConfig.value?.trim() !== "" ? "sk-omt-comment-trigger-treasure" : "" }`} onClick={() => setOpened(!opened)}>
+								<div className={`sk-omt-comment-trigger ${commentConfig?.value !== null && commentConfig?.value?.trim() !== "" ? "sk-omt-comment-trigger-treasure" : "" } ${commentConfig?.required === true && localValues[commentConfig?.name]?.trim() === "" ? "sk-omt-comment-trigger-hot" : "" }`} onClick={() => setOpened(!opened)}>
 									<span>{opened ? <CaretUpOutlined /> : <CaretDownOutlined />}</span>
 									<span >
                   {commentConfig.label ? commentConfig.label : 'комм'}

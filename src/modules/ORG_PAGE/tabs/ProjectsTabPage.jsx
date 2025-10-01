@@ -48,9 +48,9 @@ const ProjectsTabPage = (props) => {
   }, [props.current_page]);
 
   useEffect(() => {
-    if (props.item_id) {
+   
       setOrgId(props.item_id);
-    }
+    
   }, [props.item_id]);
 
   useEffect(() => {
@@ -114,6 +114,11 @@ const ProjectsTabPage = (props) => {
     }
 		setEditMode(props.edit_mode);
 	}, [props.edit_mode]);
+
+  useEffect(() => {
+    setTemporaryUnits([]);
+    setNewStructureItems([]);
+  }, [orgId]);
 
   useEffect(() => {
     if (props.base_data?.projects !== null && props.base_data?.projects?.length > 0) {
@@ -379,7 +384,9 @@ const ProjectsTabPage = (props) => {
     });
   };
 
-
+  useEffect(() => {
+    setTemporaryUnits([]);
+  }, [orgId]);
 
   const handleUpdateRealUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);

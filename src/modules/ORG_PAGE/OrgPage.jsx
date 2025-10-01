@@ -77,6 +77,8 @@ const tabNames = [
  * 10. Раскидать данные, собрать данные
  */
 
+
+
 const OrgPage = (props) => {
 	const { userdata } = props;
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
@@ -109,7 +111,7 @@ const OrgPage = (props) => {
 	const [editMode, setEditMode] = useState(false);
 	// const [companies, setCompanies] = useState([]);
 
-	const [itemId, setItemId] = useState(item_id ? item_id : 'new');
+	const [itemId, setItemId] = useState(item_id ? parseInt(item_id) : 'new');
 
 	const [backeReturnPath, setBackeReturnPath] = useState(null);
 
@@ -186,6 +188,10 @@ const OrgPage = (props) => {
 			return () => clearTimeout(timer);
 		}
 	}, [isAlertVisible]);
+
+	useEffect(()=>{
+		console.log("ORG_ID:", itemId);
+	}, [itemId])
 
 
 	useEffect(() => {
@@ -281,19 +287,26 @@ const OrgPage = (props) => {
 			let itt  = itemId;
 			if (PRODMODE) {
 				setItemId(0);
-				setBaseMainData(null);
-				setItemId(itt);
+				
+				
+				setTimeout(() => {
+					setBaseMainData(null);
+					setItemId(itt);
+				}, 1200);
 				setTimeout(() => {
 					
-					get_main_data_action(item_id);
-					// get_notes_data_action(item_id);
-					// get_org_calls_action(item_id);
-					// get_projects_data_action(item_id);
+					get_main_data_action(itt);
+					get_notes_data_action(itt);
+					get_org_calls_action(itt);
+					get_projects_data_action(itt);
 
 				}, 500);
 				} else {
-					setItemId(0);
-					setBaseMainData(null);
+					setTimeout(() => {
+						setItemId(0);
+						setBaseMainData(null);
+						
+					}, 1200);
 
 					setItemId(itt);
 					setTimeout(() => {
@@ -401,10 +414,15 @@ const OrgPage = (props) => {
 				// if (props.changed_user_data){
 				//     props.changed_user_data(response.data);
 				// }
-				setBaseCallsData(response.data.content.map((item)=>{
-					item._savecontact = false;
-					return item;
-				}));
+				// setBaseCallsData(response.data.content?.calls.map((item)=>{
+				// 	item._savecontact = false;
+				// 	return item;
+				// }));
+				// setBaseCallsData(response.data.content?.calls.map((item)=>{
+				// 	item._savecontact = false;
+				// 	return item;
+				// }));
+				setBaseCallsData(response.data.content);
 				setLoading(false);
 
 			}
@@ -550,6 +568,7 @@ const OrgPage = (props) => {
 		} else {
 			//setUserAct(USDA);
 			console.log('SEND', dataToUpdate);
+			clearTemps();
 		}
 
 	};
@@ -585,19 +604,19 @@ const OrgPage = (props) => {
 
 	useEffect(() => {
 		if (PRODMODE){
-			get_notes_data_action(item_id);
+			get_notes_data_action(itemId);
 		}
 	}, [pageNotes]);
 
 	useEffect(() => {
 		if (PRODMODE){
-			get_org_calls_action(item_id);
+			get_org_calls_action(itemId);
 		}
 	}, [pageCalls]);
 
 	useEffect(() => {
 		if (PRODMODE){
-			get_projects_data_action(item_id);
+			get_projects_data_action(itemId);
 		}
 	}, [pageProject]);
 
@@ -630,8 +649,6 @@ const OrgPage = (props) => {
 			update_data_action(saveData);
 			console.log('SAVEDATA FIN', saveData);
 		}, 2000);
-		
-
 
 			setIsSmthChanged(false);
 	};
@@ -769,9 +786,11 @@ const OrgPage = (props) => {
 	// Очистка данных для сохранения (измененных)
 	const clearTemps = () => {
 		let iid = itemId;
+		setItemId(0);
 		setTimeout(() => {
 			setItemId(iid);
-		}, 300);
+			
+		}, 1200);
 			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
 				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
 				setTempMainData(null);

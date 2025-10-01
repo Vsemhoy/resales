@@ -52,10 +52,13 @@ const NotesTabPage = (props) => {
 	}, [props.current_page]);
 
 	useEffect(() => {
-		if (props.item_id) {
 			setOrgId(props.item_id);
-		}
 	}, [props.item_id]);
+
+  useEffect(() => {
+	setTemporaryUnits([]);
+	setNewStructureItems([]);
+  }, [orgId]);
 
 	useEffect(() => {
 		if (props.current_page && props.current_page !== currentPage)
@@ -134,7 +137,7 @@ const NotesTabPage = (props) => {
 								</span>{' '}
 								<span className={'sa-text-phantom'}>({item.id})</span>
 							</div>
-							{editMode && (
+							{editMode && false && (
 								<>
 									{item.deleted === 1 ? (
 										<Button
@@ -178,7 +181,9 @@ const NotesTabPage = (props) => {
 						/>
 					),
 				};
-			});
+			}); 
+
+			
 
 			setStructureItems(strdata);
 		} else {
@@ -272,7 +277,7 @@ const NotesTabPage = (props) => {
               "id8staff_list": userdata.user.id,
               "theme": "",
               "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
-              "notes": "",
+              "note": "",
               "deleted": 0,
               "next_call_date" : null,
               "creator": {
