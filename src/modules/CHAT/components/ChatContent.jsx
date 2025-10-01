@@ -1,15 +1,19 @@
+import styles from './style/Chat.module.css';
+import { PRODMODE } from '../../../config/config';
+
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Layout, List, message, Button } from 'antd';
-import { SyncOutlined } from '@ant-design/icons';
+import { usePolling } from '../../../hooks/sms/usePolling';
 import { useUserData } from '../../../context/UserDataContext';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { useChatMessages } from '../../../hooks/sms/useChatMessages';
+
+import { Layout, List, message, Button } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
 import { nanoid } from 'nanoid';
-import { ChatDivider } from './ChatDivider';
 import { ChatInput } from './ChatInput';
-import styles from './style/Chat.module.css';
 import { MOCK } from '../mock/mock';
+
 const { Content, Footer } = Layout;
 const generateUUID = () => nanoid(8);
 
@@ -19,7 +23,6 @@ export default function ChatContent({ chatId }) {
 
 	const getRole = useCompanion(currentUserId);
 
-	// ИСПОЛЬЗУЕМ ТОЛЬКО HTTP ДАННЫЕ С POLLING
 	const {
 		data: smsList = [],
 		loading,
@@ -29,26 +32,75 @@ export default function ChatContent({ chatId }) {
 		chatId,
 		mock: MOCK,
 	});
-	const { sendSms } = useSendSms();
 
+	// Тестовые сообщения для PRODUCTION (если нужно)
+	const getTestMessages = useCallback(() => {
+		if (PRODMODE && chatId) {
+			return [
+				{
+					id: 1001,
+					chat_id: parseInt(chatId),
+					from: {
+						surname: 'Иванов',
+						name: 'Петр',
+						id: 999,
+					},
+					to: {
+						surname: 'Кошелев',
+						name: 'Александр',
+						id: 46,
+					},
+					text: 'Это тестовое сообщение от другого пользователя',
+					status: false,
+					created_at: Math.floor(Date.now() / 1000) - 3600,
+					updated_at: Math.floor(Date.now() / 1000) - 3600,
+				},
+				{
+					id: 1002,
+					chat_id: parseInt(chatId),
+					from: {
+						surname: 'Сидорова',
+						name: 'Мария',
+						id: 998,
+					},
+					to: {
+						surname: 'Кошелев',
+						name: 'Александр',
+						id: 46,
+					},
+					text: 'Еще одно тестовое сообщение',
+					status: false,
+					created_at: Math.floor(Date.now() / 1000) - 1800,
+					updated_at: Math.floor(Date.now() / 1000) - 1800,
+				},
+			];
+		}
+		return [];
+	}, [chatId]);
+
+	// Отладка
+	useEffect(() => {
+		console.log('📱 SMS List from backend:', smsList);
+		console.log('👤 Current User ID:', currentUserId);
+		console.log('💬 Current Chat ID:', chatId);
+	}, [smsList, currentUserId, chatId]);
+
+	const { sendSms } = useSendSms();
 	const [localMessages, setLocalMessages] = useState([]);
 	const [lastUpdate, setLastUpdate] = useState(Date.now());
 
-	// Автообновление при открытии чата
-	useEffect(() => {
-		if (chatId) {
-			const interval = setInterval(() => {
-				console.log(`[ChatContent] Auto-refresh for chat ${chatId}`);
-				refetch();
-				setLastUpdate(Date.now());
-			}, 8000); // Обновляем каждые 8 секунд в активном чате
-
-			return () => clearInterval(interval);
-		}
-	}, [chatId, refetch]);
+	// Polling для чата
+	usePolling(
+		() => {
+			console.log(`[ChatContent] Auto-refresh for chat ${chatId}`);
+			refetch();
+			setLastUpdate(Date.now());
+		},
+		30000,
+		!!chatId
+	);
 
 	const handleManualRefresh = useCallback(() => {
-		console.log('Ручное обновление чата...');
 		refetch();
 		setLastUpdate(Date.now());
 		message.info('Сообщения обновлены');
@@ -56,51 +108,88 @@ export default function ChatContent({ chatId }) {
 
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
-		const combined = [...smsList, ...filteredLocal];
+
+		// УБИРАЕМ фильтрацию - useChatMessages уже вернул отфильтрованные данные
+		// const filteredSms = smsList.filter((msg) => msg.chat_id === parseInt(chatId));
+
+		// Тестовые сообщения (опционально)
+		const testMessages = PRODMODE ? getTestMessages() : [];
+
+		const combined = [...smsList, ...testMessages, ...filteredLocal];
+
+		console.log('🔄 Processing messages:', {
+			smsCount: smsList.length,
+			testCount: testMessages.length,
+			localCount: filteredLocal.length,
+			combinedCount: combined.length,
+			chatId,
+		});
 
 		return combined
 			.map((msg) => {
 				const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
-				const timestamp = isLocal ? msg.timestamp : (msg.updated_at || msg.created_at) * 1000;
+
+				// Timestamp
+				let timestamp;
+				if (isLocal) {
+					timestamp = msg.timestamp;
+				} else {
+					timestamp = (msg.updated_at || msg.created_at) * 1000;
+				}
+
 				const role = isLocal ? 'self' : getRole(msg);
+
+				// Имя отправителя
+				let senderName = 'Неизвестный';
+				if (role === 'self') {
+					senderName = 'Вы';
+				} else {
+					senderName = `${msg.from?.name || ''} ${msg.from?.surname || ''}`.trim() || 'Собеседник';
+				}
 
 				return {
 					id: msg.id || generateUUID(),
-					text: msg.text,
+					text: msg.text || '',
 					timestamp,
 					time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
 					role,
-					senderName:
-						role === 'self' ? 'Вы' : `${msg.from?.name ?? ''} ${msg.from?.surname ?? ''}`.trim(),
-					isLocal, // Помечаем локальные сообщения
+					senderName,
+					isLocal,
 				};
 			})
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [smsList, localMessages, getRole, chatId]);
+	}, [smsList, localMessages, getRole, chatId, getTestMessages]);
 
 	const handleSend = useCallback(
 		async (text) => {
+			if (!text.trim()) return;
+
 			const newLocalMsg = {
 				id: generateUUID(),
 				chat_id: chatId,
-				text,
+				text: text.trim(),
 				timestamp: Date.now(),
-				from: { id: currentUserId, name: 'Вы', surname: '' },
+				from: { id: currentUserId },
 				to: { id: chatId },
+				isLocal: true,
 			};
+
+			// Оптимистичное обновление
 			setLocalMessages((prev) => [...prev, newLocalMsg]);
 
 			try {
-				await sendSms({ to: chatId, text, answer: null });
-				// После успешной отправки обновляем сообщения
+				await sendSms({ to: chatId, text: text.trim(), answer: null });
+
+				// Успех - обновляем и удаляем локальное сообщение
 				setTimeout(() => {
 					refetch();
-				}, 1000);
+					setLocalMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
+				}, 500);
 			} catch (err) {
-				message.error('Ошибка при отправке сообщения');
-				console.error('Ошибка при отправке сообщения:', err);
-				// Удаляем локальное сообщение при ошибке
+				console.error('❌ Send message error:', err);
+				// Ошибка - удаляем локальное сообщение
 				setLocalMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
+				message.error(err.message || 'Ошибка при отправке сообщения');
 			}
 		},
 		[chatId, sendSms, refetch, currentUserId]
