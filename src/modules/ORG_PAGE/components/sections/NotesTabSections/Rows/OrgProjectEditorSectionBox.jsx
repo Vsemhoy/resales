@@ -51,7 +51,11 @@ const OrgNoteEditorSectionBox = (props) => {
 
     const [erectorName, setErectorName] = useState(null);
 
+  const [orgUsers, setOrgUsers] = useState([]);
 
+  const [targetOrgUserId, setTargetOrgUserId] = useState(0);
+
+  const [trigger, setTrigger] = useState(0);
     // const [projType, setProjType] = useState(dayjs().format('DD-MM-YYYY HH:mm:ss')); // id8an_projecttype
 
 
@@ -70,6 +74,34 @@ const OrgNoteEditorSectionBox = (props) => {
       }, [props.selects]);
 
     // DATA    // DATA      // DATA      // DATA  
+
+  useEffect(() => {
+
+    if (props.org_users) {
+     
+      let usess = [];
+      let uids = [];
+      let fusers = props.org_users.filter((item)=>
+        !(!item.lastname && !item.name && !item.middlename)
+      );
+
+      for (let i = 0; i < fusers.length; i++) {
+        const element = fusers[i];
+        if (!uids.includes(element.id)){
+          let nm = `${(element.lastname ? element.lastname : "") + (element.lastname ? ' ' : '') +  (element.name ? element.name : "") + (element.name ? ' ' : '') + (element.middlename ? element.middlename : '') }`;
+          usess.push({
+            key: 'kjfealllo' + element.id,
+            value: element.value,
+            label: nm
+          });
+
+        }
+
+      }
+      setOrgUsers(usess);
+    }
+  }, [props.org_users]); // dependency is correct.
+
 
     useEffect(() => {
       if (props.data?.id){
@@ -314,7 +346,7 @@ const handleChangeData = (changed_data) => {
                 value: `${props.data.curator?.surname} ${props.data.curator?.name}  ${props.data.curator?.secondname}`,
                 max: 250,
                 required: true,
-                nullable: false,
+                allowClear: false,
                 placeholder: '',
                 name: '_creator.name',
                 },
@@ -323,7 +355,7 @@ const handleChangeData = (changed_data) => {
                 value: date,
                 max: 250,
                 required: true,
-                nullable: false,
+                allowClear: false,
                 placeholder: '',
                 name: '_date',
                 },
@@ -342,7 +374,7 @@ const handleChangeData = (changed_data) => {
                 value: name,
                 max: 250,
                 required: true,
-                nullable: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'name',
                 },
@@ -361,7 +393,7 @@ const handleChangeData = (changed_data) => {
                 value: address,
                 max: 250,
                 required: true,
-                nullable: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'address',
                 },
@@ -380,7 +412,7 @@ const handleChangeData = (changed_data) => {
                 value: customer,
                 max: 250,
                 required: true,
-                nullable: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'customer',
                 },
@@ -389,7 +421,7 @@ const handleChangeData = (changed_data) => {
                 value: stage,
                 max: 250,
                 required: true,
-                nullable: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'stage',
                 },
@@ -408,8 +440,8 @@ const handleChangeData = (changed_data) => {
                 type: 'text',
                 value: equipment,
                 max: 250,
-                required: true,
-                nullable: false,
+                required: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'equipment',
                 },
@@ -418,7 +450,7 @@ const handleChangeData = (changed_data) => {
                 value: typeEac,
                 max: 250,
                 required: true,
-                nullable: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'typepaec',
                 },
@@ -434,20 +466,22 @@ const handleChangeData = (changed_data) => {
             titles={['Контактное лицо','Дата завершения']}
             datas={[
                 {
-                type: 'text',
+                type: OPS_TYPE.AUTOCOMPLETE,
                 value: contactperson,
                 max: 250,
                 required: true,
-                nullable: false,
-                placeholder: '',
+                allowClear: false,
+                placeholder: 'Фамилия Имя Отчество',
                 name: 'contactperson',
+                options: orgUsers,
+                onClick: ()=>{setTrigger(dayjs().unix())}
                 },
 
                 {
                 type: OPS_TYPE.DATE,
                 value: dateEnd,
                 required: false,
-                nullable: true,
+                allowClear: true,
                 placeholder: 'Когда реализован',
                 name: 'date_end',
                 },
@@ -466,8 +500,8 @@ const handleChangeData = (changed_data) => {
                 type: 'text',
                 value: cost,
                 max: 100,
-                required: true,
-                nullable: false,
+                required: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'cost',
                 },
@@ -475,8 +509,8 @@ const handleChangeData = (changed_data) => {
                 type: 'text',
                 value: bonus,
                 max: 250,
-                required: true,
-                nullable: false,
+                required: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'bonus',
                 },
@@ -501,7 +535,7 @@ const handleChangeData = (changed_data) => {
                 value: projType, 
                 max: 250,
                 required: true,
-                nullable: false,
+                allowClear: false,
                 placeholder: '',
                 name: 'id8an_projecttype',
                 options: selects?.projecttype?.map((item)=>({
@@ -525,7 +559,7 @@ const handleChangeData = (changed_data) => {
                 value: _type?.name,
                 max: null,
                 required: true,
-                nullable: true,
+                allowClear: true,
                 placeholder: '',
                 name: 'id8an_projecttype',
                 },
@@ -544,8 +578,8 @@ const handleChangeData = (changed_data) => {
                 type: OPS_TYPE.SELECT,
                 value: erector,
                 max: Number.MAX_SAFE_INTEGER,
-                required: true,
-                nullable: true,
+                required: false,
+                allowClear: true,
                 placeholder: 'ID организации',
                 name: 'erector_id',
                 options: mountOrgList,
@@ -571,7 +605,7 @@ const handleChangeData = (changed_data) => {
                   value: bidsId,
                   max: Number.MAX_SAFE_INTEGER,
                   required: false,
-                  nullable: true,
+                  allowClear: true,
                   placeholder: 'ID коммерческого предложения',
                   name: 'bidsId',
                   link: '/bids/',
@@ -598,8 +632,8 @@ const handleChangeData = (changed_data) => {
                 type: OPS_TYPE.TEXTAREA,
                 value: comment,
                 max: null,
-                required: true,
-                nullable: true,
+                required: false,
+                allowClear: true,
                 placeholder: '',
                 name: 'comment',
                 },

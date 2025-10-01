@@ -32,6 +32,7 @@ const OrgCallEditorSectionBox = (props) => {
   const [phone,      setPhone] = useState("");
   const [result,     setResult] = useState("");
   const [nexCallDate, setNextCallDate] = useState(null);
+  const [nexType, setNextType] = useState(null);
 
   const [saveContact, setSaveContact] = useState(false);
 
@@ -47,7 +48,7 @@ const OrgCallEditorSectionBox = (props) => {
 
   const [targetOrgUserId, setTargetOrgUserId] = useState(0);
 
-
+  const [trigger, setTrigger] = useState(0);
   // DATA    // DATA      // DATA      // DATA  
 
   useEffect(() => {
@@ -67,6 +68,7 @@ const OrgCallEditorSectionBox = (props) => {
       setPhone(props.data.phone);
       setResult(props.data.result);
       setNextCallDate(props.data?.next_call_date ? props.data?.next_call_date : null);
+      setNextType(props.next_type?.next_type ? props.data?.next_type : null);
       setSaveContact(props.data?._savecontact ? props.data?._savecontact : false);
     }
   }, [props.data]);
@@ -131,7 +133,18 @@ const OrgCallEditorSectionBox = (props) => {
 
   }, [props.departaments]);
 
-
+  const nexVariants = [
+    {
+      key: 'Vareifa_5432',
+      value: 'call',
+      label: 'Звонок'
+    },
+        {
+      key: 'Marofo_5432',
+      value: 'meeting',
+      label: 'Встреча'
+    }
+  ];
 
   /**
    * Этот злой стейт отвечает за поиск телефонов для выбранного гуся
@@ -181,9 +194,9 @@ const OrgCallEditorSectionBox = (props) => {
         const element = foundUser.contactstelephones[index];
         console.log('contactstelephones', element);
         if (!of.includes(element.number) && element.number !== null){
-          let ltlt= element.number + `${element.ext !== null ? (" (" + element.ext + ")") : ""}`;
+          let ltlt = element.number + `${element.ext !== null && element.ext !== "" ? (" (" + element.ext + ")") : ""}`;
           of.push({
-            key: 'fofofofof_' + element.id,
+            key: 'fofodfofof_' + element.id,
             value: ltlt,
             label:  ltlt,
           });
@@ -204,7 +217,7 @@ const OrgCallEditorSectionBox = (props) => {
       }
     }
     setOrgPhones(of);
-  }, [subscriber, props.org_users]);
+  }, [subscriber, props.org_users, id, trigger]);
 
 
 
@@ -239,6 +252,8 @@ const OrgCallEditorSectionBox = (props) => {
       setSaveContact(changed_data._savecontact);
     } else if (changed_data.next_call_date !== undefined) {
       setNextCallDate(changed_data.next_call_date);
+    } else if (changed_data.next_type){
+      setNextType(changed_data.next_type);
     }
   }
 
@@ -259,6 +274,7 @@ const OrgCallEditorSectionBox = (props) => {
       resultObject._savecontact = saveContact;
       resultObject.phone = phone;
       resultObject.next_call_date = nexCallDate;
+      resultObject.next_type = nexType;
 
 
       if (props.on_change) {
@@ -356,10 +372,11 @@ const OrgCallEditorSectionBox = (props) => {
             max: 250,
             required: true,
             nullable: false,
-            placeholder: '',
+            placeholder: 'Фамилия Имя Отчество',
             name: 'subscriber',
             // options: ['Maif', 'GALYA', 'ALINA', 'AVIA']
             options: orgUsers,
+            onClick: ()=>{setTrigger(dayjs().unix())}
           },
           {
             type: 'text',
@@ -392,6 +409,7 @@ const OrgCallEditorSectionBox = (props) => {
             placeholder: '',
             name: 'phone',
             options: orgPhones,
+            onClick: ()=>{setTrigger(dayjs().unix())}
           }
         ]}
         // on_change={handleChangeData}
@@ -448,6 +466,7 @@ const OrgCallEditorSectionBox = (props) => {
             nullable: false,
             placeholder: '',
             name: 'result',
+            
           },
         ]}
         // on_change={handleChangeData}
@@ -457,7 +476,7 @@ const OrgCallEditorSectionBox = (props) => {
       <OrgPageSectionRow
         key={'calmet44' + id + props.data._type}
         edit_mode={editMode}
-        titles={['Дата следующего звонка']}
+        titles={['Дата следующего звонка', 'Тип след. события']}
         datas={[
           {
             type: OPS_TYPE.DATE,
@@ -468,6 +487,14 @@ const OrgCallEditorSectionBox = (props) => {
             placeholder: '',
             name: 'next_call_date',
           },
+          {
+            type: OPS_TYPE.SELECT,
+            value: nexType,
+            required: false,
+            allowClear: true,
+            name: 'next_type',
+            options: nexVariants
+          }
         ]}
         on_change={handleChangeData}
         // on_blur={handleChangeData}
