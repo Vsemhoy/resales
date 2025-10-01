@@ -3,26 +3,26 @@ export const DS_CURRENCY = {
 		{
 			charcode: 'EUR',
 			name_ru: 'Евро',
-			value: 107.9576,
+			value: 90.9007,
 			sign: '€',
 		},
 		{
 			charcode: 'USD',
 			name_ru: 'Доллар США',
-			value: 103.4207,
+			value: 79.6167,
 			sign: '$',
 		},
 	],
 	company: [
 		{
-			id_company: 1,
-			value: 99,
+			id_company: 2,
+			value: 121,
 			name_ru: 'Доллар США',
 			charcode: 'USD',
 		},
 		{
-			id_company: 1,
-			value: 100,
+			id_company: 2,
+			value: 126,
 			name_ru: 'Евро',
 			charcode: 'EUR',
 		},
@@ -60,7 +60,7 @@ export const PRICE = {
 									"currency": 0,
 									"name_seo": "SC-28",
 									"prices": {
-										"price_0": 100,
+										"price_0": 284,
 										"price_10": 100,
 										"price_20": 100,
 										"price_30": 100
