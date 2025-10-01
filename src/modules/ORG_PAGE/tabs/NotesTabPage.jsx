@@ -57,6 +57,11 @@ const NotesTabPage = (props) => {
 		}
 	}, [props.item_id]);
 
+  useEffect(() => {
+	setTemporaryUnits([]);
+	setNewStructureItems([]);
+  }, [orgId]);
+
 	useEffect(() => {
 		if (props.current_page && props.current_page !== currentPage)
 			setCurrentPage(props.current_page);
@@ -272,7 +277,7 @@ const NotesTabPage = (props) => {
               "id8staff_list": userdata.user.id,
               "theme": "",
               "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
-              "notes": "",
+              "note": "",
               "deleted": 0,
               "next_call_date" : null,
               "creator": {

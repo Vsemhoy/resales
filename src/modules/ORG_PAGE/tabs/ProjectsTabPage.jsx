@@ -116,6 +116,11 @@ const ProjectsTabPage = (props) => {
 	}, [props.edit_mode]);
 
   useEffect(() => {
+    setTemporaryUnits([]);
+    setNewStructureItems([]);
+  }, [orgId]);
+
+  useEffect(() => {
     if (props.base_data?.projects !== null && props.base_data?.projects?.length > 0) {
       let secids = [];
       // setDataList(baseOrgData.projects);
@@ -379,7 +384,9 @@ const ProjectsTabPage = (props) => {
     });
   };
 
-
+  useEffect(() => {
+    setTemporaryUnits([]);
+  }, [orgId]);
 
   const handleUpdateRealUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);

@@ -86,7 +86,10 @@ const CallsTabPage = (props) => {
 		}
 	}, [baseData, temporaryUnits]);
 
-
+  useEffect(() => {
+	setTemporaryUnits([]);
+	setNewStructureItems([]);
+  }, [orgId]);
 
 
 	// useEffect(() => {

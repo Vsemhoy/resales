@@ -63,7 +63,9 @@ const MainTabPage = (props) => {
     setBaseData(props.base_data);
   }, [props.base_data]);
 
-
+  useEffect(() => {
+    setItemId(props.item_id);
+  }, [props.item_id]);
 
   useEffect(() => {
     let contics = [];

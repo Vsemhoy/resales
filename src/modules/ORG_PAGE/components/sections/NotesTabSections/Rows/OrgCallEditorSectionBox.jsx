@@ -57,7 +57,7 @@ const OrgCallEditorSectionBox = (props) => {
       // if (props.data.id_orgs !== org){
       setOrg(props.data.id_orgs);
       setTheme(props.data.theme);
-      setNote(props.data.notes);
+      setNote(props.data.note);
       setDate(props.data.date);
       setCreator(props.data.id8staff_list);
       setDeleted(props.data.deleted);
@@ -180,11 +180,12 @@ const OrgCallEditorSectionBox = (props) => {
       for (let index = 0; index < foundUser.contactstelephones.length; index++) {
         const element = foundUser.contactstelephones[index];
         console.log('contactstelephones', element);
-        if (!of.includes(element.number)){
+        if (!of.includes(element.number) && element.number !== null){
+          let ltlt= element.number + `${element.ext !== null ? (" (" + element.ext + ")") : ""}`;
           of.push({
             key: 'fofofofof_' + element.id,
-            value: element.number + `${element.ext !== "" ? (" (" + element.ext + ")") : ""}`,
-            label: element.number + `${element.ext !== "" ? (" (" + element.ext + ")") : ""}`,
+            value: ltlt,
+            label:  ltlt,
           });
         }
       }
@@ -193,7 +194,7 @@ const OrgCallEditorSectionBox = (props) => {
     if (foundUser.contactmobiles.length){
       for (let index = 0; index < foundUser.contactmobiles.length; index++) {
         const element = foundUser.contactmobiles[index];
-        if (!of.includes(element.number)){
+        if (!of.includes(element.number) && element.number !== null){
         of.push({
           key: 'fofofofof_' + element.id,
           value: element.number,
@@ -218,8 +219,8 @@ const OrgCallEditorSectionBox = (props) => {
     console.log('changed_data', changed_data)
     if (changed_data.theme !== undefined) {
       setTheme(changed_data.theme);
-    } else if (changed_data.notes !== undefined) {
-      setNote(changed_data.notes);
+    } else if (changed_data.note !== undefined) {
+      setNote(changed_data.note);
     } else if (changed_data.id8staff_list !== undefined) {
       setCreator(changed_data.id8staff_list);
     } else if (changed_data.id8ref_departaments !== undefined) {
@@ -251,6 +252,7 @@ const OrgCallEditorSectionBox = (props) => {
       let resultObject = objectResult;
       resultObject.theme = theme;
       resultObject.post = post;
+      resultObject.note = note;
       resultObject.subscriber = subscriber;
       resultObject.result = result;
       resultObject.id8ref_departaments = depart;
@@ -363,7 +365,7 @@ const OrgCallEditorSectionBox = (props) => {
             type: 'text',
             value: post,
             max: 250,
-            required: true,
+            required: false,
             nullable: false,
             placeholder: '',
             name: 'post',
@@ -426,7 +428,7 @@ const OrgCallEditorSectionBox = (props) => {
             required: true,
             nullable: false,
             placeholder: '',
-            name: 'notes',
+            name: 'note',
           },
         ]}
         // on_change={handleChangeData}
@@ -442,7 +444,7 @@ const OrgCallEditorSectionBox = (props) => {
             type: OPS_TYPE.TEXTAREA,
             value: result,
             max: null,
-            required: true,
+            required: false,
             nullable: false,
             placeholder: '',
             name: 'result',
