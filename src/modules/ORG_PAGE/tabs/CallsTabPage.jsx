@@ -51,9 +51,9 @@ const CallsTabPage = (props) => {
 	}, [props.current_page]);
 
 	useEffect(() => {
-		if (props.item_id) {
+		
 			setOrgId(props.item_id);
-		}
+		
 	}, [props.item_id]);
 
 	useEffect(() => {
