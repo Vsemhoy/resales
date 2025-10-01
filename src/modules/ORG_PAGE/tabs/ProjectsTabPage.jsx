@@ -34,6 +34,8 @@ const ProjectsTabPage = (props) => {
   const [editedItemsIds, setEditedItemsIds] = useState([]);
   const [openedNewSections, setOpenedNewSections] = useState([]);
 
+  const [orgusers, setOrgUsers] = useState([]);
+
     const [selects, setSelects] = useState(null);
     useEffect(() => {
       setSelects(props.selects);
@@ -57,6 +59,14 @@ const ProjectsTabPage = (props) => {
     if (props.current_page && props.current_page !== currentPage)
       setCurrentPage(props.current_page);
   }, [props.current_page]);
+
+    useEffect(() => {
+      if (props.main_data && props.main_data.contacts) {
+        setOrgUsers(props.main_data.contacts);
+      } else {
+        setOrgUsers([]);
+      }
+    }, [props.main_data]);
 
   // useEffect(() => {
   //   if (props.edit_mode === false) {
@@ -187,6 +197,7 @@ const ProjectsTabPage = (props) => {
               on_change={handleUpdateRealUnit}
               edit_mode={editMode}
               selects={selects}
+              org_users={orgusers}
               // selects_data={props.selects_data}
             />
           ),
@@ -262,6 +273,7 @@ const ProjectsTabPage = (props) => {
               on_blur={handleUpdateBlankUnit}
               edit_mode={editMode}
               selects={selects}
+              org_users={orgusers}
               // selects_data={props.selects_data}
             />
           ),

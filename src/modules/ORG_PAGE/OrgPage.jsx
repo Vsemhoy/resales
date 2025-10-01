@@ -1060,6 +1060,7 @@ const OrgPage = (props) => {
 							userdata={userdata}
 							on_change_data={handleTabDataChange}
 							selects={baseFiltersData}
+							main_data={baseMainData}
 						/>
 
 						<NotesTabPage

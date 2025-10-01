@@ -677,7 +677,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
               label: item.name
             })),
 						required: false,
-						nullable: true,
+						allowClear: true,
 						placeholder: '',
             showSearch: true,
 						name: 'id8org_towns',
@@ -687,7 +687,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 						value: id8org_regions,
 						max: 2150,
 						required: false,
-						nullable: true,
+						allowClear: true,
             options: selects?.regions.map((item)=>({
               key: "regitm_" + item.value,
               value: parseInt(item.value),
@@ -823,7 +823,7 @@ const OrgPage_MainTab_Contactinfo_Section = (props) => {
 						type: OPS_TYPE.STRING,
 						value: site,
 						max: 150,
-						nullable: true,
+						allowClear: true,
 						placeholder: '',
 						name: 'site',
             required: true,

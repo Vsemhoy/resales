@@ -83,7 +83,7 @@ const MainTabPage = (props) => {
         },
 
         label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}>
-          <div>{item.name ? item.name : ''}{item.lastname ? " " + item.lastname : ""}{item.middlename ? " " + item.middlename : ""}<span style={{ color: 'gray', fontWeight: 100 }}>({item.id})</span></div>
+          <div>{item.lastname ? item.lastname : ""}{item.name ? " " + item.name : ''}{item.middlename ? " " + item.middlename : ""} <span style={{ color: 'gray', fontWeight: 100 }}>({item.id})</span></div>
           {editMode && (
             <div className={'sa-flex-gap'}>
 

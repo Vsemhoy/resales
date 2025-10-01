@@ -461,6 +461,7 @@ const OrgPageSectionRow = (props) => {
             style={{ width: '100%' }}
             size='small'
             variant="borderless"
+			onClick={field?.onClick}
             onSearch={(text)=> {
               let filteredOptions = [];
               let cmod = transContainer;
