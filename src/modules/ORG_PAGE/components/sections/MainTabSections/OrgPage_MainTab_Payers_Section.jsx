@@ -30,6 +30,10 @@ const OrgPage_MainTab_Payers_Section = (props) => {
 		seteditMode(props.edit_mode);
 	}, [props.edit_mode]);
 
+	useEffect(() => {
+	  setNewRequisites([]);
+	}, [orgId]);
+
 
 	useEffect(() => {
 		if (props.selects){
@@ -45,10 +49,7 @@ const OrgPage_MainTab_Payers_Section = (props) => {
 		if (props.data?.id){
 			setOrgId(props.data?.id);
 
-
-
 			setRequisites(props.data.requisites);
-
 
 			setOriginalRequisites(JSON.parse(JSON.stringify(props.data.requisites)));
 
