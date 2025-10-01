@@ -13,16 +13,23 @@ import Sider from "antd/es/layout/Sider";
 import {Content, Header} from "antd/es/layout/layout";
 
 
-const Price = () => {
-	const [currency, setCurrency] = useState(PRODMODE ? null : DS_CURRENCY);
+const Price = (props) => {
+	const [currency, setCurrency] = useState(null);
 	const [treeData, setTreeData] = useState([]);
 	const [checkedKeys, setCheckedKeys] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [smallLoading, setSmallLoading] = useState(false);
 	const [currentCurrency, setCurrentCurrency] = useState(false);
 
+	const [userData, setUserData] = useState(null);
+
 	const [isOpenedFilters, setIsOpenedFilters] = useState(true);
 	const defaultCheckedList = [
+		{
+			id: 0,
+			name: 'Розница + 40%',
+			checked: true,
+		},
 		{
 			id: 1,
 			name: 'Розница',
@@ -54,7 +61,6 @@ const Price = () => {
 
 	useEffect(() => {
 		fetchFields().then();
-		fetchCurrency().then();
 		setCheckedList(defaultCheckedList);
 	}, []);
 	useEffect(() => {
@@ -72,6 +78,16 @@ const Price = () => {
 			return () => clearTimeout(timer);
 		}
 	}, [isAlertVisible]);
+	useEffect(() => {
+		if (props.userdata) {
+			setUserData(props.userdata);
+		}
+	}, [props.userdata]);
+	useEffect(() => {
+		if (userData) {
+			fetchCurrency().then();
+		}
+	}, [userData]);
 
 	const fetchFields = async () => {
 		if (PRODMODE) {
@@ -109,7 +125,12 @@ const Price = () => {
 				};
 				const currency_response = await PROD_AXIOS_INSTANCE.post(path, format_data);
 				if (currency_response) {
-					setCurrency(currency_response.data);
+					const cur = currency_response.data;
+					if (cur?.company?.length > 0 && userData && cur?.company.find(c => (+c.id_company === +userData.user.id_company && c.charcode === 'USD'))) {
+						setCurrency(cur?.company.find(c => (+c.id_company === +userData.user.id_company && c.charcode === 'USD')).value);
+					} else if (cur?.currency?.length > 0) {
+						setCurrency(cur?.currency.find(c => (c.charcode === 'USD')).value);
+					}
 				}
 				setLoading(false);
 			} catch (e) {
@@ -119,6 +140,12 @@ const Price = () => {
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setLoading(false);
+			}
+		} else {
+			if (DS_CURRENCY?.company?.length > 0 && userData && DS_CURRENCY?.company.find(c => (+c.id_company === +userData.user.id_company && c.charcode === 'USD'))) {
+				setCurrency(DS_CURRENCY?.company.find(c => (+c.id_company === +userData.user.id_company && c.charcode === 'USD')).value);
+			} else if (DS_CURRENCY?.currency?.length > 0) {
+				setCurrency(DS_CURRENCY?.currency.find(c => (c.charcode === 'USD')).value);
 			}
 		}
 	};
@@ -148,79 +175,108 @@ const Price = () => {
 									{model.name}
 								</div>
 								<div className={'sa-price-grid-cell'}>{model.descr}</div>
-								{checkedList.find((c) => c.id === 1)?.checked && (
+								{checkedList.find((c) => c.id === 0)?.checked && (
 									<div className={'sa-price-tag'}>
 										<Tag
-											color={'green'}
 											style={{
 												width: '100%',
 												display: 'inline-block',
 												textAlign: 'center',
-												lineHeight: '27px',
+												lineHeight: '29px',
+											}}
+										>
+											Розница + 40%:{' '}
+											<Tag  color={'green'}>
+												{ currentCurrency ?
+													( (+model.prices.price_0 + +(model.prices.price_0 * 0.4).toFixed(2)) * currency).toFixed(2) :
+													(+model.prices.price_0 + +(model.prices.price_0 * 0.4).toFixed(2) )
+												}
+												{getCurrencySymbol(model.currency)}
+											</Tag>
+										</Tag>
+									</div>
+								)}
+								{checkedList.find((c) => c.id === 1)?.checked && (
+									<div className={'sa-price-tag'}>
+										<Tag
+											style={{
+												width: '100%',
+												display: 'inline-block',
+												textAlign: 'center',
+												lineHeight: '29px',
 											}}
 										>
 											Розница:{' '}
-											<span style={{ background: '#fff', fontWeight: 600 }}>
-												{model.prices.price_0}
+											<Tag color={'blue'}>
+												{ currentCurrency ?
+													((model.prices.price_0) * currency).toFixed(2) :
+													(model.prices.price_0)
+												}
 												{getCurrencySymbol(model.currency)}
-											</span>
+											</Tag>
 										</Tag>
 									</div>
 								)}
 								{checkedList.find((c) => c.id === 2)?.checked && (
 									<div className={'sa-price-tag'}>
 										<Tag
-											color={'geekblue'}
 											style={{
 												width: '100%',
 												display: 'inline-block',
 												textAlign: 'center',
-												lineHeight: '27px',
+												lineHeight: '29px',
 											}}
 										>
 											Прайс 10:{' '}
-											<span style={{ background: '#fff', fontWeight: 600 }}>
-												{model.prices.price_10}
+											<Tag color={'geekblue'}>
+												{ currentCurrency ?
+													((model.prices.price_10) * currency).toFixed(2) :
+													(model.prices.price_10)
+												}
 												{getCurrencySymbol(model.currency)}
-											</span>
+											</Tag>
 										</Tag>
 									</div>
 								)}
 								{checkedList.find((c) => c.id === 3)?.checked && (
 									<div className={'sa-price-tag'}>
 										<Tag
-											color={'gold'}
 											style={{
 												width: '100%',
 												display: 'inline-block',
 												textAlign: 'center',
-												lineHeight: '27px',
+												lineHeight: '29px',
 											}}
 										>
 											Прайс 20:{' '}
-											<span style={{ background: '#fff', fontWeight: 600 }}>
-												{model.prices.price_20}
+											<Tag color={'gold'}>
+												{ currentCurrency ?
+													((model.prices.price_20) * currency).toFixed(2) :
+													(model.prices.price_20)
+												}
 												{getCurrencySymbol(model.currency)}
-											</span>
+											</Tag>
 										</Tag>
 									</div>
 								)}
 								{checkedList.find((c) => c.id === 4)?.checked && (
 									<div className={'sa-price-tag'}>
 										<Tag
-											color={'volcano'}
 											style={{
 												width: '100%',
 												display: 'inline-block',
 												textAlign: 'center',
-												lineHeight: '27px',
+												lineHeight: '29px',
 											}}
 										>
 											Прайс 30:{' '}
-											<span style={{ background: '#fff', fontWeight: 600 }}>
-												{model.prices.price_30}
+											<Tag color={'volcano'}>
+												{ currentCurrency ?
+													((model.prices.price_30) * currency).toFixed(2) :
+													(model.prices.price_30)
+												}
 												{getCurrencySymbol(model.currency)}
-											</span>
+											</Tag>
 										</Tag>
 									</div>
 								)}
