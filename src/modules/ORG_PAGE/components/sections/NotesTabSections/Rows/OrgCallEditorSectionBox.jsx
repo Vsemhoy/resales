@@ -98,7 +98,7 @@ const OrgCallEditorSectionBox = (props) => {
       let usess = [];
       let uids = [];
       let fusers = props.org_users.filter((item)=>
-        !item.lastname || !item.name || !item.middlename
+        !(!item.lastname && !item.name && !item.middlename)
       );
 
       for (let i = 0; i < fusers.length; i++) {

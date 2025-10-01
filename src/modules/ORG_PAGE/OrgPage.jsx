@@ -109,7 +109,7 @@ const OrgPage = (props) => {
 	const [editMode, setEditMode] = useState(false);
 	// const [companies, setCompanies] = useState([]);
 
-	const [itemId, setItemId] = useState(item_id ? item_id : 'new');
+	const [itemId, setItemId] = useState(item_id ? parseInt(item_id) : 'new');
 
 	const [backeReturnPath, setBackeReturnPath] = useState(null);
 
@@ -285,7 +285,7 @@ const OrgPage = (props) => {
 				setItemId(itt);
 				setTimeout(() => {
 					
-					get_main_data_action(item_id);
+					get_main_data_action(itt);
 					// get_notes_data_action(item_id);
 					// get_org_calls_action(item_id);
 					// get_projects_data_action(item_id);
@@ -585,19 +585,19 @@ const OrgPage = (props) => {
 
 	useEffect(() => {
 		if (PRODMODE){
-			get_notes_data_action(item_id);
+			get_notes_data_action(itemId);
 		}
 	}, [pageNotes]);
 
 	useEffect(() => {
 		if (PRODMODE){
-			get_org_calls_action(item_id);
+			get_org_calls_action(itemId);
 		}
 	}, [pageCalls]);
 
 	useEffect(() => {
 		if (PRODMODE){
-			get_projects_data_action(item_id);
+			get_projects_data_action(itemId);
 		}
 	}, [pageProject]);
 

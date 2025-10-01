@@ -31,6 +31,7 @@ const OrgPage_MainTab_Payers_Section = (props) => {
 	}, [props.edit_mode]);
 
 	useEffect(() => {
+		console.log('+++++++++++++++++++++++++++++++++++++++ ORG ID CHANGED', orgId);
 	  setNewRequisites([]);
 	}, [orgId]);
 
@@ -42,17 +43,13 @@ const OrgPage_MainTab_Payers_Section = (props) => {
 	}, [props.selects]);
 
 	useEffect(() => {
-		setNewRequisites([]);
+		setOrgId(props.item_id);
 	}, [props.item_id]);
 
 	useEffect(() => {
 		if (props.data?.id){
-			setOrgId(props.data?.id);
-
 			setRequisites(props.data.requisites);
-
 			setOriginalRequisites(JSON.parse(JSON.stringify(props.data.requisites)));
-
 		}
 
 	}, [props.data]);
@@ -202,7 +199,7 @@ const OrgPage_MainTab_Payers_Section = (props) => {
       ))}
 	  </div>
 
-			{newRequisites.length > 0 && (
+	{newRequisites.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newRequisites.map((item)=>(
           <OPMTRequisitesSection
