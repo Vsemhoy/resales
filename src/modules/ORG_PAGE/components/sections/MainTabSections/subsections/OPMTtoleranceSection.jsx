@@ -163,7 +163,7 @@ const OPMTtoleranceSection = (props) => {
             type: OPS_TYPE.STRING,
             value: name,
             max: 50,
-            required: false,
+            required: true,
             nullable: false,
             placeholder: '',
             name: 'name',

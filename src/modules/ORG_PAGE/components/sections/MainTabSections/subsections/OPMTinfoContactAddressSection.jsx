@@ -98,7 +98,7 @@ const OPMTinfoContactAddressSection = (props) => {
 						type: OPS_TYPE.STRING,
 						value: address,
 						max: 255,
-						required: false,
+						required: true,
 						nullable: true,
 						placeholder: '',
 						name: 'address',

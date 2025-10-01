@@ -240,3 +240,7 @@
 	background: #e3e8ea; 
 }
 
+.sk-omt-comment-trigger-hot {
+	color: red;
+	outline: 1px solid red;
+}
