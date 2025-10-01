@@ -181,7 +181,9 @@ const NotesTabPage = (props) => {
 						/>
 					),
 				};
-			});
+			}); 
+
+			
 
 			setStructureItems(strdata);
 		} else {
