@@ -190,7 +190,7 @@ const OrgPage = (props) => {
 	}, [isAlertVisible]);
 
 	useEffect(()=>{
-		alert(itemId);
+		console.log("ORG_ID:", itemId);
 	}, [itemId])
 
 

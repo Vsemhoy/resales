@@ -137,7 +137,7 @@ const NotesTabPage = (props) => {
 								</span>{' '}
 								<span className={'sa-text-phantom'}>({item.id})</span>
 							</div>
-							{editMode && (
+							{editMode && false && (
 								<>
 									{item.deleted === 1 ? (
 										<Button
