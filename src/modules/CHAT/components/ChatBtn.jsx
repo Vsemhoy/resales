@@ -1,11 +1,14 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import styles from './style/Chat.module.css';
+import { MOCK } from '../mock/mock.js';
+
+import { useState, useMemo, useCallback } from 'react';
+import { useUserData } from '../../../context/UserDataContext.js';
+import { usePolling } from '../../../hooks/sms/usePolling.js';
+import { useSms } from '../../../hooks/sms/useSms';
+
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined, SyncOutlined } from '@ant-design/icons';
-import { MOCK } from '../mock/mock.js';
-import { useSms } from '../../../hooks/sms/useSms';
 import { ChatModal } from './ChatModal';
-import { useUserData } from '../../../context/UserDataContext.js';
-import styles from './style/Chat.module.css';
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,8 +23,18 @@ export const ChatBtn = () => {
 	} = useSms({
 		url: '/api/sms',
 		mock: MOCK,
-		enablePolling: true, // ВКЛЮЧАЕМ POLLING
 	});
+
+	// УБИРАЕМ дублирующий useEffect - используем только usePolling
+	usePolling(
+		() => {
+			console.log('Автообновление списка чатов...');
+			refetch();
+			setLastUpdate(Date.now());
+		},
+		30000,
+		true
+	); // 30 секунд
 
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id || NaN;
@@ -29,7 +42,7 @@ export const ChatBtn = () => {
 	// Ручное обновление по клику на бейдж
 	const handleManualRefresh = useCallback(
 		(e) => {
-			e.stopPropagation();
+			e?.stopPropagation();
 			console.log('Ручное обновление сообщений...');
 			setLastUpdate(Date.now());
 			refetch();

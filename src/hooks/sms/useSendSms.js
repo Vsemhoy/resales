@@ -11,85 +11,77 @@ export const useSendSms = () => {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 
-	// Локальный буфер отправленных сообщений
-	const [localSentMessages, setLocalSentMessages] = useState([]);
-
 	const sendSms = async ({ to, text, answer = null }) => {
 		setLoading(true);
 		setError(null);
 		setSuccess(false);
-
-		// Локальное сообщение
-		const newLocalMessage = {
-			id: nanoid(),
-			from: { id: currentUserId, name: 'Вы', surname: '' },
-			to,
-			chat_id: to,
-			text,
-			created_at: Math.floor(Date.now() / 1000),
-			updated_at: Math.floor(Date.now() / 1000),
-		};
 
 		try {
 			if (!PRODMODE) {
 				console.log('[useSendSms] Режим разработки — сообщение не отправляется');
 				await new Promise((res) => setTimeout(res, 500));
 				setSuccess(true);
-				setLocalSentMessages((prev) => [...prev, newLocalMessage]);
-				return;
+				return { success: true, mock: true };
 			}
 
+			// ПРАВИЛЬНАЯ структура для Laravel
 			const formData = new FormData();
 			formData.append('_token', CSRF_TOKEN);
-			formData.append(
-				'data',
-				JSON.stringify({
-					to,
-					text,
-					answer,
-				})
-			);
+			formData.append('to', to);
+			formData.append('text', text);
+			if (answer) {
+				formData.append('answer', answer);
+			}
 
-			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
+			console.log('[useSendSms] Отправка данных:', { to, text, answer });
+
+			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			});
 
 			console.log('[useSendSms] Ответ от сервера:', response);
 
-			if (response.status === 200) {
+			if (response.data?.success || response.status === 200) {
 				setSuccess(true);
-				setLocalSentMessages((prev) => [...prev, newLocalMessage]);
+				return { success: true, data: response.data };
 			} else {
-				throw new Error('Сервер вернул некорректный статус: ' + response.status);
+				throw new Error('Сервер вернул некорректный ответ');
 			}
 		} catch (err) {
 			console.error('[useSendSms] Ошибка:', err);
 
-			// Axios error: если пришёл ответ, но с ошибкой (например, 403)
+			let errorMessage = 'Ошибка при отправке сообщения';
+
 			if (err.response) {
 				const status = err.response.status;
 				const serverMessage = err.response.data?.message || 'Неизвестная ошибка с сервера';
 
 				if (status === 403) {
-					setError('Доступ запрещён: ' + serverMessage);
+					errorMessage = 'Доступ запрещён: ' + serverMessage;
+				} else if (status === 422) {
+					// Validation errors
+					const errors = err.response.data?.errors;
+					errorMessage = errors ? Object.values(errors).flat().join(', ') : 'Ошибка валидации';
 				} else {
-					setError(`Ошибка ${status}: ${serverMessage}`);
+					errorMessage = `Ошибка ${status}: ${serverMessage}`;
 				}
 			} else {
-				// Сетевая ошибка или что-то ещё
-				setError(err.message || 'Неизвестная ошибка');
+				errorMessage = err.message || 'Неизвестная ошибка';
 			}
+
+			setError(errorMessage);
+			throw new Error(errorMessage);
 		} finally {
 			setLoading(false);
 		}
 	};
-
-	const clearLocalMessages = () => setLocalSentMessages([]);
 
 	return {
 		sendSms,
 		loading,
 		error,
 		success,
-		localSentMessages,
-		clearLocalMessages,
 	};
 };
