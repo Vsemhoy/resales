@@ -104,7 +104,7 @@ const OrgCallEditorSectionBox = (props) => {
       for (let i = 0; i < fusers.length; i++) {
         const element = fusers[i];
         if (!uids.includes(element.id)){
-          let nm = `${element.lastname + (element.name ? ' ' : '') +  element.name + (element.middlename ? ' ' : '') +  element.middlename }`;
+          let nm = `${(element.lastname ? element.lastname : "") + (element.lastname ? ' ' : '') +  (element.name ? element.name : "") + (element.name ? ' ' : '') + (element.middlename ? element.middlename : '') }`;
           usess.push({
             key: 'kjfealllo' + element.id,
             value: element.value,
