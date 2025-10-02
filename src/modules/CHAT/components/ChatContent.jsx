@@ -31,29 +31,24 @@ export default function ChatContent({ chatId }) {
 		data: allSmsList = [],
 		loading,
 		error,
+		chatId = null, // ПЕРЕПРОВЕРИТЬ
 		// refetch,
 	} = useSms({
 		url: '/api/sms',
 		mock: MOCK,
 	});
 
-	// Фильтруем сообщения по chat_id вручную
 	const smsList = useMemo(() => {
-		if (!chatId) return [];
+    if (!allSmsList || !Array.isArray(allSmsList)) {
+        console.log('❌ allSmsList не является массивом:', allSmsList);
+        return [];
+    }
 
-		const filtered = allSmsList.filter((msg) => {
-			const msgChatId = parseInt(msg.chat_id);
-			const targetChatId = parseInt(chatId);
-			return msgChatId === targetChatId;
-		});
-
-		return filtered;
-	}, [allSmsList, chatId]);
-
-	useEffect(() => {
-		// Отладочная логика (закомментирована)
-	}, [allSmsList, smsList, currentUserId, chatId, loading, error]);
-
+    console.log('🎯 Используем ВСЕ сообщения для чата', chatId, ':', allSmsList);
+    return allSmsList;
+}, [allSmsList, chatId]);
+	
+	
 	const { sendSms } = useSendSms();
 	const [localMessages, setLocalMessages] = useState([]);
 	// const [lastUpdate, setLastUpdate] = useState(Date.now());
@@ -80,10 +75,10 @@ export default function ChatContent({ chatId }) {
 				}
 
 				// Временная логика определения роли - замените на useCompanion когда будет готов
-				const isSelf = msg.from?.id === currentUserId;
+				const isSelf = msg.from_id === currentUserId; // ПЕРЕПРОВЕРИТЬ from.id
 				const role = isLocal ? 'self' : isSelf ? 'self' : 'companion';
 
-				let senderName = 'Неизвестный';
+				let senderName = {role === 'self' ? 'Вы' : msg.content.who}; //ПЕРЕПРОВЕРИТТ
 				if (role === 'self') {
 					senderName = 'Вы';
 				} else {
