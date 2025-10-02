@@ -49,6 +49,7 @@ ul {
 	flex-direction: column;
 	height: 100%;
 	padding: 5px;
+	border-right: 1px solid #e6e6e6;
 }
 
 .sidebar-layout > *:not(:last-child) {
