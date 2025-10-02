@@ -12,7 +12,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 	const [messages, setMessages] = useState([]);
 	const [connectionStatus, setConnectionStatus] = useState('disconnected');
 
-	// Функция отправки сообщения через ref (работает всегда)
 	const sendMessage = useCallback((data) => {
 		if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
 			wsRef.current.send(JSON.stringify(data));

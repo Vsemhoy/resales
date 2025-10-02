@@ -16,7 +16,7 @@ export const compareObjects = (original, updated, options = {}) => {
 	if (!original || !updated) return false;
 
 	const allKeys = new Set([...Object.keys(original), ...Object.keys(updated)]);
-	console.log(excludeFields);
+	// console.log(excludeFields);
 
 	for (const key of allKeys) {
 		if (excludeFields.includes(key)) continue;

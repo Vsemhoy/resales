@@ -11,7 +11,7 @@ export const useSendSms = () => {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 
-	const sendSms = async ({ to, text, answer = null }) => {
+	const sendSms = async ({ to, text, answer = null || false || true }) => {
 		setLoading(true);
 		setError(null);
 		setSuccess(false);
@@ -24,7 +24,6 @@ export const useSendSms = () => {
 				return { success: true, mock: true };
 			}
 
-			// ВОЗВРАЩАЕМ старую рабочую структуру FormData!
 			const formData = new FormData();
 			formData.append('_token', CSRF_TOKEN);
 			formData.append(
@@ -35,10 +34,9 @@ export const useSendSms = () => {
 					answer,
 				})
 			);
-
-			console.log('[useSendSms] Отправка данных:', { to, text, answer });
-
-			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
+			console.log(to);
+			// const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData); // НЕ УДАЛЯТЬ
+			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms');
 
 			console.log('[useSendSms] Ответ от сервера:', response);
 

@@ -4,14 +4,13 @@ import { useSms } from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
-import { useCompanion } from '../../../hooks/sms/useCompanion';
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 
 	const {
-		data: smsData = {},
+		data: smsList = [],
 		loading,
 		error,
 	} = useSms({
@@ -19,27 +18,56 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		mock: MOCK,
 	});
 
-	const getCompanion = useCompanion(currentUserId);
+	// Функция для определения собеседника
+	const getCompanion = useMemo(() => {
+		return (sms) => {
+			if (!sms || !currentUserId) return null;
+
+			// Если сообщение от текущего пользователя - собеседник это получатель
+			if (sms.from?.id === currentUserId) {
+				return sms.to;
+			}
+
+			// Если сообщение не от текущего пользователя - собеседник это отправитель
+			return sms.from;
+		};
+	}, [currentUserId]);
+
+	// ОТЛАДКА
+	console.log('🔍 ChatList Debug:', {
+		smsList,
+		smsListLength: smsList.length,
+		currentUserId,
+		selectedChatId,
+		search,
+		loading,
+		error,
+	});
 
 	const chats = useMemo(() => {
-		// Получаем массив сообщений из данных
-		const smsList = smsData.content?.sms || [];
 		const normalizedSearch = search.toLowerCase();
 
-		console.log('📱 ChatList Debug:', {
-			smsData,
-			smsListLength: smsList.length,
-			currentUserId,
-		});
+		console.log('🔄 Processing chats, smsList length:', smsList.length);
 
 		const filtered = smsList.filter((sms) => {
 			const companion = getCompanion(sms);
-			if (companion === 'self') return true;
+			console.log('📞 Companion for sms:', sms.id, companion);
+
+			// Если это сообщение от самого себя (например, в сохраненных)
+			if (companion?.id === currentUserId) {
+				return true;
+			}
 
 			const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
 			const messageText = sms.text?.toLowerCase() || '';
-			return fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
+			const matchesSearch =
+				fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
+
+			console.log('🔎 Search check:', { fullName, messageText, normalizedSearch, matchesSearch });
+			return matchesSearch;
 		});
+
+		console.log('📱 Filtered chats after search:', filtered);
 
 		const uniqueChatsMap = {};
 		filtered.forEach((sms) => {
@@ -60,9 +88,8 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			return timeB - timeA;
 		});
 
-		console.log('💬 Processed chats:', result);
+		console.log('💬 Final unique chats:', result);
 
-		// Чат "Сохранённое"
 		result.unshift({
 			chat_id: 'saved',
 			from: { id: currentUserId, name: 'Вы', surname: '' },
@@ -74,10 +101,12 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		});
 
 		return result;
-	}, [smsData, search, getCompanion, currentUserId]);
+	}, [smsList, search, getCompanion, currentUserId]);
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
+
+	console.log('🎯 Rendering chats:', chats.length);
 
 	return (
 		<div className={styles['chat-list__container']}>
@@ -94,11 +123,22 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 
 					const isActive = chat.chat_id === selectedChatId;
 
+					console.log('💬 Chat item:', {
+						chatId: chat.chat_id,
+						isSaved,
+						companion,
+						isActive,
+						selectedChatId,
+					});
+
 					return (
 						<li
 							key={chat.chat_id}
 							className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
-							onClick={() => onSelectChat?.(chat.chat_id)}
+							onClick={() => {
+								console.log('🖱️ Selecting chat:', chat.chat_id);
+								onSelectChat?.(chat.chat_id);
+							}}
 						>
 							<div className={styles.companionName}>
 								{isSaved

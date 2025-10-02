@@ -1,0 +1,222 @@
+/* Cброс стилей */
+ol,
+ul {
+	list-style: none;
+	padding-left: 0;
+	margin: 0;
+}
+
+.draggableWrapper :global(.ant-modal-content) {
+	padding: 0;
+	background-color: #fff;
+	border: 1px solid #787878a2;
+	border-radius: 15px;
+	overflow: hidden;
+}
+
+.chat-modal__title {
+	cursor: grab;
+	padding: 20px 10px 10px 20px;
+	background: linear-gradient(to bottom, #4d84bbda, #366da5);
+	color: #fff !important;
+	font-weight: 400 !important;
+}
+
+.chat-modal__title:active {
+	cursor: grabbing;
+}
+
+.chat-input__footer {
+	border-top: 1px solid #e6e6e6;
+	background: #fff;
+	padding: 5px;
+	display: flex;
+	gap: 8px;
+}
+
+.chat-input__footer > * {
+	margin: 0 auto !important;
+}
+
+.chat-input__footer .ant-btn {
+	width: 30px;
+	max-height: 30px;
+	border-radius: 50%;
+}
+
+.sidebar-layout {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 5px;
+}
+
+.sidebar-layout > *:not(:last-child) {
+	border-bottom: 1px solid #e6e6e6;
+}
+
+.chat-list {
+	overflow-y: scroll;
+	height: 40vh;
+}
+
+.chat-list::-webkit-scrollbar {
+	display: none;
+}
+
+.chat-list > * {
+	margin: 12px 0;
+	border-bottom: 1px solid #e6e6e6;
+	padding-bottom: 12px;
+}
+
+.chat-item {
+	margin-bottom: 12px;
+}
+
+.last-message {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+	font-size: 0.9em;
+	color: #555;
+}
+
+/* Стили сообщения */
+.message {
+	display: flex;
+	margin-bottom: 8px;
+}
+
+.myMessage {
+	justify-content: flex-end;
+}
+
+.otherMessage {
+	justify-content: flex-start;
+}
+
+/* Стили пузыря (самого блока с текстом) */
+.bubble {
+	max-width: 70%;
+	padding: 8px 12px;
+	position: relative;
+}
+
+/* Мои сообщения */
+.myMessageBubble {
+	border-radius: 25px 25px 0 25px;
+	margin: 0 7px 0 auto;
+	background: #dcf8c6;
+	color: #000;
+	align-self: flex-end;
+	border: 1px solid #e6e6e6;
+	-webkit-box-shadow: 9px 10px 15px -5px rgba(34, 60, 80, 0.2);
+	-moz-box-shadow: 9px 10px 15px -5px rgba(34, 60, 80, 0.2);
+	box-shadow: 9px 10px 15px -5px rgba(34, 60, 80, 0.2);
+}
+
+/* Сообщения собеседника */
+.otherMessageBubble {
+	border-radius: 25px 25px 25px 0;
+	margin-left: 7px;
+	background: #e1f8f2;
+	color: #000;
+	border: 1px solid #e6e6e6;
+	align-self: flex-start;
+	-webkit-box-shadow: -13px 10px 15px -5px rgba(34, 60, 80, 0.2);
+	-moz-box-shadow: -13px 10px 15px -5px rgba(34, 60, 80, 0.2);
+	box-shadow: -13px 10px 15px -5px rgba(34, 60, 80, 0.2);
+}
+
+/* Имя отправителя */
+.senderName {
+	display: block;
+	font-size: 12px;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 4px;
+}
+
+/* Время */
+.time {
+	font-size: 11px;
+	color: #666666;
+	text-align: right;
+	margin-top: 2px;
+}
+
+/* Стили для polling интерфейса */
+.chatHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 16px;
+	border-bottom: 1px solid #f0f0f0;
+	background: #fafafa;
+	flex-shrink: 0;
+}
+
+.lastUpdate {
+	font-size: 12px;
+	color: #888;
+}
+
+.localMessage {
+	opacity: 0.7;
+}
+
+.sending {
+	color: #1890ff;
+	font-size: 11px;
+	font-style: italic;
+}
+
+.notification-badge {
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.notification-badge:hover {
+	background-color: #1890ff;
+}
+
+/* ОСНОВНЫЕ СТИЛИ ЧАТА */
+.chat-layout {
+	height: 400px;
+	display: flex;
+	overflow: hidden;
+}
+
+.chat-content {
+	flex: 1;
+	overflow: hidden;
+}
+
+.chatcontentLayout {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.chatContent {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.messagesList {
+	flex: 1;
+	overflow-y: auto;
+	padding: 8px;
+	min-height: 0;
+}
+
+.messagesList::-webkit-scrollbar {
+	display: none;
+}

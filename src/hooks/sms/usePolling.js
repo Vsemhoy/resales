@@ -13,7 +13,14 @@ export function usePolling(callback, interval = 30000, enabled = true) {
 	}, [callback]);
 
 	useEffect(() => {
-		if (!enabled || interval <= 0) return;
+		if (!enabled || interval <= 0) {
+			// Если polling отключен, очищаем существующий интервал
+			if (intervalRef.current) {
+				clearInterval(intervalRef.current);
+				intervalRef.current = null;
+			}
+			return;
+		}
 
 		let isMounted = true;
 		let isFetching = false;
@@ -23,9 +30,10 @@ export function usePolling(callback, interval = 30000, enabled = true) {
 
 			isFetching = true;
 			try {
+				// console.log(`[usePolling] Executing polling callback (interval: ${interval}ms)`);
 				await callbackRef.current();
 			} catch (error) {
-				console.error('[usePolling] Ошибка:', error);
+				console.error('[usePolling] Ошибка в callback:', error);
 			} finally {
 				if (isMounted) {
 					isFetching = false;
@@ -34,15 +42,18 @@ export function usePolling(callback, interval = 30000, enabled = true) {
 		};
 
 		// Запускаем сразу при монтировании
+		console.log(`[usePolling] Starting polling with ${interval}ms interval`);
 		executePolling();
 
 		// Устанавливаем интервал
 		intervalRef.current = setInterval(executePolling, interval);
 
 		return () => {
+			console.log(`[usePolling] Cleaning up polling`);
 			isMounted = false;
 			if (intervalRef.current) {
 				clearInterval(intervalRef.current);
+				intervalRef.current = null;
 			}
 		};
 	}, [interval, enabled]);

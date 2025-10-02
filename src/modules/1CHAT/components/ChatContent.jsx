@@ -1,11 +1,10 @@
 import styles from './style/Chat.module.css';
 // import { PRODMODE } from '../../../config/config';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 // import { usePolling } from '../../../hooks/sms/usePolling';
 import { useUserData } from '../../../context/UserDataContext';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
-// import { useCompanion } from '../../../hooks/sms/useCompanion';
 import { useSms } from '../../../hooks/sms/useSms';
 
 import { Layout, List, message, Button } from 'antd';
@@ -22,10 +21,9 @@ const { Content, Footer } = Layout;
 const generateUUID = () => nanoid(8);
 
 export default function ChatContent({ chatId }) {
+	const messagesContainerRef = useRef(null);
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
-
-	// const getRole = useCompanion(currentUserId);
 
 	const {
 		data: allSmsList = [],
@@ -47,26 +45,24 @@ export default function ChatContent({ chatId }) {
 			return msgChatId === targetChatId;
 		});
 
+		console.log('🎯 Filtered messages for chat', chatId, ':', filtered);
 		return filtered;
 	}, [allSmsList, chatId]);
 
-	useEffect(() => {
-		// Отладочная логика (закомментирована)
-	}, [allSmsList, smsList, currentUserId, chatId, loading, error]);
-
 	const { sendSms } = useSendSms();
 	const [localMessages, setLocalMessages] = useState([]);
-	// const [lastUpdate, setLastUpdate] = useState(Date.now());
-
-	// const handleManualRefresh = useCallback(() => {
-	// refetch();
-	// setLastUpdate(Date.now());
-	// 	message.info('Сообщения обновлены');
-	// }, []);
 
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
 		const combined = [...smsList, ...filteredLocal];
+
+		console.log('🔄 Processing messages:', {
+			allSmsCount: allSmsList.length,
+			filteredCount: smsList.length,
+			localCount: filteredLocal.length,
+			combinedCount: combined.length,
+			chatId,
+		});
 
 		return combined
 			.map((msg) => {
@@ -79,7 +75,7 @@ export default function ChatContent({ chatId }) {
 					timestamp = (msg.updated_at || msg.created_at) * 1000;
 				}
 
-				// Временная логика определения роли - замените на useCompanion когда будет готов
+				// Определяем отправителя
 				const isSelf = msg.from?.id === currentUserId;
 				const role = isLocal ? 'self' : isSelf ? 'self' : 'companion';
 
@@ -104,6 +100,39 @@ export default function ChatContent({ chatId }) {
 			})
 			.sort((a, b) => a.timestamp - b.timestamp);
 	}, [smsList, localMessages, chatId, allSmsList.length, currentUserId]);
+
+	// Функция для скролла к последнему сообщению
+	const scrollToBottom = useCallback(() => {
+		if (messagesContainerRef.current) {
+			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+		}
+	}, []);
+
+	// Автоскролл при загрузке новых сообщений или смене чата
+	useEffect(() => {
+		if (allMessages.length > 0) {
+			scrollToBottom();
+		}
+	}, [allMessages, scrollToBottom]);
+
+	// Автоскролл при отправке нового сообщения
+	useEffect(() => {
+		if (localMessages.length > 0) {
+			scrollToBottom();
+		}
+	}, [localMessages, scrollToBottom]);
+
+	useEffect(() => {
+		// Отладочная логика
+		console.log('🔍 ChatContent Debug:', {
+			chatId,
+			currentUserId,
+			allSmsListLength: allSmsList.length,
+			smsListLength: smsList.length,
+			loading,
+			error,
+		});
+	}, [allSmsList, smsList, currentUserId, chatId, loading, error]);
 
 	const handleSend = useCallback(
 		async (text) => {
@@ -157,38 +186,38 @@ export default function ChatContent({ chatId }) {
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.chatContent}>
 				<div className={styles.chatHeader}>
-					{/* <Button
-						icon={<SyncOutlined />}
-						loading={loading}
-						onClick={handleManualRefresh}
-						size="small"
-					>
-						Обновить
-					</Button>
-					<span className={styles.lastUpdate}>
-						Обновлено: {new Date(lastUpdate).toLocaleTimeString()}
-					</span> */}
-					<span>*Имя Собеседника*</span>
+					<span>
+						{chatId === 'saved'
+							? 'Сохранённое'
+							: (() => {
+									const msg = allSmsList.find((m) => m.chat_id === chatId);
+									if (!msg) return 'Собеседник';
+									const companion = msg.from?.id === currentUserId ? msg.to : msg.from;
+									return (
+										`${companion?.surname || ''} ${companion?.name || ''}`.trim() || 'Собеседник'
+									);
+							  })()}
+					</span>
 				</div>
-
-				{loading && allMessages.length === 0 ? (
-					<p className={styles.loading}>Загрузка сообщений...</p>
-				) : allMessages.length === 0 ? (
-					<p className={styles.empty}>Нет сообщений</p>
-				) : (
-					<div className={styles.messagesList}>
-						{allMessages.map(renderMessage)}
-						{/* Тестовые сообщения для отладки стилей */}
-						<ChatIncomingMsg
-							message={{
-								id: 'test-incoming-1',
-								text: 'Тестовое входящее сообщение для проверки стилей',
-								time: '12:00',
-								senderName: 'Тестовый Собеседник',
+				<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+					{loading && allMessages.length === 0 ? (
+						<p className={styles.loading}>Загрузка сообщений...</p>
+					) : allMessages.length === 0 ? (
+						<p className={styles.empty}>Нет сообщений</p>
+					) : (
+						<div
+							ref={messagesContainerRef}
+							className={styles.messagesList}
+							style={{
+								flex: 1,
+								overflowY: 'auto',
+								minHeight: 0,
 							}}
-						/>
-					</div>
-				)}
+						>
+							{allMessages.map(renderMessage)}
+						</div>
+					)}
+				</div>
 			</Content>
 
 			<Footer className={styles['chat-input__footer']}>
