@@ -11,7 +11,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const currentUserId = userdata?.user?.id;
 
 	const {
-		data: smsList = [],
+		data: smsData = {},
 		loading,
 		error,
 	} = useSms({
@@ -22,7 +22,15 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const getCompanion = useCompanion(currentUserId);
 
 	const chats = useMemo(() => {
+		// Получаем массив сообщений из данных
+		const smsList = smsData.content?.sms || [];
 		const normalizedSearch = search.toLowerCase();
+
+		console.log('📱 ChatList Debug:', {
+			smsData,
+			smsListLength: smsList.length,
+			currentUserId,
+		});
 
 		const filtered = smsList.filter((sms) => {
 			const companion = getCompanion(sms);
@@ -52,6 +60,8 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			return timeB - timeA;
 		});
 
+		console.log('💬 Processed chats:', result);
+
 		// Чат "Сохранённое"
 		result.unshift({
 			chat_id: 'saved',
@@ -64,7 +74,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		});
 
 		return result;
-	}, [smsList, search, getCompanion, currentUserId]);
+	}, [smsData, search, getCompanion, currentUserId]);
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;

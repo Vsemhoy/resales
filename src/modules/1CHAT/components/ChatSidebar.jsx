@@ -20,7 +20,12 @@ export default function ChatSidebar({ onSelectChat, selectedChatId }) {
 				selectedChatId={selectedChatId}
 			/>
 			<Content className={styles['sidebar-content']}>
-				<ChatList search={search} onSelectChat={onSelectChat} />
+				{/* ПЕРЕДАЕМ selectedChatId в ChatList */}
+				<ChatList
+					search={search}
+					onSelectChat={onSelectChat}
+					selectedChatId={selectedChatId} // ДОБАВЛЕНО
+				/>
 			</Content>
 			<ChatFooter
 				className={styles['sidebar-footer']}

@@ -41,22 +41,26 @@ export const useSms = ({ chatId = null, mock = {} }) => {
 					}
 				} else {
 					console.log('[useSms] Используются MOCK-данные (dev mode)');
-					const mockData = typeof mock === 'function' ? mock() : mock;
+
+					// ИСПРАВЛЕНИЕ: убрал вызов mock как функции
+					const mockData = mock; // Просто используем объект как есть
 
 					console.log('[useSms] MOCK-данные:', mockData);
 
 					// Для chatId можно расширить мок или фильтровать
 					const sms = chatId
-						? mockData?.content?.sms.filter((msg) => msg.chat_id === chatId)
+						? mockData?.content?.sms?.filter((msg) => msg.chat_id === chatId)
 						: mockData?.content?.sms;
 
 					if (Array.isArray(sms)) {
 						responseData = sms;
 					} else {
 						console.warn('[useSms] MOCK-данные не содержат массив sms');
+						responseData = []; // Устанавливаем пустой массив вместо undefined
 					}
 				}
 
+				console.log('[useSms] Установка данных:', responseData);
 				setData(responseData);
 			} catch (err) {
 				console.error('[useSms] Ошибка при загрузке данных:', err);

@@ -1,41 +1,34 @@
 // TODO: Переписать, когда будет адекватная логика получения чата
-// import { useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
-// export function useCompanion(currentUserId) {
-// 	return useCallback(
-// 		(message) => {
-// 			if (!message || !currentUserId) return 'other';
+// Хук для определения роли пользователя
+export const useCompanion = (currentUserId, chatData) => {
+	const [isCompanion, setIsCompanion] = useState(false);
 
-// console.log('🔍 Message role check:', {
-// 	messageId: message.id,
-// 	fromId: message.from?.id,
-// 	toId: message.to?.id,
-// 	currentUserId,
-// 	chatId: message.chat_id,
-// });
+	useEffect(() => {
+		if (!currentUserId || !chatData) return;
 
-// Если from.id равен текущему пользователю - это наше сообщение
-// if (message.from?.id === currentUserId) {
-// 	return 'self';
-// }
+		// Логика определения роли
+		const checkRole = () => {
+			// Пример 1: Если в чате есть поле participants
+			if (chatData.participants) {
+				const currentUser = chatData.participants.find(
+					(participant) => participant.id === currentUserId
+				);
+				return currentUser?.role === 'companion';
+			}
 
-// Если to.id равен текущему пользователю - это сообщение нам
-// if (message.to?.id === currentUserId) {
-// 	return 'other';
-// }
+			// Пример 2: Если чат имеет создателя
+			if (chatData.creatorId) {
+				return chatData.creatorId !== currentUserId;
+			}
 
-// Дополнительная проверка по chat_id
-// Если chat_id соответствует собеседнику, а from.id не нам - это сообщение от другого
-// if (
-// 	message.chat_id &&
-// 	message.chat_id !== currentUserId &&
-// 	message.from?.id !== currentUserId
-// ) {
-// 	return 'other';
-// }
+			// Пример 3: Простая проверка по ID
+			return chatData.companionId === currentUserId;
+		};
 
-// 			return 'other'; // по умолчанию
-// 		},
-// 		[currentUserId]
-// 	);
-// }
+		setIsCompanion(checkRole());
+	}, [currentUserId, chatData]);
+
+	return isCompanion;
+};
