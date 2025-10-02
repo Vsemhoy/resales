@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
 
-export const useSms = ({ chatId = null, mock = {} }) => {
+export const useSms = ({ chatId = null, mock = {}, search }) => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -12,6 +12,8 @@ export const useSms = ({ chatId = null, mock = {} }) => {
 			setLoading(true);
 			setError(null);
 
+			console.log("ПИСЯ К НОСУ!!!!!!", search)
+
 			try {
 				let responseData = [];
 
@@ -19,7 +21,7 @@ export const useSms = ({ chatId = null, mock = {} }) => {
 					try {
 						const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
 						const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
-							data: {},
+							data: {search},
 							_token: CSRF_TOKEN,
 						});
 
@@ -72,7 +74,7 @@ export const useSms = ({ chatId = null, mock = {} }) => {
 		};
 
 		fetchData();
-	}, [chatId, mock]);
+	}, [chatId, mock, search]);
 
 	return { data, loading, error };
 };

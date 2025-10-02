@@ -7,8 +7,8 @@ import { useUserData } from '../../../context/UserDataContext';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useSms } from '../../../hooks/sms/useSms';
 
-import { Layout, List, message, Button } from 'antd';
-import { SyncOutlined } from '@ant-design/icons';
+import { Layout, message } from 'antd';
+// import { SyncOutlined } from '@ant-design/icons';
 import { nanoid } from 'nanoid';
 import { ChatInput } from './ChatInput';
 import { MOCK } from '../mock/mock';
