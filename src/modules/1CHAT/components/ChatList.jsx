@@ -4,6 +4,7 @@ import { useSms } from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
+import { PRODMODE } from '../../../config/config';
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
@@ -16,6 +17,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	} = useSms({
 		url: '/api/sms',
 		mock: MOCK,
+        search
 	});
 
 	// Функция для определения собеседника
@@ -44,74 +46,83 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		error,
 	});
 
-	const chats = useMemo(() => {
-		const normalizedSearch = search.toLowerCase();
+	// console.log("ПОПОВЛОАТЛОВЫАЫВОТЛАТЫВАВЫ", search);
 
-		console.log('🔄 Processing chats, smsList length:', smsList.length);
+	// const use = useSms(0, {}, search);
 
-		const filtered = smsList.filter((sms) => {
-			const companion = getCompanion(sms);
-			console.log('📞 Companion for sms:', sms.id, companion);
+	// const chats = useMemo(() => {
+	// 	const normalizedSearch = search.toLowerCase();
 
-			// Если это сообщение от самого себя (например, в сохраненных)
-			if (companion?.id === currentUserId) {
-				return true;
-			}
+	// 	console.log('🔄 Processing chats, smsList length:', smsList.length);
 
-			const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
-			const messageText = sms.text?.toLowerCase() || '';
-			const matchesSearch =
-				fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
+	// 	// const filtered = smsList.filter((sms) => {
+	// 	const filtered = smsList;
 
-			console.log('🔎 Search check:', { fullName, messageText, normalizedSearch, matchesSearch });
-			return matchesSearch;
-		});
+	// 	// 			((sms) => {
 
-		console.log('📱 Filtered chats after search:', filtered);
+	// 	// 	const companion = getCompanion(sms);
+	// 	// 		console.log('📞 Companion for sms:', sms.id, companion);
 
-		const uniqueChatsMap = {};
-		filtered.forEach((sms) => {
-			const chatId = sms.chat_id;
-			const currentTime = sms.updated_at || sms.created_at;
+	// 	// 		// Если это сообщение от самого себя (например, в сохраненных)
+	// 	// 		if (companion?.id === currentUserId) {
+	// 	// 			return true;
+	// 	// 		}
 
-			if (
-				!uniqueChatsMap[chatId] ||
-				currentTime > (uniqueChatsMap[chatId].updated_at || uniqueChatsMap[chatId].created_at)
-			) {
-				uniqueChatsMap[chatId] = sms;
-			}
-		});
+	// 	// 		const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
+	// 	// 		const messageText = sms.text?.toLowerCase() || '';
+	// 	// 		const matchesSearch =
+	// 	// 			fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
 
-		const result = Object.values(uniqueChatsMap).sort((a, b) => {
-			const timeA = a.updated_at || a.created_at;
-			const timeB = b.updated_at || b.created_at;
-			return timeB - timeA;
-		});
+	// 	// 		console.log('🔎 Search check:', { fullName, messageText, normalizedSearch, matchesSearch });
 
-		console.log('💬 Final unique chats:', result);
+	// 	// 	return matchesSearch;
+	// 	// });
 
-		result.unshift({
-			chat_id: 'saved',
-			from: { id: currentUserId, name: 'Вы', surname: '' },
-			to: { id: currentUserId, name: 'Вы', surname: '' },
-			text: '📁',
-			updated_at: Infinity,
-			created_at: Infinity,
-			isSavedChat: true,
-		});
+	// 	console.log('📱 Filtered chats after search:', );
 
-		return result;
-	}, [smsList, search, getCompanion, currentUserId]);
+	// 	const uniqueChatsMap = {};
+	// 	filtered.forEach((sms) => {
+	// 		const chatId = sms.chat_id;
+	// 		const currentTime = sms.updated_at || sms.created_at;
+
+	// 		if (
+	// 			!uniqueChatsMap[chatId] ||
+	// 			currentTime > (uniqueChatsMap[chatId].updated_at || uniqueChatsMap[chatId].created_at)
+	// 		) {
+	// 			uniqueChatsMap[chatId] = sms;
+	// 		}
+	// 	});
+
+	// 	const result = Object.values(uniqueChatsMap).sort((a, b) => {
+	// 		const timeA = a.updated_at || a.created_at;
+	// 		const timeB = b.updated_at || b.created_at;
+	// 		return timeB - timeA;
+	// 	});
+
+	// 	console.log('💬 Final unique chats:', result);
+
+	// 	result.unshift({
+	// 		chat_id: 'saved',
+	// 		from: { id: currentUserId, name: 'Вы', surname: '' },
+	// 		to: { id: currentUserId, name: 'Вы', surname: '' },
+	// 		text: '📁',
+	// 		updated_at: Infinity,
+	// 		created_at: Infinity,
+	// 		isSavedChat: true,
+	// 	});
+
+	// 	return result;
+	// }, [smsList, search, currentUserId]);
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
 
-	console.log('🎯 Rendering chats:', chats.length);
+	console.log('🎯 Rendering chats:', smsList.length);
 
 	return (
 		<div className={styles['chat-list__container']}>
 			<ul className={styles['chat-list']}>
-				{chats.map((chat) => {
+				{smsList.map((chat) => {
 					const isSaved = chat.chat_id === 'saved' || chat.isSavedChat;
 					const companion = isSaved ? null : getCompanion(chat);
 

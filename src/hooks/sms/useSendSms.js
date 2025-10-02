@@ -36,7 +36,7 @@ export const useSendSms = () => {
 			);
 			console.log(to);
 			// const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData); // НЕ УДАЛЯТЬ
-			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms');
+			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
 
 			console.log('[useSendSms] Ответ от сервера:', response);
 
