@@ -27,7 +27,7 @@ const Price = (props) => {
 	const defaultCheckedList = [
 		{
 			id: 0,
-			name: 'Розница + 40%',
+			name: 'РРЦ',
 			checked: true,
 		},
 		{
@@ -185,11 +185,11 @@ const Price = (props) => {
 												lineHeight: '29px',
 											}}
 										>
-											Розница + 40%:{' '}
-											<Tag  color={'green'}>
+											РРЦ:{' '}
+											<Tag  color={'geekblue'}>
 												{ currentCurrency ?
-													( (+model.prices.price_0 + +(model.prices.price_0 * 0.4).toFixed(2)) * currency).toFixed(2) :
-													(+model.prices.price_0 + +(model.prices.price_0 * 0.4).toFixed(2) )
+													((model.prices.bo_price_40_rub) / 100).toFixed(2) :
+													((model.prices.bo_price_40) / 100).toFixed(2)
 												}
 												{getCurrencySymbol(model.currency)}
 											</Tag>
@@ -209,8 +209,8 @@ const Price = (props) => {
 											Розница:{' '}
 											<Tag color={'blue'}>
 												{ currentCurrency ?
-													((model.prices.price_0) * currency).toFixed(2) :
-													(model.prices.price_0)
+													((model.prices.bo_price_0_rub) / 100).toFixed(2) :
+													((model.prices.bo_price_0) / 100).toFixed(2)
 												}
 												{getCurrencySymbol(model.currency)}
 											</Tag>
@@ -228,10 +228,10 @@ const Price = (props) => {
 											}}
 										>
 											Прайс 10:{' '}
-											<Tag color={'geekblue'}>
+											<Tag color={'green'}>
 												{ currentCurrency ?
-													((model.prices.price_10) * currency).toFixed(2) :
-													(model.prices.price_10)
+													((model.prices.bo_price_10_rub) / 100).toFixed(2) :
+													((model.prices.bo_price_10) / 100).toFixed(2)
 												}
 												{getCurrencySymbol(model.currency)}
 											</Tag>
@@ -251,8 +251,8 @@ const Price = (props) => {
 											Прайс 20:{' '}
 											<Tag color={'gold'}>
 												{ currentCurrency ?
-													((model.prices.price_20) * currency).toFixed(2) :
-													(model.prices.price_20)
+													((model.prices.bo_price_20_rub) / 100).toFixed(2) :
+													((model.prices.bo_price_20) / 100).toFixed(2)
 												}
 												{getCurrencySymbol(model.currency)}
 											</Tag>
@@ -272,8 +272,8 @@ const Price = (props) => {
 											Прайс 30:{' '}
 											<Tag color={'volcano'}>
 												{ currentCurrency ?
-													((model.prices.price_30) * currency).toFixed(2) :
-													(model.prices.price_30)
+													((model.prices.bo_price_30_rub) / 100).toFixed(2) :
+													((model.prices.bo_price_30) / 100).toFixed(2)
 												}
 												{getCurrencySymbol(model.currency)}
 											</Tag>
@@ -341,9 +341,9 @@ const Price = (props) => {
 		const rows = selectedModels.map((m) => {
 			// Начинаем с базового объекта
 			const obj = {
-				ID: m.id,
-				Название: m.name,
-				Описание: m.descr,
+				'ID': m.id,
+				'Название': m.name,
+				'Описание': m.descr,
 			};
 
 			// Функция для удобного добавления свойства, если оно есть в checkedList
@@ -355,27 +355,33 @@ const Price = (props) => {
 
 			// Добавляем свойства с проверкой
 			addIfChecked(
+				'РРЦ',
+				`${
+					currentCurrency ? (m.prices.bo_price_40_rub / 100) : (m.prices.bo_price_40 / 100)
+				} ${getCurrencySymbol(m.currency)}`
+			);
+			addIfChecked(
 				'Розница',
 				`${
-					currentCurrency ? convertToRub(m.prices.price_0, m.currency) : m.prices.price_0
+					currentCurrency ? (m.prices.bo_price_0_rub / 100) : (m.prices.bo_price_0 / 100)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 			addIfChecked(
 				'Прайс 10',
 				`${
-					currentCurrency ? convertToRub(m.prices.price_10, m.currency) : m.prices.price_10
+					currentCurrency ? (m.prices.bo_price_10_rub / 100) : (m.prices.bo_price_10 / 100)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 			addIfChecked(
 				'Прайс 20',
 				`${
-					currentCurrency ? convertToRub(m.prices.price_20, m.currency) : m.prices.price_20
+					currentCurrency ? (m.prices.bo_price_20_rub / 100) : (m.prices.bo_price_20 / 100)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 			addIfChecked(
 				'Прайс 30',
 				`${
-					currentCurrency ? convertToRub(m.prices.price_30, m.currency) : m.prices.price_30
+					currentCurrency ? (m.prices.bo_price_30_rub / 100) : (m.prices.bo_price_30 / 100)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 
