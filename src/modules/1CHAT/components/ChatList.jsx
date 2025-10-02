@@ -4,7 +4,7 @@ import { useSms } from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
-import { PRODMODE } from '../../../config/config';
+// import { PRODMODE } from '../../../config/config';
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
@@ -15,9 +15,10 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		loading,
 		error,
 	} = useSms({
-		url: '/api/sms',
+		// url: '/api/sms',
+		chatId: 0,
 		mock: MOCK,
-        search
+		search,
 	});
 
 	// Функция для определения собеседника
@@ -34,17 +35,6 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			return sms.from;
 		};
 	}, [currentUserId]);
-
-	// ОТЛАДКА
-	console.log('🔍 ChatList Debug:', {
-		smsList,
-		smsListLength: smsList.length,
-		currentUserId,
-		selectedChatId,
-		search,
-		loading,
-		error,
-	});
 
 	// console.log("ПОПОВЛОАТЛОВЫАЫВОТЛАТЫВАВЫ", search);
 

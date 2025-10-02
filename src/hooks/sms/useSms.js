@@ -1,80 +1,93 @@
-import { useEffect, useState } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
-import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
+import {useEffect, useState} from 'react';
+import {CSRF_TOKEN, PRODMODE} from '../../config/config.js';
+import {PROD_AXIOS_INSTANCE} from '../../config/Api.js';
 
-export const useSms = ({ chatId = null, mock = {}, search }) => {
-	const [data, setData] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+export const useSms = ({chatId, mock = {}, search}) => {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [who, setWho] = useState(null);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			setLoading(true);
-			setError(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            setError(null);
 
-			console.log("ПИСЯ К НОСУ!!!!!!", search)
+            try {
+                let responseData = [];
 
-			try {
-				let responseData = [];
+                if (PRODMODE) {
+                    try {
+                        const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
+                        const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
+                            data: {search},
+                            _token: CSRF_TOKEN,
+                        });
 
-				if (PRODMODE) {
-					try {
-						const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
-						const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
-							data: {search},
-							_token: CSRF_TOKEN,
-						});
+                        console.log(`[useSms] Полный ответ от сервера:`, response.data);
+                        console.log(`[useSms] Структура content:`, response?.data?.content);
 
-						console.log(`[useSms] Ответ от сервера (${endpoint}):`, response.data);
+                        // Проверяем различные возможные структуры ответа
+                        let sms;
+                        if (chatId) {
+                            sms = response?.data?.content?.messages ||
+                                response?.data?.content?.sms ||
+                                response?.data?.content;
+                        } else {
+                            sms = response?.data?.content?.sms ||
+                                response?.data?.content?.messages ||
+                                response?.data?.content;
+                        }
 
-						const sms = response?.data?.content?.sms;
+                        console.log(`[useSms] Извлеченные SMS:`, sms);
 
-						if (Array.isArray(sms)) {
-							responseData = sms;
-						} else {
-							console.warn(`[useSms] СМС в ответе сервера по ${endpoint} не является массивом`);
-						}
-					} catch (err) {
-						console.error(
-							`[useSms] Ошибка при запросе ${chatId ? `/api/sms/${chatId}` : '/api/sms'}:`,
-							err
-						);
-						throw new Error('Не удалось загрузить SMS с сервера');
-					}
-				} else {
-					console.log('[useSms] Используются MOCK-данные (dev mode)');
+                        setWho(response?.data?.content?.who);
 
-					// ИСПРАВЛЕНИЕ: убрал вызов mock как функции
-					const mockData = mock; // Просто используем объект как есть
+                        if (Array.isArray(sms)) {
+                            responseData = sms;
+                        } else {
+                            console.warn(`[useSms] СМС не является массивом:`, typeof sms, sms);
+                            responseData = [];
+                        }
+                    } catch (err) {
+                        console.error(
+                            `[useSms] Ошибка при запросе ${chatId ? `/api/sms/${chatId}` : '/api/sms'}:`,
+                            err
+                        );
+                        throw new Error('Не удалось загрузить SMS с сервера');
+                    }
+                } else {
+                    console.log('[useSms] Используются MOCK-данные (dev mode)');
 
-					console.log('[useSms] MOCK-данные:', mockData);
+                    const mockData = mock;
 
-					// Для chatId можно расширить мок или фильтровать
-					const sms = chatId
-						? mockData?.content?.sms?.filter((msg) => msg.chat_id === chatId)
-						: mockData?.content?.sms;
+                    console.log('[useSms] MOCK-данные:', mockData);
 
-					if (Array.isArray(sms)) {
-						responseData = sms;
-					} else {
-						console.warn('[useSms] MOCK-данные не содержат массив sms');
-						responseData = []; // Устанавливаем пустой массив вместо undefined
-					}
-				}
+                    const sms = chatId
+                        ? mockData?.content?.sms?.filter((msg) => msg.chat_id === chatId)
+                        : mockData?.content?.sms;
 
-				console.log('[useSms] Установка данных:', responseData);
-				setData(responseData);
-			} catch (err) {
-				console.error('[useSms] Ошибка при загрузке данных:', err);
-				setError(err.message || 'Неизвестная ошибка');
-				setData([]);
-			} finally {
-				setLoading(false);
-			}
-		};
+                    if (Array.isArray(sms)) {
+                        responseData = sms;
+                    } else {
+                        console.warn('[useSms] MOCK-данные не содержат массив sms');
+                        responseData = []; // Устанавливаем пустой массив вместо undefined
+                    }
+                }
 
-		fetchData();
-	}, [chatId, mock, search]);
+                console.log('[useSms] Установка данных:', responseData);
+                setData(responseData);
+            } catch (err) {
+                console.error('[useSms] Ошибка при загрузке данных:', err);
+                setError(err.message || 'Неизвестная ошибка');
+                setData([]);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-	return { data, loading, error };
+        fetchData();
+    }, [chatId, mock, search]);
+
+    return {data, who, loading, error};
 };
