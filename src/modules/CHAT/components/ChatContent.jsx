@@ -152,7 +152,7 @@ export default function ChatContent({ chatId }) {
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.chatContent}>
 				<div className={styles.chatHeader}>
-					{/* <Button
+					<Button
 						icon={<SyncOutlined />}
 						loading={loading}
 						onClick={handleManualRefresh}
@@ -162,7 +162,7 @@ export default function ChatContent({ chatId }) {
 					</Button>
 					<span className={styles.lastUpdate}>
 						Обновлено: {new Date(lastUpdate).toLocaleTimeString()}
-					</span> */}
+					</span>
 					<span>*Имя Собеседника*</span>
 				</div>
 
