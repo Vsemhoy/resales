@@ -357,31 +357,31 @@ const Price = (props) => {
 			addIfChecked(
 				'РРЦ',
 				`${
-					currentCurrency ? (m.prices.bo_price_40_rub / 100) : (m.prices.bo_price_40 / 100)
+					currentCurrency ? (m.prices.bo_price_40_rub / 100).toFixed(2) : (m.prices.bo_price_40 / 100).toFixed(2)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 			addIfChecked(
 				'Розница',
 				`${
-					currentCurrency ? (m.prices.bo_price_0_rub / 100) : (m.prices.bo_price_0 / 100)
+					currentCurrency ? (m.prices.bo_price_0_rub / 100).toFixed(2) : (m.prices.bo_price_0 / 100).toFixed(2)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 			addIfChecked(
 				'Прайс 10',
 				`${
-					currentCurrency ? (m.prices.bo_price_10_rub / 100) : (m.prices.bo_price_10 / 100)
+					currentCurrency ? (m.prices.bo_price_10_rub / 100).toFixed(2) : (m.prices.bo_price_10 / 100).toFixed(2)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 			addIfChecked(
 				'Прайс 20',
 				`${
-					currentCurrency ? (m.prices.bo_price_20_rub / 100) : (m.prices.bo_price_20 / 100)
+					currentCurrency ? (m.prices.bo_price_20_rub / 100).toFixed(2) : (m.prices.bo_price_20 / 100).toFixed(2)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 			addIfChecked(
 				'Прайс 30',
 				`${
-					currentCurrency ? (m.prices.bo_price_30_rub / 100) : (m.prices.bo_price_30 / 100)
+					currentCurrency ? (m.prices.bo_price_30_rub / 100).toFixed(2) : (m.prices.bo_price_30 / 100).toFixed(2)
 				} ${getCurrencySymbol(m.currency)}`
 			);
 
