@@ -11,7 +11,7 @@ import { Layout, message } from 'antd';
 // import { SyncOutlined } from '@ant-design/icons';
 import { nanoid } from 'nanoid';
 import { ChatInput } from './ChatInput';
-import { MOCK } from '../mock/mock';
+import { CHAT_MOCK } from '../mock/mock';
 
 // Импортируем новые компоненты сообщений
 import ChatSelfMsg from './ChatSelfMsg';
@@ -29,10 +29,11 @@ export default function ChatContent({ chatId }) {
 		data: allSmsList = [],
 		loading,
 		error,
+		who,
 		// refetch,
 	} = useSms({
-		url: '/api/sms',
-		mock: MOCK,
+		chatId,
+		mock: CHAT_MOCK,
 	});
 
 	// Фильтруем сообщения по chat_id вручную
@@ -53,8 +54,8 @@ export default function ChatContent({ chatId }) {
 	const [localMessages, setLocalMessages] = useState([]);
 
 	const allMessages = useMemo(() => {
-		const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
-		const combined = [...smsList, ...filteredLocal];
+		const filteredLocal = localMessages;
+		const combined = [...allSmsList, ...filteredLocal];
 
 		console.log('🔄 Processing messages:', {
 			allSmsCount: allSmsList.length,
@@ -76,14 +77,14 @@ export default function ChatContent({ chatId }) {
 				}
 
 				// Определяем отправителя
-				const isSelf = msg.from?.id === currentUserId;
+				const isSelf = msg.from_id === currentUserId;
 				const role = isLocal ? 'self' : isSelf ? 'self' : 'companion';
 
 				let senderName = 'Неизвестный';
 				if (role === 'self') {
 					senderName = 'Вы';
 				} else {
-					senderName = `${msg.from?.name || ''} ${msg.from?.surname || ''}`.trim() || 'Собеседник';
+					senderName = who;
 				}
 
 				return {
@@ -99,7 +100,7 @@ export default function ChatContent({ chatId }) {
 				};
 			})
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [smsList, localMessages, chatId, allSmsList.length, currentUserId]);
+	}, [smsList, localMessages, chatId, allSmsList, currentUserId, who]);
 
 	// Функция для скролла к последнему сообщению
 	const scrollToBottom = useCallback(() => {
@@ -122,17 +123,17 @@ export default function ChatContent({ chatId }) {
 		}
 	}, [localMessages, scrollToBottom]);
 
-	useEffect(() => {
-		// Отладочная логика
-		console.log('🔍 ChatContent Debug:', {
-			chatId,
-			currentUserId,
-			allSmsListLength: allSmsList.length,
-			smsListLength: smsList.length,
-			loading,
-			error,
-		});
-	}, [allSmsList, smsList, currentUserId, chatId, loading, error]);
+	// useEffect(() => {
+	// 	// Отладочная логика
+	// 	console.log('🔍 ChatContent Debug:', {
+	// 		chatId,
+	// 		currentUserId,
+	// 		allSmsListLength: allSmsList.length,
+	// 		smsListLength: smsList.length,
+	// 		loading,
+	// 		error,
+	// 	});
+	// }, [allSmsList, smsList, currentUserId, chatId, loading, error]);
 
 	const handleSend = useCallback(
 		async (text) => {
@@ -186,18 +187,7 @@ export default function ChatContent({ chatId }) {
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.chatContent}>
 				<div className={styles.chatHeader}>
-					<span>
-						{chatId === 'saved'
-							? 'Сохранённое'
-							: (() => {
-									const msg = allSmsList.find((m) => m.chat_id === chatId);
-									if (!msg) return 'Собеседник';
-									const companion = msg.from?.id === currentUserId ? msg.to : msg.from;
-									return (
-										`${companion?.surname || ''} ${companion?.name || ''}`.trim() || 'Собеседник'
-									);
-							  })()}
-					</span>
+					<span>{chatId === 'saved' ? 'Сохранённое' : who}</span>
 				</div>
 				<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 					{loading && allMessages.length === 0 ? (
