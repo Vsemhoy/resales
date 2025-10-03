@@ -449,7 +449,7 @@ const handleChangeData = (changed_data) => {
                 type: 'text',
                 value: typeEac,
                 max: 250,
-                required: false,
+                required: true,
                 allowClear: false,
                 placeholder: '',
                 name: 'typepaec',
