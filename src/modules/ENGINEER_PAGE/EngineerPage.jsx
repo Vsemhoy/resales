@@ -460,7 +460,7 @@ const EngineerPage = (props) => {
     }
   };
 
-  const handleCopySpecificationIntoBid = async () => {
+  const handleCopySpecificationIntoBid = async (value) => {
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/intoBid/' + bidId, {
@@ -500,7 +500,7 @@ const EngineerPage = (props) => {
 
       case 2:
       case 3:
-        handleCopySpecificationIntoBid().then( () => {setOpenCopySpecification(false)});
+        handleCopySpecificationIntoBid(spec_id).then( () => {setOpenCopySpecification(false)});
         break;
     }
     console.log(spec_id, type);
