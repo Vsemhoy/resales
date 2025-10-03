@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
-import { nanoid } from 'nanoid';
-import { useUserData } from '../../context/UserDataContext';
+// import { nanoid } from 'nanoid';
+// import { useUserData } from '../../context/UserDataContext';
 
 export const useSendSms = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [success, setSuccess] = useState(false);
-	const { userdata } = useUserData();
-	const currentUserId = userdata?.user?.id;
+	// const { userdata } = useUserData();
+	// const currentUserId = userdata?.user?.id;
 
-	const sendSms = async ({ to, text, answer = null || false || true }) => {
+	const sendSms = async ({ to, text, answer }) => {
 		setLoading(true);
 		setError(null);
 		setSuccess(false);
@@ -35,7 +35,6 @@ export const useSendSms = () => {
 				})
 			);
 			console.log(to);
-			// const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData); // НЕ УДАЛЯТЬ
 			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
 
 			console.log('[useSendSms] Ответ от сервера:', response);

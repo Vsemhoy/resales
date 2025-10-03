@@ -440,13 +440,13 @@ const EngineerPage = (props) => {
     setModelNameExtra('');
   };
 
-  const handleCopySpecification = async () => {
+  const handleCopySpecification = async (spec_id) => {
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/copy/' + bidId, {
           _token: CSRF_TOKEN,
           data: {
-            bidId: value
+            bidId: spec_id
           }
         });
 
@@ -460,13 +460,14 @@ const EngineerPage = (props) => {
     }
   };
 
-  const handleCopySpecificationIntoBid = async () => {
+  const handleCopySpecificationIntoBid = async (value) => {
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/intoBid/' + bidId, {
           _token: CSRF_TOKEN,
           data: {
-            bidId: value
+            bidId: value,
+            copyType,
           }
         });
 
@@ -494,11 +495,12 @@ const EngineerPage = (props) => {
 
     switch (type){
       case 1:
-        handleCopySpecification().then( () => {setOpenCopySpecification(false)});
+        handleCopySpecification(spec_id).then( () => {setOpenCopySpecification(false)});
         break;
 
       case 2:
-        handleCopySpecificationIntoBid().then( () => {setOpenCopySpecification(false)});
+      case 3:
+        handleCopySpecificationIntoBid(spec_id).then( () => {setOpenCopySpecification(false)});
         break;
     }
     console.log(spec_id, type);
@@ -628,7 +630,7 @@ const EngineerPage = (props) => {
                                 disabled={editMode}
                                 onClick={() => {
                                   setOpenAddIntoBidSpecification(true);
-                                  setCopyType(1);
+                                  setCopyType(3);
                                 }}
                                 icon={<ProfileOutlined className={'sa-engineer-page-btn-icon'}/>}
                         ></Button>
@@ -932,7 +934,7 @@ const EngineerPage = (props) => {
 
         {openAddIntoBidSpecification && (
             <CopyMessageView
-                customText={copyType === 1 ? "Введите ID организации, для которой нужно создать кп" : "Введите ID заявки, в которую нужно скопировать данные"}
+                customText={copyType === 3 ? "Введите ID организации, для которой нужно создать кп" : "Введите ID заявки, в которую нужно скопировать данные"}
                 openCopySpecification={openAddIntoBidSpecification}
                 handleCancel={handleCancel}
                 handleOk={handleOk}
