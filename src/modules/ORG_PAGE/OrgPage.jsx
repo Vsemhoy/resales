@@ -191,6 +191,7 @@ const OrgPage = (props) => {
 	}, [isAlertVisible]);
 
 	useEffect(()=>{
+		setIsSmthChanged(false);
 		console.log("ORG_ID:", itemId);
 	}, [itemId])
 
@@ -762,7 +763,7 @@ const OrgPage = (props) => {
 
 
 		useEffect(() => {
-			if (tempCallsData || tempNotesData || tempProjectsData || tempMainData ||
+			if (tempCallsData || tempNotesData || tempProjectsData || !IsSameComparedSomeOrgData(tempMainData, baseMainData)  ||
 				tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
 				tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
 				tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
