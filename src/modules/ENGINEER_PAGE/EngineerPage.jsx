@@ -471,8 +471,16 @@ const EngineerPage = (props) => {
           }
         });
 
-        setOpenAddIntoBidSpecification(true);
+        setOpenAddIntoBidSpecification(false);
 
+        setIsAlertVisible(true);
+        setAlertMessage('Успех!');
+        setAlertDescription(response.data.message);
+        setAlertType('success');
+
+        setTimeout(() => {
+          window.open(BASE_ROUTE + '/api/sales/engineer/' + response.data.content.bid_id);
+        }, 500);
         // window.open(BASE_ROUTE + '/api/sales/engineer/' + response.data.newId);
       } catch (e) {
         console.log(e);
