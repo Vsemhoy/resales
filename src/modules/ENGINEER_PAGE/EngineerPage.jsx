@@ -440,13 +440,13 @@ const EngineerPage = (props) => {
     setModelNameExtra('');
   };
 
-  const handleCopySpecification = async () => {
+  const handleCopySpecification = async (spec_id) => {
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/copy/' + bidId, {
           _token: CSRF_TOKEN,
           data: {
-            bidId: value
+            bidId: spec_id
           }
         });
 
@@ -495,7 +495,7 @@ const EngineerPage = (props) => {
 
     switch (type){
       case 1:
-        handleCopySpecification().then( () => {setOpenCopySpecification(false)});
+        handleCopySpecification(spec_id).then( () => {setOpenCopySpecification(false)});
         break;
 
       case 2:
