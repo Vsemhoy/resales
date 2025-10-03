@@ -10,11 +10,13 @@ export const useSendSms = () => {
 	const [success, setSuccess] = useState(false);
 	// const { userdata } = useUserData();
 	// const currentUserId = userdata?.user?.id;
+	const [newId, setNewId] = useState(null);
 
 	const sendSms = async ({ to, text, answer }) => {
 		setLoading(true);
 		setError(null);
 		setSuccess(false);
+		setNewId(null);
 
 		try {
 			if (!PRODMODE) {
@@ -41,6 +43,8 @@ export const useSendSms = () => {
 
 			if (response.status === 200) {
 				setSuccess(true);
+				setNewId(response.data.id);
+
 				return { success: true, data: response.data };
 			} else {
 				throw new Error('Сервер вернул некорректный статус: ' + response.status);
@@ -79,5 +83,6 @@ export const useSendSms = () => {
 		loading,
 		error,
 		success,
+		newId,
 	};
 };
