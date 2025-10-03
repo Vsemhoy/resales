@@ -196,4 +196,5 @@ export default function ChatContent({chatId}) {
             </Footer>
         </Layout>
     );
+
 }
