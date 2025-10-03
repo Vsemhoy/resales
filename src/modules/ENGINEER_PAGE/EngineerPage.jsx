@@ -99,6 +99,7 @@ const EngineerPage = (props) => {
   const [activeRole, setActiveRole] = useState(0);
   const [openCopySpecification, setOpenCopySpecification] = useState(false);
   const [openAddIntoBidSpecification, setOpenAddIntoBidSpecification] = useState(false);
+  const [copyType, setCopyType] = useState(1);
   const [value, setValue] = useState(0);
   const [superUser, setSuperUser] = useState(false);
   const [modelIdExtra, setModelIdExtra] = useState(null);
@@ -625,6 +626,10 @@ const EngineerPage = (props) => {
                                 color="primary"
                                 variant="outlined"
                                 disabled={editMode}
+                                onClick={() => {
+                                  setOpenAddIntoBidSpecification(true);
+                                  setCopyType(1);
+                                }}
                                 icon={<ProfileOutlined className={'sa-engineer-page-btn-icon'}/>}
                         ></Button>
                       </Tooltip>
@@ -633,7 +638,10 @@ const EngineerPage = (props) => {
                                 color="primary"
                                 variant="outlined"
                                 disabled={editMode}
-                                onClick={() => {setOpenAddIntoBidSpecification(true);}}
+                                onClick={() => {
+                                  setOpenAddIntoBidSpecification(true);
+                                  setCopyType(2);
+                                }}
                                 icon={<FileAddOutlined className={'sa-engineer-page-btn-icon'}/>}
                         ></Button>
                       </Tooltip>
@@ -924,11 +932,11 @@ const EngineerPage = (props) => {
 
         {openAddIntoBidSpecification && (
             <CopyMessageView
-                customText={"Введите ID заявки, в которую нужно скопировать данные"}
+                customText={copyType === 1 ? "Введите ID организации, для которой нужно создать кп" : "Введите ID заявки, в которую нужно скопировать данные"}
                 openCopySpecification={openAddIntoBidSpecification}
                 handleCancel={handleCancel}
                 handleOk={handleOk}
-                type={2}
+                type={copyType}
                 handleSetValue={handleSetValue}
             />
         )}
