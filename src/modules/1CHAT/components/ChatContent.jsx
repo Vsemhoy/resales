@@ -41,7 +41,7 @@ export default function ChatContent({ chatId }) {
 	useEffect(() => {
 		const interval = setInterval(() => {
 			refetch();
-		}, 15000);
+		}, 30000);
 
 		return () => clearInterval(interval);
 	}, [refetch]);
@@ -65,7 +65,8 @@ export default function ChatContent({ chatId }) {
 	// const [incomingMessages, setIncomingMessages] = useState([]);
 
 	const allMessages = useMemo(() => {
-		const filteredLocal = localMessages;
+		const existingIds = new Set(allSmsList.map((msg) => msg.id.toString()));
+		const filteredLocal = localMessages.filter((lMsg) => !existingIds.has(lMsg.id.toString()));
 		const combined = [...allSmsList, ...filteredLocal];
 
 		return combined
