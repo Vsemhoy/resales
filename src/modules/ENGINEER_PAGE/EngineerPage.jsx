@@ -471,13 +471,22 @@ const EngineerPage = (props) => {
           }
         });
 
-        setOpenAddIntoBidSpecification(true);
+        setOpenAddIntoBidSpecification(false);
 
-        // window.open(BASE_ROUTE + '/api/sales/engineer/' + response.data.newId);
+        setIsAlertVisible(true);
+        setAlertMessage('Успех!');
+        setAlertDescription(response.data.message);
+        setAlertType('success');
+
+        setTimeout(() => {
+          window.open(BASE_ROUTE + '/bids/' + response.data.content.bid_id, '_blank');
+        }, 500);
       } catch (e) {
         console.log(e);
         setTimeout(() => setIsLoadingSmall(false), 500);
       }
+    } else {
+      window.open(BASE_ROUTE + '/bids/' + 1, '_blank');
     }
   };
   const handleCancel = () => {
@@ -491,6 +500,7 @@ const EngineerPage = (props) => {
     setValue(0);
   };
   const handleSetValue = (spec_id, type) => {
+    handleOk();
     setValue(spec_id);
 
     switch (type){
@@ -627,7 +637,7 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
-                                disabled={editMode}
+                                disabled={editMode && +bidPlace === 4}
                                 onClick={() => {
                                   setOpenAddIntoBidSpecification(true);
                                   setCopyType(3);
@@ -639,7 +649,7 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
-                                disabled={editMode}
+                                disabled={editMode  && +bidPlace === 4}
                                 onClick={() => {
                                   setOpenAddIntoBidSpecification(true);
                                   setCopyType(2);
