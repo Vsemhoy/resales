@@ -138,3 +138,80 @@ export const FlushOrgData = (newData, keysToFlush = MAIN_ORG_DATA_TO_FLUSH) => {
   }
   return cleaned;
 };
+
+/**
+ * Сравнивает два массива объектов по ID и содержимому.
+ * 
+ * @param {Array} newArray - Новый массив объектов
+ * @param {Array} oldArray - Старый массив объектов
+ * @param {Array<string>} ignoreKeys - Ключи, которые нужно игнорировать при сравнении объектов
+ * @returns {boolean} - true, если массивы эквивалентны; иначе false
+ */
+export const IsSameComparedOrgArrays = (newArray, oldArray, ignoreKeys = []) => {
+  // Проверка, что оба аргумента — массивы
+  if (!Array.isArray(newArray) || !Array.isArray(oldArray)) {
+    console.error('Оба аргумента должны быть массивами');
+    return false;
+  }
+
+  // Если количество элементов разное — сразу false
+  if (newArray.length !== oldArray.length) {
+    return false;
+  }
+
+  // Если оба пустые — считаем равными
+  if (newArray.length === 0) {
+    return true;
+  }
+
+  // Создаём мапы по id для быстрого поиска
+  const newMap = new Map();
+  const oldMap = new Map();
+
+  // Заполняем newMap и проверяем уникальность id
+  for (const item of newArray) {
+    if (typeof item !== 'object' || item === null || !('id' in item)) {
+      console.error('Элемент в newArray не содержит id или не является объектом:', item);
+      return false;
+    }
+    const id = item.id;
+    if (newMap.has(id)) {
+      console.error(`Дублирующийся id "${id}" в newArray`);
+      return false;
+    }
+    newMap.set(id, item);
+  }
+
+  // Заполняем oldMap и проверяем уникальность id
+  for (const item of oldArray) {
+    if (typeof item !== 'object' || item === null || !('id' in item)) {
+      console.error('Элемент в oldArray не содержит id или не является объектом:', item);
+      return false;
+    }
+    const id = item.id;
+    if (oldMap.has(id)) {
+      console.error(`Дублирующийся id "${id}" в oldArray`);
+      return false;
+    }
+    oldMap.set(id, item);
+  }
+
+  // Проверяем, что все id из newArray есть в oldArray (и наоборот — из-за одинаковой длины достаточно одного направления)
+  for (const id of newMap.keys()) {
+    if (!oldMap.has(id)) {
+      console.error(`id "${id}" присутствует в newArray, но отсутствует в oldArray`);
+      return false;
+    }
+  }
+
+  // Теперь сравниваем каждый объект по id с учётом ignoreKeys
+  for (const [id, newItem] of newMap.entries()) {
+    const oldItem = oldMap.get(id);
+    // Используем  метод сравнения объектов
+    if (!IsSameComparedSomeOrgData(newItem, oldItem, ignoreKeys)) {
+      return false;
+    }
+  }
+
+  return true;
+};
