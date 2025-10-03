@@ -30,6 +30,7 @@ const OrgCallEditorSectionBox = (props) => {
   const [subscriber, setSubscriber] = useState("");
   const [post,       setPost] = useState("");
   const [phone,      setPhone] = useState("");
+  const [addPhone,      setAddPhone] = useState("");
   const [result,     setResult] = useState("");
   const [nexCallDate, setNextCallDate] = useState(null);
   const [nexType, setNextType] = useState(null);
@@ -49,7 +50,30 @@ const OrgCallEditorSectionBox = (props) => {
   const [targetOrgUserId, setTargetOrgUserId] = useState(0);
 
   const [trigger, setTrigger] = useState(0);
+  const [prevPhone, setPrevPhone] = useState(null);
   // DATA    // DATA      // DATA      // DATA  
+
+  const bracketSplitter = (number) => {
+    let pho = '';
+    let add = '';
+
+    const splitter = "(";
+    let result = number.split(splitter);
+
+    if (result[0] && result[0].trim() !== "")
+    {
+      pho = result[0].trim();
+      
+      if (result[1] && result[1] !== ''){
+        add = result[1].replace(')', '').trim();
+      }
+
+    } else {
+      pho = number;
+    }
+    console.log('SPLITAK', {number: pho, add: add});
+    return {number: pho, add: add};
+  }
 
   useEffect(() => {
     if (props.data?.id) {
@@ -65,11 +89,23 @@ const OrgCallEditorSectionBox = (props) => {
       setDepart(props.data.id8ref_departaments);
       setSubscriber(props.data.subscriber);
       setPost(props.data.post);
-      setPhone(props.data.phone);
+      let phn = bracketSplitter(props.data.phone);
+
+      let pho = phn.number;
+      let add = phn.add;
+
+      console.log(phn);
+
+      setPhone(pho);
+      setAddPhone(add);
+
       setResult(props.data.result);
       setNextCallDate(props.data?.next_call_date ? props.data?.next_call_date : null);
       setNextType(props.next_type?.next_type ? props.data?.next_type : null);
       setSaveContact(props.data?._savecontact ? props.data?._savecontact : false);
+      setTimeout(() => {
+        setPrevPhone(pho);
+      }, 1000);
     }
   }, [props.data]);
 
@@ -93,8 +129,9 @@ const OrgCallEditorSectionBox = (props) => {
     }
   }, []);
 
-  useEffect(() => {
 
+
+  useEffect(() => {
     if (props.org_users) {
      
       let usess = [];
@@ -112,13 +149,12 @@ const OrgCallEditorSectionBox = (props) => {
             value: element.value,
             label: nm
           });
-
         }
-
       }
       setOrgUsers(usess);
     }
   }, [props.org_users]); // dependency is correct.
+
 
 
   useEffect(() => {
@@ -145,6 +181,7 @@ const OrgCallEditorSectionBox = (props) => {
       label: 'Встреча'
     }
   ];
+
 
   /**
    * Этот злой стейт отвечает за поиск телефонов для выбранного гуся
@@ -195,6 +232,8 @@ const OrgCallEditorSectionBox = (props) => {
         console.log('contactstelephones', element);
         if (!of.includes(element.number) && element.number !== null){
           let ltlt = element.number + `${element.ext !== null && element.ext !== "" ? (" (" + element.ext + ")") : ""}`;
+          // let vall = element.number + `${element.number !== null && element.number !== '' &&
+          //    element.ext !== null && element.ext !== "" ? ("," + element.ext ) : ""}`;
           of.push({
             key: 'fofodfofof_' + element.id,
             value: ltlt,
@@ -244,13 +283,24 @@ const OrgCallEditorSectionBox = (props) => {
       setPost(changed_data.post.trim());
       } else if (changed_data.date !== undefined) {
       setDate(changed_data.date);
-    } else if (changed_data.phone !== undefined) {
-      setPhone(changed_data.phone);
+
     } else if (changed_data.result !== undefined) {
       setResult(changed_data.result);
     }  else if (changed_data._savecontact !== undefined) {
       setSaveContact(changed_data._savecontact);
-    }  
+    } else if (changed_data.phone !== undefined) {
+      let splitak = bracketSplitter(changed_data.phone);
+      console.log('splitak', splitak);
+        setPhone(splitak.number);
+      if (splitak.add){
+         setAddPhone(splitak.add);
+      }
+
+    }  else if (changed_data.add_phone){
+      setAddPhone(changed_data.add_phone);
+    }
+
+
   }
 
 
@@ -268,10 +318,15 @@ const OrgCallEditorSectionBox = (props) => {
       resultObject.result = result;
       resultObject.id8ref_departaments = depart;
       resultObject._savecontact = saveContact;
-      resultObject.phone = phone;
       resultObject.next_call_date = nexCallDate;
       resultObject.next_type = nexType;
+      resultObject.phone = phone;
 
+      if (addPhone && addPhone.trim() !== '' && phone && phone.trim() !== ''){
+        resultObject.phone = phone + ' (' + addPhone + ')';
+
+      }
+      
 
       if (props.on_change) {
         props.on_change(id, resultObject);
@@ -290,8 +345,33 @@ const OrgCallEditorSectionBox = (props) => {
       result,     
       saveContact,
       nexCallDate,
-      nexType
+      nexType,
+      addPhone
   ]);
+
+
+  const handleChangeNumbers = (ev)=> {
+    console.log('ONCHANGER !!!!!!!!!!!', ev.phone);
+    if (ev.phone){
+      let splitak = bracketSplitter(ev.phone);
+      console.log('splitak', splitak.number);
+        setPrevPhone(splitak.number);
+        setTimeout(() => {
+          setPhone(splitak.number);
+      }, 300);
+      if (splitak.add){
+         setAddPhone(splitak.add);
+      }
+    }
+  }
+
+
+  useEffect(() => {
+    if (prevPhone !== null && prevPhone !== phone){
+      setAddPhone('');
+      setPrevPhone(phone);
+    };
+  }, [phone]);
 
 
   return (
@@ -394,7 +474,7 @@ const OrgCallEditorSectionBox = (props) => {
 
       <OrgPageSectionRow
         key={'calmet7' + id + props.data._type}
-        titles={['Телефон']}
+        titles={['Телефон', "Добавочный"]}
         edit_mode={editMode}
         datas={[
           {
@@ -407,9 +487,19 @@ const OrgCallEditorSectionBox = (props) => {
             name: 'phone',
             options: orgPhones,
             onClick: ()=>{setTrigger(dayjs().unix())}
+          },
+          {
+            type: OPS_TYPE.STRING,
+            value: addPhone,
+            required: false,
+            max: 12,
+            allowClear: true,
+            placeholder: '',
+            name: 'add_phone',
           }
         ]}
-        // on_change={handleChangeData}
+        on_change={handleChangeNumbers}
+
         on_blur={handleChangeData}
       />
 
@@ -473,7 +563,7 @@ const OrgCallEditorSectionBox = (props) => {
       <OrgPageSectionRow
         key={'calmet44' + id + props.data._type}
         edit_mode={editMode}
-        titles={['Дата следующего звонка', 'Тип след. события']}
+        titles={['Дата следующего контакта', 'Тип след. события']}
         datas={[
           {
             type: OPS_TYPE.DATE,
