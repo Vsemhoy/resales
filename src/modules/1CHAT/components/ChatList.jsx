@@ -4,7 +4,7 @@ import { useSms } from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
-import { PRODMODE } from '../../../config/config';
+// import { PRODMODE } from '../../../config/config';
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
@@ -15,9 +15,10 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		loading,
 		error,
 	} = useSms({
-		url: '/api/sms',
+		// url: '/api/sms',
+		chatId: 0,
 		mock: MOCK,
-        search
+		search,
 	});
 
 	// Функция для определения собеседника
@@ -34,17 +35,6 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			return sms.from;
 		};
 	}, [currentUserId]);
-
-	// ОТЛАДКА
-	console.log('🔍 ChatList Debug:', {
-		smsList,
-		smsListLength: smsList.length,
-		currentUserId,
-		selectedChatId,
-		search,
-		loading,
-		error,
-	});
 
 	// console.log("ПОПОВЛОАТЛОВЫАЫВОТЛАТЫВАВЫ", search);
 
@@ -93,11 +83,11 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	// 		}
 	// 	});
 
-	// 	const result = Object.values(uniqueChatsMap).sort((a, b) => {
-	// 		const timeA = a.updated_at || a.created_at;
-	// 		const timeB = b.updated_at || b.created_at;
-	// 		return timeB - timeA;
-	// 	});
+		// const result = Object.values(uniqueChatsMap).sort((a, b) => {
+		// 	const timeA = a.updated_at || a.created_at;
+		// 	const timeB = b.updated_at || b.created_at;
+		// 	return timeB - timeA;
+		// });
 
 	// 	console.log('💬 Final unique chats:', result);
 
@@ -133,14 +123,6 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 					);
 
 					const isActive = chat.chat_id === selectedChatId;
-
-					console.log('💬 Chat item:', {
-						chatId: chat.chat_id,
-						isSaved,
-						companion,
-						isActive,
-						selectedChatId,
-					});
 
 					return (
 						<li

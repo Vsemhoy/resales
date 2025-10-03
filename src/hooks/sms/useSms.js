@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
-import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
+import {useEffect, useState} from 'react';
+import {CSRF_TOKEN, PRODMODE} from '../../config/config.js';
+import {PROD_AXIOS_INSTANCE} from '../../config/Api.js';
 
 export const useSms = ({ chatId = null, mock = {}, search }) => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [who, setWho] = useState(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			setLoading(true);
 			setError(null);
-
-			console.log("ПИСЯ К НОСУ!!!!!!", search)
-
+			setWho(null);
 			try {
 				let responseData = [];
 
@@ -21,14 +20,17 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 					try {
 						const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
 						const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
-							data: {search},
+							data: { search },
 							_token: CSRF_TOKEN,
 						});
 
-						console.log(`[useSms] Ответ от сервера (${endpoint}):`, response.data);
+                        console.log(`[useSms] Полный ответ от сервера:`, response.data);
+                        console.log(`[useSms] Структура content:`, response?.data?.content);
 
-						const sms = response?.data?.content?.sms;
-
+						const sms = chatId ? response?.data?.content?.messages : response?.data?.content?.sms;
+						if (chatId) {
+							setWho(response?.data?.content?.who);
+						}
 						if (Array.isArray(sms)) {
 							responseData = sms;
 						} else {
@@ -44,16 +46,13 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 				} else {
 					console.log('[useSms] Используются MOCK-данные (dev mode)');
 
-					// ИСПРАВЛЕНИЕ: убрал вызов mock как функции
 					const mockData = mock; // Просто используем объект как есть
 
-					console.log('[useSms] MOCK-данные:', mockData);
+                    console.log('[useSms] MOCK-данные:', mockData);
 
 					// Для chatId можно расширить мок или фильтровать
-					const sms = chatId
-						? mockData?.content?.sms?.filter((msg) => msg.chat_id === chatId)
-						: mockData?.content?.sms;
-
+					const sms = chatId ? mockData?.content?.messages : mockData?.content?.sms;
+					setWho('Lorem lsdfgjls');
 					if (Array.isArray(sms)) {
 						responseData = sms;
 					} else {
@@ -62,19 +61,19 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 					}
 				}
 
-				console.log('[useSms] Установка данных:', responseData);
-				setData(responseData);
-			} catch (err) {
-				console.error('[useSms] Ошибка при загрузке данных:', err);
-				setError(err.message || 'Неизвестная ошибка');
-				setData([]);
-			} finally {
-				setLoading(false);
-			}
-		};
+                console.log('[useSms] Установка данных:', responseData);
+                setData(responseData);
+            } catch (err) {
+                console.error('[useSms] Ошибка при загрузке данных:', err);
+                setError(err.message || 'Неизвестная ошибка');
+                setData([]);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-		fetchData();
-	}, [chatId, mock, search]);
+        fetchData();
+    }, [chatId, mock, search]);
 
-	return { data, loading, error };
+	return { data, who, loading, error };
 };
