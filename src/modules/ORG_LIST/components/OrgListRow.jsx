@@ -65,10 +65,11 @@ const OrgListRow = (props) => {
 	useEffect(() => {
 		if (orgData){
 			let newArr = [];
-			if ((orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company) &&
+			if (
+				((orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company) &&
 			(userdata?.acls?.includes(138) // Разрешено брать кураторство
 		 || userdata?.acls?.includes(137) // Рукотдела продаж
-		) 
+		) ) &&  userdata?.user?.id !== orgData?.curator_id 
 		){
 				newArr.push(
 							{

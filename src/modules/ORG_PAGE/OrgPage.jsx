@@ -289,10 +289,10 @@ const OrgPage = (props) => {
 			let itt  = itemId;
 			if (PRODMODE) {
 				setItemId(0);
+				setBaseMainData(null);
 				
 				
 				setTimeout(() => {
-					setBaseMainData(null);
 					setItemId(itt);
 				}, 1200);
 				setTimeout(() => {
@@ -302,22 +302,23 @@ const OrgPage = (props) => {
 					get_org_calls_action(itt);
 					get_projects_data_action(itt);
 
-				}, 500);
+				}, 1000);
 				} else {
-					setTimeout(() => {
-						setItemId(0);
-						setBaseMainData(null);
-						
-					}, 1200);
 
-					setItemId(itt);
+					setItemId(0);
+					setBaseMainData(null);
+					setTimeout(() => {
+						
+						
+						setItemId(itt);
+					}, 1200);
 					setTimeout(() => {
 						setBaseMainData(FlushOrgData(ORGLIST_MODAL_MOCK_MAINTAB));
 						setBaseNotesData(MODAL_NOTES_LIST);
 						setBaseProjectsData(MODAL_PROJECTS_LIST);
 						setBaseCallsData(MODAL_CALLS_LIST);
 	
-					}, 500);
+					}, 1000);
 
 					clearTemps();
 				}
@@ -389,6 +390,7 @@ const OrgPage = (props) => {
 				// if (props.changed_user_data){
 				//     props.changed_user_data(response.data);
 				// }
+				// setBaseMainData(FlushOrgData(response.data.content));
 				setBaseMainData(FlushOrgData(response.data.content));
 				setLoading(false);
 				
@@ -612,15 +614,23 @@ const OrgPage = (props) => {
 			console.log('tempMainData', tempMainData)
 			if (tempMainData){
 				saveData.orgData = tempMainData;
+			} else {
+				saveData.orgData = baseMainData;
 			}
 			if (tempProjectsData && tempProjectsData.length > 0){
 				saveData.projects = tempProjectsData;
+			} else {
+				saveData.projects = [];
 			}
 			if (tempCallsData && tempCallsData.length > 0){
 				saveData.calls = tempCallsData;
+			} else {
+				saveData.calls = [];
 			}
 			if (tempNotesData && tempNotesData.length > 0){
 				saveData.notes = tempNotesData;
+			} else {
+				saveData.notes = [];
 			}
 			
 			update_data_action(saveData);
@@ -941,7 +951,7 @@ const OrgPage = (props) => {
 									</div>
 								)}
 
-								{!editMode && (
+								{!editMode && userdata?.user?.id !== baseMainData?.curator?.id && (
 									<Button style={{marginRight: '12px'}}
 										onClick={handleCallBecomeCurator}>
 											Запрос.Кураторство
