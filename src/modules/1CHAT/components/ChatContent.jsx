@@ -30,11 +30,20 @@ export default function ChatContent({ chatId }) {
 		loading,
 		error,
 		who,
-		// refetch,
+		refetch,
 	} = useSms({
 		chatId,
 		mock: CHAT_MOCK,
 	});
+
+	// Polling для обновления сообщений
+	useEffect(() => {
+		const interval = setInterval(() => {
+			refetch();
+		}, 5000);
+
+		return () => clearInterval(interval);
+	}, [refetch]);
 
 	// Фильтруем сообщения по chat_id вручную
 	const smsList = useMemo(() => {
