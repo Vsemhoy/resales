@@ -454,9 +454,9 @@ const ProjectsTabPage = (props) => {
   /** Отптавка данных родительскому компоненту */
   useEffect(() => {
     if (editMode && props.on_change_data){
-      if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
+      // if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
         props.on_change_data('projects', baseData.concat(temporaryUnits))
-      }
+      // }
     }
   }, [baseData, temporaryUnits]);
 
