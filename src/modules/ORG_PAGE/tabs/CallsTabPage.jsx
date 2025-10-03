@@ -80,9 +80,9 @@ const CallsTabPage = (props) => {
 
 	useEffect(() => {
 		if (editMode && props.on_change_data){
-			if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
+			// if (temporaryUnits.length > 0 || editedItemsIds.length > 0){
 				props.on_change_data('calls', baseData.concat(temporaryUnits))
-			}
+			// }
 		}
 	}, [baseData, temporaryUnits]);
 
