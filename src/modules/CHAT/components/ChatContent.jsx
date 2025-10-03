@@ -64,9 +64,9 @@ export default function ChatContent({chatId}) {
         message.info('Сообщения обновлены');
     }, []);
 
-    const allMessages = useMemo(() => {
-        const filteredLocal = localMessages.filter((msg) => msg.chat_id === chatId);
-        const combined = [...smsList, ...filteredLocal];
+	const allMessages = useMemo(() => {
+		const filteredLocal = localMessages.filter((msg) => msg.chatId === chatId);
+		const combined = [...smsList, ...filteredLocal];
 
         return combined
             .map((msg) => {

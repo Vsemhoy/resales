@@ -45,6 +45,11 @@ ul {
 }
 
 .sidebar-layout {
+	border-right: 1px solid #c1c1c1;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: 5px;
     display: flex;
     flex-direction: column;
     height: 100%;

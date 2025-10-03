@@ -83,11 +83,11 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	// 		}
 	// 	});
 
-	// 	const result = Object.values(uniqueChatsMap).sort((a, b) => {
-	// 		const timeA = a.updated_at || a.created_at;
-	// 		const timeB = b.updated_at || b.created_at;
-	// 		return timeB - timeA;
-	// 	});
+		// const result = Object.values(uniqueChatsMap).sort((a, b) => {
+		// 	const timeA = a.updated_at || a.created_at;
+		// 	const timeB = b.updated_at || b.created_at;
+		// 	return timeB - timeA;
+		// });
 
 	// 	console.log('💬 Final unique chats:', result);
 
@@ -123,14 +123,6 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 					);
 
 					const isActive = chat.chat_id === selectedChatId;
-
-					console.log('💬 Chat item:', {
-						chatId: chat.chat_id,
-						isSaved,
-						companion,
-						isActive,
-						selectedChatId,
-					});
 
 					return (
 						<li
