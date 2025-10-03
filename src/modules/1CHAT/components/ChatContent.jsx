@@ -1,5 +1,8 @@
 import styles from './style/Chat.module.css';
+// import { PRODMODE } from '../../../config/config';
+
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+// import { usePolling } from '../../../hooks/sms/usePolling';
 import { useUserData } from '../../../context/UserDataContext';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useSms } from '../../../hooks/sms/useSms';
@@ -8,7 +11,6 @@ import { Layout, message } from 'antd';
 // import { SyncOutlined } from '@ant-design/icons';
 import { nanoid } from 'nanoid';
 import { ChatInput } from './ChatInput';
-// import { MOCK } from '../mock/mock';
 import { CHAT_MOCK } from '../mock/mock';
 
 // Импортируем новые компоненты сообщений
@@ -25,9 +27,9 @@ export default function ChatContent({ chatId }) {
 
 	const {
 		data: allSmsList = [],
-		who,
 		loading,
 		error,
+		who,
 		// refetch,
 	} = useSms({
 		chatId,
@@ -35,75 +37,70 @@ export default function ChatContent({ chatId }) {
 	});
 
 	// Фильтруем сообщения по chat_id вручную
-	// const smsList = useMemo(() => {
-	// 	// if (!chatId) return [];
+	const smsList = useMemo(() => {
+		if (!chatId) return [];
 
-	// 	const filtered = allSmsList.filter((msg) => {
-	// 		const msgChatId = parseInt(msg.chatId);
-	// 		const targetChatId = parseInt(chatId);
-	// 		return msgChatId === targetChatId;
-	// 	});
+		const filtered = allSmsList.filter((msg) => {
+			const msgChatId = parseInt(msg.chat_id);
+			const targetChatId = parseInt(chatId);
+			return msgChatId === targetChatId;
+		});
 
-	//           const msgChatId = msg.chatId ? parseInt(msg.chatId) : null;
-	//           const targetChatId = parseInt(chatId);
+		console.log('🎯 Filtered messages for chat', chatId, ':', filtered);
+		return filtered;
+	}, [allSmsList, chatId]);
 
-	//           if (isNaN(msgChatId) || isNaN(targetChatId)) {
-	//               console.log('⚠️ Некорректный chatId:', {msgChatId, targetChatId, msg});
-	//               return false;
-	//           }
+	const { sendSms } = useSendSms();
+	const [localMessages, setLocalMessages] = useState([]);
 
-		const allMessages = useMemo(() => {
-								if (!smsList) return [];
+	const allMessages = useMemo(() => {
+		const filteredLocal = localMessages;
+		const combined = [...allSmsList, ...filteredLocal];
 
-								// Определяем отправителя
-								const isSelf = msg.from_id === currentUserId;
-								const role = isLocal ? 'self' : isSelf ? 'self' : 'companion';
+		console.log('🔄 Processing messages:', {
+			allSmsCount: allSmsList.length,
+			filteredCount: smsList.length,
+			localCount: filteredLocal.length,
+			combinedCount: combined.length,
+			chatId,
+		});
 
-								let senderName = 'Неизвестный';
-								if (role === 'self') {
-									senderName = 'Вы';
-								} else {
-									senderName = who;
-								}
+		return combined
+			.map((msg) => {
+				const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
 
-								return {
-									id: msg.id || generateUUID(),
-									text: msg.text || '',
-									timestamp,
-									time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-									role,
-									senderName,
-									isLocal,
-									// Добавляем статус отправки
-									isSending: msg.isSending || false,
-								};
-							}).sort((a, b) => a.timestamp - b.timestamp);
-		}, [localMessages, chatId, allSmsList, currentUserId]);
+				let timestamp;
+				if (isLocal) {
+					timestamp = msg.timestamp;
+				} else {
+					timestamp = (msg.updated_at || msg.created_at) * 1000;
+				}
 
-	//             // Определяем отправителя
-	//             const isSelf = msg.from_id === currentUserId || msg.from?.id === currentUserId;
-	//             const role = isLocal ? 'self' : isSelf ? 'self' : 'companion';
+				// Определяем отправителя
+				const isSelf = msg.from_id === currentUserId;
+				const role = isLocal ? 'self' : isSelf ? 'self' : 'companion';
 
-	//             let senderName = 'Неизвестный';
-	//             if (role === 'self') {
-	//                 senderName = 'Вы';
-	//             } else {
-	//                 senderName = who || 'Неизвестный';
-	//             }
+				let senderName = 'Неизвестный';
+				if (role === 'self') {
+					senderName = 'Вы';
+				} else {
+					senderName = who;
+				}
 
-	//             return {
-	//                 id: msg.id || generateUUID(),
-	//                 text: msg.text || '',
-	//                 timestamp,
-	//                 time: new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}),
-	//                 role,
-	//                 senderName,
-	//                 isLocal,
-	//                 isSending: msg.isSending || false,
-	//             };
-	//         })
-	//         .sort((a, b) => a.timestamp - b.timestamp);
-	// }, [smsList, localMessages, chatId, currentUserId, who]);
+				return {
+					id: msg.id || generateUUID(),
+					text: msg.text || '',
+					timestamp,
+					time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+					role,
+					senderName,
+					isLocal,
+					// Добавляем статус отправки
+					isSending: msg.isSending || false,
+				};
+			})
+			.sort((a, b) => a.timestamp - b.timestamp);
+	}, [smsList, localMessages, chatId, allSmsList, currentUserId, who]);
 
 	// Функция для скролла к последнему сообщению
 	const scrollToBottom = useCallback(() => {
@@ -111,12 +108,7 @@ export default function ChatContent({ chatId }) {
 			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
 		}
 	}, []);
-	useEffect(() => {
-		if (error) {
-			console.error('🚨 Ошибка загрузки сообщений:', error);
-			message.error('Ошибка загрузки сообщений');
-		}
-	}, [error]);
+
 	// Автоскролл при загрузке новых сообщений или смене чата
 	useEffect(() => {
 		if (allMessages.length > 0) {
@@ -131,17 +123,17 @@ export default function ChatContent({ chatId }) {
 		}
 	}, [localMessages, scrollToBottom]);
 
-	// 	const newLocalMsg = {
-	// 		id: generateUUID(),
-	// 		chatId: chatId,
-	// 		text: text.trim(),
-	// 		timestamp: Date.now(),
-	// 		from: { id: currentUserId },
-	// 		to: { id: chatId },
-	// 		isLocal: true,
-	// 		isSending: true, // Сообщение отправляется
-	// 	};
-	// }, [allSmsList, smsList, allMessages, currentUserId, chatId, loading, error, who]);
+	// useEffect(() => {
+	// 	// Отладочная логика
+	// 	console.log('🔍 ChatContent Debug:', {
+	// 		chatId,
+	// 		currentUserId,
+	// 		allSmsListLength: allSmsList.length,
+	// 		smsListLength: smsList.length,
+	// 		loading,
+	// 		error,
+	// 	});
+	// }, [allSmsList, smsList, currentUserId, chatId, loading, error]);
 
 	const handleSend = useCallback(
 		async (text) => {
@@ -149,25 +141,28 @@ export default function ChatContent({ chatId }) {
 
 			const newLocalMsg = {
 				id: generateUUID(),
-				chatId: chatId,
+				chat_id: chatId,
 				text: text.trim(),
 				timestamp: Date.now(),
 				from: { id: currentUserId },
 				to: { id: chatId },
 				isLocal: true,
-				isSending: true,
+				isSending: true, // Сообщение отправляется
 			};
 
 			// Сразу добавляем сообщение в чат
 			setLocalMessages((prev) => [...prev, newLocalMsg]);
 
 			try {
+				// Отправляем сообщение
 				await sendSms({ to: chatId, text: text.trim(), answer: null });
 
 				// После успешной отправки меняем статус
 				setLocalMessages((prev) =>
 					prev.map((msg) => (msg.id === newLocalMsg.id ? { ...msg, isSending: false } : msg))
 				);
+
+				// Сообщение остается в чате с обычным стилем
 			} catch (err) {
 				// При ошибке удаляем сообщение
 				setLocalMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
@@ -177,11 +172,22 @@ export default function ChatContent({ chatId }) {
 		[chatId, sendSms, currentUserId]
 	);
 
+	// Функция для рендеринга сообщений
+	const renderMessage = (message) => {
+		if (message.role === 'self') {
+			return <ChatSelfMsg key={message.id} message={message} />;
+		} else {
+			return <ChatIncomingMsg key={message.id} message={message} />;
+		}
+	};
+
+	if (error) return <div className={styles.error}>Ошибка загрузки: {error}</div>;
+
 	return (
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.chatContent}>
 				<div className={styles.chatHeader}>
-					<span>{chatId === 'saved' ? 'Сохранённое' : who || 'Загрузка...'}</span>
+					<span>{chatId === 'saved' ? 'Сохранённое' : who}</span>
 				</div>
 				<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 					{loading && allMessages.length === 0 ? (
