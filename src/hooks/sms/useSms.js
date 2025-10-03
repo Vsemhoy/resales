@@ -25,11 +25,10 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 							_token: CSRF_TOKEN,
 						});
 
-						// console.log(`[useSms] Ответ от сервера (${endpoint}):`, response.data);
-
 						const sms = chatId ? response?.data?.content?.messages : response?.data?.content?.sms;
-						setWho(response?.data?.content?.who);
-
+						if (chatId) {
+							setWho(response?.data?.content?.who);
+						}
 						if (Array.isArray(sms)) {
 							responseData = sms;
 						} else {
@@ -45,14 +44,14 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 				} else {
 					console.log('[useSms] Используются MOCK-данные (dev mode)');
 
-					// ИСПРАВЛЕНИЕ: убрал вызов mock как функции
 					const mockData = mock; // Просто используем объект как есть
 
 					console.log('[useSms] MOCK-данные:', mockData);
 
 					// Для chatId можно расширить мок или фильтровать
 					const sms = chatId ? mockData?.content?.messages : mockData?.content?.sms;
-					if (chatId) setWho(mockData.content.who);
+
+					if (chatId) setWho('Lorem lsdfgjls');
 					if (Array.isArray(sms)) {
 						responseData = sms;
 					} else {
@@ -75,5 +74,5 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 		fetchData();
 	}, [chatId, mock, search]);
 
-	return { data, loading, error, who };
+	return { data, who, loading, error };
 };

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Input, Button, Popover, Space } from 'antd';
-import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
+import { Input, Button, Popover, Space, Upload } from 'antd';
+import { SendOutlined, SmileOutlined, FileAddOutlined, UploadOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 import styles from './style/Chat.module.css';
 
@@ -33,7 +33,16 @@ export function ChatInput({ onSend }) {
 				<Button icon={<SmileOutlined />} />
 			</Popover>
 
-			<Button icon={<FileAddOutlined />} />
+			<Popover
+				content={
+					<Upload>
+						<Button icon={<UploadOutlined />}>Click to Upload</Button>
+					</Upload>
+				}
+				trigger="hover"
+			>
+				<Button icon={<FileAddOutlined />} />
+			</Popover>
 
 			<Input
 				value={inputValue}

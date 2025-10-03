@@ -36,8 +36,6 @@ export const ChatBtn = () => {
 	});
 
 	const smsData = useMemo(() => {
-		console.log('📊 Processing smsData, smsList length:', smsList.length);
-
 		if (!Array.isArray(smsList) || smsList.length === 0) {
 			return { hasSms: false, messages: [] };
 		}
@@ -55,7 +53,7 @@ export const ChatBtn = () => {
 				name: companion?.name || 'Неизвестный',
 				surname: companion?.surname || '',
 				content: sms.text || '(без текста)',
-				chat_id: sms.chat_id,
+				chatId: sms.chatId,
 			};
 		});
 
