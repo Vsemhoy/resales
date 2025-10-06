@@ -29,6 +29,7 @@ import { PROD_AXIOS_INSTANCE } from './config/Api';
 import { MS_USER } from './mock/MAINSTATE';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Dropdown } from 'antd';
+import TorgPage from './modules/TORG_PAGE/TorgPage';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState([]);
@@ -101,6 +102,14 @@ export const App = () => {
 								element={<OrgPage userdata={userdata} />}
 							/>
 							<Route path="/orgs/:item_id" element={<OrgPage userdata={userdata} />} />
+
+              {/* NEW VERSION TEST MAX */}
+							<Route
+								path={BASE_ROUTE + '/torgs/:item_id'}
+								element={<TorgPage userdata={userdata} />}
+							/>
+							<Route path="/torgs/:item_id" element={<TorgPage userdata={userdata} />} />
+              {/* NEW VERSION TEST MAX */}
 
 							<Route
 								path={BASE_ROUTE + '/bids'}
