@@ -1,13 +1,13 @@
 import styles from './style/Chat.module.css';
 import { MOCK } from '../mock/mock.js';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useUserData } from '../../../context/UserDataContext.js';
-import { usePolling } from '../../../hooks/sms/usePolling.js';
+// import { usePolling } from '../../../hooks/sms/usePolling.js';
 import { useSms } from '../../../hooks/sms/useSms.js';
 
 import { Button, Dropdown, Space } from 'antd';
-import { MessageOutlined, SyncOutlined } from '@ant-design/icons';
+import { MessageOutlined } from '@ant-design/icons';
 import { ChatModal } from './ChatModal.jsx';
 
 export const ChatBtn = () => {
