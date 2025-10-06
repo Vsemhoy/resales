@@ -1,19 +1,29 @@
-import {useEffect, useState} from 'react';
-import {Button, Modal} from "antd";
+import {cloneElement, useEffect, useState} from 'react';
+import {Button, Modal, Select} from "antd";
 
 const CustomModal = (props) => {
     const [text, setText] = useState('');
+    const [filling, setFilling] = useState([]);
     const [buttons, setButtons] = useState([]);
     const [type, setType] = useState('');
     const [title, setTitle] = useState('');
     const [open, setOpen] = useState(false);
+    const [selectValue, setSelectValue] = useState(null);
 
     useEffect(() => {
         setText(props.customText);
     }, [props.customText]);
 
     useEffect(() => {
-        setButtons(props.customButtons);
+        if (props.customFilling) {
+            setFilling(props.customFilling);
+        }
+    }, [props.customFilling]);
+
+    useEffect(() => {
+        if (props.customButtons) {
+            setButtons(props.customButtons);
+        }
     }, [props.customButtons]);
 
     useEffect(() => {
@@ -29,7 +39,7 @@ const CustomModal = (props) => {
     }, [props.open]);
 
     const handleClick = (button_id) => {
-        props.customClick(button_id);
+        props.customClick(button_id, selectValue);
     }
 
 
@@ -59,6 +69,21 @@ const CustomModal = (props) => {
             })}
         >
             <h2> {text}</h2>
+            <br/>
+            {filling && filling.length > 0 && filling.map((fill, index) => {
+                if (fill.type === Select) {
+                    return cloneElement(fill, {
+                        key: index,
+                        value: selectValue,
+                        onChange: setSelectValue
+                    });
+                }
+                return (
+                    <div key={index} style={{width:'100%'}}>
+                        {fill}
+                    </div>
+                );
+            })}
         </Modal>
     );
 }
