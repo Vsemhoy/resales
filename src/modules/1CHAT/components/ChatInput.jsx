@@ -47,24 +47,24 @@ export function ChatInput({ onSend }) {
 	return (
 		<Space className={styles.spaceContainer}>
 			<Popover
-				content={<EmojiPicker onEmojiClick={onEmojiClick} />}
+				content={<EmojiPicker onEmojiClick={onEmojiClick}/>}
 				trigger="hover"
 				open={showPicker}
 				onOpenChange={setShowPicker}
 				placement="topRight"
 			>
-				<Button icon={<SmileOutlined />} />
+				<Button icon={<SmileOutlined/>}/>
 			</Popover>
 
 			<Popover
 				content={
 					<Upload>
-						<Button icon={<UploadOutlined />}>Click to Upload</Button>
+						<Button icon={<UploadOutlined/>}>Click to Upload</Button>
 					</Upload>
 				}
 				trigger="hover"
 			>
-				<Button icon={<FileAddOutlined />} />
+				<Button icon={<FileAddOutlined/>}/>
 			</Popover>
 
 			<Input.TextArea
@@ -76,7 +76,7 @@ export function ChatInput({ onSend }) {
 				autoSize={{ minRows: 1, maxRows: 6 }}
 			/>
 
-			<Button type="primary" icon={<SendOutlined />} onClick={handleSend} />
+			<Button type="primary" icon={<SendOutlined/>} onClick={handleSend}/>
 		</Space>
 	);
 }
