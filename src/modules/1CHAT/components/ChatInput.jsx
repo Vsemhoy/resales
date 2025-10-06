@@ -25,10 +25,10 @@ export function ChatInput({ onSend }) {
 		if (e.key === 'Enter' && e.shiftKey) {
 			// Shift+Enter - перенос строки
 			e.preventDefault();
-			const { selectionStart, selectionEnd } = e.target;
+			const {selectionStart, selectionEnd} = e.target;
 			const newValue = inputValue.substring(0, selectionStart) + '\n' + inputValue.substring(selectionEnd);
 			setInputValue(newValue);
-			
+
 			// Обновляем позицию курсора после следующего рендера
 			setTimeout(() => {
 				e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
@@ -43,24 +43,24 @@ export function ChatInput({ onSend }) {
 	return (
 		<Space className={styles.spaceContainer}>
 			<Popover
-				content={<EmojiPicker onEmojiClick={onEmojiClick} />}
+				content={<EmojiPicker onEmojiClick={onEmojiClick}/>}
 				trigger="hover"
 				open={showPicker}
 				onOpenChange={setShowPicker}
 				placement="topRight"
 			>
-				<Button icon={<SmileOutlined />} />
+				<Button icon={<SmileOutlined/>}/>
 			</Popover>
 
 			<Popover
 				content={
 					<Upload>
-						<Button icon={<UploadOutlined />}>Click to Upload</Button>
+						<Button icon={<UploadOutlined/>}>Click to Upload</Button>
 					</Upload>
 				}
 				trigger="hover"
 			>
-				<Button icon={<FileAddOutlined />} />
+				<Button icon={<FileAddOutlined/>}/>
 			</Popover>
 
 			<Input.TextArea
@@ -68,10 +68,11 @@ export function ChatInput({ onSend }) {
 				onChange={(e) => setInputValue(e.target.value)}
 				onKeyDown={handleKeyDown}
 				placeholder="Введите сообщение..."
-				style={{ flex: 1 }}
-				autoSize={{ minRows: 1, maxRows: 4 }}
+				style={{flex: 1}}
+				autoSize={{minRows: 1, maxRows: 4}}
 			/>
 
-			<Button type="primary" icon={<SendOutlined />} onClick={handleSend} />
+			<Button type="primary" icon={<SendOutlined/>} onClick={handleSend}/>
 		</Space>
 	);
+}
