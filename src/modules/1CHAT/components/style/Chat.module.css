@@ -27,21 +27,16 @@ ul {
 }
 
 .chat-input__footer {
-	border-top: 1px solid #e6e6e6;
+	border-top: 1px solid #c1c1c1;
 	background: #fff;
-	padding: 5px;
+	padding: 5px 0;
 	display: flex;
-	gap: 8px;
+	gap: 5px;
+	justify-content: space-around;
 }
 
 .chat-input__footer > * {
 	margin: 0 auto !important;
-}
-
-.chat-input__footer .ant-btn {
-	width: 30px;
-	max-height: 30px;
-	border-radius: 50%;
 }
 
 .sidebar-layout {
@@ -226,6 +221,22 @@ ul {
 	min-height: 0;
 }
 
-.messagesList::-webkit-scrollbar {
+.messagesList::-webkit-scrollbar,
+.textArea::-webkit-scrollbar {
 	display: none;
+}
+
+.textArea {
+	min-height: 40px;
+	max-height: 120px;
+	resize: none;
+	padding: 0 2px;
+	width: 200px;
+	line-height: 40px;
+}
+
+/* Если нужно стилизовать плейсхолдер */
+.textArea::placeholder {
+	color: #999;
+	opacity: 0.5;
 }

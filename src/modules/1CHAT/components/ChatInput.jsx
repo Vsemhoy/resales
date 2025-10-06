@@ -21,24 +21,28 @@ export function ChatInput({ onSend }) {
 		setShowPicker(false);
 	}, []);
 
-	const handleKeyDown = useCallback((e) => {
-		if (e.key === 'Enter' && e.shiftKey) {
-			// Shift+Enter - перенос строки
-			e.preventDefault();
-			const {selectionStart, selectionEnd} = e.target;
-			const newValue = inputValue.substring(0, selectionStart) + '\n' + inputValue.substring(selectionEnd);
-			setInputValue(newValue);
+	const handleKeyDown = useCallback(
+		(e) => {
+			if (e.key === 'Enter' && e.shiftKey) {
+				// Shift+Enter - перенос строки
+				e.preventDefault();
+				const { selectionStart, selectionEnd } = e.target;
+				const newValue =
+					inputValue.substring(0, selectionStart) + '\n' + inputValue.substring(selectionEnd);
+				setInputValue(newValue);
 
-			// Обновляем позицию курсора после следующего рендера
-			setTimeout(() => {
-				e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
-			}, 0);
-		} else if (e.key === 'Enter' && !e.shiftKey) {
-			// Просто Enter - отправка сообщения
-			e.preventDefault();
-			handleSend();
-		}
-	}, [inputValue, handleSend]);
+				// Обновляем позицию курсора после следующего рендера
+				setTimeout(() => {
+					e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
+				}, 0);
+			} else if (e.key === 'Enter' && !e.shiftKey) {
+				// Просто Enter - отправка сообщения
+				e.preventDefault();
+				handleSend();
+			}
+		},
+		[inputValue, handleSend]
+	);
 
 	return (
 		<Space className={styles.spaceContainer}>
@@ -64,12 +68,12 @@ export function ChatInput({ onSend }) {
 			</Popover>
 
 			<Input.TextArea
+				className={styles.textArea}
 				value={inputValue}
 				onChange={(e) => setInputValue(e.target.value)}
 				onKeyDown={handleKeyDown}
 				placeholder="Введите сообщение..."
-				style={{flex: 1}}
-				autoSize={{minRows: 1, maxRows: 4}}
+				autoSize={{ minRows: 1, maxRows: 6 }}
 			/>
 
 			<Button type="primary" icon={<SendOutlined/>} onClick={handleSend}/>
