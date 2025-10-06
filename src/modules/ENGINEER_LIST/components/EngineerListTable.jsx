@@ -132,12 +132,18 @@ const EngineerListTable = (props) => {
 
 		switch (type){
 			case 1:
-				handleCopySpecification().then( () => {setOpenCopySpecification(false)});
+				handleCopySpecification().then( () => {
+					setOpenCopySpecification(false);
+					setOpenAddIntoBidSpecification(false);
+				});
 				break;
 
 			case 2:
 			case 3:
-				handleCopySpecificationIntoBid().then( () => {setOpenCopySpecification(false)});
+				handleCopySpecificationIntoBid().then( () => {
+					setOpenCopySpecification(false);
+					setOpenAddIntoBidSpecification(false);
+				});
 				break;
 		}
 		console.log(spec_id, type, openAddIntoBidSpecificationId);
@@ -172,6 +178,21 @@ const EngineerListTable = (props) => {
 			setAlertType('success');
 		}
 	}
+
+	const handleOpenModalEngeneerCopy = (open, id, type) => {
+		setOpenCopySpecification(open);
+		setOpenAddIntoBidSpecificationId(id);
+		setCopyType(type);
+	};
+	const handleEngeneerFinal = (id) => {
+		setOpenAddIntoBidSpecificationId(id);
+		handleSpecificationFinal().then();
+	};
+	const handleOpenModalManager = (open, id, type) => {
+		setOpenAddIntoBidSpecification(open);
+		setOpenAddIntoBidSpecificationId(id);
+		setCopyType(type);
+	};
 
 	return (
 		<div className={'sa-table-box'} style={{ marginRight: 'auto ' }}>
@@ -279,12 +300,10 @@ const EngineerListTable = (props) => {
 							superUser={props.superUser}
 							is_active={isPreviewOpen && previewItem === spec.id}
 							on_double_click={handlePreviewOpen}
-							setOpenAddIntoBidSpecification={setOpenAddIntoBidSpecification}
-							setOpenAddIntoBidSpecificationId={setOpenAddIntoBidSpecificationId}
-							setCopyType={setCopyType}
-							setOpenCopySpecification={setOpenCopySpecification}
-							handleSpecificationFinal={handleSpecificationFinal}
 							key={index}
+							openModalEngeneerCopy={handleOpenModalEngeneerCopy}
+							engeneerFinal={handleEngeneerFinal}
+							openModalManager={handleOpenModalManager}
 							company_color={
 								props.base_companies?.find((item) => item.id === spec.id_company)?.color
 							}
