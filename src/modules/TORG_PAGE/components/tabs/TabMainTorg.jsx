@@ -1,12 +1,39 @@
 import React, { useEffect, useState } from 'react';
 
 const TabMainTorg = (props) => {
-
-  const [editMode, setEditMode] = useState(false);
+  /**
+   * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
+   */
+  const [isTabActive, setIsTabActive] = useState(false);
+  const [editMode, setEditMode] = useState(false); // true|false - режим редактирования
+    /**
+   * При сбросе orgId мы перегружаем данные
+   */
   const [orgId, setOrgId] = useState(null);
-  const [baseData, setBaseData] = useState(null);
-  const [selects, setSelects] = useState(null);
+  const [selects, setSelects] = useState(null);  // Данные для селектов
 
+  /**
+   * Массив с основными объектами, которые внутри можно изменять
+   */
+  const [baseData, setBaseData] = useState([]);
+  /**
+   * Массив с оригиналами объкектов, которые не меняются и используются для сравнения
+   */
+  const [originalData, setOriginalData] = useState([]);
+  /**
+   * Массив с временными, новыми объектами, которые добавляются, меняются, удаляются, но очищаются при смене орг-ИД
+   */
+  const [tempData, setTempData] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+
+  // ██    ██ ███████ ███████ 
+  // ██    ██ ██      ██      
+  // ██    ██ █████   █████   
+  // ██    ██ ██      ██      
+  //  ██████  ██      ██      
+  // UseEffects
   useEffect(() => {
     setEditMode(props.editMode);
   }, [props.editMode]);
@@ -35,12 +62,52 @@ const TabMainTorg = (props) => {
     }
   }, [props.on_save_command]);
 
-  
+  useEffect(() => {
+    setIsTabActive(props.active_tab);
+  }, [props.active_tab]);
 
+
+  // ██    ██ ███████ ███████       ██   ██ 
+  // ██    ██ ██      ██             ██ ██  
+  // ██    ██ █████   █████   █████   ███   
+  // ██    ██ ██      ██             ██ ██  
+  //  ██████  ██      ██            ██   ██ 
+
+    // ------------------------------------------------------------------- //
+
+  // ███████ ███████ ████████  ██████ ██   ██ 
+  // ██      ██         ██    ██      ██   ██ 
+  // █████   █████      ██    ██      ███████ 
+  // ██      ██         ██    ██      ██   ██ 
+  // ██      ███████    ██     ██████ ██   ██ 
+
+
+
+  // ███████ ███████ ████████  ██████ ██   ██       ██   ██ 
+  // ██      ██         ██    ██      ██   ██        ██ ██  
+  // █████   █████      ██    ██      ███████ █████   ███   
+  // ██      ██         ██    ██      ██   ██        ██ ██  
+  // ██      ███████    ██     ██████ ██   ██       ██   ██ 
+
+  // ------------------------------------------------------------------- //
+
+
+
+  
+  const reload_all_data = () => {
+    if (!orgId){ return; };
+    // Flush temporary data
+
+    // Load main data
+    
+  }
 
 
   return (
-    <h1>Hello Wolf from TabMainTorg</h1>
+    <div className={`${isTabActive ? '' : 'sa-orgpage-tab-hidder'}`}>
+      <h1>Hello Wolf from TabMainTorg</h1>
+
+    </div>
   );
 };
 

@@ -4,7 +4,11 @@ const TorgPageSectionRow = (props) => {
   const [inputs, setInputs] = useState([]);
 
   useEffect(() => {
-    setInputs(props.inputs);
+    if (props.inputs){
+      setInputs(props.inputs);
+    } else {
+      setInputs([]);
+    }
   }, [props.inputs]);
 
   return (
