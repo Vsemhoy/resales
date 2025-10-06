@@ -8,7 +8,7 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 	const [error, setError] = useState(null);
 	const [who, setWho] = useState(null);
 	const fetchData = useCallback(async () => {
-		console.log('FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA ');
+		// console.log('FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA ');
 		setLoading(true);
 		setError(null);
 		setWho(null);
@@ -41,16 +41,16 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 					throw new Error('Не удалось загрузить SMS с сервера');
 				}
 			} else {
-				console.log('[useSms] Используются MOCK-данные (dev mode)');
+				// console.log('[useSms] Используются MOCK-данные (dev mode)');
 
 				const mockData = mock; // Просто используем объект как есть
 
-				console.log('[useSms] MOCK-данные:', mockData);
+				// console.log('[useSms] MOCK-данные:', mockData);
 
 				// Для chatId можно расширить мок или фильтровать
 				const sms = chatId ? mockData?.content?.messages : mockData?.content?.sms;
 
-				if (chatId) setWho('Lorem lsdfgjls');
+				if (chatId) setWho('Собеседник');
 				if (Array.isArray(sms)) {
 					responseData = sms;
 				} else {
