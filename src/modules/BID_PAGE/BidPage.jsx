@@ -180,7 +180,9 @@ const BidPage = (props) => {
 	const [customModalTitle, setCustomModalTitle] = useState('');
 	const [customModalText, setCustomModalText] = useState('');
 	const [customModalType, setCustomModalType] = useState('');
-	const [customModalColumns, setCustomModalColumns] = useState([]);
+	const [customModalFilling, setCustomModalFilling] = useState([]);
+	const [customModalButtons, setCustomModalButtons] = useState([]);
+	const [customModalSelect, setCustomModalSelect] = useState(null);
 	const [isLoading1c, setIsLoading1c] = useState(false);
 	const [isLoadingChangePlaceBtn, setIsLoadingChangePlaceBtn] = useState('');
 	const [projectInfo, setProjectInfo] = useState({
@@ -846,7 +848,8 @@ const BidPage = (props) => {
 			}
 		}
 	};
-	const fetchBidPlace = async (newPlace) => {
+	const fetchBidPlace = async (newPlace, selectValue) => {
+		console.log(selectValue)
 		if (PRODMODE) {
 			const path = `/sales/data/changebidstage`;
 			try {
@@ -854,7 +857,8 @@ const BidPage = (props) => {
 					bid_id: bidId,
 					data: {
 						bid: bidId,
-						stage: newPlace
+						stage: newPlace,
+						reason: selectValue
 					},
 					_token: CSRF_TOKEN,
 				});
@@ -1151,14 +1155,15 @@ const BidPage = (props) => {
 
 		setDefaultInfo(defaultInfoUpd);
 	};
-	const openCustomModal = (type, title, text, buttons) => {
+	const openCustomModal = (type, title, text, filling, buttons) => {
 		setCustomModalType(type);
 		setCustomModalTitle(title);
 		setCustomModalText(text);
-		setCustomModalColumns(buttons);
+		setCustomModalFilling(filling);
+		setCustomModalButtons(buttons);
 		setTimeout(() => setIsOpenCustomModal(true), 200);
 	}
-	const customClick = (button_id) => {
+	const customClick = (button_id, selectValue) => {
 		console.log(button_id)
 		switch (customModalType) {
 			case 'pdf':
@@ -1184,14 +1189,44 @@ const BidPage = (props) => {
 				}
 				break;
 			case 'backManager':
+				openCustomModal(
+					'backManagerWithSelect',
+					'Вернуть менеджеру',
+					'Укажите причину возврата менеджеру.',
+					[<Select key="return-reason-select"
+							 style={{width:'100%'}}
+							 placeholder={'Причина возврата заявки'}
+							 options={[
+								 {value: 'По просьбе менеджера', label: 'По просьбе менеджера'},
+								 {value: 'Нет ИНН', label: 'Нет ИНН'},
+								 {value: 'Не указан способ транспортировки', label: 'Не указан способ транспортировки'},
+								 {value: 'Не указаны сроки поставки', label: 'Не указаны сроки поставки'},
+								 {value: 'Необходимо разбить на несколько заявок', label: 'Необходимо разбить на несколько заявок'},
+								 {value: 'Не указан склад отгрузки', label: 'Не указан склад отгрузки'},
+							 ]}
+					/>],
+					returnButtons
+				);
+				break;
+			case 'backManagerWithSelect':
 				if (+button_id === 2) {
 					setBidPlace(1);
-					fetchBidPlace(1).then(() => fetchBidInfo().then());
+					fetchBidPlace(1, selectValue).then(() => fetchBidInfo().then());
+				} else if (+button_id === 1) {
+					setIsLoadingChangePlaceBtn('');
 				}
 				break;
 			case 'toBuh':
 				if (+button_id === 2) {
 					fetchUpdates(3).then();
+				}
+				break;
+			case 'backAdminWithSelect':
+				if (+button_id === 2) {
+					setBidPlace(2);
+					fetchBidPlace(2, selectValue).then(() => fetchBidInfo().then());
+				} else if (+button_id === 1) {
+					setIsLoadingChangePlaceBtn('');
 				}
 				break;
 		}
@@ -1235,6 +1270,20 @@ const BidPage = (props) => {
 			id: 2,
 			text: "Подтвердить и сохранить",
 			color: "primary",
+			variant: "solid"
+		},
+	];
+	const returnButtons = [
+		{
+			id: 1,
+			text: "Отменить",
+			color: "default",
+			variant: "outlined"
+		},
+		{
+			id: 2,
+			text: "Вернуть",
+			color: "purple",
 			variant: "solid"
 		},
 	];
@@ -1677,6 +1726,7 @@ const BidPage = (props) => {
 																		'toAdmin',
 																		'Передать администратору',
 																		'У Вас есть несохраненные изменения! Подтвердите сохранение перед передачей администратору.',
+																		[],
 																		baseButtons
 																	);
 																} else {
@@ -1707,11 +1757,28 @@ const BidPage = (props) => {
 																		'backManager',
 																		'Вернуть менеджеру',
 																		'У Вас есть несохраненные изменения! Подтвердите сохранение перед тем как вернуть менеджеру.',
+																		[],
 																		baseButtons
 																	);
 																} else {
-																	setBidPlace(1);
-																	fetchBidPlace(1).then(() => fetchBidInfo().then());
+																	openCustomModal(
+																		'backManagerWithSelect',
+																		'Вернуть менеджеру',
+																		'Укажите причину возврата менеджеру.',
+																		[<Select key="return-reason-select"
+																				 		style={{width:'100%'}}
+																						placeholder={'Причина возврата заявки'}
+																						options={[
+																							{value: 'По просьбе менеджера', label: 'По просьбе менеджера'},
+																							{value: 'Нет ИНН', label: 'Нет ИНН'},
+																							{value: 'Не указан способ транспортировки', label: 'Не указан способ транспортировки'},
+																							{value: 'Не указаны сроки поставки', label: 'Не указаны сроки поставки'},
+																							{value: 'Необходимо разбить на несколько заявок', label: 'Необходимо разбить на несколько заявок'},
+																							{value: 'Не указан склад отгрузки', label: 'Не указан склад отгрузки'},
+																						]}
+																		/>],
+																		returnButtons
+																	);
 																}
 															}}
 													><ArrowLeftOutlined /> Вернуть менеджеру</Button>
@@ -1725,6 +1792,7 @@ const BidPage = (props) => {
 																		'toBuh',
 																		'Передать бухгалтеру',
 																		'У Вас есть несохраненные изменения! Подтвердите сохранение перед передачей бухгалтеру.',
+																		[],
 																		baseButtons
 																	);
 																} else {
@@ -1750,8 +1818,25 @@ const BidPage = (props) => {
 															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backAdmin'}
 															onClick={() => {
 																setIsLoadingChangePlaceBtn('backAdmin');
-																setBidPlace(2);
-																fetchBidPlace(2).then(() => fetchBidInfo().then());
+																openCustomModal(
+																	'backAdminWithSelect',
+																	'Вернуть администратору',
+																	'Укажите причину возврата администратору.',
+																	[<Select key="return-reason-select"
+																			 style={{width:'100%'}}
+																			 placeholder={'Причина возврата заявки'}
+																			 options={[
+																				 {value: 'По просьбе менеджера', label: 'По просьбе менеджера'},
+																				 {value: 'Нет ИНН', label: 'Нет ИНН'},
+																				 {value: 'Не указан способ транспортировки', label: 'Не указан способ транспортировки'},
+																				 {value: 'Не указаны сроки поставки', label: 'Не указаны сроки поставки'},
+																				 {value: 'Необходимо разбить на несколько заявок', label: 'Необходимо разбить на несколько заявок'},
+																				 {value: 'Не указан склад отгрузки', label: 'Не указан склад отгрузки'},
+																				 {value: 'Убрать статус завершено', label: 'Убрать статус завершено'},
+																			 ]}
+																	/>],
+																	returnButtons
+																);
 															}}
 													><ArrowLeftOutlined /> Вернуть администратору</Button>
 													<Button className={'sa-select-custom-end'}
@@ -1824,6 +1909,7 @@ const BidPage = (props) => {
 														'1c',
 														'Отправить данные в 1С',
 														'Данные уже были отправлены в 1С! Подтвердите повторную отправку данных.',
+														[],
 														buttons1C
 													);
 												} else {
@@ -1846,6 +1932,7 @@ const BidPage = (props) => {
 												'pdf',
 												'Переход в интерфейс создания PDF-документа',
 												'У Вас есть несохраненные изменения! Подтвердите сохранение перед сменой интерфейса.',
+												[],
 												baseButtons
 											);
 										} else {
@@ -1917,6 +2004,7 @@ const BidPage = (props) => {
 													'bill',
 													'Создание счета на базе КП',
 													'У Вас есть несохраненные изменения! Подтвердите сохранение перед созданием нового счета.',
+													[],
 													baseButtons
 												);
 											} else {
@@ -2478,7 +2566,8 @@ const BidPage = (props) => {
 				customType={customModalType}
 				customText={customModalText}
 				customTitle={customModalTitle}
-				customButtons={customModalColumns}
+				customFilling={customModalFilling}
+				customButtons={customModalButtons}
 				open={isOpenCustomModal}
 			/>
 			{isAlertVisible && (
