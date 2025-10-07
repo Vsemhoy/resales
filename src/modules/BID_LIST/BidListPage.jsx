@@ -872,7 +872,7 @@ const BidListPage = (props) => {
 						className={`${isOpenedFilters ? 'sa-pa-tb-12 sa-pa-s-3' : 'sa-pa-12'} sa-table`}
 						style={{ paddingTop: 0 }}
 					>
-						<Spin spinning={true}>
+						<Spin spinning={isLoading}>
 							<BidListTable
 								companies={companies}
 								bids={bids}
