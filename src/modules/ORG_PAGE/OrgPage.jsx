@@ -135,6 +135,7 @@ const OrgPage = (props) => {
 	const [tempCallsData, setTempCallsData] = useState(null);
 	const [tempNotesData, setTempNotesData] = useState(null);
 
+	const [tempMain_contacts, setTempMain_contacts] = useState([]);
 	const [tempMain_phones, setTempMain_phones] = useState([]);
 	const [tempMain_addresses, setTempMain_addresses] = useState([]);
 	const [tempMain_legalAddresses, setTempMain_legalAddresses] = useState([]);
@@ -663,6 +664,8 @@ const OrgPage = (props) => {
 			setTempMain_an_requisites(dataarr);
 		} else if (key === 'phones'){
 			setTempMain_phones(dataarr);
+		// } else if (key === 'contacts'){
+		// 	setTempMain_contacts(dataarr);
 		} else if (key === 'address'){
 			setTempMain_addresses(dataarr);
 		} else if (key === 'legaladdresses'){
@@ -684,7 +687,7 @@ const OrgPage = (props) => {
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
-				
+				// copyData.contacts =            tempMain_contacts;
 				setTempMainData(copyData);
 				console.log('END POINT ALT', copyData);
 			}
@@ -697,6 +700,7 @@ const OrgPage = (props) => {
 		tempMain_emails,
 		tempMain_phones,
 		tempMain_an_requisites,
+		// tempMain_contacts
 	]);
 
 
@@ -713,7 +717,7 @@ const OrgPage = (props) => {
 
 			let copyData = JSON.parse(JSON.stringify(data));
 			// if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
-			console.log('BAES MAIN DATA', baseMainData);
+			console.log('BASE MAIN DATA', baseMainData);
 			if (!IsSameComparedSomeOrgData(data, baseMainData, MAIN_ORG_DATA_IGNORE_KEYS)){
 				copyData.active_licenses =     tempMain_an_licenses;
 				copyData.active_tolerance =    tempMain_an_tolerances;
@@ -735,7 +739,11 @@ const OrgPage = (props) => {
 				copyData.address =             tempMain_addresses;
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
-				console.log('SET ANTI COPY DATA', copyData)
+
+				console.log('SET LAST COPY DATA', copyData);
+				// console.log('SET ANTI COPY DATA', copyData)
+				// if (cop)
+				// 	copyData.contacts =              ;
 				setTempMainData(copyData);
 			}
 

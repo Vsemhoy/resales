@@ -156,11 +156,7 @@ const MainTabPage = (props) => {
   };
 
 
-  useEffect(() => {
-    if (props.on_change_data) {
-      props.on_change_data('main', baseData);
-    }
-  }, [baseData]);
+
 
 
 
@@ -384,6 +380,12 @@ const MainTabPage = (props) => {
     setBaseData(ndt);
   }
 
+  useEffect(() => {
+    console.log('BASE DATA MODIFIED');
+
+    console.log(baseData);
+  }, [baseData]);
+
   const handleDeleteContact = (id) => {
     let contacts = baseData.contacts;
     let ordata = contacts.find((item) => item.id === id);
@@ -442,9 +444,20 @@ const MainTabPage = (props) => {
 
 
 
+  useEffect(() => {
+    console.log('DATA UPDATED');
+    if (props.on_change_data){
+      console.log(baseData);
+      props.on_change_data('main', baseData);
+    };
+  }, [baseData]);
 
-
-
+  // useEffect(() => {
+  //   if (props.on_change_data) {
+  //     console.log('CALL TO CHANGE BASEDATA ON 1 LEVEL', baseData);
+  //     props.on_change_data('main', baseData);
+  //   }
+  // }, [baseData]);
 
 
 
