@@ -62,5 +62,8 @@
 	margin: 0 12px;
 	align-items: end;
 	margin: 0 12px;
-	outline: 9px solid #b4cbe4;
+	outline: 9px solid var(--app-background);
+}
+.sa-pagination-panel {
+	background-color: var(--app-background);
 }

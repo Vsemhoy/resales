@@ -672,7 +672,7 @@ const OrgListPage = (props) => {
 					<Affix offsetTop={94}>
 						<div
 							className={'sa-pagination-panel sa-pa-12'}
-							style={{ background: '#b4cbe4', minHeight: '54px' }}
+							style={{ minHeight: '54px' }}
 						>
 							<div className={'sa-flex-space'}>
 								<div className={'sa-flex-gap'}>

@@ -78,7 +78,7 @@
 }
 
 .sa-orgpage-blank-section-item {
-	border-left: 6px solid #2196f3;
+	border-left: 6px solid var(--org-page-temp-border-color);
 }
 
 .sa-orgpage-updated-section-item {
@@ -100,11 +100,11 @@
 }
 
 .sa-org-temp-stack-collapse {
-	border: 2px solid #2196f3;
+	border: 2px solid var(--org-page-temp-border-color);
 	margin-bottom: 6px;
 }
 .sa-org-temp-stack-collapse-header {
-	background-color: #2196f3;
+	background-color: var(--org-page-temp-border-color);
 	color: #ffffff !important;
 	font-size: large;
 	display: block;
@@ -167,9 +167,9 @@
 }
 
 .ant-collapse-item .ant-collapse-item .sk-omt-stack-control {
-	background-color: #ecf2fa;
+	background-color: var(--org-modal-legend);
 	transition: all 0.1s;
-	color: #006cc4;
+	color: var(--sa-antd-button-primary-color);
 	border-bottom: 1px solid #2195f357;
 }
 /* .ant-collapse-item .ant-collapse-item:hover .sk-omt-stack-control {
@@ -227,10 +227,10 @@
 
 }
 .sk-omt-comment-trigger-treasure {
-	outline: 1px solid #2c6ea77c;
+	outline: 1px solid var(--org-page-trigger-treasure-outline);
 }
 .sk-omt-comment-trigger-treasure > span {
-	color: rgb(0, 89, 178);
+	color: var(--org-page-trigger-treasure-text);
 }
 
 .sa-orgpage-tab-hidder {

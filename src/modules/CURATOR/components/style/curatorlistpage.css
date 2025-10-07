@@ -15,7 +15,7 @@
 }
 
 .sa-list-header {
-	background-color: aliceblue;
+	background-color: var(--sa-list-header);
 	display: grid;
 	grid-template-columns: 1fr;
 	margin: 0 12px;
@@ -48,7 +48,7 @@
 }
 
 .sa-back {
-	background: #b4cbe4;
+	background: var(--app-background);
 }
 
 .sa-pa-12-24 {
