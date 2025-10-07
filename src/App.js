@@ -106,108 +106,109 @@ export const App = () => {
 			<ChatSocketProvider url={`ws://192.168.1.16:5003`}>
 			<BrowserRouter basename={BASE_NAME}>
 				<div className={`app `}>
-					<TopMenu userdata={userdata} changed_user_data={() => get_userdata()} /> {/*setUserdata*/}
-					{/* <WebSocketDebug /> */}
-					<div>
-						<Routes>
-							<Route path="/" element={<Navigate to={topRole} replace />} />
-							<Route path={BASE_ROUTE + '/'} element={<Navigate to={topRole} replace />} />
+						<TopMenu userdata={userdata} changed_user_data={() => get_userdata()} /> {/*setUserdata*/}
+						{/* <WebSocketDebug /> */}
+						<div>
+							<Routes>
+								<Route path="/" element={<Navigate to={topRole} replace />} />
+								<Route path={BASE_ROUTE + '/'} element={<Navigate to={topRole} replace />} />
 
-							<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata} />} />
-							<Route path="/orgs" element={<OrgListPage userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata} />} />
+								<Route path="/orgs" element={<OrgListPage userdata={userdata} />} />
 
-							<Route
-								path={BASE_ROUTE + '/orgs/:item_id'}
-								element={<OrgPage userdata={userdata} />}
-							/>
-							<Route path="/orgs/:item_id" element={<OrgPage userdata={userdata} />} />
+								<Route
+									path={BASE_ROUTE + '/orgs/:item_id'}
+									element={<OrgPage userdata={userdata} />}
+								/>
+								<Route path="/orgs/:item_id" element={<OrgPage userdata={userdata} />} />
 
-              {/* NEW VERSION TEST MAX */}
-							<Route
-								path={BASE_ROUTE + '/torgs/:item_id'}
-								element={<TorgPage userdata={userdata} />}
-							/>
-							<Route path="/torgs/:item_id" element={<TorgPage userdata={userdata} />} />
-              {/* NEW VERSION TEST MAX */}
+									{/* NEW VERSION TEST MAX */}
+								<Route
+									path={BASE_ROUTE + '/torgs/:item_id'}
+									element={<TorgPage userdata={userdata} />}
+								/>
+								<Route path="/torgs/:item_id" element={<TorgPage userdata={userdata} />} />
+								{/* NEW VERSION TEST MAX */}
 
-							<Route
-								path={BASE_ROUTE + '/bids'}
-								element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
-							/>
-							<Route
-								path="/bids"
-								element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
-							/>
+								<Route
+									path={BASE_ROUTE + '/bids'}
+									element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
+								/>
+								<Route
+									path="/bids"
+									element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
+								/>
 
-							<Route
-								path={BASE_ROUTE + '/bids/:bidId'}
-								element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
-							/>
-							<Route
-								path="/bids/:bidId"
-								element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
-							/>
+								<Route
+									path={BASE_ROUTE + '/bids/:bidId'}
+									element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
+								/>
+								<Route
+									path="/bids/:bidId"
+									element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
+								/>
 
-							<Route
-								path={BASE_ROUTE + '/bidsPDF/:bidId'}
-								element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
-							/>
-							<Route
-								path="/bidsPDF/:bidId"
-								element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
-							/>
+								<Route
+									path={BASE_ROUTE + '/bidsPDF/:bidId'}
+									element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
+								/>
+								<Route
+									path="/bidsPDF/:bidId"
+									element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
+								/>
 
-							<Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />
-							<Route path="/price" element={<Price userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />
+								<Route path="/price" element={<Price userdata={userdata} />} />
 
-							<Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata} />} />
-							<Route path="/curator" element={<CuratorPage userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata} />} />
+								<Route path="/curator" element={<CuratorPage userdata={userdata} />} />
 
-							<Route
-								path={BASE_ROUTE + '/engineer'}
-								element={<EngineerListPage userdata={userdata} />}
-							/>
-							<Route path="/engineer" element={<EngineerListPage userdata={userdata} />} />
+								<Route
+									path={BASE_ROUTE + '/engineer'}
+									element={<EngineerListPage userdata={userdata} />}
+								/>
+								<Route path="/engineer" element={<EngineerListPage userdata={userdata} />} />
 
-							<Route
-								path={BASE_ROUTE + '/engineer/:bidId'}
-								element={<EngineerPage userdata={userdata} />}
-							/>
-							<Route path="/engineer/:bidId" element={<EngineerPage userdata={userdata} />} />
+								<Route
+									path={BASE_ROUTE + '/engineer/:bidId'}
+									element={<EngineerPage userdata={userdata} />}
+								/>
+								<Route path="/engineer/:bidId" element={<EngineerPage userdata={userdata} />} />
 
-							<Route
-								path={BASE_ROUTE + '/dev/icons/antdicons'}
-								element={<AntdIconsPage userdata={0} />}
-							/>
-							<Route path="/dev/icons/antdicons" element={<AntdIconsPage userdata={0} />} />
+								<Route
+									path={BASE_ROUTE + '/dev/icons/antdicons'}
+									element={<AntdIconsPage userdata={0} />}
+								/>
+								<Route path="/dev/icons/antdicons" element={<AntdIconsPage userdata={0} />} />
 
-							<Route
-								path={BASE_ROUTE + '/dev/icons/heroicons24'}
-								element={<HeroIconsPage24 userdata={0} />}
-							/>
-							<Route path="/dev/icons/heroicons24" element={<HeroIconsPage24 userdata={0} />} />
+								<Route
+									path={BASE_ROUTE + '/dev/icons/heroicons24'}
+									element={<HeroIconsPage24 userdata={0} />}
+								/>
+								<Route path="/dev/icons/heroicons24" element={<HeroIconsPage24 userdata={0} />} />
 
-							<Route
-								path={BASE_ROUTE + '/dev/icons/customicons'}
-								element={<CustomIconPage userdata={0} />}
-							/>
-							<Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
-						</Routes>
-						{!PRODMODE && (
-							<Dropdown menu={{ items: devMenu }}>
-								<div
-									style={{
-										position: 'fixed',
-										bottom: '0px',
-										color: 'orangered',
-										opacity: '0.9',
-									}}
-									title="DEV MODE"
-								>
-									<ExclamationTriangleIcon height={'64px'} />
-								</div>
-							</Dropdown>
-						)}
+								<Route
+									path={BASE_ROUTE + '/dev/icons/customicons'}
+									element={<CustomIconPage userdata={0} />}
+								/>
+								<Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
+							</Routes>
+							{!PRODMODE && (
+								<Dropdown menu={{ items: devMenu }}>
+									<div
+										style={{
+											position: 'fixed',
+											bottom: '0px',
+											color: 'orangered',
+											opacity: '0.9',
+										}}
+										title="DEV MODE"
+									>
+										<ExclamationTriangleIcon height={'64px'} />
+									</div>
+								</Dropdown>
+							)}
+						</div>
 					</div>
 				</BrowserRouter>
 			</ChatSocketProvider>
