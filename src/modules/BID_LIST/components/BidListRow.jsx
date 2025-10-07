@@ -113,125 +113,129 @@ const BidListRow = (props) => {
 	const handleDoubleClick = () => {
 		if (props.on_double_click) {
 			props.on_double_click(data);
-			window.open(`${BASE_ROUTE}/resales/bids/${data.id}`, '_blank');
+			window.open(`${BASE_ROUTE}/bids/${data.id}`, '_blank');
 		}
 	};
 
 	return (
 		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
-			<div
-				className={`sa-table-box-bids sa-table-box-row ${active ? 'active' : ''}`}
-				style={{ color: compColor, cursor: 'pointer' }}
-				onDoubleClick={handleDoubleClick}
-			>
+			<Tooltip title={data.last_message ?? ''}>
 				<div
-					className={'sa-table-box-cell'}
-					//style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
+					className={`sa-table-box-bids sa-table-box-row ${active ? 'active' : ''} ${data.last_message ? 'sa-error-row' : ''}`}
+					style={{color: compColor, cursor: 'pointer'}}
+					onDoubleClick={handleDoubleClick}
 				>
-					<div>
-						<NavLink to={`/bids/${data.id}`} target={'_blank'}>
-							{data.id}
-						</NavLink>
-					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div className={'text-align-left'}>
-						<NavLink to={`/orgs/${data.id}`}>{data.company_name}</NavLink>
-					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<Tooltip title={data.type_status_name}>
-						<div>
-							{data.type_status === 1 && <FileDoneOutlined />}
-							{data.type_status === 2 && <DollarOutlined />}
-						</div>
-					</Tooltip>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<Tooltip
-						title={
-							data.protection_project === 1
-								? 'Защита проекта'
-								: data.protection_project === 2
-									? 'Реализация проекта'
-									: ''
-						}
+					<div
+						className={'sa-table-box-cell'}
+						//style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
 					>
 						<div>
-							{data.protection_project === 1 && <SafetyOutlined />}
-							{data.protection_project === 2 && <LogoutOutlined />}
+							<NavLink to={`/bids/${data.id}`} target={'_blank'}>
+								{data.id}
+							</NavLink>
 						</div>
-					</Tooltip>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>
-						{data.stage_id === 1 && <Tag color={'blue'}>менеджер</Tag>}
-						{data.stage_id === 2 && <Tag color={'volcano'}>администратор</Tag>}
-						{data.stage_id === 3 && <Tag color={'magenta'}>бухгалтер</Tag>}
-						{data.stage_id === 4 && <Tag color={'gold'}>завершено</Tag>}
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>{dayjs.unix(data.date).format('DD.MM.YYYY')}</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>{data.username}</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>{data.bill_number}</div>
-				</div>
-				<div className={'sa-table-box-cell text-align-left'}>
-					<div>{data.comment}</div>
-				</div>
-				<div className={'sa-table-box-cell text-align-left'}>
-					<div>{data.object}</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>
-						<Tooltip
-							placement="leftTop"
-							title={<PositionList bidId={data.id} fetch_path={'/sales/data/getbidmodels'} error_alert={props.error_alert}/>}
-							color="white"
-							styles={{
-								body: {
-									color: 'black',
-									border: '1px solid #d9d9d9',
-								},
-								root: {
-									maxWidth: '400px'
-								}
-							}}
-						>
-							<Tag color={'purple'}>{data.models_count}</Tag>
+					<div className={'sa-table-box-cell'}>
+						<div className={'text-align-left'}>
+							<NavLink to={`/orgs/${data.org_id}`}>{data.company_name}</NavLink>
+						</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<Tooltip title={data.type_status_name}>
+							<div>
+								{data.type_status === 1 && <FileDoneOutlined/>}
+								{data.type_status === 2 && <DollarOutlined/>}
+							</div>
 						</Tooltip>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>
+					<div className={'sa-table-box-cell'}>
 						<Tooltip
-							placement="leftTop"
-							title={<PositionList bidId={data.id} fetch_path={'/api/sales/doclist'} error_alert={props.error_alert}/>}
-							color="white"
-							style={{
-								maxWidth: '300px',
-								overflow: 'hidden',
-								wordWrap: 'break-word',
-							}}
-							styles={{
-								body: {
-									color: 'black',
-									border: '1px solid #d9d9d9',
-								},
-								root: {
-									maxWidth: '400px'
-								}
-							}}
+							title={
+								data.protection_project === 1
+									? 'Защита проекта'
+									: data.protection_project === 2
+										? 'Реализация проекта'
+										: ''
+							}
 						>
-							<Tag color={'cyan'}>{data.files_count}</Tag>
+							<div>
+								{data.protection_project === 1 && <SafetyOutlined/>}
+								{data.protection_project === 2 && <LogoutOutlined/>}
+							</div>
 						</Tooltip>
 					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>
+							{data.stage_id === 1 && <Tag color={'blue'}>менеджер</Tag>}
+							{data.stage_id === 2 && <Tag color={'volcano'}>администратор</Tag>}
+							{data.stage_id === 3 && <Tag color={'magenta'}>бухгалтер</Tag>}
+							{data.stage_id === 4 && <Tag color={'gold'}>завершено</Tag>}
+						</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>{dayjs.unix(data.date).format('DD.MM.YYYY')}</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>{data.username}</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>{data.bill_number}</div>
+					</div>
+					<div className={'sa-table-box-cell text-align-left'}>
+						<div>{data.comment}</div>
+					</div>
+					<div className={'sa-table-box-cell text-align-left'}>
+						<div>{data.object}</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>
+							<Tooltip
+								placement="leftTop"
+								title={<PositionList bidId={data.id} fetch_path={'/sales/data/getbidmodels'}
+													 error_alert={props.error_alert}/>}
+								color="white"
+								styles={{
+									body: {
+										color: 'black',
+										border: '1px solid #d9d9d9',
+									},
+									root: {
+										maxWidth: '400px'
+									}
+								}}
+							>
+								<Tag color={'purple'}>{data.models_count}</Tag>
+							</Tooltip>
+						</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>
+							<Tooltip
+								placement="leftTop"
+								title={<PositionList bidId={data.id} fetch_path={'/api/sales/doclist'}
+													 error_alert={props.error_alert}/>}
+								color="white"
+								style={{
+									maxWidth: '300px',
+									overflow: 'hidden',
+									wordWrap: 'break-word',
+								}}
+								styles={{
+									body: {
+										color: 'black',
+										border: '1px solid #d9d9d9',
+									},
+									root: {
+										maxWidth: '400px'
+									}
+								}}
+							>
+								<Tag color={'cyan'}>{data.files_count}</Tag>
+							</Tooltip>
+						</div>
+					</div>
 				</div>
-			</div>
+			</Tooltip>
 		</Dropdown>
 	);
 };

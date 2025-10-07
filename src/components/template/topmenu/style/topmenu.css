@@ -1,6 +1,6 @@
 .sa-top-menu {
 	/* background-color: var(--menu-bg-color); */
-	background: linear-gradient(178deg, rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%);
+	background: var(--app-top-menu);
 }
 .sa-topmenu-button {
 	color: white;

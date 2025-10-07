@@ -42,10 +42,15 @@
 
 .sa-list-header {
 	background-color: var(--sa-list-header);
+	outline: 9px solid var(--app-background);
 	display: grid;
 	grid-template-columns: 1fr;
 	/*margin: 0 12px;*/
 	align-items: end;
+}
+
+.sa-table-box-row-header {
+	box-shadow: var(--app-background) -10px 0 0 -1px;
 }
 
 .sa-header-label-container {
@@ -162,4 +167,7 @@
 }
 .sa-app-page .ant-alert-description {
 	text-align: justify !important;
+}
+.sa-error-row {
+	background-color: var(--row-self-accent-color);
 }

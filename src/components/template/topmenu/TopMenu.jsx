@@ -20,7 +20,7 @@ import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { useUserData } from '../../../context/UserDataContext'; // импортируем хук
 import { WebSocketDebug } from '../../helpers/WebSocketDebug';
 
-const TopMenu = () => {
+const TopMenu = (props) => {
 	const { userdata, setUserdata } = useUserData();
 	const [roleMenu, setRoleMenu] = useState([]);
 	const [companiesMenu, setCompanieseMenu] = useState([]);
@@ -135,6 +135,7 @@ const TopMenu = () => {
 				});
 				if (response.data) {
 					setUserdata(response.data); // Обновляем данные пользователя
+					props.changed_user_data();
 				}
 			} catch (e) {
 				console.log(e);
@@ -151,6 +152,7 @@ const TopMenu = () => {
 				});
 				if (response.data) {
 					setUserdata(response.data); // Обновляем данные пользователя
+					props.changed_user_data();
 				}
 			} catch (e) {
 				console.log(e);
