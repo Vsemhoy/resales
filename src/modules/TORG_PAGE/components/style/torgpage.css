@@ -249,3 +249,71 @@
 .sa-org-collpase-header {
       align-items: center;
 }
+
+.sa-org-collapse-item {
+	border: 1px solid rgba(128, 128, 128, 0.288);
+	margin-bottom: 14px;
+	background-color: rgb(241, 241, 241);
+	transition: all 0.2s;
+}
+.sa-org-collapse-item:hover {
+	border: 1px solid var(--button-color);
+}
+.sa-org-collapse-item.deleted:hover {
+	border: 1px solid var(--error-color);
+}
+.sa-org-collpase-header {
+	font-weight: 600;
+	font-size: 1.06rem;
+}
+
+.sa-org-remove-button {
+	color: var(--error-color);
+	cursor: pointer;
+	padding-right: 12px;
+	padding-left: 12px;
+	border-radius: 3px;
+	margin-right: 3px;
+}
+.sa-org-remove-button:hover {
+	color: var(--current-color);
+}
+.sa-org-remove-button:active {
+	color: white;
+	background-color: var(--current-color);
+}
+.sa-org-trigger-button {
+	/* color: var(--error-color); */
+	cursor: pointer;
+	padding-right: 6px;
+	padding-left: 6px;
+	border-radius: 3px;
+}
+.sa-org-trigger-button:hover {
+	background-color: var(--table-hovered-row-color);
+
+}
+
+
+.sa-org-collapse-item.deleted {
+	border-radius: 6px;
+	outline: rgba(255, 0, 0, 0.635) solid 2px;
+}
+.sa-collapsed-item .sa-org-collapse-body {
+	/* height: 0px; */
+	overflow: none;
+	display: none;
+}
+
+.sa-org-collapse-item .sa-org-collpase-header {
+	background-color: var(--table-background-color);
+	transition: all 0.2s;
+}
+.sa-org-collapse-item:hover .sa-org-collpase-header {
+	background-color: var(--row-hovered-bg-color);
+}
+
+.sa-org-row-header-id {
+	color: gray;
+	font-weight: 100;
+}

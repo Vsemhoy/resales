@@ -3,6 +3,7 @@ import TorgPageSectionRow from '../TorgPageSectionRow';
 import { Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
+import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const NoteTabSectionTorg = (props) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -10,10 +11,14 @@ const NoteTabSectionTorg = (props) => {
 
   const [data, setData] = useState(null);
 
+  const [itemId, setItemId]  = useState(null);
   const [theme, setTheme] = useState('');
   const [author, setAuthor] = useState(1);
   const [date, setDate] = useState(null);
   const [note, setNote] = useState('');
+  const [deleted, setDeleted] = useState(0);
+
+  const [allowDelete, setAllowDelete] = useState(true);
 
 
   // ██    ██ ███████ ███████ 
@@ -27,6 +32,7 @@ const NoteTabSectionTorg = (props) => {
 
   useEffect(() => {
     setData(props.data);
+    setItemId(props.data.id);
   }, [props.data]);
 
   // ██    ██ ███████ ███████       ██   ██ 
@@ -39,16 +45,63 @@ const NoteTabSectionTorg = (props) => {
 
 
   return (
-    <div className={`sa-org-collapse-item ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}`}>
-      <div className={'sa-org-collpase-header sa-flex-space'}>
+    <div className={`sa-org-collapse-item
+       ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
+       ${deleted ? 'deleted' : ''}`}
+      
+    >
+      <div className={'sa-org-collpase-header sa-flex-space'}
+        onDoubleClick={(ev)=>{
+          ev.preventDefault();
+          ev.stopPropagation();
+          setCollapsed(!collapsed)}
+        }
+      >
         <div className={'sa-flex'}>
-          Name of the sheep
+          <div className={'sa-pa-6'}>
+            {collapsed ? (
+              <span className={'sa-pa-3 sa-org-trigger-button'}
+                onClick={()=>{setCollapsed(!collapsed)}}
+              >
+                <ChevronDownIcon height={'22px'} />
+              </span>
+
+            ):(
+              <span className={'sa-pa-3 sa-org-trigger-button'}
+                onClick={()=>{setCollapsed(!collapsed)}}
+              >
+                <ChevronUpIcon height={'22px'} />
+              </span>
+            )}
+            
+            
+          </div>
+          <div className={'sa-pa-6 sa-flex-space'}>
+            <div>
+            Name of the sheep
+
+            </div>
+            {itemId && (
+              <div className={'sa-org-row-header-id '}>
+                ({itemId})
+              </div>
+
+            )}
+            
+            </div>
+          
         </div>
         <div className={'sa-flex'}>
-          Delete?
+          {allowDelete && editMode && (
+            <span className={'sa-pa-3 sa-org-remove-button'}
+              onClick={()=>{setDeleted(!deleted)}}
+            >
+              <TrashIcon height={'22px'} />
+            </span>
+          )}
         </div>
       </div>
-      <div className={'sa-org-collpase-body'}>
+      <div className={'sa-org-collapse-body'}>
         <div className={'sa-org-collapse-content'}>
           <TorgPageSectionRow
             labels={['Gosha']}
