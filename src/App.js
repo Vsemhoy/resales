@@ -50,6 +50,25 @@ export const App = () => {
 		console.log('topRole: ', topRole);
 	}, [topRole]);
 
+	useEffect(() => {
+		const body = document.body;
+		body.classList.remove('theme_1', 'theme_2');
+
+		if (userdata?.user?.active_company) {
+			switch (userdata.user.active_company) {
+				case 2:
+					body.classList.add('theme_1');
+					break;
+				case 3:
+					body.classList.add('theme_2');
+					break;
+			}
+		} else {
+			body.classList.remove('theme_2');
+			body.classList.add('theme_1');
+		}
+	}, [userdata]);
+
 	const get_userdata = async () => {
 		try {
 			let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
@@ -86,7 +105,7 @@ export const App = () => {
 		<UserDataProvider>
 			{/* <ChatSocketProvider url={`ws://192.168.1.16:5003`}> */}
 			<BrowserRouter basename={BASE_NAME}>
-				<div className="app">
+				<div className={`app `}>
 					<TopMenu userdata={userdata} changed_user_data={setUserdata} />
 					{/* <WebSocketDebug /> */}
 					<div>

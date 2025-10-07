@@ -161,8 +161,7 @@ const BidListTable = (props) => {
 			<Affix offsetTop={156}>
 				<div className={'sa-table-box-header'}>
 					<div
-						className={'sa-table-box-bids sa-table-box-row'}
-						style={{ boxShadow: '-10px 0 0 -1px #b4c9e1' }}
+						className={'sa-table-box-bids sa-table-box-row sa-table-box-row-header'}
 					>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>

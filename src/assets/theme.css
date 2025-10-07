@@ -1,4 +1,7 @@
-* {
+.theme_1 {
+	--app-background: #b4cbe4;
+	--app-top-menu: linear-gradient(178deg, rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%);
+
 	--row-main-bg-color: #ffffff;
 	--row-main-bg-color-second: #919191;
 	--row-second-bg-color: #f5f5f5;
@@ -83,17 +86,233 @@
 	--sider-bg-color: #e1e7ed;
 
 	--sa-list-header: aliceblue;
+
+	--divider: #99bad3;
+
+	--sa-bid-page-divide: #99bad3;
+	--sa-bid-page-table-header: #e6f4ff;
+
+	--sa-bid-page-d: #e4f2fd;
+
+	--sa-primary-color: #2178fa;
+	--sa-collapse-color: #d9dee4;
+
+	--sa-bid-page-span: #2C6DA7;
+
+	--org-modal-legend: #ecf2fa;
+	--org-modal-content-background: #f9f9f9;
+	--org-modal-content-background-hover: #dae9fb;
+	--org-modal-content-text: #2c6da7;
+
+	--org-page-trigger-treasure-text: rgb(0, 89, 178);
+	--org-page-trigger-treasure-outline: #2c6ea77c;
+	--org-page-temp-border-color: #2196f3;
+
+
+	--sa-antd-steps-color: #1677ff;
+
+	--sa-antd-button-primary-color-text: #fff;
+	--sa-antd-button-primary-color-border: #1677ff;
+	--sa-antd-button-primary-color: #1677ff;
+	--sa-antd-button-primary-color-hover: #1e708e;
+	--sa-antd-button-primary-color-active: #185671;
+	--sa-antd-button-variant-filled: #e6f4ff;
+	--sa-antd-button-variant-outlined: #fff;
+	--sa-antd-button-variant-outlined-hover: rgba(156, 215, 241, 0.5);
+	--sa-antd-button-variant-outlined-active: rgba(112, 152, 184, 0.5);
+	--sa-antd-button-variant--color-dangerous-filled: #ff4d4f57;
+	--sa-antd-button-variant--color-dangerous: rgb(255, 0, 3);
+
+	--sa-antd-checkbox-color: #1677ff;
+	--sa-price-option: rgba(33, 120, 250, 0.7);
+	--sa-price-option-background: #e6f4ff;
+	--sa-antd-input-outlined-hover: #4096ff;
+}
+
+.theme_2 {
+	--app-background: #bad5b2;
+	--app-top-menu: linear-gradient(178deg, rgb(64 191 49) 0%, rgb(17 96 31) 100%);
+
+	--sa-list-header: #f0fff2;
+
+	--table-background-color: #fff;
+	--table-header-row-color: #fff;
+	--table-second-row-color: #00000011;
+	--column-divider-color: #00000036;
+
+	--sider-bg-color: #e1ede1;
+
+	--divider: #7e976f;
+
+	--row-main-bg-color: #fff;
+
+	--sa-bid-page-divide: #9ed399;
+	--sa-bid-page-table-header: #fff9e6;
+
+	--sa-primary-color: #2e8716;
+	--sa-collapse-color: #f9ebbc;
+
+	--sa-bid-page-span:  #2ca732;
+
+	--sa-bid-page-d: #e4fde4;
+
+	--org-modal-legend: #ecfaec;
+	--org-modal-content-background: #f9f9f9;
+	--org-modal-content-background-hover: #f9f9f9;
+	--org-modal-content-text: #114e21;
+
+	--org-page-temp-border-color: #2e8716;
+
+	--section-header-color: #d1eac9;
+	--section-row-color: #edf1fa;
+	--section-row-input-text-color: #7c8d9d;
+	--section-tab-color: #dae5ee;
+	--section-tab-text-color: #353a3e;
+	--section-tab-text-name-color: #de8060;
+	--section-text-title-color: #a2a7ad;
+	--section-second-title-color: #c1c6ca;
+
+	--current-color: #d32f2f;
+	--menu-buttons-color: #66cf4f;
+	--menu-button-active-color: #3f8b33;
+	--menu-bg-color: #e7f0f7;
+
+	--table-text-color: #8fc172;
+	--modal-header-text-color-hover: #4f7b45;
+	--modal-header-text-color: #3da73f;
+	--modal-header-text-color-active: #cb531f;
+
+	--org-page-trigger-treasure-text: #1a7d34;
+	--org-page-trigger-treasure-outline: #7e976f;
+
+	--row-selected-color: #66c7f4;
+	--row-selected-color_2: #1e88e5;
+	/* #ffab91; */
+	--row-self-accent-color: #fe938c;
+	--row-self-accent-faded-color: #f5d5d3;
+	--row-self-accent-color_2: #ff6b6b;
+	/* --row-self-accent-faded-color: #f5d5d3; */
+	--row-self-accent-color-2: #27c5c2;
+	--row-self-accent-faded-color-2: #27c5c291;
+	/* #bde9d1 */
+	--row-divider-color: #c1cad6d9;
+	--row-divider-color_2: #aadabf;
+
+	--close-color: #ea8f90;
+	--close-color-hover: #ed5659;
+	--close-color-active: #ff3134;
+
+	--expand-color: rgba(60, 197, 39, 0.19);
+	--expand-color-hover: rgba(60, 197, 39, 0.35);
+	--expand-color-active: rgba(79, 197, 39, 0.65);
+
+
+
+	--sa-antd-steps-color: #4b6a4a;
+
+	--sa-antd-button-primary-color-text: #fff;
+	--sa-antd-button-primary-color-border: #1a7d34;
+	--sa-antd-button-primary-color: #1a7d34;
+	--sa-antd-button-primary-color-hover: #1e8e3c;
+	--sa-antd-button-primary-color-active: #18712f;
+	--sa-antd-button-variant-filled: rgba(165, 227, 140, 0.5);
+	--sa-antd-button-variant-outlined: #fff;
+	--sa-antd-button-variant-outlined-hover: rgba(181, 241, 156, 0.5);
+	--sa-antd-button-variant-outlined-active: rgba(133, 184, 112, 0.5);
+	--sa-antd-button-variant--color-dangerous-filled: #ff4d4f57;
+	--sa-antd-button-variant--color-dangerous: rgb(255, 0, 3);
+
+	--sa-antd-checkbox-color: #1a7d34;
+	--sa-price-option: #1a7d34;
+	--sa-price-option-background: #e8fbda;
+	--sa-antd-input-outlined-hover: #1a7d34;
 }
 
 .app {
 	min-height: 100vh;
-	background: #b4cbe4;
+	background-color: var(--app-background);
 }
-/* .app > div {
-    
-    background: linear-gradient(355deg,rgba(118, 129, 163, 0.5) 0%, rgba(141, 194, 235, 0.5) 54%, rgba(213, 232, 247, 0.5) 100%);
-} */
 
 .sa-outlet-body {
 	background-color: var(--row-main-bg-color);
+}
+.ant-btn-color-primary {
+	color: var(--sa-antd-button-primary-color-text) !important;
+	background-color: var(--sa-antd-button-primary-color) !important;
+}
+.ant-btn-color-primary:hover {
+	background-color: var(--sa-antd-button-primary-color-hover) !important;
+}
+.ant-btn-color-primary:active {
+	background-color: var(--sa-antd-button-primary-color-active) !important;
+}
+.ant-btn-variant-outlined {
+	background-color: var(--sa-antd-button-variant-outlined) !important;
+	border-color: var(--sa-antd-button-primary-color-border) !important;
+	color: var(--sa-antd-button-primary-color-border) !important;
+}
+.ant-btn-variant-outlined:hover {
+	background-color: var(--sa-antd-button-variant-outlined-hover) !important;
+}
+.ant-btn-variant-outlined:active {
+	background-color: var(--sa-antd-button-variant-outlined-active) !important;
+}
+.ant-btn-color-primary.ant-btn-variant-filled {
+	border: none !important;
+	color: var(--sa-antd-button-primary-color-border) !important;
+	background-color: var(--sa-antd-button-variant-filled) !important;
+}
+.ant-btn-variant-filled.ant-btn-color-dangerous {
+	background-color: var(--sa-antd-button-variant--color-dangerous-filled) !important;
+}
+.ant-btn-variant-outlined.ant-btn-color-dangerous {
+	color: var(--sa-antd-button-variant--color-dangerous) !important;
+	background-color: var(--sa-antd-button-variant--color-dangerous-filled) !important;
+	border-color: var(--sa-antd-button-variant--color-dangerous) !important;
+}
+
+.ant-tree-checkbox-checked .ant-tree-checkbox-inner {
+	background-color: var(--sa-antd-checkbox-color) !important;
+	border-color: var(--sa-antd-checkbox-color) !important;
+}
+.ant-checkbox-checked .ant-checkbox-inner {
+	background-color: var(--sa-antd-checkbox-color) !important;
+	border-color: var(--sa-antd-checkbox-color) !important;
+}
+
+.ant-tree-checkbox-inner:after {
+	background-color: var(--sa-antd-checkbox-color) !important;
+}
+
+.ant-switch.ant-switch-checked {
+	background: var(--sa-antd-checkbox-color) !important;
+}
+
+.ant-badge .ant-badge-color-blue {
+	background: var(--sa-antd-checkbox-color) !important;
+}
+
+.ant-input-outlined:focus, .ant-input-outlined:focus-within, .ant-input-outlined:hover {
+	border-color: var(--sa-antd-input-outlined-hover) !important;
+}
+
+.ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+	background-color: var(--sa-price-option-background) !important;
+}
+
+.ant-select-outlined:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):hover .ant-select-selector {
+	border-color: var(--sa-antd-input-outlined-hover) !important;
+}
+.ant-select-outlined:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):focus .ant-select-selector {
+	border-color: var(--sa-antd-input-outlined-hover) !important;
+}
+.ant-select-outlined:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):focus-within .ant-select-selector {
+	border-color: var(--sa-antd-input-outlined-hover) !important;
+}
+
+.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected:not(.ant-picker-cell-disabled) .ant-picker-cell-inner {
+	background-color: var(--sa-antd-button-primary-color) !important;
+}
+.ant-picker-now-btn {
+	color: var(--sa-antd-button-primary-color) !important;
 }
