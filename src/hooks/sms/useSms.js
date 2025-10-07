@@ -41,13 +41,9 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 					throw new Error('Не удалось загрузить SMS с сервера');
 				}
 			} else {
-				// console.log('[useSms] Используются MOCK-данные (dev mode)');
 
-				const mockData = mock; // Просто используем объект как есть
+				const mockData = mock;
 
-				// console.log('[useSms] MOCK-данные:', mockData);
-
-				// Для chatId можно расширить мок или фильтровать
 				const sms = chatId ? mockData?.content?.messages : mockData?.content?.sms;
 
 				if (chatId) setWho('Собеседник');
