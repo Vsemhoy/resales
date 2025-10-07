@@ -324,3 +324,7 @@
 .ant-spin-dot-item {
 	background: var(--sa-antd-spin) !important;
 }
+
+.ant-badge .ant-badge-color-geekblue {
+	background: var(--sa-antd-button-primary-color) !important;
+}
