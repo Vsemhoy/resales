@@ -91,16 +91,14 @@ const EngineerListRow = (props) => {
 									<Tooltip title={'Копировать'}>
 										<Button type={'primary'} style={{ width: '32px' }} icon={<CopyOutlined />}
 												onClick={() => {
-													props.setOpenCopySpecification(true);
-													props.setOpenAddIntoBidSpecificationId(data.id);
+													props.openModalEngeneerCopy(true, data.id, 1);
 												}}
 										></Button>
 									</Tooltip>
 									<Tooltip title={'Отправить'}>
 										<Button type={'primary'} style={{ width: '32px' }} danger icon={<SendOutlined />}
 												onClick={() => {
-													props.handleSpecificationFinal(true);
-													props.setOpenAddIntoBidSpecificationId(data.id);
+													props.engeneerFinal(data.id);
 												}}
 										></Button>
 									</Tooltip>
@@ -112,18 +110,14 @@ const EngineerListRow = (props) => {
 									<Tooltip title={'Создать КП'}>
 										<Button type={'primary'} style={{ width: '32px' }} icon={<ProfileOutlined />}
 												onClick={() => {
-													props.setOpenAddIntoBidSpecification(true);
-													props.setOpenAddIntoBidSpecificationId(data.id);
-													props.setCopyType(3);
+													props.openModalManager(true, data.id, 3);
 												}}
 										></Button>
 									</Tooltip>
 									<Tooltip title={'Добавить в КП'}>
 										<Button type={'primary'} style={{ width: '32px' }} danger icon={<FileAddOutlined />}
 												onClick={() => {
-													props.setOpenAddIntoBidSpecification(true);
-													props.setOpenAddIntoBidSpecificationId(data.id);
-													props.setCopyType(2);
+													props.openModalManager(true, data.id, 2);
 												}}
 										></Button>
 									</Tooltip>

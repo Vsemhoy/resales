@@ -9,7 +9,7 @@ export const MAIN_ORG_DATA_IGNORE_KEYS = [
     "deliverytype",
     "curator",
     "creator",
-    // "contacts",
+    "contacts",
     "address",
     "active_tolerance",
     "active_licenses_bo",

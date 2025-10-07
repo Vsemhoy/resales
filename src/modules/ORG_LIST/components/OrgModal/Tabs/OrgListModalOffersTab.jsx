@@ -107,7 +107,7 @@ const OrgListModalOffersTab = (props) => {
 
 
 
-		const create_bid = async (type, org_id) => {
+		const create_bid = async (org_id, type) => {
 				try {
 					const format_data = {
 						

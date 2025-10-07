@@ -83,7 +83,7 @@ const MainTabPage = (props) => {
         },
 
         label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}>
-          <div>{item.lastname ? item.lastname : ""}{item.name ? " " + item.name : ''}{item.middlename ? " " + item.middlename : ""} <span style={{ color: 'gray', fontWeight: 100 }}>({item.id})</span></div>
+          <div>{item.middlename ? item.middlename : ""}{item.name ? " " + item.name : ''}{item.lastname ? " " + item.lastname : ""} <span style={{ color: 'gray', fontWeight: 100 }}>({item.id})</span></div>
           {editMode && (
             <div className={'sa-flex-gap'}>
 
@@ -156,11 +156,7 @@ const MainTabPage = (props) => {
   };
 
 
-  useEffect(() => {
-    if (props.on_change_data) {
-      props.on_change_data('main', baseData);
-    }
-  }, [baseData]);
+
 
 
 
@@ -384,6 +380,12 @@ const MainTabPage = (props) => {
     setBaseData(ndt);
   }
 
+  useEffect(() => {
+    console.log('BASE DATA MODIFIED');
+
+    console.log(baseData);
+  }, [baseData]);
+
   const handleDeleteContact = (id) => {
     let contacts = baseData.contacts;
     let ordata = contacts.find((item) => item.id === id);
@@ -442,9 +444,20 @@ const MainTabPage = (props) => {
 
 
 
+  useEffect(() => {
+    console.log('DATA UPDATED');
+    if (props.on_change_data){
+      console.log(baseData);
+      props.on_change_data('main', baseData);
+    };
+  }, [baseData]);
 
-
-
+  // useEffect(() => {
+  //   if (props.on_change_data) {
+  //     console.log('CALL TO CHANGE BASEDATA ON 1 LEVEL', baseData);
+  //     props.on_change_data('main', baseData);
+  //   }
+  // }, [baseData]);
 
 
 

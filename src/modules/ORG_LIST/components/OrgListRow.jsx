@@ -82,7 +82,7 @@ const OrgListRow = (props) => {
 				)
 			};
 
-			if (userdata?.acls?.includes(55) && (orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company)){
+			if ((userdata?.acls?.includes(89) || userdata?.acls?.includes(92))  && (orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company)){
 				newArr.push(
 					{
 							key: 'Can_create_offer',

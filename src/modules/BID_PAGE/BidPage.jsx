@@ -13,8 +13,8 @@ import {
 	Tooltip,
 	Space, Empty, Divider
 } from 'antd';
-import {useNavigate, useParams} from 'react-router-dom';
-import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
+import {NavLink, useNavigate, useParams} from 'react-router-dom';
+import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/bidPage.css';
 import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT, PROJECT_INFO, SELECTS} from './mock/mock';
@@ -1683,8 +1683,10 @@ const BidPage = (props) => {
 														style={{
 															textAlign: 'center',
 															fontSize: '14px',
+															cursor: 'pointer'
 														}}
 														color="geekblue"
+														onClick={() => window.open(`${BASE_ROUTE}/orgs/${bidOrg.id}`, '_blank')}
 													>
 														{bidOrg.name}
 													</Tag>

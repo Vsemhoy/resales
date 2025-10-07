@@ -22,14 +22,10 @@ import {
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import dayjs from 'dayjs';
-import './components/style/orgpage.css';
+import './components/style/torgpage.css';
 import '../ORG_LIST/components/style/orgmodal.css';
 
-import MainTabPage from './tabs/MainTabPage';
-import CallsTabPage from './tabs/CallsTabPage';
-import NotesTabPage from './tabs/NotesTabPage';
-import ProjectsTabPage from './tabs/ProjectsTabPage';
-
+ 
 import OrgListModalBillsTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalBillsTab';
 import OrgListModalOffersTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalOffersTab';
 import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalHistoryTab';
@@ -40,9 +36,14 @@ import { MODAL_NOTES_LIST } from '../ORG_LIST/components/mock/MODALNOTESTABMOCK'
 import { MODAL_PROJECTS_LIST } from '../ORG_LIST/components/mock/MODALPROJECTSTABMOCK';
 import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
-import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
+
 import CustomModal from '../../components/helpers/modals/CustomModal';
 import { FlushOrgData, IsSameComparedSomeOrgData, MAIN_ORG_DATA_IGNORE_KEYS } from './components/handlers/OrgPageDataHandler';
+import TabMainTorg from './components/tabs/TabMainTorg';
+import TabCallsTorg from './components/tabs/TabCallsTorg';
+import TabProjectsTorg from './components/tabs/TabProjectsTorg';
+import TabNotesTorg from './components/tabs/TabNotesTorg';
+import { DEPARTAMENTS_MOCK } from '../ORG_PAGE/components/mock/ORGPAGEMOCK';
 
 const tabNames = [
 	{
@@ -135,7 +136,6 @@ const OrgPage = (props) => {
 	const [tempCallsData, setTempCallsData] = useState(null);
 	const [tempNotesData, setTempNotesData] = useState(null);
 
-	const [tempMain_contacts, setTempMain_contacts] = useState([]);
 	const [tempMain_phones, setTempMain_phones] = useState([]);
 	const [tempMain_addresses, setTempMain_addresses] = useState([]);
 	const [tempMain_legalAddresses, setTempMain_legalAddresses] = useState([]);
@@ -180,6 +180,38 @@ const OrgPage = (props) => {
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertDescription, setAlertDescription] = useState('');
 	const [alertType, setAlertType] = useState('');
+
+
+  // ██    ██ ███████ ███████
+  // ██    ██ ██      ██     
+  // ██    ██ █████   █████  
+  // ██    ██ ██      ██     
+  //  ██████  ██      ██     
+
+
+
+
+  // ██    ██ ███████ ███████       ██   ██ 
+  // ██    ██ ██      ██             ██ ██  
+  // ██    ██ █████   █████   █████   ███   
+  // ██    ██ ██      ██             ██ ██  
+  //  ██████  ██      ██            ██   ██ 
+
+  // ------------------------------------------------------------------- //
+
+  // ███████ ███████ ████████  ██████ ██   ██ 
+  // ██      ██         ██    ██      ██   ██ 
+  // █████   █████      ██    ██      ███████ 
+  // ██      ██         ██    ██      ██   ██ 
+  // ██      ███████    ██     ██████ ██   ██ 
+
+
+
+  // ███████ ███████ ████████  ██████ ██   ██       ██   ██ 
+  // ██      ██         ██    ██      ██   ██        ██ ██  
+  // █████   █████      ██    ██      ███████ █████   ███   
+  // ██      ██         ██    ██      ██   ██        ██ ██  
+  // ██      ███████    ██     ██████ ██   ██       ██   ██ 
 
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
@@ -664,8 +696,6 @@ const OrgPage = (props) => {
 			setTempMain_an_requisites(dataarr);
 		} else if (key === 'phones'){
 			setTempMain_phones(dataarr);
-		// } else if (key === 'contacts'){
-		// 	setTempMain_contacts(dataarr);
 		} else if (key === 'address'){
 			setTempMain_addresses(dataarr);
 		} else if (key === 'legaladdresses'){
@@ -687,7 +717,7 @@ const OrgPage = (props) => {
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
-				// copyData.contacts =            tempMain_contacts;
+				
 				setTempMainData(copyData);
 				console.log('END POINT ALT', copyData);
 			}
@@ -700,7 +730,6 @@ const OrgPage = (props) => {
 		tempMain_emails,
 		tempMain_phones,
 		tempMain_an_requisites,
-		// tempMain_contacts
 	]);
 
 
@@ -717,7 +746,7 @@ const OrgPage = (props) => {
 
 			let copyData = JSON.parse(JSON.stringify(data));
 			// if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
-			console.log('BASE MAIN DATA', baseMainData);
+			console.log('BAES MAIN DATA', baseMainData);
 			if (!IsSameComparedSomeOrgData(data, baseMainData, MAIN_ORG_DATA_IGNORE_KEYS)){
 				copyData.active_licenses =     tempMain_an_licenses;
 				copyData.active_tolerance =    tempMain_an_tolerances;
@@ -739,11 +768,7 @@ const OrgPage = (props) => {
 				copyData.address =             tempMain_addresses;
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
-
-				console.log('SET LAST COPY DATA', copyData);
-				// console.log('SET ANTI COPY DATA', copyData)
-				// if (cop)
-				// 	copyData.contacts =              ;
+				console.log('SET ANTI COPY DATA', copyData)
 				setTempMainData(copyData);
 			}
 
@@ -1036,9 +1061,12 @@ const OrgPage = (props) => {
 							/>
 						)}
 
-						<MainTabPage
-							show={activeTab === 'm'}
+						<TabMainTorg
+              active_tab={activeTab === 'm'}
 							edit_mode={editMode}
+              org_id={itemId}
+
+							show={activeTab === 'm'}
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseMainData}
@@ -1049,9 +1077,11 @@ const OrgPage = (props) => {
 							on_change_main_data_part={handleMaintabObjectDataChange}
 						/>
 
-						<CallsTabPage
-							show={activeTab === 'c'}
+            <TabCallsTorg
+              active_tab={activeTab === 'c'}
 							edit_mode={editMode}
+              org_id={itemId}
+
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseCallsData}
@@ -1068,9 +1098,12 @@ const OrgPage = (props) => {
 							on_change_data={handleTabDataChange}
 						/>
 
-						<ProjectsTabPage
-							show={activeTab === 'p'}
-							edit_mode={editMode}
+						<TabProjectsTorg
+							active_tab={activeTab === 'p'}
+              edit_mode={editMode}
+							org_id={itemId}
+              
+
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseProjectsData}
@@ -1086,10 +1119,13 @@ const OrgPage = (props) => {
 							main_data={baseMainData}
 						/>
 
-						<NotesTabPage
-							show={activeTab === 'n'}
+						<TabNotesTorg
+							active_tab={activeTab === 'n'}
 							edit_mode={editMode}
-							item_id={itemId}
+							org_id={itemId}
+              userdata={userdata}
+
+
 							call_to_save={callToSaveAction}
 							base_data={baseNotesData}
 							// on_save={handleDataChangeApprove}
@@ -1098,7 +1134,6 @@ const OrgPage = (props) => {
 								setPageNotes(p);
 							}}
 							current_page={pageNotes}
-							userdata={userdata}
 							on_change_data={handleTabDataChange}
 						/>
 

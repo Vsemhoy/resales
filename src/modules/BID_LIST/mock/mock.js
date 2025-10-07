@@ -26,6 +26,7 @@ export const BID_LIST = [
 		type_status: 1,
 		type_status_name: 'Коммерческое предложение',
 		username: 'Турелькин М. Г.',
+		last_message: 'Нет ИНН'
 	},
 	{
 		admin_accept_status_name: '',

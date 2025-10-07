@@ -78,7 +78,7 @@
 }
 
 .sa-orgpage-blank-section-item {
-	border-left: 6px solid var(--org-page-temp-border-color);
+	border-left: 6px solid #2196f3;
 }
 
 .sa-orgpage-updated-section-item {
@@ -167,9 +167,9 @@
 }
 
 .ant-collapse-item .ant-collapse-item .sk-omt-stack-control {
-	background-color: var(--org-modal-legend);
+	background-color: #ecf2fa;
 	transition: all 0.1s;
-	color: var(--sa-antd-button-primary-color);
+	color: #006cc4;
 	border-bottom: 1px solid #2195f357;
 }
 /* .ant-collapse-item .ant-collapse-item:hover .sk-omt-stack-control {
@@ -227,10 +227,10 @@
 
 }
 .sk-omt-comment-trigger-treasure {
-	outline: 1px solid var(--org-page-trigger-treasure-outline);
+	outline: 1px solid #2c6ea77c;
 }
 .sk-omt-comment-trigger-treasure > span {
-	color: var(--org-page-trigger-treasure-text);
+	color: rgb(0, 89, 178);
 }
 
 .sa-orgpage-tab-hidder {
@@ -243,4 +243,77 @@
 .sk-omt-comment-trigger-hot {
 	color: red;
 	outline: 1px solid red;
+}
+
+
+.sa-org-collpase-header {
+      align-items: center;
+}
+
+.sa-org-collapse-item {
+	border: 1px solid rgba(128, 128, 128, 0.288);
+	margin-bottom: 14px;
+	background-color: rgb(241, 241, 241);
+	transition: all 0.2s;
+}
+.sa-org-collapse-item:hover {
+	border: 1px solid var(--button-color);
+}
+.sa-org-collapse-item.deleted:hover {
+	border: 1px solid var(--error-color);
+}
+.sa-org-collpase-header {
+	font-weight: 600;
+	font-size: 1.06rem;
+}
+
+.sa-org-remove-button {
+	color: var(--error-color);
+	cursor: pointer;
+	padding-right: 12px;
+	padding-left: 12px;
+	border-radius: 3px;
+	margin-right: 3px;
+}
+.sa-org-remove-button:hover {
+	color: var(--current-color);
+}
+.sa-org-remove-button:active {
+	color: white;
+	background-color: var(--current-color);
+}
+.sa-org-trigger-button {
+	/* color: var(--error-color); */
+	cursor: pointer;
+	padding-right: 6px;
+	padding-left: 6px;
+	border-radius: 3px;
+}
+.sa-org-trigger-button:hover {
+	background-color: var(--table-hovered-row-color);
+
+}
+
+
+.sa-org-collapse-item.deleted {
+	border-radius: 6px;
+	outline: rgba(255, 0, 0, 0.635) solid 2px;
+}
+.sa-collapsed-item .sa-org-collapse-body {
+	/* height: 0px; */
+	overflow: none;
+	display: none;
+}
+
+.sa-org-collapse-item .sa-org-collpase-header {
+	background-color: var(--table-background-color);
+	transition: all 0.2s;
+}
+.sa-org-collapse-item:hover .sa-org-collpase-header {
+	background-color: var(--row-hovered-bg-color);
+}
+
+.sa-org-row-header-id {
+	color: gray;
+	font-weight: 100;
 }
