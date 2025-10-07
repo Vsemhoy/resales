@@ -43,7 +43,8 @@ ul {
 .chat-modal__title {
 	cursor: grab;
 	padding: 20px 10px 10px 20px;
-	background: linear-gradient(to bottom, #4d84bbda, #366da5);
+	background: var(--app-top-menu);
+	/*background: linear-gradient(to bottom, #4d84bbda, #366da5);*/
 	color: #fff !important;
 	font-weight: 400 !important;
 }
