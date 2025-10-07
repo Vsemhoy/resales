@@ -169,6 +169,8 @@ const TopMenu = (props) => {
 			} catch (e) {
 				console.log(e);
 			}
+		} else {
+			props.changed_user_data();
 		}
 	};
 
