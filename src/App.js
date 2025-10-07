@@ -106,7 +106,7 @@ export const App = () => {
 			{/* <ChatSocketProvider url={`ws://192.168.1.16:5003`}> */}
 			<BrowserRouter basename={BASE_NAME}>
 				<div className={`app `}>
-					<TopMenu userdata={userdata} changed_user_data={setUserdata} />
+					<TopMenu userdata={userdata} changed_user_data={() => get_userdata()} /> {/*setUserdata*/}
 					{/* <WebSocketDebug /> */}
 					<div>
 						<Routes>
