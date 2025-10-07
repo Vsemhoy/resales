@@ -23,7 +23,7 @@ import AntdIconsPage from './modules/DEV/Icons/AntdIconsPage';
 import HeroIconsPage24 from './modules/DEV/Icons/HeroIconsPage24';
 import CustomIconPage from './modules/DEV/Icons/CustomIconsPage';
 // import { WebSocketDebug } from './components/helpers/WebSocketDebug';
-// import { ChatSocketProvider } from './context/ChatSocketContext';
+import { ChatSocketProvider } from './context/ChatSocketContext';
 import { UserDataProvider } from './context/UserDataContext';
 import { PROD_AXIOS_INSTANCE } from './config/Api';
 import { MS_USER } from './mock/MAINSTATE';
@@ -103,7 +103,7 @@ export const App = () => {
 
 	return (
 		<UserDataProvider>
-			{/* <ChatSocketProvider url={`ws://192.168.1.16:5003`}> */}
+			<ChatSocketProvider url={`ws://192.168.1.16:5003`}>
 			<BrowserRouter basename={BASE_NAME}>
 				<div className={`app `}>
 					<TopMenu userdata={userdata} changed_user_data={() => get_userdata()} /> {/*setUserdata*/}
@@ -209,9 +209,8 @@ export const App = () => {
 							</Dropdown>
 						)}
 					</div>
-				</div>
-			</BrowserRouter>
-			{/* </ChatSocketProvider> */}
+				</BrowserRouter>
+			</ChatSocketProvider>
 		</UserDataProvider>
 	);
 };

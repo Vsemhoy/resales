@@ -1,7 +1,32 @@
 import { useChatSocket } from '../../context/ChatSocketContext';
+import { PROD_API_URL } from '../../config/Api'; // Импортируем из Api.js
+import { CSRF_TOKEN } from '../../config/config';
 
 export const WebSocketDebug = () => {
 	const { connected, messages, sendMessage, connectionStatus, reconnect } = useChatSocket();
+
+	// Функция для получения полного URL используя PROD_API_URL из Api.js
+	const getFullUrl = (endpoint) => {
+		let baseUrl = PROD_API_URL;
+
+		// Если в PROD_API_URL нет протокола, добавляем его
+		if (baseUrl && !baseUrl.startsWith('http')) {
+			baseUrl = `http://${baseUrl}`;
+		}
+
+		// Если PROD_API_URL не определен, используем текущий хост
+		if (!baseUrl) {
+			baseUrl = window.location.origin;
+		}
+
+		// Убираем слеш в конце baseUrl если есть
+		baseUrl = baseUrl.replace(/\/$/, '');
+
+		// Убираем слеш в начале endpoint если есть
+		endpoint = endpoint.replace(/^\//, '');
+
+		return `${baseUrl}/${endpoint}`;
+	};
 
 	const testChatMessage = () => {
 		sendMessage({
@@ -23,9 +48,14 @@ export const WebSocketDebug = () => {
 		sendMessage({
 			action: 'laravel_request',
 			requestId: requestId,
-			endpoint: '/api/sms',
-			method: 'POST', // ИЗМЕНИЛ НА POST
-			data: {}, // ДОБАВИЛ ПУСТОЙ ОБЪЕКТ ДЛЯ POST
+			endpoint: getFullUrl('/api/sms'),
+			method: 'POST',
+			data: {
+				to: 46,
+				text: `Тестовое сообщение через Laravel API ${Date.now()}`,
+				answer: null,
+				_token: CSRF_TOKEN,
+			},
 		});
 		console.log('🗂️ Sent Laravel request:', requestId);
 	};
@@ -35,17 +65,19 @@ export const WebSocketDebug = () => {
 		sendMessage({
 			action: 'laravel_request',
 			requestId: requestId,
-			endpoint: '/api/sms/create/sms',
+			endpoint: getFullUrl('/api/sms/create/sms'),
 			method: 'POST',
 			data: {
 				text: 'Тестовое сообщение через BFF ' + new Date().toLocaleTimeString(),
 				to: 46,
 				files: [],
+				_token: CSRF_TOKEN,
 			},
 		});
 		console.log('📝 Sent Laravel create message:', requestId);
 	};
 
+	// Остальной код без изменений
 	return (
 		<div
 			style={{
@@ -67,6 +99,7 @@ export const WebSocketDebug = () => {
 			<div>Status: {connectionStatus}</div>
 			<div>Connected: {connected ? 'Yes ✅' : 'No ❌'}</div>
 			<div>Messages: {messages.length}</div>
+			<div>Base URL: {PROD_API_URL}</div>
 
 			<div
 				style={{

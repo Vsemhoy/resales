@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import { useUserData } from '../../context/UserDataContext';
 import './components/style/orglistpage.css';
 import { BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
@@ -45,8 +45,8 @@ import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { readOrgURL, updateURL, useURLParams } from '../../components/helpers/UriHelpers';
 // import dayjs from 'dayjs';
 
-const OrgListPage = (props) => {
-	const { userdata } = props;
+const OrgListPage = () => {
+	const { userdata } = useUserData();
 	const { updateURL, readOrgURL } = useURLParams();
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -249,7 +249,6 @@ const OrgListPage = (props) => {
 		console.log('SKIPPER', SKIPPER);
 		if (SKIPPER === 0) {
 			const timer = setTimeout(() => {
-				console.log('first GETTER');
 				get_orglist_async();
 			}, 250);
 
@@ -433,8 +432,9 @@ const OrgListPage = (props) => {
 	const triggerMyCompaniesFilterButton = () => {
 		let value = filterBox.curator;
 		let newValue = null;
-		if (!value) {
-			newValue = userdata.user?.id;
+		if (!value && userdata?.user?.id) {
+			// ✅ Добавлена проверка
+			newValue = userdata.user.id;
 		}
 		setFilterBox((prev) => {
 			const updated = { ...prev }; // копируем старые фильтры
@@ -738,7 +738,7 @@ const OrgListPage = (props) => {
 								base_orgs={orgList}
 								on_preview_open={handlePreviewOpen}
 								on_set_sort_orders={setOrderBox}
-								userdata={userdata}
+								// userdata={userdata}
 								on_change_filters={handleFilterChange}
 								base_filters={filterBox}
 								base_orders={orderBox}

@@ -1,5 +1,3 @@
-// ВРЕМЕННО ЗАКОММЕНТИРОВАНО ДЛЯ MVP
-/*
 import { useEffect, useRef } from 'react';
 
 const getWebSocketUrl = () => {
@@ -43,14 +41,13 @@ export const useChatSocket = ({ chatId, onNewMessage }) => {
 		};
 	}, [chatId, onNewMessage]);
 };
-*/
 
 // ВРЕМЕННАЯ ЗАГЛУШКА ДЛЯ MVP
-export const useChatSocket = () => {
-	return {
-		messages: [],
-		connected: false,
-		ws: null,
-		sendMessage: () => console.warn('WebSocket временно отключен для MVP'),
-	};
-};
+// export const useChatSocket = () => {
+// 	return {
+// 		messages: [],
+// 		connected: false,
+// 		ws: null,
+// 		sendMessage: () => console.warn('WebSocket временно отключен для MVP'),
+// 	};
+// };

@@ -41,7 +41,7 @@ export default function ChatContent({ chatId }) {
 	useEffect(() => {
 		const interval = setInterval(() => {
 			refetch();
-		}, 30000);
+		}, 1000);
 
 		return () => clearInterval(interval);
 	}, [refetch]);
