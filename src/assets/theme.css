@@ -127,6 +127,8 @@
 	--sa-price-option: rgba(33, 120, 250, 0.7);
 	--sa-price-option-background: #e6f4ff;
 	--sa-antd-input-outlined-hover: #4096ff;
+
+	--sa-antd-spin: #1677ff;
 }
 
 .theme_2 {
@@ -226,6 +228,8 @@
 	--sa-price-option: #1a7d34;
 	--sa-price-option-background: #e8fbda;
 	--sa-antd-input-outlined-hover: #1a7d34;
+
+	--sa-antd-spin: #1a7d34;
 }
 
 .app {
@@ -315,4 +319,8 @@
 }
 .ant-picker-now-btn {
 	color: var(--sa-antd-button-primary-color) !important;
+}
+
+.ant-spin-dot-item {
+	background: var(--sa-antd-spin) !important;
 }
