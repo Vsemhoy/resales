@@ -301,11 +301,18 @@
 	border-color: var(--sa-antd-input-outlined-hover) !important;
 }
 
+.ant-input-filled:focus, .ant-input-filled:hover {
+	border-color: var(--sa-antd-input-outlined-hover) !important;
+}
+
 .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
 	background-color: var(--sa-price-option-background) !important;
 }
 
 .ant-select-outlined:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):hover .ant-select-selector {
+	border-color: var(--sa-antd-input-outlined-hover) !important;
+}
+.ant-select-open:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):hover .ant-select-selector {
 	border-color: var(--sa-antd-input-outlined-hover) !important;
 }
 .ant-select-outlined:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):focus .ant-select-selector {
@@ -322,6 +329,17 @@
 	color: var(--sa-antd-button-primary-color) !important;
 }
 
+.ant-picker-filled:focus {
+	border-color: var(--sa-antd-button-primary-color) !important;
+}
+.ant-picker-filled:focus-within {
+	border-color: var(--sa-antd-button-primary-color) !important;
+}
+
+.ant-pagination .ant-pagination-options-quick-jumper input:focus {
+	border-color: var(--sa-antd-button-primary-color) !important;
+}
+
 .ant-spin-dot-item {
 	background: var(--sa-antd-spin) !important;
 }
@@ -330,6 +348,16 @@
 	background: var(--sa-antd-button-primary-color) !important;
 }
 
-.ant-dropdown-open {
+.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+	border-color: var(--sa-antd-button-primary-color) !important;
+}
+.ant-picker-dropdown .ant-picker-header-view >button:hover {
+	color: var(--sa-antd-button-primary-color) !important;
+}
 
+.ant-pagination .ant-pagination-item-active {
+	border-color: var(--sa-antd-button-primary-color) !important;
+}
+.ant-pagination .ant-pagination-item-active a {
+	color: var(--sa-antd-button-primary-color) !important;
 }
