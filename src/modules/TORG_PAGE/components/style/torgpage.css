@@ -100,11 +100,11 @@
 }
 
 .sa-org-temp-stack-collapse {
-	border: 2px solid #2196f3;
+	border: 2px solid var(--org-page-temp-border-color);
 	margin-bottom: 6px;
 }
 .sa-org-temp-stack-collapse-header {
-	background-color: #2196f3;
+	background-color: var(--org-page-temp-border-color);
 	color: #ffffff !important;
 	font-size: large;
 	display: block;

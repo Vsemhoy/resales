@@ -208,6 +208,7 @@
 	--expand-color-hover: rgba(60, 197, 39, 0.35);
 	--expand-color-active: rgba(79, 197, 39, 0.65);
 
+	--row-active-color: #1a7d34;
 
 
 	--sa-antd-steps-color: #4b6a4a;
@@ -327,4 +328,8 @@
 
 .ant-badge .ant-badge-color-geekblue {
 	background: var(--sa-antd-button-primary-color) !important;
+}
+
+.ant-dropdown-open {
+
 }
