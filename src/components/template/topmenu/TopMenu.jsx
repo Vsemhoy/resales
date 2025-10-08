@@ -218,6 +218,12 @@ const TopMenu = (props) => {
 						</NavLink>
 					)}
 
+					{topRole === 2 && (
+						<NavLink to="/regtown">
+							<div className={'sa-topmenu-button'}>Города и регионы</div>
+						</NavLink>
+					)}
+
 					<NavLink to="/engineer">
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
