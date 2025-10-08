@@ -228,6 +228,7 @@
 }
 .sk-omt-comment-trigger {
 	border-radius: 3px;
+	margin-left: 6px;
 
 }
 .sk-omt-comment-trigger-treasure {
@@ -277,20 +278,20 @@
 }
 
 .sa-org-remove-button {
-	color: var(--error-color);
-	cursor: pointer;
+	/* color: var(--error-color);
+	cursor: pointer; */
 	padding-right: 12px;
 	padding-left: 12px;
 	border-radius: 3px;
 	margin-right: 3px;
 }
-.sa-org-remove-button:hover {
+/* .sa-org-remove-button:hover {
 	color: var(--current-color);
 }
 .sa-org-remove-button:active {
 	color: white;
 	background-color: var(--current-color);
-}
+} */
 .sa-org-trigger-button {
 	/* color: var(--error-color); */
 	cursor: pointer;

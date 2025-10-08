@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { DatePicker, Input } from 'antd';
+import { Button, DatePicker, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -173,9 +173,16 @@ const NoteTabSectionTorg = (props) => {
         <div className={'sa-flex'}>
           {allowDelete && editMode && (
             <span className={'sa-pa-3 sa-org-remove-button'}
-              onClick={handleDeleteItem}
+              
             >
-              <TrashIcon height={TORG_CHEVRON_SIZE} />
+              <Button danger 
+              size='small'
+                onClick={handleDeleteItem}
+                icon={<TrashIcon height={TORG_CHEVRON_SIZE} />}
+              >
+
+              </Button>
+              
             </span>
           )}
         </div>
