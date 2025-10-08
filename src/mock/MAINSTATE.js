@@ -118,7 +118,7 @@ export const MS_USER = {
 		email: null,
 		sales_role: 1,
 		password2: '$2y$12$vwqewb1to3XkD3FUvSrgoeydtcmsswjQSp6DWvJfxZanevLwAq6BS',
-		active_company: 2,
+		active_company: 3,
 		id_departament: 11,
 		// id_departament: 8,
 		id_company: 2,

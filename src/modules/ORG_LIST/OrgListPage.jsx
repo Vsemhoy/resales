@@ -1,52 +1,52 @@
 import React, { useEffect, useState } from 'react';
-
+import { useUserData } from '../../context/UserDataContext';
 import './components/style/orglistpage.css';
 import { BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import {
 	Affix,
 	Button,
-	DatePicker,
+	// DatePicker,
 	Dropdown,
-	Input,
+	// Input,
 	Layout,
 	Pagination,
-	Select,
+	// Select,
 	Spin,
 	Tag,
 	Tooltip,
 } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
-import { DocumentPlusIcon } from '@heroicons/react/16/solid';
+// import { DocumentPlusIcon } from '@heroicons/react/16/solid';
 import {
-	CaretDownFilled,
-	CaretUpFilled,
+	// CaretDownFilled,
+	// CaretUpFilled,
 	CloseOutlined,
-	CloseSquareOutlined,
+	// CloseSquareOutlined,
 	FilterOutlined,
 	LoadingOutlined,
 	PlusOutlined,
 } from '@ant-design/icons';
-import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort';
+// import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
-import OrgListRow from './components/OrgListRow';
+// import OrgListRow from './components/OrgListRow';
 import OrgListPreviewModal from './components/OrgModal/OrgListPreviewModal';
 import OrgListSiderFilter from './components/OrgListSiderFilters';
 import OrgListTable from './components/OrgListTable';
-import { RectangleStackIcon } from '@heroicons/react/24/outline';
+// import { RectangleStackIcon } from '@heroicons/react/24/outline';
 import {
-	filterSortClearMenu,
+	// filterSortClearMenu,
 	OM_COMP_LIST,
 	OM_ORG_FILTERDATA,
 } from './components/mock/ORGLISTMOCK';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { readOrgURL, updateURL, useURLParams } from '../../components/helpers/UriHelpers';
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 
-const OrgListPage = (props) => {
-	const { userdata } = props;
+const OrgListPage = () => {
+	const { userdata } = useUserData();
 	const { updateURL, readOrgURL } = useURLParams();
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -249,7 +249,6 @@ const OrgListPage = (props) => {
 		console.log('SKIPPER', SKIPPER);
 		if (SKIPPER === 0) {
 			const timer = setTimeout(() => {
-				console.log('first GETTER');
 				get_orglist_async();
 			}, 250);
 
@@ -285,7 +284,7 @@ const OrgListPage = (props) => {
 					? orderBox.map((item) => ({
 							field: item.key,
 							order: item.order === 2 ? 'DESC' : 'ASC',
-						}))
+					  }))
 					: [];
 
 			// let sortBox = [];
@@ -433,8 +432,9 @@ const OrgListPage = (props) => {
 	const triggerMyCompaniesFilterButton = () => {
 		let value = filterBox.curator;
 		let newValue = null;
-		if (!value) {
-			newValue = userdata.user?.id;
+		if (!value && userdata?.user?.id) {
+			// ✅ Добавлена проверка
+			newValue = userdata.user.id;
 		}
 		setFilterBox((prev) => {
 			const updated = { ...prev }; // копируем старые фильтры
@@ -541,38 +541,23 @@ const OrgListPage = (props) => {
 	//   updateURL(filterBox,orderBox,currentPage,onPage,previewItem,tab);
 	// }
 
-
-	const handleCreateNewOrg = async ()=>{
+	const handleCreateNewOrg = async () => {
 		try {
-				const format_data = {
-					
-					_token: CSRF_TOKEN,
-				
-				};
-				let new_bid_response = await PROD_AXIOS_INSTANCE.post(
-					"/api/sales/orgcreate",
-					format_data,
-				);
-				if (new_bid_response) {
-					window.open(
-						BASE_ROUTE + '/orgs/' +
-						new_bid_response.data.org_id, 
-						"_blank"
-					);
-				}
-			} catch (e) {
-				console.log(e);
-				if (!PRODMODE){
-					window.open(
-							'/orgs/' + targetRowId, 
-							"_blank"
-						);
-				}
+			const format_data = {
+				_token: CSRF_TOKEN,
+			};
+			let new_bid_response = await PROD_AXIOS_INSTANCE.post('/api/sales/orgcreate', format_data);
+			if (new_bid_response) {
+				window.open(BASE_ROUTE + '/orgs/' + new_bid_response.data.org_id, '_blank');
 			}
-			get_orglist_async();
-	}
-
-
+		} catch (e) {
+			console.log(e);
+			if (!PRODMODE) {
+				window.open('/orgs/' + targetRowId, '_blank');
+			}
+		}
+		get_orglist_async();
+	};
 
 	return (
 		<div
@@ -602,7 +587,9 @@ const OrgListPage = (props) => {
 											}
 											setOpenedFilters(!openedFilters);
 										}}
-										className={`${openedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'}`}
+										className={`${
+											openedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'
+										}`}
 										color={'default'}
 										variant={openedFilters ? 'solid' : 'outlined'}
 										icon={<FilterOutlined />}
@@ -638,9 +625,7 @@ const OrgListPage = (props) => {
 							</div>
 							<div style={{ display: 'flex', alignItems: 'end' }}>
 								{userdata?.user?.sales_role === 1 && userdata?.acls?.includes(60) && (
-									<Button type={'primary'} icon={<PlusOutlined />}
-										onClick={handleCreateNewOrg}
-									>
+									<Button type={'primary'} icon={<PlusOutlined />} onClick={handleCreateNewOrg}>
 										Добавить
 									</Button>
 								)}
@@ -687,7 +672,7 @@ const OrgListPage = (props) => {
 					<Affix offsetTop={94}>
 						<div
 							className={'sa-pagination-panel sa-pa-12'}
-							style={{ background: '#b4cbe4', minHeight: '54px' }}
+							style={{ minHeight: '54px' }}
 						>
 							<div className={'sa-flex-space'}>
 								<div className={'sa-flex-gap'}>
@@ -753,7 +738,7 @@ const OrgListPage = (props) => {
 								base_orgs={orgList}
 								on_preview_open={handlePreviewOpen}
 								on_set_sort_orders={setOrderBox}
-								userdata={userdata}
+								// userdata={userdata}
 								on_change_filters={handleFilterChange}
 								base_filters={filterBox}
 								base_orders={orderBox}

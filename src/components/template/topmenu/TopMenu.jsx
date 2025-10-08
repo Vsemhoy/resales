@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './style/topmenu.css';
 // import ChatBtn from '../../../modules/CHAT/components/ChatBtn';
 import { ChatBtn } from '../../../modules/1CHAT/components/ChatBtn';
@@ -20,12 +20,27 @@ import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { useUserData } from '../../../context/UserDataContext'; // импортируем хук
 import { WebSocketDebug } from '../../helpers/WebSocketDebug';
 
-const TopMenu = () => {
+const TopMenu = (props) => {
 	const { userdata, setUserdata } = useUserData();
 	const [roleMenu, setRoleMenu] = useState([]);
 	const [companiesMenu, setCompanieseMenu] = useState([]);
 	const [topRole, setTopRole] = useState(1);
 	const [showDebugger, setShowDebugger] = useState(false);
+	const debuggerRef = useRef(null);
+
+	// Закрытие debugger при клике вне компонента
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (debuggerRef.current && !debuggerRef.current.contains(event.target)) {
+				setShowDebugger(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
 
 	useEffect(() => {
 		if (!userdata || userdata.length === 0) {
@@ -56,36 +71,33 @@ const TopMenu = () => {
 				}
 			}
 
-			if (company.id === activeCompany && company.places.length > 0) {
-				for (let y = 0; y < company.places.length; y++) {
-					const place = company.places[y];
-					roles.push({
-						key: 'rolecom_' + company.id + '_' + place.id,
-						label: (
-							<div
-								className={`${place.place === activeRole ? 'active' : ''}`}
-								onClick={() => {
-									if (place.place !== activeRole || company.id !== activeCompany) {
-										changeUserRole(place.place);
-									}
-								}}
-							>
-								{place.accessname}
-							</div>
-						),
-						danger: place.place === activeRole,
-						icon: (() => {
-							if (place.place === 1) {
+			if (company.id === activeCompany && company.places?.length > 0) {
+				const roleItems = company.places.map((place) => ({
+					key: `rolecom_${company.id}_${place.id}`,
+					label: (
+						<div
+							className={place.place === activeRole ? 'active' : ''}
+							onClick={() => place.place !== activeRole && changeUserRole(place.place)}
+						>
+							{place.accessname}
+						</div>
+					),
+					danger: place.place === activeRole,
+					icon: (() => {
+						switch (place.place) {
+							case 1:
 								return <UserCircleIcon height="18px" />;
-							} else if (place.place === 2) {
+							case 2:
 								return <ClipboardDocumentListIcon height="18px" />;
-							} else if (place.place === 3) {
+							case 3:
 								return <ShieldCheckIcon height="18px" />;
-							}
-							return null;
-						})(),
-					});
-				}
+							default:
+								return null;
+						}
+					})(),
+				}));
+
+				roles.push(...roleItems);
 			}
 		}
 
@@ -135,6 +147,7 @@ const TopMenu = () => {
 				});
 				if (response.data) {
 					setUserdata(response.data); // Обновляем данные пользователя
+					props.changed_user_data();
 				}
 			} catch (e) {
 				console.log(e);
@@ -151,6 +164,7 @@ const TopMenu = () => {
 				});
 				if (response.data) {
 					setUserdata(response.data); // Обновляем данные пользователя
+					props.changed_user_data();
 				}
 			} catch (e) {
 				console.log(e);
@@ -164,6 +178,10 @@ const TopMenu = () => {
 
 	const changeUserRole = (role_id) => {
 		set_user_role(role_id);
+	};
+
+	const toggleDebugger = () => {
+		setShowDebugger(!showDebugger);
 	};
 
 	return (
@@ -205,21 +223,15 @@ const TopMenu = () => {
 					</NavLink>
 
 					{/* DEBUGGER */}
-					{userdata && userdata.user && userdata.user.super ? (
-						<div
-							style={{
-								position: 'relative',
-								display: 'inline-block',
-							}}
-						>
+					{userdata && userdata.user && userdata.user.super && (
+						<div ref={debuggerRef} style={{ position: 'relative', display: 'inline-block' }}>
 							<div
 								className={'sa-topmenu-button'}
 								style={{
 									color: 'transparent',
-									backgroundColor: showDebugger ? '#f0f0f0' : 'transparent',
-									cursor: 'pointer',
+									backgroundColor: 'transparent',
 								}}
-								onClick={() => setShowDebugger(!showDebugger)}
+								onClick={toggleDebugger}
 							>
 								DEBUGGER
 							</div>
@@ -231,18 +243,24 @@ const TopMenu = () => {
 										right: 0,
 										zIndex: 10000,
 										marginTop: '5px',
+										backgroundColor: 'white',
+										border: '1px solid #d9d9d9',
+										borderRadius: '6px',
+										boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+										padding: '8px',
+										minWidth: '300px',
 									}}
 								>
+									<p>Пора подебажить</p>
 									<WebSocketDebug />
 								</div>
 							)}
 						</div>
-					) : null}
+					)}
 					{/* DEBUGGER */}
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
-					{/* <ChatBtn sms={sms} /> */}
 					<ChatBtn sms={sms} />
 					<Dropdown menu={{ items: userMenu }}>
 						<div className={'sa-flex-gap'}>

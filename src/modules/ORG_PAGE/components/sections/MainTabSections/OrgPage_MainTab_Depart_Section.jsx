@@ -31,12 +31,12 @@ const OrgPage_MainTab_Depart_Section = (props) => {
       setItemId(props.data?.id);
       // setObjectResult(props.data);
       if (props.data?.creator){
-        setAuthor(ShortName(props.data?.creator.surname, props.data?.creator.name, props.data?.curator.secondname));
+        setAuthor(ShortName(props.data?.creator?.surname, props.data?.creator?.name, props.data?.creator?.secondname));
       } else {
         setAuthor('');
       };
       if (props.data?.curator){
-        setCurator(ShortName(props.data?.curator.surname, props.data?.curator.name, props.data?.curator.secondname));
+        setCurator(ShortName(props.data?.curator?.surname, props.data?.curator?.name, props.data?.curator?.secondname));
       } else {
         setCurator('');
       };

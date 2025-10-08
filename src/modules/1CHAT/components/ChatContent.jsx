@@ -12,6 +12,7 @@ import { Layout, message } from 'antd';
 import { nanoid } from 'nanoid';
 import { ChatInput } from './ChatInput';
 import { CHAT_MOCK } from '../mock/mock';
+import { ChatDivider } from './ChatDivider';
 
 // Импортируем новые компоненты сообщений
 import ChatSelfMsg from './ChatSelfMsg';
@@ -40,39 +41,33 @@ export default function ChatContent({ chatId }) {
 	useEffect(() => {
 		const interval = setInterval(() => {
 			refetch();
-		}, 5000);
+		}, 1000);
 
 		return () => clearInterval(interval);
 	}, [refetch]);
 
 	// Фильтруем сообщения по chat_id вручную
-	const smsList = useMemo(() => {
-		if (!chatId) return [];
+	// const smsList = useMemo(() => {
+	// 	if (!chatId) return [];
 
-		const filtered = allSmsList.filter((msg) => {
-			const msgChatId = parseInt(msg.chat_id);
-			const targetChatId = parseInt(chatId);
-			return msgChatId === targetChatId;
-		});
+	// 	const filtered = allSmsList.filter((msg) => {
+	// 		const msgChatId = parseInt(msg.chat_id);
+	// 		const targetChatId = parseInt(chatId);
+	// 		return msgChatId === targetChatId;
+	// 	});
 
-		console.log('🎯 Filtered messages for chat', chatId, ':', filtered);
-		return filtered;
-	}, [allSmsList, chatId]);
+	// 	console.log('🎯 Filtered messages for chat', chatId, ':', filtered);
+	// 	return filtered;
+	// }, [allSmsList, chatId]);
 
-	const { sendSms } = useSendSms();
+	const { sendSms, newId } = useSendSms();
 	const [localMessages, setLocalMessages] = useState([]);
+	// const [incomingMessages, setIncomingMessages] = useState([]);
 
 	const allMessages = useMemo(() => {
-		const filteredLocal = localMessages;
+		const existingIds = new Set(allSmsList.map((msg) => msg.id.toString()));
+		const filteredLocal = localMessages.filter((lMsg) => !existingIds.has(lMsg.id.toString()));
 		const combined = [...allSmsList, ...filteredLocal];
-
-		console.log('🔄 Processing messages:', {
-			allSmsCount: allSmsList.length,
-			filteredCount: smsList.length,
-			localCount: filteredLocal.length,
-			combinedCount: combined.length,
-			chatId,
-		});
 
 		return combined
 			.map((msg) => {
@@ -109,7 +104,57 @@ export default function ChatContent({ chatId }) {
 				};
 			})
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [smsList, localMessages, chatId, allSmsList, currentUserId, who]);
+	}, [localMessages, allSmsList, currentUserId, who]);
+
+	// --- Новая логика: группировка сообщений с разделителями по датам ---
+	// Форматирует подпись для разделителя: Сегодня/Вчера/дд месяц yyyy
+	const formatChatDate = useCallback((ts) => {
+		const d = new Date(ts);
+		const today = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(today.getDate() - 1);
+
+		const isSameDay = (a, b) =>
+			a.getFullYear() === b.getFullYear() &&
+			a.getMonth() === b.getMonth() &&
+			a.getDate() === b.getDate();
+
+		if (isSameDay(d, today)) return 'Сегодня';
+		if (isSameDay(d, yesterday)) return 'Вчера';
+
+		// Пример: "12 октября 2025"
+		return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+	}, []);
+
+	// Создаём массив элементов с разделителями: [{ type: 'divider', id, timestamp }, { type: 'msg', message }]
+	const messagesWithDividers = useMemo(() => {
+		const items = [];
+		let lastDayKey = null;
+
+		for (const msg of allMessages) {
+			const msgDate = new Date(msg.timestamp);
+			const dayKey = msgDate.toDateString(); // уникально для дня в локальном часовом поясе
+
+			if (lastDayKey !== dayKey) {
+				// вставляем разделитель перед первым сообщением нового дня
+				items.push({
+					type: 'divider',
+					id: `divider-${dayKey}`,
+					timestamp: msg.timestamp,
+				});
+				lastDayKey = dayKey;
+			}
+
+			items.push({
+				type: 'msg',
+				id: msg.id,
+				message: msg,
+			});
+		}
+
+		return items;
+	}, [allMessages]);
+	// --- /Новая логика ---
 
 	// Функция для скролла к последнему сообщению
 	const scrollToBottom = useCallback(() => {
@@ -120,10 +165,10 @@ export default function ChatContent({ chatId }) {
 
 	// Автоскролл при загрузке новых сообщений или смене чата
 	useEffect(() => {
-		if (allMessages.length > 0) {
+		if (chatId) {
 			scrollToBottom();
 		}
-	}, [allMessages, scrollToBottom]);
+	}, [chatId, scrollToBottom]);
 
 	// Автоскролл при отправке нового сообщения
 	useEffect(() => {
@@ -132,24 +177,14 @@ export default function ChatContent({ chatId }) {
 		}
 	}, [localMessages, scrollToBottom]);
 
-	// useEffect(() => {
-	// 	// Отладочная логика
-	// 	console.log('🔍 ChatContent Debug:', {
-	// 		chatId,
-	// 		currentUserId,
-	// 		allSmsListLength: allSmsList.length,
-	// 		smsListLength: smsList.length,
-	// 		loading,
-	// 		error,
-	// 	});
-	// }, [allSmsList, smsList, currentUserId, chatId, loading, error]);
-
 	const handleSend = useCallback(
 		async (text) => {
 			if (!text.trim()) return;
 
+			const id = generateUUID();
+
 			const newLocalMsg = {
-				id: generateUUID(),
+				id,
 				chat_id: chatId,
 				text: text.trim(),
 				timestamp: Date.now(),
@@ -170,15 +205,17 @@ export default function ChatContent({ chatId }) {
 				setLocalMessages((prev) =>
 					prev.map((msg) => (msg.id === newLocalMsg.id ? { ...msg, isSending: false } : msg))
 				);
-
 				// Сообщение остается в чате с обычным стилем
+				if (newId) {
+					newLocalMsg.id = newId;
+				}
 			} catch (err) {
 				// При ошибке удаляем сообщение
 				setLocalMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
 				message.error(err.message || 'Ошибка при отправке сообщения');
 			}
 		},
-		[chatId, sendSms, currentUserId]
+		[chatId, sendSms, currentUserId, newId]
 	);
 
 	// Функция для рендеринга сообщений
@@ -213,7 +250,14 @@ export default function ChatContent({ chatId }) {
 								minHeight: 0,
 							}}
 						>
-							{allMessages.map(renderMessage)}
+							{messagesWithDividers.map((item) =>
+								item.type === 'divider' ? (
+									<ChatDivider key={item.id}>{formatChatDate(item.timestamp)}</ChatDivider>
+								) : (
+									// renderMessage уже добавляет key для сообщения
+									renderMessage(item.message)
+								)
+							)}
 						</div>
 					)}
 				</div>

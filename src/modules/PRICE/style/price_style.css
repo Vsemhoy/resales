@@ -8,8 +8,8 @@
     /*background-color: aliceblue !important;*/
 }
 .ant-table-small {
-    background: #e6f4ff !important;
-    border: 1px solid rgba(33, 120, 250, 0.7) !important;
+    /*background: #e6f4ff !important;*/
+    /*border: 1px solid rgba(33, 120, 250, 0.7) !important;*/
 }
 .ant-table-cell {
     color: black !important;
@@ -20,8 +20,8 @@
     grid-template-columns: minmax(100px, 0.7fr) minmax(150px, 2fr) repeat(5, minmax(50px, 200px));
     grid-gap: 10px;
     padding: 5px;
-    background: #e6f4ff !important;
-    border: 1px solid rgba(33, 120, 250, 0.7) !important;
+    background: var(--sa-price-option-background) !important;
+    border: 1px solid var(--sa-price-option) !important;
     border-radius: 6px;
     width: 100%;
 }

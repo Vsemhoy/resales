@@ -1,3 +1,40 @@
+// 🎯 Как это работает:
+
+// //В ComponentA.js
+// const ComponentA = () => {
+//   const { userdata, setUserdata } = useUserData();
+
+//   const updateName = () => {
+//     setUserdata({ ...userdata, name: "Новое имя" });
+//   };
+
+//   return <button onClick={updateName}>Изменить имя</button>;
+// };
+
+//  //В ComponentB.js (в любой части приложения)
+// const ComponentB = () => {
+//   const { userdata } = useUserData();
+
+//   return <div>Текущее имя: {userdata.name}</div>; // Будет "Новое имя"
+// };
+
+// //ПРАВИЛЬНО - иммутабельное обновление
+// setUserdata({ ...userdata, name: "Новое имя" });
+
+// // НЕПРАВИЛЬНО - мутация существующего объекта
+// userdata.name = "Новое имя"; // ❌ Не сработает!
+// setUserdata(userdata);
+
+// В форме редактирования профиля
+// const ProfileForm = () => {
+//   const { userdata, setUserdata } = useUserData();
+
+//   const handleSave = (newData) => {
+//     setUserdata({ ...userdata, ...newData });
+// // Все компоненты (хедер, сайдбар, etc.) сразу увидят изменения и произойдёт перерендер!
+//   };
+// };
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../config/config';
 import { PROD_AXIOS_INSTANCE } from '../config/Api';

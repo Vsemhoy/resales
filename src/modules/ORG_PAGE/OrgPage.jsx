@@ -42,6 +42,7 @@ import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK'
 import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
 import CustomModal from '../../components/helpers/modals/CustomModal';
+import { FlushOrgData, IsSameComparedSomeOrgData, MAIN_ORG_DATA_IGNORE_KEYS } from './components/handlers/OrgPageDataHandler';
 
 const tabNames = [
 	{
@@ -134,6 +135,7 @@ const OrgPage = (props) => {
 	const [tempCallsData, setTempCallsData] = useState(null);
 	const [tempNotesData, setTempNotesData] = useState(null);
 
+	const [tempMain_contacts, setTempMain_contacts] = useState([]);
 	const [tempMain_phones, setTempMain_phones] = useState([]);
 	const [tempMain_addresses, setTempMain_addresses] = useState([]);
 	const [tempMain_legalAddresses, setTempMain_legalAddresses] = useState([]);
@@ -190,6 +192,7 @@ const OrgPage = (props) => {
 	}, [isAlertVisible]);
 
 	useEffect(()=>{
+		setIsSmthChanged(false);
 		console.log("ORG_ID:", itemId);
 	}, [itemId])
 
@@ -226,7 +229,7 @@ const OrgPage = (props) => {
 		} else {
 			setBaseFilterstData(OM_ORG_FILTERDATA);
 
-			setBaseMainData(ORGLIST_MODAL_MOCK_MAINTAB);
+			setBaseMainData(FlushOrgData(ORGLIST_MODAL_MOCK_MAINTAB));
 			setBaseNotesData(MODAL_NOTES_LIST);
 			setBaseProjectsData(MODAL_PROJECTS_LIST);
 			setBaseCallsData(MODAL_CALLS_LIST);
@@ -287,10 +290,10 @@ const OrgPage = (props) => {
 			let itt  = itemId;
 			if (PRODMODE) {
 				setItemId(0);
+				setBaseMainData(null);
 				
 				
 				setTimeout(() => {
-					setBaseMainData(null);
 					setItemId(itt);
 				}, 1200);
 				setTimeout(() => {
@@ -300,22 +303,23 @@ const OrgPage = (props) => {
 					get_org_calls_action(itt);
 					get_projects_data_action(itt);
 
-				}, 500);
+				}, 1000);
 				} else {
-					setTimeout(() => {
-						setItemId(0);
-						setBaseMainData(null);
-						
-					}, 1200);
 
-					setItemId(itt);
+					setItemId(0);
+					setBaseMainData(null);
 					setTimeout(() => {
-						setBaseMainData(ORGLIST_MODAL_MOCK_MAINTAB);
+						
+						
+						setItemId(itt);
+					}, 1200);
+					setTimeout(() => {
+						setBaseMainData(FlushOrgData(ORGLIST_MODAL_MOCK_MAINTAB));
 						setBaseNotesData(MODAL_NOTES_LIST);
 						setBaseProjectsData(MODAL_PROJECTS_LIST);
 						setBaseCallsData(MODAL_CALLS_LIST);
 	
-					}, 500);
+					}, 1000);
 
 					clearTemps();
 				}
@@ -387,7 +391,8 @@ const OrgPage = (props) => {
 				// if (props.changed_user_data){
 				//     props.changed_user_data(response.data);
 				// }
-				setBaseMainData(response.data.content);
+				// setBaseMainData(FlushOrgData(response.data.content));
+				setBaseMainData(FlushOrgData(response.data.content));
 				setLoading(false);
 				
 			}
@@ -575,32 +580,7 @@ const OrgPage = (props) => {
 
 	/** ----------------------- FETCHES -------------------- */
 
-	/**
-	 * Коллбэк при нажатии сохранить данные - находит разницу и отправляет на сервер, обновляет стейты
-	 * @param {*} data
-	 * @param {*} section
-	 */
-	const handleDataChangeApprove = (data, section) => {
-		// setBlockOnSave(true);
-		// const timer = setTimeout(() => {
-		// 	switch (section) {
-		// 		case 'main':
-		// 			setTempMainData(data);
-		// 			break;
-		// 		case 'calls':
-		// 			setTempCallsData(data);
-		// 			break;
-		// 		case 'projects':
-		// 			setTempProjectsData(data);
-		// 			break;
-		// 		case 'notes':
-		// 			setTempNotesData(data);
-		// 			break;
-		// 	}
-		// }, 400);
 
-		// return () => clearTimeout(timer);
-	};
 
 	useEffect(() => {
 		if (PRODMODE){
@@ -635,15 +615,23 @@ const OrgPage = (props) => {
 			console.log('tempMainData', tempMainData)
 			if (tempMainData){
 				saveData.orgData = tempMainData;
+			} else {
+				saveData.orgData = baseMainData;
 			}
 			if (tempProjectsData && tempProjectsData.length > 0){
 				saveData.projects = tempProjectsData;
+			} else {
+				saveData.projects = [];
 			}
 			if (tempCallsData && tempCallsData.length > 0){
 				saveData.calls = tempCallsData;
+			} else {
+				saveData.calls = [];
 			}
 			if (tempNotesData && tempNotesData.length > 0){
 				saveData.notes = tempNotesData;
+			} else {
+				saveData.notes = [];
 			}
 			
 			update_data_action(saveData);
@@ -676,6 +664,8 @@ const OrgPage = (props) => {
 			setTempMain_an_requisites(dataarr);
 		} else if (key === 'phones'){
 			setTempMain_phones(dataarr);
+		// } else if (key === 'contacts'){
+		// 	setTempMain_contacts(dataarr);
 		} else if (key === 'address'){
 			setTempMain_addresses(dataarr);
 		} else if (key === 'legaladdresses'){
@@ -697,7 +687,7 @@ const OrgPage = (props) => {
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
-				
+				// copyData.contacts =            tempMain_contacts;
 				setTempMainData(copyData);
 				console.log('END POINT ALT', copyData);
 			}
@@ -710,14 +700,25 @@ const OrgPage = (props) => {
 		tempMain_emails,
 		tempMain_phones,
 		tempMain_an_requisites,
+		// tempMain_contacts
 	]);
 
 
+
+
+
+
+
 	const handleTabDataChange = (tab_name, data) => {
+		if (!editMode) return;
 		console.log('END POOINT', tab_name, data);
 		if (tab_name === 'main' && data){
+
+
 			let copyData = JSON.parse(JSON.stringify(data));
-			if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+			// if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
+			console.log('BASE MAIN DATA', baseMainData);
+			if (!IsSameComparedSomeOrgData(data, baseMainData, MAIN_ORG_DATA_IGNORE_KEYS)){
 				copyData.active_licenses =     tempMain_an_licenses;
 				copyData.active_tolerance =    tempMain_an_tolerances;
 				copyData.active_licenses_bo =  tempMain_bo_licenses;
@@ -727,9 +728,23 @@ const OrgPage = (props) => {
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
 				console.log('SET COPY DATA', copyData)
+				// alert('ERROR');
 				setTempMainData(copyData);
 			} else {
-				setTempMainData(baseMainData);
+				copyData = JSON.parse(JSON.stringify(baseMainData));
+				copyData.active_licenses =     tempMain_an_licenses;
+				copyData.active_tolerance =    tempMain_an_tolerances;
+				copyData.active_licenses_bo =  tempMain_bo_licenses;
+				copyData.legaladdresses =      tempMain_legalAddresses;
+				copyData.address =             tempMain_addresses;
+				copyData.emails =              tempMain_emails;
+				copyData.phones =              tempMain_phones;
+
+				console.log('SET LAST COPY DATA', copyData);
+				// console.log('SET ANTI COPY DATA', copyData)
+				// if (cop)
+				// 	copyData.contacts =              ;
+				setTempMainData(copyData);
 			}
 
 		} else if (tab_name === 'projects'){
@@ -752,13 +767,21 @@ const OrgPage = (props) => {
 			} else {
 				setTempCallsData(null);
 			}
-
 		}
-		
 	}
 
+
+
+
+
+
+
+
+
+
+
 		useEffect(() => {
-			if (tempCallsData || tempNotesData || tempProjectsData || tempMainData ||
+			if (tempCallsData || tempNotesData || tempProjectsData || !IsSameComparedSomeOrgData(tempMainData, baseMainData)  ||
 				tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
 				tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
 				tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
@@ -936,7 +959,7 @@ const OrgPage = (props) => {
 									</div>
 								)}
 
-								{!editMode && (
+								{!editMode && userdata?.user?.id !== baseMainData?.curator?.id && (
 									<Button style={{marginRight: '12px'}}
 										onClick={handleCallBecomeCurator}>
 											Запрос.Кураторство
@@ -1019,7 +1042,7 @@ const OrgPage = (props) => {
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseMainData}
-							on_save={handleDataChangeApprove}
+							// on_save={handleDataChangeApprove}
 							userdata={userdata}
               selects={baseFiltersData}
 							on_change_data={handleTabDataChange}
@@ -1032,7 +1055,7 @@ const OrgPage = (props) => {
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseCallsData}
-							on_save={handleDataChangeApprove}
+							// on_save={handleDataChangeApprove}
 							active_page={pageCalls}
 							on_change_page={(p) => {
 								setPageCalls(p);
@@ -1051,7 +1074,7 @@ const OrgPage = (props) => {
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseProjectsData}
-							on_save={handleDataChangeApprove}
+							// on_save={handleDataChangeApprove}
 							active_page={pageProject}
 							on_change_page={(p) => {
 								setPageProject(p);
@@ -1069,7 +1092,7 @@ const OrgPage = (props) => {
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseNotesData}
-							on_save={handleDataChangeApprove}
+							// on_save={handleDataChangeApprove}
 							active_page={pageNotes}
 							on_change_page={(p) => {
 								setPageNotes(p);

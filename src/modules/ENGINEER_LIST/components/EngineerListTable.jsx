@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import EngineerListRow from './EngineerListRow';
 import CopyMessageView from "../../ENGINEER_PAGE/components/CopyMessageView";
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 
 const EngineerListTable = (props) => {
@@ -18,6 +18,9 @@ const EngineerListTable = (props) => {
 	const [value, setValue] = useState(0);
 	const [isLoadingSmall, setIsLoadingSmall] = useState(false);
 	const [isAlertVisible, setIsAlertVisible] = useState(false);
+
+	const [copyType, setCopyType] = useState(1);
+
 
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertDescription, setAlertDescription] = useState('');
@@ -87,17 +90,27 @@ const EngineerListTable = (props) => {
 				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/intoBid/' + openAddIntoBidSpecificationId, {
 					_token: CSRF_TOKEN,
 					data: {
-						bidId: value
+						bidId: value,
+						copyType,
 					}
 				});
 
 				setOpenAddIntoBidSpecification(true);
 
-				// window.open(BASE_ROUTE + '/api/sales/engineer/' + response.data.newId);
+				setIsAlertVisible(true);
+				setAlertMessage('Успех!');
+				setAlertDescription(response.data.message);
+				setAlertType('success');
+
+				setTimeout(() => {
+					window.open(BASE_ROUTE + '/bids/' + response.data.content.bid_id, '_blank');
+				}, 500);
 			} catch (e) {
 				console.log(e);
 				setTimeout(() => setIsLoadingSmall(false), 500);
 			}
+		} else {
+			window.open(BASE_ROUTE + '/bids/' + 1, '_blank');
 		}
 	};
 
@@ -107,21 +120,30 @@ const EngineerListTable = (props) => {
 		setValue(0);
 	};
 	const handleOk = () => {
+		console.log(11111)
 		setOpenCopySpecification(false);
 		setOpenAddIntoBidSpecification(false);
 		setValue(0);
 	};
 
 	const handleSetValue = (spec_id, type) => {
+		handleOk();
 		setValue(spec_id);
 
 		switch (type){
 			case 1:
-				handleCopySpecification().then( () => {setOpenCopySpecification(false)});
+				handleCopySpecification().then( () => {
+					setOpenCopySpecification(false);
+					setOpenAddIntoBidSpecification(false);
+				});
 				break;
 
 			case 2:
-				handleCopySpecificationIntoBid().then( () => {setOpenCopySpecification(false)});
+			case 3:
+				handleCopySpecificationIntoBid().then( () => {
+					setOpenCopySpecification(false);
+					setOpenAddIntoBidSpecification(false);
+				});
 				break;
 		}
 		console.log(spec_id, type, openAddIntoBidSpecificationId);
@@ -156,6 +178,21 @@ const EngineerListTable = (props) => {
 			setAlertType('success');
 		}
 	}
+
+	const handleOpenModalEngeneerCopy = (open, id, type) => {
+		setOpenCopySpecification(open);
+		setOpenAddIntoBidSpecificationId(id);
+		setCopyType(type);
+	};
+	const handleEngeneerFinal = (id) => {
+		setOpenAddIntoBidSpecificationId(id);
+		handleSpecificationFinal().then();
+	};
+	const handleOpenModalManager = (open, id, type) => {
+		setOpenAddIntoBidSpecification(open);
+		setOpenAddIntoBidSpecificationId(id);
+		setCopyType(type);
+	};
 
 	return (
 		<div className={'sa-table-box'} style={{ marginRight: 'auto ' }}>
@@ -263,11 +300,10 @@ const EngineerListTable = (props) => {
 							superUser={props.superUser}
 							is_active={isPreviewOpen && previewItem === spec.id}
 							on_double_click={handlePreviewOpen}
-							setOpenAddIntoBidSpecification={setOpenAddIntoBidSpecification}
-							setOpenAddIntoBidSpecificationId={setOpenAddIntoBidSpecificationId}
-							setOpenCopySpecification={setOpenCopySpecification}
-							handleSpecificationFinal={handleSpecificationFinal}
 							key={index}
+							openModalEngeneerCopy={handleOpenModalEngeneerCopy}
+							engeneerFinal={handleEngeneerFinal}
+							openModalManager={handleOpenModalManager}
 							company_color={
 								props.base_companies?.find((item) => item.id === spec.id_company)?.color
 							}
@@ -277,11 +313,11 @@ const EngineerListTable = (props) => {
 
 			{openAddIntoBidSpecification && (
 				<CopyMessageView
-					customText={"Введите ID заявки, в которую нужно скопировать данные"}
+					customText={copyType === 3 ? "Введите ID организации, для которой нужно создать кп" : "Введите ID заявки, в которую нужно скопировать данные"}
 					openCopySpecification={openAddIntoBidSpecification}
 					handleCancel={handleCancel}
 					handleOk={handleOk}
-					type={2}
+					type={copyType}
 					handleSetValue={handleSetValue}
 				/>
 			)}

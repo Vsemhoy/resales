@@ -194,7 +194,7 @@ const OrgPage_MainTab_Payers_Section = (props) => {
           data={item}
           edit_mode={editMode}
           on_change={handleUpdateToleranceUint}
-		  selects={selects}
+		      selects={selects}
         />
       ))}
 	  </div>

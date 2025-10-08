@@ -82,14 +82,14 @@ export const ShortName = (surname, name, patronymic) => {
 		return name;
 	}
 	// Начинаем с фамилии
-	let shortName = surname && typeof surname === 'string' ? surname.trim() : '';
+	let shortName = surname && typeof surname === 'string' ? surname?.trim() : '';
 	// Добавляем первую букву имени, если оно есть
 	if (name) {
-		shortName += ` ${name.charAt(0)}.`; // Добавляем первую букву имени с точкой
+		shortName += ` ${name?.charAt(0)}.`; // Добавляем первую букву имени с точкой
 	}
 	// Добавляем первую букву отчества, если оно есть
 	if (patronymic) {
-		shortName += ` ${patronymic.charAt(0)}.`; // Добавляем первую букву отчества с точкой
+		shortName += ` ${patronymic?.charAt(0)}.`; // Добавляем первую букву отчества с точкой
 	}
 
 	return shortName;
@@ -146,7 +146,10 @@ export const generateYearOptions = () => {
 
 export const getMonthName = (number) => {
 	let month = DS_YEARMONTHS_SELECT.find((el) => el.value === parseInt(number));
-	return month.label;
+	if (month && month.label){
+		return month.label;
+	}
+	return '';
 };
 
 export const secondsValueToGlobalTime = (seconds) => {
