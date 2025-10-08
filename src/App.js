@@ -30,6 +30,7 @@ import { MS_USER } from './mock/MAINSTATE';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Dropdown } from 'antd';
 import TorgPage from './modules/TORG_PAGE/TorgPage';
+import Regtown from "./modules/REGTOWN/Regtown";
 
 export const App = () => {
 	const [userdata, setUserdata] = useState([]);
@@ -163,6 +164,9 @@ export const App = () => {
 								<Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata} />} />
 								<Route path="/curator" element={<CuratorPage userdata={userdata} />} />
 
+								<Route path={BASE_ROUTE + '/regtown'} element={<Regtown userdata={userdata} />} />
+								<Route path="/regtown" element={<Regtown userdata={userdata} />} />
+
 								<Route
 									path={BASE_ROUTE + '/engineer'}
 									element={<EngineerListPage userdata={userdata} />}
@@ -193,7 +197,7 @@ export const App = () => {
 								/>
 								<Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
 							</Routes>
-							{!PRODMODE && (
+							{!PRODMODE ? (
 								<Dropdown menu={{ items: devMenu }}>
 									<div
 										style={{
@@ -207,7 +211,7 @@ export const App = () => {
 										<ExclamationTriangleIcon height={'64px'} />
 									</div>
 								</Dropdown>
-							)}
+							) : ('')}
 						</div>
 					</div>
 				</BrowserRouter>
