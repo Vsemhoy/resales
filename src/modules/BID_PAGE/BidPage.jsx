@@ -1028,8 +1028,8 @@ const BidPage = (props) => {
 	  });
 	  setBidModels(bidModelsUpd);
 	};
-	const handleDeleteModelFromBid = (bidModelId) => {
-	  const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
+	const handleDeleteModelFromBid = (bidModelId, bidModelSort) => {
+	  const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
 	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
 	  bidModelsUpd.splice(bidModelIdx, 1);
 	  setBidModels(bidModelsUpd);
@@ -2220,7 +2220,7 @@ const BidPage = (props) => {
 														color="danger"
 														variant="filled"
 														icon={<DeleteOutlined/>}
-														onClick={() => handleDeleteModelFromBid(bidModel.id)}
+														onClick={( ) => handleDeleteModelFromBid(bidModel.id, bidModel.sort)}
 														disabled={isDisabledInputManager()}
 													></Button>
 												</div>
