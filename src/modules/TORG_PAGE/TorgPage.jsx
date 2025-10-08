@@ -1149,12 +1149,13 @@ const OrgPage = (props) => {
 
 						<TabProjectsTorg
 							active_tab={activeTab === 'p'}
-              				edit_mode={editMode}
+              edit_mode={editMode}
 							org_id={itemId}
-                            userdata={userdata}
+              userdata={userdata}
 							on_change_section={sectionUpdateHandler}
 							on_delete_section={sectionDeleteHandler}
 
+							
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseProjectsData}
@@ -1173,7 +1174,7 @@ const OrgPage = (props) => {
 							active_tab={activeTab === 'n'}
 							edit_mode={editMode}
 							org_id={itemId}
-              				userdata={userdata}
+              userdata={userdata}
 							on_change_section={sectionUpdateHandler}
 							on_delete_section={sectionDeleteHandler}
 

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 const TorgPageSectionRow = (props) => {
   const [inputs, setInputs] = useState([]);
   const [extraOpened, setExtraOpened] = useState(true);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     if (props.inputs){
@@ -12,13 +13,16 @@ const TorgPageSectionRow = (props) => {
     }
   }, [props.inputs]);
   
+  useEffect(() => {
+    setEditMode(props.editMode);
+  }, [props.editMode]);
 
   return (
     <div className='torg-section'>
       <div className='sk-omt-row-wrapper'>
           <div className={`sk-omt-row omt-${inputs?.length}-col`}>
             {inputs.map((item)=>(
-              <div className={`${(item.required && !(item?.value && item.value)) ? 'sa-required-field-block' : ''}`}>
+              <div className={`${(item.edit_mode && item.required && !(item?.value && item.value)) ? 'sa-required-field-block' : ''}`}>
                 <div className={'sk-omt-legend sa-flex-space'}>
                   <span style={{paddingLeft: '6px'}}></span>
                   <span>{item.label}</span>
@@ -38,7 +42,7 @@ const TorgPageSectionRow = (props) => {
         <div>
           {props.extratext.map((item)=>(
             <div className='sk-omt-row-wrapper'>
-              <div className={`${(item.required && !(item?.value && item.value)) ? 'sa-required-field-block' : ''}`}>
+              <div className={`${(item.edit_mode  && item.required && !(item?.value && item.value)) ? 'sa-required-field-block' : ''}`}>
                 <div className={'sk-omt-legend sa-flex-space'}>
                   <span style={{paddingLeft: '6px'}}></span>
                   <span>{item.label}</span>

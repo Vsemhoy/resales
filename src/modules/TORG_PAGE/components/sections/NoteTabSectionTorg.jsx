@@ -187,6 +187,7 @@ const NoteTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Тема',
                 input:
                   <Input
@@ -257,6 +258,7 @@ const NoteTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Заметка',
                 input:
                   <TextArea
