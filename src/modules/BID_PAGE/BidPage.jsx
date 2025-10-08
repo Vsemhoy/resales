@@ -2220,7 +2220,7 @@ const BidPage = (props) => {
 														color="danger"
 														variant="filled"
 														icon={<DeleteOutlined/>}
-														onClick={() => handleDeleteModelFromBid(bidModel.id, bidModel.sort)}
+														onClick={( ) => handleDeleteModelFromBid(bidModel.id, bidModel.sort)}
 														disabled={isDisabledInputManager()}
 													></Button>
 												</div>
