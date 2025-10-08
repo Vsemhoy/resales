@@ -53,13 +53,11 @@ const TabNotesTorg = (props) => {
   // ██    ██ █████   █████   
   // ██    ██ ██      ██      
   //  ██████  ██      ██      
-  // UseEffects
-  useEffect(() => {
-    setEditMode(props.edit_mode);
-    if (!props.edit_mode){
-      setTempData([]);
-    }
-  }, [props.edit_mode]);
+
+
+
+
+
 
   useEffect(() => {
     setUserData(props.userdata)
@@ -70,10 +68,20 @@ const TabNotesTorg = (props) => {
    */
   useEffect(() => {
     setOrgId(props.org_id);
-    get_notes_data_action();
   }, [props.org_id]);
-
-
+  // Перегрузка данных при смене айдишника
+  useEffect(() => {
+    if (orgId){
+      get_notes_data_action();
+    };
+  }, [orgId]);
+  // Смена режима на редактировние - сброс временных
+  useEffect(() => {
+    setEditMode(props.edit_mode);
+    if (!props.edit_mode){
+      setTempData([]);
+    }
+  }, [props.edit_mode]);
 
   useEffect(() => {
     if (props.on_save_command && props.on_save_command > 0){
@@ -93,6 +101,9 @@ const TabNotesTorg = (props) => {
   useEffect(() => {
     setIsTabActive(props.active_tab);
   }, [props.active_tab]);
+
+
+
 
   // ██    ██ ███████ ███████       ██   ██ 
   // ██    ██ ██      ██             ██ ██  

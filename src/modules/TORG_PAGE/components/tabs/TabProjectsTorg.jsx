@@ -55,13 +55,8 @@ const TabProjectsTorg = (props) => {
   // ██    ██ █████   █████   
   // ██    ██ ██      ██      
   //  ██████  ██      ██      
-  // UseEffects
-  useEffect(() => {
-    setEditMode(props.edit_mode);
-    if (!props.edit_mode){
-      setTempData([]);
-    }
-  }, [props.edit_mode]);
+
+
 
   useEffect(() => {
     setUserData(props.userdata)
@@ -72,9 +67,21 @@ const TabProjectsTorg = (props) => {
    */
   useEffect(() => {
     setOrgId(props.org_id);
-    get_projects_data_action();
+    
   }, [props.org_id]);
-
+  // Перегрузка данных при смене айдишника
+  useEffect(() => {
+    if (orgId){
+      get_projects_data_action();
+    };
+  }, [orgId]);
+  // Сброс временных при входе в режим редактирования
+  useEffect(() => {
+    setEditMode(props.edit_mode);
+    if (!props.edit_mode){
+      setTempData([]);
+    }
+  }, [props.edit_mode]);
 
 
   useEffect(() => {
