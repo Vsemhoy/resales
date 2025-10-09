@@ -7,8 +7,9 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [who, setWho] = useState(null);
+
 	const fetchData = useCallback(async () => {
-		// console.log('FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA FETCH DATA ');
+		console.log(`[useSms] Загрузка данных для чата: ${chatId || 'список'}`);
 		setLoading(true);
 		setError(null);
 		setWho(null);
@@ -25,13 +26,16 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 					});
 
 					const sms = chatId ? response?.data?.content?.messages : response?.data?.content?.sms;
+
 					if (chatId) {
 						setWho(response?.data?.content?.who);
 					}
+
 					if (Array.isArray(sms)) {
 						responseData = sms;
 					} else {
 						console.warn(`[useSms] СМС в ответе сервера по ${endpoint} не является массивом`);
+						responseData = [];
 					}
 				} catch (err) {
 					console.error(
@@ -42,15 +46,15 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 				}
 			} else {
 				const mockData = mock;
-
 				const sms = chatId ? mockData?.content?.messages : mockData?.content?.sms;
 
 				if (chatId) setWho('Собеседник');
+
 				if (Array.isArray(sms)) {
 					responseData = sms;
 				} else {
 					console.warn('[useSms] MOCK-данные не содержат массив sms');
-					responseData = []; // Устанавливаем пустой массив вместо undefined
+					responseData = [];
 				}
 			}
 
@@ -69,5 +73,6 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 		fetchData();
 	}, [fetchData]);
 
-	return { data, who, loading, error, refetch: fetchData };
+	// Возвращаем только данные, без refetch
+	return { data, who, loading, error };
 };
