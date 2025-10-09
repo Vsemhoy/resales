@@ -4,9 +4,10 @@ import { PRODMODE } from '../../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../../ORG_LIST/components/mock/ORGLISTMOCK';
 import OrgPageSectionRow, { OPS_TYPE } from '../../OrgPageSectionRow';
 import dayjs from 'dayjs';
-import { AutoComplete, Input } from 'antd';
+import { AutoComplete, DatePicker, Input } from 'antd';
 import useToken from 'antd/es/theme/useToken';
 import { FaceFrownIcon } from '@heroicons/react/24/solid';
+import TorgPageSectionRow from '../../../../../TORG_PAGE/components/TorgPageSectionRow';
 
 
 
@@ -313,6 +314,7 @@ const OrgCallEditorSectionBox = (props) => {
       let resultObject = objectResult;
       resultObject.theme = theme;
       resultObject.post = post;
+      resultObject.date = date;
       resultObject.note = note;
       resultObject.subscriber = subscriber;
       resultObject.result = result;
@@ -334,6 +336,7 @@ const OrgCallEditorSectionBox = (props) => {
     }, 120);
     return () => clearTimeout(timer);
   }, [
+      date,
       org,        
       theme,      
       note,       
@@ -380,7 +383,37 @@ const OrgCallEditorSectionBox = (props) => {
     >
 
 
-      <OrgPageSectionRow
+      <TorgPageSectionRow
+
+      inputs={[
+        {
+          title: 'Автор',
+          input: <Input
+            type={'text'}
+            value={`${props.data.creator?.surname} ${props.data.creator?.name}  ${props.data.creator?.secondname}`}
+            allowClear={false}
+            readOnly={true}
+            variant={'borderless'}
+            />
+          },
+          {
+            title: 'Дата',
+            required: true,
+            input: <DatePicker
+            allowClear={false}
+            variant={'borderless'}
+            size='small'
+            value={date ? dayjs(date) : null}
+            onChange={(ev)=>{handleChangeData( {date: ev ? ev.format('YYYY-MM-DD HH:mm:ss') : null})}}
+            disabled={!editMode}
+            format={'DD-MM-YYYY'}
+          />
+        },
+
+      ]}
+      />
+
+      {/* <OrgPageSectionRow
         key={'calmet2' + id + props.data._type}
         titles={['Автор', 'Дата']}
 
@@ -406,7 +439,7 @@ const OrgCallEditorSectionBox = (props) => {
         ]}
         // on_change={handleChangeData}
         on_blur={handleChangeData}
-      />
+      /> */}
 
       <OrgPageSectionRow
         key={'calmet1' + id + props.data._type}
