@@ -154,6 +154,7 @@ const OrgPage = (props) => {
 
 	const [baseFiltersData, setBaseFilterstData] = useState(null);
 
+	const [refreshMark, setRefreshMark] = useState(null);
 
 	const [isOpenCustomModal,  setIsOpenCustomModal]  = useState(false);
 	const [customModalTitle,   setCustomModalTitle]   = useState('Некоторые данные не сохранены. Выйти из режима редактирования и отменить изменения?');

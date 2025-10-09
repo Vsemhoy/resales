@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../../../TorgPageSectionRow';
 import { Button, Input } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
+
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import TextArea from 'antd/es/input/TextArea';
 
 
-const ContactMobileMicroSectionTorg = (props) => {
+const OrgLegalAddressMicroSectionTorg = (props) => {
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
   // Оригинал объекта, в который сетапятся данные для отправки наружу
@@ -24,9 +25,9 @@ const ContactMobileMicroSectionTorg = (props) => {
 
 
   const [comment, setComment] = useState('');
-  const [number, setNumber] = useState('');
-  const [ext, setExt] = useState('');
-  const [id_orgsusers, setIdOrgsusers] = useState(null);
+  const [address, setAddress] = useState('');
+  const [post_index, setPostIndex] = useState('');
+  const [id_orgs, setIdOrgs] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
 
@@ -36,6 +37,8 @@ const ContactMobileMicroSectionTorg = (props) => {
   // ██    ██ █████   █████   
   // ██    ██ ██      ██      
   //  ██████  ██      ██      
+
+
   useEffect(() => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
@@ -47,10 +50,10 @@ const ContactMobileMicroSectionTorg = (props) => {
       setItemId(props.data.id);
       setOrgId(props.data.id_orgs);
 
-      setIdOrgsusers(props.data?.id_orgsusers);
-      setNumber(props.data?.number);
+      setIdOrgs(props.data?.id_orgs);
+      setAddress(props.data?.address);
       setComment(props.data?.comment);
-      setExt(props.data?.ext);
+      setPostIndex(props.data?.post_index);
       setDeleted(props.data?.deleted);
 
 
@@ -104,10 +107,10 @@ const ContactMobileMicroSectionTorg = (props) => {
             if (props.on_change){
               // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
               
-              baseData.id_orgsusers = id_orgsusers;
-              baseData.number        = number?.trim();
+              baseData.id_orgs      = id_orgs;
+              baseData.address      = address;
               baseData.comment      = comment?.trim();
-              baseData.ext          = ext;
+              baseData.post_index   = post_index;
               baseData.deleted      = deleted;
              
   
@@ -118,7 +121,7 @@ const ContactMobileMicroSectionTorg = (props) => {
                   baseData.command = 'update';
                 }
               }
-              props.on_change( itemId, baseData, 'contact_mobile');
+              props.on_change( itemId, baseData, 'contact_phone');
             }
           }
             }, 500);
@@ -126,11 +129,11 @@ const ContactMobileMicroSectionTorg = (props) => {
             return () => clearTimeout(timer);
   
     }, [
-      id_orgsusers,
-      number,
+      id_orgs,
+      address,
       comment,
       deleted,
-      ext
+      post_index
     ]);
 
 
@@ -143,13 +146,33 @@ const ContactMobileMicroSectionTorg = (props) => {
               inputs={[
               {
                 edit_mode: editMode,
-                label: 'Мобильный телефон',
+                label: 'Контактный телефон',
                 input:
                   
                   <Input
-                    key={'contnumber_' + baseData?.id + orgId}
-                    value={number}
-                    onChange={e => setNumber(e.target.value)}
+                    key={'legard_1_' + baseData?.id + orgId}
+                    value={address}
+                    onChange={e => setAddress(e.target.value)}
+                    // placeholder="Controlled autosize"
+                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={225}
+                    required={true}
+                  />,
+                  required: true,
+                  value: address
+              },
+                {
+                edit_mode: editMode,
+                label: 'Добавочн.',
+                input:
+                  
+                  <Input
+                    key={'legard_2_' + baseData?.id + orgId}
+                    value={post_index}
+                    type={'number'}
+                    onChange={e => setPostIndex(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -158,18 +181,17 @@ const ContactMobileMicroSectionTorg = (props) => {
                     required={true}
                   />,
                   required: true,
-                  value: number
+                  value: post_index
               },
-               
             ]}
-            extratext={[
+            post_indexratpost_index={[
               {
                 edit_mode: editMode,
                 label: 'Комментарий',
                 input:
                   
                   <TextArea
-                    key={'contnusmber_2_' + baseData?.id + orgId}
+                    key={'legard__2_' + baseData?.id + orgId}
                     value={comment}
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"
@@ -199,4 +221,4 @@ const ContactMobileMicroSectionTorg = (props) => {
   );
 };
 
-export default ContactMobileMicroSectionTorg;
+export default OrgLegalAddressMicroSectionTorg;

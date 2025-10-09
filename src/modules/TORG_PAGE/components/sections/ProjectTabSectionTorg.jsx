@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { getMonthName } from '../../../../components/helpers/TextHelpers';
 
 const ProjectTabSectionTorg = (props) => {
+  const [refreshMark, setRefreshMark] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
@@ -57,6 +58,10 @@ const ProjectTabSectionTorg = (props) => {
   useEffect(() => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
+
+    useEffect(() => {
+      setRefreshMark(props.refresh_mark);
+    }, [props.refresh_mark]);
 
   useEffect(() => {
     setData(props.data);
@@ -111,6 +116,10 @@ const ProjectTabSectionTorg = (props) => {
       setDeleted(!deleted);
     }
   }
+
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
 
   useEffect(() => {
     setCollapsed(props.collapsed);

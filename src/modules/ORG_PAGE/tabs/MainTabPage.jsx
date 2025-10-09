@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import { Badge, Button, Collapse, Empty } from 'antd';
 import {
+  BuildingLibraryIcon,
+  BuildingOfficeIcon,
 	CameraIcon,
 	DevicePhoneMobileIcon,
 	EnvelopeIcon,
@@ -21,6 +23,7 @@ import OrgPage_MainTab_Tolerance_Section from '../components/sections/MainTabSec
 import OrgPage_MainTab_Payers_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Payers_Section';
 import { FlushOrgData } from '../components/handlers/OrgPageDataHandler';
 import ContactMainSectionTorg from '../../TORG_PAGE/components/sections/ContactMainSectionTorg';
+import OrgLegalAddressMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgLegalAddressMicroSectionTorg';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -49,9 +52,23 @@ const MainTabPage = (props) => {
   const [callToAddTolerance, setCallToAddTolerance] = useState(null);
 
 
-  const [CONTACTS, setCONTACTS] = useState([]);
-  const [REQUISITES, setREQUISITES] = useState([]);
-  const [BOLICENSES, setBOLICENSES] = useState([]);
+  /**
+   * Оперативные массивы - сюда загружаются все массивы и здесь же они модифицируются
+   */
+  const [CONTACTS,     setCONTACTS]     = useState([]);
+  /**
+   * Здесь хранятся как полученные с сервера, так и измененные и добавленные объекты
+   * При отправке наверх, данные фильтруются по полю !action
+   */
+  const [REQUISITES,   setREQUISITES]   = useState([]);
+  const [BOLICENSES,   setBOLICENSES]   = useState([]);
+  const [ANLICENSES,   setANLICENSES]   = useState([]);
+  const [ANTOLERANCES, setANTOLERANCES] = useState([]);
+
+  const [ORGLEGADDRESSES, setORLEGADDRESSES] = useState([]);
+  const [ORGADDRESSES,    setORGADDRESSES]   = useState([]);
+  const [ORGPHONES,       setORGPHONES]      = useState([]);
+  const [ORGEMAILS,       setORGEMAILS]      = useState([]);
 
 
 
@@ -77,9 +94,40 @@ const MainTabPage = (props) => {
     setBaseData(props.base_data);
     // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
     if (props.base_data?.contacts){
+      setCONTACTS(JSON.parse(JSON.stringify(props.base_data?.contacts)));
+    } else { setCONTACTS([])};
 
-      setCONTACTS(JSON.parse(JSON.stringify(props.base_data?.contacts)) );
-    }
+    if (props.base_data?.active_licenses_bo){
+      setBOLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses_bo)));
+    } else {setBOLICENSES([])};
+
+    if (props.base_data?.active_tolerance){
+      setANTOLERANCES(JSON.parse(JSON.stringify(props.base_data?.active_tolerance)));
+    } else {setANTOLERANCES([])};
+
+    if (props.base_data?.address){
+      setORGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.address)));
+    } else {setORGADDRESSES([])};
+
+    if (props.base_data?.legaladdresses){
+      setORLEGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.legaladdresses)));
+    } else {setORLEGADDRESSES([])};
+
+    if (props.base_data?.emails){
+      setORGEMAILS(JSON.parse(JSON.stringify(props.base_data?.emails)));
+    } else {setORGEMAILS([])};
+
+      if (props.base_data?.active_licenses){
+      setANLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses)));
+    } else {setANLICENSES([])};
+
+    if (props.base_data?.phones){
+      setORGPHONES(JSON.parse(JSON.stringify(props.base_data?.phones)));
+    } else {setORGPHONES([])};
+
+    if (props.base_data?.requisites){
+      setREQUISITES(JSON.parse(JSON.stringify(props.base_data?.requisites)));
+    } else {setREQUISITES([])};
 
     let bdt = FlushOrgData(props.base_data, [
       "warningcmpcount",
@@ -105,85 +153,6 @@ const MainTabPage = (props) => {
   useEffect(() => {
     setItemId(props.item_id);
   }, [props.item_id]);
-
-  useEffect(() => {
-    let contics = [];
-    // setOriginalData(JSON.parse(JSON.stringify(props.base_data)));
-    if (CONTACTS) {
-    //   contics = CONTACTS.map((item) => ({
-    //     key: "controw_org_" + item.id,
-    //     classNames: 'super',
-    //     style: {
-    //       outline: item.deleted ? '2px solid #ff0000a2' : (
-    //         item.command === 'create' ? '2px solid #2196f3' : '0px'
-    //       ), marginBottom: item.deleted ? '3px ' : (
-    //         item.command === 'create' ? '3px' : '0px'
-    //       )
-    //     },
-
-    //     label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}>
-    //       <div>{item.middlename ? item.middlename : ""}{item.name ? " " + item.name : ''}{item.lastname ? " " + item.lastname : ""} <span style={{ color: 'gray', fontWeight: 100 }}>({item.id})</span></div>
-    //       {editMode && (
-    //         <div className={'sa-flex-gap'}>
-
-    //           <div className={'sa-org-contactstack-delrow'}>
-
-    //             {editMode && (
-    //               <Button
-    //                 size="small"
-    //                 color="default"
-    //                 variant="filled"
-    //                 onClick={(ev) => {
-    //                   ev.stopPropagation();
-    //                   handleAddContact();
-    //                 }}
-    //                 icon={<PlusCircleOutlined />}
-    //               >
-    //                 Звонок
-    //               </Button>
-    //             )}
-
-    //             <Button
-    //               title='Удалить контакт'
-    //               size='small'
-    //               color="danger"
-    //               variant="outlined"
-    //               icon={<TrashIcon height={'20px'} />}
-    //               onClick={(ev) => {
-    //                 ev.stopPropagation();
-    //                 handleDeleteContact(item.id);
-    //               }}
-    //             />
-    //           </div>
-    //         </div>)}
-
-    //     </div>,
-    //     children: <div className={`${item.deleted ? 'ant-collapse-content-box-deleted' : ''}`}>
-    //       <OrgPage_MainTab_Contacts_Section
-    //         color={item.deleted ? '#e50000' : '#f39821ff'}
-    //         edit_mode={editMode}
-    //         data={item}
-    //         // contacts={CONTACTS}
-    //         on_change={handleUpdateContactData}
-    //         selects={selects}
-    //       /> </div>
-    //   }))
-
-      
-    // setNostructContacts(CONTACTS.map((item)=>(
-    //   <ContactMainSectionTorg
-    //     data={item}
-    //     edit_mode={editMode}
-
-    //     />
-
-    // )));
-    }
-  }, [show, editMode, CONTACTS]);
-
-
-
-
 
 
 
@@ -250,7 +219,7 @@ const MainTabPage = (props) => {
         label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div>
 
         </div>,
-        children: <OrgPage_MainTab_Contactinfo_Section
+        children: <div><OrgPage_MainTab_Contactinfo_Section
           color={'#799119ff'}
           edit_mode={editMode}
           data={baseData}
@@ -262,6 +231,111 @@ const MainTabPage = (props) => {
           // on_change={(ee)=>(// console.log("CCHHHHHHHHHHHHHHHAAAAAAAAAAA", ee))} // Изменение объектов
           item_id={itemId}
         />
+          <div>
+            {ORGLEGADDRESSES.map((item)=>(
+              <OrgLegalAddressMicroSectionTorg
+                data={item}
+                org_id={itemId}
+                edit_mode={editMode}
+              />
+            ))}
+          </div>
+
+          <div>
+            {ORGADDRESSES.map((item)=>(
+              <OrgLegalAddressMicroSectionTorg
+                data={item}
+                org_id={itemId}
+                edit_mode={editMode}
+              />
+            ))}
+          </div>
+
+          <div>
+            {ORGPHONES.map((item)=>(
+              <OrgLegalAddressMicroSectionTorg
+                data={item}
+                org_id={itemId}
+                edit_mode={editMode}
+              />
+            ))}
+          </div>
+
+          <div>
+            {ORGEMAILS.map((item)=>(
+              <OrgLegalAddressMicroSectionTorg
+                data={item}
+                org_id={itemId}
+                edit_mode={editMode}
+              />
+            ))}
+          </div>
+
+
+        <div className={'sk-omt-stack-control sa-flex-space'}>
+        <div></div>
+        <div>
+          <div className={'sa-org-contactstack-addrow'}>
+            Добавить
+            <div>
+
+
+              <Button
+                title='Добавить адрес'
+                size='small'
+                color="primary"
+                variant="outlined"
+                icon={<BuildingOfficeIcon height={'20px'}/>}
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  handleAddAddress();
+                }}
+                >Адрес</Button>
+                {ORGLEGADDRESSES.length + ORGLEGADDRESSES < 1 && (
+                  <Button
+                  title='Добавить юр. адрес'
+                  size='small'
+                  icon={<BuildingLibraryIcon height={'20px'}/>}
+                  color="primary"
+                  variant="outlined"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddLegalad();
+                  }}
+                  >Юр. Адрес</Button>
+                )}
+
+              <Button
+                title='Добавить контактный телефон'
+                size='small'
+                color="primary"
+                variant="outlined"
+                icon={<PhoneIcon height={'20px'}/>}
+                onClick={(ev) => {
+                  console.log('ALOHA');
+                  handleAddPhone();
+                }}
+                >Телефон</Button>
+              <Button
+                title='Добавить эл. почту'
+                size='small'
+                color="primary"
+                variant="outlined"
+                icon={<EnvelopeIcon height={'20px'}/>}
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  handleAddEmail();
+                }}
+                >Эл. почту</Button>
+
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+
+        </div>
       },
       {
         key: 'mainorgsec_131',
@@ -406,8 +480,20 @@ const MainTabPage = (props) => {
     ];
 
     setStructureItems(secids);
-  }, [CONTACTS, show, editMode, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance, structureContacts, itemId]);
+  }, [CONTACTS, ORGLEGADDRESSES, ORGADDRESSES, ORGEMAILS, ORGPHONES,
+     show, editMode, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance, structureContacts, itemId]);
   // },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
+
+
+
+
+
+
+//  ██████  ██████  ███    ██ ████████  █████   ██████ ████████ 
+// ██      ██    ██ ████   ██    ██    ██   ██ ██         ██    
+// ██      ██    ██ ██ ██  ██    ██    ███████ ██         ██    
+// ██      ██    ██ ██  ██ ██    ██    ██   ██ ██         ██    
+//  ██████  ██████  ██   ████    ██    ██   ██  ██████    ██    
 
 
   const handleUpdateContacts = (e,a,data)=>{
@@ -460,69 +546,269 @@ const MainTabPage = (props) => {
     setCONTACTS([newContact, ...CONTACTS]);
   }
 
-  useEffect(() => {
-    // console.log('BASE DATA MODIFIED');
 
-    // console.log(baseData);
-  }, [baseData]);
 
-  const handleDeleteContact = (id) => {
-    let contacts = CONTACTS;
-    let ordata = contacts.find((item) => item.id === id);
-
-    if (ordata) {
-      ordata.deleted = !ordata.deleted;
-      if (ordata.deleted === true) {
-        ordata.command = 'delete';
-      } else {
-        if (ordata.command === 'delete') {
-          ordata.command = 'update';
-        }
+  
+  
+  // ░█████████  ░██                                                    
+  // ░██     ░██ ░██                                                    
+  // ░██     ░██ ░████████   ░███████  ░████████   ░███████   ░███████  
+  // ░█████████  ░██    ░██ ░██    ░██ ░██    ░██ ░██    ░██ ░██        
+  // ░██         ░██    ░██ ░██    ░██ ░██    ░██ ░█████████  ░███████  
+  // ░██         ░██    ░██ ░██    ░██ ░██    ░██ ░██               ░██ 
+  // ░██         ░██    ░██  ░███████  ░██    ░██  ░███████   ░███████  
+    /* ----------------- PHONES --------------------- */
+  /**
+     * Добавление нового элемента в стек новых
+     */
+    const handleAddPhone = ()=>{
+      let item = {
+            id: 'new_' + dayjs().unix() + '_' + ORGPHONES.length ,
+            id_orgs:  itemId,
+            number: '',
+            ext: '',
+            comment: '',
+            deleted: 0,
+            command: "create",
+          };
+      setORGPHONES([...ORGPHONES, item]);
+    }
+  
+  
+    /**
+     * Обновление или удаление записи
+     * @param {*} id 
+     * @param {*} data 
+     * @returns 
+     */
+    const handleUpdatePhoneUnit = (id, data) => {
+      if (!editMode) {
+        return;
       }
-
-      // let ndt = JSON.parse(JSON.stringify(baseData)); // В ином случае не вызовется коллбэк
-      let newContacts = [];
-      if (ordata.id && String(ordata.id).startsWith('new')) {
-        newContacts = contacts.filter((item) => item.id !== id);
+  
+      if (data.command !== 'create'){
+        if (data.deleted){
+          data.command = 'delete';
+        } else {
+          data.command = 'update';
+        }
       } else {
-        newContacts = contacts.map((item) => (item.id === id ? ordata : item));
-        if (!editedContactIds?.includes(id)) {
-          setEditedContactIds([...editedContactIds, id]);
+        // Попытка удалить новый - удаляет из стека
+        if (data.deleted){
+          setORGPHONES(ORGPHONES.filter((item)=>item.id !== id));
+          return;
         }
       };
-
-      // ndt.contacts = newContacts;
-      // setBaseData(ndt);
-      setCONTACTS(newContacts);
-    }
-  }
-
-
-
-
-  const handleUpdateContactData = (id, updata) => {
-    let contacts = CONTACTS;
-    // let ordata = contacts.find((item)=> item.id === id);
-    // console.log('id, updata', id, updata)
-    if (updata.command && updata.command === 'create') {
-
-    } else {
-      updata.command = 'update';
+      // изменяет существующий
+      setORGPHONES((prevUnits) => {
+        const exists = prevUnits.some((item) => item.id === id);
+        if (!exists) {
+          return [...prevUnits, data];
+        } else {
+          return prevUnits?.map((item) => (item.id === id ? data : item));
+        }
+      });
     };
-    if (!editedContactIds?.includes(id)) {
-      setEditedContactIds([...editedContactIds, id]);
+
+  
+  
+    /* ----------------- PHONES END --------------------- */
+  
+  
+  
+  
+  
+  
+  // ░██         ░██████████   ░██████     ░███    ░██         
+  // ░██         ░██          ░██   ░██   ░██░██   ░██         
+  // ░██         ░██         ░██         ░██  ░██  ░██         
+  // ░██         ░█████████  ░██  █████ ░█████████ ░██         
+  // ░██         ░██         ░██     ██ ░██    ░██ ░██         
+  // ░██         ░██          ░██  ░███ ░██    ░██ ░██         
+  // ░██████████ ░██████████   ░█████░█ ░██    ░██ ░██████████ 
+    /* ----------------- LAWADDRESS --------------------- */
+  /**
+     * Добавление нового элемента в стек новых
+     */
+    const handleAddLegalad = ()=>{
+      let item = {
+            id: 'new_' + dayjs().unix() + '_' + ORGADDRESSES.length ,
+            id_orgs:  itemId,
+            address: '',
+            post_index: '',
+            comment: '',
+            deleted: 0,
+            command: "create",
+          };
+      setORLEGADDRESSES([...ORGLEGADDRESSES, item]);
     }
+      /**
+     * Обновление или удаление записи
+     * @param {*} id 
+     * @param {*} data 
+     * @returns 
+     */
+    const handleUpdateLegalUnit = (id, data) => {
+      if (!editMode) {
+        return;
+      }
+  
+      if (data.command !== 'create'){
+        if (data.deleted){
+          data.command = 'delete';
+        } else {
+          data.command = 'update';
+        }
+      } else {
+        // Попытка удалить новый - удаляет из стека
+        if (data.deleted){
+          setORLEGADDRESSES(ORGLEGADDRESSES.filter((item)=>item.id !== id));
+          return;
+        }
+      };
+      // изменяет существующий
+      setORLEGADDRESSES((prevUnits) => {
+        const exists = prevUnits.some((item) => item.id === id);
+        if (!exists) {
+          return [...prevUnits, data];
+        } else {
+          return prevUnits?.map((item) => (item.id === id ? data : item));
+        }
+      });
+    };
+  
+  
+    /* ----------------- LAWADDRESS END --------------------- */
+  
+  
+  
+  
+  
+  //    ░███    ░███████   ░███████   ░█████████  ░██████████   ░██████     ░██████   
+  //   ░██░██   ░██   ░██  ░██   ░██  ░██     ░██ ░██          ░██   ░██   ░██   ░██  
+  //  ░██  ░██  ░██    ░██ ░██    ░██ ░██     ░██ ░██         ░██         ░██         
+  // ░█████████ ░██    ░██ ░██    ░██ ░█████████  ░█████████   ░████████   ░████████  
+  // ░██    ░██ ░██    ░██ ░██    ░██ ░██   ░██   ░██                 ░██         ░██ 
+  // ░██    ░██ ░██   ░██  ░██   ░██  ░██    ░██  ░██          ░██   ░██   ░██   ░██  
+  // ░██    ░██ ░███████   ░███████   ░██     ░██ ░██████████   ░██████     ░██████   
+    /* ----------------- ADDRESS --------------------- */
+  /**
+     * Добавление нового элемента в стек новых
+     */
+    const handleAddAddress = ()=>{
+      let item = {
+            id: 'new_' + dayjs().unix() + '_' + ORGADDRESSES.length ,
+            id_orgs:  itemId,
+            address: '',
+            post_index: '',
+            comment: '',
+            deleted: 0,
+            command: "create",
+          };
+      setORGADDRESSES([...ORGADDRESSES, item]);
+    }
+  
+    
+    const handleUpdateAddressUnit = (id, data) => {
+     if (!editMode) {
+        return;
+      }
+  
+      if (data.command !== 'create'){
+        if (data.deleted){
+          data.command = 'delete';
+        } else {
+          data.command = 'update';
+        }
+      } else {
+        // Попытка удалить новый - удаляет из стека
+        if (data.deleted){
+          setORGADDRESSES(ORGADDRESSES.filter((item)=>item.id !== id));
+          return;
+        }
+      };
+      // изменяет существующий
+      setORGADDRESSES((prevUnits) => {
+        const exists = prevUnits.some((item) => item.id === id);
+        if (!exists) {
+          return [...prevUnits, data];
+        } else {
+          return prevUnits?.map((item) => (item.id === id ? data : item));
+        }
+      });
+    };
+  
+  
+    /* ----------------- ADDRESS END --------------------- */
+  
+  
+  
+  
+  // ░██████████ ░███     ░███    ░███    ░██████░██           ░██████   
+  // ░██         ░████   ░████   ░██░██     ░██  ░██          ░██   ░██  
+  // ░██         ░██░██ ░██░██  ░██  ░██    ░██  ░██         ░██         
+  // ░█████████  ░██ ░████ ░██ ░█████████   ░██  ░██          ░████████  
+  // ░██         ░██  ░██  ░██ ░██    ░██   ░██  ░██                 ░██ 
+  // ░██         ░██       ░██ ░██    ░██   ░██  ░██          ░██   ░██  
+  // ░██████████ ░██       ░██ ░██    ░██ ░██████░██████████   ░██████   
+    /* ----------------- EMAILS --------------------- */
+  /**
+     * Добавление нового элемента в стек новых
+     */
+    const handleAddEmail = ()=>{
+      let item = {
+            id: 'new_' + dayjs().unix() + '_' + ORGEMAILS.length ,
+            id_orgs:  itemId,
+            email: '',
+            comment: '',
+            deleted: 0,
+            command: "create",
+          };
+      setORGEMAILS([...ORGEMAILS, item]);
+    }
+  
+   
+  
+    /**
+     * Обновление и удаление существующей записи
+     * @param {*} id 
+     * @param {*} data 
+     * @returns 
+     */
+    const handleUpdateEmailUnit = (id, data) => {
+      if (!editMode) {
+        return;
+      }
+  
+      if (data.command !== 'create'){
+        if (data.deleted){
+          data.command = 'delete';
+        } else {
+          data.command = 'update';
+        }
+      } else {
+        // Попытка удалить новый - удаляет из стека
+        if (data.deleted){
+          setORGEMAILS(ORGEMAILS.filter((item)=>item.id !== id));
+          return;
+        }
+      };
+      // изменяет существующий
+      setORGEMAILS((prevUnits) => {
+        const exists = prevUnits.some((item) => item.id === id);
+        if (!exists) {
+          return [...prevUnits, data];
+        } else {
+          return prevUnits?.map((item) => (item.id === id ? data : item));
+        }
+      });
+    };
+  
+  
+    /* ----------------- EMAILS END --------------------- */
+  
 
-    // CONTACTS = CONTACTS.map((item) => (item.id === id ? updata : item));
-    // setBaseData(baseData);
-    setCONTACTS(CONTACTS.map(item => item.id === id ? updata : item));
 
-    // setBaseData(prev => ({
-    //   ...prev,
-    //   contacts: prev.contacts
-    // }));
-
-  }
 
 
 

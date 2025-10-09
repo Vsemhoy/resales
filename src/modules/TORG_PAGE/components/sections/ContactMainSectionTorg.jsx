@@ -13,6 +13,8 @@ import ContactMobileMicroSectionTorg from './microsections/contact/ContactMobile
 import ContactPhoneMicroSectionTorg from './microsections/contact/ContactPhoneMicroSectionTorg';
 
 const ContactMainSectionTorg = (props) => {
+  const [refreshMark, setRefreshMark] = useState(null);
+
   const [collapsed, setCollapsed] = useState(true);
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
@@ -100,7 +102,9 @@ const ContactMainSectionTorg = (props) => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
 
-
+  useEffect(() => {
+    setRefreshMark(props.refresh_mark);
+  }, [props.refresh_mark]);
 
 useEffect(() => {
   const newData = JSON.parse(JSON.stringify(props.data));
@@ -219,6 +223,10 @@ useEffect(() => {
       setDeleted(!deleted);
     }
   }
+
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
 
   // useEffect(() => {
   //   setCollapsed(props.collapsed);
@@ -925,7 +933,7 @@ useEffect(() => {
   return (
     <div className={`sa-org-collapse-item sa-org-person-row
        ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
-       ${deleted ? 'deleted' : ''}`}
+       ${deleted ? 'deleted' : ''} ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}`}
 
     >
       <div className={'sa-org-collpase-header sa-flex-space'}

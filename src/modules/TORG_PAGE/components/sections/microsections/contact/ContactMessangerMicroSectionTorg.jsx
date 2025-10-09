@@ -84,6 +84,10 @@ const [selects, setSelects] = useState(null);
     }
   }
 
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
+
 
     useEffect(() => {
       if (editMode  && baseData && baseData.command === 'create' && deleted){

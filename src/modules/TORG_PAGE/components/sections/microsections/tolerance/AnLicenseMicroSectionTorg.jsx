@@ -6,7 +6,7 @@ import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from
 import { TrashIcon } from '@heroicons/react/24/outline';
 
 
-const ContactMobileMicroSectionTorg = (props) => {
+const AnLicenseMicroSectionTorg = (props) => {
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
   // Оригинал объекта, в который сетапятся данные для отправки наружу
@@ -118,7 +118,7 @@ const ContactMobileMicroSectionTorg = (props) => {
                   baseData.command = 'update';
                 }
               }
-              props.on_change( itemId, baseData, 'contact_mobile');
+              props.on_change( itemId, baseData, 'contact_phone');
             }
           }
             }, 500);
@@ -143,11 +143,11 @@ const ContactMobileMicroSectionTorg = (props) => {
               inputs={[
               {
                 edit_mode: editMode,
-                label: 'Мобильный телефон',
+                label: 'Контактный телефон',
                 input:
                   
                   <Input
-                    key={'contnumber_' + baseData?.id + orgId}
+                    key={'csontnumber_' + baseData?.id + orgId}
                     value={number}
                     onChange={e => setNumber(e.target.value)}
                     // placeholder="Controlled autosize"
@@ -160,7 +160,26 @@ const ContactMobileMicroSectionTorg = (props) => {
                   required: true,
                   value: number
               },
-               
+                {
+                edit_mode: editMode,
+                label: 'Добавочн.',
+                input:
+                  
+                  <Input
+                    key={'csontnumber_' + baseData?.id + orgId}
+                    value={ext}
+                    type={'number'}
+                    onChange={e => setExt(e.target.value)}
+                    // placeholder="Controlled autosize"
+                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={25}
+                    required={false}
+                  />,
+                  required: false,
+                  value: ext
+              },
             ]}
             extratext={[
               {
@@ -169,7 +188,7 @@ const ContactMobileMicroSectionTorg = (props) => {
                 input:
                   
                   <TextArea
-                    key={'contnusmber_2_' + baseData?.id + orgId}
+                    key={'cossntnumber_2_' + baseData?.id + orgId}
                     value={comment}
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"
@@ -199,4 +218,4 @@ const ContactMobileMicroSectionTorg = (props) => {
   );
 };
 
-export default ContactMobileMicroSectionTorg;
+export default AnLicenseMicroSectionTorg;
