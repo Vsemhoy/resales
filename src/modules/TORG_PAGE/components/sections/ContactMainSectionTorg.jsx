@@ -52,6 +52,12 @@ const ContactMainSectionTorg = (props) => {
   const [newContacthomephones,  setNewContacthomephones]  = useState([]);
   const [newContactemails,      setNewContactEmails]      = useState([]);
   const [newContactmessangers,  setNewContactmessangers]  = useState([]);
+
+  const [updatedContactstelephones, setUpdatedNewContactstelephones] = useState([]);
+  const [updatedContactmobiles,     setUpdatedNewContactmobiles]     = useState([]);
+  const [updatedContacthomephones,  setUpdatedNewContacthomephones]  = useState([]);
+  const [updatedContactemails,      setUpdatedNewContactEmails]      = useState([]);
+  const [updatedContactmessangers,  setUpdatedNewContactmessangers]  = useState([]);
   
   // const [originalContactstelephones, setOriginalContactstelephones] = useState([]);
   // const [originalContactmobiles,     setOriginalContactmobiles]     = useState([]);
@@ -84,6 +90,12 @@ const ContactMainSectionTorg = (props) => {
       setNewContactmessangers([]);
       setNewContactmobiles([]);
       setNewContactstelephones([]);
+
+      setUpdatedNewContactEmails([]);
+      setUpdatedNewContacthomephones([]);
+      setUpdatedNewContactmessangers([]);
+      setUpdatedNewContactmobiles([]);
+      setUpdatedNewContactstelephones([]);
     };
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
@@ -132,18 +144,28 @@ useEffect(() => {
     // Массивы — через stringify
     if (JSON.stringify(contactstelephones) !== JSON.stringify(props.data.contactstelephones)) {
       setContactstelephones(props.data.contactstelephones);
+      setNewContactstelephones([]);      
+      setUpdatedNewContactstelephones([]);
     }
     if (JSON.stringify(contactmobiles) !== JSON.stringify(props.data.contactmobiles)) {
       setContactmobiles(props.data.contactmobiles);
+      setUpdatedNewContactmobiles([]);
+      setNewContactmobiles([]);
     }
     if (JSON.stringify(contacthomephones) !== JSON.stringify(props.data.contacthomephones)) {
       setContacthomephones(props.data.contacthomephones);
+      setNewContacthomephones([]);
+      setUpdatedNewContacthomephones([]);
     }
     if (JSON.stringify(contactemails) !== JSON.stringify(props.data.contactemails)) {
       setContactemails(props.data.contactemails);
+      setNewContactEmails([]);
+      setUpdatedNewContactEmails([]);
     }
     if (JSON.stringify(contactmessangers) !== JSON.stringify(props.data.contactmessangers)) {
       setContactmessangers(props.data.contactmessangers);
+      setNewContactmessangers([]);
+      setUpdatedNewContactmessangers([]);
     }
   }
 }, [props.data]);
@@ -167,6 +189,12 @@ useEffect(() => {
       setNewContactmessangers([]);
       setNewContactmobiles([]);
       setNewContactstelephones([]);
+
+      setUpdatedNewContactEmails([]);
+      setUpdatedNewContacthomephones([]);
+      setUpdatedNewContactmessangers([]);
+      setUpdatedNewContactmobiles([]);
+      setUpdatedNewContactstelephones([]);
     }
   }, [props.data.id_orgs]);
 
@@ -214,6 +242,8 @@ useEffect(() => {
             // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
             // data.notes = note;
             // data.deleted = deleted;
+            
+
             baseData.name = name?.trim();
             baseData.lastname = lastName?.trim();
             baseData.middlename = middleName?.trim();
@@ -228,6 +258,12 @@ useEffect(() => {
             baseData.contacthomephones =  contacthomephones.concat(newContacthomephones);
             baseData.contactemails =      contactemails.concat(newContactemails);
             baseData.contactmessangers =  contactmessangers.concat(newContactmessangers);
+
+            baseData.up_contactstelephones = updatedContactstelephones.concat(newContactstelephones);
+            baseData.up_contactmobiles =     updatedContactmobiles.concat(newContactmobiles);
+            baseData.up_contacthomephones =  updatedContacthomephones.concat(newContacthomephones);
+            baseData.up_contactemails =      updatedContactemails.concat(newContactemails);
+            baseData.up_contactmessangers =  updatedContactmessangers.concat(newContactmessangers);
 
             if (baseData.command === undefined || baseData.command !== 'create'){
               if (deleted){
@@ -750,6 +786,16 @@ useEffect(() => {
         item.id === id ? value : item
       )
     );
+    let existed = updatedContactmobiles.find((item)=> item.id === id);
+    if (existed){
+      setUpdatedNewContactmobiles(prev =>
+        prev.map(item =>
+          item.id === id ? value : item
+        )
+      );
+    } else {
+      setUpdatedNewContactmobiles([...updatedContactmobiles, value]);
+    }
   };
 
   const updateNewContactMobile = (id, value, field) => {
@@ -760,12 +806,24 @@ useEffect(() => {
     );
   };
 
+
+
     const updateContactPhone = (id, value, field) => {
     setContactstelephones(prev =>
       prev.map(item =>
         item.id === id ? value : item
       )
     );
+    let existed = updatedContactstelephones.find((item)=> item.id === id);
+    if (existed){
+      setUpdatedNewContactstelephones(prev =>
+        prev.map(item =>
+          item.id === id ? value : item
+        )
+      );
+    } else {
+      setUpdatedNewContactstelephones([...updatedContactstelephones, value]);
+    }
   };
 
   const updateNewContactPhone = (id, value, field) => {
@@ -776,12 +834,22 @@ useEffect(() => {
     );
   };
 
-    const updateContactHomePhone = (id, value, field) => {
+  const updateContactHomePhone = (id, value, field) => {
     setContacthomephones(prev =>
       prev.map(item =>
         item.id === id ? value : item
       )
     );
+        let existed = updatedContacthomephones.find((item)=> item.id === id);
+    if (existed){
+      setUpdatedNewContacthomephones(prev =>
+        prev.map(item =>
+          item.id === id ? value : item
+        )
+      );
+    } else {
+      setUpdatedNewContacthomephones([...updatedContacthomephones, value]);
+    }
   };
 
   const updateNewContactHomePhone = (id, value, field) => {
@@ -798,6 +866,16 @@ useEffect(() => {
         item.id === id ? value : item
       )
     );
+      let existed = updatedContactemails.find((item)=> item.id === id);
+    if (existed){
+      setUpdatedNewContactEmails(prev =>
+        prev.map(item =>
+          item.id === id ? value : item
+        )
+      );
+    } else {
+      setUpdatedNewContactEmails([...updatedContactemails, value]);
+    }
   };
 
   const updateNewContactEmail = (id, value, field) => {
@@ -814,6 +892,16 @@ useEffect(() => {
         item.id === id ? value : item
       )
     );
+      let existed = updatedContactmessangers.find((item)=> item.id === id);
+    if (existed){
+      setUpdatedNewContactmessangers(prev =>
+        prev.map(item =>
+          item.id === id ? value : item
+        )
+      );
+    } else {
+      setUpdatedNewContactmessangers([...updatedContactmessangers, value]);
+    }
   };
 
   const updateNewContactMessanger = (id, value, field) => {

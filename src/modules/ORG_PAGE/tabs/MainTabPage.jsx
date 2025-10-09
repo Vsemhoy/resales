@@ -69,6 +69,10 @@ const MainTabPage = (props) => {
   }, [props.edit_mode]);
 
   useEffect(() => {
+    console.log('CONTACTS', CONTACTS)
+  }, [CONTACTS]);
+
+  useEffect(() => {
 
     setBaseData(props.base_data);
     // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
@@ -425,6 +429,7 @@ const MainTabPage = (props) => {
 			}
 		}
   }
+
 
 
   const handleAddContact = () => {

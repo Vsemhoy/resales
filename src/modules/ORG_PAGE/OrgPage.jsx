@@ -301,7 +301,7 @@ const OrgPage = (props) => {
 				
 				setTimeout(() => {
 					setItemId(itt);
-				}, 1200);
+				}, 3200);
 				setTimeout(() => {
 					
 					get_main_data_action(itt);
@@ -822,10 +822,7 @@ const OrgPage = (props) => {
 	const clearTemps = () => {
 		let iid = itemId;
 		setItemId(0);
-		setTimeout(() => {
-			setItemId(iid);
-			
-		}, 1200);
+
 			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
 				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
 				setTempMainData(null);
@@ -892,6 +889,10 @@ const OrgPage = (props) => {
 								if (tempMain_contacts && tempMain_contacts.length > 0){
 					setTempMain_contacts([]);
 				}
+		setTimeout(() => {
+			setItemId(iid);
+			
+		}, 1200);
 	}
 
 
