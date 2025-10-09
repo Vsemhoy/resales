@@ -108,6 +108,7 @@ const EngineerListPage = (props) => {
 	};
 
 	useEffect(() => {
+		console.log(props.userdata.user?.super);
 		setSuperUser(props.userdata.user?.super);
 	}, [props.userdata.user?.super]);
 
