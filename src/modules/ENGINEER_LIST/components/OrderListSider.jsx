@@ -65,15 +65,20 @@ const OrderListSider = (props) => {
 								<List.Item key={index}>
 									<div className="sider-order-list">
 										<div className="manager-info">
-											<span>{order.manager || 'Иванов И.И.'}</span>
+											<span><h4> Название проекта:  </h4> {order.title || 'Иванов И.И.'}</span>
 										</div>
+
+										<div className="manager-info">
+											<span><h4> Менеджер:  </h4>{order.manager || 'Иванов И.И.'}</span>
+										</div>
+
 
 										{role && role === 1 ? (
 											<div className="buttons-container">
 												<Button
 													type="primary"
-													icon={<CheckOutlined />}
-													style={{ width: '100%' }}
+													icon={<CheckOutlined/>}
+													style={{width: '100%'}}
 													size="small"
 													onClick={(e) => props.acceptOrder(order.id, 'engineer')}
 												>
@@ -95,9 +100,9 @@ const OrderListSider = (props) => {
 												<Button
 													type="primary"
 													danger
-													icon={<CloseOutlined />}
+													icon={<CloseOutlined/>}
 													size="small"
-													style={{ width: '100%' }}
+													style={{width: '100%'}}
 													onClick={(e) => props.returnOrderToSpec(order.id, 'myself')}
 												>
 													Отозвать
