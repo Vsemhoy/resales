@@ -134,6 +134,10 @@ useEffect(() => {
     if (job !== props.data?.job) {
       setJob(props.data?.job);
     }
+    if (unsubscribe !== props.data?.unsubscribe) {
+      setUnsubscribe(props.data?.unsubscribe);
+    }
+
     if (exittoorg_id !== props.data?.exittoorg_id) {
       setExittoorg_id(props.data?.exittoorg_id);
     }
@@ -252,6 +256,7 @@ useEffect(() => {
             baseData.job = job;
             baseData.exittoorg_id = exittoorg_id;
             baseData.deleted = deleted;
+            baseData.unsubscribe = unsubscribe;
 
             baseData.contactstelephones = contactstelephones.concat(newContactstelephones);
             baseData.contactmobiles =     contactmobiles.concat(newContactmobiles);
@@ -287,6 +292,7 @@ useEffect(() => {
     occupy,
     comment,
     job,
+    unsubscribe,
     exittoorg_id,
     deleted,
     contactemails,
@@ -1119,7 +1125,8 @@ useEffect(() => {
                   key={'memcard_6d_' + itemId}
                    value={job}
                    onChange={(ev)=>(setJob(ev.target.checked))}
-
+                    checked={job ? true : false}
+                    disabled={!editMode}
                    />
               },
               {
@@ -1151,8 +1158,9 @@ useEffect(() => {
                   <Checkbox
                     key={'memcard_6d_' + itemId}
                    value={unsubscribe}
-                   onChange={(ev)=>(setJob(ev.target.checked))}
-
+                   onChange={(ev)=>(setUnsubscribe(ev.target.checked))}
+                    checked={unsubscribe ? true : false}
+                    disabled={!editMode}
                    />,
             
                   value: unsubscribe
