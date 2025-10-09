@@ -960,7 +960,7 @@ useEffect(() => {
           <div className={'sa-pa-3 sa-org-section-text'}>
             <div className='sa-org-section-label'>
               {(name || middleName || lastName) ?
-              (`${middleName ? middleName : ""}${name ? " " + name : ''}${lastName ? " " + lastName : ""}`)
+              (`${lastName ?lastName : ""}${name ? " " + name : ''}${middleName ?  " " + middleName : ""}`)
                : "Без имени "}
             </div>
             {/* <span className="sa-date-text">
