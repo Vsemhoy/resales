@@ -410,9 +410,8 @@
 
 .sa-brand-new-row {
 	border: 2px solid var(--org-page-temp-border-color);
-    margin-bottom: 10px;
+	margin-bottom: 6px;
 }
 .sa-brand-new-row:hover {
 	border: 2px solid var(--org-page-temp-border-color);
-  margin-bottom: 6px;
 }

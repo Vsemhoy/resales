@@ -52,12 +52,14 @@ const OrgAddressMicroSectionTorg = (props) => {
       setComment(props.data?.comment);
       setExt(props.data?.ext);
       setDeleted(props.data?.deleted);
-
-
     }
-
-
   }, [props.data]);
+
+
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
+
 
   useEffect(() => {
     if (deleted && props.on_delete){
@@ -89,12 +91,11 @@ const OrgAddressMicroSectionTorg = (props) => {
 
     useEffect(() => {
       if (editMode  && baseData && baseData.command === 'create' && deleted){
-        // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
+        // Лазейка для удаления созданных, в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
               baseData.deleted = deleted;
-                  baseData.command = 'delete';
-                  props.on_change('notes', itemId, baseData);
-                  return;
+              props.on_change(itemId, baseData, 'org_address');
+              return;
             }
           }
   
@@ -118,7 +119,7 @@ const OrgAddressMicroSectionTorg = (props) => {
                   baseData.command = 'update';
                 }
               }
-              props.on_change( itemId, baseData, 'contact_phone');
+              props.on_change( itemId, baseData, 'org_address' );
             }
           }
             }, 500);
@@ -136,18 +137,20 @@ const OrgAddressMicroSectionTorg = (props) => {
 
 
   return (
-    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
+    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''} 
+     ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}
+    `}>
             <TorgPageSectionRow
               explabel={'комм'}
               edit_mode={editMode}
               inputs={[
               {
                 edit_mode: editMode,
-                label: 'Контактный телефон',
+                label: 'Адрес',
                 input:
                   
                   <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
+                    key={'oaddress1_' + baseData?.id + orgId}
                     value={number}
                     onChange={e => setNumber(e.target.value)}
                     // placeholder="Controlled autosize"
@@ -166,7 +169,7 @@ const OrgAddressMicroSectionTorg = (props) => {
                 input:
                   
                   <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
+                    key={'oaddress2_' + baseData?.id + orgId}
                     value={ext}
                     type={'number'}
                     onChange={e => setExt(e.target.value)}
@@ -188,7 +191,7 @@ const OrgAddressMicroSectionTorg = (props) => {
                 input:
                   
                   <TextArea
-                    key={'cossntnumber_2_' + baseData?.id + orgId}
+                    key={'oaddress3_' + baseData?.id + orgId}
                     value={comment}
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"

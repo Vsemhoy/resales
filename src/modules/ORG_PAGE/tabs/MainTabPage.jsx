@@ -24,6 +24,9 @@ import OrgPage_MainTab_Payers_Section from '../components/sections/MainTabSectio
 import { FlushOrgData } from '../components/handlers/OrgPageDataHandler';
 import ContactMainSectionTorg from '../../TORG_PAGE/components/sections/ContactMainSectionTorg';
 import OrgLegalAddressMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgLegalAddressMicroSectionTorg';
+import OrgEmailMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgEmailMicroSectionTorg';
+import OrgPhoneMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgPhoneMicroSectionTorg';
+import OrgAddressMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgAddressMicroSectionTorg';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -219,7 +222,8 @@ const MainTabPage = (props) => {
         label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div>
 
         </div>,
-        children: <div><OrgPage_MainTab_Contactinfo_Section
+        children: <div>
+        {/* <OrgPage_MainTab_Contactinfo_Section
           color={'#799119ff'}
           edit_mode={editMode}
           data={baseData}
@@ -230,108 +234,121 @@ const MainTabPage = (props) => {
           on_change={updateCompanyObject} // Изменение объектов
           // on_change={(ee)=>(// console.log("CCHHHHHHHHHHHHHHHAAAAAAAAAAA", ee))} // Изменение объектов
           item_id={itemId}
-        />
+        /> */}
           <div>
             {ORGLEGADDRESSES.map((item)=>(
               <OrgLegalAddressMicroSectionTorg
+                key={'orlega_' + item.id + itemId}
+                allow_delete={true}
                 data={item}
                 org_id={itemId}
                 edit_mode={editMode}
+                on_change={handleUpdateLegalUnit}
               />
             ))}
           </div>
 
           <div>
             {ORGADDRESSES.map((item)=>(
-              <OrgLegalAddressMicroSectionTorg
+              <OrgAddressMicroSectionTorg
+                key={'oraada_' + item.id + itemId}
+                allow_delete={true}
                 data={item}
                 org_id={itemId}
                 edit_mode={editMode}
+                on_change={handleUpdateAddressUnit}
               />
             ))}
           </div>
 
           <div>
             {ORGPHONES.map((item)=>(
-              <OrgLegalAddressMicroSectionTorg
+              <OrgPhoneMicroSectionTorg
+                key={'orgphona_' + item.id + itemId}
+                allow_delete={true}
                 data={item}
                 org_id={itemId}
                 edit_mode={editMode}
+                on_change={handleUpdatePhoneUnit}
               />
             ))}
           </div>
 
           <div>
             {ORGEMAILS.map((item)=>(
-              <OrgLegalAddressMicroSectionTorg
+              <OrgEmailMicroSectionTorg
+                key={'orgema_' + item.id + itemId}
+                allow_delete={true}
                 data={item}
                 org_id={itemId}
                 edit_mode={editMode}
+                on_change={handleUpdateEmailUnit}
               />
             ))}
           </div>
 
+          {editMode && (
+          <div className={'sk-omt-stack-control sa-flex-space'}>
+          <div></div>
+          <div>
+            <div className={'sa-org-contactstack-addrow'}>
+              Добавить
+              <div>
 
-        <div className={'sk-omt-stack-control sa-flex-space'}>
-        <div></div>
-        <div>
-          <div className={'sa-org-contactstack-addrow'}>
-            Добавить
-            <div>
 
-
-              <Button
-                title='Добавить адрес'
-                size='small'
-                color="primary"
-                variant="outlined"
-                icon={<BuildingOfficeIcon height={'20px'}/>}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  handleAddAddress();
-                }}
-                >Адрес</Button>
-                {ORGLEGADDRESSES.length + ORGLEGADDRESSES < 1 && (
-                  <Button
-                  title='Добавить юр. адрес'
+                <Button
+                  title='Добавить адрес'
                   size='small'
-                  icon={<BuildingLibraryIcon height={'20px'}/>}
                   color="primary"
                   variant="outlined"
+                  icon={<BuildingOfficeIcon height={'20px'}/>}
                   onClick={(ev) => {
                     ev.stopPropagation();
-                    handleAddLegalad();
+                    handleAddAddress();
                   }}
-                  >Юр. Адрес</Button>
-                )}
+                  >Адрес</Button>
+                  {ORGLEGADDRESSES.length + ORGLEGADDRESSES < 1 && (
+                    <Button
+                    title='Добавить юр. адрес'
+                    size='small'
+                    icon={<BuildingLibraryIcon height={'20px'}/>}
+                    color="primary"
+                    variant="outlined"
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      handleAddLegalad();
+                    }}
+                    >Юр. Адрес</Button>
+                  )}
 
-              <Button
-                title='Добавить контактный телефон'
-                size='small'
-                color="primary"
-                variant="outlined"
-                icon={<PhoneIcon height={'20px'}/>}
-                onClick={(ev) => {
-                  console.log('ALOHA');
-                  handleAddPhone();
-                }}
-                >Телефон</Button>
-              <Button
-                title='Добавить эл. почту'
-                size='small'
-                color="primary"
-                variant="outlined"
-                icon={<EnvelopeIcon height={'20px'}/>}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  handleAddEmail();
-                }}
-                >Эл. почту</Button>
+                <Button
+                  title='Добавить контактный телефон'
+                  size='small'
+                  color="primary"
+                  variant="outlined"
+                  icon={<PhoneIcon height={'20px'}/>}
+                  onClick={(ev) => {
+                    console.log('ALOHA');
+                    handleAddPhone();
+                  }}
+                  >Телефон</Button>
+                <Button
+                  title='Добавить эл. почту'
+                  size='small'
+                  color="primary"
+                  variant="outlined"
+                  icon={<EnvelopeIcon height={'20px'}/>}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddEmail();
+                  }}
+                  >Эл. почту</Button>
 
-                </div>
-            </div>
+                  </div>
+              </div>
+          </div>
         </div>
-      </div>
+      )}
 
 
 
@@ -431,6 +448,7 @@ const MainTabPage = (props) => {
                     selects={selects}
                     id_orgs={itemId}
                     collapse={true}
+                    allow_delete={true}
                     />
 
                 ))}
@@ -713,7 +731,7 @@ const MainTabPage = (props) => {
      if (!editMode) {
         return;
       }
-  
+      console.log('id,data', id,data)
       if (data.command !== 'create'){
         if (data.deleted){
           data.command = 'delete';

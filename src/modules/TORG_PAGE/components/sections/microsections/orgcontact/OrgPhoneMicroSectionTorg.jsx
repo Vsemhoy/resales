@@ -55,9 +55,11 @@ const OrgPhoneMicroSectionTorg = (props) => {
 
 
     }
-
-
   }, [props.data]);
+
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
 
   useEffect(() => {
     if (deleted && props.on_delete){
@@ -91,10 +93,9 @@ const OrgPhoneMicroSectionTorg = (props) => {
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
-              baseData.deleted = deleted;
-                  baseData.command = 'delete';
-                  props.on_change('notes', itemId, baseData);
-                  return;
+               baseData.deleted = deleted;
+              props.on_change(itemId, baseData, 'org_phone');
+              return;
             }
           }
   
@@ -136,18 +137,19 @@ const OrgPhoneMicroSectionTorg = (props) => {
 
 
   return (
-    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
+    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}
+     ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}
+    `}>
             <TorgPageSectionRow
               explabel={'комм'}
               edit_mode={editMode}
               inputs={[
               {
                 edit_mode: editMode,
-                label: 'Контактный телефон',
+                label: 'Телефон',
                 input:
-                  
                   <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
+                    key={'csontnumber1_' + baseData?.id + orgId}
                     value={number}
                     onChange={e => setNumber(e.target.value)}
                     // placeholder="Controlled autosize"
@@ -166,7 +168,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                 input:
                   
                   <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
+                    key={'csontnumber2_' + baseData?.id + orgId}
                     value={ext}
                     type={'number'}
                     onChange={e => setExt(e.target.value)}
@@ -188,7 +190,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                 input:
                   
                   <TextArea
-                    key={'cossntnumber_2_' + baseData?.id + orgId}
+                    key={'csontnumber3_' + baseData?.id + orgId}
                     value={comment}
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"

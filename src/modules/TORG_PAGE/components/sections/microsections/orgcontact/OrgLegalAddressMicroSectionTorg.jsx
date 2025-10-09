@@ -58,10 +58,14 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
 
 
     }
-
-
   }, [props.data]);
 
+    
+    
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
+  
   useEffect(() => {
     if (deleted && props.on_delete){
       props.on_delete(itemId);
@@ -95,9 +99,8 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
               baseData.deleted = deleted;
-                  baseData.command = 'delete';
-                  props.on_change('notes', itemId, baseData);
-                  return;
+              props.on_change(itemId, baseData, 'org_legaladdress');
+              return;
             }
           }
   
@@ -139,14 +142,15 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
 
 
   return (
-    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
+    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''} 
+     ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}`}>
             <TorgPageSectionRow
               explabel={'комм'}
               edit_mode={editMode}
               inputs={[
               {
                 edit_mode: editMode,
-                label: 'Контактный телефон',
+                label: 'Юридический адрес',
                 input:
                   
                   <Input
@@ -191,7 +195,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
                 input:
                   
                   <TextArea
-                    key={'legard__2_' + baseData?.id + orgId}
+                    key={'legard_3_' + baseData?.id + orgId}
                     value={comment}
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"
