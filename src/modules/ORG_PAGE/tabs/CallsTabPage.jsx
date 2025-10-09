@@ -447,7 +447,7 @@ const CallsTabPage = (props) => {
 		}
 		
 
-		const excluders = ['command', 'date', 'departament', 'creator', '_type'];
+		const excluders = ['command', 'departament', 'creator', '_type'];
 		let is_original = false;
 
 		originalData.forEach((element) => {
