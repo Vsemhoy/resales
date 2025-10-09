@@ -21,21 +21,21 @@ const OrgCallsModalRow = (props) => {
 				<OrgModalRow
 					key={'rowfla_0032241'}
 					titles={['Отдел', 'Автор']}
-					datas={[baseData?.departament?.name, baseData?.id]}
+					datas={[baseData?.departament?.name, baseData?.creator
+							? baseData.creator.surname +
+								' ' +
+								baseData.creator.name +
+								' ' +
+								baseData.creator.secondname
+							: '']}
 				/>
 
 				<OrgModalRow
 					key={'rowfla_0032251_' + orgId}
 					titles={['Абонент', 'Должность']}
 					datas={[
-						baseData?.creator
-							? baseData.creator.surname +
-								' ' +
-								baseData.creator.name +
-								' ' +
-								baseData.creator.secondname
-							: '',
-						baseData?.date ? dayjs(baseData.date).format('DD.MM.YYYY') : '',
+						baseData?.subscriber,
+						baseData?.post,
 					]}
 				/>
 
