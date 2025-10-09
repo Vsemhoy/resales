@@ -181,6 +181,12 @@ const OrgPage = (props) => {
 	const [alertDescription, setAlertDescription] = useState('');
 	const [alertType, setAlertType] = useState('');
 
+
+	useEffect(() => {
+	  console.log('tempMain_contacts', tempMain_contacts)
+	}, [tempMain_contacts]);
+
+
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
 			const timer = setTimeout(() => {
@@ -615,9 +621,13 @@ const OrgPage = (props) => {
 			console.log('tempMainData', tempMainData)
 			if (tempMainData){
 				saveData.orgData = tempMainData;
+				saveData.orgData.contacts = tempMain_contacts;
+				
 			} else {
 				saveData.orgData = baseMainData;
+				saveData.orgData.contacts = tempMain_contacts;
 			}
+
 			if (tempProjectsData && tempProjectsData.length > 0){
 				saveData.projects = tempProjectsData;
 			} else {
@@ -687,7 +697,7 @@ const OrgPage = (props) => {
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
-				// copyData.contacts =            tempMain_contacts;
+				copyData.contacts =            tempMain_contacts;
 				setTempMainData(copyData);
 				console.log('END POINT ALT', copyData);
 			}
@@ -700,7 +710,7 @@ const OrgPage = (props) => {
 		tempMain_emails,
 		tempMain_phones,
 		tempMain_an_requisites,
-		// tempMain_contacts
+		tempMain_contacts
 	]);
 
 
@@ -727,6 +737,7 @@ const OrgPage = (props) => {
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
 				copyData.requisites =          tempMain_an_requisites;
+				copyData.contacts = 			tempMain_contacts;
 				console.log('SET COPY DATA', copyData)
 				// alert('ERROR');
 				setTempMainData(copyData);
@@ -739,6 +750,7 @@ const OrgPage = (props) => {
 				copyData.address =             tempMain_addresses;
 				copyData.emails =              tempMain_emails;
 				copyData.phones =              tempMain_phones;
+				copyData.contacts = 			tempMain_contacts;
 
 				console.log('SET LAST COPY DATA', copyData);
 				// console.log('SET ANTI COPY DATA', copyData)
@@ -817,14 +829,15 @@ const OrgPage = (props) => {
 			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
 				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
 				setTempMainData(null);
-				setTempMain_an_requisites(null);
-				setTempMain__an_licenses(null);
-				setTempMain_an_tolerances(null);
-				setTempMain_bo_licenses(null);
-				setTempMain_emails(null);
-				setTempMain_legalAddresses(null);
-				setTempMain_phones(null);
-				setTempMain_addresses(null);
+				setTempMain_an_requisites([]);
+				setTempMain__an_licenses([]);
+				setTempMain_an_tolerances([]);
+				setTempMain_bo_licenses([]);
+				setTempMain_emails([]);
+				setTempMain_legalAddresses([]);
+				setTempMain_phones([]);
+				setTempMain_addresses([]);
+				setTempMain_contacts([]);
 
 				get_main_data_action(iid);
 			}
@@ -843,37 +856,41 @@ const OrgPage = (props) => {
 
 
 				if (tempMain_addresses && tempMain_addresses.length > 0){
-					setTempMain_addresses(null);
+					setTempMain_addresses([]);
 				}
 
 				if (tempMain_an_licenses && tempMain_an_licenses.length > 0){
-					setTempMain__an_licenses(null);
+					setTempMain__an_licenses([]);
 				}
 
 				if (tempMain_an_requisites && tempMain_an_requisites.length > 0){
-					setTempMain_an_requisites(null);
+					setTempMain_an_requisites([]);
 				}
 
 
 				if (tempMain_an_tolerances && tempMain_an_tolerances.length > 0){
-					setTempMain_an_tolerances(null);
+					setTempMain_an_tolerances([]);
 				}
 
 
 				if (tempMain_bo_licenses && tempMain_bo_licenses.length > 0){
-					setTempMain_bo_licenses(null);
+					setTempMain_bo_licenses([]);
 				}
 
 				if (tempMain_emails && tempMain_emails.length > 0){
-					setTempMain_emails(null);
+					setTempMain_emails([]);
 				}
 				
 				if (tempMain_legalAddresses && tempMain_legalAddresses.length > 0){
-					setTempMain_legalAddresses(null);
+					setTempMain_legalAddresses([]);
 				}
 
 				if (tempMain_phones && tempMain_phones.length > 0){
-					setTempMain_phones(null);
+					setTempMain_phones([]);
+				}
+
+								if (tempMain_contacts && tempMain_contacts.length > 0){
+					setTempMain_contacts([]);
 				}
 	}
 
@@ -899,6 +916,23 @@ const OrgPage = (props) => {
 					console.log(e);
 					
 			}
+	}
+
+
+	const handleContactChange = (ea, as, data)=>{
+		if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setTempMain_contacts(tempMain_contacts.filter((item) => item.id !== data.id));
+		} else {
+			let existed = tempMain_contacts.find((item)=>item.id === data.id);
+			if (!existed){
+				setTempMain_contacts([data, ...tempMain_contacts]);
+			} else {
+				setTempMain_contacts(tempMain_contacts.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
 	}
 
 
@@ -1047,6 +1081,8 @@ const OrgPage = (props) => {
               selects={baseFiltersData}
 							on_change_data={handleTabDataChange}
 							on_change_main_data_part={handleMaintabObjectDataChange}
+
+							on_change_contact={handleContactChange}
 						/>
 
 						<CallsTabPage

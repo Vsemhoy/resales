@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react';
 
 const TorgPageSectionRow = (props) => {
   const [inputs, setInputs] = useState([]);
-  const [extraOpened, setExtraOpened] = useState(true);
+  const [opened, setOpened] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [expanderText, setExpanderText] = useState("комм");
+  const [actionBlock, setActionBlock] = useState(null);
 
   useEffect(() => {
     if (props.inputs){
@@ -16,24 +17,42 @@ const TorgPageSectionRow = (props) => {
   }, [props.inputs]);
   
   useEffect(() => {
-    setEditMode(props.editMode);
-  }, [props.editMode]);
+    setEditMode(props.edit_mode);
+    // if (!props.editMode){
+    //   setActionBlock(null);
+    // } else {
+    //   if (props.action){
+    //     setActionBlock(props.action);
+    //   }
+    // }
+  }, [props.edit_mode]);
 
   useEffect(() => {
-    setExpanderText(props.explabel);
+    if (props.explabel){
+      setExpanderText(props.explabel);
+    }
   }, [props.explabel]);
 
 
+
+  useEffect(() => {
+    if (props.action){
+      setActionBlock(props.action);
+    }
+  }, [props.action]);
+
+
+
   return (
-    <div className='torg-section'>
-      <div className='sk-omt-row-wrapper'>
+    <div className={`torg-section ${editMode ? 'torg-section-editmode' : ''}`}>
+      <div className='sk-omt-row-wrapper sk-omt-rw-first'>
           <div className={`sk-omt-row omt-${inputs?.length}-col`}>
             {inputs.map((item, index)=>(
               <div className={`${(item.edit_mode && item.required && !(item?.value && item.value)) ? 'sa-required-field-block' : ''}`}>
                 <div className={'sk-omt-legend sa-flex-space'}>
 
               
-              {props.extratext && props.extratext.length > 0 && (
+              {props.extratext && props.extratext.length > 0 && index === 0 && (
 	            <div
                 
                   className={`sk-omt-comment-trigger ${
@@ -45,9 +64,9 @@ const TorgPageSectionRow = (props) => {
                       ? "sk-omt-comment-trigger-hot"
                       : ""
                   }`}
-                  onClick={() => setExtraOpened(!extraOpened)}
+                  onClick={() => setOpened(!opened)}
                 >
-                  <span>{extraOpened ? <CaretUpOutlined /> : <CaretDownOutlined />}</span>
+                  <span>{opened ? <CaretUpOutlined /> : <CaretDownOutlined />}</span>
                   <span>{expanderText}</span>
                 </div>
 							)}
@@ -63,9 +82,11 @@ const TorgPageSectionRow = (props) => {
                 </div>
             ))}
           </div>
-
+          {actionBlock && editMode && (
+            <div className='sk-omt-action-block'>{actionBlock}</div>
+          ) } 
       </div>
-      {props.extratext && props.extratext.length > 0 && extraOpened && (
+      {props.extratext && props.extratext.length > 0 && opened && (
         <div>
           {props.extratext.map((item)=>(
             <div className='sk-omt-row-wrapper'>

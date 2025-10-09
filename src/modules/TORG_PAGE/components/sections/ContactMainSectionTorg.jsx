@@ -6,9 +6,14 @@ import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } fro
 import { CameraIcon, ChevronDownIcon, ChevronUpIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../../components/helpers/TextHelpers';
+import ContactEmailMicroSectionTorg from './microsections/contact/ContactEmailMicroSectionTorg';
+import ContactHomePhoneMicroSectionTorg from './microsections/contact/ContactHomePhoneMicroSectionTorg';
+import ContactMessangerMicroSectionTorg from './microsections/contact/ContactMessangerMicroSectionTorg';
+import ContactMobileMicroSectionTorg from './microsections/contact/ContactMobileMicroSectionTorg';
+import ContactPhoneMicroSectionTorg from './microsections/contact/ContactPhoneMicroSectionTorg';
 
 const ContactMainSectionTorg = (props) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
   // Оригинал объекта, в который сетапятся данные для отправки наружу
@@ -45,7 +50,7 @@ const ContactMainSectionTorg = (props) => {
   const [newContactstelephones, setNewContactstelephones] = useState([]);
   const [newContactmobiles,     setNewContactmobiles]     = useState([]);
   const [newContacthomephones,  setNewContacthomephones]  = useState([]);
-  const [newContactemails,      setNewContactemails]      = useState([]);
+  const [newContactemails,      setNewContactEmails]      = useState([]);
   const [newContactmessangers,  setNewContactmessangers]  = useState([]);
   
   // const [originalContactstelephones, setOriginalContactstelephones] = useState([]);
@@ -73,37 +78,97 @@ const ContactMainSectionTorg = (props) => {
   // ██    ██ ██      ██      
   //  ██████  ██      ██      
   useEffect(() => {
+    if (!props.edit_mode){
+      setNewContactEmails([]);
+      setNewContacthomephones([]);
+      setNewContactmessangers([]);
+      setNewContactmobiles([]);
+      setNewContactstelephones([]);
+    };
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
 
-  useEffect(() => {
-    setBaseData(JSON.parse(JSON.stringify(props.data)));
 
-    if (props.data.id) {
+
+useEffect(() => {
+  const newData = JSON.parse(JSON.stringify(props.data));
+  if (JSON.stringify(baseData) !== JSON.stringify(newData)) {
+    setBaseData(newData);
+  }
+
+  if (props.data.id) {
+    // Примитивы
+    if (itemId !== props.data.id) {
       setItemId(props.data.id);
+    }
+    if (orgId !== props.data.id_orgs) {
       setOrgId(props.data.id_orgs);
-
+    }
+    if (name !== props.data?.name) {
       setName(props.data?.name);
+    }
+    if (lastName !== props.data?.lastname) {
       setLastName(props.data?.lastname);
+    }
+    if (middleName !== props.data?.middlename) {
       setMiddleName(props.data?.middlename);
+    }
+    if (occupy !== props.data?.occupy) {
       setOccupy(props.data?.occupy);
+    }
+    if (comment !== props.data?.comment) {
       setComment(props.data?.comment);
+    }
+    if (job !== props.data?.job) {
       setJob(props.data?.job);
+    }
+    if (exittoorg_id !== props.data?.exittoorg_id) {
       setExittoorg_id(props.data?.exittoorg_id);
+    }
+    if (deleted !== props.data?.deleted) {
       setDeleted(props.data?.deleted);
-
-
-      setContactstelephones(props.data.contactstelephones);
-      setContactmobiles(props.data.contactmobiles);
-      setContacthomephones(props.data.contacthomephones);
-      setContactemails(props.data.contactemails);
-      setContactmessangers(props.data.contactmessangers);
     }
 
+    // Массивы — через stringify
+    if (JSON.stringify(contactstelephones) !== JSON.stringify(props.data.contactstelephones)) {
+      setContactstelephones(props.data.contactstelephones);
+    }
+    if (JSON.stringify(contactmobiles) !== JSON.stringify(props.data.contactmobiles)) {
+      setContactmobiles(props.data.contactmobiles);
+    }
+    if (JSON.stringify(contacthomephones) !== JSON.stringify(props.data.contacthomephones)) {
+      setContacthomephones(props.data.contacthomephones);
+    }
+    if (JSON.stringify(contactemails) !== JSON.stringify(props.data.contactemails)) {
+      setContactemails(props.data.contactemails);
+    }
+    if (JSON.stringify(contactmessangers) !== JSON.stringify(props.data.contactmessangers)) {
+      setContactmessangers(props.data.contactmessangers);
+    }
+  }
+}, [props.data]);
 
-  }, [props.data]);
 
 
+  useEffect(() => {
+    setSelects(props.selects)
+  }, [props.selects]);
+
+  useEffect(() => {
+    setCollapsed(props.collapse);
+  }, [props.collapse]);
+
+  // Этот не работает - не долетает айдишник компании
+  useEffect(() => {
+    console.log('ID ORGS', props.data.id_orgs)
+    if (props.data.id_orgs !== orgId){
+      setNewContactEmails([]);
+      setNewContacthomephones([]);
+      setNewContactmessangers([]);
+      setNewContactmobiles([]);
+      setNewContactstelephones([]);
+    }
+  }, [props.data.id_orgs]);
 
 
   // ██    ██ ███████ ███████       ██   ██ 
@@ -123,35 +188,37 @@ const ContactMainSectionTorg = (props) => {
     }
   }
 
-  useEffect(() => {
-    setCollapsed(props.collapsed);
-  }, [props.collapsed]);
+  // useEffect(() => {
+  //   setCollapsed(props.collapsed);
+  // }, [props.collapsed]);
 
 
   useEffect(() => {
+    console.log('ALLLLOO', deleted)
     if (editMode && !collapsed && baseData && baseData.command === 'create' && deleted){
       // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
           if (props.on_change){
             baseData.deleted = deleted;
-                baseData.command = 'delete';
-                props.on_change('notes', itemId, baseData);
+                // baseData.command = 'delete';
+                console.log('DELETED')
+                props.on_change('contacts', itemId, baseData);
                 return;
           }
         }
 
       const timer = setTimeout(() => {
         // При сверх-быстром изменении полей в разных секциях могут быть гонки
-			  if (editMode && !collapsed && baseData){
+			  if (editMode && baseData){
           if (props.on_change){
             // data.theme = theme;
             // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
             // data.notes = note;
             // data.deleted = deleted;
-            baseData.name = name;
-            baseData.lastname = lastName;
-            baseData.middlename = middleName;
-            baseData.occupy = occupy;
-            baseData.comment = comment;
+            baseData.name = name?.trim();
+            baseData.lastname = lastName?.trim();
+            baseData.middlename = middleName?.trim();
+            baseData.occupy = occupy?.trim();
+            baseData.comment = comment?.trim();
             baseData.job = job;
             baseData.exittoorg_id = exittoorg_id;
             baseData.deleted = deleted;
@@ -169,8 +236,8 @@ const ContactMainSectionTorg = (props) => {
                 baseData.command = 'update';
               }
             }
-
-            props.on_change('notes', itemId, baseData);
+            console.log('baseData', baseData)
+            props.on_change('contacts', itemId, baseData);
           }
         }
 			}, 500);
@@ -506,7 +573,7 @@ const ContactMainSectionTorg = (props) => {
           deleted: 0,
           command: "create",
         };
-    setNewContactemails([...newContactemails, item]);
+    setNewContactEmails([...newContactemails, item]);
   }
 
   /**
@@ -515,7 +582,7 @@ const ContactMainSectionTorg = (props) => {
    */
   const handleDeleteNewEmail = (id) => {
     console.log('delete', id)
-    setNewContactemails(newContactemails.filter((item)=>item.id !== id));
+    setNewContactEmails(newContactemails.filter((item)=>item.id !== id));
   }
 
   /**
@@ -534,7 +601,7 @@ const ContactMainSectionTorg = (props) => {
 
     data.command = 'create';
 
-    setNewContactemails((prevUnits) => {
+    setNewContactEmails((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
         return [...prevUnits, data];
@@ -677,18 +744,82 @@ const ContactMainSectionTorg = (props) => {
 
 
 
-  const updateContactMobile = (id, field, value) => {
+  const updateContactMobile = (id, value, field) => {
     setContactmobiles(prev =>
       prev.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
+        item.id === id ? value : item
       )
     );
   };
 
-  const updateNewContactMobile = (id, field, value) => {
+  const updateNewContactMobile = (id, value, field) => {
     setNewContactmobiles(prev =>
       prev.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
+        item.id === id ? value : item
+      )
+    );
+  };
+
+    const updateContactPhone = (id, value, field) => {
+    setContactstelephones(prev =>
+      prev.map(item =>
+        item.id === id ? value : item
+      )
+    );
+  };
+
+  const updateNewContactPhone = (id, value, field) => {
+    setNewContactstelephones(prev =>
+      prev.map(item =>
+        item.id === id ? value : item
+      )
+    );
+  };
+
+    const updateContactHomePhone = (id, value, field) => {
+    setContacthomephones(prev =>
+      prev.map(item =>
+        item.id === id ? value : item
+      )
+    );
+  };
+
+  const updateNewContactHomePhone = (id, value, field) => {
+    setNewContacthomephones(prev =>
+      prev.map(item =>
+        item.id === id ? value : item
+      )
+    );
+  };
+
+  const updateContactEmail = (id, value, field) => {
+    setContactemails(prev =>
+      prev.map(item =>
+        item.id === id ? value : item
+      )
+    );
+  };
+
+  const updateNewContactEmail = (id, value, field) => {
+    setNewContactEmails(prev =>
+      prev.map(item =>
+        item.id === id ? value : item
+      )
+    );
+  };
+
+    const updateContactMessanger = (id, value, field) => {
+    setContactmessangers(prev =>
+      prev.map(item =>
+        item.id === id ? value : item
+      )
+    );
+  };
+
+  const updateNewContactMessanger = (id, value, field) => {
+    setNewContactmessangers(prev =>
+      prev.map(item =>
+        item.id === id ? value : item
       )
     );
   };
@@ -698,21 +829,23 @@ const ContactMainSectionTorg = (props) => {
 
 
   return (
-    <div className={`sa-org-collapse-item
+    <div className={`sa-org-collapse-item sa-org-person-row
        ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
        ${deleted ? 'deleted' : ''}`}
 
     >
       <div className={'sa-org-collpase-header sa-flex-space'}
-        onDoubleClick={(ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          setCollapsed(!collapsed)
+        onClick={(ev) => {
+          if (!ev.target.closest('.sa-click-ignore')){
+            ev.preventDefault();
+            ev.stopPropagation();
+            setCollapsed(!collapsed)
+          }
         }
         }
       >
         <div className={'sa-flex'}>
-          <div className={'sa-pa-6'}>
+          <div className={'sa-pa-3 sa-lh-chevron'}>
             {collapsed ? (
               <span className={'sa-pa-3 sa-org-trigger-button'}
                 onClick={() => { setCollapsed(!collapsed) }}
@@ -730,7 +863,7 @@ const ContactMainSectionTorg = (props) => {
 
 
           </div>
-          <div className={'sa-pa-6 sa-org-section-text'}>
+          <div className={'sa-pa-3 sa-org-section-text'}>
             <div className='sa-org-section-label'>
               {(name || middleName || lastName) ?
               (`${middleName ? middleName : ""}${name ? " " + name : ''}${lastName ? " " + lastName : ""}`)
@@ -754,7 +887,7 @@ const ContactMainSectionTorg = (props) => {
           </div>
 
         </div>
-        <div className={'sa-flex'}>
+        <div className={'sa-flex sa-click-ignore'}>
           {allowDelete && editMode && (
             <span className={'sa-pa-3 sa-org-remove-button'}
               
@@ -783,8 +916,8 @@ const ContactMainSectionTorg = (props) => {
                 input:
                   <Input
                     key={'memcard_1_' + itemId}
-                    value={middleName}
-                    onChange={e => setMiddleName(e.target.value)}
+                    value={name}
+                    onChange={e => setName(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -792,7 +925,7 @@ const ContactMainSectionTorg = (props) => {
                     maxLength={60}
                   />,
                   required: true,
-                  value: middleName
+                  value: name
               },
               {
                 edit_mode: editMode,
@@ -800,16 +933,17 @@ const ContactMainSectionTorg = (props) => {
                 input:
                   <Input
                     key={'memcard_2_' + itemId}
-                    value={lastName}
-                    onChange={e => setLastName(e.target.value)}
+                    value={middleName}
+                    onChange={e => setMiddleName(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={60}
+                    required={false}
                   />,
-                  required: true,
-                  value: lastName
+                  required: false,
+                  value: middleName
               },
 
             ]}
@@ -827,8 +961,8 @@ const ContactMainSectionTorg = (props) => {
                 input:
                   <Input
                     key={'memcard_3_' + itemId}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={lastName}
+                    onChange={e => setLastName(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -836,7 +970,7 @@ const ContactMainSectionTorg = (props) => {
                     maxLength={60}
                   />,
                   required: true,
-                  value: name
+                  value: lastName
               },
               {
                 edit_mode: editMode,
@@ -877,7 +1011,7 @@ const ContactMainSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={5000}
                   />,
-                  required: true,
+                  required: false,
                   value: comment
               },
 
@@ -973,98 +1107,74 @@ const ContactMainSectionTorg = (props) => {
 
 
 
-
+      <div>
+      {contactstelephones.map((item)=>(
+        <ContactPhoneMicroSectionTorg
+          data={item}
+          edit_mode={editMode}
+          on_change={updateContactPhone}
+        />
+      ))}</div>
 
              {/* ----------------------------- DIVIDER ----------------------------- */}
       <div>
       {contactmobiles.map((item)=>(
-        <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-          <TorgPageSectionRow
-              explabel={"комм"}
-
-            edit_mode={editMode}
-            inputs={[
-              {
-                edit_mode: editMode,
-                label: 'Мобильный телефон',
-                input:
-                  
-                  <TextArea
-                    key={'memcadrd_6_' + baseData?.id + item.id}
-                    value={item.number}
-                    onChange={e => updateContactMobile(item.id, 'number', e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={22}
-                    required={true}
-                  />,
-                  required: true,
-                  value: comment
-              },
-
-
-            ]}
-            extratext={[
-              {
-                edit_mode: editMode,
-                label: 'Комментарий',
-                input:
-                  
-                  <TextArea
-                    key={'memcadsrd_6_' + baseData?.id + item.id}
-                    value={item.comment}
-                    onChange={e => updateContactMobile(item.id, 'comment', e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={5000}
-                  />,
-                  required: false,
-                  value: comment
-              },
-            ]}
-          />
-        </div>
+        <ContactMobileMicroSectionTorg
+          data={item}
+          edit_mode={editMode}
+          on_change={updateContactMobile}
+        />
       ))}</div>
 
       {/* ----------------------------- DIVIDER ----------------------------- */}
 
       <div>
       {contacthomephones.map((item)=>(
-        <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-        Hello
-        </div>
+        <ContactHomePhoneMicroSectionTorg
+          data={item}
+          edit_mode={editMode}
+          on_change={updateContactHomePhone}
+        />
       ))}</div>
 
       {/* ----------------------------- DIVIDER ----------------------------- */}
 
       <div>
       {contactemails.map((item)=>(
-        <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-        Hello
-        </div>
+        <ContactEmailMicroSectionTorg
+          data={item}
+          edit_mode={editMode}
+          on_change={updateContactEmail}
+         />
       ))}</div>
 
       {/* ----------------------------- DIVIDER ----------------------------- */}
       
       <div>
       {contactmessangers.map((item)=>(
-        <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-        Hello
-        </div>
+        <ContactMessangerMicroSectionTorg
+            data={item}
+            edit_mode={editMode}
+            on_change={updateContactMessanger}
+            selects={selects}
+        />
       ))}</div>
+
+
 
       {/* ----------------------------- DIVIDER ----------------------------- */}
 
       {newContactstelephones.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContactstelephones.map((item)=>(
-          <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-        Hello
-          </div>
+          <ContactPhoneMicroSectionTorg
+                data={item}
+                edit_mode={editMode}
+                on_change={updateNewContactPhone}
+                on_delete={(id)=>{
+                  setNewContactstelephones(newContactstelephones.filter(item => item.id !== id));
+                }}
+          />
         ))}
         </div>
       )}
@@ -1074,56 +1184,14 @@ const ContactMainSectionTorg = (props) => {
       {newContactmobiles.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContactmobiles.map((item)=>(
-          <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-             <TorgPageSectionRow
-
-            edit_mode={editMode}
-            inputs={[
-              {
-                edit_mode: editMode,
-                label: 'Мобильный телефон',
-                input:
-                  
-                  <Input
-                    key={'memcadrd_6_' + baseData?.id + item.id}
-                    value={item.number}
-                    onChange={e => updateNewContactMobile(item.id, 'number', e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={5000}
-                    required={true}
-                  />,
-                  required: true,
-                  value: item.number
-              },
- 
-
-            ]}
-            extratext={[
-              {
-                edit_mode: editMode,
-                label: 'Комментарий',
-                input:
-                  
-                  <TextArea
-                    key={'memcadsrd_6_' + baseData?.id + item.id}
-                    value={item.comment}
-                    onChange={e => updateNewContactMobile(item.id, 'comment', e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={5000}
-                    
-                  />,
-                  required: false,
-                  value: item.comment
-              },
-            ]}
+          <ContactMobileMicroSectionTorg
+                data={item}
+                edit_mode={editMode}
+                on_change={updateNewContactMobile}
+                on_delete={(id)=>{
+                  setNewContactmobiles(newContactmobiles.filter(item => item.id !== id));
+                }}
           />
-          </div>
         ))}</div>
       )}
 
@@ -1132,9 +1200,14 @@ const ContactMainSectionTorg = (props) => {
       {newContacthomephones.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContacthomephones.map((item)=>(
-          <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-        Hello
-          </div>
+          <ContactHomePhoneMicroSectionTorg
+                data={item}
+                edit_mode={editMode}
+                on_change={updateNewContactHomePhone}
+                on_delete={(id)=>{
+                  setNewContacthomephones(newContacthomephones.filter(item => item.id !== id));
+                }}
+          />
         ))}</div>
       )}
 
@@ -1143,9 +1216,14 @@ const ContactMainSectionTorg = (props) => {
       {newContactemails.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContactemails.map((item)=>(
-          <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-        Hello
-          </div>
+              <ContactEmailMicroSectionTorg
+                data={item}
+                edit_mode={editMode}
+                on_change={updateNewContactEmail}
+                on_delete={(id)=>{
+                  setNewContactEmails(newContactemails.filter(item => item.id !== id));
+                }}
+              />
         ))}</div>
       )}
 
@@ -1154,9 +1232,15 @@ const ContactMainSectionTorg = (props) => {
       {newContactmessangers.length > 0 && (
         <div className='sa-org-temp-stack-collapse'>
         {newContactmessangers.map((item)=>(
-          <div className={`sa-org-sub-sub-section-row ${item.deleted ? 'deleted' : ''}`}>
-        Hello
-          </div>
+          <ContactMessangerMicroSectionTorg
+                data={item}
+                edit_mode={editMode}
+                on_change={updateNewContactMessanger}
+                on_delete={(id)=>{
+                  setNewContactmessangers(newContactmessangers.filter(item => item.id !== id));
+                }}
+                selects={selects}
+          />
         ))}</div>
       )}
 

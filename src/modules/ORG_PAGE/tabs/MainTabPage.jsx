@@ -346,9 +346,13 @@ const MainTabPage = (props) => {
             <div>
                 {CONTACTS.map((item)=>(
                   <ContactMainSectionTorg
+                    key={'contactsectionrow_' + item.id}
                     data={item}
                     edit_mode={editMode}
-
+                    on_change={handleUpdateContacts}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
                     />
 
                 ))}
@@ -402,7 +406,25 @@ const MainTabPage = (props) => {
   // },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
 
 
-
+  const handleUpdateContacts = (e,a,data)=>{
+    if (props.on_change_contact){
+      props.on_change_contact(e,a,data);
+    }
+    console.log('data', data)
+    if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setCONTACTS(CONTACTS.filter((item) => item.id !== data.id));
+		} else {
+			let existed = CONTACTS.find((item)=>item.id === data.id);
+			if (!existed){
+				setCONTACTS([data, ...CONTACTS]);
+			} else {
+				setCONTACTS(CONTACTS.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+  }
 
 
   const handleAddContact = () => {
