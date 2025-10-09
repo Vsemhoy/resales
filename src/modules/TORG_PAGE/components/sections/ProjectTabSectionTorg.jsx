@@ -312,8 +312,8 @@ const ProjectTabSectionTorg = (props) => {
                 input:
                   <Input
                     key={'texpard_5_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={address}
+                    onChange={e => setAddress(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -321,7 +321,7 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: address
               },
 
 
@@ -337,8 +337,8 @@ const ProjectTabSectionTorg = (props) => {
                 input:
                   <Input
                     key={'texpard_6_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={customer}
+                    onChange={e => setCustomer(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -346,15 +346,15 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: customer
               },
               {
                 label: 'Этап',
                 input:
                   <Input
                     key={'texpard_7_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={stage}
+                    onChange={e => setStage(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -362,9 +362,8 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: stage
               },
-
             ]}
             extratext={[]}
           />
@@ -377,8 +376,8 @@ const ProjectTabSectionTorg = (props) => {
                 input:
                   <Input
                     key={'texpard_8_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={equipment}
+                    onChange={e => setEquipment(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -386,15 +385,15 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: equipment
               },
               {
                 label: 'Тип СОУЭ',
                 input:
                   <Input
                     key={'texpard_9_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={typeEac}
+                    onChange={e => setTypeEac(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -402,7 +401,7 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: typeEac
               },
 
             ]}
@@ -418,8 +417,8 @@ const ProjectTabSectionTorg = (props) => {
                 input:
                   <Input
                     key={'texpard_10_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={contactperson}
+                    onChange={e => setContactperson(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -427,15 +426,15 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: contactperson
               },
               {
                 label: 'Дата завершения',
                 input:
                   <Input
                     key={'texpard_11_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={dateEnd}
+                    onChange={setDateEnd}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -443,7 +442,7 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: dateEnd
               },
 
             ]}
@@ -459,8 +458,8 @@ const ProjectTabSectionTorg = (props) => {
                 input:
                   <Input
                     key={'texpard_12_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={cost}
+                    onChange={e => setCost(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -468,15 +467,15 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: cost
               },
               {
                 label: 'Вознаграждение',
                 input:
                   <Input
                     key={'texpard_13_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={bonus}
+                    onChange={e => setBonus(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -484,7 +483,7 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: bonus
               },
 
             ]}
@@ -502,8 +501,8 @@ const ProjectTabSectionTorg = (props) => {
                 input:
                   <Input
                     key={'texpard_14_' + data?.id}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    value={erector}
+                    onChange={e => setErector(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -511,7 +510,33 @@ const ProjectTabSectionTorg = (props) => {
                     maxLength={200}
                   />,
                   required: true,
-                  value: name
+                  value: erector
+              },
+
+
+            ]}
+            extratext={[]}
+          />
+
+
+          <TorgPageSectionRow
+            edit_mode={editMode}
+            inputs={[
+              {
+                label: 'Связанное КП',
+                input:
+                  <Input
+                    key={'texpard_19_' + data?.id}
+                    value={bidsId}
+                    onChange={e => setBidsId(e.target.value)}
+                    // placeholder="Controlled autosize"
+                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={200}
+                  />,
+                  required: true,
+                  value: bidsId
               },
 
 
