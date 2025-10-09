@@ -41,6 +41,8 @@
 .sa-sai-orgs {
 	max-height: calc(100vh - 100px);
 	overflow: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--sa-primary-color) #fff;
 }
 
 .sa-default-outlined-btn-color {

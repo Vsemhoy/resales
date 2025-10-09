@@ -361,3 +361,23 @@
 .ant-pagination .ant-pagination-item-active a {
 	color: var(--sa-antd-button-primary-color) !important;
 }
+
+.ant-radio-checked .ant-radio-inner {
+	border-color: var(--sa-antd-spin) !important;
+	background-color: var(--sa-antd-spin) !important;
+}
+.ant-radio-wrapper:hover .ant-radio-inner {
+	border-color: var(--sa-antd-spin) !important;
+}
+.ant-radio-wrapper-checked {
+	background-color: var(--sa-bid-page-table-header);
+	outline: 1px solid var(--sa-bid-page-divide);
+}
+
+.ant-divider {
+	border-color: var(--divider) !important;
+}
+
+.ant-btn[disabled] {
+	filter: grayscale(80%);
+}
