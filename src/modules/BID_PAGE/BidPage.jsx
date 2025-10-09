@@ -1028,8 +1028,8 @@ const BidPage = (props) => {
 	  });
 	  setBidModels(bidModelsUpd);
 	};
-	const handleDeleteModelFromBid = (bidModelId) => {
-	  const bidModelIdx = bidModels.findIndex(model => model.id === bidModelId);
+	const handleDeleteModelFromBid = (bidModelId, bidModelSort) => {
+	  const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
 	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
 	  bidModelsUpd.splice(bidModelIdx, 1);
 	  setBidModels(bidModelsUpd);
@@ -1098,18 +1098,34 @@ const BidPage = (props) => {
 		const sort = bidModels.sort((a,b) => a.sort - b.sort)[bidModels.length-1].sort;
 		const arr = additionData.map((newModel, idx) => {
 			const model = modelsSelect.find(model => model.id === newModel.id);
-			return {
-				"id": 0,
-				"bid_id": bidId,
-				"model_id": model.id,
-				"model_name": model.name,
-				"model_count": newModel.count,
-				"not_available": 0,
-				"percent": 0,
-				"presence": -2,
-				"sort": sort + idx,
-				"type_model": model.type_model,
-				"currency": model.currency,
+			if (model) {
+				return {
+					"id": 0,
+					"bid_id": bidId,
+					"model_id": model.id,
+					"model_name": model.name,
+					"model_count": newModel.count,
+					"not_available": 0,
+					"percent": 0,
+					"presence": -2,
+					"sort": sort + idx,
+					"type_model": model.type_model,
+					"currency": model.currency,
+				};
+			} else {
+				return {
+					"id": 0,
+					"bid_id": bidId,
+					"model_id": null,
+					"model_name": newModel.name,
+					"model_count": newModel.count,
+					"not_available": 0,
+					"percent": 0,
+					"presence": -2,
+					"sort": sort + idx,
+					"type_model": null,
+					"currency": null,
+				};
 			}
 		});
 		const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
@@ -2204,7 +2220,7 @@ const BidPage = (props) => {
 														color="danger"
 														variant="filled"
 														icon={<DeleteOutlined/>}
-														onClick={() => handleDeleteModelFromBid(bidModel.id)}
+														onClick={( ) => handleDeleteModelFromBid(bidModel.id, bidModel.sort)}
 														disabled={isDisabledInputManager()}
 													></Button>
 												</div>

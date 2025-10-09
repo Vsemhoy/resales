@@ -98,6 +98,8 @@ const EngineerListPage = (props) => {
 	const [alertDescription, setAlertDescription] = useState('');
 	const [alertType, setAlertType] = useState('');
 
+	const [modalTitle, setModalTitle] = useState('');
+
 	const success = (content) => {
 		messageApi.open({
 			type: 'success',
@@ -465,28 +467,34 @@ const EngineerListPage = (props) => {
 		setModalText(text);
 	};
 
+	const handleSetModalTitle = (text) => {
+		setModalTitle(text);
+	};
+
 	const handleModalCancel = () => {
 		console.log('HERE: handleModalCancel');
 		setBlockNewSpec(false);
 		setModalText('');
+		setModalTitle('');
 		setModalFileList([]);
 	};
-	const handleModalOk = (text, files) => {
-		console.log('HERE: handleModalOk', text);
+	const handleModalOk = (title, text, files) => {
+		console.log('HERE: handleModalOk', text, title);
+		setModalTitle(title);
 		setModalText(text);
 		setModalFileList(files);
 		console.log(files);
 
-		fetchCreateNewOrder(files, text).then(() => {
+		fetchCreateNewOrder(files, text, title).then(() => {
 			setBlockNewSpec(false);
 		});
 	};
 
-	const fetchCreateNewOrder = async (files, text) => {
+	const fetchCreateNewOrder = async (files, text, title) => {
 		if (PRODMODE) {
 			const formData = new FormData();
 			formData.append('_token', CSRF_TOKEN);
-			formData.append('data', JSON.stringify({ text: text }));
+			formData.append('data', JSON.stringify({ text: text, title: title }));
 
 			console.log('Files: ', files);
 			console.log('Text: ', text);
@@ -728,9 +736,11 @@ const EngineerListPage = (props) => {
 					<NewOrderModal
 						open={blockNewSpec}
 						text={modalText}
+						title={modalTitle}
 						handleOk={handleModalOk}
 						handleCancel={handleModalCancel}
 						handleSetModalText={handleSetModalText}
+						handleSetModalTitle={handleSetModalTitle}
 						fileListM={modalFileList}
 					/>
 				)}

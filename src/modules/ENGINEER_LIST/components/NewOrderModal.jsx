@@ -1,12 +1,14 @@
-import {Button, Modal, Upload, message } from "antd";
+import {Button, Modal, Upload, message, Input} from "antd";
 import React, {useEffect, useState} from "react";
 import TextArea from "antd/es/input/TextArea";
 import {UploadOutlined} from "@ant-design/icons";
+import FormItemLabel from "antd/es/form/FormItemLabel";
 
 
 const NewOrderModal = (props) => {
     const [open, setOpen] = useState(false);
     const [text, setText] = useState("");
+    const [title, setTitle] = useState("");
     const [fileList, setFileList] = useState([]);
 
     useEffect(() => {
@@ -21,12 +23,23 @@ const NewOrderModal = (props) => {
         setFileList(props.fileListM);
     }, [props.fileListM]);
 
-    const handleChange = (value) => {
-        setText(value);
+    useEffect(() => {
+        setTitle(props.title);
+    }, [])
+
+    const handleChange = (value, type) => {
+        switch (type) {
+            case 1:
+                setText(value);
+                break;
+            case 2:
+                setTitle(value);
+                break;
+        }
     }
 
     const handleOk = () => {
-        props.handleOk(text, fileList)
+        props.handleOk(title, text, fileList)
     }
 
     const handleUploadChange = ({ fileList: newFileList }) => {
@@ -45,11 +58,18 @@ const NewOrderModal = (props) => {
             onCancel={props.handleCancel}
             closeIcon={false}
         >
+            <h4> Название заявки </h4>
+            <Input value={title}
+                   placeholder={"Введите коротко что делать"}
+                   onChange={(e) => handleChange(e.target.value, 2)}
+            />
+
+            <h4> Комментарий к заявке </h4>
             <TextArea
                 value={text}
                 autoSize={{minRows: 5, maxRows: 6}}
                 style={{fontSize: '18px', marginDown: '10px'}}
-                onChange={(e) => handleChange(e.target.value)}
+                onChange={(e) => handleChange(e.target.value, 1)}
             />
 
 
