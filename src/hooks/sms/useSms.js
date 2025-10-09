@@ -41,7 +41,6 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 					throw new Error('Не удалось загрузить SMS с сервера');
 				}
 			} else {
-
 				const mockData = mock;
 
 				const sms = chatId ? mockData?.content?.messages : mockData?.content?.sms;

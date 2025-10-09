@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 
-const ChatSocketContext = createContext(null);
+export const ChatSocketContext = createContext(null);
 
 export const ChatSocketProvider = ({ children, url }) => {
 	const wsRef = useRef(null);
