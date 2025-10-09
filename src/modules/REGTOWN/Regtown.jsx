@@ -161,18 +161,16 @@ const Regtown = () => {
     };
 
     return (
-        <div>
-            <Affix>
-                <div style={{padding: '10px 12px 0 12px'}}>
-                    <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}
-                         style={{margin: 0, height: '109px'}}
-                    >
-                        <div className={'sa-header-label-container'}>
-                            <h1 className={`sa-header-label`} style={{width:'290px'}}>Города и регионы</h1>
-                        </div>
+        <div className={'sa-regtown'}>
+            <div style={{padding: '10px 12px 0 12px'}}>
+                <div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}
+                     style={{margin: 0, height: '109px'}}
+                >
+                    <div className={'sa-header-label-container'}>
+                        <h1 className={`sa-header-label`} style={{width:'290px'}}>Города и регионы</h1>
                     </div>
                 </div>
-            </Affix>
+            </div>
 
             <div className={'sa-regtown-container'}>
                 <div className={'sa-regtown-regions'}>
@@ -188,8 +186,8 @@ const Regtown = () => {
                         >Добавить регион</Button>
                     </div>
                     <div style={{padding: '0 10px'}}><Divider /></div>
-                    <div className={'sa-regions-body'}>
-                        <Spin spinning={isLoadingRegions}>
+                    <Spin spinning={isLoadingRegions}>
+                        <div className={'sa-regions-body'}>
                             {regions ? (
                                 <Radio.Group value={selectedRegion}
                                              options={prepareRadioOptions(regions)}
@@ -203,8 +201,8 @@ const Regtown = () => {
                             ) : (
                                 <Empty />
                             )}
-                        </Spin>
-                    </div>
+                        </div>
+                    </Spin>
                 </div>
 
                 <div className={'sa-regtown-towns'}>

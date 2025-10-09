@@ -1,3 +1,9 @@
+.sa-regtown {
+    width: 100%;
+    height: calc(100vh - 34px);
+    overflow: hidden;
+}
+
 .sa-regtown-container {
     margin: 10px 12px;
     height: calc(100vh - 109px - 34px - 55px);
@@ -11,6 +17,7 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto 1fr;
+    max-height: calc(100vh - 200px);
 }
 .sa-regtown-header {
     font-size: 16px;
