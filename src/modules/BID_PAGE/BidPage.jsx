@@ -1661,7 +1661,7 @@ const BidPage = (props) => {
 			<Spin size="large" spinning={isLoading}>
 				<div className={'sa-bid-page'}>
 					<Affix>
-						<div style={{ padding: '10px 12px 0 12px', backgroundColor: '#b4c9e1' }}>
+						<div style={{ padding: '10px 12px 0 12px' }}>
 							<div
 								className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}
 								style={{ margin: 0 }}
