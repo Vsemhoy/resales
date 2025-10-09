@@ -106,11 +106,11 @@ const EngineerListPage = (props) => {
 			content: content,
 		});
 	};
+	
 
 	useEffect(() => {
-		console.log(props.userdata.user?.super);
 		setSuperUser(props.userdata.user?.super);
-	}, [props.userdata.user?.super]);
+	}, [props?.userdata?.user?.super]);
 
 	useEffect(() => {
 		fetchInfo().then();
