@@ -186,8 +186,8 @@ const Regtown = () => {
                         >Добавить регион</Button>
                     </div>
                     <div style={{padding: '0 10px'}}><Divider /></div>
-                    <Spin spinning={isLoadingRegions}>
-                        <div className={'sa-regions-body'}>
+                    <div className={'sa-regions-body'}>
+                        <Spin spinning={isLoadingRegions}>
                             {regions ? (
                                 <Radio.Group value={selectedRegion}
                                              options={prepareRadioOptions(regions)}
@@ -201,8 +201,8 @@ const Regtown = () => {
                             ) : (
                                 <Empty />
                             )}
-                        </div>
-                    </Spin>
+                        </Spin>
+                    </div>
                 </div>
 
                 <div className={'sa-regtown-towns'}>
@@ -224,8 +224,8 @@ const Regtown = () => {
                         >Добавить город в регион</Button>
                     </div>
                     <div style={{padding: '0 10px'}}><Divider/></div>
-                    <Spin spinning={isLoadingTowns}>
-                        <div className={'sa-towns-body'}>
+                    <div className={'sa-towns-body'}>
+                        <Spin spinning={isLoadingTowns}>
                             {townsByRegions ? townsByRegions?.map(town => (
                                 <div className={'sa-towns-body-item'}>
                                     <Input value={town.name}
@@ -289,8 +289,8 @@ const Regtown = () => {
                             )) : (
                                 <Empty/>
                             )}
-                        </div>
-                    </Spin>
+                        </Spin>
+                    </div>
                 </div>
 
             </div>

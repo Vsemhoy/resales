@@ -18,6 +18,7 @@
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto 1fr;
     max-height: calc(100vh - 200px);
+    overflow: hidden;
 }
 .sa-regtown-header {
     font-size: 16px;
