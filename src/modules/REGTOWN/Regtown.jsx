@@ -167,6 +167,15 @@ const Regtown = () => {
         })
     };
 
+    const prepareSelect = (options) => {
+        return options?.sort((a,b) => a.name - b.name).map((option) => {
+            return {
+                value: option.id,
+                label: option.name
+            }
+        })
+    };
+
     return (
         <div className={'sa-regtown'}>
             <div style={{padding: '10px 12px 0 12px'}}>
@@ -251,7 +260,7 @@ const Regtown = () => {
                                                     content={
                                                         <div style={{display: 'flex', gap: '8px'}}>
                                                             <Select style={{width: '200px'}}
-                                                                    options={regions}
+                                                                    options={prepareSelect(regions)}
                                                             />
                                                             <Button color={'primary'}>ОК</Button>
                                                         </div>
