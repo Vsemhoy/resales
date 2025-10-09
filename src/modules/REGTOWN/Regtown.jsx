@@ -122,6 +122,7 @@ const Regtown = () => {
                         <Input value={option.name}
                                onChange={() => console.log(111111)}
                                readOnly={(option.id !== editSelectedRegion)}
+                               onClick={(e) => e.target.closest('.sa-regions-body-item').click()}
                         />
                         {option.id !== editSelectedRegion ? (
                             <Tooltip title={'Редактировать'}>
