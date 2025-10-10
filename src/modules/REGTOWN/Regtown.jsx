@@ -35,12 +35,12 @@ const Regtown = () => {
     const [selectedRegion, setSelectedRegion] = useState(null);
 
     const [editSelectedRegion, setEditSelectedRegion] = useState(null);
-    const [editSelectedRegionName, setEditSelectedRegionName] = useState(null);
     const [addedRegion, setAddedRegion] = useState(null);
 
     const [editSelectedTown, setEditSelectedTown] = useState(null);
-    const [editSelectedTownName, setEditSelectedTownName] = useState(null);
     const [addedTown, setAddedTown] = useState(null);
+
+    const [selectedRegionSelect, setSelectedRegionSelect] = useState(null);
 
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
@@ -346,7 +346,10 @@ const Regtown = () => {
             const path = `/api/regiontown/towns/update/${town.id}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
-                    data: town,
+                    data: {
+                        ...town,
+                        id_region: selectedRegionSelect ?? selectedRegion
+                    },
                     _token: CSRF_TOKEN,
                 });
                 if (response.data) {
@@ -358,6 +361,7 @@ const Regtown = () => {
                     fetchTownsByRegions().then();
                     setEditSelectedTown(null);
                 }
+                setSelectedRegionSelect(null);
             } catch (e) {
                 console.log(e);
                 setIsAlertVisible(true);
@@ -539,7 +543,9 @@ const Regtown = () => {
                                                         <div style={{display: 'flex', gap: '8px'}}>
                                                             <Select style={{width: '200px'}}
                                                                     placeholder={'Выберите новый регион'}
+                                                                    value={selectedRegionSelect}
                                                                     options={prepareSelect(regions)}
+                                                                    onChange={setSelectedRegionSelect}
                                                             />
                                                             <Button color={'primary'}>ОК</Button>
                                                         </div>
