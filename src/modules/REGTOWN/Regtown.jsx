@@ -255,7 +255,7 @@ const Regtown = () => {
             // setIsLoadingRegions(true);
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
-                    addedRegion,
+                    data: addedRegion,
                     _token: CSRF_TOKEN,
                 });
                 if (response.data) {
@@ -287,7 +287,7 @@ const Regtown = () => {
             // setIsLoadingTowns(true);
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
-                    addedTown,
+                    data: addedTown,
                     _token: CSRF_TOKEN,
                 });
                 if (response.data) {
@@ -318,7 +318,7 @@ const Regtown = () => {
             const path = `/api/regiontown/regions/update/${region.id}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
-                    region,
+                    data: region,
                     _token: CSRF_TOKEN,
                 });
                 if (response.data) {
@@ -346,7 +346,7 @@ const Regtown = () => {
             const path = `/api/regiontown/towns/update/${town.id}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
-                    town,
+                    data: town,
                     _token: CSRF_TOKEN,
                 });
                 if (response.data) {
