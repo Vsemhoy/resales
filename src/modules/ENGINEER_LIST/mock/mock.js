@@ -94,6 +94,7 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: 1,
+		files_count: 1,
 		title: 'dfhgbfdjh',
 	},
 	{
@@ -102,6 +103,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: 2,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 	{
 		id: 3,
@@ -109,6 +112,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: 0,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 	{
 		id: 4,
@@ -116,6 +121,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: 2,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 	{
 		id: 5,
@@ -123,6 +130,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: false,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 	{
 		id: 6,
@@ -130,6 +139,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: false,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 ];
 

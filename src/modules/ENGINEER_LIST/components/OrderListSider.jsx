@@ -1,10 +1,17 @@
 import { PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Affix, Button, Input, List, Modal, Select } from 'antd';
+import {Affix, Button, Input, List, Modal, Select, Tag, Tooltip} from 'antd';
 import React, { useEffect, useState } from 'react';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import {
+	CheckOutlined,
+	CloseOutlined,
+	FileOutlined,
+	FileTextOutlined,
+	PaperClipOutlined,
+	UserOutlined
+} from '@ant-design/icons';
 import dayjs from 'dayjs';
 import DeclineEngineer from './DeclineEngineer';
-
+import PositionList from "../../BID_LIST/components/PositionList";
 const useWindowSize = () => {
 	const [windowSize, setWindowSize] = useState({
 		width: window.innerWidth,
@@ -65,14 +72,75 @@ const OrderListSider = (props) => {
 							renderItem={(order, index) => (
 								<List.Item key={index}>
 									<div className="sider-order-list">
-										<div className="manager-info">
-											<span><h4> Название проекта:  </h4> {order.title || 'Иванов И.И.'}</span>
-										</div>
+										<div className="project-card">
+											<div className="info-item">
+												<FileTextOutlined className="info-icon"/>
+												<div className="info-content">
+													<label>Название проекта</label>
+													<span className="info-value">{order.title || 'Иванов И.И.'}</span>
+												</div>
+											</div>
 
-										<div className="manager-info">
-											<span><h4> Менеджер:  </h4>{order.manager || 'Иванов И.И.'}</span>
-										</div>
+											<div className="info-item">
+												<UserOutlined className="info-icon"/>
+												<div className="info-content">
+													<label>Менеджер</label>
+													<span className="info-value">{order.manager || 'Иванов И.И.'}</span>
+												</div>
+											</div>
 
+											<div className="info-item">
+												<PaperClipOutlined className="info-icon"/>
+												<div className="info-content">
+													<label>Файлы</label>
+													<Tooltip
+														placement="leftTop"
+														title={<PositionList bidId={order.id} fetch_path={'/api/sales/doclist'}
+																			 error_alert={props.error_alert}/>}
+														color="white"
+														style={{
+															maxWidth: '300px',
+															overflow: 'hidden',
+															wordWrap: 'break-word',
+														}}
+														styles={{
+															body: {
+																color: 'black',
+																border: '1px solid #d9d9d9',
+															},
+															root: {
+																maxWidth: '400px'
+															}
+														}}
+													>
+														<Tag color={'cyan'}>Файлов: {order.files_count}</Tag>
+													</Tooltip>
+												</div>
+											</div>
+										</div>
+										{/*<div className="manager-info">*/}
+										{/*	<span><h4> Название проекта:  </h4> {order.title || 'Иванов И.И.'}</span>*/}
+										{/*</div>*/}
+
+										{/*<div className="manager-info">*/}
+										{/*	<span><h4> Менеджер:  </h4>{order.manager || 'Иванов И.И.'}</span>*/}
+										{/*</div>*/}
+
+										{/*<div className="manager-info">*/}
+										{/*	<span><h4> Файлы:  </h4>*/}
+										{/*	<Tooltip*/}
+										{/*		placement="leftTop"*/}
+										{/*		title={<PositionList bidId={order.id} type={2} />}*/}
+										{/*		color="white"*/}
+										{/*		overlayInnerStyle={{*/}
+										{/*			color: 'black',*/}
+										{/*			border: '1px solid #d9d9d9',*/}
+										{/*		}}*/}
+										{/*	>*/}
+										{/*		<Tag color={'magenta'}>{order.files_count}</Tag>*/}
+										{/*	</Tooltip>*/}
+										{/*	</span>*/}
+										{/*</div>*/}
 
 										{role && role === 1 ? (
 											<div className="buttons-container">
