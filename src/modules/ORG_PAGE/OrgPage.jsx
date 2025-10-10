@@ -186,7 +186,14 @@ const OrgPage = (props) => {
 	useEffect(() => {
 	  console.log('tempMain_contacts', tempMain_contacts)
 	  console.log('tempMain_addresses', tempMain_addresses)
-	}, [tempMain_contacts, tempMain_addresses]);
+	  console.log('tempMain_legalAddresses', tempMain_legalAddresses)
+	  console.log('tempMain_phones', tempMain_phones)
+	  console.log('tempMain_emails', tempMain_emails)
+	}, [tempMain_contacts, tempMain_addresses, tempMain_emails, tempMain_legalAddresses,
+		tempMain_phones, tempMain_an_licenses, tempMain_an_requisites, tempMain_bo_licenses,
+		tempMain_an_tolerances
+
+	]);
 
 
 	useEffect(() => {

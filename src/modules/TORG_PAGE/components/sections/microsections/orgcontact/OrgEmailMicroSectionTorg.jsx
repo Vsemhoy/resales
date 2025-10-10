@@ -4,6 +4,7 @@ import { Button, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import dayjs from 'dayjs';
 
 
 const OrgEmailMicroSectionTorg = (props) => {
@@ -24,12 +25,11 @@ const OrgEmailMicroSectionTorg = (props) => {
 
 
   const [comment, setComment] = useState('');
-  const [number, setNumber] = useState('');
-  const [ext, setExt] = useState('');
+  const [email, setEmail] = useState('');
   const [id_orgsusers, setIdOrgsusers] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
-
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -48,9 +48,8 @@ const OrgEmailMicroSectionTorg = (props) => {
       setOrgId(props.data.id_orgs);
 
       setIdOrgsusers(props.data?.id_orgsusers);
-      setNumber(props.data?.number);
+      setEmail(props.data?.email);
       setComment(props.data?.comment);
-      setExt(props.data?.ext);
       setDeleted(props.data?.deleted);
     }
   }, [props.data]);
@@ -90,6 +89,9 @@ const OrgEmailMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
+      // При монтировании компонента форма не отправляется
+      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
+      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
@@ -106,9 +108,8 @@ const OrgEmailMicroSectionTorg = (props) => {
               // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
               
               baseData.id_orgsusers = id_orgsusers;
-              baseData.number        = number?.trim();
+              baseData.email        = email?.trim();
               baseData.comment      = comment?.trim();
-              baseData.ext          = ext;
               baseData.deleted      = deleted;
              
   
@@ -128,10 +129,8 @@ const OrgEmailMicroSectionTorg = (props) => {
   
     }, [
       id_orgsusers,
-      number,
-      comment,
+      BLUR_FLAG,
       deleted,
-      ext
     ]);
 
 
@@ -150,38 +149,20 @@ const OrgEmailMicroSectionTorg = (props) => {
                   
                   <Input
                     key={'emadres1_' + baseData?.id + orgId}
-                    value={number}
-                    onChange={e => setNumber(e.target.value)}
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={250}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                   />,
                   required: true,
-                  value: number
+                  value: email
               },
-                {
-                edit_mode: editMode,
-                label: 'Добавочн.',
-                input:
-                  
-                  <Input
-                    key={'emadres2_' + baseData?.id + orgId}
-                    value={ext}
-                    type={'number'}
-                    onChange={e => setExt(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={25}
-                    required={false}
-                  />,
-                  required: false,
-                  value: ext
-              },
+              
             ]}
             extratext={[
               {
@@ -198,7 +179,7 @@ const OrgEmailMicroSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={5000}
-                    
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                   />,
                   required: false,
                   value: comment

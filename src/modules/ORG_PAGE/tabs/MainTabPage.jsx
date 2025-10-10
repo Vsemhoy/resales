@@ -262,19 +262,14 @@ const MainTabPage = (props) => {
                   showSearch
                     key={'oaddress1_' + baseData?.id}
                     value={parseInt(form_id8org_towns)}
-                    // onChange={e => setAddress(e.target.value)}
-                    // onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                     onChange={(ee)=>{ setFormId8org_towns(ee);
-                      
-                          
-                          let ttown = selects?.towns.find((item)=> item.value === ee);
-                          if (ttown){
-                            if (ttown.id_region !== form_id8org_regions){
-                              setFormId8org_regions(ttown.id_region);
-                            }
+                      // Подстановка региона по городу
+                        let ttown = selects?.towns.find((item)=> item.value === ee);
+                        if (ttown){
+                          if (ttown.id_region !== form_id8org_regions){
+                            setFormId8org_regions(ttown.id_region);
                           }
-
-                        
+                        }
                       }
                     }
                     // placeholder="Controlled autosize"
@@ -692,6 +687,9 @@ const MainTabPage = (props) => {
       if (!editMode) {
         return;
       }
+      if (props.on_change_phone){
+        props.on_change_phone(data);
+      };
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -759,6 +757,9 @@ const MainTabPage = (props) => {
       if (!editMode) {
         return;
       }
+      if (props.on_change_legal_address){
+        props.on_change_legal_address(data);
+      };
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -822,8 +823,8 @@ const MainTabPage = (props) => {
       }
       if (props.on_change_address){
         props.on_change_address(data);
-      }
-      // const timer = setTimeout(() => {
+      };
+ 
       
       if (data.command !== 'create'){
         if (data.deleted){
@@ -847,11 +848,6 @@ const MainTabPage = (props) => {
           return prevUnits?.map((item) => (item.id === id ? data : item));
         }
       });
-
-      // Отправка данных на главную в накопитель изменений
-			// }, 3000);
-
-			// return () => clearTimeout(timer);
     };
   
   
@@ -892,9 +888,12 @@ const MainTabPage = (props) => {
      * @returns 
      */
     const handleUpdateEmailUnit = (id, data) => {
-      if (!editMode) {
-        return;
+     if (!editMode) {
+       return;
       }
+      if (props.on_change_email){
+        props.on_change_email(data);
+      };
   
       if (data.command !== 'create'){
         if (data.deleted){

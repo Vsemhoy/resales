@@ -29,7 +29,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
   const [id_orgsusers, setIdOrgsusers] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
-
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -90,6 +90,9 @@ const OrgPhoneMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
+      // При монтировании компонента форма не отправляется
+      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
+      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
@@ -106,7 +109,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
               // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
               
               baseData.id_orgsusers = id_orgsusers;
-              baseData.number        = number?.trim();
+              baseData.number       = number?.trim();
               baseData.comment      = comment?.trim();
               baseData.ext          = ext;
               baseData.deleted      = deleted;
@@ -128,10 +131,9 @@ const OrgPhoneMicroSectionTorg = (props) => {
   
     }, [
       id_orgsusers,
-      number,
-      comment,
+      BLUR_FLAG,
       deleted,
-      ext
+      
     ]);
 
 

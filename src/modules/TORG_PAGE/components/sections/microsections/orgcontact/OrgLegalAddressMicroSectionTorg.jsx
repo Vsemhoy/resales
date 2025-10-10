@@ -5,6 +5,7 @@ import { Button, Input } from 'antd';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import TextArea from 'antd/es/input/TextArea';
+import dayjs from 'dayjs';
 
 
 const OrgLegalAddressMicroSectionTorg = (props) => {
@@ -30,7 +31,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
   const [id_orgs, setIdOrgs] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
-
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -95,6 +96,9 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
+      // При монтировании компонента форма не отправляется
+      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
+      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
@@ -133,10 +137,9 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
   
     }, [
       id_orgs,
-      address,
-      comment,
+      BLUR_FLAG,
       deleted,
-      post_index
+   
     ]);
 
 
@@ -163,6 +166,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={225}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                   />,
                   required: true,
                   value: address
@@ -183,6 +187,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={25}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                   />,
                   required: true,
                   value: post_index
@@ -203,7 +208,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={5000}
-                    
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                   />,
                   required: false,
                   value: comment
