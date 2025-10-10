@@ -13,6 +13,8 @@ import {
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {REGIONS, TOWNS} from "./mock/mock";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
+import CustomInput from "./components/CustomInput";
+import {PRICE as region} from "../PRICE/mock/mock";
 
 const Regtown = () => {
 
@@ -169,14 +171,11 @@ const Regtown = () => {
                 value: option.id,
                 label: (
                     <div className={'sa-regions-body-item'}>
-                        <Input value={option.name}
-                               onChange={() => console.log(111111)}
-                               readOnly={(option.id !== editSelectedRegion)}
-                               onClick={(e) => {
-                                   e.target.closest('.sa-regions-body-item').click();
-                                   e.stopPropagation()
-                                   e.target.focus();
-                               }}
+                        <CustomInput id={option.id}
+                                     name={option.name}
+                                     editSelectedRegion={editSelectedRegion}
+                                     updateName={(name) => handleUpdateRegion(option, name)}
+                                     radioBtn={true}
                         />
                         {option.id !== editSelectedRegion ? (
                             <Tooltip title={'Редактировать'}>
@@ -190,7 +189,7 @@ const Regtown = () => {
                             <Tooltip title={'Сохранить'}>
                                 <Button icon={<CheckOutlined />}
                                         color="primary"
-                                        //onClick={() => setEditSelectedTown(town.id)}
+                                        onClick={() => regionUpdate(option)}
                                 ></Button>
                             </Tooltip>
                         )}
@@ -205,7 +204,7 @@ const Regtown = () => {
                             <Tooltip title={'Отмена'}>
                                 <Button icon={<CloseOutlined />}
                                         color="danger"
-                                        onClick={() => setEditSelectedRegion(null)}
+                                        onClick={() => handleCloseEditRegion()}
                                 ></Button>
                             </Tooltip>
                         )}
@@ -314,11 +313,23 @@ const Regtown = () => {
             setAddedTown(null);
         }
     };
-    const regionUpdate = () => {
+    const regionUpdate = async (region) => {
         if (PRODMODE) {
-            const path = `/api/regiontown/regions/update/`;
+            const path = `/api/regiontown/regions/update/${region.id}`;
             try {
+                let response = await PROD_AXIOS_INSTANCE.post(path, {
+                    region,
+                    _token: CSRF_TOKEN,
+                });
+                if (response.data) {
+                    setIsAlertVisible(true);
+                    setAlertMessage('Успех!');
+                    setAlertDescription(response.data.message);
+                    setAlertType('success');
 
+                    fetchRegions().then();
+                    setEditSelectedRegion(null);
+                }
             } catch (e) {
                 console.log(e);
                 setIsAlertVisible(true);
@@ -327,14 +338,26 @@ const Regtown = () => {
                 setAlertType('error');
             }
         } else {
-
+            setEditSelectedRegion(null);
         }
     };
-    const townUpdate = () => {
+    const townUpdate = async (town) => {
         if (PRODMODE) {
-            const path = `/api/regiontown/towns/update/`;
+            const path = `/api/regiontown/towns/update/${town.id}`;
             try {
+                let response = await PROD_AXIOS_INSTANCE.post(path, {
+                    town,
+                    _token: CSRF_TOKEN,
+                });
+                if (response.data) {
+                    setIsAlertVisible(true);
+                    setAlertMessage('Успех!');
+                    setAlertDescription(response.data.message);
+                    setAlertType('success');
 
+                    fetchTownsByRegions().then();
+                    setEditSelectedTown(null);
+                }
             } catch (e) {
                 console.log(e);
                 setIsAlertVisible(true);
@@ -343,8 +366,40 @@ const Regtown = () => {
                 setAlertType('error');
             }
         } else {
-
+            setEditSelectedTown(null);
         }
+    };
+
+    const handleUpdateRegion = (region, name) => {
+        const regionsUpd = JSON.parse(JSON.stringify(sortedRegions));
+        const regionIdx = regionsUpd.findIndex(r => r.id === region.id);
+        regionsUpd[regionIdx].name = name;
+        setSortedRegions(regionsUpd);
+    };
+
+    const handleUpdateTown = (town, name) => {
+        const townsUpd = JSON.parse(JSON.stringify(sortedTownsByRegions));
+        const townIdx = townsUpd.findIndex(r => r.id === town.id);
+        townsUpd[townIdx].name = name;
+        setSortedTownsByRegions(townsUpd);
+    };
+
+    const handleCloseEditRegion = () => {
+        const regionsUpd = JSON.parse(JSON.stringify(sortedRegions));
+        const reg = regionsUpd.find(r => r.id === editSelectedRegion);
+        const regSer = regions.find(r => r.id === editSelectedRegion);
+        reg.name = regSer.name;
+        setSortedRegions(regionsUpd);
+        setEditSelectedRegion(null);
+    };
+
+    const handleCloseEditTown = () => {
+        const townsUpd = JSON.parse(JSON.stringify(sortedTownsByRegions));
+        const tow = townsUpd.find(r => r.id === editSelectedTown);
+        const towSer = townsByRegions.find(r => r.id === editSelectedTown);
+        tow.name = towSer.name;
+        setSortedTownsByRegions(townsUpd);
+        setEditSelectedTown(null);
     };
 
     return (
@@ -469,8 +524,13 @@ const Regtown = () => {
                             <div className={'sa-towns-body sa-towns-body-s'}>
                                 {townsByRegions ? sortedTownsByRegions?.sort((a, b) => a.name.localeCompare(b.name))?.map((town, idx) => (
                                     <div className={'sa-towns-body-item'} key={`towns-${town.id}-${idx}`}>
-                                        <Input value={town.name}
+                                        {/*<Input value={town.name}
                                                readOnly={(town.id !== editSelectedTown)}
+                                        />*/}
+                                        <CustomInput id={town.id}
+                                                     name={town.name}
+                                                     editSelectedTown={editSelectedTown}
+                                                     updateName={(name) => handleUpdateTown(town, name)}
                                         />
                                         {town.id !== editSelectedTown ? (
                                             <Tooltip title={'Перенести в другой регион'}>
@@ -508,7 +568,7 @@ const Regtown = () => {
                                             <Tooltip title={'Сохранить'}>
                                                 <Button icon={<CheckOutlined/>}
                                                         color="primary"
-                                                    // onClick={() => setEditSelectedTown(town.id)}
+                                                        onClick={() => townUpdate(town)}
                                                 ></Button>
                                             </Tooltip>
                                         )}
@@ -523,7 +583,7 @@ const Regtown = () => {
                                             <Tooltip title={'Отмена'}>
                                                 <Button icon={<CloseOutlined/>}
                                                         color="danger"
-                                                        onClick={() => setEditSelectedTown(null)}
+                                                        onClick={() => handleCloseEditTown()}
                                                 ></Button>
                                             </Tooltip>
                                         )}
