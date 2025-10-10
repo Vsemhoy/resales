@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Badge, Button, Collapse, Empty } from 'antd';
+import { Badge, Button, Collapse, Empty, Input, Select } from 'antd';
 import {
   BuildingLibraryIcon,
   BuildingOfficeIcon,
@@ -27,6 +27,8 @@ import OrgLegalAddressMicroSectionTorg from '../../TORG_PAGE/components/sections
 import OrgEmailMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgEmailMicroSectionTorg';
 import OrgPhoneMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgPhoneMicroSectionTorg';
 import OrgAddressMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgAddressMicroSectionTorg';
+import TextArea from 'antd/es/input/TextArea';
+import TorgPageSectionRow from '../../TORG_PAGE/components/TorgPageSectionRow';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -53,6 +55,13 @@ const MainTabPage = (props) => {
   const [callToAddRequisite, setCallToAddRequisite] = useState(null);
   const [callToAddLicense, setCallToAddLicense] = useState(null);
   const [callToAddTolerance, setCallToAddTolerance] = useState(null);
+
+
+  const [form_id8org_towns,   setFormId8org_towns]   = useState(1);
+  const [form_id8org_regions, setFormId8org_regions] = useState(1);
+  const [form_name, setFormName] = useState('');
+
+
 
 
   /**
@@ -96,6 +105,11 @@ const MainTabPage = (props) => {
 
     setBaseData(props.base_data);
     // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
+    if (props.base_data){
+      setFormId8org_regions(props.base_data.id8org_regions);
+      setFormId8org_towns(props.base_data.id8org_towns);
+    }
+
     if (props.base_data?.contacts){
       setCONTACTS(JSON.parse(JSON.stringify(props.base_data?.contacts)));
     } else { setCONTACTS([])};
@@ -235,6 +249,79 @@ const MainTabPage = (props) => {
           // on_change={(ee)=>(// console.log("CCHHHHHHHHHHHHHHHAAAAAAAAAAA", ee))} // Изменение объектов
           item_id={itemId}
         /> */}
+             <TorgPageSectionRow
+              
+              edit_mode={editMode}
+              inputs={[
+              {
+                edit_mode: editMode,
+                label: 'Город',
+                input:
+                  
+                  <Select
+                  showSearch
+                    key={'oaddress1_' + baseData?.id}
+                    value={parseInt(form_id8org_towns)}
+                    // onChange={e => setAddress(e.target.value)}
+                    // onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
+                    onChange={(ee)=>{ setFormId8org_towns(ee);
+                      
+                          
+                          let ttown = selects?.towns.find((item)=> item.value === ee);
+                          if (ttown){
+                            if (ttown.id_region !== form_id8org_regions){
+                              setFormId8org_regions(ttown.id_region);
+                            }
+                          }
+
+                        
+                      }
+                    }
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={2500}
+                    required={true}
+                    options={selects?.towns.map((item)=>({
+                      key: "twnitm_" + item.value,
+                      value: parseInt(item.value),
+                      label: item.name
+                    }))}
+                  />,
+                  required: true,
+                  value: form_id8org_towns
+              },
+                {
+                edit_mode: editMode,
+                label: 'Регион',
+                input:
+                  
+                  <Select
+                  showSearch
+                    options={selects?.regions.map((item)=>({
+                      key: "regitm_" + item.value,
+                      value: parseInt(item.value),
+                      label: item.name
+                    }))}
+                    key={'oaddress2_' + baseData?.id}
+                    value={parseInt(form_id8org_regions)}
+                    type={'address'}
+                    onChange={setFormId8org_regions}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={2500}
+                    required={false}
+                  />,
+                  required: false,
+                  value: form_id8org_regions
+              },
+            ]}
+           action={
+            <div></div>
+           }
+           
+          />
           <div>
             {ORGLEGADDRESSES.map((item)=>(
               <OrgLegalAddressMicroSectionTorg
@@ -498,7 +585,9 @@ const MainTabPage = (props) => {
     ];
 
     setStructureItems(secids);
-  }, [CONTACTS, ORGLEGADDRESSES, ORGADDRESSES, ORGEMAILS, ORGPHONES,
+  }, [form_id8org_regions,
+    form_id8org_towns,
+    CONTACTS, ORGLEGADDRESSES, ORGADDRESSES, ORGEMAILS, ORGPHONES,
      show, editMode, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance, structureContacts, itemId]);
   // },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
 
@@ -650,7 +739,7 @@ const MainTabPage = (props) => {
      */
     const handleAddLegalad = ()=>{
       let item = {
-            id: 'new_' + dayjs().unix() + '_' + ORGADDRESSES.length ,
+            id: 'new_' + dayjs().unix() + '_' + ORGLEGADDRESSES.length ,
             id_orgs:  itemId,
             address: '',
             post_index: '',
@@ -729,9 +818,13 @@ const MainTabPage = (props) => {
     
     const handleUpdateAddressUnit = (id, data) => {
      if (!editMode) {
-        return;
+       return;
       }
-      console.log('id,data', id,data)
+      if (props.on_change_address){
+        props.on_change_address(data);
+      }
+      // const timer = setTimeout(() => {
+      
       if (data.command !== 'create'){
         if (data.deleted){
           data.command = 'delete';
@@ -754,6 +847,11 @@ const MainTabPage = (props) => {
           return prevUnits?.map((item) => (item.id === id ? data : item));
         }
       });
+
+      // Отправка данных на главную в накопитель изменений
+			// }, 3000);
+
+			// return () => clearTimeout(timer);
     };
   
   

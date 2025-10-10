@@ -176,7 +176,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={25}
+                    maxLength={64}
                     required={false}
                   />,
                   required: false,

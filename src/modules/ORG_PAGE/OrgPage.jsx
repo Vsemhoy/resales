@@ -185,7 +185,8 @@ const OrgPage = (props) => {
 
 	useEffect(() => {
 	  console.log('tempMain_contacts', tempMain_contacts)
-	}, [tempMain_contacts]);
+	  console.log('tempMain_addresses', tempMain_addresses)
+	}, [tempMain_contacts, tempMain_addresses]);
 
 
 	useEffect(() => {
@@ -921,6 +922,7 @@ const OrgPage = (props) => {
 	}
 
 
+	// Подготовка Контактов к отправке
 	const handleContactChange = (ea, as, data)=>{
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
@@ -931,6 +933,145 @@ const OrgPage = (props) => {
 				setTempMain_contacts([data, ...tempMain_contacts]);
 			} else {
 				setTempMain_contacts(tempMain_contacts.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+	}
+
+	// Подготовка адресов к отправке
+	const handleAddressChange = (data)=>{
+			if (data.command === 'create' && data.deleted){
+				// Удаление только что добавленного
+				setTempMain_addresses(tempMain_addresses.filter((item) => item.id !== data.id));
+			} else {
+				let existed = tempMain_addresses.find((item)=>item.id === data.id);
+				if (!existed){
+					setTempMain_addresses([data, ...tempMain_addresses]);
+				} else {
+					setTempMain_addresses(tempMain_addresses.map((item) => (
+						item.id === data.id ? data : item
+					)))
+				}
+			}
+	}
+
+		// Подготовка адресов к отправке
+	const handleLegalAddressChange = (data)=>{
+		if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setTempMain_legalAddresses(tempMain_legalAddresses.filter((item) => item.id !== data.id));
+		} else {
+			let existed = tempMain_legalAddresses.find((item)=>item.id === data.id);
+			if (!existed){
+				// Вставка
+				setTempMain_legalAddresses([data, ...tempMain_legalAddresses]);
+			} else {
+				// Обновление
+				setTempMain_legalAddresses(tempMain_legalAddresses.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+	}
+
+		// Подготовка email адресов к отправке
+	const handleEmailChange = (data)=>{
+		if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setTempMain_emails(tempMain_emails.filter((item) => item.id !== data.id));
+		} else {
+			let existed = tempMain_emails.find((item)=>item.id === data.id);
+			if (!existed){
+				setTempMain_emails([data, ...tempMain_emails]);
+			} else {
+				setTempMain_emails(tempMain_emails.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+	}
+
+		// Подготовка адресов к отправке
+	const handlePhoneChange = (data)=>{
+		if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setTempMain_phones(tempMain_phones.filter((item) => item.id !== data.id));
+		} else {
+			let existed = tempMain_phones.find((item)=>item.id === data.id);
+			if (!existed){
+				setTempMain_phones([data, ...tempMain_phones]);
+			} else {
+				setTempMain_phones(tempMain_phones.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+	}
+
+
+	// Подготовка адресов к отправке
+	const handleBoLicenseChange = (data)=>{
+		if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setTempMain_bo_licenses(tempMain_bo_licenses.filter((item) => item.id !== data.id));
+		} else {
+			let existed = tempMain_bo_licenses.find((item)=>item.id === data.id);
+			if (!existed){
+				setTempMain_bo_licenses([data, ...tempMain_bo_licenses]);
+			} else {
+				setTempMain_bo_licenses(tempMain_bo_licenses.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+	}
+
+		// Подготовка адресов к отправке
+	const handleAnLicenseChange = (data)=>{
+		if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setTempMain_bo_licenses(tempMain_an_licenses.filter((item) => item.id !== data.id));
+		} else {
+			let existed = tempMain_an_licenses.find((item)=>item.id === data.id);
+			if (!existed){
+				setTempMain_bo_licenses([data, ...tempMain_an_licenses]);
+			} else {
+				setTempMain_bo_licenses(tempMain_an_licenses.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+	}
+
+		// Подготовка адресов к отправке
+	const handleAnToleranceChange = (data)=>{
+		if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setTempMain_an_tolerances(tempMain_an_tolerances.filter((item) => item.id !== data.id));
+		} else {
+			let existed = tempMain_an_tolerances.find((item)=>item.id === data.id);
+			if (!existed){
+				setTempMain_an_tolerances([data, ...tempMain_an_tolerances]);
+			} else {
+				setTempMain_an_tolerances(tempMain_an_tolerances.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+	}
+
+		// Подготовка адресов к отправке
+	const handleRequisitesChange = (data)=>{
+		if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setTempMain_an_requisites(tempMain_an_requisites.filter((item) => item.id !== data.id));
+		} else {
+			let existed = tempMain_an_requisites.find((item)=>item.id === data.id);
+			if (!existed){
+				setTempMain_an_requisites([data, ...tempMain_an_requisites]);
+			} else {
+				setTempMain_an_requisites(tempMain_an_requisites.map((item) => (
 					item.id === data.id ? data : item
 				)))
 			}
@@ -1085,6 +1226,14 @@ const OrgPage = (props) => {
 							on_change_main_data_part={handleMaintabObjectDataChange}
 
 							on_change_contact={handleContactChange}
+							on_change_address={handleAddressChange}
+							on_change_phone={handlePhoneChange}
+							on_change_legal_address={handleLegalAddressChange}
+							on_change_email={handleEmailChange}
+							on_change_bo_license={handleBoLicenseChange}
+							on_change_an_license={handleAnLicenseChange}
+							on_change_an_tolerance={handleAnToleranceChange}
+							on_change_requisites={handleRequisitesChange}
 						/>
 
 						<CallsTabPage

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../../../TorgPageSectionRow';
 import { Button, Input } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
+
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import dayjs from 'dayjs';
+import TextArea from 'antd/es/input/TextArea';
 
 
 const OrgAddressMicroSectionTorg = (props) => {
@@ -24,12 +26,16 @@ const OrgAddressMicroSectionTorg = (props) => {
 
 
   const [comment, setComment] = useState('');
-  const [number, setNumber] = useState('');
-  const [ext, setExt] = useState('');
+  const [address, setAddress] = useState('');
+  const [post_index, setPostIndex] = useState('');
   const [id_orgsusers, setIdOrgsusers] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
-
+  /**
+   * Форма отправляется вниз только когда челик расфокусировался из текстовых полей
+   * Иначе форма лагает
+   */
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -48,9 +54,9 @@ const OrgAddressMicroSectionTorg = (props) => {
       setOrgId(props.data.id_orgs);
 
       setIdOrgsusers(props.data?.id_orgsusers);
-      setNumber(props.data?.number);
+      setAddress(props.data?.address);
       setComment(props.data?.comment);
-      setExt(props.data?.ext);
+      setPostIndex(props.data?.post_index);
       setDeleted(props.data?.deleted);
     }
   }, [props.data]);
@@ -89,7 +95,10 @@ const OrgAddressMicroSectionTorg = (props) => {
   }, [props.allow_delete]);
 
 
-    useEffect(() => {
+  useEffect(() => {
+      // При монтировании компонента форма не отправляется
+      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
+      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных, в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
@@ -106,9 +115,9 @@ const OrgAddressMicroSectionTorg = (props) => {
               // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
               
               baseData.id_orgsusers = id_orgsusers;
-              baseData.number        = number?.trim();
-              baseData.comment      = comment?.trim();
-              baseData.ext          = ext;
+              baseData.address       = address;
+              baseData.comment      = comment;
+              baseData.post_index    = post_index;
               baseData.deleted      = deleted;
              
   
@@ -122,16 +131,14 @@ const OrgAddressMicroSectionTorg = (props) => {
               props.on_change( itemId, baseData, 'org_address' );
             }
           }
-            }, 500);
-  
-            return () => clearTimeout(timer);
+        }, 500);
+
+        return () => clearTimeout(timer);
   
     }, [
       id_orgsusers,
-      number,
-      comment,
+      BLUR_FLAG,
       deleted,
-      ext
     ]);
 
 
@@ -151,28 +158,31 @@ const OrgAddressMicroSectionTorg = (props) => {
                   
                   <Input
                     key={'oaddress1_' + baseData?.id + orgId}
-                    value={number}
-                    onChange={e => setNumber(e.target.value)}
+                    value={address}
+                    // onChange={e => setAddress(e.target.value)}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
+                    onChange={e => setAddress(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={25}
+                    maxLength={250}
                     required={true}
                   />,
                   required: true,
-                  value: number
+                  value: address
               },
                 {
                 edit_mode: editMode,
-                label: 'Добавочн.',
+                label: 'Индекс',
                 input:
                   
                   <Input
                     key={'oaddress2_' + baseData?.id + orgId}
-                    value={ext}
-                    type={'number'}
-                    onChange={e => setExt(e.target.value)}
+                    value={post_index}
+                    type={'address'}
+                    onChange={e => setPostIndex(e.target.value)}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -181,10 +191,10 @@ const OrgAddressMicroSectionTorg = (props) => {
                     required={false}
                   />,
                   required: false,
-                  value: ext
+                  value: post_index
               },
             ]}
-            extratext={[
+            post_indexratpost_index={[
               {
                 edit_mode: editMode,
                 label: 'Комментарий',
@@ -199,7 +209,7 @@ const OrgAddressMicroSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={5000}
-                    
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: false,
                   value: comment
