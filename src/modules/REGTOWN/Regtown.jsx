@@ -34,9 +34,11 @@ const Regtown = () => {
 
     const [editSelectedRegion, setEditSelectedRegion] = useState(null);
     const [editSelectedRegionName, setEditSelectedRegionName] = useState(null);
+    const [addedRegion, setAddedRegion] = useState(null);
 
     const [editSelectedTown, setEditSelectedTown] = useState(null);
     const [editSelectedTownName, setEditSelectedTownName] = useState(null);
+    const [addedTown, setAddedTown] = useState(null);
 
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
@@ -57,6 +59,15 @@ const Regtown = () => {
         } else {
             setTownsByRegions(null);
         }
+        if (addedTown && selectedRegion) {
+            setAddedTown({
+                ...addedTown,
+                "id_region": selectedRegion,
+            });
+        }
+        if (addedTown && !selectedRegion) {
+            setAddedTown(null);
+        }
     }, [selectedRegion]);
 
     useEffect(() => {
@@ -76,7 +87,9 @@ const Regtown = () => {
                     fetchTownsByRegions().then();
                 } else if (townSearchStr && selectedRegion) {
                     setSortedTownsByRegions(townsByRegions.filter(town => {
-                        town.name.toLowerCase().includes(townSearchStr.toLowerCase())
+                        console.log(town.name.toLowerCase())
+                        console.log(townSearchStr.toLowerCase())
+                        return town.name.toLowerCase().includes(townSearchStr.toLowerCase())
                     }));
                 } else if (!townSearchStr && !selectedRegion) {
                     setSortedTownsByRegions(null);
@@ -87,12 +100,6 @@ const Regtown = () => {
             return () => clearTimeout(timer);
         }
     }, [townSearchStr]);
-
-    /*
-    * setIsAlertVisible(true);
-					setAlertMessage('Успех!');
-					setAlertDescription(response.data.message);
-					setAlertType('success');*/
 
     const fetchRegions = async () => {
         if (PRODMODE) {
@@ -183,7 +190,7 @@ const Regtown = () => {
                             <Tooltip title={'Сохранить'}>
                                 <Button icon={<CheckOutlined />}
                                         color="primary"
-                                    // onClick={() => setEditSelectedTown(town.id)}
+                                        //onClick={() => setEditSelectedTown(town.id)}
                                 ></Button>
                             </Tooltip>
                         )}
@@ -217,6 +224,129 @@ const Regtown = () => {
         })
     };
 
+    const handleAddRegion = () => {
+         setAddedRegion({
+            "id": 0,
+            "name": ""
+        });
+    };
+    const handleAddTown = () => {
+        setAddedTown({
+            "id_region": selectedRegion,
+            "name": "",
+            "id": 0
+        });
+    };
+    const handleUpdateAddedRegionName = (name) => {
+        setAddedRegion({
+            "id": 0,
+            "name": name
+        });
+    };
+    const handleUpdateAddedTownName = (name) => {
+        setAddedTown({
+            "id_region": selectedRegion,
+            "name": name,
+            "id": 0
+        });
+    };
+    const saveNewRegion = async () => {
+        if (PRODMODE) {
+            const path = `/api/regiontown/regions/create`;
+            // setIsLoadingRegions(true);
+            try {
+                let response = await PROD_AXIOS_INSTANCE.post(path, {
+                    addedRegion,
+                    _token: CSRF_TOKEN,
+                });
+                if (response.data) {
+                    setIsAlertVisible(true);
+                    setAlertMessage('Успех!');
+                    setAlertDescription(response.data.message);
+                    setAlertType('success');
+
+                    fetchRegions().then();
+
+                    setAddedTown(null);
+                }
+                // setIsLoadingRegions(false);
+            } catch (e) {
+                console.log(e);
+                // setIsLoadingRegions(false);
+                setIsAlertVisible(true);
+                setAlertMessage(`Произошла ошибка! ${path}`);
+                setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                setAlertType('error');
+            }
+        } else {
+            setAddedRegion(null);
+        }
+    };
+    const saveNewTown = async () => {
+        if (PRODMODE) {
+            const path = `/api/regiontown/towns/create`;
+            // setIsLoadingTowns(true);
+            try {
+                let response = await PROD_AXIOS_INSTANCE.post(path, {
+                    addedTown,
+                    _token: CSRF_TOKEN,
+                });
+                if (response.data) {
+                    setIsAlertVisible(true);
+                    setAlertMessage('Успех!');
+                    setAlertDescription(response.data.message);
+                    setAlertType('success');
+
+                    fetchTownsByRegions().then();
+
+                    setAddedTown(null);
+                }
+                // setIsLoadingTowns(false);
+            } catch (e) {
+                console.log(e);
+                // setIsLoadingTowns(false);
+                setIsAlertVisible(true);
+                setAlertMessage(`Произошла ошибка! ${path}`);
+                setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                setAlertType('error');
+            }
+        } else {
+            setAddedTown(null);
+        }
+    };
+    const regionUpdate = () => {
+        if (PRODMODE) {
+            const path = `/api/regiontown/regions/update/`;
+            try {
+
+            } catch (e) {
+                console.log(e);
+                setIsAlertVisible(true);
+                setAlertMessage(`Произошла ошибка! ${path}`);
+                setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                setAlertType('error');
+            }
+        } else {
+
+        }
+    };
+    const townUpdate = () => {
+        if (PRODMODE) {
+            const path = `/api/regiontown/towns/update/`;
+            try {
+
+            } catch (e) {
+                console.log(e);
+                setIsAlertVisible(true);
+                setAlertMessage(`Произошла ошибка! ${path}`);
+                setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                setAlertType('error');
+            }
+        } else {
+
+        }
+    };
+
     return (
         <div className={'sa-regtown'}>
             <div style={{padding: '10px 12px 0 12px'}}>
@@ -242,11 +372,32 @@ const Regtown = () => {
                         <Button color={'primary'}
                                 variant={'solid'}
                                 icon={<PlusOutlined />}
+                                onClick={handleAddRegion}
                         >Добавить регион</Button>
                     </div>
                     <div style={{padding: '0 10px'}}><Divider /></div>
                     <div className={'sa-regions-body'}>
                         <Spin spinning={isLoadingRegions}>
+                            {Boolean(addedRegion) && (
+                                <div className={'sa-regions-body-item'} style={{width:'auto', padding: '0 12px'}}>
+                                    <Input value={addedRegion.name}
+                                           onChange={(e) => handleUpdateAddedRegionName(e.target.value)}
+                                           placeholder={'Введите название региона'}
+                                    />
+                                    <Tooltip title={'Сохранить'}>
+                                        <Button icon={<CheckOutlined/>}
+                                                color="primary"
+                                                onClick={() => saveNewRegion()}
+                                        ></Button>
+                                    </Tooltip>
+                                    <Tooltip title={'Отмена'}>
+                                        <Button icon={<CloseOutlined/>}
+                                                color="danger"
+                                                onClick={() => setAddedRegion(null)}
+                                        ></Button>
+                                    </Tooltip>
+                                </div>
+                            )}
                             <div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '10px'}}>
                                 <Button disabled={!selectedRegion}
                                         color={'purple'}
@@ -288,11 +439,33 @@ const Regtown = () => {
                                 variant={'solid'}
                                 icon={<PlusOutlined/>}
                                 disabled={!selectedRegion}
+                                onClick={handleAddTown}
                         >Добавить город в регион</Button>
                     </div>
                     <div style={{padding: '0 10px'}}><Divider/></div>
                     <div className={'sa-towns-body'}>
                         <Spin spinning={isLoadingTowns}>
+                            {Boolean(addedTown) && (
+                                <div className={'sa-towns-body-item'}>
+                                    <Input value={addedTown.name}
+                                           onChange={(e) => handleUpdateAddedTownName(e.target.value)}
+                                           placeholder={'Введите название города'}
+                                    />
+                                    <div></div>
+                                    <Tooltip title={'Сохранить'}>
+                                        <Button icon={<CheckOutlined/>}
+                                                color="primary"
+                                                onClick={() => saveNewTown()}
+                                        ></Button>
+                                    </Tooltip>
+                                    <Tooltip title={'Отмена'}>
+                                        <Button icon={<CloseOutlined/>}
+                                                color="danger"
+                                                onClick={() => setAddedTown(null)}
+                                        ></Button>
+                                    </Tooltip>
+                                </div>
+                            )}
                             <div className={'sa-towns-body sa-towns-body-s'}>
                                 {townsByRegions ? sortedTownsByRegions?.sort((a, b) => a.name.localeCompare(b.name))?.map((town, idx) => (
                                     <div className={'sa-towns-body-item'} key={`towns-${town.id}-${idx}`}>
