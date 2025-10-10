@@ -85,6 +85,37 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 							),
 						},
 					]);
+				} else if (models_response && models_response.data.content.files) {
+					setFiles(models_response.data.content.files);
+					setTableHeader('ФАЙЛЫ');
+					setTableColumns([
+						{
+							title: 'Наименование',
+							dataIndex: 'name_file',
+							key: 'name_file',
+						},
+						{
+							title: 'Дата',
+							dataIndex: 'created_at',
+							key: 'created_at',
+							render: (created_at) => {
+								if (!created_at) return '-';
+								return dayjs(created_at * 1000).format('DD.MM.YYYY HH:mm:ss');
+							},
+						},
+						{
+							title: 'Скачать',
+							key: 'download',
+							render: (_, record) => (
+								<Button
+									type="link"
+									icon={<DownloadOutlined />}
+									onClick={() => handleDownload(record)}
+									size="small"
+								></Button>
+							),
+						},
+					]);
 				}
 				setLoad(false);
 			} catch (e) {

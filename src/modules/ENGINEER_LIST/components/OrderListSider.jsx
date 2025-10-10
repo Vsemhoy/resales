@@ -77,7 +77,7 @@ const OrderListSider = (props) => {
 												<FileTextOutlined className="info-icon"/>
 												<div className="info-content">
 													<label>Название проекта</label>
-													<span className="info-value">{order.title || 'Иванов И.И.'}</span>
+													<span className="info-value">{order.title || 'Без названия'}</span>
 												</div>
 											</div>
 
@@ -85,7 +85,7 @@ const OrderListSider = (props) => {
 												<UserOutlined className="info-icon"/>
 												<div className="info-content">
 													<label>Менеджер</label>
-													<span className="info-value">{order.manager || 'Иванов И.И.'}</span>
+													<span className="info-value">{order.manager || 'Без менеджера'}</span>
 												</div>
 											</div>
 
