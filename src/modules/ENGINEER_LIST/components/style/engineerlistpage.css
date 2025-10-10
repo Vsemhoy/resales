@@ -107,7 +107,7 @@
 
 .info-icon {
 	font-size: 18px;
-	color: #1890ff;
+	color: var(--row-active-color);
 	margin-right: 12px;
 	width: 24px;
 }
