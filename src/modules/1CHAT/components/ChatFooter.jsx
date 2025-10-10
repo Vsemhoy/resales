@@ -8,13 +8,8 @@ import {
 	LockOutlined,
 	EyeInvisibleOutlined,
 } from '@ant-design/icons';
-// import { useChatSocket } from '../../../context/ChatSocketContext';
 
 export default function ChatFooter({ draggable, setDraggable, position, setPosition }) {
-	// const { ws, connected } = useChatSocket();
-	// const sendMessage = (msg) => {
-	// 	if (ws && connected) ws.send(JSON.stringify(msg));
-	// };
 	const cyclePosition = () => {
 		const nextPosition = {
 			topLeft: 'topRight',

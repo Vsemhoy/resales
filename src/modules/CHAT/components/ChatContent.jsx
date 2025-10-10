@@ -31,7 +31,7 @@ export default function ChatContent({chatId}) {
         data: allSmsList = [],
         loading,
         error,
-        refetch,
+        // refetch,
     } = useSms({
         url: '/api/sms',
         mock: MOCK,
@@ -56,13 +56,13 @@ export default function ChatContent({chatId}) {
 
     const {sendSms} = useSendSms();
     const [localMessages, setLocalMessages] = useState([]);
-    const [lastUpdate, setLastUpdate] = useState(Date.now());
+    // const [lastUpdate, setLastUpdate] = useState(Date.now());
 
-    const handleManualRefresh = useCallback(() => {
-        refetch();
-        setLastUpdate(Date.now());
-        message.info('Сообщения обновлены');
-    }, []);
+    // const handleManualRefresh = useCallback(() => {
+    //     refetch();
+    //     setLastUpdate(Date.now());
+    //     message.info('Сообщения обновлены');
+    // }, []);
 
 	const allMessages = useMemo(() => {
 		const filteredLocal = localMessages.filter((msg) => msg.chatId === chatId);

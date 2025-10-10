@@ -2,7 +2,7 @@ import './App.css';
 
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom';
-import { BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE } from './config/config';
+import { BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE, BFF_PORT } from './config/config';
 import './assets/theme.css';
 import './assets/layout.css';
 import './assets/table.css';
@@ -30,7 +30,7 @@ import { MS_USER } from './mock/MAINSTATE';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Dropdown } from 'antd';
 import TorgPage from './modules/TORG_PAGE/TorgPage';
-import Regtown from "./modules/REGTOWN/Regtown";
+import Regtown from './modules/REGTOWN/Regtown';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState([]);
@@ -55,19 +55,17 @@ export const App = () => {
 		const body = document.body;
 		body.classList.remove('theme_1', 'theme_2');
 
-		if (userdata?.user?.active_company) {
-			switch (userdata.user.active_company) {
-				case 2:
-					body.classList.add('theme_1');
-					break;
-				case 3:
-					body.classList.add('theme_2');
-					break;
-			}
-		} else {
-			body.classList.remove('theme_2');
-			body.classList.add('theme_1');
-		}
+		const activeTheme = (() => {
+			const companyId = userdata?.user?.active_company;
+
+			if (companyId === 2) return 'theme_1';
+			if (companyId === 3) return 'theme_2';
+
+			return 'theme_1'; // тема по умолчанию
+		})();
+
+		// Применяем выбранную тему
+		body.classList.add(activeTheme);
 	}, [userdata]);
 
 	const get_userdata = async () => {
@@ -104,80 +102,60 @@ export const App = () => {
 
 	return (
 		<UserDataProvider>
-			<ChatSocketProvider url={`ws://192.168.1.16:5003`}>
-			<BrowserRouter basename={BASE_NAME}>
-				<div className={`app `}>
-						<TopMenu userdata={userdata} changed_user_data={() => get_userdata()} /> {/*setUserdata*/}
+			<ChatSocketProvider url={`ws://192.168.1.16:${BFF_PORT}`}>
+				<BrowserRouter basename={BASE_NAME}>
+					<div className={`app `}>
+						<TopMenu changed_user_data={() => get_userdata()} />
+						{/*setUserdata*/}
 						{/* <WebSocketDebug /> */}
 						<div>
 							<Routes>
 								<Route path="/" element={<Navigate to={topRole} replace />} />
 								<Route path={BASE_ROUTE + '/'} element={<Navigate to={topRole} replace />} />
 
-								<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata} />} />
-								<Route path="/orgs" element={<OrgListPage userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage />} />
+								<Route path="/orgs" element={<OrgListPage />} />
 
-								<Route
-									path={BASE_ROUTE + '/orgs/:item_id'}
-									element={<OrgPage userdata={userdata} />}
-								/>
-								<Route path="/orgs/:item_id" element={<OrgPage userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/orgs/:item_id'} element={<OrgPage />} />
+								<Route path="/orgs/:item_id" element={<OrgPage />} />
 
-									{/* NEW VERSION TEST MAX */}
-								<Route
-									path={BASE_ROUTE + '/torgs/:item_id'}
-									element={<TorgPage userdata={userdata} />}
-								/>
-								<Route path="/torgs/:item_id" element={<TorgPage userdata={userdata} />} />
+								{/* NEW VERSION TEST MAX */}
+								<Route path={BASE_ROUTE + '/torgs/:item_id'} element={<TorgPage />} />
+								<Route path="/torgs/:item_id" element={<TorgPage />} />
 								{/* NEW VERSION TEST MAX */}
 
 								<Route
 									path={BASE_ROUTE + '/bids'}
-									element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
+									element={<BidListPage changed_user_data={setUserdata} />}
 								/>
-								<Route
-									path="/bids"
-									element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
-								/>
+								<Route path="/bids" element={<BidListPage changed_user_data={setUserdata} />} />
 
 								<Route
 									path={BASE_ROUTE + '/bids/:bidId'}
-									element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
+									element={<BidPage changed_user_data={setUserdata} />}
 								/>
-								<Route
-									path="/bids/:bidId"
-									element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
-								/>
+								<Route path="/bids/:bidId" element={<BidPage changed_user_data={setUserdata} />} />
 
 								<Route
 									path={BASE_ROUTE + '/bidsPDF/:bidId'}
-									element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
+									element={<BidPdfCreator changed_user_data={setUserdata} />}
 								/>
 								<Route
 									path="/bidsPDF/:bidId"
-									element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
+									element={<BidPdfCreator changed_user_data={setUserdata} />}
 								/>
 
-								<Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />
-								<Route path="/price" element={<Price userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/price'} element={<Price />} />
+								<Route path="/price" element={<Price />} />
 
-								<Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata} />} />
-								<Route path="/curator" element={<CuratorPage userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/curator'} element={<CuratorPage />} />
+								<Route path="/curator" element={<CuratorPage />} />
 
-								<Route path={BASE_ROUTE + '/regtown'} element={<Regtown userdata={userdata} />} />
-								<Route path="/regtown" element={<Regtown userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/engineer'} element={<EngineerListPage />} />
+								<Route path="/engineer" element={<EngineerListPage />} />
 
-								<Route
-									path={BASE_ROUTE + '/engineer'}
-									element={<EngineerListPage userdata={userdata} />}
-								/>
-								<Route path="/engineer" element={<EngineerListPage userdata={userdata} />} />
-
-								<Route
-									path={BASE_ROUTE + '/engineer/:bidId'}
-									element={<EngineerPage userdata={userdata} />}
-								/>
-								<Route path="/engineer/:bidId" element={<EngineerPage userdata={userdata} />} />
+								<Route path={BASE_ROUTE + '/engineer/:bidId'} element={<EngineerPage />} />
+								<Route path="/engineer/:bidId" element={<EngineerPage />} />
 
 								<Route
 									path={BASE_ROUTE + '/dev/icons/antdicons'}
@@ -197,7 +175,7 @@ export const App = () => {
 								/>
 								<Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
 							</Routes>
-							{!PRODMODE ? (
+							{!PRODMODE && (
 								<Dropdown menu={{ items: devMenu }}>
 									<div
 										style={{
@@ -211,7 +189,7 @@ export const App = () => {
 										<ExclamationTriangleIcon height={'64px'} />
 									</div>
 								</Dropdown>
-							) : ('')}
+							)}
 						</div>
 					</div>
 				</BrowserRouter>
