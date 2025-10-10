@@ -95,7 +95,7 @@ const OrderListSider = (props) => {
 													<label>Файлы</label>
 													<Tooltip
 														placement="leftTop"
-														title={<PositionList bidId={order.id} fetch_path={'/api/sales/doclist'}
+														title={<PositionList bidId={order.id} fetch_path={'/api/sales/engineer/orders/document/show/' + order.id}
 																			 error_alert={props.error_alert}/>}
 														color="white"
 														style={{
