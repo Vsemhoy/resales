@@ -44,6 +44,7 @@
 		"push-all-bogdan": "git add . && git commit -m\"update\" && git push origin master:bogdan",
 		"fetch-all": "git fetch origin && git merge origin/master",
 		"postinstall": "npm audit --audit-level=high"
+		
 	},
 	"eslintConfig": {
 		"extends": [

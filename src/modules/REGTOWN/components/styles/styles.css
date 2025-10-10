@@ -1,0 +1,80 @@
+.sa-regtown {
+    width: 100%;
+    height: calc(100vh - 34px);
+    overflow: hidden;
+}
+
+.sa-regtown-container {
+    margin: 10px 12px;
+    height: calc(100vh - 109px - 34px - 55px);
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px
+}
+.sa-regtown-regions, .sa-regtown-towns {
+    background-color: var(--row-main-bg-color);
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    max-height: calc(100vh - 200px);
+}
+.sa-regtown-header {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+}
+.sa-regtown-events-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 0 10px;
+}
+.sa-regions-body, .sa-towns-body {
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--sa-primary-color) #fff;
+}
+.sa-regions-body-item {
+    width: 100%;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 1fr 32px 32px;
+    justify-items: center;
+    align-items: center;
+    grid-gap: 10px;
+}
+
+.sa-towns-body-item {
+    width: 100%;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 1fr 32px 32px 32px;
+    justify-items: center;
+    align-items: center;
+    grid-gap: 10px;
+}
+
+.sa-regtown-container .ant-radio-label {
+    width: 100% !important;
+    margin: 0 !important;
+    margin-inline-end: 0 !important;
+}
+.sa-regtown-container .ant-radio-wrapper {
+    margin-inline-end: 0 !important;
+}
+
+.sa-regtown-container .ant-radio-wrapper  {
+    border-radius: 6px !important;
+    padding: 0 5px !important;
+}
+
+.sa-regtown-container .ant-divider  {
+    border-width: 2px !important;
+}

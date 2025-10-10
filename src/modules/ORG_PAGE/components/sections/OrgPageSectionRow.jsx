@@ -168,7 +168,7 @@ const OrgPageSectionRow = (props) => {
 						style={{ whiteSpace: 'pre-line', display: 'block' }}
 						ellipsis={false}
 					>
-						{String(value ?? (field.nullable ? '(не задано)' : ''))}
+						{String(value ?? (field.nullable ? '' : ''))}
 					</Typography.Paragraph>
 				);
 			} else if (field.type === 'date') {
@@ -213,7 +213,7 @@ const OrgPageSectionRow = (props) => {
 			return (
         /** ---------------------------------------------------------------- */
 				<div className="sk-omt-content-formatted">
-					{String(value ?? (field.nullable ? '(не задано)' : ''))}
+					{String(value ?? (field.nullable ? '' : ''))}
 				</div>
 			);
 		}
@@ -628,7 +628,7 @@ const OrgPageSectionRow = (props) => {
 									style={{ whiteSpace: 'pre-line', display: 'block' }}
 									ellipsis={false}
 								>
-									{commentConfig.value || '(не задано)'}
+									{commentConfig.value || ''}
 								</Typography.Paragraph>
 							)}
 						</div>

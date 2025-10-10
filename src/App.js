@@ -30,6 +30,7 @@ import { MS_USER } from './mock/MAINSTATE';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Dropdown } from 'antd';
 import TorgPage from './modules/TORG_PAGE/TorgPage';
+import Regtown from './modules/REGTOWN/Regtown';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState([]);

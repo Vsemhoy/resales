@@ -146,7 +146,10 @@ export const generateYearOptions = () => {
 
 export const getMonthName = (number) => {
 	let month = DS_YEARMONTHS_SELECT.find((el) => el.value === parseInt(number));
-	return month.label;
+	if (month && month.label){
+		return month.label;
+	}
+	return '';
 };
 
 export const secondsValueToGlobalTime = (seconds) => {

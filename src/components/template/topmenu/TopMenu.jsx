@@ -220,12 +220,18 @@ const TopMenu = (props) => {
 						</NavLink>
 					)}
 
+					{userdata?.user?.super === 1 && (
+						<NavLink to="/regtown">
+							<div className={'sa-topmenu-button'}>Города и регионы</div>
+						</NavLink>
+					)}
+
 					<NavLink to="/engineer">
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
 
 					{/* DEBUGGER */}
-					{userdata && userdata.user && userdata.user.super && (
+					{userdata?.user?.super === 1 && (
 						<div ref={debuggerRef} style={{ position: 'relative', display: 'inline-block' }}>
 							<div
 								className={'sa-topmenu-button'}

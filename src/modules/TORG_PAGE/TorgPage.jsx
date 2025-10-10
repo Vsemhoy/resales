@@ -132,9 +132,9 @@ const OrgPage = (props) => {
 	// Контейнеры, куда сохраняются данные из вкладок при нажатии кнопки сохранить
 	// Далее дебаунс вызывает фильтрацию данных и отправку на сервер
 	const [tempMainData, setTempMainData] = useState(null);
-	const [tempProjectsData, setTempProjectsData] = useState(null);
+	const [tempProjectsData, setTempProjectsData] = useState([]);
 	const [tempCallsData, setTempCallsData] = useState(null);
-	const [tempNotesData, setTempNotesData] = useState(null);
+	const [tempNotesData, setTempNotesData] = useState([]);
 
 	const [tempMain_phones, setTempMain_phones] = useState([]);
 	const [tempMain_addresses, setTempMain_addresses] = useState([]);
@@ -805,24 +805,24 @@ const OrgPage = (props) => {
 
 
 
-		useEffect(() => {
-			if (tempCallsData || tempNotesData || tempProjectsData || !IsSameComparedSomeOrgData(tempMainData, baseMainData)  ||
-				tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
-				tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
-				tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
-			){
-				console.log('CHANGE LISTENER', tempCallsData, tempNotesData, tempProjectsData);
+		// useEffect(() => {
+		// 	if (tempCallsData || tempNotesData || tempProjectsData || !IsSameComparedSomeOrgData(tempMainData, baseMainData)  ||
+		// 		tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
+		// 		tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
+		// 		tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
+		// 	){
+		// 		console.log('CHANGE LISTENER', tempCallsData, tempNotesData, tempProjectsData);
 
-				setIsSmthChanged(true);
-			}  else 
-				{
-				setIsSmthChanged(false);
-			}
-		}, [tempCallsData, tempMainData, tempNotesData, tempProjectsData,
-			tempMain_addresses, tempMain_an_licenses, tempMain_an_requisites,
-			tempMain_an_requisites, tempMain_an_tolerances, tempMain_emails,
-			tempMain_legalAddresses, tempMain_phones
-		]);
+		// 		setIsSmthChanged(true);
+		// 	}  else 
+		// 		{
+		// 		setIsSmthChanged(false);
+		// 	}
+		// }, [tempCallsData, tempMainData, tempNotesData, tempProjectsData,
+		// 	tempMain_addresses, tempMain_an_licenses, tempMain_an_requisites,
+		// 	tempMain_an_requisites, tempMain_an_tolerances, tempMain_emails,
+		// 	tempMain_legalAddresses, tempMain_phones
+		// ]);
 
 	const customClick = (button_id) => {
 		if (button_id === 1){
@@ -925,6 +925,55 @@ const OrgPage = (props) => {
 					
 			}
 	}
+
+
+
+	const sectionUpdateHandler = (section, id, data) => {
+		console.log('section, id, data', section, id, data);
+		if (section === 'notes'){
+			let catchObject = tempNotesData.find((item)=> item.id === id);
+			if (catchObject){
+				if (data.action && data.action === 'delete' && data.id.contains('new')){
+					// Удаление временного элемента из стека
+					sectionDeleteHandler(section, id);
+					return;
+				}
+				setTempNotesData(tempNotesData.map(item => item.id === id ? data : item));
+			} else {
+				setTempNotesData([data, ...tempNotesData]);
+			}
+		};
+		if (section === 'projects'){
+			let catchObject = tempProjectsData.find((item)=> item.id === id);
+			if (catchObject){
+				if (data.action && data.action === 'delete' && data.id.contains('new')){
+					// Удаление временного элемента из стека
+					sectionDeleteHandler(section, id);
+					return;
+				}
+				setTempProjectsData(tempProjectsData.map(item => item.id === id ? data : item));
+			} else {
+				setTempProjectsData([data, ...tempProjectsData]);
+			}
+		};
+	}
+
+	const sectionDeleteHandler = (section, id) => {
+		// Удаление временного элемента из стека
+		if (section === 'notes'){
+			setTempNotesData(tempNotesData.filter((item)=> item.id !== id));
+		};
+		if (section === 'projects'){
+			setTempProjectsData(tempProjectsData.filter((item)=> item.id !== id));
+		};
+	}
+
+	useEffect(() => {
+	  console.log('tempNotesData', tempNotesData)
+	}, [tempNotesData]);
+		useEffect(() => {
+	  console.log('tempProjectsData', tempProjectsData)
+	}, [tempProjectsData]);
 
 
 	return (
@@ -1102,8 +1151,11 @@ const OrgPage = (props) => {
 							active_tab={activeTab === 'p'}
               edit_mode={editMode}
 							org_id={itemId}
-              
+              userdata={userdata}
+							on_change_section={sectionUpdateHandler}
+							on_delete_section={sectionDeleteHandler}
 
+							
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseProjectsData}
@@ -1113,7 +1165,6 @@ const OrgPage = (props) => {
 								setPageProject(p);
 							}}
 							current_page={pageProject}
-							userdata={userdata}
 							on_change_data={handleTabDataChange}
 							selects={baseFiltersData}
 							main_data={baseMainData}
@@ -1124,7 +1175,8 @@ const OrgPage = (props) => {
 							edit_mode={editMode}
 							org_id={itemId}
               userdata={userdata}
-
+							on_change_section={sectionUpdateHandler}
+							on_delete_section={sectionDeleteHandler}
 
 							call_to_save={callToSaveAction}
 							base_data={baseNotesData}

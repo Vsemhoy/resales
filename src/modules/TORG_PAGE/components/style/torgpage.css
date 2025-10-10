@@ -101,7 +101,11 @@
 
 .sa-org-temp-stack-collapse {
 	border: 2px solid var(--org-page-temp-border-color);
-	margin-bottom: 6px;
+	margin-bottom: 10px;
+}
+.sa-org-temp-stack-collapse > .sa-org-collapse-item {
+	margin: 7px;
+
 }
 .sa-org-temp-stack-collapse-header {
 	background-color: var(--org-page-temp-border-color);
@@ -124,7 +128,8 @@
 	color: red;
 }
 .sa-org-contactstack-box {
-	background-color: #e3e8ea;
+	background-color: #dadfe1;
+	padding: 3px;
 }
 .sa-org-contactstack-box .ant-collapse-item:hover {
 	background-color: #d6dbdd;
@@ -179,6 +184,14 @@
 	/* border: 1px solid #006cc471; */
 	border: 2px solid #ffffff;
 }
+.sa-org-person-row {
+	border-radius: 9px;
+	
+}
+.sa-org-collapse-content {
+	padding-bottom: 6px;
+
+}
 .sa-org-sub-sub-section-row.deleted{
 	  border: 2px solid rgba(255, 0, 0, 0.634) ;
 		background-color: rgb(255, 233, 233);
@@ -218,12 +231,15 @@
 }
 .sk-omt-stack-control {
 	background-color: #ecf2fa;
+	    border-top: 1px solid white;
+    box-shadow: 1px 1px 10px #0000001f;
 }
 .sa-omt-filler {
 	width: 24px;
 }
 .sk-omt-comment-trigger {
 	border-radius: 3px;
+	margin-left: 6px;
 
 }
 .sk-omt-comment-trigger-treasure {
@@ -251,37 +267,42 @@
 }
 
 .sa-org-collapse-item {
-	border: 1px solid rgba(128, 128, 128, 0.288);
-	margin-bottom: 14px;
+	border: 1px solid var(--column-divider-color);
+	margin-bottom: 3px;
 	background-color: rgb(241, 241, 241);
 	transition: all 0.2s;
+	overflow: hidden;
 }
 .sa-org-collapse-item:hover {
-	border: 1px solid var(--button-color);
+	border: 1px solid var(--divider);
 }
 .sa-org-collapse-item.deleted:hover {
-	border: 1px solid var(--error-color);
+	/* border: 1px solid var(--error-color); */
 }
 .sa-org-collpase-header {
-	font-weight: 600;
+	font-weight: 500;
 	font-size: 1.06rem;
+	    font-size: 14px;
+    line-height: 1.5714285714285714;
+    list-style: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 .sa-org-remove-button {
-	color: var(--error-color);
-	cursor: pointer;
+	/* color: var(--error-color);
+	cursor: pointer; */
 	padding-right: 12px;
 	padding-left: 12px;
 	border-radius: 3px;
 	margin-right: 3px;
 }
-.sa-org-remove-button:hover {
+/* .sa-org-remove-button:hover {
 	color: var(--current-color);
 }
 .sa-org-remove-button:active {
 	color: white;
 	background-color: var(--current-color);
-}
+} */
 .sa-org-trigger-button {
 	/* color: var(--error-color); */
 	cursor: pointer;
@@ -297,7 +318,7 @@
 
 .sa-org-collapse-item.deleted {
 	border-radius: 6px;
-	outline: rgba(255, 0, 0, 0.635) solid 2px;
+	outline: var(--current-color) solid 2px;
 }
 .sa-collapsed-item .sa-org-collapse-body {
 	/* height: 0px; */
@@ -316,4 +337,73 @@
 .sa-org-row-header-id {
 	color: gray;
 	font-weight: 100;
+}
+
+.sk-omt-row>div .sk-omt-content input,
+.sk-omt-row>div .sk-omt-content textarea,
+.sk-omt-row>div .sk-omt-content .ant-select
+{
+	background-color: transparent !important;
+	padding: 1px 11px;
+	width: 100%;
+}
+.sk-omt-row>div .sk-omt-content .ant-checkbox-wrapper {
+	padding-left: 12px;
+}
+
+
+.sk-omt-row>div:hover .sk-omt-content
+{
+    background-color: rgba(0, 0, 0, .016) !important;
+}
+.sa-org-collapse-item .omt-3-col {
+	grid-template-columns: 40fr 26fr 34fr;
+}
+.sa-org-collapse-item .omt-2-col {
+	grid-template-columns: 60fr 40fr;
+}
+.sa-opened-item .sa-org-collpase-header {
+	/* border-bottom: 1px solid var(--table-border-divider-color); */
+	border-bottom: 1px solid #e0e0e0;
+	
+}
+.sa-org-collapse-item.deleted .sa-org-collpase-header {
+	color: var(--current-color);
+}
+.sa-org-section-label {
+	text-align: left;
+	line-height: 24px;
+}
+.sa-lh-chevron {
+	line-height: 20px;
+
+}
+.sa-org-section-text {
+	display: flex;
+	grid-gap: 6px;
+}
+
+.torg-section .sa-required-field-block {
+	border-bottom: 1px solid red;
+}
+
+.torg-section .sa-required-field-block .sk-omt-legend {
+	color: var(--current-color);
+}
+.sk-omt-rw-first {
+	display: grid;
+	grid-template-columns: 1fr auto;
+}
+.sk-omt-action-block {
+	width: max-content;
+	background-color: #f9f9f9;
+	border-bottom: 1px solid #d9dee4;
+	padding: 2px;
+	min-width: 60px;
+	border-left: 1px solid var(--column-divider-color);
+	display: flex;
+	    justify-content: space-around;
+}
+.torg-section {
+	box-shadow: 1px 0px 2px #0000006e;
 }

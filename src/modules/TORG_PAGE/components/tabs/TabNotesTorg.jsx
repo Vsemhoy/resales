@@ -4,7 +4,7 @@ import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
 import { MODAL_NOTES_LIST } from '../../../ORG_LIST/components/mock/MODALNOTESTABMOCK';
 import NoteTabSectionTorg from '../sections/NoteTabSectionTorg';
 import dayjs from 'dayjs';
-import { Button, Pagination, Spin } from 'antd';
+import { Button, Empty, Pagination, Spin } from 'antd';
 import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
 import { PlusOutlined } from '@ant-design/icons';
 
@@ -53,13 +53,11 @@ const TabNotesTorg = (props) => {
   // ██    ██ █████   █████   
   // ██    ██ ██      ██      
   //  ██████  ██      ██      
-  // UseEffects
-  useEffect(() => {
-    setEditMode(props.edit_mode);
-    if (!props.edit_mode){
-      setTempData([]);
-    }
-  }, [props.edit_mode]);
+
+
+
+
+
 
   useEffect(() => {
     setUserData(props.userdata)
@@ -71,8 +69,19 @@ const TabNotesTorg = (props) => {
   useEffect(() => {
     setOrgId(props.org_id);
   }, [props.org_id]);
-
-
+  // Перегрузка данных при смене айдишника
+  useEffect(() => {
+    if (orgId){
+      get_notes_data_action();
+    };
+  }, [orgId]);
+  // Смена режима на редактировние - сброс временных
+  useEffect(() => {
+    setEditMode(props.edit_mode);
+    if (!props.edit_mode){
+      setTempData([]);
+    }
+  }, [props.edit_mode]);
 
   useEffect(() => {
     if (props.on_save_command && props.on_save_command > 0){
@@ -92,6 +101,9 @@ const TabNotesTorg = (props) => {
   useEffect(() => {
     setIsTabActive(props.active_tab);
   }, [props.active_tab]);
+
+
+
 
   // ██    ██ ███████ ███████       ██   ██ 
   // ██    ██ ██      ██             ██ ██  
@@ -161,13 +173,12 @@ const TabNotesTorg = (props) => {
             let spawn = {
                   "command": "create",
                   "id": 'new_' + dayjs().unix() + dayjs().millisecond() + tempData.length,
-                  "id_orgs": props.item_id,
+                  "id_orgs": props.org_id,
                   "id8staff_list": userdata.user.id,
                   "theme": "",
                   "date": dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
                   "note": "",
                   "deleted": 0,
-                  "next_call_date" : null,
                   "creator": {
                       "id": userdata.user.id,
                       "surname": userdata?.user.surname,
@@ -179,9 +190,15 @@ const TabNotesTorg = (props) => {
                 setTempData(prevItems => [spawn, ...prevItems]);
                 // console.log(spawn);
                 setNewLoading(false);
-          }, 760);
-          
+          }, 460);
   }
+
+  const handleDeleteNewItem = (id) => {
+    setTempData(tempData.filter((item)=> item.id !== id));
+    if (props.on_delete_section){
+      props.on_delete_section('notes', id);
+    };
+  };
 
 
   return (
@@ -225,19 +242,45 @@ const TabNotesTorg = (props) => {
 							</div>
 						</div>
             <div className={'sa-orgpage-tab-container'}>
+            <Spin spinning={newLoading}>
               {tempData && tempData.length > 0 && (
                 <div className='sa-org-temp-stack-collapse'>
                   <div className={'sa-org-temp-stack-collapse-header'}>Новые заметки</div>
                   {tempData.map((item)=>(
                     <NoteTabSectionTorg
                       edit_mode={editMode}
+                      collapsed={false}
                       org_id={orgId}
                       data={item}
-                      key={ "nototas_" +  item.id }
+                      key={ "nototas_n_" +  item.id }
+                      on_delete={handleDeleteNewItem}
+                      on_change={props.on_change_section}
 
+                      selects={selects}
                       />
                   ))}
                 </div>
+              )}</Spin>
+              {baseData && baseData.length > 0 && (
+                <div className='sa-org-stack-collapse'>
+                  
+                  {baseData.map((item)=>(
+                    <NoteTabSectionTorg
+                      edit_mode={editMode}
+                      org_id={orgId}
+                      data={item}
+                      collapsed={true}
+                      key={ "nototas_" +  item.id }
+                      on_change={props.on_change_section}
+                      // on_delete={handleDeleteNewItem}
+
+                      selects={selects}
+                      />
+                  ))}
+                </div>
+              )}
+              {baseData.length === 0 && tempData.length === 0 && (
+                <Empty />
               )}
             </div>
 					</div>

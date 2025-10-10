@@ -19,6 +19,8 @@ import OrgPage_MainTab_Depart_Section from '../components/sections/MainTabSectio
 import OrgPage_MainTab_Contactinfo_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Contactinfo_Section';
 import OrgPage_MainTab_Tolerance_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Tolerance_Section';
 import OrgPage_MainTab_Payers_Section from '../components/sections/MainTabSections/OrgPage_MainTab_Payers_Section';
+import { FlushOrgData } from '../components/handlers/OrgPageDataHandler';
+import ContactMainSectionTorg from '../../TORG_PAGE/components/sections/ContactMainSectionTorg';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -35,6 +37,8 @@ const MainTabPage = (props) => {
   // Структурированные в коллапсы юниты
   const [structureItems, setStructureItems] = useState([]);
   const [structureContacts, setStructureContacts] = useState([]);
+
+  const [nostructContacts, setNostructContacts] = useState([]);
   const [baseData, setBaseData] = useState([]);
 	const [editedContactIds, setEditedContactIds] = useState([]);
 
@@ -43,6 +47,11 @@ const MainTabPage = (props) => {
   const [callToAddRequisite, setCallToAddRequisite] = useState(null);
   const [callToAddLicense, setCallToAddLicense] = useState(null);
   const [callToAddTolerance, setCallToAddTolerance] = useState(null);
+
+
+  const [CONTACTS, setCONTACTS] = useState([]);
+  const [REQUISITES, setREQUISITES] = useState([]);
+  const [BOLICENSES, setBOLICENSES] = useState([]);
 
 
 
@@ -60,7 +69,37 @@ const MainTabPage = (props) => {
   }, [props.edit_mode]);
 
   useEffect(() => {
+    console.log('CONTACTS', CONTACTS)
+  }, [CONTACTS]);
+
+  useEffect(() => {
+
     setBaseData(props.base_data);
+    // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
+    if (props.base_data?.contacts){
+
+      setCONTACTS(JSON.parse(JSON.stringify(props.base_data?.contacts)) );
+    }
+
+    let bdt = FlushOrgData(props.base_data, [
+      "warningcmpcount",
+      "warningcmpcomment",
+      "tv",
+      "id_orgs8an_tolerance",
+      "id_orgs8an_project",
+      "id_orgs8an_phones",
+      "id_orgs8an_notes",
+      "id_orgs8an_meeting",
+      "id_orgs8an_log",
+      "id_orgs8an_licenses",
+      "id_orgs8an_fax",
+      "id_orgs8an_calls",
+      "id_orgs8an_email",
+      "id_orgs8an_address",
+      "contacts"
+    ]);
+
+    setBaseData(bdt);
   }, [props.base_data]);
 
   useEffect(() => {
@@ -70,67 +109,81 @@ const MainTabPage = (props) => {
   useEffect(() => {
     let contics = [];
     // setOriginalData(JSON.parse(JSON.stringify(props.base_data)));
-    if (baseData?.contacts) {
-      contics = baseData.contacts.map((item) => ({
-        key: "controw_org_" + item.id,
-        classNames: 'super',
-        style: {
-          outline: item.deleted ? '2px solid #ff0000a2' : (
-            item.command === 'create' ? '2px solid #2196f3' : '0px'
-          ), marginBottom: item.deleted ? '3px ' : (
-            item.command === 'create' ? '3px' : '0px'
-          )
-        },
+    if (CONTACTS) {
+    //   contics = CONTACTS.map((item) => ({
+    //     key: "controw_org_" + item.id,
+    //     classNames: 'super',
+    //     style: {
+    //       outline: item.deleted ? '2px solid #ff0000a2' : (
+    //         item.command === 'create' ? '2px solid #2196f3' : '0px'
+    //       ), marginBottom: item.deleted ? '3px ' : (
+    //         item.command === 'create' ? '3px' : '0px'
+    //       )
+    //     },
 
-        label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}>
-          <div>{item.middlename ? item.middlename : ""}{item.name ? " " + item.name : ''}{item.lastname ? " " + item.lastname : ""} <span style={{ color: 'gray', fontWeight: 100 }}>({item.id})</span></div>
-          {editMode && (
-            <div className={'sa-flex-gap'}>
+    //     label: <div className={`sa-flex-space ${item.deleted ? 'sa-orgrow-deleted' : ''}`}>
+    //       <div>{item.middlename ? item.middlename : ""}{item.name ? " " + item.name : ''}{item.lastname ? " " + item.lastname : ""} <span style={{ color: 'gray', fontWeight: 100 }}>({item.id})</span></div>
+    //       {editMode && (
+    //         <div className={'sa-flex-gap'}>
 
-              <div className={'sa-org-contactstack-delrow'}>
+    //           <div className={'sa-org-contactstack-delrow'}>
 
-                {editMode && (
-                  <Button
-                    size="small"
-                    color="default"
-                    variant="filled"
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      handleAddContact();
-                    }}
-                    icon={<PlusCircleOutlined />}
-                  >
-                    Звонок
-                  </Button>
-                )}
+    //             {editMode && (
+    //               <Button
+    //                 size="small"
+    //                 color="default"
+    //                 variant="filled"
+    //                 onClick={(ev) => {
+    //                   ev.stopPropagation();
+    //                   handleAddContact();
+    //                 }}
+    //                 icon={<PlusCircleOutlined />}
+    //               >
+    //                 Звонок
+    //               </Button>
+    //             )}
 
-                <Button
-                  title='Удалить контакт'
-                  size='small'
-                  color="danger"
-                  variant="outlined"
-                  icon={<TrashIcon height={'20px'} />}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    handleDeleteContact(item.id);
-                  }}
-                />
-              </div>
-            </div>)}
+    //             <Button
+    //               title='Удалить контакт'
+    //               size='small'
+    //               color="danger"
+    //               variant="outlined"
+    //               icon={<TrashIcon height={'20px'} />}
+    //               onClick={(ev) => {
+    //                 ev.stopPropagation();
+    //                 handleDeleteContact(item.id);
+    //               }}
+    //             />
+    //           </div>
+    //         </div>)}
 
-        </div>,
-        children: <div className={`${item.deleted ? 'ant-collapse-content-box-deleted' : ''}`}>
-          <OrgPage_MainTab_Contacts_Section
-            color={item.deleted ? '#e50000' : '#f39821ff'}
-            edit_mode={editMode}
-            data={item}
-            on_change={handleUpdateContactData}
-            selects={selects}
-          /> </div>
-      }))
+    //     </div>,
+    //     children: <div className={`${item.deleted ? 'ant-collapse-content-box-deleted' : ''}`}>
+    //       <OrgPage_MainTab_Contacts_Section
+    //         color={item.deleted ? '#e50000' : '#f39821ff'}
+    //         edit_mode={editMode}
+    //         data={item}
+    //         // contacts={CONTACTS}
+    //         on_change={handleUpdateContactData}
+    //         selects={selects}
+    //       /> </div>
+    //   }))
+
+      
+    // setNostructContacts(CONTACTS.map((item)=>(
+    //   <ContactMainSectionTorg
+    //     data={item}
+    //     edit_mode={editMode}
+
+    //     />
+
+    // )));
     }
-    setStructureContacts(contics);
-  }, [show, editMode, baseData?.contacts]);
+  }, [show, editMode, CONTACTS]);
+
+
+
+
 
 
 
@@ -202,11 +255,11 @@ const MainTabPage = (props) => {
           edit_mode={editMode}
           data={baseData}
           selects={selects}
-          // on_blur={(ee)=>(console.log("BLUUUUUUUUUUURRRRRRR", ee))}
+          // on_blur={(ee)=>(// console.log("BLUUUUUUUUUUURRRRRRR", ee))}
           // on_blur={props.on_change_main_data_part} // Изменение строк
           on_blur={updateCompanyData} // Изменение строк
           on_change={updateCompanyObject} // Изменение объектов
-          // on_change={(ee)=>(console.log("CCHHHHHHHHHHHHHHHAAAAAAAAAAA", ee))} // Изменение объектов
+          // on_change={(ee)=>(// console.log("CCHHHHHHHHHHHHHHHAAAAAAAAAAA", ee))} // Изменение объектов
           item_id={itemId}
         />
       },
@@ -273,7 +326,7 @@ const MainTabPage = (props) => {
         style: { boxShadow: '#ca6f7eff -9px 0px 0px -0.5px' },
         label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Контактные лица
           <Badge
-            count={baseData?.contacts?.length}
+            count={CONTACTS?.length}
             color="blue"
           />
         </div><div></div>
@@ -293,15 +346,21 @@ const MainTabPage = (props) => {
           )}
         </div>,
         children: <div className='sa-org-contactstack-box'>
-          {structureContacts.length > 0 ? (
-            <Collapse
-              defaultActiveKey={['mainorgsec_11', 'mainorgsec_12', 'mainorgsec_14']}
-              // activeKey={modalSectionsOpened}
-              size={"small"}
-              // onChange={handleSectionChange}
-              // onMouseDown={handleSectionClick}
-              items={structureContacts}
-            />
+          {CONTACTS.length > 0 ? (
+            <div>
+                {CONTACTS.map((item)=>(
+                  <ContactMainSectionTorg
+                    key={'contactsectionrow_' + item.id}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateContacts}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    />
+
+                ))}
+              </div>
 
           ) : (<Empty />)}
 
@@ -347,16 +406,35 @@ const MainTabPage = (props) => {
     ];
 
     setStructureItems(secids);
-  }, [show, editMode, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance, structureContacts, itemId]);
+  }, [CONTACTS, show, editMode, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance, structureContacts, itemId]);
   // },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
 
 
+  const handleUpdateContacts = (e,a,data)=>{
+    if (props.on_change_contact){
+      props.on_change_contact(e,a,data);
+    }
+    console.log('data', data)
+    if (data.command === 'create' && data.deleted){
+			// Удаление только что добавленного
+			setCONTACTS(CONTACTS.filter((item) => item.id !== data.id));
+		} else {
+			let existed = CONTACTS.find((item)=>item.id === data.id);
+			if (!existed){
+				setCONTACTS([data, ...CONTACTS]);
+			} else {
+				setCONTACTS(CONTACTS.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
+  }
 
 
 
   const handleAddContact = () => {
     let newContact = {
-      id: 'new_' + dayjs().unix() + '_' + baseData.contacts.length,
+      id: 'new_' + dayjs().unix() + '_' + CONTACTS?.length,
       id_orgs: baseData.id,
       occupy: '',
       lastname: '',
@@ -374,20 +452,22 @@ const MainTabPage = (props) => {
       contactmessangers: [],
       command: 'create',
     }
-    let ndt = JSON.parse(JSON.stringify(baseData));
-    let newContacts = [newContact, ...ndt.contacts];
-    ndt.contacts = newContacts;
-    setBaseData(ndt);
+    // let ndt = JSON.parse(JSON.stringify(baseData));
+    // let newContacts = [newContact, ...ndt.contacts];
+    // ndt.contacts = newContacts;
+    // setBaseData(ndt);
+
+    setCONTACTS([newContact, ...CONTACTS]);
   }
 
   useEffect(() => {
-    console.log('BASE DATA MODIFIED');
+    // console.log('BASE DATA MODIFIED');
 
-    console.log(baseData);
+    // console.log(baseData);
   }, [baseData]);
 
   const handleDeleteContact = (id) => {
-    let contacts = baseData.contacts;
+    let contacts = CONTACTS;
     let ordata = contacts.find((item) => item.id === id);
 
     if (ordata) {
@@ -400,7 +480,7 @@ const MainTabPage = (props) => {
         }
       }
 
-      let ndt = JSON.parse(JSON.stringify(baseData)); // В ином случае не вызовется коллбэк
+      // let ndt = JSON.parse(JSON.stringify(baseData)); // В ином случае не вызовется коллбэк
       let newContacts = [];
       if (ordata.id && String(ordata.id).startsWith('new')) {
         newContacts = contacts.filter((item) => item.id !== id);
@@ -411,8 +491,9 @@ const MainTabPage = (props) => {
         }
       };
 
-      ndt.contacts = newContacts;
-      setBaseData(ndt);
+      // ndt.contacts = newContacts;
+      // setBaseData(ndt);
+      setCONTACTS(newContacts);
     }
   }
 
@@ -420,9 +501,9 @@ const MainTabPage = (props) => {
 
 
   const handleUpdateContactData = (id, updata) => {
-    let contacts = baseData.contacts;
+    let contacts = CONTACTS;
     // let ordata = contacts.find((item)=> item.id === id);
-    console.log('id, updata', id, updata)
+    // console.log('id, updata', id, updata)
     if (updata.command && updata.command === 'create') {
 
     } else {
@@ -432,29 +513,30 @@ const MainTabPage = (props) => {
       setEditedContactIds([...editedContactIds, id]);
     }
 
-    // baseData.contacts = baseData.contacts.map((item) => (item.id === id ? updata : item));
+    // CONTACTS = CONTACTS.map((item) => (item.id === id ? updata : item));
     // setBaseData(baseData);
+    setCONTACTS(CONTACTS.map(item => item.id === id ? updata : item));
 
-    setBaseData(prev => ({
-      ...prev,
-      contacts: prev.contacts.map(item => item.id === id ? updata : item)
-    }));
+    // setBaseData(prev => ({
+    //   ...prev,
+    //   contacts: prev.contacts
+    // }));
 
   }
 
 
 
   useEffect(() => {
-    console.log('DATA UPDATED');
+    // console.log('DATA UPDATED');
     if (props.on_change_data){
-      console.log(baseData);
+      // console.log(baseData);
       props.on_change_data('main', baseData);
     };
   }, [baseData]);
 
   // useEffect(() => {
   //   if (props.on_change_data) {
-  //     console.log('CALL TO CHANGE BASEDATA ON 1 LEVEL', baseData);
+  //     // console.log('CALL TO CHANGE BASEDATA ON 1 LEVEL', baseData);
   //     props.on_change_data('main', baseData);
   //   }
   // }, [baseData]);
