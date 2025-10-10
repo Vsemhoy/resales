@@ -20,8 +20,15 @@ const Regtown = () => {
     const [isLoadingRegions, setIsLoadingRegions] = useState(false);
     const [isLoadingTowns, setIsLoadingTowns] = useState(false);
 
+    const [regionsSearchStr, setRegionsSearchStr] = useState(null);
+    const [townSearchStr, setTownSearchStr] = useState(null);
+
+
     const [regions, setRegions] = useState(null);
+    const [sortedRegions, setSortedRegions] = useState(null);
+
     const [townsByRegions, setTownsByRegions] = useState(null);
+    const [sortedTownsByRegions, setSortedTownsByRegions] = useState(null);
 
     const [selectedRegion, setSelectedRegion] = useState(null);
 
@@ -52,6 +59,35 @@ const Regtown = () => {
         }
     }, [selectedRegion]);
 
+    useEffect(() => {
+        if (isMounted) {
+            if (regionsSearchStr) {
+                setSortedRegions(regions.filter(reg => reg.name.toLowerCase().includes(regionsSearchStr.toLowerCase())));
+            } else {
+                setSortedRegions(regions);
+            }
+        }
+    }, [regionsSearchStr]);
+
+    useEffect(() => {
+        if (isMounted) {
+            const timer = setTimeout(() => {
+                if (townSearchStr && !selectedRegion) {
+                    fetchTownsByRegions().then();
+                } else if (townSearchStr && selectedRegion) {
+                    setTownsByRegions(townsByRegions.filter(town => {
+                        town.name.toLowerCase().includes(townSearchStr.toLowerCase())
+                    }));
+                } else if (!townSearchStr && !selectedRegion) {
+                    fetchTownsByRegions().then();
+                } else if (!townSearchStr && selectedRegion) {
+                    setSortedTownsByRegions(townsByRegions);
+                }
+            });
+            return () => clearTimeout(timer);
+        }
+    }, [townSearchStr]);
+
     /*
     * setIsAlertVisible(true);
 					setAlertMessage('Успех!');
@@ -68,6 +104,7 @@ const Regtown = () => {
                 });
                 if (response.data?.content) {
                     setRegions(response.data?.content?.regions);
+                    setSortedRegions(response.data?.content?.regions);
                 }
                 setIsLoadingRegions(false);
             } catch (e) {
@@ -81,6 +118,7 @@ const Regtown = () => {
         } else {
             setIsLoadingRegions(true);
             setRegions(REGIONS);
+            setSortedRegions(REGIONS);
             setTimeout(() => setIsLoadingRegions(false), 500);
         }
     };
@@ -92,12 +130,14 @@ const Regtown = () => {
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
-                        'region': selectedRegion
+                        'region': selectedRegion,
+                        'town': townSearchStr
                     },
                     _token: CSRF_TOKEN,
                 });
                 if (response.data?.content) {
                     setTownsByRegions(response.data?.content?.towns);
+                    setSortedTownsByRegions(response.data?.content?.towns);
                 }
                 setIsLoadingTowns(false);
             } catch (e) {
@@ -111,12 +151,13 @@ const Regtown = () => {
         } else {
             setIsLoadingTowns(true);
             setTownsByRegions(TOWNS);
+            setSortedTownsByRegions(TOWNS);
             setTimeout(() => setIsLoadingTowns(false), 500);
         }
     };
 
     const prepareRadioOptions = (options) => {
-        return options?.sort((a,b) => a.name - b.name).map((option) => {
+        return options?.sort((a, b) => a.name.localeCompare(b.name))?.map((option) => {
             return {
                 value: option.id,
                 label: (
@@ -193,6 +234,8 @@ const Regtown = () => {
                     <div className={'sa-regtown-header'}>Регионы</div>
                     <div className={'sa-regtown-events-container'}>
                         <Input placeholder={'Поиск по регионам...'}
+                               value={regionsSearchStr}
+                               onChange={(e) => setRegionsSearchStr(e.target.value)}
                                prefix={<SearchOutlined />}
                                allowClear
                         />
@@ -212,7 +255,7 @@ const Regtown = () => {
                             </div>
                             {regions ? (
                                 <Radio.Group value={selectedRegion}
-                                             options={prepareRadioOptions(regions)}
+                                             options={prepareRadioOptions(sortedRegions)}
                                              onChange={(e) => setSelectedRegion(e.target.value)}
                                              style={{
                                                  display: 'flex',
@@ -237,6 +280,8 @@ const Regtown = () => {
                     <div className={'sa-regtown-events-container'}>
                         <Input placeholder={selectedRegion ? 'Поиск по городам в регионе...' : 'Поиск по городам...'}
                                prefix={<SearchOutlined/>}
+                               value={townSearchStr}
+                               onChange={(e) => setTownSearchStr(e.target.value)}
                                allowClear
                         />
                         <Button color={'primary'}
@@ -249,7 +294,7 @@ const Regtown = () => {
                     <div className={'sa-towns-body'}>
                         <Spin spinning={isLoadingTowns}>
                             <div className={'sa-towns-body sa-towns-body-s'}>
-                                {townsByRegions ? townsByRegions?.sort((a,b) => a.name - b.name)?.map((town, idx) => (
+                                {townsByRegions ? sortedTownsByRegions?.sort((a, b) => a.name.localeCompare(b.name))?.map((town, idx) => (
                                     <div className={'sa-towns-body-item'} key={`towns-${town.id}-${idx}`}>
                                         <Input value={town.name}
                                                readOnly={(town.id !== editSelectedTown)}
@@ -260,6 +305,7 @@ const Regtown = () => {
                                                     content={
                                                         <div style={{display: 'flex', gap: '8px'}}>
                                                             <Select style={{width: '200px'}}
+                                                                    placeholder={'Выберите новый регион'}
                                                                     options={prepareSelect(regions)}
                                                             />
                                                             <Button color={'primary'}>ОК</Button>
