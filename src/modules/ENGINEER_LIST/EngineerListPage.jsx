@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useUserData } from '../../context/UserDataContext';
 
 import './components/style/engineerlistpage.css';
 import { BASE_ROUTE, CSRF_TOKEN, PRODMODE } from '../../config/config';
@@ -29,9 +30,8 @@ import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import OrderListSider from './components/OrderListSider';
 import NewOrderModal from './components/NewOrderModal';
 
-const EngineerListPage = (props) => {
-	const { userdata } = props;
-
+const EngineerListPage = () => {
+	const { userdata } = useUserData();
 	const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isOpenedFilters, setIsOpenedFilters] = useState(true);
@@ -74,7 +74,7 @@ const EngineerListPage = (props) => {
 	});
 	const [orderBox, setOrderBox] = useState({});
 
-	const [sortOrders, setSortOrders] = useState([]);
+	// const [sortOrders, setSortOrders] = useState([]);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [baseCompanies, setBaseCompanies] = useState([]);
@@ -109,8 +109,12 @@ const EngineerListPage = (props) => {
 	
 
 	useEffect(() => {
-		setSuperUser(props.userdata.user?.super);
-	}, [props?.userdata?.user?.super]);
+		setSuperUser(userdata?.user?.super);
+	}, [userdata?.user?.super]);
+	
+	useEffect(() => {
+		console.log('USERDATA: ', userdata);
+	}, [userdata]);
 
 	useEffect(() => {
 		fetchInfo().then();
@@ -145,8 +149,8 @@ const EngineerListPage = (props) => {
 			console.log('found', found.length);
 			setIsOneRole(found.length === 1);
 		}
-		if (userdata !== null && userdata.user && userdata.user.id_departament) {
-			if ([7, 8, 20].includes(userdata.user.id_departament)) {
+		if (userdata !== null && userdata?.user && userdata?.user.id_departament) {
+			if ([7, 8, 20].includes(userdata?.user.id_departament)) {
 				setActiveRole(1);
 			} else {
 				setActiveRole(2);

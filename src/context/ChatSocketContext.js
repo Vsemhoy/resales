@@ -1,98 +1,90 @@
+// context/ChatSocketContext.js
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { io } from 'socket.io-client';
 
-const ChatSocketContext = createContext(null);
+export const ChatSocketContext = createContext(null);
 
 export const ChatSocketProvider = ({ children, url }) => {
-	const wsRef = useRef(null);
-	const reconnectTimer = useRef(null);
-	const reconnectAttempts = useRef(0);
-	const maxReconnectAttempts = 5;
-
+	const socketRef = useRef(null);
 	const [connected, setConnected] = useState(false);
-	const [messages, setMessages] = useState([]);
 	const [connectionStatus, setConnectionStatus] = useState('disconnected');
 
-	const sendMessage = useCallback((data) => {
-		if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-			wsRef.current.send(JSON.stringify(data));
-			console.log('[WS] Sent:', data);
-		} else {
-			console.warn('[WS] Cannot send - socket not ready');
-		}
-	}, []);
+	// Подписка на комнату (chatId на фронтенде = room на бэкенде)
+	const subscribeToRoom = useCallback(
+		(chatId) => {
+			if (socketRef.current && connected) {
+				console.log(`[Socket.io] Subscribing to room: ${chatId}`);
+				socketRef.current.emit('subscribe', chatId);
+			}
+		},
+		[connected]
+	);
+
+	// Подписка на список
+	const subscribeToList = useCallback(
+		(listId) => {
+			if (socketRef.current && connected) {
+				console.log(`[Socket.io] Subscribing to list: ${listId}`);
+				socketRef.current.emit('subscribeToList', listId);
+			}
+		},
+		[connected]
+	);
 
 	const connect = useCallback(() => {
-		if (
-			wsRef.current?.readyState === WebSocket.OPEN ||
-			wsRef.current?.readyState === WebSocket.CONNECTING
-		) {
+		if (socketRef.current?.connected) {
 			return;
 		}
 
-		if (reconnectAttempts.current >= maxReconnectAttempts) {
-			console.warn('[WS] Max reconnection attempts reached');
-			setConnectionStatus('failed');
-			return;
-		}
-
-		console.log(`[WS] Connecting to ${url} (attempt ${reconnectAttempts.current + 1})`);
+		console.log(`[Socket.io] Connecting to ${url}`);
 		setConnectionStatus('connecting');
 
-		// Получаем CSRF токен из meta тега
-		const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-		// Создаем URL с токеном в query параметрах
-		const urlWithAuth = `${url}?csrf_token=${encodeURIComponent(csrfToken || '')}`;
-
-		console.log('[WS] Connecting with CSRF token:', csrfToken ? 'yes' : 'no');
-
 		try {
-			const ws = new WebSocket(urlWithAuth);
-			wsRef.current = ws;
+			// Создаем Socket.io клиент - ВАЖНО: без префикса ws://
+			const socket = io(url, {
+				transports: ['websocket', 'polling'],
+				withCredentials: true,
+			});
 
-			ws.onopen = () => {
-				console.log('[WS] ✅ Connected successfully');
+			socketRef.current = socket;
+
+			socket.on('connect', () => {
+				console.log('[Socket.io] ✅ Connected successfully');
 				setConnected(true);
 				setConnectionStatus('connected');
-				reconnectAttempts.current = 0;
-			};
+			});
 
-			ws.onclose = (event) => {
-				console.log(`[WS] ❌ Closed:`, event.code, event.reason);
+			socket.on('disconnect', (reason) => {
+				console.log(`[Socket.io] ❌ Disconnected:`, reason);
 				setConnected(false);
 				setConnectionStatus('disconnected');
-				wsRef.current = null;
+			});
 
-				reconnectAttempts.current++;
-
-				if (!reconnectTimer.current && reconnectAttempts.current < maxReconnectAttempts) {
-					const delay = Math.min(3000 * reconnectAttempts.current, 15000);
-					console.log(`[WS] Reconnecting in ${delay}ms...`);
-					reconnectTimer.current = setTimeout(() => {
-						reconnectTimer.current = null;
-						connect();
-					}, delay);
-				}
-			};
-
-			ws.onerror = (error) => {
-				console.error('[WS] 🚨 Error:', error);
+			socket.on('connect_error', (error) => {
+				console.error('[Socket.io] 🚨 Connection error:', error);
 				setConnectionStatus('error');
-			};
+			});
 
-			ws.onmessage = (event) => {
-				try {
-					const data = JSON.parse(event.data);
-					console.log('[WS] 📨 Received:', data);
+			// Обработка входящих событий от BFF
+			socket.on('new_message', (data) => {
+				console.log('[Socket.io] 📨 Received new_message:', data);
+				// Здесь будет логика обновления UI
+			});
 
-					// Добавляем все сообщения в стейт для отладки
-					setMessages((prev) => [data, ...prev]);
-				} catch (e) {
-					console.error('[WS] Message parse error:', e);
-				}
-			};
+			socket.on('update_message', (data) => {
+				console.log('[Socket.io] 📨 Received update_message:', data);
+			});
+
+			socket.on('status_update', (data) => {
+				console.log('[Socket.io] 📨 Received status_update:', data);
+			});
+
+			// Общий обработчик для отладки
+			socket.onAny((eventName, ...args) => {
+				console.log(`[Socket.io] 🔍 Received event "${eventName}":`, args);
+			});
 		} catch (error) {
-			console.error('[WS] 🚨 Connection failed:', error);
+			console.error('[Socket.io] 🚨 Connection failed:', error);
 			setConnectionStatus('error');
 		}
 	}, [url]);
@@ -101,30 +93,19 @@ export const ChatSocketProvider = ({ children, url }) => {
 		connect();
 
 		return () => {
-			if (reconnectTimer.current) {
-				clearTimeout(reconnectTimer.current);
-				reconnectTimer.current = null;
-			}
-			if (wsRef.current) {
-				wsRef.current.close();
-				wsRef.current = null;
+			if (socketRef.current) {
+				socketRef.current.disconnect();
+				socketRef.current = null;
 			}
 		};
 	}, [connect]);
 
 	const value = {
 		connected,
-		messages,
-		sendMessage,
 		connectionStatus,
-		reconnect: () => {
-			reconnectAttempts.current = 0;
-			if (wsRef.current) {
-				wsRef.current.close();
-			} else {
-				connect();
-			}
-		},
+		subscribeToRoom,
+		subscribeToList,
+		reconnect: connect,
 	};
 
 	return <ChatSocketContext.Provider value={value}>{children}</ChatSocketContext.Provider>;
