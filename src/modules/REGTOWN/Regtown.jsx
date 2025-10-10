@@ -547,7 +547,9 @@ const Regtown = () => {
                                                                     options={prepareSelect(regions)}
                                                                     onChange={setSelectedRegionSelect}
                                                             />
-                                                            <Button color={'primary'}>ОК</Button>
+                                                            <Button color={'primary'}
+                                                                    onClick={() => townUpdate(town)}
+                                                            >ОК</Button>
                                                         </div>
                                                     }
                                                     trigger="click"
