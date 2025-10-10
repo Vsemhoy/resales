@@ -75,15 +75,15 @@ const Regtown = () => {
                 if (townSearchStr && !selectedRegion) {
                     fetchTownsByRegions().then();
                 } else if (townSearchStr && selectedRegion) {
-                    setTownsByRegions(townsByRegions.filter(town => {
+                    setSortedTownsByRegions(townsByRegions.filter(town => {
                         town.name.toLowerCase().includes(townSearchStr.toLowerCase())
                     }));
                 } else if (!townSearchStr && !selectedRegion) {
-                    fetchTownsByRegions().then();
+                    setSortedTownsByRegions(null);
                 } else if (!townSearchStr && selectedRegion) {
                     setSortedTownsByRegions(townsByRegions);
                 }
-            });
+            }, 200);
             return () => clearTimeout(timer);
         }
     }, [townSearchStr]);
@@ -356,7 +356,7 @@ const Regtown = () => {
                                         )}
                                     </div>
                                 )) : (
-                                    <Empty/>
+                                    <Empty description={'Выберите регион'}/>
                                 )}
                             </div>
                         </Spin>
