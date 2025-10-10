@@ -111,39 +111,12 @@ const PositionList2 = ({ bidId, fetch_path, error_alert }) => {
     };
 
     const handleDownload = async (file) => {
-        console.log(file);
-        let data = {};
-        if (file.type === 1) {
-            data = {
-                template_id: file.template_id,
-                id: file.id,
-                bid_id: bidId,
-                type: file.type,
-                new: false,
-            };
-        } else {
-            data = {
-                template_id: file.template_id,
-                id: file.id,
-                bid_id: bidId,
-                type: file.type,
-                new: false,
-            };
-        }
         if (PRODMODE) {
-            const path = `/api/sales/makedoc`;
             try {
-                const format_data = {
-                    _token: CSRF_TOKEN,
-                    data,
-                };
-                const file_response = await PROD_AXIOS_INSTANCE.post(path, format_data);
-                const parts = file_response.data.data.file_link.split('/');
-                const withSlash = '/' + parts.slice(1).join('/');
-                window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
+                // const parts = file_link.split('/');
+                window.open(`${file.name_file}`, "_blank", "noopener,noreferrer",);
             } catch (e) {
                 console.log(e);
-                error_alert(path, e);
             }
         }
     };
