@@ -47,6 +47,8 @@ const Regtown = () => {
     useEffect(() => {
         if (isMounted && selectedRegion) {
             fetchTownsByRegions().then();
+        } else {
+            setTownsByRegions(null);
         }
     }, [selectedRegion]);
 
@@ -114,7 +116,7 @@ const Regtown = () => {
     };
 
     const prepareRadioOptions = (options) => {
-        return options.map((option) => {
+        return options?.sort((a,b) => a.name - b.name).map((option) => {
             return {
                 value: option.id,
                 label: (
@@ -122,6 +124,11 @@ const Regtown = () => {
                         <Input value={option.name}
                                onChange={() => console.log(111111)}
                                readOnly={(option.id !== editSelectedRegion)}
+                               onClick={(e) => {
+                                   e.target.closest('.sa-regions-body-item').click();
+                                   e.stopPropagation()
+                                   e.target.focus();
+                               }}
                         />
                         {option.id !== editSelectedRegion ? (
                             <Tooltip title={'Редактировать'}>
@@ -160,6 +167,15 @@ const Regtown = () => {
         })
     };
 
+    const prepareSelect = (options) => {
+        return options?.sort((a,b) => a.name - b.name).map((option) => {
+            return {
+                value: option.id,
+                label: option.name
+            }
+        })
+    };
+
     return (
         <div className={'sa-regtown'}>
             <div style={{padding: '10px 12px 0 12px'}}>
@@ -186,8 +202,14 @@ const Regtown = () => {
                         >Добавить регион</Button>
                     </div>
                     <div style={{padding: '0 10px'}}><Divider /></div>
-                    <Spin spinning={isLoadingRegions}>
-                        <div className={'sa-regions-body'}>
+                    <div className={'sa-regions-body'}>
+                        <Spin spinning={isLoadingRegions}>
+                            <div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '10px'}}>
+                                <Button disabled={!selectedRegion}
+                                        color={'purple'}
+                                        onClick={() => setSelectedRegion(null)}
+                                >Отменить выбранный регион</Button>
+                            </div>
                             {regions ? (
                                 <Radio.Group value={selectedRegion}
                                              options={prepareRadioOptions(regions)}
@@ -201,8 +223,8 @@ const Regtown = () => {
                             ) : (
                                 <Empty />
                             )}
-                        </div>
-                    </Spin>
+                        </Spin>
+                    </div>
                 </div>
 
                 <div className={'sa-regtown-towns'}>
@@ -224,73 +246,75 @@ const Regtown = () => {
                         >Добавить город в регион</Button>
                     </div>
                     <div style={{padding: '0 10px'}}><Divider/></div>
-                    <Spin spinning={isLoadingTowns}>
-                        <div className={'sa-towns-body'}>
-                            {townsByRegions ? townsByRegions?.map(town => (
-                                <div className={'sa-towns-body-item'}>
-                                    <Input value={town.name}
-                                           readOnly={(town.id !== editSelectedTown)}
-                                    />
-                                    {town.id !== editSelectedTown ? (
-                                        <Tooltip title={'Перенести в другой регион'}>
-                                            <Popover
-                                                content={
-                                                    <div style={{display: 'flex', gap: '8px'}}>
-                                                        <Select style={{width:'200px'}}
-                                                                options={regions}
-                                                        />
-                                                        <Button color={'primary'}>ОК</Button>
-                                                    </div>
-                                                }
-                                                trigger="click"
-                                                placement={'bottomLeft'}
-                                            >
-                                                <Button icon={<RollbackOutlined />}
-                                                        color="purple"
+                    <div className={'sa-towns-body'}>
+                        <Spin spinning={isLoadingTowns}>
+                            <div className={'sa-towns-body sa-towns-body-s'}>
+                                {townsByRegions ? townsByRegions?.sort((a,b) => a.name - b.name)?.map((town, idx) => (
+                                    <div className={'sa-towns-body-item'} key={`towns-${town.id}-${idx}`}>
+                                        <Input value={town.name}
+                                               readOnly={(town.id !== editSelectedTown)}
+                                        />
+                                        {town.id !== editSelectedTown ? (
+                                            <Tooltip title={'Перенести в другой регион'}>
+                                                <Popover
+                                                    content={
+                                                        <div style={{display: 'flex', gap: '8px'}}>
+                                                            <Select style={{width: '200px'}}
+                                                                    options={prepareSelect(regions)}
+                                                            />
+                                                            <Button color={'primary'}>ОК</Button>
+                                                        </div>
+                                                    }
+                                                    trigger="click"
+                                                    placement={'bottomLeft'}
+                                                >
+                                                    <Button icon={<RollbackOutlined/>}
+                                                            color="purple"
+                                                            variant="filled"
+                                                    ></Button>
+                                                </Popover>
+                                            </Tooltip>
+                                        ) : (
+                                            <div></div>
+                                        )}
+                                        {town.id !== editSelectedTown ? (
+                                            <Tooltip title={'Редактировать'}>
+                                                <Button icon={<EditOutlined/>}
+                                                        color="primary"
+                                                        variant="filled"
+                                                        onClick={() => setEditSelectedTown(town.id)}
+                                                ></Button>
+                                            </Tooltip>
+                                        ) : (
+                                            <Tooltip title={'Сохранить'}>
+                                                <Button icon={<CheckOutlined/>}
+                                                        color="primary"
+                                                    // onClick={() => setEditSelectedTown(town.id)}
+                                                ></Button>
+                                            </Tooltip>
+                                        )}
+                                        {town.id !== editSelectedTown ? (
+                                            <Tooltip title={'В архив'}>
+                                                <Button icon={<InboxOutlined/>}
+                                                        color="danger"
                                                         variant="filled"
                                                 ></Button>
-                                            </Popover>
-                                        </Tooltip>
-                                    ) : (
-                                        <div></div>
-                                    )}
-                                    {town.id !== editSelectedTown ? (
-                                        <Tooltip title={'Редактировать'}>
-                                            <Button icon={<EditOutlined />}
-                                                    color="primary"
-                                                    variant="filled"
-                                                    onClick={() => setEditSelectedTown(town.id)}
-                                            ></Button>
-                                        </Tooltip>
-                                    ) : (
-                                        <Tooltip title={'Сохранить'}>
-                                            <Button icon={<CheckOutlined />}
-                                                    color="primary"
-                                                    // onClick={() => setEditSelectedTown(town.id)}
-                                            ></Button>
-                                        </Tooltip>
-                                    )}
-                                    {town.id !== editSelectedTown ? (
-                                        <Tooltip title={'В архив'}>
-                                            <Button icon={<InboxOutlined />}
-                                                    color="danger"
-                                                    variant="filled"
-                                            ></Button>
-                                        </Tooltip>
-                                    ) : (
-                                        <Tooltip title={'Отмена'}>
-                                            <Button icon={<CloseOutlined />}
-                                                    color="danger"
-                                                    onClick={() => setEditSelectedTown(null)}
-                                            ></Button>
-                                        </Tooltip>
-                                    )}
-                                </div>
-                            )) : (
-                                <Empty/>
-                            )}
-                        </div>
-                    </Spin>
+                                            </Tooltip>
+                                        ) : (
+                                            <Tooltip title={'Отмена'}>
+                                                <Button icon={<CloseOutlined/>}
+                                                        color="danger"
+                                                        onClick={() => setEditSelectedTown(null)}
+                                                ></Button>
+                                            </Tooltip>
+                                        )}
+                                    </div>
+                                )) : (
+                                    <Empty/>
+                                )}
+                            </div>
+                        </Spin>
+                    </div>
                 </div>
 
             </div>

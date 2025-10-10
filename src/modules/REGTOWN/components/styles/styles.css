@@ -18,6 +18,7 @@
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto 1fr;
     max-height: calc(100vh - 200px);
+    overflow: hidden;
 }
 .sa-regtown-header {
     font-size: 16px;
@@ -40,6 +41,9 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--sa-primary-color) #fff;
+}
+.sa-towns-body-s {
+    padding: 0;
 }
 .sa-regions-body-item {
     width: 100%;
