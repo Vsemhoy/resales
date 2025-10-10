@@ -86,6 +86,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 						},
 					]);
 				} else if (models_response && models_response.data.content.files) {
+					console.log(models_response.data.content.files);
 					setFiles(models_response.data.content.files);
 					setTableHeader('ФАЙЛЫ');
 					setTableColumns([
