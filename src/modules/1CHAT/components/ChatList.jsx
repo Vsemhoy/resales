@@ -1,153 +1,201 @@
-import { useMemo } from 'react';
-import { MOCK } from '../mock/mock';
-import { useSms } from '../../../hooks/sms/useSms';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
+import { useChatSocket } from '../../../context/ChatSocketContext';
+import { MOCK } from '../mock/mock';
 import styles from './style/Chat.module.css';
-// import { PRODMODE } from '../../../config/config';
+import React from 'react';
+
+// --- Меморизируем отдельный элемент чата ---
+const ChatListItem = React.memo(({ chat, isActive, onSelectChat, getCompanion }) => {
+	const isSaved = chat.isSavedChat || chat.chat_id === 'saved';
+	const companion = isSaved ? null : getCompanion(chat);
+	const lastMessageText =
+		chat.text ||
+		(chat.files?.length > 0 ? (
+			<>
+				<FileOutlined /> Файл
+			</>
+		) : (
+			''
+		));
+
+	return (
+		<li
+			key={chat.chat_id}
+			className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
+			onClick={() => onSelectChat?.(chat.chat_id)}
+		>
+			<div className={styles.companionName}>
+				{isSaved ? 'Сохранённое' : `${companion?.surname ?? ''} ${companion?.name ?? ''}`.trim()}
+			</div>
+			<div className={styles.lastMessage}>
+				{typeof lastMessageText === 'string'
+					? lastMessageText.length > 30
+						? `${lastMessageText.slice(0, 30)} ...`
+						: lastMessageText
+					: lastMessageText}
+			</div>
+		</li>
+	);
+});
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
+	const { chats, connectionStatus, socket, localMessages } = useChatSocket();
 	const currentUserId = userdata?.user?.id;
 
-	const {
-		data: smsList = [],
-		loading,
-		error,
-	} = useSms({
-		// url: '/api/sms',
-		chatId: 0,
-		mock: MOCK,
-		search,
-	});
+	const [smsList, setSmsList] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
-	// Функция для определения собеседника
-	const getCompanion = useMemo(() => {
-		return (sms) => {
+	// --- Получаем собеседника ---
+	const getCompanion = useMemo(
+		() => (sms) => {
 			if (!sms || !currentUserId) return null;
+			return sms.from?.id === currentUserId ? sms.to : sms.from;
+		},
+		[currentUserId]
+	);
 
-			// Если сообщение от текущего пользователя - собеседник это получатель
-			if (sms.from?.id === currentUserId) {
-				return sms.to;
+	// --- Обновление smsList при новых данных ---
+	const updateSmsList = useCallback(
+		(newSms) => {
+			setSmsList((prev) => {
+				const existingIndex = prev.findIndex((sms) => sms.id === newSms.id);
+				if (existingIndex >= 0) {
+					const copy = [...prev];
+					copy[existingIndex] = newSms; // обновляем
+					return copy;
+				} else {
+					return [...prev, newSms]; // добавляем новое
+				}
+			});
+		},
+		[setSmsList]
+	);
+
+	// --- Инициализация списка сообщений ---
+	useEffect(() => {
+		setLoading(true);
+		setError(null);
+
+		try {
+			if (connectionStatus === 'connected' && Array.isArray(chats) && chats.length > 0) {
+				setSmsList(chats);
+			} else {
+				const sms = MOCK?.content?.sms || [];
+				setSmsList(Array.isArray(sms) ? sms : []);
 			}
+		} catch (err) {
+			setError('Ошибка загрузки данных');
+			setSmsList([]);
+		} finally {
+			setLoading(false);
+		}
+	}, [chats, connectionStatus]);
 
-			// Если сообщение не от текущего пользователя - собеседник это отправитель
-			return sms.from;
-		};
-	}, [currentUserId]);
+	// --- Подписка на новые сообщения через socket.io ---
+	useEffect(() => {
+		if (connectionStatus === 'connected' && socket) {
+			const handleNewMessage = (msg) => updateSmsList(msg);
+			socket.on('message:new', handleNewMessage);
+			return () => socket.off('message:new', handleNewMessage);
+		}
+	}, [socket, connectionStatus, updateSmsList]);
 
-	// console.log("ПОПОВЛОАТЛОВЫАЫВОТЛАТЫВАВЫ", search);
+	// --- Моковые новые сообщения при PRODMODE === false ---
+	useEffect(() => {
+		if (connectionStatus !== 'mock') return;
 
-	// const use = useSms(0, {}, search);
+		const interval = setInterval(() => {
+			const newMsgId = Date.now();
+			const newSms = {
+				id: newMsgId,
+				chat_id: 540,
+				from: { id: 540, name: 'Анатолий', surname: 'Дроботенко' },
+				to: { id: 46, name: 'Александр', surname: 'Кошелев' },
+				text: `Тестовое сообщение #${newMsgId}`,
+				created_at: Math.floor(Date.now() / 1000),
+				updated_at: Math.floor(Date.now() / 1000),
+				files: [],
+			};
+			updateSmsList(newSms);
+		}, 12000);
 
-	// const chats = useMemo(() => {
-	// 	const normalizedSearch = search.toLowerCase();
+		return () => clearInterval(interval);
+	}, [connectionStatus, updateSmsList]);
 
-	// 	console.log('🔄 Processing chats, smsList length:', smsList.length);
+	// --- Объединяем серверные и локальные сообщения для отображения ---
+	const mergedSmsList = useMemo(() => {
+		const local = Array.isArray(localMessages) ? localMessages : [];
+		const existingIds = new Set(smsList.map((m) => m.id));
+		const newLocal = local.filter((m) => !existingIds.has(m.id));
+		return [...smsList, ...newLocal];
+	}, [smsList, localMessages]);
 
-	// 	// const filtered = smsList.filter((sms) => {
-	// 	const filtered = smsList;
+	// --- Формируем список чатов с последним сообщением ---
+	const chatList = useMemo(() => {
+		if (!mergedSmsList || mergedSmsList.length === 0) return [];
 
-	// 	// 			((sms) => {
+		const normalizedSearch = search?.toLowerCase() || '';
+		const chatsMap = new Map();
 
-	// 	// 	const companion = getCompanion(sms);
-	// 	// 		console.log('📞 Companion for sms:', sms.id, companion);
+		mergedSmsList.forEach((sms) => {
+			const chatId = sms.chat_id;
+			const currentTime = sms.updated_at || sms.created_at;
+			const existing = chatsMap.get(chatId);
+			if (!existing || currentTime > (existing.updated_at || existing.created_at)) {
+				chatsMap.set(chatId, sms);
+			}
+		});
 
-	// 	// 		// Если это сообщение от самого себя (например, в сохраненных)
-	// 	// 		if (companion?.id === currentUserId) {
-	// 	// 			return true;
-	// 	// 		}
+		let result = [...chatsMap.values()];
 
-	// 	// 		const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
-	// 	// 		const messageText = sms.text?.toLowerCase() || '';
-	// 	// 		const matchesSearch =
-	// 	// 			fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
+		// Фильтруем по поиску
+		result = result.filter((sms) => {
+			const companion = getCompanion(sms);
+			const fullName = `${companion?.surname ?? ''} ${companion?.name ?? ''}`.toLowerCase();
+			const messageText = sms.text?.toLowerCase() || '';
+			return fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
+		});
 
-	// 	// 		console.log('🔎 Search check:', { fullName, messageText, normalizedSearch, matchesSearch });
+		// Сортируем по последнему сообщению
+		result.sort((a, b) => {
+			const timeA = a.updated_at || a.created_at;
+			const timeB = b.updated_at || b.created_at;
+			return timeB - timeA;
+		});
 
-	// 	// 	return matchesSearch;
-	// 	// });
+		// Добавляем "Сохранённое"
+		result.unshift({
+			chat_id: 'saved',
+			from: { id: currentUserId, name: 'Вы', surname: '' },
+			to: { id: currentUserId, name: 'Вы', surname: '' },
+			text: '📁',
+			isSavedChat: true,
+			updated_at: Infinity,
+			created_at: Infinity,
+		});
 
-	// 	console.log('📱 Filtered chats after search:', );
-
-	// 	const uniqueChatsMap = {};
-	// 	filtered.forEach((sms) => {
-	// 		const chatId = sms.chat_id;
-	// 		const currentTime = sms.updated_at || sms.created_at;
-
-	// 		if (
-	// 			!uniqueChatsMap[chatId] ||
-	// 			currentTime > (uniqueChatsMap[chatId].updated_at || uniqueChatsMap[chatId].created_at)
-	// 		) {
-	// 			uniqueChatsMap[chatId] = sms;
-	// 		}
-	// 	});
-
-		// const result = Object.values(uniqueChatsMap).sort((a, b) => {
-		// 	const timeA = a.updated_at || a.created_at;
-		// 	const timeB = b.updated_at || b.created_at;
-		// 	return timeB - timeA;
-		// });
-
-	// 	console.log('💬 Final unique chats:', result);
-
-	// 	result.unshift({
-	// 		chat_id: 'saved',
-	// 		from: { id: currentUserId, name: 'Вы', surname: '' },
-	// 		to: { id: currentUserId, name: 'Вы', surname: '' },
-	// 		text: '📁',
-	// 		updated_at: Infinity,
-	// 		created_at: Infinity,
-	// 		isSavedChat: true,
-	// 	});
-
-	// 	return result;
-	// }, [smsList, search, currentUserId]);
+		return result;
+	}, [mergedSmsList, search, currentUserId, getCompanion]);
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
 
-	console.log('🎯 Rendering chats:', smsList.length);
-
 	return (
 		<div className={styles['chat-list__container']}>
 			<ul className={styles['chat-list']}>
-				{smsList.map((chat) => {
-					const isSaved = chat.chat_id === 'saved' || chat.isSavedChat;
-					const companion = isSaved ? null : getCompanion(chat);
-
-					const lastMessageText = chat.text || (
-						<>
-							<FileOutlined /> Файл
-						</>
-					);
-
-					const isActive = chat.chat_id === selectedChatId;
-
-					return (
-						<li
-							key={chat.chat_id}
-							className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
-							onClick={() => {
-								console.log('🖱️ Selecting chat:', chat.chat_id);
-								onSelectChat?.(chat.chat_id);
-							}}
-						>
-							<div className={styles.companionName}>
-								{isSaved
-									? 'Сохранённое'
-									: `${companion?.surname ?? ''} ${companion?.name ?? ''}`.trim()}
-							</div>
-							<div className={styles.lastMessage}>
-								{typeof lastMessageText === 'string'
-									? lastMessageText.length > 20
-										? `${lastMessageText.slice(0, 20)} ...`
-										: lastMessageText
-									: lastMessageText}
-							</div>
-						</li>
-					);
-				})}
+				{chatList.map((chat) => (
+					<ChatListItem
+						key={chat.chat_id}
+						chat={chat}
+						isActive={chat.chat_id === selectedChatId}
+						onSelectChat={onSelectChat}
+						getCompanion={getCompanion}
+					/>
+				))}
 			</ul>
 		</div>
 	);

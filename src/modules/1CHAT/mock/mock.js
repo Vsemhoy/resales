@@ -5,8 +5,8 @@ export const MOCK = {
 				id: 4,
 				chat_id: 540,
 				from: {
-					surname: 'Анатолий',
-					name: 'Дроботенко',
+					name: 'Анатолий',
+					surname: 'Дроботенко',
 					id: 540,
 				},
 				to: {
@@ -19,6 +19,44 @@ export const MOCK = {
 				status: false,
 				created_at: 1757342961,
 				updated_at: 1757342961,
+			},
+			{
+				id: 250,
+				chat_id: 540,
+				from: {
+					name: 'Анатолий',
+					surname: 'Дроботенко',
+					id: 540,
+				},
+				to: {
+					surname: 'Кошелев',
+					name: 'Александр',
+					id: 46,
+				},
+				text: 'Опять???',
+				files: [],
+				status: false,
+				created_at: 1757342962,
+				updated_at: 1757342963,
+			},
+			{
+				id: 300,
+				chat_id: 52,
+				from: {
+					surname: 'Кошелева',
+					name: 'Валентина',
+					id: 52,
+				},
+				to: {
+					surname: 'Кошелев',
+					name: 'Александр',
+					id: 46,
+				},
+				text: 'ЭЙ!!!',
+				files: [],
+				status: false,
+				created_at: 1757341894,
+				updated_at: 1757341895,
 			},
 			{
 				id: 2,
@@ -116,45 +154,6 @@ export const MOCK = {
 				updated_at: 1757341850,
 			},
 			{
-				id: 135,
-				chat_id: 63,
-				from: {
-					surname: 'Артур',
-					name: 'Король',
-					id: 47,
-				},
-				to: {
-					surname: 'Кошелев',
-					name: 'Александр',
-					id: 46,
-				},
-				text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum eveniet vel quo itaque totam voluptas sint provident accusamus vitae placeat.',
-				files: [],
-				status: false,
-				created_at: 1757341930,
-				updated_at: 1757341930,
-			},
-			{
-				id: 136,
-				chat_id: 63,
-				from: {
-					surname: 'Артур',
-					name: 'Король',
-					id: 47,
-				},
-				to: {
-					surname: 'Кошелев',
-					name: 'Александр',
-					id: 46,
-				},
-				text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum eveniet vel quo itaque totam voluptas sint provident accusamus vitae placeat.',
-				files: [],
-				status: false,
-				created_at: 1757341930,
-				updated_at: 1757341930,
-			},
-
-			{
 				id: 137,
 				chat_id: 63,
 				from: {
@@ -182,7 +181,28 @@ export const CHAT_MOCK = {
 	content: {
 		messages: [
 			{
-				id: 146,
+				id: 250,
+				from_id: 540,
+				answer: null,
+				to: {
+					surname: 'Кошелев',
+					name: 'Александр',
+					id: 46,
+				},
+
+				created_at: 1757342962,
+				updated_at: 1757342963,
+			},
+			{
+				id: 246,
+				from_id: 540,
+				answer: null,
+				text: 'Опять???',
+				created_at: 1759477587,
+				updated_at: 1759477587,
+			},
+			{
+				id: 346,
 				from_id: 46,
 				answer: null,
 				text: 'А теперь?',
@@ -190,7 +210,7 @@ export const CHAT_MOCK = {
 				updated_at: 1759477587,
 			},
 			{
-				id: 145,
+				id: 445,
 				from_id: 46,
 				answer: null,
 				text: 'Проверка связи',
@@ -307,3 +327,6 @@ export const CHAT_MOCK = {
 	},
 	message: 'OK!',
 };
+
+// console.log('MOCK: ', MOCK);
+// console.log('CHAT_MOCK: ', CHAT_MOCK);
