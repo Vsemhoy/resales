@@ -102,9 +102,11 @@ export const App = () => {
 
 	return (
 		<UserDataProvider>
-			<ChatSocketProvider url={`ws://192.168.1.16:${BFF_PORT}`}>
+			<ChatSocketProvider
+				url={!PRODMODE ? `ws://localhost:${BFF_PORT}` : `ws://192.168.1.16:${BFF_PORT}`}
+			>
 				<BrowserRouter basename={BASE_NAME}>
-					<div className={`app `}>
+					<div className={'app'}>
 						<TopMenu changed_user_data={() => get_userdata()} />
 						{/*setUserdata*/}
 						{/* <WebSocketDebug /> */}

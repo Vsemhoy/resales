@@ -2,17 +2,19 @@ import { useEffect, useState, useCallback } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
 
-export const useSms = ({ chatId = null, mock = {}, search }) => {
+export const useSms = ({ mock = {}, search }) => {
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [who, setWho] = useState(null);
+	const [chatId, setChatId] = useState(null);
 
 	const fetchData = useCallback(async () => {
 		console.log(`[useSms] Загрузка данных для чата: ${chatId || 'список'}`);
 		setLoading(true);
 		setError(null);
 		setWho(null);
+		setChatId(null);
 
 		try {
 			let responseData = [];
@@ -74,5 +76,5 @@ export const useSms = ({ chatId = null, mock = {}, search }) => {
 	}, [fetchData]);
 
 	// Возвращаем только данные, без refetch
-	return { data, who, loading, error };
+	return { data, who, loading, error, chatId };
 };
