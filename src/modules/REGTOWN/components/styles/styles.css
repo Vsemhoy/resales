@@ -18,6 +18,7 @@
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto 1fr;
     max-height: calc(100vh - 200px);
+    overflow: hidden;
 }
 .sa-regtown-header {
     font-size: 16px;
@@ -40,6 +41,9 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--sa-primary-color) #fff;
+}
+.sa-towns-body-s {
+    padding: 0;
 }
 .sa-regions-body-item {
     width: 100%;
@@ -77,4 +81,9 @@
 
 .sa-regtown-container .ant-divider  {
     border-width: 2px !important;
+}
+
+.sa-regtown-container .ant-popover .ant-popover-inner  {
+    /*border-width: 2px !important;*/
+    box-shadow: 0 6px 16px 0 rgb(0 0 0 / 28%), 0 3px 6px -4px rgb(0 0 0 / 27%), 0 9px 28px 8px rgb(0 0 0 / 25%);
 }

@@ -19,7 +19,7 @@ export const REGIONS = [
         "label": "Приволжский ФО",
         "id": 3,
         "name": "Приволжский ФО"
-    },
+    }
 ];
 
 export const TOWNS = [
@@ -43,5 +43,5 @@ export const TOWNS = [
         "id_region": 4,
         "name": "Краснодарский край, г. Армавир",
         "id": 4
-    }
+    },
 ];
