@@ -13,3 +13,6 @@ export const HOST_COMPONENT_ROOT = !PRODMODE ? '' : '/com/resales';
 
 export const BASE_NAME = PRODMODE ? '/resales' : '/';
 export const BASE_ROUTE = PRODMODE ? '/resales' : '';
+
+// Websocket backend-for-frontend PORT
+export const BFF_PORT = 5003;
