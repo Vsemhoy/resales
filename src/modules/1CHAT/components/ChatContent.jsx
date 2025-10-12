@@ -46,10 +46,6 @@ export default function ChatContent({ chatId }) {
 	// 	return () => clearInterval(interval);
 	// }, [refetch]);
 
-
-
-
-
 	// Фильтруем сообщения по chat_id вручную
 	// const smsList = useMemo(() => {
 	// 	if (!chatId) return [];
