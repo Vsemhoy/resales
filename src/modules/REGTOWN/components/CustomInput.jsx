@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Input} from "antd";
+import {Input, Tag, Tooltip} from "antd";
 
 const CustomInput = (props) => {
     const [value, setValue] = useState('');
@@ -21,19 +21,34 @@ const CustomInput = (props) => {
         }
     }, [value]);
 
+    const region = props.regions?.find(reg => reg.id === props.id_region);
 
     return (
-        <Input value={value}
-               onChange={(e) => setValue(e.target.value)}
-               readOnly={((id !== props?.editSelectedRegion) && (id !== props?.editSelectedTown))}
-               onClick={(e) => {
-                   if (props?.radioBtn) {
-                       e.target.closest('.sa-regions-body-item').click();
-                       e.stopPropagation()
-                       e.target.focus();
-                   }
-               }}
-        />
+        <Tooltip title={(!(props.selectedRegion) && props.type === 'town') ? <Tag color={'purple'}>{region?.name}</Tag> : ''}
+                 color="white"
+                 styles={{
+                     body: {
+                         color: 'black',
+                         border: '1px solid #d9d9d9',
+                     },
+                     root: {
+                         maxWidth: '400px'
+                     }
+                 }}
+                 placement="leftTop"
+        >
+            <Input value={value}
+                   onChange={(e) => setValue(e.target.value)}
+                   readOnly={((id !== props?.editSelectedRegion) && (id !== props?.editSelectedTown))}
+                   onClick={(e) => {
+                       if (props?.radioBtn) {
+                           e.target.closest('.sa-regions-body-item').click();
+                           e.stopPropagation()
+                           e.target.focus();
+                       }
+                   }}
+            />
+        </Tooltip>
     );
 };
 
