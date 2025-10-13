@@ -422,7 +422,6 @@ const Regtown = () => {
             const path = `/api/regiontown/regions/${regionId}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.delete(path, {
-                    data: region,
                     _token: CSRF_TOKEN,
                 });
                 if (response.data) {
