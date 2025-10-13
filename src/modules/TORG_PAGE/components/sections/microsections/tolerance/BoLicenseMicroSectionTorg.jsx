@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../../../TorgPageSectionRow';
-import { Button, Input, Select } from 'antd';
+import { Button, DatePicker, Input, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
@@ -15,7 +15,7 @@ const AnLicenseMicroSectionTorg = (props) => {
 
   const [itemId, setItemId] = useState(null);
   const [options, setOptions] = useState([]);
-    const [selects, setSelects] = useState(null);
+  const [selects, setSelects] = useState(null);
   // const [theme, setTheme] = useState('');
   // const [author, setAuthor] = useState(1);
   // const [date, setDate] = useState(null);
@@ -25,17 +25,27 @@ const AnLicenseMicroSectionTorg = (props) => {
   const [allowDelete, setAllowDelete] = useState(true);
 
 
-  const [comment, setComment] = useState('');
-  const [number, setNumber] = useState('');
-  const [id_orgs, setIdOrgs] = useState(null);
-  const [type, setType] = useState(1);
-  const [docType, setDocType] = useState(1);
+  // const [comment, setComment] = useState('');
+  // const [number, setNumber] = useState('');
+  // const [id_orgs, setIdOrgs] = useState(null);
+  // const [type, setType] = useState(1);
+  // const [docType, setDocType] = useState(1);
+
+    const [id, setId] = useState(null);
+    const [id_an_orgs, setId_an_orgs] = useState(null); //id_orgsusers
+    const [comment,    setComment]    = useState('');
+    const [type,       setType]       = useState(1);
+    const [docType,    setDocType]    = useState(1);
+    const [name,       setName]       = useState('');
+    const [deleted,    setDeleted]    = useState(0);
+    const [start_date, setStart_date] = useState(0);
+    const [end_date,   setEnd_date]   = useState(0);
 
 
-  const [deleted, setDeleted] = useState(0);
 
   const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
+  
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -50,19 +60,16 @@ const AnLicenseMicroSectionTorg = (props) => {
     setBaseData(JSON.parse(JSON.stringify(props.data)));
 
     if (props.data.id) {
-      setItemId(props.data.id);
-
-      console.log('TYPE', props.data);
-      setIdOrgs(    props.data.id_orgs);
-      if (props.doc_type ===  1){
-        setType( parseInt(props.data.id8an_typelicenses));
-      } else {
-        setType( parseInt(props.data.id8an_typetolerance));
-      }
-      setDocType(   props.doc_type);
+      setId(props.data.id);
+      setId_an_orgs(props.data.id_an_orgs);
+      setType(      props.data.type);
+      setDocType(   props.data.document_type);
       setComment(   props.data.comment);
       setDeleted(   props.data.deleted);
-      setNumber(    props.data.number);
+      setName(      props.data.name);
+      setDeleted(   props.data.deleted);
+      setStart_date(props.data.start_date ? dayjs.unix(props.data.start_date) : null);
+      setEnd_date(  props.data.end_date ? dayjs.unix(props.data.end_date) : null);
     }
   }, [props.data]);
 
@@ -72,33 +79,31 @@ const AnLicenseMicroSectionTorg = (props) => {
     }
   }, [deleted]);
 
-  useEffect(() => {
-    setDocType(props.doc_type);
-  }, [props.doc_type]);
 
-
-    useEffect(() => {
-      let arrak = [];
-      if (props.selects){
-        setSelects(props.selects);
-        if (props?.selects?.tollic){
-          for (const key in props?.selects?.tollic) {
-              if (props?.selects?.tollic.hasOwnProperty(key)) {
-                if (key.startsWith(String(docType))){
-                  const davalue = props.selects.tollic[key];
-                  arrak.push({
-                    key: 'kivalas3_k' + key + '_' + itemId,
-                    value: Number(key.split('-')[1]),
-                    label: davalue
-                  });
-                }
-                  // Your logic here
+ useEffect(() => {
+    // //console.log('props.selects', props.selects)
+    let arrak = [];
+    if (props.selects){
+      setSelects(props.selects);
+      if (props?.selects?.tollic){
+        for (const key in props?.selects?.tollic) {
+            if (props?.selects?.tollic.hasOwnProperty(key)) {
+              if (key.startsWith(String(docType))){
+                const davalue = props.selects.tollic[key];
+                arrak.push({
+                  key: 'kivala_k' + key + '_' + id,
+                  value: Number(key.split('-')[1]),
+                  label: davalue
+                });
               }
-          }
+                // Your logic here
+            }
         }
       }
-      setOptions(arrak);
-    }, [props.selects, docType, type]);
+    }
+    // //console.log('ARRAK', arrak);
+    setOptions(arrak);
+  }, [props.selects, docType]);
 
   // ██    ██ ███████ ███████       ██   ██ 
   // ██    ██ ██      ██             ██ ██  
@@ -131,7 +136,7 @@ const AnLicenseMicroSectionTorg = (props) => {
             if (props.on_change){
               baseData.deleted = deleted;
                   baseData.command = 'delete';
-                  props.on_change('notes', itemId, baseData);
+                  props.on_change(id, baseData);
                   return;
             }
           }
@@ -148,16 +153,14 @@ const AnLicenseMicroSectionTorg = (props) => {
               // baseData.ext          = ext;
               // baseData.deleted      = deleted;
              
-              baseData.id_orgs = id_orgs;
-              if (props.doc_type ===  1){
-                baseData.id8an_typelicenses  = type;
-              } else {
-                baseData.id8an_typetolerance = type;
-              }
+              baseData.id_an_orgs    = id_an_orgs;
+              baseData.type          = type;
               baseData.document_type = docType;
+              baseData.name          = name;
+              baseData.start_date    = start_date ? start_date.unix() : null;
+              baseData.end_date      = end_date ? end_date.unix() : null;
               baseData.comment = comment;
               baseData.deleted = deleted;
-              baseData.number = number;
   
               if (baseData.command === undefined || baseData.command !== 'create'){
                 if (deleted){
@@ -166,7 +169,7 @@ const AnLicenseMicroSectionTorg = (props) => {
                   baseData.command = 'update';
                 }
               }
-              props.on_change( itemId, baseData, 'contact_phone');
+              props.on_change( id, baseData, 'bo_license');
             }
           }
             }, 500);
@@ -174,7 +177,8 @@ const AnLicenseMicroSectionTorg = (props) => {
             return () => clearTimeout(timer);
   
     }, [
-      id_orgs,
+      start_date,
+      end_date,
       type,
       deleted,
       BLUR_FLAG,
@@ -183,17 +187,77 @@ const AnLicenseMicroSectionTorg = (props) => {
 
 
   return (
-    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
+    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''} 
+     ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}
+    `}>
             <TorgPageSectionRow
               explabel={'комм'}
               edit_mode={editMode}
               inputs={[
               {
                 edit_mode: editMode,
-                label: docType === 1 ? "Лицензия" : "Допуск",
+                label: docType === 1 ? "Лицензия" : "Допуск СРО",
+                input:
+                  <Input
+                    size={'small'}
+                    key={'bodicden_2_' + baseData?.id + id}
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    // placeholder="Controlled autosize"
+                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={255}
+                    required={true}
+                    onBlur={() => setBLUR_FLAG(dayjs().unix())}
+                  />,
+                  required: true,
+                  value: name
+              },
+                {
+                edit_mode: editMode,
+                label: 'Начало действия',
+                input:
+                  <DatePicker
+                    size={'small'}
+                    key={'bodicfden_2_' + baseData?.id + id}
+                    value={start_date}
+                    onChange={e => setStart_date(e)}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    
+                    required={false}
+                    // onBlur={() => setBLUR_FLAG(dayjs().unix())}
+                  />,
+                  required: false,
+                  value: start_date
+              },
+            ]}
+
+            action={<Button
+                className='sa-org-sub-sub-section-row-action'
+                size='small'
+                color="danger"
+                variant="outlined"
+                icon={<TrashIcon height={TORG_DELETE_SIZE} />}
+                onClick={()=>{
+                    setDeleted(!deleted);
+                }}
+                />
+            }
+          />
+
+          <TorgPageSectionRow
+              explabel={'комм'}
+              edit_mode={editMode}
+              inputs={[
+              {
+                edit_mode: editMode,
+                label:  "Вид лицензии/допуска",
                 input:
                   <Select
-                  key={'analicensde_2_' + baseData?.id + id_orgs}
+                  key={'bodicdend_2_' + baseData?.id + id}
                     value={type}
                     options={options}
                     onChange={setType}
@@ -202,29 +266,26 @@ const AnLicenseMicroSectionTorg = (props) => {
                     disabled={!editMode}
                     />,
                   required: true,
-                  value: number
+                  value: type
               },
                 {
                 edit_mode: editMode,
-                label: 'Номер',
+                label: 'Конец действия',
                 input:
-                  
-                  <Input
+                                    <DatePicker
                     size={'small'}
-                    key={'analicense_2_' + baseData?.id + id_orgs}
-                    value={number}
-                    // type={'number'}
-                    onChange={e => setNumber(e.target.value)}
+                    key={'bodicfddn_2_' + baseData?.id + id}
+                    value={end_date}
+                    onChange={e => setEnd_date(e)}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={55}
+                    
                     required={false}
-                    onBlur={() => setBLUR_FLAG(dayjs().unix())}
+                    // onBlur={() => setBLUR_FLAG(dayjs().unix())}
                   />,
                   required: false,
-                  value: number
+                  value: end_date
               },
             ]}
             extratext={[
@@ -234,7 +295,7 @@ const AnLicenseMicroSectionTorg = (props) => {
                 input:
                   
                   <TextArea
-                    key={'analicense_1_' + baseData?.id + id_orgs}
+                    key={'bodicdesan_1_' + baseData?.id + id}
                     value={comment}
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"
@@ -249,16 +310,7 @@ const AnLicenseMicroSectionTorg = (props) => {
                   value: comment
               },
             ]}
-            action={<Button
-                className='sa-org-sub-sub-section-row-action'
-                size='small'
-                color="danger"
-                variant="outlined"
-                icon={<TrashIcon height={TORG_DELETE_SIZE} />}
-                onClick={()=>{
-                    setDeleted(!deleted);
-                }}
-                />
+            action={<div></div>
             }
           />
           </div>

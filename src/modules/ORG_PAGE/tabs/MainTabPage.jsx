@@ -29,6 +29,10 @@ import OrgPhoneMicroSectionTorg from '../../TORG_PAGE/components/sections/micros
 import OrgAddressMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/orgcontact/OrgAddressMicroSectionTorg';
 import TextArea from 'antd/es/input/TextArea';
 import TorgPageSectionRow from '../../TORG_PAGE/components/TorgPageSectionRow';
+import RequisiteMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/requisites/RequisiteMicroSectionTorg';
+import AnLicenseMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/tolerance/AnLicenseMicroSectionTorg';
+import BoLicenseMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/tolerance/BoLicenseMicroSectionTorg';
+import { ShortName } from '../../../components/helpers/TextHelpers';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -41,27 +45,39 @@ const MainTabPage = (props) => {
 
 	const [newLoading, setNewLoading] = useState(false);
 
+  const [baseData, setBaseData] = useState([]);
 
   // Структурированные в коллапсы юниты
   const [structureItems, setStructureItems] = useState([]);
   const [structureContacts, setStructureContacts] = useState([]);
 
-  const [nostructContacts, setNostructContacts] = useState([]);
-  const [baseData, setBaseData] = useState([]);
-	const [editedContactIds, setEditedContactIds] = useState([]);
-
-  const [dataModified, setDataModified] = useState(false);
-
-  const [callToAddRequisite, setCallToAddRequisite] = useState(null);
-  const [callToAddLicense, setCallToAddLicense] = useState(null);
-  const [callToAddTolerance, setCallToAddTolerance] = useState(null);
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
 
   const [form_id8org_towns,   setFormId8org_towns]   = useState(1);
   const [form_id8org_regions, setFormId8org_regions] = useState(1);
   const [form_name, setFormName] = useState('');
 
+  const [name,           setName]             = useState('');
+  const [id8an_profiles, setId8an_profiles]   = useState(0);
+  const [middlename,     setMiddlename]       = useState('');
+  const [id8an_fs,       setId8an_fs]         = useState(0);
+  const [inn,            setInn]              = useState('');
+  const [source,         setSource]           = useState('');
+  const [comment,        setComment]          = useState('');
+  const [commentinlist,  setCommentinlist]    = useState('');
+  const [kindofactivity, setKindofactivity]  = useState('');
+  const [profsound,      setProfsound]        = useState(0);
 
+  const [site,           setSite]             = useState('');
+
+  const [statusmoney, setStatusmoney]         = useState(0);
+  const [conveyance, setConveyance]           = useState(0);
+  const [typeList, setTypeList] = useState(0);
+  const [listComment,       setListComment] = useState('');
+
+  const [author, setAuthor] = useState(''); //id8staff_list7author
+  const [curator, setCurator] = useState('');
 
 
   /**
@@ -84,6 +100,8 @@ const MainTabPage = (props) => {
 
 
 
+
+
 	const [selects, setSelects] = useState(null);
 	useEffect(() => {
 		setSelects(props.selects);
@@ -102,7 +120,9 @@ const MainTabPage = (props) => {
   }, [CONTACTS]);
 
   useEffect(() => {
-
+    if (!props.base_data){
+      return;
+    }
     setBaseData(props.base_data);
     // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
     if (props.base_data){
@@ -117,6 +137,10 @@ const MainTabPage = (props) => {
     if (props.base_data?.active_licenses_bo){
       setBOLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses_bo)));
     } else {setBOLICENSES([])};
+
+    if (props.base_data?.active_licenses){
+      setANLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses)));
+    } else {setANLICENSES([])};
 
     if (props.base_data?.active_tolerance){
       setANTOLERANCES(JSON.parse(JSON.stringify(props.base_data?.active_tolerance)));
@@ -134,9 +158,7 @@ const MainTabPage = (props) => {
       setORGEMAILS(JSON.parse(JSON.stringify(props.base_data?.emails)));
     } else {setORGEMAILS([])};
 
-      if (props.base_data?.active_licenses){
-      setANLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses)));
-    } else {setANLICENSES([])};
+
 
     if (props.base_data?.phones){
       setORGPHONES(JSON.parse(JSON.stringify(props.base_data?.phones)));
@@ -145,6 +167,10 @@ const MainTabPage = (props) => {
     if (props.base_data?.requisites){
       setREQUISITES(JSON.parse(JSON.stringify(props.base_data?.requisites)));
     } else {setREQUISITES([])};
+
+    let creator  = props.base_data?.creator;
+    let curator  = props.base_data?.curator;
+    let list     = props.base_data?.list;
 
     let bdt = FlushOrgData(props.base_data, [
       "warningcmpcount",
@@ -161,10 +187,46 @@ const MainTabPage = (props) => {
       "id_orgs8an_calls",
       "id_orgs8an_email",
       "id_orgs8an_address",
-      "contacts"
+      "contacts",
+      "creator",
+      "curator",
+      "list"
     ]);
 
     setBaseData(bdt);
+
+    console.log('bdt', bdt, props.base_data)
+
+      if (bdt?.creator){
+            setAuthor(ShortName(creator?.surname, creator?.name, creator?.secondname));
+          } else {
+            setAuthor('');
+          };
+          if (curator){
+            setCurator(ShortName(curator?.surname, curator?.name, curator?.secondname));
+          } else {
+            setCurator('');
+          };
+    
+      setStatusmoney(bdt.id8an_statusmoney);
+      setConveyance(bdt.id8an_conveyance);
+      
+      setTypeList(list?.id8an_typelist ? list?.id8an_typelist : 0);
+      setListComment(list?.comment ? list?.comment : '');
+
+      setName(props.data?.name);
+      setSite(props.data?.site);
+      setMiddlename(props.data?.middlename);
+      setId8an_fs(props.data?.id8an_fs ? parseInt(props.data?.id8an_fs) : 0);
+      setId8an_profiles(props.data?.id8an_profiles);
+      setInn(props.data?.inn);
+      setSource(props.data?.source);
+      setComment(props.data?.comment);
+      setProfsound(props.data?.profsound);
+      setCommentinlist(props.data?.commentinlist);
+      setKindofactivity(props.data?.kindofactivity);
+
+
   }, [props.base_data]);
 
   useEffect(() => {
@@ -180,7 +242,7 @@ const MainTabPage = (props) => {
       for (let key in changed_data) {
         if (changed_data.hasOwnProperty(key) && prevData?.hasOwnProperty(key)) {
           updatedData[key] = changed_data[key];
-          setDataModified(true);
+          
         }
       }
       return updatedData;
@@ -188,11 +250,7 @@ const MainTabPage = (props) => {
   };
 
 
-  const updateCompanyObject = (key, changed_data) => {
-    if (props.on_change_main_data_part) {
-      props.on_change_main_data_part(key, changed_data);
-    }
-  };
+
 
 
 
@@ -369,6 +427,36 @@ const MainTabPage = (props) => {
             ))}
           </div>
 
+          <div>
+             <TorgPageSectionRow
+              explabel={'Реквизиты'}
+              edit_mode={editMode}
+              inputs={[
+              {
+                edit_mode: editMode,
+                label: 'Веб-Сайт',
+                input:
+                  
+                  <Input
+                    key={'sitefield_2_' + baseData?.id + itemId}
+                    value={site}
+                    onChange={e => setSite(e.target.value)}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={128}
+                    required={false}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
+                  />,
+                  required: false,
+                  value: site
+              },
+             
+            ]}
+                      
+          />
+          </div>
+
           {editMode && (
           <div className={'sk-omt-stack-control sa-flex-space'}>
           <div></div>
@@ -442,7 +530,7 @@ const MainTabPage = (props) => {
         label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Лицензии/Допуски
 
           <Badge
-            count={baseData?.active_licenses_bo?.length ? baseData?.active_licenses_bo?.length + baseData?.active_licenses?.length + baseData?.active_tolerance?.length : 0}
+            count={ANLICENSES?.length + ANTOLERANCES?.length + BOLICENSES?.length || 0}
             color="blue"
           />
         </div><div className={'sa-flex-gap'}>
@@ -453,10 +541,7 @@ const MainTabPage = (props) => {
                 variant="outlined"
                 onClick={(ev) => {
                   ev.stopPropagation();
-                  setCallToAddLicense(dayjs().unix());
-                  setTimeout(() => {
-                    setCallToAddLicense(null);
-                  }, 300);
+                  handleAddBoLicense(1);
                 }}
                 icon={<PlusCircleOutlined />}
               >
@@ -470,10 +555,7 @@ const MainTabPage = (props) => {
                 variant="outlined"
                 onClick={(ev) => {
                   ev.stopPropagation();
-                  setCallToAddTolerance(dayjs().unix());
-                  setTimeout(() => {
-                    setCallToAddTolerance(null);
-                  }, 300);
+                  handleAddBoLicense(2);
                 }}
                 icon={<PlusCircleOutlined />}
               >
@@ -483,16 +565,65 @@ const MainTabPage = (props) => {
           </div>
 
         </div>,
-        children: baseData ? (<OrgPage_MainTab_Tolerance_Section
-          color={'#30c97aff'}
-          edit_mode={editMode}
-          data={baseData}
-          selects={selects}
-          on_blur={props.on_change_main_data_part}
-          on_add_license={callToAddLicense}
-          on_add_tolerance={callToAddTolerance}
-          item_id={itemId}
-        />) : ("")
+        children: (ANLICENSES.length > 0 ||
+            ANTOLERANCES.length > 0 ||
+            BOLICENSES.length > 0) ? (
+              <div className='sa-org-contactstack-box'>
+                <div className={'sa-tolerance-old-v'}>
+                  {ANLICENSES.map((item)=>(
+                  <AnLicenseMicroSectionTorg
+                    key={'anlicensee_' + item.id + itemId}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateAnLicenseUnit}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    doc_type={1}
+                    />
+                ))}
+                  {ANTOLERANCES.map((item)=>(
+                  <AnLicenseMicroSectionTorg
+                    key={'antolerancee_' + item.id + itemId}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateAnToleranceUnit}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    doc_type={2}
+                    />
+                ))}
+                </div>
+                <div>
+                {BOLICENSES.map((item)=>(
+                  <BoLicenseMicroSectionTorg
+                    key={'bolicensee_' + item.id + itemId}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateBoLicenseUnit}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    />
+                ))}
+                </div>
+              </div>
+            ) : (<Empty />)
+        
+        // baseData ? (<OrgPage_MainTab_Tolerance_Section
+        //   color={'#30c97aff'}
+        //   edit_mode={editMode}
+        //   data={baseData}
+        //   selects={selects}
+        //   on_blur={props.on_change_main_data_part}
+        //   on_add_license={callToAddLicense}
+        //   on_add_tolerance={callToAddTolerance}
+        //   item_id={itemId}
+        // />) : ("")
       },
       {
         key: 'mainorgsec_14',
@@ -545,7 +676,7 @@ const MainTabPage = (props) => {
         style: { boxShadow: '#87c16cff -9px 0px 0px -0.5px' },
         label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Фирмы/плательщики
           <Badge
-            count={baseData?.requisites?.length}
+            count={REQUISITES?.length}
             color="blue"
           />
         </div><div></div>
@@ -556,10 +687,10 @@ const MainTabPage = (props) => {
               variant="outlined"
               onClick={(ev) => {
                 ev.stopPropagation();
-                setCallToAddRequisite(dayjs().unix());
-                setTimeout(() => {
-                  setCallToAddRequisite(null);
-                }, 300);
+                handleAddRequisite();
+                // setTimeout(() => {
+                //   setCallToAddRequisite(null);
+                // }, 300);
               }}
               icon={<PlusCircleOutlined />}
             >
@@ -567,15 +698,27 @@ const MainTabPage = (props) => {
             </Button>
           )}
         </div>,
-        children: <OrgPage_MainTab_Payers_Section
-          color={'#f0f321ff'}
-          edit_mode={editMode}
-          data={baseData}
-          selects={selects}
-          on_add_requisites={callToAddRequisite}
-          on_blur={props.on_change_main_data_part}
-          item_id={itemId}
-        />
+        children: 
+         <div className='sa-org-contactstack-box'>
+          {REQUISITES.length > 0 ? (
+            <div>
+                {REQUISITES.map((item)=>(
+                  <RequisiteMicroSectionTorg
+                    key={'requisitsectionrow_' + item.id}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateRuquisiteUnit}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    />
+
+                ))}
+              </div>
+
+          ) : (<Empty />)}
+        </div>
       },
     ];
 
@@ -583,7 +726,9 @@ const MainTabPage = (props) => {
   }, [form_id8org_regions,
     form_id8org_towns,
     CONTACTS, ORGLEGADDRESSES, ORGADDRESSES, ORGEMAILS, ORGPHONES,
-     show, editMode, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance, structureContacts, itemId]);
+    REQUISITES,
+    BOLICENSES, ANLICENSES, ANTOLERANCES,
+     show, editMode, selects, itemId]);
   // },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
 
 
@@ -923,8 +1068,229 @@ const MainTabPage = (props) => {
     /* ----------------- EMAILS END --------------------- */
   
 
+// ██████  ███████  ██████  ██    ██ ██ ███████ ██ ████████ ███████ ███████ 
+// ██   ██ ██      ██    ██ ██    ██ ██ ██      ██    ██    ██      ██      
+// ██████  █████   ██    ██ ██    ██ ██ ███████ ██    ██    █████   ███████ 
+// ██   ██ ██      ██ ▄▄ ██ ██    ██ ██      ██ ██    ██    ██           ██ 
+// ██   ██ ███████  ██████   ██████  ██ ███████ ██    ██    ███████ ███████ 
+//                     ▀▀                                                   
+                                                                         
+
+      /* ----------------- REQUISITES --------------------- */
+      /**
+       * Добавление нового элемента в стек новых
+       */
+      const handleAddRequisite = ()=>{
+        let item = {
+              id: 'new_' + dayjs().unix() + '_' + REQUISITES.length ,
+              id_orgs:  itemId,
+              nameorg: '',
+              kpp: '',
+              inn: '',
+              requisites: '',
+              deleted: 0,
+              command: "create",
+            };
+        setREQUISITES([...REQUISITES, item]);
+      }
+
+    /**
+     * Обновление и удаление существующей записи
+     * @param {*} id 
+     * @param {*} data 
+     * @returns 
+     */
+    const handleUpdateRuquisiteUnit = (id, data) => {
+     if (!editMode) {
+       return;
+      }
+      if (props.on_change_requisite){
+        props.on_change_requisite(data);
+      };
+  
+      if (data.command !== 'create'){
+        if (data.deleted){
+          data.command = 'delete';
+        } else {
+          data.command = 'update';
+        }
+      } else {
+        // Попытка удалить новый - удаляет из стека
+        if (data.deleted){
+          setREQUISITES(REQUISITES.filter((item)=>item.id !== id));
+          return;
+        }
+      };
+      // изменяет существующий
+      setREQUISITES((prevUnits) => {
+        const exists = prevUnits.some((item) => item.id === id);
+        if (!exists) {
+          return [...prevUnits, data];
+        } else {
+          return prevUnits?.map((item) => (item.id === id ? data : item));
+        }
+      });
+    };
 
 
+
+//  █████  ███    ██ ██      ██  ██████ ███████ ███    ██ ███████ ███████ 
+// ██   ██ ████   ██ ██      ██ ██      ██      ████   ██ ██      ██      
+// ███████ ██ ██  ██ ██      ██ ██      █████   ██ ██  ██ ███████ █████   
+// ██   ██ ██  ██ ██ ██      ██ ██      ██      ██  ██ ██      ██ ██      
+// ██   ██ ██   ████ ███████ ██  ██████ ███████ ██   ████ ███████ ███████ 
+                                                                       
+    /**
+     * Обновление и удаление существующей записи
+     * @param {*} id 
+     * @param {*} data 
+     * @returns 
+     */
+    const handleUpdateAnLicenseUnit = (id, data) => {
+     if (!editMode) {
+       return;
+      }
+      if (props.on_change_an_license){
+        props.on_change_an_license(data);
+      };
+  
+      if (data.command !== 'create'){
+        if (data.deleted){
+          data.command = 'delete';
+        } else {
+          data.command = 'update';
+        }
+      } else {
+        // Попытка удалить новый - удаляет из стека
+        if (data.deleted){
+          setANLICENSES(ANLICENSES.filter((item)=>item.id !== id));
+          return;
+        }
+      };
+      // изменяет существующий
+      setANLICENSES((prevUnits) => {
+        const exists = prevUnits.some((item) => item.id === id);
+        if (!exists) {
+          return [...prevUnits, data];
+        } else {
+          return prevUnits?.map((item) => (item.id === id ? data : item));
+        }
+      });
+    };                                                            
+
+
+//  █████  ███    ██  █████  ████████  ██████  ██      ███████ ██   ██ 
+// ██   ██ ████   ██ ██   ██    ██    ██    ██ ██      ██      ██  ██  
+// ███████ ██ ██  ██ ███████    ██    ██    ██ ██      █████   █████   
+// ██   ██ ██  ██ ██ ██   ██    ██    ██    ██ ██      ██      ██  ██  
+// ██   ██ ██   ████ ██   ██    ██     ██████  ███████ ███████ ██   ██ 
+                                                                    
+    /**
+     * Обновление и удаление существующей записи
+     * @param {*} id 
+     * @param {*} data 
+     * @returns 
+     */
+    const handleUpdateAnToleranceUnit = (id, data) => {
+     if (!editMode) {
+       return;
+      }
+      if (props.on_change_an_tolerance){
+        props.on_change_an_tolerance(data);
+      };
+  
+      if (data.command !== 'create'){
+        if (data.deleted){
+          data.command = 'delete';
+        } else {
+          data.command = 'update';
+        }
+      } else {
+        // Попытка удалить новый - удаляет из стека
+        if (data.deleted){
+          setANTOLERANCES(ANTOLERANCES.filter((item)=>item.id !== id));
+          return;
+        }
+      };
+      // изменяет существующий
+      setANTOLERANCES((prevUnits) => {
+        const exists = prevUnits.some((item) => item.id === id);
+        if (!exists) {
+          return [...prevUnits, data];
+        } else {
+          return prevUnits?.map((item) => (item.id === id ? data : item));
+        }
+      });
+    };
+
+
+
+// ██████   ██████  ██      ██  ██████ 
+// ██   ██ ██    ██ ██      ██ ██      
+// ██████  ██    ██ ██      ██ ██      
+// ██   ██ ██    ██ ██      ██ ██      
+// ██████   ██████  ███████ ██  ██████ 
+        
+    // typedoc 1 = License, 2 - tolerance
+  const handleAddBoLicense = (typedoc)=>{
+    let item = {
+          id: 'new_' + dayjs().unix() + '_' + BOLICENSES.length ,
+          id_an_orgs:  itemId,
+          type: 1,
+          document_type: typedoc,
+          name: '',
+          start_date: null,
+          end_date: null,
+          comment: '',
+          deleted: 0,
+          command: "create",
+        };
+    setBOLICENSES([...BOLICENSES, item]);
+  }
+
+
+    /**
+     * Обновление и удаление существующей записи
+     * @param {*} id 
+     * @param {*} data 
+     * @returns 
+     */
+    const handleUpdateBoLicenseUnit = (id, data) => {
+     if (!editMode) {
+       return;
+      }
+      if (props.on_change_bo_license){
+        props.on_change_bo_license(data);
+      };
+
+      if (data.command !== 'create'){
+        if (data.deleted){
+          data.command = 'delete';
+        } else {
+          data.command = 'update';
+        }
+      } else {
+        // Попытка удалить новый - удаляет из стека
+        if (data.deleted){
+          setBOLICENSES(BOLICENSES.filter((item)=>item.id !== id));
+          return;
+        }
+      };
+      // изменяет существующий
+      setBOLICENSES((prevUnits) => {
+        const exists = prevUnits.some((item) => item.id === id);
+
+        if (!exists) {
+          return [...prevUnits, data];
+        } else {
+          return prevUnits?.map((item) => (item.id === id ? data : item));
+        }
+      });
+    };
+
+
+
+                                    
 
 
   useEffect(() => {

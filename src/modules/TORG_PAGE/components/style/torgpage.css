@@ -415,3 +415,6 @@
 .sa-brand-new-row:hover {
 	border: 2px solid var(--org-page-temp-border-color);
 }
+.sa-brand-new-row:first-child {
+	margin-top: 16px !important;
+}

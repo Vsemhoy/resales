@@ -249,7 +249,7 @@ useEffect(() => {
       const timer = setTimeout(() => {
         // При сверх-быстром изменении полей в разных секциях могут быть гонки
 			  if (editMode && baseData){
-          if (props.on_change){
+          if (props.on_change && name){
             // data.theme = theme;
             // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
             // data.notes = note;

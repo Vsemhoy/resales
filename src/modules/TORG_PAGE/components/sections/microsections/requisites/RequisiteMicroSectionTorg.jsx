@@ -4,6 +4,7 @@ import { Button, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import dayjs from 'dayjs';
 
 
 const RequisiteMicroSectionTorg = (props) => {
@@ -23,10 +24,10 @@ const RequisiteMicroSectionTorg = (props) => {
   const [allowDelete, setAllowDelete] = useState(true);
 
 
-  const [comment, setComment] = useState('');
-  const [number, setNumber] = useState('');
-  const [ext, setExt] = useState('');
-  const [id_orgsusers, setIdOrgsusers] = useState(null);
+  const [requisites, setRequisites] = useState('');
+  const [orgName, setOrgName] = useState('');
+  const [inn, setInn] = useState('');
+  const [kpp, setKpp] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
 
@@ -47,10 +48,10 @@ const RequisiteMicroSectionTorg = (props) => {
       setItemId(props.data.id);
       setOrgId(props.data.id_orgs);
 
-      setIdOrgsusers(props.data?.id_orgsusers);
-      setNumber(props.data?.number);
-      setComment(props.data?.comment);
-      setExt(props.data?.ext);
+      setKpp(props.data?.kpp);
+      setOrgName(props.data?.nameorg);
+      setRequisites(props.data?.requisites);
+      setInn(props.data?.inn);
       setDeleted(props.data?.deleted);
 
 
@@ -65,6 +66,7 @@ const RequisiteMicroSectionTorg = (props) => {
     }
   }, [deleted]);
 
+    const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████       ██   ██ 
   // ██    ██ ██      ██             ██ ██  
@@ -88,13 +90,15 @@ const RequisiteMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
+      // При монтировании компонента форма не отправляется
+      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
+      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
               baseData.deleted = deleted;
-                  baseData.command = 'delete';
-                  props.on_change('notes', itemId, baseData);
-                  return;
+              props.on_change(itemId, baseData,'requisites');
+              return;
             }
           }
   
@@ -104,10 +108,10 @@ const RequisiteMicroSectionTorg = (props) => {
             if (props.on_change){
               // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
               
-              baseData.id_orgsusers = id_orgsusers;
-              baseData.number        = number?.trim();
-              baseData.comment      = comment?.trim();
-              baseData.ext          = ext;
+              baseData.kpp = kpp;
+              baseData.nameorg        = orgName?.trim();
+              baseData.requisites      = requisites?.trim();
+              baseData.inn          = inn?.trim();
               baseData.deleted      = deleted;
              
   
@@ -118,7 +122,7 @@ const RequisiteMicroSectionTorg = (props) => {
                   baseData.command = 'update';
                 }
               }
-              props.on_change( itemId, baseData, 'contact_phone');
+              props.on_change( itemId, baseData, 'requisite');
             }
           }
             }, 500);
@@ -126,82 +130,41 @@ const RequisiteMicroSectionTorg = (props) => {
             return () => clearTimeout(timer);
   
     }, [
-      id_orgsusers,
-      number,
-      comment,
+      BLUR_FLAG,
       deleted,
-      ext
     ]);
 
 
 
   return (
-    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
+    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''} 
+     ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}
+    `}>
             <TorgPageSectionRow
-              explabel={'комм'}
               edit_mode={editMode}
               inputs={[
               {
                 edit_mode: editMode,
-                label: 'Контактный телефон',
+                label: 'Организация',
                 input:
                   
                   <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
-                    value={number}
-                    onChange={e => setNumber(e.target.value)}
+                    key={'orgreques_1_' + baseData?.id + orgId}
+                    value={orgName}
+                    onChange={e => setOrgName(e.target.value)}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={25}
+                    maxLength={200}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                   />,
                   required: true,
-                  value: number
+                  value: orgName
               },
-                {
-                edit_mode: editMode,
-                label: 'Добавочн.',
-                input:
-                  
-                  <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
-                    value={ext}
-                    type={'number'}
-                    onChange={e => setExt(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={25}
-                    required={false}
-                  />,
-                  required: false,
-                  value: ext
-              },
+               
             ]}
-            extratext={[
-              {
-                edit_mode: editMode,
-                label: 'Комментарий',
-                input:
-                  
-                  <TextArea
-                    key={'cossntnumber_2_' + baseData?.id + orgId}
-                    value={comment}
-                    onChange={(e)=>setComment(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={5000}
-                    
-                  />,
-                  required: false,
-                  value: comment
-              },
-            ]}
+            
             action={<Button
                 className='sa-org-sub-sub-section-row-action'
                 size='small'
@@ -213,6 +176,75 @@ const RequisiteMicroSectionTorg = (props) => {
                 }}
                 />
             }
+          />
+
+          <TorgPageSectionRow
+              explabel={'Реквизиты'}
+              edit_mode={editMode}
+              inputs={[
+              {
+                edit_mode: editMode,
+                label: 'ИНН',
+                input:
+                  
+                  <Input
+                    key={'orgreques_2_' + baseData?.id + orgId}
+                    value={inn}
+                    onChange={e => setInn(e.target.value)}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={64}
+                    required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
+                  />,
+                  required: true,
+                  value: inn
+              },
+                {
+                edit_mode: editMode,
+                label: 'КПП',
+                input:
+                  
+                  <Input
+                    key={'orgreques_3_' + baseData?.id + orgId}
+                    value={kpp}
+                    // type={'number'}
+                    onChange={e => setKpp(e.target.value)}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={64}
+                    required={false}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
+                  />,
+                  required: false,
+                  value: kpp
+              },
+            ]}
+            extratext={[
+              {
+                edit_mode: editMode,
+                label: 'Реквизиты',
+                input:
+                  
+                  <TextArea
+                    key={'orgreques_4_' + baseData?.id + orgId}
+                    value={requisites}
+                    onChange={(e)=>setRequisites(e.target.value)}
+                    // placeholder="Controlled autosize"
+                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={5000}
+                    required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
+                  />,
+                  required: false,
+                  value: requisites
+              },
+            ]}
+           
           />
           </div>
   );
