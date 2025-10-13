@@ -1,84 +1,79 @@
 import styles from './style/Chat.module.css';
-import { MOCK } from '../mock/mock.js';
-
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useUserData } from '../../../context/UserDataContext.js';
-import { usePolling } from '../../../hooks/sms/usePolling.js';
-import { useSms } from '../../../hooks/sms/useSms';
-
+import { useChatSocket } from '../../../context/ChatSocketContext.js';
+import { useSms } from '../../../hooks/sms/useSms.js';
 import { Button, Dropdown, Space } from 'antd';
-import { MessageOutlined, SyncOutlined } from '@ant-design/icons';
-import { ChatModal } from './ChatModal';
+import { MessageOutlined } from '@ant-design/icons';
+import { ChatModal } from './ChatModal.jsx';
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [dropdownVisible, setDropdownVisible] = useState(false);
-	const [lastUpdate, setLastUpdate] = useState(Date.now());
-
-	const {
-		data: smsList,
-		loading,
-		error,
-		refetch,
-	} = useSms({
-		url: '/api/sms',
-		mock: MOCK,
-	});
-
 	const { userdata } = useUserData();
-	const currentUserId = userdata?.user?.id || NaN;
+	const { chats /*, connectionStatus */ } = useChatSocket();
+	const currentUserId = userdata?.user?.id;
 
-	// Ручное обновление по клику на бейдж
-	const handleManualRefresh = useCallback(
-		(e) => {
-			e?.stopPropagation();
-			// console.log('Ручное обновление сообщений...');
-			setLastUpdate(Date.now());
-			refetch();
-		},
-		[refetch]
-	);
+	// ДОБАВЛЕНО: Логирование для отладки
+	useEffect(() => {
+		console.log('🔍 [ChatBtn] Current user ID:', currentUserId);
+		console.log('🔍 [ChatBtn] Chats data:', chats);
+		console.log('🔍 [ChatBtn] Chats structure:', JSON.stringify(chats, null, 2));
+	}, [chats, currentUserId]);
 
-	const getCompanion = useCallback(
-		(sms) => {
-			if (sms.from.id === currentUserId && sms.to.id === currentUserId) {
-				return { name: 'Вы', surname: '' };
-			}
-			return sms.from.id === currentUserId ? sms.to : sms.from;
-		},
-		[currentUserId]
-	);
-
+	// --- Формируем smsData (чаты, где участвует текущий пользователь) ---
 	const smsData = useMemo(() => {
-		const combined = [...(smsList || [])];
 
-		if (!combined.length) return { hasSms: false, messages: [] };
+		if (!Array.isArray(chats) || chats.length === 0) {
+			console.log('🔍 [ChatBtn] No chats available');
+			return { hasSms: false, messages: [] };
+		}
 
-		const messages = combined.map((sms) => {
-			const companion = getCompanion(sms);
-			return {
-				id: sms.id,
-				name: companion?.name || null,
-				surname: companion?.surname || null,
-				content: sms.text || '(без текста)',
-				timestamp: sms.updated_at || sms.created_at,
-			};
-		});
+		const messages = chats
+			.filter((chat) => {
+				const fromId = chat.from?.id || chat.from_id;
+				const toId = chat.to?.id || chat.to_id;
+				const isParticipant = fromId === currentUserId || toId === currentUserId;
 
-		// Сортируем по времени (новые сверху)
-		messages.sort((a, b) => b.timestamp - a.timestamp);
+				console.log(
+					`🔍 [ChatBtn] Chat ${chat.chat_id}: from=${fromId}, to=${toId}, current=${currentUserId}, isParticipant=${isParticipant}`
+				);
+				return isParticipant;
+			})
+			.map((chat) => {
+				const fromId = chat.from?.id || chat.from_id;
+				const companion = fromId === currentUserId ? chat.to : chat.from;
 
-		return {
-			hasSms: messages.length > 0,
-			messages: messages.slice(0, 10), // Показываем только последние 10
-		};
-	}, [smsList, getCompanion]);
+				const result = {
+					id: chat.chat_id || chat.id,
+					name: companion?.name || 'Неизвестный',
+					surname: companion?.surname || '',
+					content: chat.text || chat.last_message || '(без текста)',
+					chatId: chat.chat_id,
+					// ДОБАВЛЕНО: полная структура для отладки
+					_fullChat: chat,
+				};
 
+				console.log(`🔍 [ChatBtn] Processed chat:`, result);
+				return result;
+			});
+
+		console.log(`🔍 [ChatBtn] Final messages:`, messages);
+		return { hasSms: messages.length > 0, messages };
+	}, [chats, currentUserId]);
+
+	// --- Меню для dropdown ---
 	const menuItems = useMemo(() => {
-		if (!smsData.hasSms) return [];
+		console.log('🔍 [ChatBtn] Generating menu items from smsData:', smsData);
+
+		if (!smsData.hasSms) {
+			console.log('🔍 [ChatBtn] No messages for menu');
+			return [];
+		}
 
 		const { messages } = smsData;
 		const count = messages.length;
+
+		console.log(`🔍 [ChatBtn] Messages count: ${count}`, messages);
 
 		const label = (() => {
 			if (count === 1) return `${messages[0].name} ${messages[0].surname}`.trim();
@@ -90,6 +85,8 @@ export const ChatBtn = () => {
 				.join(', ')} и ещё +${count - 2}`;
 		})();
 
+		console.log(`🔍 [ChatBtn] Generated label: "${label}"`);
+
 		return [
 			{
 				key: 'sms-section',
@@ -98,63 +95,44 @@ export const ChatBtn = () => {
 						<Space direction="vertical" size={4}>
 							<Space size={2} wrap>
 								<span className={styles['sms-counter']}>{label}</span>
-								<Button
-									type="text"
-									size="small"
-									icon={<SyncOutlined />}
-									onClick={handleManualRefresh}
-									title="Обновить"
-								/>
 							</Space>
-							<div style={{ fontSize: '10px', color: '#888' }}>
-								Обновлено: {new Date(lastUpdate).toLocaleTimeString()}
-							</div>
 						</Space>
 					</div>
 				),
 			},
 		];
-	}, [smsData, lastUpdate, handleManualRefresh]);
+	}, [smsData]);
 
-	const showModal = () => {
-		setIsModalOpen(true);
-		setDropdownVisible(false);
-	};
+	const showModal = () => setIsModalOpen(true);
 	const handleOk = () => setIsModalOpen(false);
 	const handleCancel = () => setIsModalOpen(false);
 
+	const ButtonNode = (
+		<Button style={{ background: 'transparent' }} type="primary" onClick={showModal}>
+			<MessageOutlined />
+			{smsData.hasSms && (
+				<span className={styles['notification-badge']}>{smsData.messages.length}</span>
+			)}
+		</Button>
+	);
+
+	console.log('🔍 [ChatBtn] Rendering with:', {
+		menuItemsCount: menuItems.length,
+		hasSms: smsData.hasSms,
+		messagesCount: smsData.messages.length,
+	});
+
 	return (
 		<Space style={{ padding: 0 }}>
-			<Dropdown
-				menu={{ items: menuItems }}
-				trigger={['hover']}
-				open={dropdownVisible}
-				onOpenChange={setDropdownVisible}
-			>
-				<div>
-					<Button
-						style={{ background: 'transparent' }}
-						type="primary"
-						onClick={showModal}
-						loading={loading}
-					>
-						<MessageOutlined />
-						{smsData.hasSms && (
-							<span
-								className={styles['notification-badge']}
-								onClick={handleManualRefresh}
-								title="Кликните для обновления"
-							>
-								{smsData.messages.length}
-							</span>
-						)}
-					</Button>
-				</div>
-			</Dropdown>
+			{menuItems.length > 0 ? (
+				<Dropdown menu={{ items: menuItems }} trigger={['hover']}>
+					<div>{ButtonNode}</div>
+				</Dropdown>
+			) : (
+				<div>{ButtonNode}</div>
+			)}
 
 			<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData} />
-
-			{error && <span style={{ color: 'red', fontSize: 12 }}>Ошибка загрузки сообщений</span>}
 		</Space>
 	);
 };

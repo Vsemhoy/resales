@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { PRODMODE } from '../config/config.js';
-import { MOCK, CHAT_MOCK } from '../modules/1CHAT/mock/mock.js';
+import { MOCK, CHAT_MOCK } from '../modules/CHAT/mock/mock.js';
 
 export const ChatSocketContext = createContext(null);
 
@@ -527,14 +527,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 export const useChatSocket = () => {
 	const context = useContext(ChatSocketContext);
 	if (!context) throw new Error('useChatSocket must be used within ChatSocketProvider');
-
-	// Логируем использование хука
-	console.log('🔌 [FRONTEND] useChatSocket called, context:', {
-		connected: context.connected,
-		chatsCount: context.chats?.length,
-		messagesKeys: Object.keys(context.messages),
-		connectionStatus: context.connectionStatus,
-	});
 
 	return context;
 };

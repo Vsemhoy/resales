@@ -1,4 +1,4 @@
-import { MOCK } from '../../1CHAT/mock/mock.js';
+import { MOCK } from './mock.js';
 
 export const mockApi = {
 	getMessages() {
