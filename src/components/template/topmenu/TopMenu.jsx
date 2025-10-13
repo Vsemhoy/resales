@@ -182,9 +182,9 @@ const TopMenu = (props) => {
 		set_user_role(role_id);
 	};
 
-	const toggleDebugger = () => {
-		setShowDebugger(!showDebugger);
-	};
+	// const toggleDebugger = () => {
+	// 	setShowDebugger(!showDebugger);
+	// };
 
 	return (
 		<div className="sa-top-menu" style={{ padding: '0 12px' }}>
@@ -230,8 +230,7 @@ const TopMenu = (props) => {
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
 
-					{/* DEBUGGER */}
-					{userdata?.user?.super === 1 && (
+					{/* {userdata?.user?.super === 1 && (
 						<div ref={debuggerRef} style={{ position: 'relative', display: 'inline-block' }}>
 							<div
 								className={'sa-topmenu-button'}
@@ -264,8 +263,7 @@ const TopMenu = (props) => {
 								</div>
 							)}
 						</div>
-					)}
-					{/* DEBUGGER */}
+					)} */}
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
