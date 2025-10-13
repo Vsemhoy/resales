@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import { useUserData } from '../../context/UserDataContext';
 import './components/style/bidlistpage.css';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
@@ -13,7 +13,9 @@ import {
 	Select,
 	Spin,
 	Tag,
-	Tooltip, Alert, message,
+	Tooltip,
+	Alert,
+	message,
 } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
@@ -899,7 +901,9 @@ const BidListPage = (props) => {
 								error_alert={(path, e) => {
 									setIsAlertVisible(true);
 									setAlertMessage(`Произошла ошибка! ${path}`);
-									setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+									setAlertDescription(
+										e.response?.data?.message || e.message || 'Неизвестная ошибка'
+									);
 									setAlertType('error');
 								}}
 							/>

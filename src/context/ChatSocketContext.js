@@ -1,4 +1,3 @@
-// context/ChatSocketContext.js
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { PRODMODE } from '../config/config.js';
@@ -107,6 +106,78 @@ export const ChatSocketProvider = ({ children, url }) => {
 			});
 			emitToListeners('message:update', msg);
 		});
+
+		// --- обработчики для API-событий (из Laravel) ---
+		socket.on('sms:new_message', (data) => {
+			const msg = data.message;
+			setMessages((prev) => {
+				const chatMsgs = prev[msg.chat_id] || [];
+				return { ...prev, [msg.chat_id]: [...chatMsgs, msg] };
+			});
+			emitToListeners('message:new', msg);
+			emitToListeners('sms:new_message', data);
+		});
+
+		socket.on('sms:update_message', (data) => {
+			const msg = data.message;
+			setMessages((prev) => {
+				const chatMsgs = prev[msg.chat_id] || [];
+				return {
+					...prev,
+					[msg.chat_id]: chatMsgs.map((m) => (m.id === msg.id ? msg : m)),
+				};
+			});
+			emitToListeners('message:update', msg);
+			emitToListeners('sms:update_message', data);
+		});
+
+		socket.on('sms:edit_message', (data) => {
+			const msg = data.message;
+			setMessages((prev) => {
+				const chatMsgs = prev[msg.chat_id] || [];
+				return {
+					...prev,
+					[msg.chat_id]: chatMsgs.map((m) => (m.id === msg.id ? msg : m)),
+				};
+			});
+			emitToListeners('message:update', msg);
+			emitToListeners('sms:edit_message', data);
+		});
+
+		socket.on('sms:reply_message', (data) => {
+			const msg = data.message;
+			setMessages((prev) => {
+				const chatMsgs = prev[msg.chat_id] || [];
+				return { ...prev, [msg.chat_id]: [...chatMsgs, msg] };
+			});
+			emitToListeners('message:new', msg);
+			emitToListeners('sms:reply_message', data);
+		});
+
+		socket.on('sms:delete_message', (data) => {
+			setMessages((prev) => {
+				const chatMsgs = prev[data.chat_id] || [];
+				return {
+					...prev,
+					[data.chat_id]: chatMsgs.filter((m) => m.id !== data.messageId),
+				};
+			});
+			emitToListeners('sms:delete_message', data);
+		});
+
+		socket.on('sms:status_update', (data) => {
+			setMessages((prev) => {
+				const chatMsgs = prev[data.chat_id] || [];
+				return {
+					...prev,
+					[data.chat_id]: chatMsgs.map((m) => 
+						m.id === data.messageId ? { ...m, status: data.status } : m
+					),
+				};
+			});
+			emitToListeners('sms:status_update', data);
+		});
+
 	}, [url, emitToListeners]);
 
 	useEffect(() => {
@@ -123,7 +194,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			if (!PRODMODE) return; // mock-режим — ничего не делаем
 
 			if (socketRef.current && connected) {
-				socketRef.current.emit('joinRoom', chatId);
+				socketRef.current.emit('room:join', chatId); // Изменено с 'joinRoom' на 'room:join'
 			}
 		},
 		[connected]
@@ -154,7 +225,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			if (!socketRef.current) return;
 
 			const msg = { chat_id: chatId, text };
-			socketRef.current.emit('message:send', msg);
+			socketRef.current.emit('sms:new_message', msg); // Изменено с 'message:send' на 'sms:new_message'
 
 			// добавляем локально сразу
 			setMessages((prev) => {
@@ -220,6 +291,43 @@ export const ChatSocketProvider = ({ children, url }) => {
 						};
 					});
 					emitToListeners('message:update', { chat_id: chatId, id: msgId, text: newText });
+				},
+
+				// --- дополнительные методы для API-событий ---
+				deleteMessage: (chatId, messageId) => {
+					if (!PRODMODE) {
+						setMessages((prev) => {
+							const chatMsgs = prev[chatId] || [];
+							return {
+								...prev,
+								[chatId]: chatMsgs.filter((m) => m.id !== messageId),
+							};
+						});
+						return;
+					}
+
+					if (socketRef.current) {
+						socketRef.current.emit('sms:delete_message', { chat_id: chatId, messageId });
+					}
+				},
+
+				updateMessageStatus: (chatId, messageId, status) => {
+					if (!PRODMODE) {
+						setMessages((prev) => {
+							const chatMsgs = prev[chatId] || [];
+							return {
+								...prev,
+								[chatId]: chatMsgs.map((m) =>
+									m.id === messageId ? { ...m, status } : m
+								),
+							};
+						});
+						return;
+					}
+
+					if (socketRef.current) {
+						socketRef.current.emit('sms:status_update', { chat_id: chatId, messageId, status });
+					}
 				},
 			}}
 		>
