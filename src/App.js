@@ -168,6 +168,9 @@ export const App = () => {
 								/>
 								<Route path="/curator" element={<CuratorPage userdata={userdata} />} />
 
+								<Route path={BASE_ROUTE + '/regtown'} element={<Regtown userdata={userdata} />} />
+								<Route path="/regtown" element={<Regtown userdata={userdata} />} />
+
 								<Route
 									path={BASE_ROUTE + '/engineer'}
 									element={<EngineerListPage userdata={userdata} />}
