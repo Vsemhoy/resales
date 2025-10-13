@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Input, Button, Popover, Space } from 'antd';
-import { SendOutlined, SmileOutlined, FileAddOutlined } from '@ant-design/icons';
+import { Input, Button, Popover, Space, Upload } from 'antd';
+import { SendOutlined, SmileOutlined, FileAddOutlined, UploadOutlined } from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 import styles from './style/Chat.module.css';
 
@@ -21,29 +21,62 @@ export function ChatInput({ onSend }) {
 		setShowPicker(false);
 	}, []);
 
+	const handleKeyDown = useCallback(
+		(e) => {
+			if (e.key === 'Enter' && e.shiftKey) {
+				// Shift+Enter - перенос строки
+				e.preventDefault();
+				const { selectionStart, selectionEnd } = e.target;
+				const newValue =
+					inputValue.substring(0, selectionStart) + '\n' + inputValue.substring(selectionEnd);
+				setInputValue(newValue);
+
+				// Обновляем позицию курсора после следующего рендера
+				setTimeout(() => {
+					e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
+				}, 0);
+			} else if (e.key === 'Enter' && !e.shiftKey) {
+				// Просто Enter - отправка сообщения
+				e.preventDefault();
+				handleSend();
+			}
+		},
+		[inputValue, handleSend]
+	);
+
 	return (
 		<Space className={styles.spaceContainer}>
 			<Popover
-				content={<EmojiPicker onEmojiClick={onEmojiClick} />}
+				content={<EmojiPicker onEmojiClick={onEmojiClick}/>}
 				trigger="hover"
 				open={showPicker}
 				onOpenChange={setShowPicker}
 				placement="topRight"
 			>
-				<Button icon={<SmileOutlined />} />
+				<Button icon={<SmileOutlined/>}/>
 			</Popover>
 
-			<Button icon={<FileAddOutlined />} />
+			<Popover
+				content={
+					<Upload>
+						<Button icon={<UploadOutlined/>}>Click to Upload</Button>
+					</Upload>
+				}
+				trigger="hover"
+			>
+				<Button icon={<FileAddOutlined/>}/>
+			</Popover>
 
-			<Input
+			<Input.TextArea
+				className={styles.textArea}
 				value={inputValue}
 				onChange={(e) => setInputValue(e.target.value)}
+				onKeyDown={handleKeyDown}
 				placeholder="Введите сообщение..."
-				style={{ flex: 1 }}
-				onPressEnter={handleSend}
+				autoSize={{ minRows: 1, maxRows: 6 }}
 			/>
 
-			<Button type="primary" icon={<SendOutlined />} onClick={handleSend} />
+			<Button type="primary" icon={<SendOutlined/>} onClick={handleSend}/>
 		</Space>
 	);
 }

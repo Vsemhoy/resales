@@ -4,7 +4,6 @@ import { useSms } from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import styles from './style/Chat.module.css';
-// import { PRODMODE } from '../../../config/config';
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
@@ -15,26 +14,24 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		loading,
 		error,
 	} = useSms({
-		// url: '/api/sms',
 		chatId: 0,
 		mock: MOCK,
 		search,
 	});
 
-	// Функция для определения роли сообщения
-	const getRole = useMemo(() => {
-		return (sms) => {
-			if (!sms || !currentUserId) return null;
+	// Упрощенная функция определения роли
+	const getRole = (sms) => {
+		if (!sms || !currentUserId) return null;
+		return sms.from?.id === currentUserId ? 'self' : 'companion';
+	};
 
-			// Если сообщение от текущего пользователя - роль 'self'
-			if (sms.from?.id === currentUserId) {
-				return 'self';
-			}
+	// Универсальная функция для получения отображаемого имени
+	const getDisplayName = (sms, role, isSaved) => {
+		if (isSaved) return 'Сохранённое';
 
-			// Если сообщение не от текущего пользователя - роль 'companion'
-			return 'companion';
-		};
-	}, [currentUserId]);
+		const user = role === 'self' ? sms.to : sms.from;
+		return `${user?.surname ?? ''} ${user?.name ?? ''}`.trim();
+	};
 
 	const chats = useMemo(() => {
 		const normalizedSearch = search.toLowerCase();
@@ -42,41 +39,43 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		console.log('🔄 Processing chats, smsList length:', smsList.length);
 
 		const filtered = smsList.filter((sms) => {
-			const role = getRole(sms);
-			console.log('📞 Role for sms:', sms.id, role);
-
-			// Если это сообщение в сохраненных (от себя себе)
+			// Сообщения себе всегда показываем
 			if (sms.to?.id === currentUserId && sms.from?.id === currentUserId) {
 				return true;
 			}
 
-			// Определяем пользователя для поиска в зависимости от роли
-			const searchUser = role === 'self' ? sms.to : sms.from;
-
-			const fullName = `${searchUser?.surname ?? ''} ${searchUser?.name ?? ''}`.toLowerCase();
+			const role = getRole(sms);
+			const displayName = getDisplayName(sms, role, false);
 			const messageText = sms.text?.toLowerCase() || '';
-			const matchesSearch =
-				fullName.includes(normalizedSearch) || messageText.includes(normalizedSearch);
 
-			console.log('🔎 Search check:', { fullName, messageText, normalizedSearch, matchesSearch });
+			const matchesSearch =
+				displayName.toLowerCase().includes(normalizedSearch) ||
+				messageText.includes(normalizedSearch);
+
+			console.log('🔎 Search check:', {
+				displayName,
+				messageText,
+				normalizedSearch,
+				matchesSearch,
+			});
 
 			return matchesSearch;
 		});
 
 		console.log('📱 Filtered chats after search:', filtered.length);
 
-		const uniqueChatsMap = {};
-		filtered.forEach((sms) => {
+		// Группировка по chat_id с выбором последнего сообщения
+		const uniqueChatsMap = filtered.reduce((acc, sms) => {
 			const chatId = sms.chat_id;
 			const currentTime = sms.updated_at || sms.created_at;
+			const existing = acc[chatId];
 
-			if (
-				!uniqueChatsMap[chatId] ||
-				currentTime > (uniqueChatsMap[chatId].updated_at || uniqueChatsMap[chatId].created_at)
-			) {
-				uniqueChatsMap[chatId] = sms;
+			if (!existing || currentTime > (existing.updated_at || existing.created_at)) {
+				acc[chatId] = sms;
 			}
-		});
+
+			return acc;
+		}, {});
 
 		const result = Object.values(uniqueChatsMap).sort((a, b) => {
 			const timeA = a.updated_at || a.created_at;
@@ -86,9 +85,9 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 
 		console.log('💬 Final unique chats:', result.length);
 
-		// Добавляем чат "Сохранённое" с ролью 'self'
+		// Добавляем чат "Сохранённое"
 		result.unshift({
-			chat_id: 'saved',
+			chat_id: currentUserId,
 			from: { id: currentUserId, name: 'Вы', surname: '' },
 			to: { id: currentUserId, name: 'Вы', surname: '' },
 			text: '📁',
@@ -111,18 +110,8 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 				{chats.map((chat) => {
 					const isSaved = chat.chat_id === 'saved' || chat.isSavedChat;
 					const role = isSaved ? 'self' : getRole(chat);
-
-					// Определяем отображаемое имя в зависимости от роли
-					let displayName = '';
-					if (isSaved) {
-						displayName = 'Сохранённое';
-					} else if (role === 'self') {
-						// Для своих сообщений показываем имя получателя
-						displayName = `${chat.to?.surname ?? ''} ${chat.to?.name ?? ''}`.trim();
-					} else {
-						// Для входящих сообщений показываем имя отправителя
-						displayName = `${chat.from?.surname ?? ''} ${chat.from?.name ?? ''}`.trim();
-					}
+					const displayName = getDisplayName(chat, role, isSaved);
+					const isActive = chat.chat_id === selectedChatId;
 
 					const lastMessageText = chat.text || (
 						<>
@@ -130,7 +119,12 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 						</>
 					);
 
-					const isActive = chat.chat_id === selectedChatId;
+					const truncatedText =
+						typeof lastMessageText === 'string'
+							? lastMessageText.length > 20
+								? `${lastMessageText.slice(0, 20)} ...`
+								: lastMessageText
+							: lastMessageText;
 
 					return (
 						<li
@@ -142,13 +136,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 							}}
 						>
 							<div className={styles.companionName}>{displayName || 'Неизвестный'}</div>
-							<div className={styles.lastMessage}>
-								{typeof lastMessageText === 'string'
-									? lastMessageText.length > 20
-										? `${lastMessageText.slice(0, 20)} ...`
-										: lastMessageText
-									: lastMessageText}
-							</div>
+							<div className={styles.lastMessage}>{truncatedText}</div>
 						</li>
 					);
 				})}

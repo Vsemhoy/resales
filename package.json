@@ -41,7 +41,6 @@
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"if-you-can-not-push": "git remote set-url origin git@github.com:Vsemhoy/resales.git",
-		"pull": "git pull origin master",
 		"push-all-changes": "git add . && git commit -m\"update\" && git push origin",
 		"push-all-bogdan": "git add . && git commit -m\"update\" && git push origin master:bogdan",
 		"fetch-all": "git fetch origin && git merge origin/master",

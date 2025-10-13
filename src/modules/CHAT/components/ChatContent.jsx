@@ -1,200 +1,322 @@
 import styles from './style/Chat.module.css';
-// import { PRODMODE } from '../../../config/config';
-
-import {useState, useMemo, useCallback, useEffect} from 'react';
-// import { usePolling } from '../../../hooks/sms/usePolling';
-import {useUserData} from '../../../context/UserDataContext';
-import {useSendSms} from '../../../hooks/sms/useSendSms';
-// import { useCompanion } from '../../../hooks/sms/useCompanion';
-import {useSms} from '../../../hooks/sms/useSms';
-
-import {Layout, List, message, Button} from 'antd';
-import {SyncOutlined} from '@ant-design/icons';
-import {nanoid} from 'nanoid';
-import {ChatInput} from './ChatInput';
-import {MOCK} from '../mock/mock';
-
-// Импортируем новые компоненты сообщений
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { useUserData } from '../../../context/UserDataContext';
+import { useSendSms } from '../../../hooks/sms/useSendSms';
+import { useChatSocket } from '../../../context/ChatSocketContext';
+import { Layout, message } from 'antd';
+import { nanoid } from 'nanoid';
+import { ChatInput } from './ChatInput';
+import { ChatDivider } from './ChatDivider';
 import ChatSelfMsg from './ChatSelfMsg';
 import ChatIncomingMsg from './ChatIncomingMsg';
-
-const {Content, Footer} = Layout;
+import { CHAT_MOCK } from '../mock/mock';
+import { useSms } from '../../../hooks/sms/useSms';
+const { Content, Footer } = Layout;
 const generateUUID = () => nanoid(8);
+const { chatId } = useSms;
+const MemoChatSelfMsg = React.memo(ChatSelfMsg);
+const MemoChatIncomingMsg = React.memo(ChatIncomingMsg);
+const MemoChatDivider = React.memo(ChatDivider);
 
-export default function ChatContent({chatId}) {
-    const {userdata} = useUserData();
-    const currentUserId = userdata?.user?.id;
+export default function ChatContent({ chatId }) {
+	const messagesContainerRef = useRef(null);
+	const { userdata } = useUserData();
+	const currentUserId = userdata?.user?.id;
 
-    // const getRole = useCompanion(currentUserId);
+	const { sendSms } = useSendSms();
+	const { connectionStatus, socket } = useChatSocket();
 
-    const {
-        data: allSmsList = [],
-        loading,
-        error,
-        // refetch,
-    } = useSms({
-        url: '/api/sms',
-        mock: MOCK,
-    });
+	const [messages, setMessages] = useState([]);
+	const [who, setWho] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const [localMessages, setLocalMessages] = useState([]);
 
-    // Фильтруем сообщения по chat_id вручную
-    const smsList = useMemo(() => {
-        if (!chatId) return [];
+	// ---------------------------------------------------------------------------------------------------------------------
+	// MOCK: новые сообщения каждые 12 секунд
+	useEffect(() => {
+		if (connectionStatus !== 'mock') return;
 
-        const filtered = allSmsList.filter((msg) => {
-            const msgChatId = parseInt(msg.chat_id);
-            const targetChatId = parseInt(chatId);
-            return msgChatId === targetChatId;
-        });
+		const interval = setInterval(() => {
+			const newMsgId = Date.now();
+			const newMsg = {
+				id: newMsgId,
+				from_id: 540, // Это НЕ текущий пользователь, поэтому будет входящим сообщением
+				text: `Тестовое сообщение #${newMsgId}`,
+				answer: null,
+				to: { surname: 'Кошелев', name: 'Александр', id: 46 },
+				created_at: Math.floor(Date.now() / 1000),
+				updated_at: Math.floor(Date.now() / 1000),
+			};
+			setMessages((prev) => [...prev, newMsg]);
+		}, 12000);
 
-        return filtered;
-    }, [allSmsList, chatId]);
+		return () => clearInterval(interval);
+	}, [connectionStatus]);
+	// /--------------------------------------------------------------------------------------------------------------------
 
-    useEffect(() => {
-        // Отладочная логика (закомментирована)
-    }, [allSmsList, smsList, currentUserId, chatId, loading, error]);
+	// Функция для определения отправителя сообщения
+	const getMessageSenderId = useCallback((msg) => {
+		// PRODMODE формат: данные от Laravel
+		if (msg.right?.from_id) return msg.right.from_id;
+		if (msg.from_id) return msg.from_id;
+		if (msg.from?.id) return msg.from.id;
+		return null;
+	}, []);
 
-    const {sendSms} = useSendSms();
-    const [localMessages, setLocalMessages] = useState([]);
-    // const [lastUpdate, setLastUpdate] = useState(Date.now());
+	// Функция для нормализации сообщения
+	const normalizeMessage = useCallback(
+		(msg) => {
+			const senderId = getMessageSenderId(msg);
+			const isSelf = senderId === currentUserId || msg.isLocal;
 
-    // const handleManualRefresh = useCallback(() => {
-    //     refetch();
-    //     setLastUpdate(Date.now());
-    //     message.info('Сообщения обновлены');
-    // }, []);
+			return {
+				id: msg.id,
+				text: msg.text || msg.left?.text,
+				timestamp: msg.isLocal
+					? msg.timestamp
+					: (msg.updated_at || msg.created_at || msg.left?.updated_at || msg.left?.created_at) *
+					  1000,
+				role: isSelf ? 'self' : 'companion',
+				senderName: isSelf ? 'Вы' : msg.senderName || who || 'Собеседник',
+				isLocal: msg.isLocal || false,
+				isSending: msg.isSending || false,
+				// Сохраняем оригинальные данные для отладки
+				_raw: msg,
+			};
+		},
+		[currentUserId, who, getMessageSenderId]
+	);
 
+	useEffect(() => {
+		setLoading(true);
+		setError(null);
+		setMessages([]);
+		setLocalMessages([]);
+
+		// MOCK режим
+		if (connectionStatus === 'mock') {
+			const sms = CHAT_MOCK?.content?.messages || [];
+			setMessages(sms);
+			setWho('Собеседник');
+			setLoading(false);
+			return;
+		}
+
+		// SOCKET режим
+		if (connectionStatus === 'connected' && socket) {
+			const handleMessageNew = (msg) => {
+				console.log('📨 [CHAT] New message received:', {
+					message: msg,
+					senderId: getMessageSenderId(msg),
+					currentUserId,
+					isSelf: getMessageSenderId(msg) === currentUserId,
+				});
+
+				if ((!msg.text || msg.text.trim() === '') && (!msg.files || msg.files.length === 0)) return;
+
+				// Проверяем chat_id в разных форматах
+				const messageChatId = msg.chat_id || msg.left?.chat_id;
+				if (messageChatId !== chatId) return;
+
+				setMessages((prev) => {
+					// Проверяем, есть ли локальное сообщение с таким же текстом
+					const localIndex = prev.findIndex(
+						(lMsg) =>
+							lMsg.isLocal &&
+							lMsg.text === (msg.text || msg.left?.text) &&
+							getMessageSenderId(lMsg) === getMessageSenderId(msg)
+					);
+
+					if (localIndex >= 0) {
+						const newPrev = [...prev];
+						newPrev[localIndex] = {
+							...newPrev[localIndex],
+							id: msg.id || msg.left?.id,
+							isLocal: false,
+							isSending: false,
+						};
+						return newPrev;
+					}
+
+					return [...prev, msg];
+				});
+			};
+
+			const handleMessageUpdate = (updatedMsg) => {
+				setMessages((prev) =>
+					prev.map((m) => (m.id === updatedMsg.id ? { ...m, ...updatedMsg } : m))
+				);
+			};
+
+			// Подписываемся на правильные события WebSocket
+			socket.emit('room:join', chatId);
+			socket.on('sms:new_message', handleMessageNew);
+			socket.on('sms:update_message', handleMessageUpdate);
+
+			setLoading(false);
+
+			return () => {
+				socket.emit('room:leave', chatId);
+				socket.off('sms:new_message', handleMessageNew);
+				socket.off('sms:update_message', handleMessageUpdate);
+			};
+		}
+
+		// fallback
+		if (connectionStatus === 'disconnected') {
+			const sms = CHAT_MOCK?.content?.messages || [];
+			setMessages(sms);
+			setWho('Собеседник');
+			setLoading(false);
+		}
+	}, [chatId, socket, connectionStatus, currentUserId, getMessageSenderId]);
+
+	// --- Объединяем серверные и локальные сообщения ---
 	const allMessages = useMemo(() => {
-		const filteredLocal = localMessages.filter((msg) => msg.chatId === chatId);
-		const combined = [...smsList, ...filteredLocal];
+		const existingIds = new Set(messages.map((msg) => msg.id?.toString()));
+		const filteredLocal = localMessages.filter((lMsg) => !existingIds.has(lMsg.id?.toString()));
+		const combined = [...messages, ...filteredLocal];
 
-        return combined
-            .map((msg) => {
-                const isLocal = 'timestamp' in msg && typeof msg.timestamp === 'number';
+		return combined
+			.map(normalizeMessage)
+			.filter((msg) => msg.text) // Фильтруем сообщения без текста
+			.sort((a, b) => a.timestamp - b.timestamp);
+	}, [messages, localMessages, normalizeMessage]);
 
-                let timestamp;
-                if (isLocal) {
-                    timestamp = msg.timestamp;
-                } else {
-                    timestamp = (msg.updated_at || msg.created_at) * 1000;
-                }
+	// --- Разделители по датам ---
+	const formatChatDate = useCallback((ts) => {
+		const d = new Date(ts);
+		const today = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(today.getDate() - 1);
 
-                // Временная логика определения роли - замените на useCompanion когда будет готов
-                const isSelf = msg.from?.id === currentUserId;
-                const role = isLocal ? 'self' : isSelf ? 'self' : 'companion';
+		const isSameDay = (a, b) =>
+			a.getFullYear() === b.getFullYear() &&
+			a.getMonth() === b.getMonth() &&
+			a.getDate() === b.getDate();
 
-                let senderName = 'Неизвестный';
-                if (role === 'self') {
-                    senderName = 'Вы';
-                } else {
-                    senderName = `${msg.from?.name || ''} ${msg.from?.surname || ''}`.trim() || 'Собеседник';
-                }
+		if (isSameDay(d, today)) return 'Сегодня';
+		if (isSameDay(d, yesterday)) return 'Вчера';
+		return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
+	}, []);
 
-                return {
-                    id: msg.id || generateUUID(),
-                    text: msg.text || '',
-                    timestamp,
-                    time: new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}),
-                    role,
-                    senderName,
-                    isLocal,
-                    // Добавляем статус отправки
-                    isSending: msg.isSending || false,
-                };
-            })
-            .sort((a, b) => a.timestamp - b.timestamp);
-    }, [smsList, localMessages, chatId, allSmsList.length, currentUserId]);
+	const messagesWithDividers = useMemo(() => {
+		const items = [];
+		let lastDayKey = null;
 
-    const handleSend = useCallback(
-        async (text) => {
-            if (!text.trim()) return;
+		for (const msg of allMessages) {
+			const dayKey = new Date(msg.timestamp).toDateString();
+			if (lastDayKey !== dayKey) {
+				items.push({ type: 'divider', id: `divider-${dayKey}`, timestamp: msg.timestamp });
+				lastDayKey = dayKey;
+			}
+			items.push({ type: 'msg', id: msg.id, message: msg });
+		}
 
-            const newLocalMsg = {
-                id: generateUUID(),
-                chat_id: chatId,
-                text: text.trim(),
-                timestamp: Date.now(),
-                from: {id: currentUserId},
-                to: {id: chatId},
-                isLocal: true,
-                isSending: true, // Сообщение отправляется
-            };
+		return items;
+	}, [allMessages]);
 
-            // Сразу добавляем сообщение в чат
-            setLocalMessages((prev) => [...prev, newLocalMsg]);
+	// --- Скролл вниз при новых сообщениях ---
+	const messagesContainerRefScroll = useCallback(() => {
+		if (messagesContainerRef.current) {
+			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+		}
+	}, []);
 
-            try {
-                // Отправляем сообщение
-                await sendSms({to: chatId, text: text.trim(), answer: null});
+	useEffect(() => {
+		messagesContainerRefScroll();
+	}, [allMessages, chatId, messagesContainerRefScroll]);
 
-                // После успешной отправки меняем статус
-                setLocalMessages((prev) =>
-                    prev.map((msg) => (msg.id === newLocalMsg.id ? {...msg, isSending: false} : msg))
-                );
+	// --- Отправка сообщения ---
+	const handleSend = useCallback(
+		async (text) => {
+			if (!text.trim()) return;
 
-                // Сообщение остается в чате с обычным стилем
-            } catch (err) {
-                // При ошибке удаляем сообщение
-                setLocalMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
-                message.error(err.message || 'Ошибка при отправке сообщения');
-            }
-        },
-        [chatId, sendSms, currentUserId]
-    );
+			const id = generateUUID();
+			const newLocalMsg = {
+				id,
+				chat_id: chatId,
+				text: text.trim(),
+				timestamp: Date.now(),
+				from_id: currentUserId, // Явно указываем отправителя
+				isLocal: true,
+				isSending: true,
+			};
 
-    // Функция для рендеринга сообщений
-    const renderMessage = (message) => {
-        if (message.role === 'self') {
-            return <ChatSelfMsg key={message.id} message={message}/>;
-        } else {
-            return <ChatIncomingMsg key={message.id} message={message}/>;
-        }
-    };
+			setLocalMessages((prev) => [...prev, newLocalMsg]);
+			setMessages((prev) => [...prev, newLocalMsg]);
 
-    if (error) return <div className={styles.error}>Ошибка загрузки: {error}</div>;
+			try {
+				const res = await sendSms({ to: chatId, text: text.trim(), answer: null });
 
-    return (
-        <Layout className={styles.chatcontentLayout}>
-            <Content className={styles.chatContent}>
-                <div className={styles.chatHeader}>
-                    {/* <Button
-						icon={<SyncOutlined />}
-						loading={loading}
-						onClick={handleManualRefresh}
-						size="small"
-					>
-						Обновить
-					</Button>
-					<span className={styles.lastUpdate}>
-						Обновлено: {new Date(lastUpdate).toLocaleTimeString()}
-					</span> */}
-                    <span>*Имя Собеседника*</span>
-                </div>
+				if (res?.data?.id) {
+					setMessages((prev) =>
+						prev.map((m) =>
+							m.id === newLocalMsg.id
+								? { ...m, id: res.data.id, isLocal: false, isSending: false }
+								: m
+						)
+					);
+					setLocalMessages((prev) => prev.filter((m) => m.id !== newLocalMsg.id));
+				} else {
+					setMessages((prev) =>
+						prev.map((m) => (m.id === newLocalMsg.id ? { ...m, isSending: false } : m))
+					);
+				}
+			} catch (err) {
+				setLocalMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
+				setMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
+				message.error(err.message || 'Ошибка при отправке сообщения');
+			}
+		},
+		[chatId, sendSms, currentUserId]
+	);
 
-                {loading && allMessages.length === 0 ? (
-                    <p className={styles.loading}>Загрузка сообщений...</p>
-                ) : allMessages.length === 0 ? (
-                    <p className={styles.empty}>Нет сообщений</p>
-                ) : (
-                    <div className={styles.messagesList}>
-                        {allMessages.map(renderMessage)}
-                        {/* Тестовые сообщения для отладки стилей */}
-                        <ChatIncomingMsg
-                            message={{
-                                id: 'test-incoming-1',
-                                text: 'Тестовое входящее сообщение для проверки стилей',
-                                time: '12:00',
-                                senderName: 'Тестовый Собеседник',
-                            }}
-                        />
-                    </div>
-                )}
-            </Content>
+	const renderMessage = useCallback(
+		(message) =>
+			message.role === 'self' ? (
+				<MemoChatSelfMsg key={message.id} message={message} />
+			) : (
+				<MemoChatIncomingMsg key={message.id} message={message} />
+			),
+		[]
+	);
 
-            <Footer className={styles['chat-input__footer']}>
-                <ChatInput onSend={handleSend}/>
-            </Footer>
-        </Layout>
-    );
+	if (error) return <div className={styles.error}>Ошибка загрузки: {error}</div>;
 
+	return (
+		<Layout className={styles.chatcontentLayout}>
+			<Content className={styles.chatContent}>
+				<div className={styles.chatHeader}>
+					<span>{who || 'Собеседник'}</span>
+				</div>
+				<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+					{loading && allMessages.length === 0 ? (
+						<p className={styles.loading}>Загрузка сообщений...</p>
+					) : allMessages.length === 0 ? (
+						<p className={styles.empty}>Нет сообщений</p>
+					) : (
+						<div
+							ref={messagesContainerRef}
+							className={styles.messagesList}
+							style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}
+						>
+							{messagesWithDividers.map((item) =>
+								item.type === 'divider' ? (
+									<MemoChatDivider key={item.id}>{formatChatDate(item.timestamp)}</MemoChatDivider>
+								) : (
+									renderMessage(item.message)
+								)
+							)}
+						</div>
+					)}
+				</div>
+			</Content>
+
+			<Footer className={styles['chat-input__footer']}>
+				<ChatInput onSend={handleSend} />
+			</Footer>
+		</Layout>
+	);
 }
