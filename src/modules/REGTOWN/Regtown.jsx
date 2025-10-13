@@ -28,7 +28,7 @@ const Regtown = (props) => {
     const [townSearchStr, setTownSearchStr] = useState(null);
 
 
-    const [regions, setRegions] = useState(null);
+    const [regions, setRegions] = useState([]);
     const [sortedRegions, setSortedRegions] = useState(null);
 
     const [townsByRegions, setTownsByRegions] = useState(null);
@@ -191,6 +191,7 @@ const Regtown = (props) => {
                     <div className={'sa-regions-body-item'}>
                         <CustomInput id={option.id}
                                      name={option.name}
+                                     type={'region'}
                                      editSelectedRegion={editSelectedRegion}
                                      updateName={(name) => handleUpdateRegion(option, name)}
                                      radioBtn={true}
@@ -609,12 +610,13 @@ const Regtown = (props) => {
                             )}
                             <div className={'sa-towns-body sa-towns-body-s'}>
                                 {townsByRegions ? sortedTownsByRegions?.sort((a, b) => a.name.localeCompare(b.name))?.map((town, idx) => (
-                                    <div className={'sa-towns-body-item'} key={`towns-${town.id}-${idx}`}>
-                                        {/*<Input value={town.name}
-                                               readOnly={(town.id !== editSelectedTown)}
-                                        />*/}
+                                    <div className={`sa-towns-body-item`} key={`towns-${town.id}-${idx}`}>
                                         <CustomInput id={town.id}
                                                      name={town.name}
+                                                     type={'town'}
+                                                     regions={regions}
+                                                     id_region={town.id_region}
+                                                     selectedRegion={selectedRegion}
                                                      editSelectedTown={editSelectedTown}
                                                      updateName={(name) => handleUpdateTown(town, name)}
                                         />
