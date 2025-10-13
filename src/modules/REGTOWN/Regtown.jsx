@@ -620,9 +620,8 @@ const Regtown = (props) => {
                                                      editSelectedTown={editSelectedTown}
                                                      updateName={(name) => handleUpdateTown(town, name)}
                                                      selectRegionFromTown={() => {
-                                                         console.log(1)
                                                          setSelectedRegion(town.id_region);
-                                                         setTownSearchStr('');
+                                                         setTimeout(() => setTownSearchStr(null), 200);
                                                      }}
                                         />
                                         {town.id !== editSelectedTown ? (
