@@ -103,6 +103,16 @@ const Regtown = () => {
         }
     }, [townSearchStr]);
 
+    useEffect(() => {
+        if (isAlertVisible && alertType !== 'error') {
+            const timer = setTimeout(() => {
+                setIsAlertVisible(false);
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [isAlertVisible]);
+
     const fetchRegions = async () => {
         if (PRODMODE) {
             const path = `/api/regiontown/regions`;
