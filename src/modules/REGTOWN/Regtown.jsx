@@ -198,6 +198,7 @@ const Regtown = () => {
                                 <Button icon={<InboxOutlined />}
                                         color="danger"
                                         variant="filled"
+                                        onClick={() => handleDeleteRegion(option.id)}
                                 ></Button>
                             </Tooltip>
                         ) : (
@@ -406,6 +407,63 @@ const Regtown = () => {
         setEditSelectedTown(null);
     };
 
+    const handleDeleteRegion = async (regionId) => {
+        if (PRODMODE) {
+            const path = `/api/regiontown/regions/${regionId}`;
+            try {
+                let response = await PROD_AXIOS_INSTANCE.delete(path, {
+                    data: region,
+                    _token: CSRF_TOKEN,
+                });
+                if (response.data) {
+                    setIsAlertVisible(true);
+                    setAlertMessage('Успех!');
+                    setAlertDescription(response.data.message);
+                    setAlertType('success');
+
+                    fetchRegions().then();
+                    //setEditSelectedRegion(null);
+                }
+            } catch (e) {
+                console.log(e);
+                setIsAlertVisible(true);
+                setAlertMessage(`Произошла ошибка! ${path}`);
+                setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                setAlertType('error');
+            }
+        } else {
+            //setEditSelectedRegion(null);
+        }
+    };
+
+    const handleDeleteTown = async (townId) => {
+        if (PRODMODE) {
+            const path = `/api/regiontown/towns/${townId}`;
+            try {
+                let response = await PROD_AXIOS_INSTANCE.delete(path, {
+                    _token: CSRF_TOKEN,
+                });
+                if (response.data) {
+                    setIsAlertVisible(true);
+                    setAlertMessage('Успех!');
+                    setAlertDescription(response.data.message);
+                    setAlertType('success');
+
+                    fetchTownsByRegions().then();
+                }
+                //setSelectedRegionSelect(null);
+            } catch (e) {
+                console.log(e);
+                setIsAlertVisible(true);
+                setAlertMessage(`Произошла ошибка! ${path}`);
+                setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                setAlertType('error');
+            }
+        } else {
+            //setEditSelectedTown(null);
+        }
+    };
+
     return (
         <div className={'sa-regtown'}>
             <div style={{padding: '10px 12px 0 12px'}}>
@@ -585,6 +643,7 @@ const Regtown = () => {
                                                 <Button icon={<InboxOutlined/>}
                                                         color="danger"
                                                         variant="filled"
+                                                        onClick={() => handleDeleteTown(town.id)}
                                                 ></Button>
                                             </Tooltip>
                                         ) : (
