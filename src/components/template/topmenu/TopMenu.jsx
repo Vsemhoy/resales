@@ -219,12 +219,9 @@ const TopMenu = (props) => {
 							<div className={'sa-topmenu-button'}>Кураторство</div>
 						</NavLink>
 					)}
-
-					{userdata?.user?.super === 1 && (
-						<NavLink to="/regtown">
-							<div className={'sa-topmenu-button'}>Города и регионы</div>
-						</NavLink>
-					)}
+					<NavLink to="/regtown">
+						<div className={'sa-topmenu-button'}>Города и регионы</div>
+					</NavLink>
 
 					<NavLink to="/engineer">
 						<div className={'sa-topmenu-button'}>Инженеры</div>
