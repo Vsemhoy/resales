@@ -619,6 +619,11 @@ const Regtown = (props) => {
                                                      selectedRegion={selectedRegion}
                                                      editSelectedTown={editSelectedTown}
                                                      updateName={(name) => handleUpdateTown(town, name)}
+                                                     selectRegionFromTown={() => {
+                                                         console.log(1)
+                                                         setSelectedRegion(town.id_region);
+                                                         setTownSearchStr('');
+                                                     }}
                                         />
                                         {town.id !== editSelectedTown ? (
                                             <Tooltip title={'Перенести в другой регион'}>
