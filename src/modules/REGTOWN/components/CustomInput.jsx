@@ -24,12 +24,17 @@ const CustomInput = (props) => {
     const region = props.regions?.find(reg => reg.id === props.id_region);
 
     return (
-        <Tooltip title={(!(props.selectedRegion) && props.type === 'town') ? <Tag color={'purple'}>{region?.name}</Tag> : ''}
+        <Tooltip title={(!(props.selectedRegion) && props.type === 'town') ?
+                            <Tag color={'purple'}
+                                 onClick={() => props.selectRegionFromTown()}
+                            >{region?.name}</Tag> : ''
+                }
                  color="white"
                  styles={{
                      body: {
                          color: 'black',
                          border: '1px solid #d9d9d9',
+                         cursor: 'pointer',
                      },
                      root: {
                          maxWidth: '400px'
