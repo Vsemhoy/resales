@@ -158,7 +158,7 @@ const Regtown = (props) => {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
                         'region': selectedRegion,
-                        'town': townSearchStr
+                        'town': selectedRegion ? null : townSearchStr
                     },
                     _token: CSRF_TOKEN,
                 });
