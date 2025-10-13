@@ -347,7 +347,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 					chat_id: chatId,
 					from_id: 'self',
 					text,
-					created_at: Date.now() / 1000,
+					created_at: Date.now() / 100,
 					isSending: false,
 				};
 				setMessages((prev) => {
@@ -457,7 +457,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 						const newMessages = {
 							...prev,
 							[chatId]: chatMsgs.map((m) =>
-								m.id === msgId ? { ...m, text: newText, updated_at: Date.now() / 1000 } : m
+								m.id === msgId ? { ...m, text: newText, updated_at: Date.now() / 100 } : m
 							),
 						};
 						console.log(`💬 [FRONTEND] Edited message in chat ${chatId}`);
