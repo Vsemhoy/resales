@@ -16,11 +16,13 @@ import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import CustomInput from "./components/CustomInput";
 import {PRICE as region} from "../PRICE/mock/mock";
 
-const Regtown = () => {
+const Regtown = (props) => {
 
     const [isMounted, setIsMounted] = useState(false);
     const [isLoadingRegions, setIsLoadingRegions] = useState(false);
     const [isLoadingTowns, setIsLoadingTowns] = useState(false);
+
+    const [userData, setUserData] = useState(null);
 
     const [regionsSearchStr, setRegionsSearchStr] = useState(null);
     const [townSearchStr, setTownSearchStr] = useState(null);
@@ -54,6 +56,12 @@ const Regtown = () => {
             });
         }
     }, []);
+
+    useEffect(() => {
+        if (props.userdata) {
+            setUserData(props.userdata);
+        }
+    }, [props.userdata]);
 
     useEffect(() => {
         if (isMounted && selectedRegion) {
@@ -192,6 +200,7 @@ const Regtown = () => {
                                 <Button icon={<EditOutlined />}
                                         color="primary"
                                         variant="filled"
+                                        disabled={idDisabled()}
                                         onClick={() => setEditSelectedRegion(option.id)}
                                 ></Button>
                             </Tooltip>
@@ -208,6 +217,7 @@ const Regtown = () => {
                                 <Button icon={<InboxOutlined />}
                                         color="danger"
                                         variant="filled"
+                                        disabled={idDisabled()}
                                         onClick={() => handleDeleteRegion(option.id)}
                                 ></Button>
                             </Tooltip>
@@ -473,6 +483,10 @@ const Regtown = () => {
         }
     };
 
+    const idDisabled = () => {
+        return !(userData?.user?.super === 1 || userData?.acls?.includes(150));
+    };
+
     return (
         <div className={'sa-regtown'}>
             <div style={{padding: '10px 12px 0 12px'}}>
@@ -499,6 +513,7 @@ const Regtown = () => {
                                 variant={'solid'}
                                 icon={<PlusOutlined />}
                                 onClick={handleAddRegion}
+                                disabled={idDisabled()}
                         >Добавить регион</Button>
                     </div>
                     <div style={{padding: '0 10px'}}><Divider /></div>
@@ -564,7 +579,7 @@ const Regtown = () => {
                         <Button color={'primary'}
                                 variant={'solid'}
                                 icon={<PlusOutlined/>}
-                                disabled={!selectedRegion}
+                                disabled={!selectedRegion || idDisabled()}
                                 onClick={handleAddTown}
                         >Добавить город в регион</Button>
                     </div>
@@ -625,6 +640,7 @@ const Regtown = () => {
                                                     <Button icon={<RollbackOutlined/>}
                                                             color="purple"
                                                             variant="filled"
+                                                            disabled={idDisabled()}
                                                     ></Button>
                                                 </Popover>
                                             </Tooltip>
@@ -636,6 +652,7 @@ const Regtown = () => {
                                                 <Button icon={<EditOutlined/>}
                                                         color="primary"
                                                         variant="filled"
+                                                        disabled={idDisabled()}
                                                         onClick={() => setEditSelectedTown(town.id)}
                                                 ></Button>
                                             </Tooltip>
@@ -652,6 +669,7 @@ const Regtown = () => {
                                                 <Button icon={<InboxOutlined/>}
                                                         color="danger"
                                                         variant="filled"
+                                                        disabled={idDisabled()}
                                                         onClick={() => handleDeleteTown(town.id)}
                                                 ></Button>
                                             </Tooltip>

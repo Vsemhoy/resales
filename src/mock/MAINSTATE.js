@@ -51,6 +51,7 @@ export const MS_USER = {
 		137, // Rukop
 		138, // Can call curatorstvo
 		55, // Delete passport
+		150 //regtown edit
 	],
 	companies: [
 		{
