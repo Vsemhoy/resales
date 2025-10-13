@@ -116,8 +116,8 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 				from: { id: 540, name: 'Анатолий', surname: 'Дроботенко' },
 				to: { id: 46, name: 'Александр', surname: 'Кошелев' },
 				text: `Тестовое сообщение #${newMsgId}`,
-				created_at: Math.floor(Date.now() / 1000),
-				updated_at: Math.floor(Date.now() / 1000),
+				created_at: Math.floor(Date.now() / 100),
+				updated_at: Math.floor(Date.now() / 100),
 				files: [],
 			};
 			updateSmsList(newSms);
