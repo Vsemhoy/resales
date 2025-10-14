@@ -1,8 +1,7 @@
 import styles from './style/Chat.module.css';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useUserData } from '../../../context/UserDataContext.js';
 import { useChatSocket } from '../../../context/ChatSocketContext.js';
-import { useSms } from '../../../hooks/sms/useSms.js';
 import { useChatRole } from '../../../hooks/sms/useChatRole.js';
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
@@ -16,13 +15,6 @@ export const ChatBtn = () => {
 
 	// Используем кастомный хук для логики ролей
 	const { getRole, getDisplayName } = useChatRole(currentUserId);
-
-	// ДОБАВЛЕНО: Логирование для отладки
-	useEffect(() => {
-		console.log('🔍 [ChatBtn] Current user ID:', currentUserId);
-		console.log('🔍 [ChatBtn] Chats data:', chats);
-		console.log('🔍 [ChatBtn] Chats structure:', JSON.stringify(chats, null, 2));
-	}, [chats, currentUserId]);
 
 	// --- Формируем smsData (чаты, где участвует текущий пользователь) ---
 	const smsData = useMemo(() => {
@@ -47,7 +39,7 @@ export const ChatBtn = () => {
 				const displayName = getDisplayName(chat, role, false);
 
 				// Определяем companion на основе роли
-				const companion = role === 'self' ? chat.to : chat.from;
+				// const companion = role === 'self' ? chat.to : chat.from;
 
 				const result = {
 					id: chat.chat_id || chat.id,

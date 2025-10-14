@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { MOCK } from '../mock/mock';
-import { useSms } from '../../../hooks/sms/useSms';
+import useSms from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import { useChatRole } from '../../../hooks/sms/useChatRole';
@@ -10,15 +10,13 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 
-	let chat_id = null;
-
 	const {
-		data: smsList = [],
+		messages: smsList = [],
 		loading,
 		error,
 	} = useSms({
-		chatId: chat_id,
-		mock: MOCK,
+		// chatId: chat_id,
+		// mock: MOCK,
 		search,
 	});
 
@@ -43,12 +41,12 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 				displayName.toLowerCase().includes(normalizedSearch) ||
 				messageText.includes(normalizedSearch);
 
-			console.log('🔎 Search check:', {
-				displayName,
-				messageText,
-				normalizedSearch,
-				matchesSearch,
-			});
+			// console.log('🔎 Search check:', {
+			// 	displayName,
+			// 	messageText,
+			// 	normalizedSearch,
+			// 	matchesSearch,
+			// });
 
 			return matchesSearch;
 		});
@@ -94,7 +92,8 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
 
 	console.log('🎯 Rendering chats:', chats.length);
-
+	const DEBUGGER = 'DEBUGGER CHAT LIST';
+	console.log(DEBUGGER);
 	return (
 		<div className={styles['chat-list__container']}>
 			<ul className={styles['chat-list']}>
@@ -118,17 +117,20 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 							: lastMessageText;
 
 					return (
-						<li
-							key={chat.chat_id}
-							className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
-							onClick={() => {
-								console.log('🖱️ Selecting chat:', chat.chat_id);
-								onSelectChat?.(chat.chat_id);
-							}}
-						>
-							<div className={styles.companionName}>{displayName || 'Неизвестный'}</div>
-							<div className={styles.lastMessage}>{truncatedText}</div>
-						</li>
+						<>
+							{/* {DEBUGGER} */}
+							<li
+								key={chat.chat_id}
+								className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
+								onClick={() => {
+									console.log('🖱️ Selecting chat:', chat.chat_id);
+									onSelectChat?.(chat.chat_id);
+								}}
+							>
+								<div className={styles.companionName}>{displayName || 'Неизвестный'}</div>
+								<div className={styles.lastMessage}>{truncatedText}</div>
+							</li>
+						</>
 					);
 				})}
 			</ul>
