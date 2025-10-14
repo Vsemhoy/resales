@@ -39,7 +39,7 @@ export const useSendSms = () => {
 			console.log(to);
 			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
 
-			console.log('[useSendSms] Ответ от сервера:', response);
+			// console.log('[useSendSms] Ответ от сервера:', response);
 
 			if (response.status === 200) {
 				setSuccess(true);

@@ -1,10 +1,8 @@
 import styles from './style/Chat.module.css';
+import dayjs from 'dayjs';
 
-/**
- * Компонент для собственных (исходящих) сообщений
- */
 export default function ChatSelfMsg({ message }) {
-	const { text, time, isLocal, isSending, senderName } = message;
+	const { text, created_at, isLocal, isSending, senderName } = message;
 
 	// Используем только существующие классы
 	const messageClass = `${styles.message} ${styles.myMessage} ${
@@ -19,7 +17,7 @@ export default function ChatSelfMsg({ message }) {
 				<div className={styles.senderName}>{senderName}</div>
 				<span>{text}</span>
 				<div className={styles.time}>
-					{time}
+					{dayjs(+created_at * 1000).format('HH:mm')}
 					{/* Показываем "отправляется..." только когда сообщение еще отправляется */}
 					{isSending && <span className={styles.sending}> • отправляется...</span>}
 				</div>
