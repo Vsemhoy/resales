@@ -259,7 +259,10 @@ const AnLicenseMicroSectionTorg = (props) => {
                   key={'bodicdend_2_' + baseData?.id + id}
                     value={type}
                     options={options}
-                    onChange={setType}
+                    onChange={(ee)=>{
+                      setType(ee);
+                      setBLUR_FLAG(dayjs().unix()); 
+                    }}
                     size={'small'}
                     variant="borderless"
                     disabled={!editMode}
@@ -275,7 +278,10 @@ const AnLicenseMicroSectionTorg = (props) => {
                     size={'small'}
                     key={'bodicfddn_2_' + baseData?.id + id}
                     value={end_date}
-                    onChange={e => setEnd_date(e)}
+                    onChange={e => {
+                      setEnd_date(e);
+                      setBLUR_FLAG(dayjs().unix());
+                    }}
                     // placeholder="Controlled autosize"
                     readOnly={!editMode}
                     variant="borderless"

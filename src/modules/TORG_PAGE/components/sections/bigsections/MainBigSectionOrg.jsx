@@ -113,7 +113,10 @@ const MianBigSectionOrg = (props) => {
                     showSearch
                       key={'fsrow_' + itemId}
                       value={parseInt(id8an_fs)}
-                      onChange={setId8an_fs}
+                      onChange={(ee)=>{
+                        setId8an_fs(ee);
+                        setBLUR_FLAG(dayjs().unix());
+                      }}
                       // placeholder="Controlled autosize"
                       // readOnly={!editMode}
                       variant="borderless"
@@ -225,7 +228,10 @@ const MianBigSectionOrg = (props) => {
                     showSearch
                       key={'fsr2ow_' + itemId}
                       value={parseInt(id8an_profiles)}
-                      onChange={setId8an_profiles}
+                      onChange={(ee)=>{
+                        setId8an_profiles(ee);
+                      setBLUR_FLAG(dayjs().unix());
+                      }}
                       // placeholder="Controlled autosize"
                       // readOnly={!editMode}
                       variant="borderless"
@@ -251,7 +257,10 @@ const MianBigSectionOrg = (props) => {
                     showSearch
                       key={'fs54row_' + itemId}
                       value={parseInt(profsound)}
-                      onChange={setProfsound}
+                      onChange={(ee)=> {
+                      setProfsound(ee);
+                      setBLUR_FLAG(dayjs().unix());
+                      }}
                       // placeholder="Controlled autosize"
                       // readOnly={!editMode}
                       variant="borderless"

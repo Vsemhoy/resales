@@ -933,8 +933,15 @@ const OrgPage = (props) => {
 		setTempMainData(data);
 	}
 
+
+	// const handleContactChange = (data)=>{
+	// 	console.log('data', data);
+	// 	// setTempMain_contacts(data.filter((item)=>item.action));
+	// }
+
 	// Подготовка Контактов к отправке
 	const handleContactChange = (data)=>{
+		console.log('data', data)
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_contacts(tempMain_contacts.filter((item) => item.id !== data.id));
@@ -1264,7 +1271,7 @@ const OrgPage = (props) => {
 							on_change_bo_license={handleBoLicenseChange}
 							on_change_an_license={handleAnLicenseChange}
 							on_change_an_tolerance={handleAnToleranceChange}
-							on_change_requisites={handleRequisitesChange}
+							on_change_requisite={handleRequisitesChange}
 						/>
 
 						<CallsTabPage

@@ -252,59 +252,59 @@ const MainTabPage = (props) => {
     }
   }, [baseData]);
 
-  useEffect(() => {
-    if (props.on_change_contact){
-      props.on_change_contact(CONTACTS);
-    }
-  }, [CONTACTS]);
+  // useEffect(() => {
+  //   if (props.on_change_contact){
+  //     props.on_change_contact(CONTACTS);
+  //   }
+  // }, [CONTACTS]);
 
-  useEffect(() => {
-    if (props.on_change_requisites){
-      props.on_change_requisites(REQUISITES);
-    }
-  }, [REQUISITES]);
+  // useEffect(() => {
+  //   if (props.on_change_requisites){
+  //     props.on_change_requisites(REQUISITES);
+  //   }
+  // }, [REQUISITES]);
 
-    useEffect(() => {
-    if (props.on_change_bo_license){
-      props.on_change_bo_license(BOLICENSES);
-    }
-  }, [BOLICENSES]);
+  //   useEffect(() => {
+  //   if (props.on_change_bo_license){
+  //     props.on_change_bo_license(BOLICENSES);
+  //   }
+  // }, [BOLICENSES]);
 
-    useEffect(() => {
-    if (props.on_change_an_license){
-      props.on_change_an_license(ANLICENSES);
-    }
-  }, [ANLICENSES]);
+  //   useEffect(() => {
+  //   if (props.on_change_an_license){
+  //     props.on_change_an_license(ANLICENSES);
+  //   }
+  // }, [ANLICENSES]);
 
-    useEffect(() => {
-    if (props.on_change_an_tolerance){
-      props.on_change_an_tolerance(ANTOLERANCES);
-    }
-  }, [ANTOLERANCES]);
+  //   useEffect(() => {
+  //   if (props.on_change_an_tolerance){
+  //     props.on_change_an_tolerance(ANTOLERANCES);
+  //   }
+  // }, [ANTOLERANCES]);
 
-    useEffect(() => {
-    if (props.on_change_legal_address){
-      props.on_change_legal_address(ORGLEGADDRESSES);
-    }
-  }, [ORGLEGADDRESSES]);
+  //   useEffect(() => {
+  //   if (props.on_change_legal_address){
+  //     props.on_change_legal_address(ORGLEGADDRESSES);
+  //   }
+  // }, [ORGLEGADDRESSES]);
 
-      useEffect(() => {
-    if (props.on_change_address){
-      props.on_change_address(ORGADDRESSES);
-    }
-  }, [ORGADDRESSES]);
+  //     useEffect(() => {
+  //   if (props.on_change_address){
+  //     props.on_change_address(ORGADDRESSES);
+  //   }
+  // }, [ORGADDRESSES]);
 
-      useEffect(() => {
-    if (props.on_change_phone){
-      props.on_change_phone(ORGPHONES);
-    }
-  }, [ORGPHONES]);
+  //     useEffect(() => {
+  //   if (props.on_change_phone){
+  //     props.on_change_phone(ORGPHONES);
+  //   }
+  // }, [ORGPHONES]);
 
-      useEffect(() => {
-    if (props.on_change_email){
-      props.on_change_email(ORGEMAILS);
-    }
-  }, [ORGEMAILS]);
+  //     useEffect(() => {
+  //   if (props.on_change_email){
+  //     props.on_change_email(ORGEMAILS);
+  //   }
+  // }, [ORGEMAILS]);
 
 
 
@@ -363,7 +363,7 @@ const MainTabPage = (props) => {
 
   const handleUpdateContacts = (e,a,data)=>{
     if (props.on_change_contact){
-      props.on_change_contact(e,a,data);
+      props.on_change_contact(data);
     }
     if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного

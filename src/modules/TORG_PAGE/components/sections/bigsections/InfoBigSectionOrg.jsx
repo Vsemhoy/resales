@@ -140,7 +140,10 @@ const InfoBigSectionOrg = (props) => {
                     showSearch
                       key={'fsr2ow_' + itemId}
                       value={parseInt(statusmoney)}
-                      onChange={setStatusmoney}
+                      onChange={(ee)=>{
+                        setStatusmoney(ee);
+                        setBLUR_FLAG(dayjs().unix());
+                        }}
                       // placeholder="Controlled autosize"
                       // readOnly={!editMode}
                       variant="borderless"
@@ -166,7 +169,10 @@ const InfoBigSectionOrg = (props) => {
                     showSearch
                       key={'fs54row_' + itemId}
                       value={parseInt(conveyance)}
-                      onChange={setConveyance}
+                      onChange={(ee)=>{
+                        setConveyance(ee);
+                        setBLUR_FLAG(dayjs().unix());
+                        }}
                       // placeholder="Controlled autosize"
                       // readOnly={!editMode}
                       variant="borderless"
@@ -200,8 +206,11 @@ const InfoBigSectionOrg = (props) => {
                     <Select
                     showSearch
                       key={'fsr2ow_' + itemId}
-                      value={parseInt(statusmoney)}
-                      onChange={setStatusmoney}
+                      value={parseInt(typeList)}
+                      onChange={(ee)=>{
+                        setTypeList(ee);
+                        setBLUR_FLAG(dayjs().unix());
+                        }}
                       // placeholder="Controlled autosize"
                       // readOnly={!editMode}
                       variant="borderless"
@@ -216,7 +225,7 @@ const InfoBigSectionOrg = (props) => {
                       disabled={!editMode}
                     />,
                     required: true,
-                    value: statusmoney
+                    value: typeList
                 },
                 {
                   edit_mode: editMode,

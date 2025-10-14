@@ -4,6 +4,7 @@ import { Button, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import dayjs from 'dayjs';
 
 
 const ContactEmailMicroSectionTorg = (props) => {
@@ -28,6 +29,7 @@ const ContactEmailMicroSectionTorg = (props) => {
   const [id_orgsusers, setIdOrgsusers] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
+      const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
 
   // ██    ██ ███████ ███████ 
@@ -86,6 +88,7 @@ const ContactEmailMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
+        if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
@@ -124,8 +127,7 @@ const ContactEmailMicroSectionTorg = (props) => {
   
     }, [
       id_orgsusers,
-      email,
-      comment,
+      BLUR_FLAG,
       deleted
     ]);
 
@@ -153,6 +155,7 @@ const ContactEmailMicroSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={64}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
                   value: email
@@ -173,7 +176,7 @@ const ContactEmailMicroSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={5000}
-                    
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: false,
                   value: comment

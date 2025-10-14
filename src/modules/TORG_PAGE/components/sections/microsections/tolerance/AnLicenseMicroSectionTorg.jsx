@@ -140,13 +140,6 @@ const AnLicenseMicroSectionTorg = (props) => {
           // При сверх-быстром изменении полей в разных секциях могут быть гонки
         if (editMode  && baseData){
             if (props.on_change){
-              // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
-              
-              // baseData.id_orgsusers = id_orgsusers;
-              // baseData.number        = number?.trim();
-              // baseData.comment      = comment?.trim();
-              // baseData.ext          = ext;
-              // baseData.deleted      = deleted;
              
               baseData.id_orgs = id_orgs;
               if (props.doc_type ===  1){
@@ -196,7 +189,10 @@ const AnLicenseMicroSectionTorg = (props) => {
                   key={'analicensde_2_' + baseData?.id + id_orgs}
                     value={type}
                     options={options}
-                    onChange={setType}
+                    onChange={(ee)=>{
+                      setBLUR_FLAG(dayjs().unix());
+                      setType(ee);
+                      }}
                     size={'small'}
                     variant="borderless"
                     disabled={!editMode}

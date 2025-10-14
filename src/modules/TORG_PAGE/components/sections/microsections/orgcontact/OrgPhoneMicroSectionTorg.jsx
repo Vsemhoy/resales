@@ -4,6 +4,7 @@ import { Button, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import dayjs from 'dayjs';
 
 
 const OrgPhoneMicroSectionTorg = (props) => {
@@ -158,8 +159,9 @@ const OrgPhoneMicroSectionTorg = (props) => {
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={25}
+                    maxLength={55}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
                   value: number
@@ -180,6 +182,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={64}
                     required={false}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: false,
                   value: ext
@@ -200,7 +203,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={5000}
-                    
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: false,
                   value: comment

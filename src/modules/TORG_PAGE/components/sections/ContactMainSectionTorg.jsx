@@ -266,11 +266,12 @@ useEffect(() => {
             baseData.deleted = deleted;
             baseData.unsubscribe = unsubscribe;
 
-            baseData.contactstelephones = contactstelephones.concat(newContactstelephones);
-            baseData.contactmobiles =     contactmobiles.concat(newContactmobiles);
-            baseData.contacthomephones =  contacthomephones.concat(newContacthomephones);
-            baseData.contactemails =      contactemails.concat(newContactemails);
-            baseData.contactmessangers =  contactmessangers.concat(newContactmessangers);
+            /** Сюда ничего не добавляем, иначе будет бесконечный add */
+            baseData.contactstelephones    = contactstelephones;
+            baseData.contactmobiles        = contactmobiles;
+            baseData.contacthomephones     = contacthomephones;
+            baseData.contactemails         = contactemails;
+            baseData.contactmessangers     = contactmessangers;
 
             baseData.up_contactstelephones = updatedContactstelephones.concat(newContactstelephones);
             baseData.up_contactmobiles =     updatedContactmobiles.concat(newContactmobiles);
@@ -823,11 +824,12 @@ useEffect(() => {
 
 
     const updateContactPhone = (id, value, field) => {
-    setContactstelephones(prev =>
-      prev.map(item =>
-        item.id === id ? value : item
-      )
-    );
+      setContactstelephones(prev =>
+        prev.map(item =>
+          item.id === id ? value : item
+        )
+      );
+
     let existed = updatedContactstelephones.find((item)=> item.id === id);
     if (existed){
       setUpdatedNewContactstelephones(prev =>
@@ -1276,7 +1278,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactPhone}
                 on_delete={(id)=>{
-                  setNewContactstelephones(newContactstelephones.filter(item => item.id !== id));
+                  setNewContactstelephones(newContactstelephones.filter(item2 => item2.id !== id));
                 }}
           />
         ))}
@@ -1293,7 +1295,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactMobile}
                 on_delete={(id)=>{
-                  setNewContactmobiles(newContactmobiles.filter(item => item.id !== id));
+                  setNewContactmobiles(newContactmobiles.filter(item2 => item2.id !== id));
                 }}
           />
         ))}</div>
@@ -1309,7 +1311,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactHomePhone}
                 on_delete={(id)=>{
-                  setNewContacthomephones(newContacthomephones.filter(item => item.id !== id));
+                  setNewContacthomephones(newContacthomephones.filter(item2 => item2.id !== id));
                 }}
           />
         ))}</div>
@@ -1325,7 +1327,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactEmail}
                 on_delete={(id)=>{
-                  setNewContactEmails(newContactemails.filter(item => item.id !== id));
+                  setNewContactEmails(newContactemails.filter(item2 => item2.id !== id));
                 }}
               />
         ))}</div>
@@ -1341,7 +1343,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactMessanger}
                 on_delete={(id)=>{
-                  setNewContactmessangers(newContactmessangers.filter(item => item.id !== id));
+                  setNewContactmessangers(newContactmessangers.filter(item2 => item2.id !== id));
                 }}
                 selects={selects}
           />
