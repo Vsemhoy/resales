@@ -418,3 +418,18 @@
 .sa-brand-new-row:first-child {
 	margin-top: 16px !important;
 }
+.sa-och-top {
+    font-size: medium;
+    color: #292929;
+		padding-bottom: 3px;
+		padding-top: 3px;
+}
+.sa-org-main-collapse-item {
+	margin-bottom: 12px;
+}
+.sa-org-main-collapse-stack {
+	background-color: #e7ebef;
+}
+.sa-org-collapse-buttons {
+	padding-right: 9px;
+}

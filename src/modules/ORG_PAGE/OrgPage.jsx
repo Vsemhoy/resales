@@ -119,9 +119,7 @@ const OrgPage = (props) => {
 	// /** Пачка данных компании, но не все данные */
 	// const [baseOrgData, setBaseOrgDate] = useState(null);
 
-	const [openedFilters, setOpenedFilters] = useState(false);
-
-	const [baseOrgs, setBaseOrgs] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]);
+	const [COLLECTOR, setCOLLECTOR] = useState({});
 
 	const [baseMainData, setBaseMainData] = useState(null);
 	const [baseProjectsData, setBaseProjectsData] = useState(null);
@@ -131,9 +129,9 @@ const OrgPage = (props) => {
 	// Контейнеры, куда сохраняются данные из вкладок при нажатии кнопки сохранить
 	// Далее дебаунс вызывает фильтрацию данных и отправку на сервер
 	const [tempMainData, setTempMainData] = useState(null);
-	const [tempProjectsData, setTempProjectsData] = useState(null);
-	const [tempCallsData, setTempCallsData] = useState(null);
-	const [tempNotesData, setTempNotesData] = useState(null);
+	const [tempProjectsData, setTempProjectsData] = useState([]);
+	const [tempCallsData, setTempCallsData] = useState([]);
+	const [tempNotesData, setTempNotesData] = useState([]);
 
 	const [tempMain_contacts, setTempMain_contacts] = useState([]);
 	const [tempMain_phones, setTempMain_phones] = useState([]);
@@ -184,14 +182,51 @@ const OrgPage = (props) => {
 
 
 	useEffect(() => {
-	  console.log('tempMain_contacts', tempMain_contacts)
-	  console.log('tempMain_addresses', tempMain_addresses)
-	  console.log('tempMain_legalAddresses', tempMain_legalAddresses)
-	  console.log('tempMain_phones', tempMain_phones)
-	  console.log('tempMain_emails', tempMain_emails)
-	}, [tempMain_contacts, tempMain_addresses, tempMain_emails, tempMain_legalAddresses,
-		tempMain_phones, tempMain_an_licenses, tempMain_an_requisites, tempMain_bo_licenses,
-		tempMain_an_tolerances
+		if (
+			tempMainData || 
+			tempMain_contacts?.length ||
+		tempMain_addresses?.length ||
+		tempMain_emails?.length ||
+		tempMain_legalAddresses?.length ||
+		tempMain_phones?.length ||
+		tempMain_an_licenses?.length ||
+		tempMain_an_requisites?.length ||
+		tempMain_bo_licenses?.length ||
+		tempMain_an_tolerances?.length ||
+		tempMainData?.length 
+		) {
+			setIsSmthChanged(true);
+			console.log('[ORG]','SOME CHANGED');
+		} else {
+			setIsSmthChanged(false);
+			console.log('[ORG]','SOME NOT CHANGED');
+		}
+
+		let collect = {};
+
+		collect.main = tempMainData;
+		collect.contacts = tempMain_contacts;
+		collect.org_phones = tempMain_phones;
+		collect.org_emails = tempMain_emails;
+		collect.org_addresses = tempMain_addresses;
+		collect.org_legaladdresses = tempMain_legalAddresses;
+		collect.org_requisites = tempMain_an_requisites;
+		collect.org_an_licenses = tempMain_an_licenses;
+		collect.org_an_tolerances = tempMain_an_tolerances;
+		collect.org_bo_licenses = tempMain_bo_licenses;
+
+		console.log(collect);
+
+	}, [tempMain_contacts, 
+		tempMain_addresses,
+		tempMain_emails,
+		tempMain_legalAddresses,
+		tempMain_phones,
+		tempMain_an_licenses,
+		tempMain_an_requisites,
+		tempMain_bo_licenses,
+		tempMain_an_tolerances,
+		tempMainData
 
 	]);
 
@@ -587,7 +622,7 @@ const OrgPage = (props) => {
 			}
 		} else {
 			//setUserAct(USDA);
-			console.log('SEND', dataToUpdate);
+			// console.log('SEND', dataToUpdate);
 			clearTemps();
 		}
 
@@ -660,67 +695,69 @@ const OrgPage = (props) => {
 			setIsSmthChanged(false);
 	};
 
+
+
 	useEffect(() => {
 		if (editMode === false){ return; }
 		console.log(tempMainData, tempNotesData, tempCallsData);
 		console.log('isSmthChanged', isSmthChanged);
 	}, [isSmthChanged]);
 
-	const handleMaintabObjectDataChange = (key, dataarr) => {
-		if (!editMode){ return; }
-		console.log('MAIN TAB OBJECT SETTER');
-		console.log(key, "-", dataarr);
+	// const handleMaintabObjectDataChange = (key, dataarr) => {
+	// 	if (!editMode){ return; }
+	// 	console.log('MAIN TAB OBJECT SETTER');
+	// 	console.log(key, "-", dataarr);
 
-		if (key === 'emails'){
-			setTempMain_emails(dataarr);
-		} else if (key === 'active_licenses'){
-			setTempMain__an_licenses(dataarr);
-		} else if (key === 'active_tolerance'){
-			setTempMain_an_tolerances(dataarr);
-		} else if (key === 'active_licenses_bo'){
-			setTempMain_bo_licenses(dataarr);
-		} else if (key === 'requisites'){
-			setTempMain_an_requisites(dataarr);
-		} else if (key === 'phones'){
-			setTempMain_phones(dataarr);
-		// } else if (key === 'contacts'){
-		// 	setTempMain_contacts(dataarr);
-		} else if (key === 'address'){
-			setTempMain_addresses(dataarr);
-		} else if (key === 'legaladdresses'){
-			setTempMain_legalAddresses(dataarr);
-		} else if (key === 'emails'){
-			setTempMain_emails(dataarr);
-		}
-	};
+	// 	if (key === 'emails'){
+	// 		setTempMain_emails(dataarr);
+	// 	} else if (key === 'active_licenses'){
+	// 		setTempMain__an_licenses(dataarr);
+	// 	} else if (key === 'active_tolerance'){
+	// 		setTempMain_an_tolerances(dataarr);
+	// 	} else if (key === 'active_licenses_bo'){
+	// 		setTempMain_bo_licenses(dataarr);
+	// 	} else if (key === 'requisites'){
+	// 		setTempMain_an_requisites(dataarr);
+	// 	} else if (key === 'phones'){
+	// 		setTempMain_phones(dataarr);
+	// 	// } else if (key === 'contacts'){
+	// 	// 	setTempMain_contacts(dataarr);
+	// 	} else if (key === 'address'){
+	// 		setTempMain_addresses(dataarr);
+	// 	} else if (key === 'legaladdresses'){
+	// 		setTempMain_legalAddresses(dataarr);
+	// 	} else if (key === 'emails'){
+	// 		setTempMain_emails(dataarr);
+	// 	}
+	// };
 
-	useEffect(() => {
-		if (!editMode){ return; }
-		let copyData = tempMainData ? tempMainData :  JSON.parse(JSON.stringify(baseMainData));
-			if (copyData){
-				copyData.active_licenses =     tempMain_an_licenses;
-				copyData.active_tolerance =    tempMain_an_tolerances;
-				copyData.active_licenses_bo =  tempMain_bo_licenses;
-				copyData.legaladdresses =      tempMain_legalAddresses;
-				copyData.address =             tempMain_addresses;
-				copyData.emails =              tempMain_emails;
-				copyData.phones =              tempMain_phones;
-				copyData.requisites =          tempMain_an_requisites;
-				copyData.contacts =            tempMain_contacts;
-				setTempMainData(copyData);
-				console.log('END POINT ALT', copyData);
-			}
-	}, [
-		tempMain_an_licenses,
-		tempMain_an_tolerances,
-		tempMain_bo_licenses,
-		tempMain_legalAddresses,
-		tempMain_addresses,
-		tempMain_emails,
-		tempMain_phones,
-		tempMain_an_requisites,
-		tempMain_contacts
-	]);
+	// useEffect(() => {
+	// 	if (!editMode){ return; }
+	// 	let copyData = tempMainData ? tempMainData :  JSON.parse(JSON.stringify(baseMainData));
+	// 		if (copyData){
+	// 			copyData.active_licenses =     tempMain_an_licenses;
+	// 			copyData.active_tolerance =    tempMain_an_tolerances;
+	// 			copyData.active_licenses_bo =  tempMain_bo_licenses;
+	// 			copyData.legaladdresses =      tempMain_legalAddresses;
+	// 			copyData.address =             tempMain_addresses;
+	// 			copyData.emails =              tempMain_emails;
+	// 			copyData.phones =              tempMain_phones;
+	// 			copyData.requisites =          tempMain_an_requisites;
+	// 			copyData.contacts =            tempMain_contacts;
+	// 			setTempMainData(copyData);
+	// 			console.log('END POINT ALT', copyData);
+	// 		}
+	// }, [
+	// 	tempMain_an_licenses,
+	// 	tempMain_an_tolerances,
+	// 	tempMain_bo_licenses,
+	// 	tempMain_legalAddresses,
+	// 	tempMain_addresses,
+	// 	tempMain_emails,
+	// 	tempMain_phones,
+	// 	tempMain_an_requisites,
+	// 	tempMain_contacts
+	// ]);
 
 
 
@@ -731,44 +768,7 @@ const OrgPage = (props) => {
 	const handleTabDataChange = (tab_name, data) => {
 		if (!editMode) return;
 		console.log('END POOINT', tab_name, data);
-		if (tab_name === 'main' && data){
-
-
-			let copyData = JSON.parse(JSON.stringify(data));
-			// if (JSON.stringify(data) !== JSON.stringify(baseMainData)){
-			console.log('BASE MAIN DATA', baseMainData);
-			if (!IsSameComparedSomeOrgData(data, baseMainData, MAIN_ORG_DATA_IGNORE_KEYS)){
-				copyData.active_licenses =     tempMain_an_licenses;
-				copyData.active_tolerance =    tempMain_an_tolerances;
-				copyData.active_licenses_bo =  tempMain_bo_licenses;
-				copyData.legaladdresses =      tempMain_legalAddresses;
-				copyData.address =             tempMain_addresses;
-				copyData.emails =              tempMain_emails;
-				copyData.phones =              tempMain_phones;
-				copyData.requisites =          tempMain_an_requisites;
-				copyData.contacts = 			tempMain_contacts;
-				console.log('SET COPY DATA', copyData)
-				// alert('ERROR');
-				setTempMainData(copyData);
-			} else {
-				copyData = JSON.parse(JSON.stringify(baseMainData));
-				copyData.active_licenses =     tempMain_an_licenses;
-				copyData.active_tolerance =    tempMain_an_tolerances;
-				copyData.active_licenses_bo =  tempMain_bo_licenses;
-				copyData.legaladdresses =      tempMain_legalAddresses;
-				copyData.address =             tempMain_addresses;
-				copyData.emails =              tempMain_emails;
-				copyData.phones =              tempMain_phones;
-				copyData.contacts = 			tempMain_contacts;
-
-				console.log('SET LAST COPY DATA', copyData);
-				// console.log('SET ANTI COPY DATA', copyData)
-				// if (cop)
-				// 	copyData.contacts =              ;
-				setTempMainData(copyData);
-			}
-
-		} else if (tab_name === 'projects'){
+	 if (tab_name === 'projects'){
 			if (JSON.stringify(data) !== JSON.stringify(baseProjectsData)){
 				setTempProjectsData(data);
 			} else {
@@ -801,24 +801,24 @@ const OrgPage = (props) => {
 
 
 
-		useEffect(() => {
-			if (tempCallsData || tempNotesData || tempProjectsData || !IsSameComparedSomeOrgData(tempMainData, baseMainData)  ||
-				tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
-				tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
-				tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
-			){
-				console.log('CHANGE LISTENER', tempCallsData, tempNotesData, tempProjectsData);
+		// useEffect(() => {
+		// 	if (tempCallsData || tempNotesData || tempProjectsData || !IsSameComparedSomeOrgData(tempMainData, baseMainData)  ||
+		// 		tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
+		// 		tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
+		// 		tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
+		// 	){
+		// 		console.log('CHANGE LISTENER', tempCallsData, tempNotesData, tempProjectsData);
 
-				setIsSmthChanged(true);
-			}  else 
-				{
-				setIsSmthChanged(false);
-			}
-		}, [tempCallsData, tempMainData, tempNotesData, tempProjectsData,
-			tempMain_addresses, tempMain_an_licenses, tempMain_an_requisites,
-			tempMain_an_requisites, tempMain_an_tolerances, tempMain_emails,
-			tempMain_legalAddresses, tempMain_phones
-		]);
+		// 		setIsSmthChanged(true);
+		// 	}  else 
+		// 		{
+		// 		setIsSmthChanged(false);
+		// 	}
+		// }, [tempCallsData, tempMainData, tempNotesData, tempProjectsData,
+		// 	tempMain_addresses, tempMain_an_licenses, tempMain_an_requisites,
+		// 	tempMain_an_requisites, tempMain_an_tolerances, tempMain_emails,
+		// 	tempMain_legalAddresses, tempMain_phones
+		// ]);
 
 	const customClick = (button_id) => {
 		if (button_id === 1){
@@ -832,72 +832,72 @@ const OrgPage = (props) => {
 		let iid = itemId;
 		setItemId(0);
 
-			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
-				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
-				setTempMainData(null);
-				setTempMain_an_requisites([]);
-				setTempMain__an_licenses([]);
-				setTempMain_an_tolerances([]);
-				setTempMain_bo_licenses([]);
-				setTempMain_emails([]);
-				setTempMain_legalAddresses([]);
-				setTempMain_phones([]);
-				setTempMain_addresses([]);
-				setTempMain_contacts([]);
+			// if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
+			// 	 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
+			// 	setTempMainData(null);
+			// 	setTempMain_an_requisites([]);
+			// 	setTempMain__an_licenses([]);
+			// 	setTempMain_an_tolerances([]);
+			// 	setTempMain_bo_licenses([]);
+			// 	setTempMain_emails([]);
+			// 	setTempMain_legalAddresses([]);
+			// 	setTempMain_phones([]);
+			// 	setTempMain_addresses([]);
+			// 	setTempMain_contacts([]);
 
-				get_main_data_action(iid);
-			}
-			if (tempProjectsData && tempProjectsData.length > 0){
-					setTempProjectsData(null);
-					get_projects_data_action(iid);
-				}
-				if (tempCallsData && tempCallsData.length > 0){
-					setTempCallsData(null);
-					get_org_calls_action(iid);
-				}
-				if (tempNotesData && tempNotesData.length > 0){
-					setTempNotesData(null);
-					get_notes_data_action(iid);
-				}
-
-
-				if (tempMain_addresses && tempMain_addresses.length > 0){
-					setTempMain_addresses([]);
-				}
-
-				if (tempMain_an_licenses && tempMain_an_licenses.length > 0){
-					setTempMain__an_licenses([]);
-				}
-
-				if (tempMain_an_requisites && tempMain_an_requisites.length > 0){
-					setTempMain_an_requisites([]);
-				}
+			// 	get_main_data_action(iid);
+			// }
+			// if (tempProjectsData && tempProjectsData.length > 0){
+			// 		setTempProjectsData(null);
+			// 		get_projects_data_action(iid);
+			// 	}
+			// 	if (tempCallsData && tempCallsData.length > 0){
+			// 		setTempCallsData(null);
+			// 		get_org_calls_action(iid);
+			// 	}
+			// 	if (tempNotesData && tempNotesData.length > 0){
+			// 		setTempNotesData(null);
+			// 		get_notes_data_action(iid);
+			// 	}
 
 
-				if (tempMain_an_tolerances && tempMain_an_tolerances.length > 0){
-					setTempMain_an_tolerances([]);
-				}
+			// 	if (tempMain_addresses && tempMain_addresses.length > 0){
+			// 		setTempMain_addresses([]);
+			// 	}
+
+			// 	if (tempMain_an_licenses && tempMain_an_licenses.length > 0){
+			// 		setTempMain__an_licenses([]);
+			// 	}
+
+			// 	if (tempMain_an_requisites && tempMain_an_requisites.length > 0){
+			// 		setTempMain_an_requisites([]);
+			// 	}
 
 
-				if (tempMain_bo_licenses && tempMain_bo_licenses.length > 0){
-					setTempMain_bo_licenses([]);
-				}
+			// 	if (tempMain_an_tolerances && tempMain_an_tolerances.length > 0){
+			// 		setTempMain_an_tolerances([]);
+			// 	}
 
-				if (tempMain_emails && tempMain_emails.length > 0){
-					setTempMain_emails([]);
-				}
+
+			// 	if (tempMain_bo_licenses && tempMain_bo_licenses.length > 0){
+			// 		setTempMain_bo_licenses([]);
+			// 	}
+
+			// 	if (tempMain_emails && tempMain_emails.length > 0){
+			// 		setTempMain_emails([]);
+			// 	}
 				
-				if (tempMain_legalAddresses && tempMain_legalAddresses.length > 0){
-					setTempMain_legalAddresses([]);
-				}
+			// 	if (tempMain_legalAddresses && tempMain_legalAddresses.length > 0){
+			// 		setTempMain_legalAddresses([]);
+			// 	}
 
-				if (tempMain_phones && tempMain_phones.length > 0){
-					setTempMain_phones([]);
-				}
+			// 	if (tempMain_phones && tempMain_phones.length > 0){
+			// 		setTempMain_phones([]);
+			// 	}
 
-								if (tempMain_contacts && tempMain_contacts.length > 0){
-					setTempMain_contacts([]);
-				}
+			// 					if (tempMain_contacts && tempMain_contacts.length > 0){
+			// 		setTempMain_contacts([]);
+			// 	}
 		setTimeout(() => {
 			setItemId(iid);
 			
@@ -929,15 +929,21 @@ const OrgPage = (props) => {
 	}
 
 
+	const handleMainDataChange = (data) => {
+		setTempMainData(data);
+	}
+
 	// Подготовка Контактов к отправке
-	const handleContactChange = (ea, as, data)=>{
+	const handleContactChange = (data)=>{
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_contacts(tempMain_contacts.filter((item) => item.id !== data.id));
 		} else {
 			let existed = tempMain_contacts.find((item)=>item.id === data.id);
 			if (!existed){
-				setTempMain_contacts([data, ...tempMain_contacts]);
+				if (data.command){
+					setTempMain_contacts([data, ...tempMain_contacts]);
+				}
 			} else {
 				setTempMain_contacts(tempMain_contacts.map((item) => (
 					item.id === data.id ? data : item
@@ -954,7 +960,9 @@ const OrgPage = (props) => {
 			} else {
 				let existed = tempMain_addresses.find((item)=>item.id === data.id);
 				if (!existed){
+					if (data.command){
 					setTempMain_addresses([data, ...tempMain_addresses]);
+					}
 				} else {
 					setTempMain_addresses(tempMain_addresses.map((item) => (
 						item.id === data.id ? data : item
@@ -972,7 +980,9 @@ const OrgPage = (props) => {
 			let existed = tempMain_legalAddresses.find((item)=>item.id === data.id);
 			if (!existed){
 				// Вставка
-				setTempMain_legalAddresses([data, ...tempMain_legalAddresses]);
+				if (data.command){
+					setTempMain_legalAddresses([data, ...tempMain_legalAddresses]);
+				}
 			} else {
 				// Обновление
 				setTempMain_legalAddresses(tempMain_legalAddresses.map((item) => (
@@ -990,7 +1000,9 @@ const OrgPage = (props) => {
 		} else {
 			let existed = tempMain_emails.find((item)=>item.id === data.id);
 			if (!existed){
-				setTempMain_emails([data, ...tempMain_emails]);
+				if (data.command){
+					setTempMain_emails([data, ...tempMain_emails]);
+				}
 			} else {
 				setTempMain_emails(tempMain_emails.map((item) => (
 					item.id === data.id ? data : item
@@ -1007,7 +1019,9 @@ const OrgPage = (props) => {
 		} else {
 			let existed = tempMain_phones.find((item)=>item.id === data.id);
 			if (!existed){
-				setTempMain_phones([data, ...tempMain_phones]);
+				if (data.command){
+					setTempMain_phones([data, ...tempMain_phones]);
+				}
 			} else {
 				setTempMain_phones(tempMain_phones.map((item) => (
 					item.id === data.id ? data : item
@@ -1025,7 +1039,9 @@ const OrgPage = (props) => {
 		} else {
 			let existed = tempMain_bo_licenses.find((item)=>item.id === data.id);
 			if (!existed){
-				setTempMain_bo_licenses([data, ...tempMain_bo_licenses]);
+				if (data.command){
+					setTempMain_bo_licenses([data, ...tempMain_bo_licenses]);
+				}
 			} else {
 				setTempMain_bo_licenses(tempMain_bo_licenses.map((item) => (
 					item.id === data.id ? data : item
@@ -1038,13 +1054,15 @@ const OrgPage = (props) => {
 	const handleAnLicenseChange = (data)=>{
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
-			setTempMain_bo_licenses(tempMain_an_licenses.filter((item) => item.id !== data.id));
+			setTempMain__an_licenses(tempMain_an_licenses.filter((item) => item.id !== data.id));
 		} else {
 			let existed = tempMain_an_licenses.find((item)=>item.id === data.id);
 			if (!existed){
-				setTempMain_bo_licenses([data, ...tempMain_an_licenses]);
+				if (data.command){
+					setTempMain__an_licenses([data, ...tempMain_an_licenses]);
+				}
 			} else {
-				setTempMain_bo_licenses(tempMain_an_licenses.map((item) => (
+				setTempMain__an_licenses(tempMain_an_licenses.map((item) => (
 					item.id === data.id ? data : item
 				)))
 			}
@@ -1059,7 +1077,9 @@ const OrgPage = (props) => {
 		} else {
 			let existed = tempMain_an_tolerances.find((item)=>item.id === data.id);
 			if (!existed){
-				setTempMain_an_tolerances([data, ...tempMain_an_tolerances]);
+				if (data.command){
+					setTempMain_an_tolerances([data, ...tempMain_an_tolerances]);
+				}
 			} else {
 				setTempMain_an_tolerances(tempMain_an_tolerances.map((item) => (
 					item.id === data.id ? data : item
@@ -1076,7 +1096,10 @@ const OrgPage = (props) => {
 		} else {
 			let existed = tempMain_an_requisites.find((item)=>item.id === data.id);
 			if (!existed){
-				setTempMain_an_requisites([data, ...tempMain_an_requisites]);
+				console.log('COMMAND', data);
+				if (data.command){
+					setTempMain_an_requisites([data, ...tempMain_an_requisites]);
+				}
 			} else {
 				setTempMain_an_requisites(tempMain_an_requisites.map((item) => (
 					item.id === data.id ? data : item
@@ -1229,9 +1252,10 @@ const OrgPage = (props) => {
 							// on_save={handleDataChangeApprove}
 							userdata={userdata}
               selects={baseFiltersData}
-							on_change_data={handleTabDataChange}
-							on_change_main_data_part={handleMaintabObjectDataChange}
+							// on_change_data={handleTabDataChange}
+							// on_change_main_data_part={handleMaintabObjectDataChange}
 
+							on_change_main_data={handleMainDataChange}
 							on_change_contact={handleContactChange}
 							on_change_address={handleAddressChange}
 							on_change_phone={handlePhoneChange}

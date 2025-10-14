@@ -194,7 +194,7 @@ const OrgAddressMicroSectionTorg = (props) => {
                   value: post_index
               },
             ]}
-            post_indexratpost_index={[
+            extratext={[
               {
                 edit_mode: editMode,
                 label: 'Комментарий',

@@ -190,7 +190,7 @@ useEffect(() => {
 
   // Этот не работает - не долетает айдишник компании
   useEffect(() => {
-    console.log('ID ORGS', props.data.id_orgs)
+    // console.log('ID ORGS', props.data.id_orgs)
     if (props.data.id_orgs !== orgId){
       setNewContactEmails([]);
       setNewContacthomephones([]);
@@ -234,13 +234,13 @@ useEffect(() => {
 
 
   useEffect(() => {
-    console.log('ALLLLOO', deleted)
+    // console.log('ALLLLOO', deleted)
     if (editMode && !collapsed && baseData && baseData.command === 'create' && deleted){
       // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
           if (props.on_change){
             baseData.deleted = deleted;
                 // baseData.command = 'delete';
-                console.log('DELETED')
+                // console.log('DELETED')
                 props.on_change('contacts', itemId, baseData);
                 return;
           }
@@ -285,7 +285,7 @@ useEffect(() => {
                 baseData.command = 'update';
               }
             }
-            console.log('baseData', baseData)
+            // console.log('baseData', baseData)
             props.on_change('contacts', itemId, baseData);
           }
         }
@@ -349,7 +349,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewMobile = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContactmobiles(newContactmobiles.filter((item)=>item.id !== id));
   }
 
@@ -387,7 +387,7 @@ useEffect(() => {
   const handleUpdateMobileUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -399,7 +399,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data email', data)
+    // console.log('data email', data)
     setContactmobiles((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -444,7 +444,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewContact = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContactstelephones(newContactstelephones.filter((item)=>item.id !== id));
   }
 
@@ -457,7 +457,7 @@ useEffect(() => {
   const handleUpdateNewContactUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU NEW UPDATE');
+    // console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
@@ -483,7 +483,7 @@ useEffect(() => {
   const handleUpdateContactUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -493,7 +493,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data email', data)
+    // console.log('data email', data)
     setContactstelephones((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -538,7 +538,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewHomePhone = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContacthomephones(newContacthomephones.filter((item)=>item.id !== id));
   }
 
@@ -551,7 +551,7 @@ useEffect(() => {
   const handleUpdateNewHomePhoneUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU NEW UPDATE');
+    // console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
@@ -577,7 +577,7 @@ useEffect(() => {
   const handleUpdateHomePhoneUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -587,7 +587,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data email', data)
+    // console.log('data email', data)
     setContacthomephones((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -631,7 +631,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewEmail = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContactEmails(newContactemails.filter((item)=>item.id !== id));
   }
 
@@ -644,7 +644,7 @@ useEffect(() => {
   const handleUpdateNewEmailUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU NEW UPDATE');
+    // console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
@@ -670,7 +670,7 @@ useEffect(() => {
   const handleUpdateEmailUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -680,7 +680,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data email', data)
+    // console.log('data email', data)
     setContactemails((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -724,7 +724,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewMessanger = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContactmessangers(newContactmessangers.filter((item)=>item.id !== id));
   }
 
@@ -737,7 +737,7 @@ useEffect(() => {
   const handleUpdateNewMessangerUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU NEW UPDATE');
+    // console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
@@ -763,7 +763,7 @@ useEffect(() => {
   const handleUpdateMessangerUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -773,7 +773,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data', data)
+    // console.log('data', data)
     setContactmessangers((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {

@@ -134,8 +134,7 @@ const AnLicenseMicroSectionTorg = (props) => {
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
-              baseData.deleted = deleted;
-                  baseData.command = 'delete';
+                baseData.deleted = deleted;
                   props.on_change(id, baseData);
                   return;
             }

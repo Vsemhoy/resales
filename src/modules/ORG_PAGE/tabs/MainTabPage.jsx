@@ -5,6 +5,8 @@ import {
   BuildingLibraryIcon,
   BuildingOfficeIcon,
 	CameraIcon,
+	ChevronDownIcon,
+	ChevronUpIcon,
 	DevicePhoneMobileIcon,
 	EnvelopeIcon,
 	PaperAirplaneIcon,
@@ -33,6 +35,10 @@ import RequisiteMicroSectionTorg from '../../TORG_PAGE/components/sections/micro
 import AnLicenseMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/tolerance/AnLicenseMicroSectionTorg';
 import BoLicenseMicroSectionTorg from '../../TORG_PAGE/components/sections/microsections/tolerance/BoLicenseMicroSectionTorg';
 import { ShortName } from '../../../components/helpers/TextHelpers';
+import { TORG_CHEVRON_SIZE, TORG_DELETE_SIZE } from '../../TORG_PAGE/components/TorgConfig';
+import SiteBigSectionOrg from '../../TORG_PAGE/components/sections/bigsections/SiteBigSectionOrg';
+import MianBigSectionOrg from '../../TORG_PAGE/components/sections/bigsections/MainBigSectionOrg';
+import InfoBigSectionOrg from '../../TORG_PAGE/components/sections/bigsections/InfoBigSectionOrg';
 
 // import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -58,16 +64,7 @@ const MainTabPage = (props) => {
   const [form_id8org_regions, setFormId8org_regions] = useState(1);
   const [form_name, setFormName] = useState('');
 
-  const [name,           setName]             = useState('');
-  const [id8an_profiles, setId8an_profiles]   = useState(0);
-  const [middlename,     setMiddlename]       = useState('');
-  const [id8an_fs,       setId8an_fs]         = useState(0);
-  const [inn,            setInn]              = useState('');
-  const [source,         setSource]           = useState('');
-  const [comment,        setComment]          = useState('');
-  const [commentinlist,  setCommentinlist]    = useState('');
-  const [kindofactivity, setKindofactivity]  = useState('');
-  const [profsound,      setProfsound]        = useState(0);
+
 
   const [site,           setSite]             = useState('');
 
@@ -76,7 +73,7 @@ const MainTabPage = (props) => {
   const [typeList, setTypeList] = useState(0);
   const [listComment,       setListComment] = useState('');
 
-  const [author, setAuthor] = useState(''); //id8staff_list7author
+  const [author, setAuthor] = useState(''); 
   const [curator, setCurator] = useState('');
 
 
@@ -99,7 +96,10 @@ const MainTabPage = (props) => {
   const [ORGEMAILS,       setORGEMAILS]      = useState([]);
 
 
-
+  /**
+   * Здесь ключи открытых коллапсов
+   */
+  const [collapsed_rows, setCollapsedRows] = useState(['main_row', 'info_row', 'contactinfo_row', 'licenses_row', 'contacts_row', 'requisites_row']);
 
 
 	const [selects, setSelects] = useState(null);
@@ -115,9 +115,7 @@ const MainTabPage = (props) => {
     seteditMode(props.edit_mode);
   }, [props.edit_mode]);
 
-  useEffect(() => {
-    console.log('CONTACTS', CONTACTS)
-  }, [CONTACTS]);
+
 
   useEffect(() => {
     if (!props.base_data){
@@ -172,7 +170,10 @@ const MainTabPage = (props) => {
     let curator  = props.base_data?.curator;
     let list     = props.base_data?.list;
 
-    let bdt = FlushOrgData(props.base_data, [
+
+
+    // Очистка главного объекта от мусора
+    let bdt = FlushOrgData(JSON.parse(JSON.stringify(props.base_data)), [
       "warningcmpcount",
       "warningcmpcomment",
       "tv",
@@ -190,14 +191,33 @@ const MainTabPage = (props) => {
       "contacts",
       "creator",
       "curator",
-      "list"
+      "list",
+      "legaladdresses",
+      "phones",
+      "region",
+      "requisites",
+      "statusmoney",
+      "town",
+      "emails",
+      "deliverytype",
+      "address",
+      "active_tolerance",
+      "active_licenses_bo",
+      "active_licenses",
+      "id8staff_list7author",
+      "id8staff_list",
+      "id_orgs8an_orgsusers",
+      "id_orgs8an_list",
+      "date_dealer"
     ]);
+
+    console.log('START --------- ', bdt);
 
     setBaseData(bdt);
 
     console.log('bdt', bdt, props.base_data)
 
-      if (bdt?.creator){
+      if (creator){
             setAuthor(ShortName(creator?.surname, creator?.name, creator?.secondname));
           } else {
             setAuthor('');
@@ -214,17 +234,7 @@ const MainTabPage = (props) => {
       setTypeList(list?.id8an_typelist ? list?.id8an_typelist : 0);
       setListComment(list?.comment ? list?.comment : '');
 
-      setName(props.data?.name);
-      setSite(props.data?.site);
-      setMiddlename(props.data?.middlename);
-      setId8an_fs(props.data?.id8an_fs ? parseInt(props.data?.id8an_fs) : 0);
-      setId8an_profiles(props.data?.id8an_profiles);
-      setInn(props.data?.inn);
-      setSource(props.data?.source);
-      setComment(props.data?.comment);
-      setProfsound(props.data?.profsound);
-      setCommentinlist(props.data?.commentinlist);
-      setKindofactivity(props.data?.kindofactivity);
+   
 
 
   }, [props.base_data]);
@@ -235,505 +245,113 @@ const MainTabPage = (props) => {
 
 
 
-  const updateCompanyData = (changed_data) => {
-    setBaseData(prevData => {
-      const updatedData = { ...prevData };
-
-      for (let key in changed_data) {
-        if (changed_data.hasOwnProperty(key) && prevData?.hasOwnProperty(key)) {
-          updatedData[key] = changed_data[key];
-          
-        }
-      }
-      return updatedData;
-    });
-  };
-
-
-
-
-
-
-
-
-
-
+  useEffect(() => {
+    if (BLUR_FLAG && props.on_change_main_data){
+      console.log('CALLL _----------- TO ___________ save');
+      props.on_change_main_data(baseData);
+    }
+  }, [baseData]);
 
   useEffect(() => {
-    if (!show) { return; }
-    let secids = [
-      {
-        key: 'mainorgsec_11',
-        style: { boxShadow: '#6cc1c1ff -9px 0px 0px -0.5px' },
-        label: <div className={`sa-flex-space`}><div>Общая информация</div><div></div></div>,
-        children: <OrgPage_MainTab_Common_Section
-          color={'#2196f3'}
-          edit_mode={editMode}
-          data={baseData}
-          selects={selects}
-          on_blur={updateCompanyData}
-          item_id={itemId}
-        />
-      },
-      {
-        key: 'mainorgsec_12',
-        style: { boxShadow: '#6c7cd4ff -9px 0px 0px -0.5px' },
-        label: <div className={`sa-flex-space`}><div>Информация отдела</div><div></div></div>,
-        children: <OrgPage_MainTab_Depart_Section
-          color={'blueviolet'}
-          edit_mode={editMode}
-          data={baseData}
-          selects={selects}
-          on_blur={updateCompanyData}
-          item_id={itemId}
-        />
-      },
-      {
-        key: 'mainorgsec_13',
-        style: { boxShadow: '#8f5fbbff -9px 0px 0px -0.5px' },
-        label: <div className={`sa-flex-space`}><div>Контактная информация</div><div></div>
+    if (props.on_change_contact){
+      props.on_change_contact(CONTACTS);
+    }
+  }, [CONTACTS]);
 
-        </div>,
-        children: <div>
-        {/* <OrgPage_MainTab_Contactinfo_Section
-          color={'#799119ff'}
-          edit_mode={editMode}
-          data={baseData}
-          selects={selects}
-          // on_blur={(ee)=>(// console.log("BLUUUUUUUUUUURRRRRRR", ee))}
-          // on_blur={props.on_change_main_data_part} // Изменение строк
-          on_blur={updateCompanyData} // Изменение строк
-          on_change={updateCompanyObject} // Изменение объектов
-          // on_change={(ee)=>(// console.log("CCHHHHHHHHHHHHHHHAAAAAAAAAAA", ee))} // Изменение объектов
-          item_id={itemId}
-        /> */}
-             <TorgPageSectionRow
-              
-              edit_mode={editMode}
-              inputs={[
-              {
-                edit_mode: editMode,
-                label: 'Город',
-                input:
-                  
-                  <Select
-                  showSearch
-                    key={'oaddress1_' + baseData?.id}
-                    value={parseInt(form_id8org_towns)}
-                    onChange={(ee)=>{ setFormId8org_towns(ee);
-                      // Подстановка региона по городу
-                        let ttown = selects?.towns.find((item)=> item.value === ee);
-                        if (ttown){
-                          if (ttown.id_region !== form_id8org_regions){
-                            setFormId8org_regions(ttown.id_region);
-                          }
-                        }
-                      }
-                    }
-                    // placeholder="Controlled autosize"
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={2500}
-                    required={true}
-                    options={selects?.towns.map((item)=>({
-                      key: "twnitm_" + item.value,
-                      value: parseInt(item.value),
-                      label: item.name
-                    }))}
-                  />,
-                  required: true,
-                  value: form_id8org_towns
-              },
-                {
-                edit_mode: editMode,
-                label: 'Регион',
-                input:
-                  
-                  <Select
-                  showSearch
-                    options={selects?.regions.map((item)=>({
-                      key: "regitm_" + item.value,
-                      value: parseInt(item.value),
-                      label: item.name
-                    }))}
-                    key={'oaddress2_' + baseData?.id}
-                    value={parseInt(form_id8org_regions)}
-                    type={'address'}
-                    onChange={setFormId8org_regions}
-                    // placeholder="Controlled autosize"
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={2500}
-                    required={false}
-                  />,
-                  required: false,
-                  value: form_id8org_regions
-              },
-            ]}
-           action={
-            <div></div>
-           }
-           
-          />
-          <div>
-            {ORGLEGADDRESSES.map((item)=>(
-              <OrgLegalAddressMicroSectionTorg
-                key={'orlega_' + item.id + itemId}
-                allow_delete={true}
-                data={item}
-                org_id={itemId}
-                edit_mode={editMode}
-                on_change={handleUpdateLegalUnit}
-              />
-            ))}
-          </div>
+  useEffect(() => {
+    if (props.on_change_requisites){
+      props.on_change_requisites(REQUISITES);
+    }
+  }, [REQUISITES]);
 
-          <div>
-            {ORGADDRESSES.map((item)=>(
-              <OrgAddressMicroSectionTorg
-                key={'oraada_' + item.id + itemId}
-                allow_delete={true}
-                data={item}
-                org_id={itemId}
-                edit_mode={editMode}
-                on_change={handleUpdateAddressUnit}
-              />
-            ))}
-          </div>
+    useEffect(() => {
+    if (props.on_change_bo_license){
+      props.on_change_bo_license(BOLICENSES);
+    }
+  }, [BOLICENSES]);
 
-          <div>
-            {ORGPHONES.map((item)=>(
-              <OrgPhoneMicroSectionTorg
-                key={'orgphona_' + item.id + itemId}
-                allow_delete={true}
-                data={item}
-                org_id={itemId}
-                edit_mode={editMode}
-                on_change={handleUpdatePhoneUnit}
-              />
-            ))}
-          </div>
+    useEffect(() => {
+    if (props.on_change_an_license){
+      props.on_change_an_license(ANLICENSES);
+    }
+  }, [ANLICENSES]);
 
-          <div>
-            {ORGEMAILS.map((item)=>(
-              <OrgEmailMicroSectionTorg
-                key={'orgema_' + item.id + itemId}
-                allow_delete={true}
-                data={item}
-                org_id={itemId}
-                edit_mode={editMode}
-                on_change={handleUpdateEmailUnit}
-              />
-            ))}
-          </div>
+    useEffect(() => {
+    if (props.on_change_an_tolerance){
+      props.on_change_an_tolerance(ANTOLERANCES);
+    }
+  }, [ANTOLERANCES]);
 
-          <div>
-             <TorgPageSectionRow
-              explabel={'Реквизиты'}
-              edit_mode={editMode}
-              inputs={[
-              {
-                edit_mode: editMode,
-                label: 'Веб-Сайт',
-                input:
-                  
-                  <Input
-                    key={'sitefield_2_' + baseData?.id + itemId}
-                    value={site}
-                    onChange={e => setSite(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={128}
-                    required={false}
-                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                  />,
-                  required: false,
-                  value: site
-              },
-             
-            ]}
-                      
-          />
-          </div>
+    useEffect(() => {
+    if (props.on_change_legal_address){
+      props.on_change_legal_address(ORGLEGADDRESSES);
+    }
+  }, [ORGLEGADDRESSES]);
 
-          {editMode && (
-          <div className={'sk-omt-stack-control sa-flex-space'}>
-          <div></div>
-          <div>
-            <div className={'sa-org-contactstack-addrow'}>
-              Добавить
-              <div>
+      useEffect(() => {
+    if (props.on_change_address){
+      props.on_change_address(ORGADDRESSES);
+    }
+  }, [ORGADDRESSES]);
 
+      useEffect(() => {
+    if (props.on_change_phone){
+      props.on_change_phone(ORGPHONES);
+    }
+  }, [ORGPHONES]);
 
-                <Button
-                  title='Добавить адрес'
-                  size='small'
-                  color="primary"
-                  variant="outlined"
-                  icon={<BuildingOfficeIcon height={'20px'}/>}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    handleAddAddress();
-                  }}
-                  >Адрес</Button>
-                  {ORGLEGADDRESSES.length + ORGLEGADDRESSES < 1 && (
-                    <Button
-                    title='Добавить юр. адрес'
-                    size='small'
-                    icon={<BuildingLibraryIcon height={'20px'}/>}
-                    color="primary"
-                    variant="outlined"
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      handleAddLegalad();
-                    }}
-                    >Юр. Адрес</Button>
-                  )}
-
-                <Button
-                  title='Добавить контактный телефон'
-                  size='small'
-                  color="primary"
-                  variant="outlined"
-                  icon={<PhoneIcon height={'20px'}/>}
-                  onClick={(ev) => {
-                    console.log('ALOHA');
-                    handleAddPhone();
-                  }}
-                  >Телефон</Button>
-                <Button
-                  title='Добавить эл. почту'
-                  size='small'
-                  color="primary"
-                  variant="outlined"
-                  icon={<EnvelopeIcon height={'20px'}/>}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    handleAddEmail();
-                  }}
-                  >Эл. почту</Button>
-
-                  </div>
-              </div>
-          </div>
-        </div>
-      )}
-
-
-
-        </div>
-      },
-      {
-        key: 'mainorgsec_131',
-        style: { boxShadow: '#f7ab49ff -9px 0px 0px -0.5px' },
-        label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Лицензии/Допуски
-
-          <Badge
-            count={ANLICENSES?.length + ANTOLERANCES?.length + BOLICENSES?.length || 0}
-            color="blue"
-          />
-        </div><div className={'sa-flex-gap'}>
-            {editMode && (
-              <Button
-                size="small"
-                color="primary"
-                variant="outlined"
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  handleAddBoLicense(1);
-                }}
-                icon={<PlusCircleOutlined />}
-              >
-                Добавить Лицензию
-              </Button>
-            )}
-            {editMode && (
-              <Button
-                size="small"
-                color="primary"
-                variant="outlined"
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  handleAddBoLicense(2);
-                }}
-                icon={<PlusCircleOutlined />}
-              >
-                Добавить Допуск
-              </Button>
-            )}
-          </div>
-
-        </div>,
-        children: (ANLICENSES.length > 0 ||
-            ANTOLERANCES.length > 0 ||
-            BOLICENSES.length > 0) ? (
-              <div className='sa-org-contactstack-box'>
-                <div className={'sa-tolerance-old-v'}>
-                  {ANLICENSES.map((item)=>(
-                  <AnLicenseMicroSectionTorg
-                    key={'anlicensee_' + item.id + itemId}
-                    data={item}
-                    edit_mode={editMode}
-                    on_change={handleUpdateAnLicenseUnit}
-                    selects={selects}
-                    id_orgs={itemId}
-                    collapse={true}
-                    allow_delete={true}
-                    doc_type={1}
-                    />
-                ))}
-                  {ANTOLERANCES.map((item)=>(
-                  <AnLicenseMicroSectionTorg
-                    key={'antolerancee_' + item.id + itemId}
-                    data={item}
-                    edit_mode={editMode}
-                    on_change={handleUpdateAnToleranceUnit}
-                    selects={selects}
-                    id_orgs={itemId}
-                    collapse={true}
-                    allow_delete={true}
-                    doc_type={2}
-                    />
-                ))}
-                </div>
-                <div>
-                {BOLICENSES.map((item)=>(
-                  <BoLicenseMicroSectionTorg
-                    key={'bolicensee_' + item.id + itemId}
-                    data={item}
-                    edit_mode={editMode}
-                    on_change={handleUpdateBoLicenseUnit}
-                    selects={selects}
-                    id_orgs={itemId}
-                    collapse={true}
-                    allow_delete={true}
-                    />
-                ))}
-                </div>
-              </div>
-            ) : (<Empty />)
-        
-        // baseData ? (<OrgPage_MainTab_Tolerance_Section
-        //   color={'#30c97aff'}
-        //   edit_mode={editMode}
-        //   data={baseData}
-        //   selects={selects}
-        //   on_blur={props.on_change_main_data_part}
-        //   on_add_license={callToAddLicense}
-        //   on_add_tolerance={callToAddTolerance}
-        //   item_id={itemId}
-        // />) : ("")
-      },
-      {
-        key: 'mainorgsec_14',
-        style: { boxShadow: '#ca6f7eff -9px 0px 0px -0.5px' },
-        label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Контактные лица
-          <Badge
-            count={CONTACTS?.length}
-            color="blue"
-          />
-        </div><div></div>
-          {editMode && (
-            <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              onClick={(ev) => {
-                ev.stopPropagation();
-                handleAddContact();
-              }}
-              icon={<PlusCircleOutlined />}
-            >
-              Добавить контакт
-            </Button>
-          )}
-        </div>,
-        children: <div className='sa-org-contactstack-box'>
-          {CONTACTS.length > 0 ? (
-            <div>
-                {CONTACTS.map((item)=>(
-                  <ContactMainSectionTorg
-                    key={'contactsectionrow_' + item.id}
-                    data={item}
-                    edit_mode={editMode}
-                    on_change={handleUpdateContacts}
-                    selects={selects}
-                    id_orgs={itemId}
-                    collapse={true}
-                    allow_delete={true}
-                    />
-
-                ))}
-              </div>
-
-          ) : (<Empty />)}
-
-        </div>
-      },
-      {
-        key: 'mainorgsec_15',
-        style: { boxShadow: '#87c16cff -9px 0px 0px -0.5px' },
-        label: <div className={`sa-flex-space`}><div className={`sa-flex`}>Фирмы/плательщики
-          <Badge
-            count={REQUISITES?.length}
-            color="blue"
-          />
-        </div><div></div>
-          {editMode && (
-            <Button
-              size="small"
-              color="primary"
-              variant="outlined"
-              onClick={(ev) => {
-                ev.stopPropagation();
-                handleAddRequisite();
-                // setTimeout(() => {
-                //   setCallToAddRequisite(null);
-                // }, 300);
-              }}
-              icon={<PlusCircleOutlined />}
-            >
-              Добавить плательщика
-            </Button>
-          )}
-        </div>,
-        children: 
-         <div className='sa-org-contactstack-box'>
-          {REQUISITES.length > 0 ? (
-            <div>
-                {REQUISITES.map((item)=>(
-                  <RequisiteMicroSectionTorg
-                    key={'requisitsectionrow_' + item.id}
-                    data={item}
-                    edit_mode={editMode}
-                    on_change={handleUpdateRuquisiteUnit}
-                    selects={selects}
-                    id_orgs={itemId}
-                    collapse={true}
-                    allow_delete={true}
-                    />
-
-                ))}
-              </div>
-
-          ) : (<Empty />)}
-        </div>
-      },
-    ];
-
-    setStructureItems(secids);
-  }, [form_id8org_regions,
-    form_id8org_towns,
-    CONTACTS, ORGLEGADDRESSES, ORGADDRESSES, ORGEMAILS, ORGPHONES,
-    REQUISITES,
-    BOLICENSES, ANLICENSES, ANTOLERANCES,
-     show, editMode, selects, itemId]);
-  // },[show, editMode, structureContacts, selects, callToAddRequisite, callToAddRequisite, callToAddLicense, callToAddTolerance]);
+      useEffect(() => {
+    if (props.on_change_email){
+      props.on_change_email(ORGEMAILS);
+    }
+  }, [ORGEMAILS]);
 
 
 
 
+
+
+
+  // useEffect(() => {
+  //   if (BLUR_FLAG === null){ return; }
+
+  //   // baseData.site = site?.trim();
+  //   // baseData.name = name?.trim();
+  //   // baseData.id8an_fs = id8an_fs;
+  //   // baseData.inn = inn.trim();
+    
+  // // setBaseData(prev => ({ ...prev, name: ... }));
+
+  //   console.log('FINAL BASEDATA', baseData);
+  // }, [
+  //   BLUR_FLAG,
+  //   // id8an_fs,
+
+  // ]);
+
+
+
+
+
+
+
+
+
+
+    const triggerCollapse = (itemname) => {
+      console.log(itemname);
+      if (collapsed_rows.includes(itemname)){
+        setCollapsedRows(collapsed_rows.filter((item)=> item !== itemname));
+      } else {
+        console.log('HOHOHO');
+        setCollapsedRows([...collapsed_rows, itemname]);
+      }
+    }
+
+
+    useEffect(() => {
+      console.log(collapsed_rows);
+    }, [collapsed_rows]);
 
 
 //  ██████  ██████  ███    ██ ████████  █████   ██████ ████████ 
@@ -747,7 +365,6 @@ const MainTabPage = (props) => {
     if (props.on_change_contact){
       props.on_change_contact(e,a,data);
     }
-    console.log('data', data)
     if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setCONTACTS(CONTACTS.filter((item) => item.id !== data.id));
@@ -1293,37 +910,796 @@ const MainTabPage = (props) => {
                                     
 
 
-  useEffect(() => {
-    // console.log('DATA UPDATED');
-    if (props.on_change_data){
-      // console.log(baseData);
-      props.on_change_data('main', baseData);
-    };
-  }, [baseData]);
+  // useEffect(() => {
+  //   // console.log('DATA UPDATED');
+  //   if (props.on_change_data){
+  //     // console.log(baseData);
+  //     props.on_change_data('main', baseData);
+  //   };
+  // }, [baseData]);
 
   // useEffect(() => {
-  //   if (props.on_change_data) {
+  //   if (props.on_change_main_data) {
   //     // console.log('CALL TO CHANGE BASEDATA ON 1 LEVEL', baseData);
-  //     props.on_change_data('main', baseData);
+  //     props.on_change_main_data(baseData);
   //   }
   // }, [baseData]);
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div className={`${show ? '' : 'sa-orgpage-tab-hidder'}`}>
-      {/* <div className={'sk-omt-stack'} style={{ borderLeft: '4px solid seagreen' }}>
-				</div> */}
 
-      <Collapse
-        defaultActiveKey={['mainorgsec_11', 'mainorgsec_12', 'mainorgsec_14']}
-        // activeKey={modalSectionsOpened}
-        size={"small"}
-        // onChange={handleSectionChange}
-        // onMouseDown={handleSectionClick}
-        items={structureItems}
-      />
+
+
+      <div className={'sa-org-main-collapse sa-org-main-collapse-stack'}>
+
+        {/* ============================= COLLAPSE ITEM ================================ */}
+
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('main_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+          style={{boxShadow: "rgb(108, 193, 193) -9px 0px 0px -0.5px"}}
+        >
+          <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
+            onClick={(ev) => {
+              if (!ev.target.closest('.sa-click-ignore')){
+                ev.preventDefault();
+                ev.stopPropagation();
+                triggerCollapse('main_row');
+              }
+            }}
+          >
+            <div className={"sa-flex"}>
+              <div className={'sa-pa-3 sa-lh-chevron'}>
+                {collapsed_rows.includes('main_row') ? (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('main_row') }}
+                  >
+                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+
+                ) : (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('main_row') }}
+                  >
+                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+                )}
+
+
+              </div>
+              <div className={'sa-pa-3 sa-org-section-text'}>
+                <div className='sa-org-section-label'>
+                  Общая информация
+                </div>
+                
+                {itemId && (
+                  <div className={'sa-org-row-header-id sa-text-phantom'}>
+                    ({itemId})
+                  </div>
+                )}
+    
+
+              </div>
+            </div>
+
+          </div>
+          <div className={'sa-org-collapse-body'}>
+            <MianBigSectionOrg
+                data={baseData}
+                on_blur={(updatedFields) => {
+                  setBLUR_FLAG(dayjs().unix());
+                  setBaseData(prev => ({
+                    ...prev,
+                    ...updatedFields
+                  }));
+                }}
+                edit_mode={editMode}
+                selects={selects}
+
+              />
+
+          </div>
+        </div>
+
+        {/* ============================= COLLAPSE ITEM ================================ */}
+
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('info_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+          style={{boxShadow: "rgb(108, 124, 212) -9px 0px 0px -0.5px"}}
+        >
+          <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
+            onClick={(ev) => {
+              if (!ev.target.closest('.sa-click-ignore')){
+                ev.preventDefault();
+                ev.stopPropagation();
+                triggerCollapse('info_row');
+              }
+            }}
+          >
+            <div className={"sa-flex"}>
+              <div className={'sa-pa-3 sa-lh-chevron'}>
+                {collapsed_rows.includes('main_row') ? (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('info_row') }}
+                  >
+                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+
+                ) : (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('info_row') }}
+                  >
+                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+                )}
+
+
+              </div>
+              <div className={'sa-pa-3 sa-org-section-text'}>
+                <div className='sa-org-section-label'>
+                  Информация отдела
+                </div>
+                
+                {itemId && (
+                  <div className={'sa-org-row-header-id sa-text-phantom'}>
+                    ({itemId})
+                  </div>
+                )}
+    
+
+              </div>
+            </div>
+
+          </div>
+          <div className={'sa-org-collapse-body'}>
+                <InfoBigSectionOrg
+                  data={baseData}
+                  on_blur={(updatedFields) => {
+                    setBLUR_FLAG(dayjs().unix());
+                    setBaseData(prev => ({
+                      ...prev,
+                      ...updatedFields
+                    }));
+                  }}
+                  edit_mode={editMode}
+                  selects={selects}
+                  author={author}
+                  curator={curator}
+                />
+          </div>
+        </div>
+
+        {/* ============================= COLLAPSE ITEM ================================ */}
+
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('contactinfo_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+          style={{boxShadow: "rgb(143, 95, 187) -9px 0px 0px -0.5px"}}
+        >
+          <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
+            onClick={(ev) => {
+              if (!ev.target.closest('.sa-click-ignore')){
+                ev.preventDefault();
+                ev.stopPropagation();
+                triggerCollapse('contactinfo_row');
+              }
+            }}
+          >
+            <div className={"sa-flex"}>
+              <div className={'sa-pa-3 sa-lh-chevron'}>
+                {collapsed_rows.includes('main_row') ? (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('contactinfo_row') }}
+                  >
+                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+
+                ) : (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('contactinfo_row') }}
+                  >
+                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+                )}
+
+
+              </div>
+              <div className={'sa-pa-3 sa-org-section-text'}>
+                <div className='sa-org-section-label'>
+                  Контактная информация
+                </div>
+                
+                {itemId && (
+                  <div className={'sa-org-row-header-id sa-text-phantom'}>
+                    ({itemId})
+                  </div>
+                )}
+    
+
+              </div>
+            </div>
+
+          </div>
+          <div className={'sa-org-collapse-body'}>
+        <div className={'sa-org-collapse-content'}>
+          <div>
+
+             <TorgPageSectionRow
+              
+              edit_mode={editMode}
+              inputs={[
+              {
+                edit_mode: editMode,
+                label: 'Город',
+                input:
+                  
+                  <Select
+                  showSearch
+                    key={'oaddress1_' + baseData?.id}
+                    value={parseInt(baseData?.id8org_towns)}
+                    onChange={(value)=>{ 
+                      // Подстановка региона по городу
+                        setBLUR_FLAG(dayjs().unix());
+                       setBaseData(prev => ({
+                          ...prev,
+                          id8org_towns: value
+                        }));
+
+                        let ttown = selects?.towns.find((item)=> item.value === value);
+                        if (ttown){
+                          if (ttown.id_region !== form_id8org_regions){
+                            // setFormId8org_regions(ttown.id_region);
+                             setBaseData(prev => ({
+                            ...prev,
+                            id8org_regions: ttown.id_region
+                          }));
+                          }
+                        }
+                      }
+                    }
+                    // placeholder="Controlled autosize"
+                    disabled={!editMode}
+                    readOnly={!editMode}
+                    variant="borderless"
+                    required={true}
+                    options={selects?.towns.map((item)=>({
+                      key: "twnitm_" + item.value,
+                      value: parseInt(item.value),
+                      label: item.name
+                    }))}
+                  />,
+                  required: true,
+                  value: form_id8org_towns
+              },
+                {
+                edit_mode: editMode,
+                label: 'Регион',
+                input:
+                  
+                  <Select
+                  showSearch
+                    options={selects?.regions.map((item)=>({
+                      key: "regitm_" + item.value,
+                      value: parseInt(item.value),
+                      label: item.name
+                    }))}
+                    disabled={!editMode}
+                    key={'oaddress2_' + baseData?.id}
+                    value={parseInt(baseData?.id8org_regions)}
+                    type={'address'}
+                    onChange={(value)=>{
+                      setBLUR_FLAG(dayjs().unix());
+                      setBaseData(prev => ({
+                      ...prev,
+                      id8org_regions: value
+                    }));
+                    }}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={2500}
+                    required={false}
+                  />,
+                  required: false,
+                  value: form_id8org_regions
+              },
+            ]}
+           action={
+            <div></div>
+           }
+           
+          />
+          <div>
+            {ORGLEGADDRESSES.map((item)=>(
+              <OrgLegalAddressMicroSectionTorg
+                key={'orlega_' + item.id + itemId}
+                allow_delete={true}
+                data={item}
+                org_id={itemId}
+                edit_mode={editMode}
+                on_change={handleUpdateLegalUnit}
+              />
+            ))}
+          </div>
+
+          <div>
+            {ORGADDRESSES.map((item)=>(
+              <OrgAddressMicroSectionTorg
+                key={'oraada_' + item.id + itemId}
+                allow_delete={true}
+                data={item}
+                org_id={itemId}
+                edit_mode={editMode}
+                on_change={handleUpdateAddressUnit}
+              />
+            ))}
+          </div>
+
+          <div>
+            {ORGPHONES.map((item)=>(
+              <OrgPhoneMicroSectionTorg
+                key={'orgphona_' + item.id + itemId}
+                allow_delete={true}
+                data={item}
+                org_id={itemId}
+                edit_mode={editMode}
+                on_change={handleUpdatePhoneUnit}
+              />
+            ))}
+          </div>
+
+          <div>
+            {ORGEMAILS.map((item)=>(
+              <OrgEmailMicroSectionTorg
+                key={'orgema_' + item.id + itemId}
+                allow_delete={true}
+                data={item}
+                org_id={itemId}
+                edit_mode={editMode}
+                on_change={handleUpdateEmailUnit}
+              />
+            ))}
+          </div>
+
+          <div>
+             <SiteBigSectionOrg
+              data={baseData}
+              on_blur={(value)=>{
+                setBLUR_FLAG(dayjs().unix());
+                setBaseData(prev => ({
+                ...prev,
+                site: value?.trim()
+              }));
+              }}
+              edit_mode={editMode}
+              />
+          </div>
+
+          {editMode && (
+          <div className={'sk-omt-stack-control sa-flex-space'}>
+          <div></div>
+          <div>
+            <div className={'sa-org-contactstack-addrow'}>
+              Добавить
+              <div>
+
+
+                <Button
+                  title='Добавить адрес'
+                  size='small'
+                  color="primary"
+                  variant="outlined"
+                  icon={<BuildingOfficeIcon height={'20px'}/>}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddAddress();
+                  }}
+                  >Адрес</Button>
+                  {ORGLEGADDRESSES.length + ORGLEGADDRESSES < 1 && (
+                    <Button
+                    title='Добавить юр. адрес'
+                    size='small'
+                    icon={<BuildingLibraryIcon height={'20px'}/>}
+                    color="primary"
+                    variant="outlined"
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      handleAddLegalad();
+                    }}
+                    >Юр. Адрес</Button>
+                  )}
+
+                <Button
+                  title='Добавить контактный телефон'
+                  size='small'
+                  color="primary"
+                  variant="outlined"
+                  icon={<PhoneIcon height={'20px'}/>}
+                  onClick={(ev) => {
+                    console.log('ALOHA');
+                    handleAddPhone();
+                  }}
+                  >Телефон</Button>
+                <Button
+                  title='Добавить эл. почту'
+                  size='small'
+                  color="primary"
+                  variant="outlined"
+                  icon={<EnvelopeIcon height={'20px'}/>}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddEmail();
+                  }}
+                  >Эл. почту</Button>
+
+                  </div>
+              </div>
+          </div>
+        </div>
+      )}
+
+
+
+        </div>
+          </div>
+          </div>
+        </div>
+
+        {/* ============================= COLLAPSE ITEM ================================ */}
+
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('licenses_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+          style={{boxShadow: "rgb(247, 171, 73) -9px 0px 0px -0.5px"}}
+        >
+          <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
+            onClick={(ev) => {
+              if (!ev.target.closest('.sa-click-ignore')){
+                ev.preventDefault();
+                ev.stopPropagation();
+                triggerCollapse('licenses_row');
+              }
+            }}
+          >
+            <div className={"sa-flex"}>
+              <div className={'sa-pa-3 sa-lh-chevron'}>
+                {collapsed_rows.includes('main_row') ? (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('licenses_row') }}
+                  >
+                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+
+                ) : (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('licenses_row') }}
+                  >
+                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+                )}
+
+
+              </div>
+              <div className={'sa-pa-3 sa-org-section-text'}>
+                <div className='sa-org-section-label'>
+                  Лицензии/Допуски
+                </div>
+                
+                <Badge
+                  count={ANLICENSES?.length + ANTOLERANCES?.length + BOLICENSES?.length || 0}
+                  color="blue"
+                />
+    
+
+              </div>
+            </div>
+
+            <div className={'sa-org-collapse-buttons sa-flex-gap'}> 
+              {editMode && (
+                <Button
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddBoLicense(1);
+                  }}
+                  icon={<PlusCircleOutlined />}
+                >
+                  Добавить Лицензию
+                </Button>
+              )}
+              {editMode && (
+                <Button
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddBoLicense(2);
+                  }}
+                  icon={<PlusCircleOutlined />}
+                >
+                  Добавить Допуск
+                </Button>
+              )}
+            </div>
+
+          </div>
+          <div className={'sa-org-collapse-body'}>
+        <div className={'sa-org-collapse-content'}>
+          {(ANLICENSES.length > 0 ||
+            ANTOLERANCES.length > 0 ||
+            BOLICENSES.length > 0) ? (
+              <div className='sa-org-contactstack-box'>
+                <div className={'sa-tolerance-old-v'}>
+                  {ANLICENSES.map((item)=>(
+                  <AnLicenseMicroSectionTorg
+                    key={'anlicensee_' + item.id + itemId}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateAnLicenseUnit}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    doc_type={1}
+                    />
+                ))}
+                  {ANTOLERANCES.map((item)=>(
+                  <AnLicenseMicroSectionTorg
+                    key={'antolerancee_' + item.id + itemId}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateAnToleranceUnit}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    doc_type={2}
+                    />
+                ))}
+                </div>
+                <div>
+                {BOLICENSES.map((item)=>(
+                  <BoLicenseMicroSectionTorg
+                    key={'bolicensee_' + item.id + itemId}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateBoLicenseUnit}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    />
+                ))}
+                </div>
+              </div>
+            ) : (<Empty />)}
+          </div>
+          </div>
+        </div>
+
+        {/* ============================= COLLAPSE ITEM ================================ */}
+
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('contacts_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+          style={{boxShadow: "rgb(202, 111, 126) -9px 0px 0px -0.5px"}}
+        >
+          <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
+            onClick={(ev) => {
+              if (!ev.target.closest('.sa-click-ignore')){
+                ev.preventDefault();
+                ev.stopPropagation();
+                triggerCollapse('contacts_row');
+              }
+            }}
+          >
+            <div className={"sa-flex"}>
+              <div className={'sa-pa-3 sa-lh-chevron'}>
+                {collapsed_rows.includes('main_row') ? (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('contacts_row') }}
+                  >
+                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+
+                ) : (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('contacts_row') }}
+                  >
+                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+                )}
+
+
+              </div>
+              <div className={'sa-pa-3 sa-org-section-text'}>
+                <div className='sa-org-section-label'>
+                  Контактные лица
+                </div>
+                
+                <Badge
+                  count={CONTACTS?.length}
+                  color="blue"
+                />
+    
+
+              </div>
+            </div>
+
+            <div className='sa-org-collapse-buttons'>
+              {editMode && (
+                <Button
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    handleAddContact();
+                  }}
+                  icon={<PlusCircleOutlined />}
+                >
+                  Добавить контакт
+                </Button>
+              )}
+            </div>
+
+          </div>
+          <div className={'sa-org-collapse-body'}>
+        <div className={'sa-org-collapse-content'}>
+          <div className='sa-org-contactstack-box'>
+          {CONTACTS.length > 0 ? (
+            <div>
+                {CONTACTS.map((item)=>(
+                  <ContactMainSectionTorg
+                    key={'contactsectionrow_' + item.id}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateContacts}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    />
+
+                ))}
+              </div>
+
+          ) : (<Empty />)}
+
+        </div>
+          </div>
+          </div>
+        </div>
+
+        {/* ============================= COLLAPSE ITEM ================================ */}
+
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('requisites_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+          style={{boxShadow: "rgb(135, 193, 108) -9px 0px 0px -0.5px"}}
+        >
+          <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
+            onClick={(ev) => {
+              if (!ev.target.closest('.sa-click-ignore')){
+                ev.preventDefault();
+                ev.stopPropagation();
+                triggerCollapse('requisites_row');
+              }
+            }}
+          >
+            <div className={"sa-flex"}>
+              <div className={'sa-pa-3 sa-lh-chevron'}>
+                {collapsed_rows.includes('requisites_row') ? (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('main_row') }}
+                  >
+                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+
+                ) : (
+                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                    onClick={() => { triggerCollapse('requisites_row') }}
+                  >
+                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+                )}
+
+
+              </div>
+              <div className={'sa-pa-3 sa-org-section-text'}>
+                <div className='sa-org-section-label'>
+                  Фирмы/плательщики
+                </div>
+                
+                <Badge
+                  count={REQUISITES?.length}
+                  color="blue"
+                />
+    
+
+              </div>
+            </div>
+
+        <div className='sa-org-collapse-buttons'>
+          {editMode && (
+            <Button
+              size="small"
+              color="primary"
+              variant="outlined"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                handleAddRequisite();
+                // setTimeout(() => {
+                //   setCallToAddRequisite(null);
+                // }, 300);
+              }}
+              icon={<PlusCircleOutlined />}
+            >
+              Добавить плательщика
+            </Button>
+          )}
+        </div>
+            
+
+          </div>
+          <div className={'sa-org-collapse-body'}>
+        <div className={'sa-org-collapse-content'}>
+            <div className='sa-org-contactstack-box'>
+          {REQUISITES.length > 0 ? (
+            <div>
+                {REQUISITES.map((item)=>(
+                  <RequisiteMicroSectionTorg
+                    key={'requisitsectionrow_' + item.id}
+                    data={item}
+                    edit_mode={editMode}
+                    on_change={handleUpdateRuquisiteUnit}
+                    selects={selects}
+                    id_orgs={itemId}
+                    collapse={true}
+                    allow_delete={true}
+                    />
+
+                ))}
+              </div>
+
+          ) : (<Empty />)}
+        </div>
+          </div>
+          </div>
+        </div>
+
+    {/* ============================= COLLAPSE ITEM ================================ */}
+
+      <div style={{height: '40vh'}}
+      ></div>
+      </div>
+
+
 
     </div>
   );

@@ -2,19 +2,19 @@ import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 
 const TorgPageSectionRow = (props) => {
-  const [inputs, setInputs] = useState([]);
+  // const [inputs, setInputs] = useState([]);
   const [opened, setOpened] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [expanderText, setExpanderText] = useState("комм");
   const [actionBlock, setActionBlock] = useState(null);
 
-  useEffect(() => {
-    if (props.inputs){
-      setInputs(props.inputs);
-    } else {
-      setInputs([]);
-    }
-  }, [props.inputs]);
+  // useEffect(() => {
+  //   if (props.inputs){
+  //     setInputs(props.inputs);
+  //   } else {
+  //     setInputs([]);
+  //   }
+  // }, [props.inputs]);
   
   useEffect(() => {
     setEditMode(props.edit_mode);
@@ -46,8 +46,8 @@ const TorgPageSectionRow = (props) => {
   return (
     <div className={`torg-section ${editMode ? 'torg-section-editmode' : ''}`}>
       <div className='sk-omt-row-wrapper sk-omt-rw-first'>
-          <div className={`sk-omt-row omt-${inputs?.length}-col`}>
-            {inputs.map((item, index)=>(
+          <div className={`sk-omt-row omt-${props.inputs?.length}-col`}>
+            {props.inputs.map((item, index)=>(
               <div className={`${(item.edit_mode && item.required && !(item?.value && item.value)) ? 'sa-required-field-block' : ''}`}>
                 <div className={'sk-omt-legend sa-flex-space'}>
 
