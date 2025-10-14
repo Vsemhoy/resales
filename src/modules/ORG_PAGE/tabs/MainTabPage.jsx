@@ -967,7 +967,7 @@ const MainTabPage = (props) => {
 
         {/* ============================= COLLAPSE ITEM ================================ */}
 
-        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('main_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${!collapsed_rows.includes('main_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
           style={{boxShadow: "rgb(108, 193, 193) -9px 0px 0px -0.5px"}}
         >
           <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
@@ -981,7 +981,7 @@ const MainTabPage = (props) => {
           >
             <div className={"sa-flex"}>
               <div className={'sa-pa-3 sa-lh-chevron'}>
-                {collapsed_rows.includes('main_row') ? (
+                {!collapsed_rows.includes('main_row') ? (
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('main_row') }}
                   >
@@ -1034,7 +1034,7 @@ const MainTabPage = (props) => {
 
         {/* ============================= COLLAPSE ITEM ================================ */}
 
-        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('info_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${!collapsed_rows.includes('info_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
           style={{boxShadow: "rgb(108, 124, 212) -9px 0px 0px -0.5px"}}
         >
           <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
@@ -1048,7 +1048,7 @@ const MainTabPage = (props) => {
           >
             <div className={"sa-flex"}>
               <div className={'sa-pa-3 sa-lh-chevron'}>
-                {collapsed_rows.includes('main_row') ? (
+                {!collapsed_rows.includes('info_row') ? (
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('info_row') }}
                   >
@@ -1101,7 +1101,7 @@ const MainTabPage = (props) => {
 
         {/* ============================= COLLAPSE ITEM ================================ */}
 
-        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('contactinfo_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${!collapsed_rows.includes('contactinfo_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
           style={{boxShadow: "rgb(143, 95, 187) -9px 0px 0px -0.5px"}}
         >
           <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
@@ -1115,7 +1115,7 @@ const MainTabPage = (props) => {
           >
             <div className={"sa-flex"}>
               <div className={'sa-pa-3 sa-lh-chevron'}>
-                {collapsed_rows.includes('main_row') ? (
+                {!collapsed_rows.includes('contactinfo_row') ? (
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('contactinfo_row') }}
                   >
@@ -1389,7 +1389,7 @@ const MainTabPage = (props) => {
           >
             <div className={"sa-flex"}>
               <div className={'sa-pa-3 sa-lh-chevron'}>
-                {collapsed_rows.includes('main_row') ? (
+                {collapsed_rows.includes('licenses_row') ? (
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('licenses_row') }}
                   >
@@ -1508,7 +1508,7 @@ const MainTabPage = (props) => {
 
         {/* ============================= COLLAPSE ITEM ================================ */}
 
-        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${collapsed_rows.includes('contacts_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
+        <div className={`sa-org-main-collapse-item sa-org-collapse-item ${!collapsed_rows.includes('contacts_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
           style={{boxShadow: "rgb(202, 111, 126) -9px 0px 0px -0.5px"}}
         >
           <div className={'sa-org-collpase-header sa-och-top sa-flex-space'}
@@ -1522,7 +1522,7 @@ const MainTabPage = (props) => {
           >
             <div className={"sa-flex"}>
               <div className={'sa-pa-3 sa-lh-chevron'}>
-                {collapsed_rows.includes('main_row') ? (
+                {!collapsed_rows.includes('contacts_row') ? (
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('contacts_row') }}
                   >
@@ -1616,7 +1616,7 @@ const MainTabPage = (props) => {
               <div className={'sa-pa-3 sa-lh-chevron'}>
                 {collapsed_rows.includes('requisites_row') ? (
                   <span className={'sa-pa-3 sa-org-trigger-button'}
-                    onClick={() => { triggerCollapse('main_row') }}
+                    onClick={() => { triggerCollapse('requisites_row') }}
                   >
                     <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
                   </span>
