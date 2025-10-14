@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const TabCallsTorg = (props) => {
+    const [refreshMark, setRefreshMark] = useState(null);
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
    */
@@ -40,7 +41,9 @@ const TabCallsTorg = (props) => {
     setEditMode(props.editMode);
   }, [props.editMode]);
 
-  
+  useEffect(() => {
+    setRefreshMark(props.refresh_mark);
+  }, [props.refresh_mark]);
 
   /**
    * Смена или сброс на ноль/нулл org_id приводит к перегрузке формы + загрузке данных с сервака/очистке временных массивов

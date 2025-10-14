@@ -54,11 +54,11 @@ const OPMTCcontactmessangersSection = (props) => {
   //   }
   // }, [props.selects]);
 
-      useEffect(() => {
-        if (props.selects){
-          setSelects(props.selects);
-        }
-      }, [props.selects, editMode]);
+    useEffect(() => {
+      if (props.selects){
+        setSelects(props.selects);
+      }
+    }, [props.selects, editMode]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

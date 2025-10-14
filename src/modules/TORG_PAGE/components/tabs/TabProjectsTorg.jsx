@@ -11,6 +11,7 @@ import { MODAL_PROJECTS_LIST } from '../../../ORG_LIST/components/mock/MODALPROJ
 import ProjectTabSectionTorg from '../sections/ProjectTabSectionTorg';
 
 const TabProjectsTorg = (props) => {
+  const [refreshMark, setRefreshMark] = useState(null);
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
    */
@@ -56,7 +57,9 @@ const TabProjectsTorg = (props) => {
   // ██    ██ ██      ██      
   //  ██████  ██      ██      
 
-
+  useEffect(() => {
+    setRefreshMark(props.refresh_mark);
+  }, [props.refresh_mark]);
 
   useEffect(() => {
     setUserData(props.userdata)

@@ -407,3 +407,33 @@
 .torg-section {
 	box-shadow: 1px 0px 2px #0000006e;
 }
+
+.sa-brand-new-row {
+	border: 2px solid var(--org-page-temp-border-color);
+	margin-bottom: 6px;
+}
+.sa-brand-new-row:hover {
+	border: 2px solid var(--org-page-temp-border-color);
+}
+.sa-brand-new-row:first-child {
+	margin-top: 16px !important;
+}
+.sa-och-top {
+    font-size: medium;
+    color: #292929;
+		padding-bottom: 3px;
+		padding-top: 3px;
+}
+.sa-org-main-collapse-item {
+	margin-bottom: 12px;
+}
+.sa-org-main-collapse-stack {
+	background-color: #e7ebef;
+}
+.sa-org-collapse-buttons {
+	padding-right: 9px;
+}
+.sa-mite-has-some {
+	/* border-bottom: 3px solid blue; */
+	box-shadow: 0px 3px 0px rgba(255, 0, 0, 0.259);
+}

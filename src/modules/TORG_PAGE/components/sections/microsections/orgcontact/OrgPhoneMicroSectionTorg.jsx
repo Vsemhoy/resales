@@ -7,7 +7,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 
 
-const ContactPhoneMicroSectionTorg = (props) => {
+const OrgPhoneMicroSectionTorg = (props) => {
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
   // Оригинал объекта, в который сетапятся данные для отправки наружу
@@ -30,7 +30,7 @@ const ContactPhoneMicroSectionTorg = (props) => {
   const [id_orgsusers, setIdOrgsusers] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
-    const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -56,9 +56,11 @@ const ContactPhoneMicroSectionTorg = (props) => {
 
 
     }
-
-
   }, [props.data]);
+
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
 
   useEffect(() => {
     if (deleted && props.on_delete){
@@ -89,14 +91,15 @@ const ContactPhoneMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
-        if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
+      // При монтировании компонента форма не отправляется
+      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
+      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
-              baseData.deleted = deleted;
-                  baseData.command = 'delete';
-                  props.on_change('notes', itemId, baseData);
-                  return;
+               baseData.deleted = deleted;
+              props.on_change(itemId, baseData, 'org_phone');
+              return;
             }
           }
   
@@ -107,7 +110,7 @@ const ContactPhoneMicroSectionTorg = (props) => {
               // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
               
               baseData.id_orgsusers = id_orgsusers;
-              baseData.number        = number?.trim();
+              baseData.number       = number?.trim();
               baseData.comment      = comment?.trim();
               baseData.ext          = ext;
               baseData.deleted      = deleted;
@@ -129,32 +132,34 @@ const ContactPhoneMicroSectionTorg = (props) => {
   
     }, [
       id_orgsusers,
-        BLUR_FLAG,
+      BLUR_FLAG,
       deleted,
+      
     ]);
 
 
 
   return (
-    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
+    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}
+     ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}
+    `}>
             <TorgPageSectionRow
               explabel={'комм'}
               edit_mode={editMode}
               inputs={[
               {
                 edit_mode: editMode,
-                label: 'Контактный телефон',
+                label: 'Телефон',
                 input:
-                  
                   <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
+                    key={'csontnumber1_' + baseData?.id + orgId}
                     value={number}
                     onChange={e => setNumber(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={25}
+                    maxLength={55}
                     required={true}
                     onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
@@ -167,7 +172,7 @@ const ContactPhoneMicroSectionTorg = (props) => {
                 input:
                   
                   <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
+                    key={'csontnumber2_' + baseData?.id + orgId}
                     value={ext}
                     type={'number'}
                     onChange={e => setExt(e.target.value)}
@@ -175,7 +180,7 @@ const ContactPhoneMicroSectionTorg = (props) => {
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={25}
+                    maxLength={64}
                     required={false}
                     onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
@@ -190,7 +195,7 @@ const ContactPhoneMicroSectionTorg = (props) => {
                 input:
                   
                   <TextArea
-                    key={'cossntnumber_2_' + baseData?.id + orgId}
+                    key={'csontnumber3_' + baseData?.id + orgId}
                     value={comment}
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"
@@ -199,7 +204,6 @@ const ContactPhoneMicroSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={5000}
                     onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
-                    
                   />,
                   required: false,
                   value: comment
@@ -221,4 +225,4 @@ const ContactPhoneMicroSectionTorg = (props) => {
   );
 };
 
-export default ContactPhoneMicroSectionTorg;
+export default OrgPhoneMicroSectionTorg;

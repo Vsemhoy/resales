@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../../../TorgPageSectionRow';
-import { Button, Input } from 'antd';
+import { Button, Input, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 
 
-const ContactPhoneMicroSectionTorg = (props) => {
+const AnLicenseMicroSectionTorg = (props) => {
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
   // Оригинал объекта, в который сетапятся данные для отправки наружу
   const [baseData, setBaseData] = useState(null);
 
   const [itemId, setItemId] = useState(null);
-  const [orgId, setOrgId] = useState(null);
+  const [options, setOptions] = useState([]);
+    const [selects, setSelects] = useState(null);
   // const [theme, setTheme] = useState('');
   // const [author, setAuthor] = useState(1);
   // const [date, setDate] = useState(null);
@@ -26,11 +27,15 @@ const ContactPhoneMicroSectionTorg = (props) => {
 
   const [comment, setComment] = useState('');
   const [number, setNumber] = useState('');
-  const [ext, setExt] = useState('');
-  const [id_orgsusers, setIdOrgsusers] = useState(null);
+  const [id_orgs, setIdOrgs] = useState(null);
+  const [type, setType] = useState(1);
+  const [docType, setDocType] = useState(1);
+
+
   const [deleted, setDeleted] = useState(0);
 
-    const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -46,18 +51,19 @@ const ContactPhoneMicroSectionTorg = (props) => {
 
     if (props.data.id) {
       setItemId(props.data.id);
-      setOrgId(props.data.id_orgs);
 
-      setIdOrgsusers(props.data?.id_orgsusers);
-      setNumber(props.data?.number);
-      setComment(props.data?.comment);
-      setExt(props.data?.ext);
-      setDeleted(props.data?.deleted);
-
-
+      console.log('TYPE', props.data);
+      setIdOrgs(    props.data.id_orgs);
+      if (props.doc_type ===  1){
+        setType( parseInt(props.data.id8an_typelicenses));
+      } else {
+        setType( parseInt(props.data.id8an_typetolerance));
+      }
+      setDocType(   props.doc_type);
+      setComment(   props.data.comment);
+      setDeleted(   props.data.deleted);
+      setNumber(    props.data.number);
     }
-
-
   }, [props.data]);
 
   useEffect(() => {
@@ -66,12 +72,40 @@ const ContactPhoneMicroSectionTorg = (props) => {
     }
   }, [deleted]);
 
+  useEffect(() => {
+    setDocType(props.doc_type);
+  }, [props.doc_type]);
+
+
+    useEffect(() => {
+      let arrak = [];
+      if (props.selects){
+        setSelects(props.selects);
+        if (props?.selects?.tollic){
+          for (const key in props?.selects?.tollic) {
+              if (props?.selects?.tollic.hasOwnProperty(key)) {
+                if (key.startsWith(String(docType))){
+                  const davalue = props.selects.tollic[key];
+                  arrak.push({
+                    key: 'kivalas3_k' + key + '_' + itemId,
+                    value: Number(key.split('-')[1]),
+                    label: davalue
+                  });
+                }
+                  // Your logic here
+              }
+          }
+        }
+      }
+      setOptions(arrak);
+    }, [props.selects, docType, type]);
 
   // ██    ██ ███████ ███████       ██   ██ 
   // ██    ██ ██      ██             ██ ██  
   // ██    ██ █████   █████   █████   ███   
   // ██    ██ ██      ██             ██ ██  
   //  ██████  ██      ██            ██   ██ 
+
 
 
   const handleDeleteItem = () => {
@@ -89,7 +123,9 @@ const ContactPhoneMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
-        if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
+      // При монтировании компонента форма не отправляется
+      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
+      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
@@ -104,14 +140,17 @@ const ContactPhoneMicroSectionTorg = (props) => {
           // При сверх-быстром изменении полей в разных секциях могут быть гонки
         if (editMode  && baseData){
             if (props.on_change){
-              // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
-              
-              baseData.id_orgsusers = id_orgsusers;
-              baseData.number        = number?.trim();
-              baseData.comment      = comment?.trim();
-              baseData.ext          = ext;
-              baseData.deleted      = deleted;
              
+              baseData.id_orgs = id_orgs;
+              if (props.doc_type ===  1){
+                baseData.id8an_typelicenses  = type;
+              } else {
+                baseData.id8an_typetolerance = type;
+              }
+              baseData.document_type = docType;
+              baseData.comment = comment;
+              baseData.deleted = deleted;
+              baseData.number = number;
   
               if (baseData.command === undefined || baseData.command !== 'create'){
                 if (deleted){
@@ -128,9 +167,10 @@ const ContactPhoneMicroSectionTorg = (props) => {
             return () => clearTimeout(timer);
   
     }, [
-      id_orgsusers,
-        BLUR_FLAG,
+      id_orgs,
+      type,
       deleted,
+      BLUR_FLAG,
     ]);
 
 
@@ -143,44 +183,44 @@ const ContactPhoneMicroSectionTorg = (props) => {
               inputs={[
               {
                 edit_mode: editMode,
-                label: 'Контактный телефон',
+                label: docType === 1 ? "Лицензия" : "Допуск",
                 input:
-                  
-                  <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
-                    value={number}
-                    onChange={e => setNumber(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                  <Select
+                  key={'analicensde_2_' + baseData?.id + id_orgs}
+                    value={type}
+                    options={options}
+                    onChange={(ee)=>{
+                      setBLUR_FLAG(dayjs().unix());
+                      setType(ee);
+                      }}
+                    size={'small'}
                     variant="borderless"
-                    maxLength={25}
-                    required={true}
-                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
-                  />,
+                    disabled={!editMode}
+                    />,
                   required: true,
                   value: number
               },
                 {
                 edit_mode: editMode,
-                label: 'Добавочн.',
+                label: 'Номер',
                 input:
                   
                   <Input
-                    key={'csontnumber_' + baseData?.id + orgId}
-                    value={ext}
-                    type={'number'}
-                    onChange={e => setExt(e.target.value)}
+                    size={'small'}
+                    key={'analicense_2_' + baseData?.id + id_orgs}
+                    value={number}
+                    // type={'number'}
+                    onChange={e => setNumber(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={25}
+                    maxLength={55}
                     required={false}
-                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
+                    onBlur={() => setBLUR_FLAG(dayjs().unix())}
                   />,
                   required: false,
-                  value: ext
+                  value: number
               },
             ]}
             extratext={[
@@ -190,7 +230,7 @@ const ContactPhoneMicroSectionTorg = (props) => {
                 input:
                   
                   <TextArea
-                    key={'cossntnumber_2_' + baseData?.id + orgId}
+                    key={'analicense_1_' + baseData?.id + id_orgs}
                     value={comment}
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"
@@ -198,7 +238,7 @@ const ContactPhoneMicroSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={5000}
-                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
+                    onBlur={() => setBLUR_FLAG(dayjs().unix())}
                     
                   />,
                   required: false,
@@ -221,4 +261,4 @@ const ContactPhoneMicroSectionTorg = (props) => {
   );
 };
 
-export default ContactPhoneMicroSectionTorg;
+export default AnLicenseMicroSectionTorg;

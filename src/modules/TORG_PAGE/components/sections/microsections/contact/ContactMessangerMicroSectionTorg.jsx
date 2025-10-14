@@ -4,6 +4,7 @@ import { Button, Input, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import dayjs from 'dayjs';
 
 
 const ContactMessangerMicroSectionTorg = (props) => {
@@ -29,6 +30,8 @@ const ContactMessangerMicroSectionTorg = (props) => {
   const [deleted, setDeleted] = useState(0);
 
 const [selects, setSelects] = useState(null);
+
+    const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -84,8 +87,13 @@ const [selects, setSelects] = useState(null);
     }
   }
 
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
+
 
     useEffect(() => {
+        if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
       if (editMode  && baseData && baseData.command === 'create' && deleted){
         // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
             if (props.on_change){
@@ -124,8 +132,8 @@ const [selects, setSelects] = useState(null);
   
     }, [
       id_orgsusers,
-      identifier,
       messangers_id,
+      BLUR_FLAG,
       deleted,
     ]);
 
@@ -145,14 +153,14 @@ const [selects, setSelects] = useState(null);
                   <Input
                     key={'contdnumber_' + baseData?.id + orgId}
                     value={identifier}
-                    onChange={e => setIdentifier(e.target.value)}
+                    onChange={(e) => setIdentifier(e.target.value)}
                     placeholder={'@contact_id'}
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={250}
                     required={true}
-                    
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
                   value: identifier
@@ -167,7 +175,10 @@ const [selects, setSelects] = useState(null);
                     key={'contdfnumber_' + baseData?.id + orgId}
                     value={messangers_id}
                     type={'number'}
-                    onChange={e => setMessangers_id(e)}
+                    onChange={(ee) => {
+                        setMessangers_id(ee);
+                        setBLUR_FLAG(dayjs().unix());
+                        }}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     disabled={!editMode}

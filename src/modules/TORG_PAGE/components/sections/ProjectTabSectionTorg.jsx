@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { DatePicker, Input } from 'antd';
+import { AutoComplete, DatePicker, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../../components/helpers/TextHelpers';
+import { after } from 'lodash';
 
 const ProjectTabSectionTorg = (props) => {
+  const [refreshMark, setRefreshMark] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
@@ -46,8 +48,8 @@ const ProjectTabSectionTorg = (props) => {
 
     const [allowDelete, setAllowDelete] = useState(true);
 
-
-
+  const [selects, setSelects] = useState(null);
+  const [orgUsers, setOrgUsers] = useState([]);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -57,6 +59,10 @@ const ProjectTabSectionTorg = (props) => {
   useEffect(() => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
+
+    useEffect(() => {
+      setRefreshMark(props.refresh_mark);
+    }, [props.refresh_mark]);
 
   useEffect(() => {
     setData(props.data);
@@ -92,7 +98,36 @@ const ProjectTabSectionTorg = (props) => {
     }
   }, [props.data]);
 
+      useEffect(() => {
+        setSelects(props.selects);
+      }, [props.selects]);
 
+useEffect(() => {
+
+    if (props.org_users) {
+     
+      let usess = [];
+      let uids = [];
+      let fusers = props.org_users.filter((item)=>
+        !(!item.lastname && !item.name && !item.middlename)
+      );
+
+      for (let i = 0; i < fusers.length; i++) {
+        const element = fusers[i];
+        if (!uids.includes(element.id)){
+          let nm = `${(element.lastname ? element.lastname : "") + (element.lastname ? ' ' : '') +  (element.name ? element.name : "") + (element.name ? ' ' : '') + (element.middlename ? element.middlename : '') }`;
+          usess.push({
+            key: 'kjfealllo' + element.id,
+            value: element.value,
+            label: nm
+          });
+
+        }
+
+      }
+      setOrgUsers(usess);
+    }
+  }, [props.org_users]);
 
 
   // ██    ██ ███████ ███████       ██   ██ 
@@ -111,6 +146,10 @@ const ProjectTabSectionTorg = (props) => {
       setDeleted(!deleted);
     }
   }
+
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
 
   useEffect(() => {
     setCollapsed(props.collapsed);
@@ -283,6 +322,7 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Объект',
                 input:
                   <Input
@@ -294,6 +334,7 @@ const ProjectTabSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    required={true}
                   />,
                   required: true,
                   value: name
@@ -308,6 +349,7 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Адрес',
                 input:
                   <Input
@@ -319,6 +361,7 @@ const ProjectTabSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    required={true}
                   />,
                   required: true,
                   value: address
@@ -333,6 +376,7 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Заказчик',
                 input:
                   <Input
@@ -344,11 +388,13 @@ const ProjectTabSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    required={true}
                   />,
                   required: true,
                   value: customer
               },
               {
+                edit_mode: editMode,
                 label: 'Этап',
                 input:
                   <Input
@@ -372,6 +418,7 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Оборудование',
                 input:
                   <Input
@@ -384,10 +431,11 @@ const ProjectTabSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={200}
                   />,
-                  required: true,
+                  required: false,
                   value: equipment
               },
               {
+                edit_mode: editMode,
                 label: 'Тип СОУЭ',
                 input:
                   <Input
@@ -413,22 +461,33 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Контактное лицо',
                 input:
-                  <Input
+                  // <Input
+                  //   key={'texpard_10_' + data?.id}
+                  //   value={contactperson}
+                  //   onChange={e => setContactperson(e.target.value)}
+                  //   // placeholder="Controlled autosize"
+                  //   autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                  //   readOnly={!editMode}
+                  //   variant="borderless"
+                  //   maxLength={200}
+                  // />
+                  <AutoComplete
+                  
                     key={'texpard_10_' + data?.id}
+                    placeholder={'Фамилия Имя Отчество'}
                     value={contactperson}
                     onChange={e => setContactperson(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={200}
-                  />,
+                    options={orgUsers}
+                    />
+                  ,
                   required: true,
                   value: contactperson
               },
               {
+                edit_mode: editMode,
                 label: 'Дата завершения',
                 input:
                   <Input
@@ -441,7 +500,7 @@ const ProjectTabSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={200}
                   />,
-                  required: true,
+                  required: false,
                   value: dateEnd
               },
 
@@ -454,6 +513,7 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Стоимость',
                 input:
                   <Input
@@ -466,10 +526,11 @@ const ProjectTabSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={200}
                   />,
-                  required: true,
+                  required: false,
                   value: cost
               },
               {
+                edit_mode: editMode,
                 label: 'Вознаграждение',
                 input:
                   <Input
@@ -482,7 +543,7 @@ const ProjectTabSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={200}
                   />,
-                  required: true,
+                  required: false,
                   value: bonus
               },
 
@@ -497,7 +558,8 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
-                label: 'Тема',
+                edit_mode: editMode,
+                label: 'Тип проекта',
                 input:
                   <Input
                     key={'texpard_14_' + data?.id}
@@ -523,6 +585,7 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Связанное КП',
                 input:
                   <Input
@@ -535,7 +598,7 @@ const ProjectTabSectionTorg = (props) => {
                     variant="borderless"
                     maxLength={200}
                   />,
-                  required: true,
+                  required: false,
                   value: bidsId
               },
 
@@ -549,6 +612,7 @@ const ProjectTabSectionTorg = (props) => {
             edit_mode={editMode}
             inputs={[
               {
+                edit_mode: editMode,
                 label: 'Заметка',
                 input:
                   <TextArea
@@ -560,9 +624,9 @@ const ProjectTabSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={5000}
-                    required={true}
+                    required={false}
                   />,
-                  required: true,
+                  required: false,
                   value: comment
               },
 

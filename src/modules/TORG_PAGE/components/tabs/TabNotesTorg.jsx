@@ -9,6 +9,7 @@ import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
 import { PlusOutlined } from '@ant-design/icons';
 
 const TabNotesTorg = (props) => {
+   const [refreshMark, setRefreshMark] = useState(null);
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
    */
@@ -55,7 +56,9 @@ const TabNotesTorg = (props) => {
   //  ██████  ██      ██      
 
 
-
+  useEffect(() => {
+    setRefreshMark(props.refresh_mark);
+  }, [props.refresh_mark]);
 
 
 

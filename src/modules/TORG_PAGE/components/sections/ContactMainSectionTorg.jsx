@@ -13,6 +13,8 @@ import ContactMobileMicroSectionTorg from './microsections/contact/ContactMobile
 import ContactPhoneMicroSectionTorg from './microsections/contact/ContactPhoneMicroSectionTorg';
 
 const ContactMainSectionTorg = (props) => {
+  const [refreshMark, setRefreshMark] = useState(null);
+
   const [collapsed, setCollapsed] = useState(true);
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
@@ -100,7 +102,9 @@ const ContactMainSectionTorg = (props) => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
 
-
+  useEffect(() => {
+    setRefreshMark(props.refresh_mark);
+  }, [props.refresh_mark]);
 
 useEffect(() => {
   const newData = JSON.parse(JSON.stringify(props.data));
@@ -186,7 +190,7 @@ useEffect(() => {
 
   // Этот не работает - не долетает айдишник компании
   useEffect(() => {
-    console.log('ID ORGS', props.data.id_orgs)
+    // console.log('ID ORGS', props.data.id_orgs)
     if (props.data.id_orgs !== orgId){
       setNewContactEmails([]);
       setNewContacthomephones([]);
@@ -220,19 +224,23 @@ useEffect(() => {
     }
   }
 
+  useEffect(() => {
+    setAllowDelete(props.allow_delete);
+  }, [props.allow_delete]);
+
   // useEffect(() => {
   //   setCollapsed(props.collapsed);
   // }, [props.collapsed]);
 
 
   useEffect(() => {
-    console.log('ALLLLOO', deleted)
+    // console.log('ALLLLOO', deleted)
     if (editMode && !collapsed && baseData && baseData.command === 'create' && deleted){
       // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
           if (props.on_change){
             baseData.deleted = deleted;
                 // baseData.command = 'delete';
-                console.log('DELETED')
+                // console.log('DELETED')
                 props.on_change('contacts', itemId, baseData);
                 return;
           }
@@ -241,7 +249,7 @@ useEffect(() => {
       const timer = setTimeout(() => {
         // При сверх-быстром изменении полей в разных секциях могут быть гонки
 			  if (editMode && baseData){
-          if (props.on_change){
+          if (props.on_change && name){
             // data.theme = theme;
             // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
             // data.notes = note;
@@ -258,11 +266,12 @@ useEffect(() => {
             baseData.deleted = deleted;
             baseData.unsubscribe = unsubscribe;
 
-            baseData.contactstelephones = contactstelephones.concat(newContactstelephones);
-            baseData.contactmobiles =     contactmobiles.concat(newContactmobiles);
-            baseData.contacthomephones =  contacthomephones.concat(newContacthomephones);
-            baseData.contactemails =      contactemails.concat(newContactemails);
-            baseData.contactmessangers =  contactmessangers.concat(newContactmessangers);
+            /** Сюда ничего не добавляем, иначе будет бесконечный add */
+            baseData.contactstelephones    = contactstelephones;
+            baseData.contactmobiles        = contactmobiles;
+            baseData.contacthomephones     = contacthomephones;
+            baseData.contactemails         = contactemails;
+            baseData.contactmessangers     = contactmessangers;
 
             baseData.up_contactstelephones = updatedContactstelephones.concat(newContactstelephones);
             baseData.up_contactmobiles =     updatedContactmobiles.concat(newContactmobiles);
@@ -277,7 +286,7 @@ useEffect(() => {
                 baseData.command = 'update';
               }
             }
-            console.log('baseData', baseData)
+            // console.log('baseData', baseData)
             props.on_change('contacts', itemId, baseData);
           }
         }
@@ -341,7 +350,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewMobile = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContactmobiles(newContactmobiles.filter((item)=>item.id !== id));
   }
 
@@ -379,7 +388,7 @@ useEffect(() => {
   const handleUpdateMobileUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -391,7 +400,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data email', data)
+    // console.log('data email', data)
     setContactmobiles((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -436,7 +445,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewContact = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContactstelephones(newContactstelephones.filter((item)=>item.id !== id));
   }
 
@@ -449,7 +458,7 @@ useEffect(() => {
   const handleUpdateNewContactUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU NEW UPDATE');
+    // console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
@@ -475,7 +484,7 @@ useEffect(() => {
   const handleUpdateContactUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -485,7 +494,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data email', data)
+    // console.log('data email', data)
     setContactstelephones((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -530,7 +539,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewHomePhone = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContacthomephones(newContacthomephones.filter((item)=>item.id !== id));
   }
 
@@ -543,7 +552,7 @@ useEffect(() => {
   const handleUpdateNewHomePhoneUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU NEW UPDATE');
+    // console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
@@ -569,7 +578,7 @@ useEffect(() => {
   const handleUpdateHomePhoneUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -579,7 +588,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data email', data)
+    // console.log('data email', data)
     setContacthomephones((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -623,7 +632,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewEmail = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContactEmails(newContactemails.filter((item)=>item.id !== id));
   }
 
@@ -636,7 +645,7 @@ useEffect(() => {
   const handleUpdateNewEmailUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU NEW UPDATE');
+    // console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
@@ -662,7 +671,7 @@ useEffect(() => {
   const handleUpdateEmailUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -672,7 +681,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data email', data)
+    // console.log('data email', data)
     setContactemails((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -716,7 +725,7 @@ useEffect(() => {
    * @param {*} id 
    */
   const handleDeleteNewMessanger = (id) => {
-    console.log('delete', id)
+    // console.log('delete', id)
     setNewContactmessangers(newContactmessangers.filter((item)=>item.id !== id));
   }
 
@@ -729,7 +738,7 @@ useEffect(() => {
   const handleUpdateNewMessangerUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU NEW UPDATE');
+    // console.log('CALL TU NEW UPDATE');
     if (!editMode) {
       return;
     }
@@ -755,7 +764,7 @@ useEffect(() => {
   const handleUpdateMessangerUnit = (id, data) => {
     // let udata = originalData.filter((item) => item.id !== id);
     // udata.push(data);
-    console.log('CALL TU REAL UPDATE');
+    // console.log('CALL TU REAL UPDATE');
     if (!editMode) {
       return;
     }
@@ -765,7 +774,7 @@ useEffect(() => {
       data.command = "delete";
     } 
 
-    console.log('data', data)
+    // console.log('data', data)
     setContactmessangers((prevUnits) => {
       const exists = prevUnits.some((item) => item.id === id);
       if (!exists) {
@@ -815,11 +824,12 @@ useEffect(() => {
 
 
     const updateContactPhone = (id, value, field) => {
-    setContactstelephones(prev =>
-      prev.map(item =>
-        item.id === id ? value : item
-      )
-    );
+      setContactstelephones(prev =>
+        prev.map(item =>
+          item.id === id ? value : item
+        )
+      );
+
     let existed = updatedContactstelephones.find((item)=> item.id === id);
     if (existed){
       setUpdatedNewContactstelephones(prev =>
@@ -925,7 +935,7 @@ useEffect(() => {
   return (
     <div className={`sa-org-collapse-item sa-org-person-row
        ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
-       ${deleted ? 'deleted' : ''}`}
+       ${deleted ? 'deleted' : ''} ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}`}
 
     >
       <div className={'sa-org-collpase-header sa-flex-space'}
@@ -1268,7 +1278,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactPhone}
                 on_delete={(id)=>{
-                  setNewContactstelephones(newContactstelephones.filter(item => item.id !== id));
+                  setNewContactstelephones(newContactstelephones.filter(item2 => item2.id !== id));
                 }}
           />
         ))}
@@ -1285,7 +1295,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactMobile}
                 on_delete={(id)=>{
-                  setNewContactmobiles(newContactmobiles.filter(item => item.id !== id));
+                  setNewContactmobiles(newContactmobiles.filter(item2 => item2.id !== id));
                 }}
           />
         ))}</div>
@@ -1301,7 +1311,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactHomePhone}
                 on_delete={(id)=>{
-                  setNewContacthomephones(newContacthomephones.filter(item => item.id !== id));
+                  setNewContacthomephones(newContacthomephones.filter(item2 => item2.id !== id));
                 }}
           />
         ))}</div>
@@ -1317,7 +1327,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactEmail}
                 on_delete={(id)=>{
-                  setNewContactEmails(newContactemails.filter(item => item.id !== id));
+                  setNewContactEmails(newContactemails.filter(item2 => item2.id !== id));
                 }}
               />
         ))}</div>
@@ -1333,7 +1343,7 @@ useEffect(() => {
                 edit_mode={editMode}
                 on_change={updateNewContactMessanger}
                 on_delete={(id)=>{
-                  setNewContactmessangers(newContactmessangers.filter(item => item.id !== id));
+                  setNewContactmessangers(newContactmessangers.filter(item2 => item2.id !== id));
                 }}
                 selects={selects}
           />

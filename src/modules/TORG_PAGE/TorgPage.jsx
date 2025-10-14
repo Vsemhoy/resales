@@ -81,8 +81,11 @@ const tabNames = [
 
 
 
-const OrgPage = (props) => {
+const TorgPage = (props) => {
 	const { userdata } = props;
+	/** Смена значения говорит дочерним компонентам, что нужно очистить все несохраненные данные/перегрузить страницу */
+	const [refreshMark, setRefreshMark] = useState(null);
+
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
 	const [departList, setDepartList] = useState(null);
 	const [open, setOpen] = useState(false);
@@ -1231,4 +1234,4 @@ const OrgPage = (props) => {
 	);
 };
 
-export default OrgPage;
+export default TorgPage;
