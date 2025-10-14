@@ -3,6 +3,7 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useUserData } from '../../../context/UserDataContext';
 import { useSendSms } from '../../../hooks/sms/useSendSms';
 import { useChatSocket } from '../../../context/ChatSocketContext';
+import { useChatRole } from '../../../hooks/sms/useChatRole.js';
 import { Layout, message } from 'antd';
 import { nanoid } from 'nanoid';
 import { ChatInput } from './ChatInput';
@@ -11,6 +12,7 @@ import ChatSelfMsg from './ChatSelfMsg';
 import ChatIncomingMsg from './ChatIncomingMsg';
 import { CHAT_MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
+
 const { Content, Footer } = Layout;
 const generateUUID = () => nanoid(8);
 const { chatId } = useSms;
@@ -22,6 +24,9 @@ export default function ChatContent({ chatId }) {
 	const messagesContainerRef = useRef(null);
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
+
+	// Используем кастомный хук для логики ролей
+	const { getRole, getDisplayName } = useChatRole(currentUserId);
 
 	const { sendSms } = useSendSms();
 	const { connectionStatus, socket } = useChatSocket();
@@ -57,11 +62,60 @@ export default function ChatContent({ chatId }) {
 
 	// Функция для определения отправителя сообщения
 	const getMessageSenderId = useCallback((msg) => {
+		// Для локальных сообщений
+		if (msg.isLocal) return msg.from_id;
+
 		// PRODMODE формат: данные от Laravel
 		if (msg.right?.from_id) return msg.right.from_id;
 		if (msg.from_id) return msg.from_id;
 		if (msg.from?.id) return msg.from.id;
 		return null;
+	}, []);
+
+	// Функция для получения timestamp из сообщения
+	const getMessageTimestamp = useCallback((msg) => {
+		// Для локальных сообщений
+		if (msg.isLocal) return msg.timestamp;
+
+		// PRODMODE формат: данные от Laravel (msg.right и msg.left)
+		if (msg.right?.updated_at) return msg.right.updated_at * 1000;
+		if (msg.right?.created_at) return msg.right.created_at * 1000;
+		if (msg.left?.updated_at) return msg.left.updated_at * 1000;
+		if (msg.left?.created_at) return msg.left.created_at * 1000;
+
+		// MOCK формат
+		if (msg.updated_at) return msg.updated_at * 1000;
+		if (msg.created_at) return msg.created_at * 1000;
+
+		// Fallback
+		console.warn('⚠️ [CHAT] No timestamp found for message:', msg);
+		return Date.now();
+	}, []);
+
+	// Функция для получения текста сообщения
+	const getMessageText = useCallback((msg) => {
+		// Для локальных сообщений
+		if (msg.isLocal) return msg.text;
+
+		// PRODMODE формат
+		if (msg.right?.text) return msg.right.text;
+		if (msg.left?.text) return msg.left.text;
+
+		// MOCK формат
+		return msg.text;
+	}, []);
+
+	// Функция для получения ID сообщения (универсальная)
+	const getMessageId = useCallback((msg) => {
+		// Для локальных сообщений
+		if (msg.isLocal) return msg.id;
+
+		// PRODMODE формат
+		if (msg.right?.id) return msg.right.id;
+		if (msg.left?.id) return msg.left.id;
+
+		// MOCK формат
+		return msg.id;
 	}, []);
 
 	// Функция для нормализации сообщения
@@ -70,22 +124,50 @@ export default function ChatContent({ chatId }) {
 			const senderId = getMessageSenderId(msg);
 			const isSelf = senderId === currentUserId || msg.isLocal;
 
-			return {
-				id: msg.id,
-				text: msg.text || msg.left?.text,
-				timestamp: msg.isLocal
-					? msg.timestamp
-					: (msg.updated_at || msg.created_at || msg.left?.updated_at || msg.left?.created_at) *
-					  1000,
-				role: isSelf ? 'self' : 'companion',
-				senderName: isSelf ? 'Вы' : msg.senderName || who || 'Собеседник',
+			// Используем хук для определения роли и имени
+			const role = isSelf ? 'self' : getRole(msg);
+			const displayName = isSelf ? 'Вы' : getDisplayName(msg, role, false);
+
+			const timestamp = getMessageTimestamp(msg);
+			const text = getMessageText(msg);
+			const id = getMessageId(msg);
+
+			console.log('🕒 [CHAT] Normalizing message:', {
+				original: msg,
+				senderId,
+				isSelf,
+				timestamp,
+				text,
+				id,
+				role,
+				displayName,
+				isLocal: msg.isLocal,
+			});
+
+			const normalizedMsg = {
+				id: id,
+				text: text,
+				timestamp: timestamp,
+				role: role,
+				senderName: displayName || 'Собеседник',
 				isLocal: msg.isLocal || false,
 				isSending: msg.isSending || false,
 				// Сохраняем оригинальные данные для отладки
 				_raw: msg,
 			};
+
+			console.log('✅ [CHAT] Normalized message:', normalizedMsg);
+			return normalizedMsg;
 		},
-		[currentUserId, who, getMessageSenderId]
+		[
+			currentUserId,
+			getMessageSenderId,
+			getRole,
+			getDisplayName,
+			getMessageTimestamp,
+			getMessageText,
+			getMessageId,
+		]
 	);
 
 	useEffect(() => {
@@ -105,18 +187,25 @@ export default function ChatContent({ chatId }) {
 
 		// SOCKET режим
 		if (connectionStatus === 'connected' && socket) {
+			console.log('🔌 [CHAT] Connecting to chat room:', chatId);
+
 			const handleMessageNew = (msg) => {
 				console.log('📨 [CHAT] New message received:', {
 					message: msg,
 					senderId: getMessageSenderId(msg),
 					currentUserId,
 					isSelf: getMessageSenderId(msg) === currentUserId,
+					timestamp: getMessageTimestamp(msg),
 				});
 
-				if ((!msg.text || msg.text.trim() === '') && (!msg.files || msg.files.length === 0)) return;
+				if (
+					(!getMessageText(msg) || getMessageText(msg).trim() === '') &&
+					(!msg.files || msg.files.length === 0)
+				)
+					return;
 
 				// Проверяем chat_id в разных форматах
-				const messageChatId = msg.chat_id || msg.left?.chat_id;
+				const messageChatId = msg.chat_id || msg.left?.chat_id || msg.right?.chat_id;
 				if (messageChatId !== chatId) return;
 
 				setMessages((prev) => {
@@ -124,7 +213,7 @@ export default function ChatContent({ chatId }) {
 					const localIndex = prev.findIndex(
 						(lMsg) =>
 							lMsg.isLocal &&
-							lMsg.text === (msg.text || msg.left?.text) &&
+							getMessageText(lMsg) === getMessageText(msg) &&
 							getMessageSenderId(lMsg) === getMessageSenderId(msg)
 					);
 
@@ -132,7 +221,7 @@ export default function ChatContent({ chatId }) {
 						const newPrev = [...prev];
 						newPrev[localIndex] = {
 							...newPrev[localIndex],
-							id: msg.id || msg.left?.id,
+							id: getMessageId(msg),
 							isLocal: false,
 							isSending: false,
 						};
@@ -145,21 +234,71 @@ export default function ChatContent({ chatId }) {
 
 			const handleMessageUpdate = (updatedMsg) => {
 				setMessages((prev) =>
-					prev.map((m) => (m.id === updatedMsg.id ? { ...m, ...updatedMsg } : m))
+					prev.map((m) =>
+						getMessageId(m) === getMessageId(updatedMsg) ? { ...m, ...updatedMsg } : m
+					)
 				);
+			};
+
+			const handleChatHistory = (historyData) => {
+				console.log('📚 [CHAT] History received:', historyData);
+
+				if (historyData && Array.isArray(historyData.messages)) {
+					// Обрабатываем историю сообщений
+					const historyMessages = historyData.messages.map((msg) => {
+						// Преобразуем формат истории в ожидаемый формат
+						return {
+							right: msg, // Помещаем в right для совместимости с normalizeMessage
+							chat_id: chatId,
+						};
+					});
+
+					setMessages(historyMessages);
+					setWho(historyData.who || 'Собеседник');
+					setLoading(false);
+				} else if (historyData && Array.isArray(historyData)) {
+					// Если история пришла как массив сообщений
+					const historyMessages = historyData.map((msg) => ({
+						right: msg,
+						chat_id: chatId,
+					}));
+
+					setMessages(historyMessages);
+					setWho('Собеседник');
+					setLoading(false);
+				} else {
+					console.warn('❌ [CHAT] Invalid history format:', historyData);
+					setLoading(false);
+				}
 			};
 
 			// Подписываемся на правильные события WebSocket
 			socket.emit('room:join', chatId);
+
+			// Запрашиваем историю сообщений
+			socket.emit('sms:get_history', { chat_id: chatId });
+
+			// Слушаем события
 			socket.on('sms:new_message', handleMessageNew);
 			socket.on('sms:update_message', handleMessageUpdate);
+			socket.on('sms:history', handleChatHistory);
+			socket.on('room:history', handleChatHistory); // альтернативное событие
 
-			setLoading(false);
+			// Таймаут для отображения, если история не пришла
+			const timeoutId = setTimeout(() => {
+				if (loading) {
+					console.log('⏰ [CHAT] History timeout, setting loading to false');
+					setLoading(false);
+				}
+			}, 3000);
 
 			return () => {
+				clearTimeout(timeoutId);
 				socket.emit('room:leave', chatId);
 				socket.off('sms:new_message', handleMessageNew);
 				socket.off('sms:update_message', handleMessageUpdate);
+				socket.off('sms:history', handleChatHistory);
+				socket.off('room:history', handleChatHistory);
 			};
 		}
 
@@ -170,23 +309,52 @@ export default function ChatContent({ chatId }) {
 			setWho('Собеседник');
 			setLoading(false);
 		}
-	}, [chatId, socket, connectionStatus, currentUserId, getMessageSenderId]);
+	}, [
+		chatId,
+		socket,
+		connectionStatus,
+		currentUserId,
+		getMessageSenderId,
+		getMessageText,
+		getMessageTimestamp,
+		getMessageId,
+		loading,
+	]);
 
 	// --- Объединяем серверные и локальные сообщения ---
 	const allMessages = useMemo(() => {
-		const existingIds = new Set(messages.map((msg) => msg.id?.toString()));
-		const filteredLocal = localMessages.filter((lMsg) => !existingIds.has(lMsg.id?.toString()));
-		const combined = [...messages, ...filteredLocal];
+		const existingIds = new Set();
+		const combined = [...messages, ...localMessages];
 
-		return combined
+		// Фильтруем дубликаты
+		const uniqueMessages = combined.filter((msg) => {
+			const id = getMessageId(msg);
+			if (existingIds.has(id?.toString())) {
+				return false;
+			}
+			existingIds.add(id?.toString());
+			return true;
+		});
+
+		const normalized = uniqueMessages
 			.map(normalizeMessage)
-			.filter((msg) => msg.text) // Фильтруем сообщения без текста
+			.filter((msg) => msg.text && msg.text.trim() !== '')
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [messages, localMessages, normalizeMessage]);
+
+		console.log('📊 [CHAT] All normalized messages:', normalized);
+		return normalized;
+	}, [messages, localMessages, normalizeMessage, getMessageId]);
 
 	// --- Разделители по датам ---
 	const formatChatDate = useCallback((ts) => {
+		console.log('📅 [CHAT] Formatting date for timestamp:', ts, new Date(ts));
+
 		const d = new Date(ts);
+		if (isNaN(d.getTime())) {
+			console.error('❌ [CHAT] Invalid timestamp:', ts);
+			return 'Неизвестная дата';
+		}
+
 		const today = new Date();
 		const yesterday = new Date();
 		yesterday.setDate(today.getDate() - 1);
@@ -202,10 +370,20 @@ export default function ChatContent({ chatId }) {
 	}, []);
 
 	const messagesWithDividers = useMemo(() => {
+		console.log('📅 [CHAT] Creating dividers for messages:', allMessages);
+
 		const items = [];
 		let lastDayKey = null;
 
 		for (const msg of allMessages) {
+			console.log('📅 [CHAT] Processing message for divider:', {
+				id: msg.id,
+				timestamp: msg.timestamp,
+				date: new Date(msg.timestamp),
+				text: msg.text?.substring(0, 20),
+				isLocal: msg.isLocal,
+			});
+
 			const dayKey = new Date(msg.timestamp).toDateString();
 			if (lastDayKey !== dayKey) {
 				items.push({ type: 'divider', id: `divider-${dayKey}`, timestamp: msg.timestamp });
@@ -214,6 +392,7 @@ export default function ChatContent({ chatId }) {
 			items.push({ type: 'msg', id: msg.id, message: msg });
 		}
 
+		console.log('📅 [CHAT] Final items with dividers:', items);
 		return items;
 	}, [allMessages]);
 
@@ -253,24 +432,24 @@ export default function ChatContent({ chatId }) {
 				if (res?.data?.id) {
 					setMessages((prev) =>
 						prev.map((m) =>
-							m.id === newLocalMsg.id
+							getMessageId(m) === newLocalMsg.id
 								? { ...m, id: res.data.id, isLocal: false, isSending: false }
 								: m
 						)
 					);
-					setLocalMessages((prev) => prev.filter((m) => m.id !== newLocalMsg.id));
+					setLocalMessages((prev) => prev.filter((m) => getMessageId(m) !== newLocalMsg.id));
 				} else {
 					setMessages((prev) =>
-						prev.map((m) => (m.id === newLocalMsg.id ? { ...m, isSending: false } : m))
+						prev.map((m) => (getMessageId(m) === newLocalMsg.id ? { ...m, isSending: false } : m))
 					);
 				}
 			} catch (err) {
-				setLocalMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
-				setMessages((prev) => prev.filter((msg) => msg.id !== newLocalMsg.id));
+				setLocalMessages((prev) => prev.filter((msg) => getMessageId(msg) !== newLocalMsg.id));
+				setMessages((prev) => prev.filter((msg) => getMessageId(msg) !== newLocalMsg.id));
 				message.error(err.message || 'Ошибка при отправке сообщения');
 			}
 		},
-		[chatId, sendSms, currentUserId]
+		[chatId, sendSms, currentUserId, getMessageId]
 	);
 
 	const renderMessage = useCallback(

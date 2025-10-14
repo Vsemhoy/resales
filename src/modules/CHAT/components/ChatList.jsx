@@ -3,35 +3,26 @@ import { MOCK } from '../mock/mock';
 import { useSms } from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
+import { useChatRole } from '../../../hooks/sms/useChatRole';
 import styles from './style/Chat.module.css';
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 
+	let chat_id = null;
+
 	const {
 		data: smsList = [],
 		loading,
 		error,
 	} = useSms({
-		chatId: 0,
+		chatId: chat_id,
 		mock: MOCK,
 		search,
 	});
 
-	// Упрощенная функция определения роли
-	const getRole = (sms) => {
-		if (!sms || !currentUserId) return null;
-		return sms.from?.id === currentUserId ? 'self' : 'companion';
-	};
-
-	// Универсальная функция для получения отображаемого имени
-	const getDisplayName = (sms, role, isSaved) => {
-		if (isSaved) return 'Сохранённое';
-
-		const user = role === 'self' ? sms.to : sms.from;
-		return `${user?.surname ?? ''} ${user?.name ?? ''}`.trim();
-	};
+	const { getRole, getDisplayName } = useChatRole(currentUserId);
 
 	const chats = useMemo(() => {
 		const normalizedSearch = search.toLowerCase();
@@ -97,7 +88,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		});
 
 		return result;
-	}, [smsList, search, currentUserId, getRole]);
+	}, [smsList, search, currentUserId, getRole, getDisplayName]);
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
