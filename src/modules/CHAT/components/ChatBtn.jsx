@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useUserData } from '../../../context/UserDataContext.js';
 import { useChatSocket } from '../../../context/ChatSocketContext.js';
 import { useSms } from '../../../hooks/sms/useSms.js';
+import { useChatRole } from '../../../hooks/sms/useChatRole.js';
 import { Button, Dropdown, Space } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import { ChatModal } from './ChatModal.jsx';
@@ -13,6 +14,9 @@ export const ChatBtn = () => {
 	const { chats /*, connectionStatus */ } = useChatSocket();
 	const currentUserId = userdata?.user?.id;
 
+	// Используем кастомный хук для логики ролей
+	const { getRole, getDisplayName } = useChatRole(currentUserId);
+
 	// ДОБАВЛЕНО: Логирование для отладки
 	useEffect(() => {
 		console.log('🔍 [ChatBtn] Current user ID:', currentUserId);
@@ -22,7 +26,6 @@ export const ChatBtn = () => {
 
 	// --- Формируем smsData (чаты, где участвует текущий пользователь) ---
 	const smsData = useMemo(() => {
-
 		if (!Array.isArray(chats) || chats.length === 0) {
 			console.log('🔍 [ChatBtn] No chats available');
 			return { hasSms: false, messages: [] };
@@ -40,15 +43,19 @@ export const ChatBtn = () => {
 				return isParticipant;
 			})
 			.map((chat) => {
-				const fromId = chat.from?.id || chat.from_id;
-				const companion = fromId === currentUserId ? chat.to : chat.from;
+				const role = getRole(chat);
+				const displayName = getDisplayName(chat, role, false);
+
+				// Определяем companion на основе роли
+				const companion = role === 'self' ? chat.to : chat.from;
 
 				const result = {
 					id: chat.chat_id || chat.id,
-					name: companion?.name || 'Неизвестный',
-					surname: companion?.surname || '',
+					name: displayName || 'Неизвестный',
+					surname: '', // Теперь фамилия включена в displayName
 					content: chat.text || chat.last_message || '(без текста)',
 					chatId: chat.chat_id,
+					role: role, // Добавляем роль для отладки
 					// ДОБАВЛЕНО: полная структура для отладки
 					_fullChat: chat,
 				};
@@ -59,7 +66,7 @@ export const ChatBtn = () => {
 
 		console.log(`🔍 [ChatBtn] Final messages:`, messages);
 		return { hasSms: messages.length > 0, messages };
-	}, [chats, currentUserId]);
+	}, [chats, currentUserId, getRole, getDisplayName]);
 
 	// --- Меню для dropdown ---
 	const menuItems = useMemo(() => {
@@ -76,12 +83,11 @@ export const ChatBtn = () => {
 		console.log(`🔍 [ChatBtn] Messages count: ${count}`, messages);
 
 		const label = (() => {
-			if (count === 1) return `${messages[0].name} ${messages[0].surname}`.trim();
-			if (count === 2)
-				return `${messages[0].name} ${messages[0].surname} и ${messages[1].name} ${messages[1].surname}`.trim();
+			if (count === 1) return messages[0].name;
+			if (count === 2) return `${messages[0].name} и ${messages[1].name}`;
 			return `${messages
 				.slice(0, 2)
-				.map((m) => `${m.name} ${m.surname}`.trim())
+				.map((m) => m.name)
 				.join(', ')} и ещё +${count - 2}`;
 		})();
 
