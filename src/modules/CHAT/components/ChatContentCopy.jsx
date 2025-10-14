@@ -20,27 +20,8 @@ export default function ChatContentCopy({ chatId }) {
 	const MemoChatDivider = React.memo(ChatDivider);
 	const [localMessages, setLocalMessages] = useState([]);
 
-	// --- Разделители по датам ---
-	// const formatChatDate = useCallback((ts) => {
-	// 	const d = new Date(ts);
-	// 	if (isNaN(d.getTime())) {
-	// 		console.error('❌ [CHAT] Invalid timestamp:', ts);
-	// 		return 'Неизвестная дата';
-	// 	}
-
-	// 	const today = new Date();
-	// 	const yesterday = new Date();
-	// 	yesterday.setDate(today.getDate() - 1);
-
-	// 	const isSameDay = (a, b) =>
-	// 		a.getFullYear() === b.getFullYear() &&
-	// 		a.getMonth() === b.getMonth() &&
-	// 		a.getDate() === b.getDate();
-
-	// 	if (isSameDay(d, today)) return 'Сегодня';
-	// 	if (isSameDay(d, yesterday)) return 'Вчера';
-	// 	return d.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' });
-	// }, []);
+	const userdata = useUserData();
+	const currentUserId = userdata?.user?.id;
 
 	const { Content, Footer } = Layout;
 	const { messages, who, loading } = useSms({ chatId });
@@ -70,15 +51,12 @@ export default function ChatContentCopy({ chatId }) {
 		// }, [messages, localMessages, normalizeMessage, getMessageId]);
 	}, [messages, localMessages]);
 
-	const renderMessage = useCallback(
-		(message) =>
-			message.role === 'self' ? (
-				<MemoChatSelfMsg key={message.id} message={message} />
-			) : (
-				<MemoChatIncomingMsg key={message.id} message={message} />
-			),
-		[]
-	);
+	const renderMessage = (message) =>
+		+message.from_id === +currentUserId ? (
+			<MemoChatSelfMsg key={message.id} message={message} />
+		) : (
+			<MemoChatIncomingMsg key={message.id} message={message} />
+		);
 
 	const messagesWithDividers = useMemo(() => {
 		const items = [];
@@ -118,7 +96,7 @@ export default function ChatContentCopy({ chatId }) {
 								item.type === 'divider' ? (
 									<MemoChatDivider key={item.id}>
 										{dayjs(+item.timestamp * 1000).format('DD.MM.YY')}
-									
+
 										{/* {dayjs(item.timestamp)} */}
 									</MemoChatDivider>
 								) : (
