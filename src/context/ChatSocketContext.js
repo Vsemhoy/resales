@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
-// import { io } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import { PRODMODE } from '../config/config.js';
 import { MOCK, CHAT_MOCK } from '../modules/CHAT/mock/mock.js';
 
