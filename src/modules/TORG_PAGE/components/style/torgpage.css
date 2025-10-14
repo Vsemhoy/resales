@@ -433,3 +433,7 @@
 .sa-org-collapse-buttons {
 	padding-right: 9px;
 }
+.sa-mite-has-some {
+	/* border-bottom: 3px solid blue; */
+	box-shadow: 0px 3px 0px rgba(255, 0, 0, 0.259);
+}

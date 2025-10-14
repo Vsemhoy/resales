@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom';
 import { Affix, Alert, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
 
-import { ArrowSmallLeftIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
+import { ArrowSmallLeftIcon, CircleStackIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import {
 	ArrowLeftCircleIcon,
 	ClipboardDocumentCheckIcon,
@@ -19,7 +19,7 @@ import {
 	PhoneXMarkIcon,
 	XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CloseOutlined, ExclamationOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
@@ -43,6 +43,7 @@ import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
 import CustomModal from '../../components/helpers/modals/CustomModal';
 import { FlushOrgData, IsSameComparedSomeOrgData, MAIN_ORG_DATA_IGNORE_KEYS } from './components/handlers/OrgPageDataHandler';
+import TabNotesTorg from '../TORG_PAGE/components/tabs/TabNotesTorg';
 
 const tabNames = [
 	{
@@ -193,7 +194,10 @@ const OrgPage = (props) => {
 		tempMain_an_requisites?.length ||
 		tempMain_bo_licenses?.length ||
 		tempMain_an_tolerances?.length ||
-		tempMainData?.length 
+		tempMainData?.length ||
+		tempCallsData?.length ||
+		tempProjectsData?.length ||
+		tempNotesData?.length
 		) {
 			setIsSmthChanged(true);
 			console.log('[ORG]','SOME CHANGED');
@@ -214,8 +218,12 @@ const OrgPage = (props) => {
 		collect.org_an_licenses = tempMain_an_licenses;
 		collect.org_an_tolerances = tempMain_an_tolerances;
 		collect.org_bo_licenses = tempMain_bo_licenses;
+		collect.projects = tempProjectsData.filter((item)=> item.command !== undefined  );
+		collect.calls = tempCallsData.filter((item)=> item.command !== undefined );
+		collect.notes = tempNotesData.filter((item)=> item.command !== undefined  );
 
 		console.log(collect);
+		setCOLLECTOR(collect);
 
 	}, [tempMain_contacts, 
 		tempMain_addresses,
@@ -226,7 +234,10 @@ const OrgPage = (props) => {
 		tempMain_an_requisites,
 		tempMain_bo_licenses,
 		tempMain_an_tolerances,
-		tempMainData
+		tempMainData,
+		tempProjectsData,
+		tempCallsData,
+		tempNotesData
 
 	]);
 
@@ -593,7 +604,7 @@ const OrgPage = (props) => {
 		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/updateorglist/' + itemId, {
-					data: dataToUpdate,
+					data: COLLECTOR,
 					_token: CSRF_TOKEN,
 				});
 				console.log('response.status', response.status)
@@ -847,57 +858,59 @@ const OrgPage = (props) => {
 
 			// 	get_main_data_action(iid);
 			// }
-			// if (tempProjectsData && tempProjectsData.length > 0){
-			// 		setTempProjectsData(null);
-			// 		get_projects_data_action(iid);
-			// 	}
-			// 	if (tempCallsData && tempCallsData.length > 0){
-			// 		setTempCallsData(null);
-			// 		get_org_calls_action(iid);
-			// 	}
-			// 	if (tempNotesData && tempNotesData.length > 0){
-			// 		setTempNotesData(null);
-			// 		get_notes_data_action(iid);
-			// 	}
+			setTempMainData(null);
+
+			if (tempProjectsData && tempProjectsData.length > 0){
+					setTempProjectsData(null);
+					get_projects_data_action(iid);
+				}
+				if (tempCallsData && tempCallsData.length > 0){
+					setTempCallsData(null);
+					get_org_calls_action(iid);
+				}
+				if (tempNotesData && tempNotesData.length > 0){
+					setTempNotesData(null);
+					get_notes_data_action(iid);
+				}
 
 
-			// 	if (tempMain_addresses && tempMain_addresses.length > 0){
-			// 		setTempMain_addresses([]);
-			// 	}
+				if (tempMain_addresses && tempMain_addresses.length > 0){
+					setTempMain_addresses([]);
+				}
 
-			// 	if (tempMain_an_licenses && tempMain_an_licenses.length > 0){
-			// 		setTempMain__an_licenses([]);
-			// 	}
+				if (tempMain_an_licenses && tempMain_an_licenses.length > 0){
+					setTempMain__an_licenses([]);
+				}
 
-			// 	if (tempMain_an_requisites && tempMain_an_requisites.length > 0){
-			// 		setTempMain_an_requisites([]);
-			// 	}
-
-
-			// 	if (tempMain_an_tolerances && tempMain_an_tolerances.length > 0){
-			// 		setTempMain_an_tolerances([]);
-			// 	}
+				if (tempMain_an_requisites && tempMain_an_requisites.length > 0){
+					setTempMain_an_requisites([]);
+				}
 
 
-			// 	if (tempMain_bo_licenses && tempMain_bo_licenses.length > 0){
-			// 		setTempMain_bo_licenses([]);
-			// 	}
+				if (tempMain_an_tolerances && tempMain_an_tolerances.length > 0){
+					setTempMain_an_tolerances([]);
+				}
 
-			// 	if (tempMain_emails && tempMain_emails.length > 0){
-			// 		setTempMain_emails([]);
-			// 	}
+
+				if (tempMain_bo_licenses && tempMain_bo_licenses.length > 0){
+					setTempMain_bo_licenses([]);
+				}
+
+				if (tempMain_emails && tempMain_emails.length > 0){
+					setTempMain_emails([]);
+				}
 				
-			// 	if (tempMain_legalAddresses && tempMain_legalAddresses.length > 0){
-			// 		setTempMain_legalAddresses([]);
-			// 	}
+				if (tempMain_legalAddresses && tempMain_legalAddresses.length > 0){
+					setTempMain_legalAddresses([]);
+				}
 
-			// 	if (tempMain_phones && tempMain_phones.length > 0){
-			// 		setTempMain_phones([]);
-			// 	}
+				if (tempMain_phones && tempMain_phones.length > 0){
+					setTempMain_phones([]);
+				}
 
-			// 					if (tempMain_contacts && tempMain_contacts.length > 0){
-			// 		setTempMain_contacts([]);
-			// 	}
+								if (tempMain_contacts && tempMain_contacts.length > 0){
+					setTempMain_contacts([]);
+				}
 		setTimeout(() => {
 			setItemId(iid);
 			
@@ -1116,6 +1129,66 @@ const OrgPage = (props) => {
 	}
 
 
+
+
+	const sectionUpdateHandler = (section, id, data) => {
+		console.log('section, id, data', section, id, data);
+		if (section === 'notes'){
+			let catchObject = tempNotesData.find((item)=> item.id === id);
+			if (catchObject){
+				if (data.action && data.action === 'delete' && data.id.contains('new')){
+					// Удаление временного элемента из стека
+					sectionDeleteHandler(section, id);
+					return;
+				}
+				setTempNotesData(tempNotesData.map(item => item.id === id ? data : item));
+			} else {
+				setTempNotesData([data, ...tempNotesData]);
+			}
+		};
+		if (section === 'projects'){
+			let catchObject = tempProjectsData.find((item)=> item.id === id);
+			if (catchObject){
+				if (data.action && data.action === 'delete' && data.id.contains('new')){
+					// Удаление временного элемента из стека
+					sectionDeleteHandler(section, id);
+					return;
+				}
+				setTempProjectsData(tempProjectsData.map(item => item.id === id ? data : item));
+			} else {
+				setTempProjectsData([data, ...tempProjectsData]);
+			}
+		};
+		if (section === 'calls'){
+			let catchObject = tempCallsData.find((item)=> item.id === id);
+			if (catchObject){
+				if (data.action && data.action === 'delete' && data.id.contains('new')){
+					// Удаление временного элемента из стека
+					sectionDeleteHandler(section, id);
+					return;
+				}
+				setTempCallsData(tempCallsData.map(item => item.id === id ? data : item));
+			} else {
+				setTempCallsData([data, ...tempCallsData]);
+			}
+		};
+	}
+
+	const sectionDeleteHandler = (section, id) => {
+		// Удаление временного элемента из стека
+		if (section === 'notes'){
+			setTempNotesData(tempNotesData.filter((item)=> item.id !== id));
+		};
+		if (section === 'projects'){
+			setTempProjectsData(tempProjectsData.filter((item)=> item.id !== id));
+		};
+		if (section === 'calls'){
+			setTempCallsData(tempCallsData.filter((item)=> item.id !== id));
+		};
+	}
+
+
+
 	return (
 		<>
 			<div className="app-page">
@@ -1139,12 +1212,28 @@ const OrgPage = (props) => {
 								{tabNames.map((tab, index) => (
 									<div
 										key={'tab_index_' + index}
-										className={`sa-orp-menu-button  ${activeTab === tab.link ? 'active' : ''}`}
+										className={`sa-orp-menu-button  ${activeTab === tab.link ? 'active' : ''}
+										${'m' === tab.link && (tempMainData || 
+											tempMain_contacts?.length ||
+										tempMain_addresses?.length ||
+										tempMain_emails?.length ||
+										tempMain_legalAddresses?.length ||
+										tempMain_phones?.length ||
+										tempMain_an_licenses?.length ||
+										tempMain_an_requisites?.length ||
+										tempMain_bo_licenses?.length ||
+										tempMain_an_tolerances?.length ||
+										tempMainData?.length) ?    'sa-mite-has-some' : ''}
+										${'n' === tab.link && tempNotesData?.length ?    'sa-mite-has-some' : ''}
+										${'p' === tab.link && tempProjectsData?.length ? 'sa-mite-has-some' : ''}
+										${'c' === tab.link && tempCallsData?.length ?    'sa-mite-has-some' : ''}
+										`}
 										onClick={() => {
 											handleChangeTab(tab.link);
 										}}
 									>
 										{tab.name}
+
 									</div>
 								))}
 							</div>
@@ -1258,7 +1347,7 @@ const OrgPage = (props) => {
 							base_data={baseMainData}
 							// on_save={handleDataChangeApprove}
 							userdata={userdata}
-              selects={baseFiltersData}
+              				selects={baseFiltersData}
 							// on_change_data={handleTabDataChange}
 							// on_change_main_data_part={handleMaintabObjectDataChange}
 
@@ -1311,7 +1400,26 @@ const OrgPage = (props) => {
 							main_data={baseMainData}
 						/>
 
-						<NotesTabPage
+						<TabNotesTorg
+							active_tab={activeTab === 'n'}
+							edit_mode={editMode}
+							org_id={itemId}
+              				userdata={userdata}
+							on_change_section={sectionUpdateHandler}
+							on_delete_section={sectionDeleteHandler}
+
+							call_to_save={callToSaveAction}
+							base_data={baseNotesData}
+							// on_save={handleDataChangeApprove}
+							active_page={pageNotes}
+							on_change_page={(p) => {
+								setPageNotes(p);
+							}}
+							current_page={pageNotes}
+							on_change_data={handleTabDataChange}
+						/>
+
+						{/* <NotesTabPage
 							show={activeTab === 'n'}
 							edit_mode={editMode}
 							item_id={itemId}
@@ -1325,7 +1433,7 @@ const OrgPage = (props) => {
 							current_page={pageNotes}
 							userdata={userdata}
 							on_change_data={handleTabDataChange}
-						/>
+						/> */}
 
 						{activeTab === 'h' && (
 							// <HistoryTabPage
