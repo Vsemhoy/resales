@@ -94,6 +94,7 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: 1,
+		files_count: 1,
 		title: 'dfhgbfdjh',
 	},
 	{
@@ -102,6 +103,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: 2,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 	{
 		id: 3,
@@ -109,6 +112,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: 0,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 	{
 		id: 4,
@@ -116,6 +121,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: 2,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 	{
 		id: 5,
@@ -123,6 +130,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: false,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 	{
 		id: 6,
@@ -130,6 +139,8 @@ export const ORDERS = [
 		created_at: 1757429497,
 		updated_at: 1757429497,
 		status: false,
+		files_count: 1,
+		title: 'dfhgbfdjh',
 	},
 ];
 
@@ -138,4 +149,19 @@ export const ORDERSSTATUS = [
 	'\u041d\u043e\u0432\u044b\u0439',
 	'\u041f\u0440\u0438\u043d\u044f\u0442 \u0432 \u0440\u0430\u0431\u043e\u0442\u0443',
 	'\u0421\u0444\u043e\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0430 \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u044f',
+];
+
+export const FILES = [
+	{
+		"id": 14,
+		"name_file": "\/orders_files\/orders_7_1758550053_17.09.2025. \u041f\u0440\u0430\u0439\u0441_\u043b\u0438\u0441\u0442. \u0420\u0443\u0431\u043b\u0438 \u2014 \u043a\u043e\u043f\u0438\u044f.xlsx",
+		"created_at": 1758550053,
+		"updated_at": 1758550053
+	},
+	{
+		"id": 15,
+		"name_file": "\/orders_files\/orders_7_1758550053_17.09.2025. \u041f\u0440\u0430\u0439\u0441_\u043b\u0438\u0441\u0442. \u0420\u0443\u0431\u043b\u0438.xlsx",
+		"created_at": 1758550053,
+		"updated_at": 1758550053
+	}
 ];

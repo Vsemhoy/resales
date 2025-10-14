@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './style/topmenu.css';
 // import ChatBtn from '../../../modules/CHAT/components/ChatBtn';
-import { ChatBtn } from '../../../modules/1CHAT/components/ChatBtn';
+import { ChatBtn } from '../../../modules/CHAT/components/ChatBtn';
 import { NavLink } from 'react-router-dom';
 import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE } from '../../../config/config';
 import { CloseCircleOutlined, HomeFilled, WechatWorkOutlined } from '@ant-design/icons';
@@ -169,6 +169,8 @@ const TopMenu = (props) => {
 			} catch (e) {
 				console.log(e);
 			}
+		} else {
+			props.changed_user_data();
 		}
 	};
 
@@ -180,9 +182,9 @@ const TopMenu = (props) => {
 		set_user_role(role_id);
 	};
 
-	const toggleDebugger = () => {
-		setShowDebugger(!showDebugger);
-	};
+	// const toggleDebugger = () => {
+	// 	setShowDebugger(!showDebugger);
+	// };
 
 	return (
 		<div className="sa-top-menu" style={{ padding: '0 12px' }}>
@@ -217,19 +219,15 @@ const TopMenu = (props) => {
 							<div className={'sa-topmenu-button'}>Кураторство</div>
 						</NavLink>
 					)}
-
-					{userdata?.user?.super === 1 && (
-						<NavLink to="/regtown">
-							<div className={'sa-topmenu-button'}>Города и регионы</div>
-						</NavLink>
-					)}
+					<NavLink to="/regtown">
+						<div className={'sa-topmenu-button'}>Города и регионы</div>
+					</NavLink>
 
 					<NavLink to="/engineer">
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
 
-					{/* DEBUGGER */}
-					{userdata?.user?.super === 1 && (
+					{/* {userdata?.user?.super === 1 && (
 						<div ref={debuggerRef} style={{ position: 'relative', display: 'inline-block' }}>
 							<div
 								className={'sa-topmenu-button'}
@@ -262,8 +260,7 @@ const TopMenu = (props) => {
 								</div>
 							)}
 						</div>
-					)}
-					{/* DEBUGGER */}
+					)} */}
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>

@@ -184,10 +184,10 @@
     border: none !important;
 }
 
-.sa-bid-page-container .ant-alert-message {
+.ant-alert-message {
 	text-align: left !important;
 }
-.sa-bid-page-container .ant-alert-description {
+.ant-alert-description {
 	text-align: justify !important;
 }
 

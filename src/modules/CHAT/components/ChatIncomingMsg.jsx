@@ -1,10 +1,16 @@
 import styles from './style/Chat.module.css';
 
-/**
- * Компонент для входящих сообщений от собеседника
- */
 export default function ChatIncomingMsg({ message }) {
-	const { text, time, senderName } = message;
+	const { text, timestamp, senderName } = message;
+
+	const formatTime = (timestamp) => {
+		return new Date(timestamp).toLocaleTimeString('ru-RU', {
+			hour: '2-digit',
+			minute: '2-digit',
+		});
+	};
+
+	const time = formatTime(timestamp);
 
 	return (
 		<div className={`${styles.message} ${styles.otherMessage}`}>

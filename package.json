@@ -21,6 +21,7 @@
 		"react-dom": "^19.1.0",
 		"react-draggable": "^4.5.0",
 		"react-router-dom": "^7.6.3",
+		"socket.io-client": "^4.8.1",
 		"web-vitals": "^2.1.4",
 		"xlsx-community": "^0.16.9002"
 	},
@@ -39,6 +40,7 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
+		"if-you-can-not-push": "git remote set-url origin git@github.com:Vsemhoy/resales.git",
 		"push-all-changes": "git add . && git commit -m\"update\" && git push origin",
 		"push-all-bogdan": "git add . && git commit -m\"update\" && git push origin master:bogdan",
 		"fetch-all": "git fetch origin && git merge origin/master",

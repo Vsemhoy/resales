@@ -2,7 +2,7 @@ import './App.css';
 
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom';
-import { BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE } from './config/config';
+import { BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE, BFF_PORT } from './config/config';
 import './assets/theme.css';
 import './assets/layout.css';
 import './assets/table.css';
@@ -22,7 +22,6 @@ import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
 import AntdIconsPage from './modules/DEV/Icons/AntdIconsPage';
 import HeroIconsPage24 from './modules/DEV/Icons/HeroIconsPage24';
 import CustomIconPage from './modules/DEV/Icons/CustomIconsPage';
-// import { WebSocketDebug } from './components/helpers/WebSocketDebug';
 import { ChatSocketProvider } from './context/ChatSocketContext';
 import { UserDataProvider } from './context/UserDataContext';
 import { PROD_AXIOS_INSTANCE } from './config/Api';
@@ -30,10 +29,10 @@ import { MS_USER } from './mock/MAINSTATE';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Dropdown } from 'antd';
 import TorgPage from './modules/TORG_PAGE/TorgPage';
-import Regtown from "./modules/REGTOWN/Regtown";
+import Regtown from './modules/REGTOWN/Regtown';
 
 export const App = () => {
-	const [userdata, setUserdata] = useState([]);
+	const [userdata, setUserdata] = useState({});
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [topRole, setTopRole] = useState('');
 
@@ -55,19 +54,17 @@ export const App = () => {
 		const body = document.body;
 		body.classList.remove('theme_1', 'theme_2');
 
-		if (userdata?.user?.active_company) {
-			switch (userdata.user.active_company) {
-				case 2:
-					body.classList.add('theme_1');
-					break;
-				case 3:
-					body.classList.add('theme_2');
-					break;
-			}
-		} else {
-			body.classList.remove('theme_2');
-			body.classList.add('theme_1');
-		}
+		const activeTheme = (() => {
+			const companyId = userdata?.user?.active_company;
+
+			if (companyId === 2) return 'theme_1';
+			if (companyId === 3) return 'theme_2';
+
+			return 'theme_1'; // тема по умолчанию
+		})();
+
+		// Применяем выбранную тему
+		body.classList.add(activeTheme);
 	}, [userdata]);
 
 	const get_userdata = async () => {
@@ -104,15 +101,19 @@ export const App = () => {
 
 	return (
 		<UserDataProvider>
-			<ChatSocketProvider url={`ws://192.168.1.16:5003`}>
-			<BrowserRouter basename={BASE_NAME}>
-				<div className={`app `}>
-						<TopMenu userdata={userdata} changed_user_data={() => get_userdata()} /> {/*setUserdata*/}
-						{/* <WebSocketDebug /> */}
+			<ChatSocketProvider
+				url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `http://192.168.1.16:${BFF_PORT}`}
+			>
+				<BrowserRouter basename={BASE_NAME}>
+					<div className={'app'}>
+						<TopMenu changed_user_data={() => get_userdata()} />
 						<div>
 							<Routes>
 								<Route path="/" element={<Navigate to={topRole} replace />} />
-								<Route path={BASE_ROUTE + '/'} element={<Navigate to={topRole} replace />} />
+								<Route
+									path={BASE_ROUTE + '/'}
+									element={<Navigate userdata={userdata} to={topRole} replace />}
+								/>
 
 								<Route path={BASE_ROUTE + '/orgs'} element={<OrgListPage userdata={userdata} />} />
 								<Route path="/orgs" element={<OrgListPage userdata={userdata} />} />
@@ -123,7 +124,7 @@ export const App = () => {
 								/>
 								<Route path="/orgs/:item_id" element={<OrgPage userdata={userdata} />} />
 
-									{/* NEW VERSION TEST MAX */}
+								{/* NEW VERSION TEST MAX */}
 								<Route
 									path={BASE_ROUTE + '/torgs/:item_id'}
 									element={<TorgPage userdata={userdata} />}
@@ -161,7 +162,10 @@ export const App = () => {
 								<Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />
 								<Route path="/price" element={<Price userdata={userdata} />} />
 
-								<Route path={BASE_ROUTE + '/curator'} element={<CuratorPage userdata={userdata} />} />
+								<Route
+									path={BASE_ROUTE + '/curator'}
+									element={<CuratorPage userdata={userdata} />}
+								/>
 								<Route path="/curator" element={<CuratorPage userdata={userdata} />} />
 
 								<Route path={BASE_ROUTE + '/regtown'} element={<Regtown userdata={userdata} />} />
@@ -197,7 +201,7 @@ export const App = () => {
 								/>
 								<Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
 							</Routes>
-							{!PRODMODE ? (
+							{!PRODMODE && (
 								<Dropdown menu={{ items: devMenu }}>
 									<div
 										style={{
@@ -211,7 +215,7 @@ export const App = () => {
 										<ExclamationTriangleIcon height={'64px'} />
 									</div>
 								</Dropdown>
-							) : ('')}
+							)}
 						</div>
 					</div>
 				</BrowserRouter>
