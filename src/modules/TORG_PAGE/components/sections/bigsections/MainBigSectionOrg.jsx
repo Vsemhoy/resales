@@ -265,7 +265,7 @@ const MianBigSectionOrg = (props) => {
                     option.label.toLowerCase().includes(input.toLowerCase())
                 }
                       key={'fs54row_' + itemId}
-                      value={parseInt(profsound)}
+                      value={profsound == 2 ? 2 : 1}
                       onChange={(ee)=> {
                       setProfsound(ee);
                       setBLUR_FLAG(dayjs().unix());

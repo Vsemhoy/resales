@@ -373,6 +373,8 @@
 .sa-org-section-label {
 	text-align: left;
 	line-height: 24px;
+	display: flex
+;
 }
 .sa-lh-chevron {
 	line-height: 20px;

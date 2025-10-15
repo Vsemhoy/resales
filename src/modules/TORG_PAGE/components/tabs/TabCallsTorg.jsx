@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { CSRF_TOKEN } from '../../../../config/config';
+import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import dayjs from 'dayjs';
+import { Button, Empty, Pagination, Spin } from 'antd';
+import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
+import CallTabSectionTorg from '../sections/CallTabSectionTorg';
+import { PlusOutlined } from '@ant-design/icons';
+import { MODAL_CALLS_LIST } from '../../../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 
 const TabCallsTorg = (props) => {
     const [refreshMark, setRefreshMark] = useState(null);
+  const [userdata, setUserData] = useState(null);
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
    */
@@ -29,8 +36,15 @@ const TabCallsTorg = (props) => {
   const [tempData, setTempData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const onPage = 20;
+  const [onPage, setOnPage] = useState(20);
   const [loading, setLoading] = useState(false);
+
+
+    const [total, setTotal] = useState(1);
+    const [newLoading, setNewLoading] = useState(false);
+  
+    const [openedSections, setOpenedSections] = useState([]);
+  
   
   
   // ██    ██ ███████ ███████ 
@@ -39,9 +53,14 @@ const TabCallsTorg = (props) => {
   // ██    ██ ██      ██      
   //  ██████  ██      ██      
   // UseEffects
+
   useEffect(() => {
-    setEditMode(props.editMode);
-  }, [props.editMode]);
+    setUserData(props.userdata)
+  }, [props.userdata]);
+
+  useEffect(() => {
+    setEditMode(props.edit_mode);
+  }, [props.edit_mode]);
 
   useEffect(() => {
     setRefreshMark(props.refresh_mark);
@@ -52,9 +71,35 @@ const TabCallsTorg = (props) => {
    */
   useEffect(() => {
     setOrgId(props.org_id);
+    if (props.org_id){
+      if (PRODMODE){
+        get_org_calls_action(props.org_id);
+      } else {
+        let arr = [];
+        if (MODAL_CALLS_LIST?.calls.length){
+          for (let i = 0; i < MODAL_CALLS_LIST?.calls.length; i++) {
+            const element = MODAL_CALLS_LIST?.calls[i];
+            element._type = "call";
+            arr.push(element);
+          }
+        };
+        if (MODAL_CALLS_LIST?.meetings.length){
+          for (let i = 0; i < MODAL_CALLS_LIST?.meetings.length; i++) {
+            const element = MODAL_CALLS_LIST?.meetings[i];
+            element._type = "meeting";
+            arr.push(element);
+          }
+        };
+        setBaseData(arr.sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf()));
+      }
+    }
   }, [props.org_id]);
 
-
+  useEffect(() => {
+    if (props.selects){
+      setSelects(props.selects);
+    }
+  }, [props.selects]);
 
   useEffect(() => {
     if (props.on_save_command && props.on_save_command > 0){
@@ -101,19 +146,26 @@ const TabCallsTorg = (props) => {
       });
       console.log('response', response);
       if (response.data) {
-        // if (props.changed_user_data){
-        //     props.changed_user_data(response.data);
-        // }
-        // setBaseCallsData(response.data.content?.calls.map((item)=>{
-        // 	item._savecontact = false;
-        // 	return item;
-        // }));
-        // setBaseCallsData(response.data.content?.calls.map((item)=>{
-        // 	item._savecontact = false;
-        // 	return item;
-        // }));
+
+        let arr = [];
+        if (response.data.content?.calls.length){
+          for (let i = 0; i < response.data.content?.calls.length; i++) {
+            const element = response.data.content?.calls[i];
+            element._type = "call";
+            arr.push(element);
+          }
+        };
+        if (response.data.content?.meetings.length){
+          for (let i = 0; i < response.data.content?.meetings.length; i++) {
+            const element = response.data.content?.meetings[i];
+            element._type = "meeting";
+            arr.push(element);
+          }
+        };
+        setBaseData(arr.sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf()));
+
         console.log('response.data', response.data);
-        setBaseData(response.data.content.calls);
+        // setBaseData(response.data.content.calls);
         setLoading(false);
 
       }
@@ -135,19 +187,150 @@ const TabCallsTorg = (props) => {
 
   // ------------------------------------------------------------------- //
 
-  const reload_all_data = () => {
-    if (!orgId){ return; };
-    // Flush temporary data
-    setTempData([]);
-    // Load main data
-    // При загрузке сливаем все Встречи и Звонки в единый массив и назначаем кажому элементу тип
 
+const MAKE_BLANK = (type) => {
+     setNewLoading(true);
+          // console.log('ADDED NEW DDDDDDDDDD')
+          setTimeout(() => {
+            let spawn = {
+                    _type: type,
+                    command: 'create',
+                    id: 'new_' + dayjs().unix() + dayjs().millisecond() + tempData.length,
+                    id_orgs: props.item_id,
+                    id8staff_list: userdata.user.id,
+                    id8ref_departaments: 5,
+                    theme: '',
+                    date: dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
+                    post: '',
+                    phone: '',
+                    note: '',
+                    result: '',
+                    subscriber: '',
+                    deleted: 0,
+                    creator: {
+                      id: userdata.user.id,
+                      surname: userdata?.user.surname,
+                      name: userdata?.user.name,
+                      secondname: userdata?.user.secondname,
+                    },
+                    departament: {
+                      id: 5,
+                      name: 'Отдел оптовых продаж',
+                      rang: 50,
+                      visible: true,
+                      deleted: false,
+                      position: null,
+                      icon: null,
+                    },
+                  };
+      
+                setTempData(prevItems => [spawn, ...prevItems]);
+                // console.log(spawn);
+                setNewLoading(false);
+          }, 460);
   }
+
+  const handleDeleteNewItem = (id) => {
+    setTempData(tempData.filter((item)=> item.id !== id));
+    if (props.on_delete_section){
+      props.on_delete_section('notes', id);
+    };
+  };
 
 
   return (
     <div className={`${isTabActive ? '' : 'sa-orgpage-tab-hidder'}`}>
-      <h1>Hello Wolf from TabCallsTorg</h1>
+       <Spin spinning={loading}>
+					<div className={'sa-orgtab-container'}>
+						<div className={'sa-pa-6 sa-flex-space'} style={{ paddingTop: '9px' }}>
+							<div>
+								<Pagination
+									disabled={editMode}
+									size={'small'}
+									current={currentPage}
+									pageSizeOptions={[10, 30, 50, 100]}
+									defaultPageSize={onPage}
+									locale={ANTD_PAGINATION_LOCALE}
+									showQuickJumper
+									total={total}
+									onChange={(ev, on) => {
+										if (ev !== currentPage) {
+											setCurrentPage(ev);
+										}
+										if (on !== onPage) {
+											setOnPage(on);
+										}
+										// get_org_data_action(orgId, ev, on);
+									}}
+								/>
+							</div>
+							<div className={'sa-flex'}>
+								{editMode && (
+									<Button
+										type={'primary'}
+										icon={<PlusOutlined />}
+										onClick={()=>{MAKE_BLANK('call')}}
+										disabled={tempData.length > 7 || newLoading}
+									>
+										Cоздать звонок
+									</Button>
+								)}
+                {editMode && (
+									<Button
+										type={'primary'}
+										icon={<PlusOutlined />}
+										onClick={()=>{MAKE_BLANK('meeting')}}
+										disabled={tempData.length > 7 || newLoading}
+									>
+										Cоздать встречу
+									</Button>
+								)}
+							</div>
+						</div>
+            <div className={'sa-orgpage-tab-container'}>
+            <Spin spinning={newLoading}>
+              {tempData && tempData.length > 0 && (
+                <div className='sa-org-temp-stack-collapse'>
+                  <div className={'sa-org-temp-stack-collapse-header'}>Новые события</div>
+                  {tempData.map((item)=>(
+                    <CallTabSectionTorg
+                      edit_mode={editMode}
+                      collapsed={false}
+                      org_id={orgId}
+                      data={item}
+                      key={ "nototas_n_" +  item.id }
+                      on_delete={handleDeleteNewItem}
+                      on_change={props.on_change_section}
+                      allow_delete={true}
+                      selects={selects}
+                      />
+                  ))}
+                </div>
+              )}</Spin>
+              {baseData && baseData.length > 0 && (
+                <div className='sa-org-stack-collapse'>
+                  
+                  {baseData.map((item)=>(
+                    <CallTabSectionTorg
+                      edit_mode={editMode}
+                      org_id={orgId}
+                      data={item}
+                      collapsed={true}
+                      key={ "nototas_" +  item.id }
+                      on_change={props.on_change_section}
+                      // on_delete={handleDeleteNewItem}
+
+                      selects={selects}
+                      />
+                  ))}
+                </div>
+              )}
+              {baseData.length === 0 && tempData.length === 0 && (
+                <Empty />
+              )}
+            </div>
+					</div>
+				</Spin>
     </div>
   );
 };
