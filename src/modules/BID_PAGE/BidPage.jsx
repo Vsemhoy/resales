@@ -1095,7 +1095,10 @@ const BidPage = (props) => {
 	};
 	const addParseModels = () => {
 		console.log(additionData);
-		const sort = bidModels.sort((a,b) => a.sort - b.sort)[bidModels.length-1].sort;
+		let sort = 0;
+		if (bidModels && bidModels.length > 0) {
+			sort = bidModels.sort((a,b) => a.sort - b.sort)[bidModels.length-1].sort;
+		}
 		const arr = additionData.map((newModel, idx) => {
 			const model = modelsSelect.find(model => model.id === newModel.id);
 			if (model) {
