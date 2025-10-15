@@ -5,7 +5,7 @@ import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
 import { useChatRole } from '../../../hooks/sms/useChatRole';
 import styles from './style/Chat.module.css';
-
+import dayjs from 'dayjs';
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
@@ -76,7 +76,12 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		return result;
 	}, [smsList, search, currentUserId, getRole, getDisplayName]);
 
-	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
+	if (loading)
+		return (
+			<p className={styles.statusMessage}>
+				Загрузка чатов...{dayjs(+1760430108 * 1000).format('HH:mm')}
+			</p>
+		);
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
 	return (
 		<div className={styles['chat-list__container']}>
