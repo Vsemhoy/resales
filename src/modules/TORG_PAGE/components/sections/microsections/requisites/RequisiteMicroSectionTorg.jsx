@@ -216,10 +216,10 @@ const RequisiteMicroSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={64}
-                    required={false}
+                    required={true}
                     onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                   />,
-                  required: false,
+                  required: true,
                   value: kpp
               },
             ]}
@@ -241,7 +241,7 @@ const RequisiteMicroSectionTorg = (props) => {
                     required={true}
                     onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
                   />,
-                  required: false,
+                  required: true,
                   value: requisites
               },
             ]}

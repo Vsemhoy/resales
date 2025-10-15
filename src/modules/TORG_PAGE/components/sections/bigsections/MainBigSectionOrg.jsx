@@ -153,7 +153,7 @@ const MianBigSectionOrg = (props) => {
                       maxLength={66}
                       required={true}
                     />,
-                    required: false,
+                    required: true,
                     value: inn
                 },
               ]}
@@ -229,6 +229,9 @@ const MianBigSectionOrg = (props) => {
                     
                     <Select
                     showSearch
+                                         filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                }
                       key={'fsr2ow_' + itemId}
                       value={parseInt(id8an_profiles)}
                       onChange={(ee)=>{
@@ -366,9 +369,9 @@ const MianBigSectionOrg = (props) => {
                       readOnly={!editMode}
                       variant="borderless"
                       maxLength={5550}
-                      required={true}
+                      required={false}
                     />,
-                    required: true,
+                    required: false,
                     value: commentinlist
                 },
               ]}
