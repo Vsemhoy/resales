@@ -50,8 +50,8 @@ export const UserDataProvider = ({ children }) => {
 		try {
 			if (PRODMODE) {
 				const response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
-				console.log('response.data.user: ', response?.data?.user || 'No data');
-				setUserdata(response.data?.user ?? response.data);
+				console.log('response.data.user: ', response?.data || 'No data');
+				setUserdata(response.data);
 			} else {
 				setUserdata(MS_USER);
 			}
