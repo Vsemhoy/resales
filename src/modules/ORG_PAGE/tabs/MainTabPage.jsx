@@ -1163,6 +1163,9 @@ const MainTabPage = (props) => {
                   
                   <Select
                     showSearch
+                                    filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                }
                     key={'oaddress1_' + baseData?.id}
                     value={parseInt(baseData?.id8org_towns)}
                     onChange={(value)=>{ 
@@ -1205,6 +1208,9 @@ const MainTabPage = (props) => {
                   
                   <Select
                   showSearch
+                  filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                    }
                     options={selects?.regions.map((item)=>({
                       key: "regitm_" + item.value,
                       value: parseInt(item.value),

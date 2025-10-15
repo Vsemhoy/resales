@@ -138,6 +138,9 @@ const InfoBigSectionOrg = (props) => {
                     
                     <Select
                     showSearch
+                                    filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                }
                       key={'fsr2ow_' + itemId}
                       value={parseInt(statusmoney)}
                       onChange={(ee)=>{
@@ -167,6 +170,9 @@ const InfoBigSectionOrg = (props) => {
                     
                     <Select
                     showSearch
+                                    filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                }
                       key={'fs54row_' + itemId}
                       value={parseInt(conveyance)}
                       onChange={(ee)=>{

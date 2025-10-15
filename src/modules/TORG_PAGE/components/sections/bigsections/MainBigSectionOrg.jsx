@@ -110,6 +110,9 @@ const MianBigSectionOrg = (props) => {
                   input:
                     
                     <Select
+                                    filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                }
                     showSearch
                       key={'fsrow_' + itemId}
                       value={parseInt(id8an_fs)}
@@ -255,6 +258,9 @@ const MianBigSectionOrg = (props) => {
                     
                     <Select
                     showSearch
+                     filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                }
                       key={'fs54row_' + itemId}
                       value={parseInt(profsound)}
                       onChange={(ee)=> {
