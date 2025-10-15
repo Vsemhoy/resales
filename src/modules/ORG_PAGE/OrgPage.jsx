@@ -860,60 +860,28 @@ const OrgPage = (props) => {
 			// }
 			setTempMainData(null);
 
-			if (tempProjectsData && tempProjectsData.length > 0){
-					setTempProjectsData([]);
-					get_projects_data_action(iid);
-				}
-				if (tempCallsData && tempCallsData.length > 0){
-					setTempCallsData([]);
-					get_org_calls_action(iid);
-				}
-				if (tempNotesData && tempNotesData.length > 0){
-					setTempNotesData([]);
-					get_notes_data_action(iid);
-				}
+			setTempProjectsData([]);
+			setTempCallsData([]);
+			setTempNotesData([]);
+			setTempMain__an_licenses([]);
+			setTempMain_addresses([]);
+			setTempMain_an_requisites([]);
+			setTempMain_an_tolerances([]);
+			
+			setTempMain_emails([]);
+			setTempMain_bo_licenses([]);
+			setTempMain_legalAddresses([]);
+			setTempMain_phones([]);
+			setTempMain_contacts([]);
 
 
-				if (tempMain_addresses && tempMain_addresses.length > 0){
-					setTempMain_addresses([]);
-				}
-
-				if (tempMain_an_licenses && tempMain_an_licenses.length > 0){
-					setTempMain__an_licenses([]);
-				}
-
-				if (tempMain_an_requisites && tempMain_an_requisites.length > 0){
-					setTempMain_an_requisites([]);
-				}
-
-
-				if (tempMain_an_tolerances && tempMain_an_tolerances.length > 0){
-					setTempMain_an_tolerances([]);
-				}
-
-
-				if (tempMain_bo_licenses && tempMain_bo_licenses.length > 0){
-					setTempMain_bo_licenses([]);
-				}
-
-				if (tempMain_emails && tempMain_emails.length > 0){
-					setTempMain_emails([]);
-				}
-				
-				if (tempMain_legalAddresses && tempMain_legalAddresses.length > 0){
-					setTempMain_legalAddresses([]);
-				}
-
-				if (tempMain_phones && tempMain_phones.length > 0){
-					setTempMain_phones([]);
-				}
-
-								if (tempMain_contacts && tempMain_contacts.length > 0){
-					setTempMain_contacts([]);
-				}
 		setTimeout(() => {
 			setItemId(iid);
 			
+			get_main_data_action(iid);
+			get_notes_data_action(iid);
+			get_org_calls_action(iid);
+			get_projects_data_action(iid);
 		}, 1200);
 	}
 
