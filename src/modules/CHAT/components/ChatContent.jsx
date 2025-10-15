@@ -29,11 +29,13 @@ export default function ChatContent({ chatId }) {
 		error,
 		success,
 		newId,
+		timestamp,
 	} = useSendSms();
 
 	useEffect(() => {
-		// setLocalMessages();
-	}, [newId]);
+		const localMsg = localMessages.find((msg) => +msg.timestamp === +timestamp);
+		localMsg.id = newId;
+	}, [newId, timestamp, localMessages]);
 
 	// --- Вспомогательные функции ---
 	const getMessageSenderId = useCallback((msg) => {
@@ -133,7 +135,7 @@ export default function ChatContent({ chatId }) {
 
 		console.log('📊 [CHAT] All normalized messages:', normalized);
 		return normalized;
-	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded, currentUserId]);
+	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded]);
 
 	// --- Автоскролл ---
 	useEffect(() => {
