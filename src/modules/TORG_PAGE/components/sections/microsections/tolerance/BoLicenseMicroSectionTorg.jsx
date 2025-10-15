@@ -7,7 +7,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 
 
-const AnLicenseMicroSectionTorg = (props) => {
+const BoLicenseMicroSectionTorg = (props) => {
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
   // Оригинал объекта, в который сетапятся данные для отправки наружу
@@ -323,4 +323,4 @@ const AnLicenseMicroSectionTorg = (props) => {
   );
 };
 
-export default AnLicenseMicroSectionTorg;
+export default BoLicenseMicroSectionTorg;

@@ -45,8 +45,9 @@ import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { readOrgURL, updateURL, useURLParams } from '../../components/helpers/UriHelpers';
 // import dayjs from 'dayjs';
 
-const OrgListPage = () => {
-	const { userdata } = useUserData();
+const OrgListPage = (props) => {
+	// const { userdata } = props.userdata;
+	const [userdata, setUserdata] = useState(props.userdata);
 	const { updateURL, readOrgURL } = useURLParams();
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -89,6 +90,10 @@ const OrgListPage = () => {
 	const [filterAwaiter, setFilerAwaiter] = useState(null);
 
 	const [SKIPPER, setSKIPPER] = useState(0);
+
+	useEffect(() => {
+		setUserdata(props.userdata);
+	}, [props.userdata]);
 
 	useEffect(() => {
 		setShowLoader(true);
