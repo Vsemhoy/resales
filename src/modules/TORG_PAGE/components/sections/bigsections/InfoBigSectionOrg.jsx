@@ -210,9 +210,9 @@ const InfoBigSectionOrg = (props) => {
                   input:
                     
                     <Select
-                    showSearch
+                      showSearch
                       key={'fsr2ow_' + itemId}
-                      value={parseInt(typeList)}
+                      value={typeList}
                       onChange={(ee)=>{
                         setTypeList(ee);
                         setBLUR_FLAG(dayjs().unix());

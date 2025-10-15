@@ -838,10 +838,16 @@ const OrgPage = (props) => {
 		setIsOpenCustomModal(false)
 	}
 
+
+	
 	// Очистка данных для сохранения (измененных)
 	const clearTemps = () => {
 		let iid = itemId;
 		setItemId(0);
+		get_main_data_action(iid);
+		get_notes_data_action(iid);
+		get_org_calls_action(iid);
+		get_projects_data_action(iid);
 
 			// if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
 			// 	 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
@@ -858,30 +864,30 @@ const OrgPage = (props) => {
 
 			// 	get_main_data_action(iid);
 			// }
-			setTempMainData(null);
-
-			setTempProjectsData([]);
-			setTempCallsData([]);
-			setTempNotesData([]);
-			setTempMain__an_licenses([]);
-			setTempMain_addresses([]);
-			setTempMain_an_requisites([]);
-			setTempMain_an_tolerances([]);
-			
-			setTempMain_emails([]);
-			setTempMain_bo_licenses([]);
-			setTempMain_legalAddresses([]);
-			setTempMain_phones([]);
-			setTempMain_contacts([]);
+			setTimeout(() => {
+				setTempMainData(null);
+	
+				setTempProjectsData([]);
+				setTempCallsData([]);
+				setTempNotesData([]);
+				setTempMain__an_licenses([]);
+				setTempMain_addresses([]);
+				setTempMain_an_requisites([]);
+				setTempMain_an_tolerances([]);
+				
+				setTempMain_emails([]);
+				setTempMain_bo_licenses([]);
+				setTempMain_legalAddresses([]);
+				setTempMain_phones([]);
+				setTempMain_contacts([]);
+				
+			}, 1500);
 
 
 		setTimeout(() => {
 			setItemId(iid);
 			
-			get_main_data_action(iid);
-			get_notes_data_action(iid);
-			get_org_calls_action(iid);
-			get_projects_data_action(iid);
+
 		}, 1200);
 	}
 

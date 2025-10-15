@@ -173,7 +173,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
               },
                 {
                 edit_mode: editMode,
-                label: 'Добавочн.',
+                label: 'Индекс',
                 input:
                   
                   <Input
@@ -221,7 +221,8 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
                 variant="outlined"
                 icon={<TrashIcon height={TORG_DELETE_SIZE} />}
                 onClick={()=>{
-                    setDeleted(!deleted);
+                  setDeleted(!deleted);
+                  setBLUR_FLAG(dayjs().unix());
                 }}
                 />
             }
