@@ -12,7 +12,7 @@ export const useSendSms = () => {
 	const currentUserId = userdata?.user?.id;
 	const [newId, setNewId] = useState(null);
 
-	const sendSms = async ({ to, text, answer }) => {
+	const sendSms = async ({ to, text, answer, timestamp }) => {
 		setLoading(true);
 		setError(null);
 		setSuccess(false);
@@ -34,6 +34,7 @@ export const useSendSms = () => {
 					to,
 					text,
 					answer,
+					timestamp,
 				})
 			);
 			console.log(to);
