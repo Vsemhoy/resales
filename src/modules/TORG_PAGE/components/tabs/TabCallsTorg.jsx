@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
+import { CSRF_TOKEN } from '../../../../config/config';
 
 const TabCallsTorg = (props) => {
     const [refreshMark, setRefreshMark] = useState(null);
@@ -87,6 +89,42 @@ const TabCallsTorg = (props) => {
   // ██      ██         ██    ██      ██   ██ 
   // ██      ███████    ██     ██████ ██   ██ 
 
+
+  const get_org_calls_action = async (id) => {
+    try {
+      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
+        data: {
+          page: currentPage,
+          limit: onPage,
+        },
+        _token: CSRF_TOKEN,
+      });
+      console.log('response', response);
+      if (response.data) {
+        // if (props.changed_user_data){
+        //     props.changed_user_data(response.data);
+        // }
+        // setBaseCallsData(response.data.content?.calls.map((item)=>{
+        // 	item._savecontact = false;
+        // 	return item;
+        // }));
+        // setBaseCallsData(response.data.content?.calls.map((item)=>{
+        // 	item._savecontact = false;
+        // 	return item;
+        // }));
+        console.log('response.data', response.data);
+        setBaseData(response.data.content.calls);
+        setLoading(false);
+
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+  };
 
 
   // ███████ ███████ ████████  ██████ ██   ██       ██   ██ 

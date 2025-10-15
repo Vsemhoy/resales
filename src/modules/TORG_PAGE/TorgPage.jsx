@@ -84,7 +84,7 @@ const tabNames = [
 const TorgPage = (props) => {
 	const { userdata } = props;
 	/** Смена значения говорит дочерним компонентам, что нужно очистить все несохраненные данные/перегрузить страницу */
-	const [refreshMark, setRefreshMark] = useState(null);
+
 
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
 	const [departList, setDepartList] = useState(null);
@@ -255,19 +255,13 @@ const TorgPage = (props) => {
 		if (PRODMODE) {
 			get_org_filters();
 
-			get_main_data_action(item_id);
-			get_notes_data_action(item_id);
-			get_org_calls_action(item_id);
-			get_projects_data_action(item_id);
+
 
       get_departs();
 		} else {
 			setBaseFilterstData(OM_ORG_FILTERDATA);
 
-			setBaseMainData(FlushOrgData(ORGLIST_MODAL_MOCK_MAINTAB));
-			setBaseNotesData(MODAL_NOTES_LIST);
-			setBaseProjectsData(MODAL_PROJECTS_LIST);
-			setBaseCallsData(MODAL_CALLS_LIST);
+
 
       setDepartList(DEPARTAMENTS_MOCK);
 		}
@@ -333,10 +327,7 @@ const TorgPage = (props) => {
 				}, 1200);
 				setTimeout(() => {
 					
-					get_main_data_action(itt);
-					get_notes_data_action(itt);
-					get_org_calls_action(itt);
-					get_projects_data_action(itt);
+
 
 				}, 1000);
 				} else {
@@ -415,65 +406,32 @@ const TorgPage = (props) => {
 
 	/** ----------------------- FETCHES -------------------- */
 
-	const get_main_data_action = async (id) => {
-		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/m', {
-				data: {},
-				_token: CSRF_TOKEN,
-			});
-			console.log('response', response);
-			if (response.data) {
-				// if (props.changed_user_data){
-				//     props.changed_user_data(response.data);
-				// }
-				// setBaseMainData(FlushOrgData(response.data.content));
-				setBaseMainData(FlushOrgData(response.data.content));
-				setLoading(false);
+	// const get_main_data_action = async (id) => {
+	// 	try {
+	// 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/m', {
+	// 			data: {},
+	// 			_token: CSRF_TOKEN,
+	// 		});
+	// 		console.log('response', response);
+	// 		if (response.data) {
+	// 			// if (props.changed_user_data){
+	// 			//     props.changed_user_data(response.data);
+	// 			// }
+	// 			// setBaseMainData(FlushOrgData(response.data.content));
+	// 			setBaseMainData(FlushOrgData(response.data.content));
+	// 			setLoading(false);
 				
-			}
-		} catch (e) {
-			console.log(e);
-		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 1000);
-		}
-	};
+	// 		}
+	// 	} catch (e) {
+	// 		console.log(e);
+	// 	} finally {
+	// 		setTimeout(() => {
+	// 			setLoading(false);
+	// 		}, 1000);
+	// 	}
+	// };
 
-	const get_org_calls_action = async (id) => {
-		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
-				data: {
-					page: pageCalls,
-					limit: onPage,
-				},
-				_token: CSRF_TOKEN,
-			});
-			console.log('response', response);
-			if (response.data) {
-				// if (props.changed_user_data){
-				//     props.changed_user_data(response.data);
-				// }
-				// setBaseCallsData(response.data.content?.calls.map((item)=>{
-				// 	item._savecontact = false;
-				// 	return item;
-				// }));
-				// setBaseCallsData(response.data.content?.calls.map((item)=>{
-				// 	item._savecontact = false;
-				// 	return item;
-				// }));
-				setBaseCallsData(response.data.content);
-				setLoading(false);
 
-			}
-		} catch (e) {
-			console.log(e);
-		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 1000);
-		}
-	};
 
 	const get_projects_data_action = async (id) => {
 		try {
@@ -617,23 +575,7 @@ const TorgPage = (props) => {
 
 
 
-	useEffect(() => {
-		if (PRODMODE){
-			get_notes_data_action(itemId);
-		}
-	}, [pageNotes]);
-
-	useEffect(() => {
-		if (PRODMODE){
-			get_org_calls_action(itemId);
-		}
-	}, [pageCalls]);
-
-	useEffect(() => {
-		if (PRODMODE){
-			get_projects_data_action(itemId);
-		}
-	}, [pageProject]);
+	
 
 
 	const handleSaveData = () => {
@@ -802,31 +744,6 @@ const TorgPage = (props) => {
 
 
 
-
-
-
-
-
-
-		// useEffect(() => {
-		// 	if (tempCallsData || tempNotesData || tempProjectsData || !IsSameComparedSomeOrgData(tempMainData, baseMainData)  ||
-		// 		tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
-		// 		tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
-		// 		tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
-		// 	){
-		// 		console.log('CHANGE LISTENER', tempCallsData, tempNotesData, tempProjectsData);
-
-		// 		setIsSmthChanged(true);
-		// 	}  else 
-		// 		{
-		// 		setIsSmthChanged(false);
-		// 	}
-		// }, [tempCallsData, tempMainData, tempNotesData, tempProjectsData,
-		// 	tempMain_addresses, tempMain_an_licenses, tempMain_an_requisites,
-		// 	tempMain_an_requisites, tempMain_an_tolerances, tempMain_emails,
-		// 	tempMain_legalAddresses, tempMain_phones
-		// ]);
-
 	const customClick = (button_id) => {
 		if (button_id === 1){
 			handleDiscard();
@@ -842,67 +759,23 @@ const TorgPage = (props) => {
 			setItemId(iid);
 			
 		}, 1200);
-			if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
-				 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
+
 				setTempMainData(null);
-				setTempMain_an_requisites(null);
-				setTempMain__an_licenses(null);
-				setTempMain_an_tolerances(null);
-				setTempMain_bo_licenses(null);
-				setTempMain_emails(null);
-				setTempMain_legalAddresses(null);
-				setTempMain_phones(null);
-				setTempMain_addresses(null);
-
-				get_main_data_action(iid);
-			}
-			if (tempProjectsData && tempProjectsData.length > 0){
-					setTempProjectsData(null);
-					get_projects_data_action(iid);
-				}
-				if (tempCallsData && tempCallsData.length > 0){
-					setTempCallsData(null);
-					get_org_calls_action(iid);
-				}
-				if (tempNotesData && tempNotesData.length > 0){
-					setTempNotesData(null);
-					get_notes_data_action(iid);
-				}
-
-
-				if (tempMain_addresses && tempMain_addresses.length > 0){
-					setTempMain_addresses(null);
-				}
-
-				if (tempMain_an_licenses && tempMain_an_licenses.length > 0){
-					setTempMain__an_licenses(null);
-				}
-
-				if (tempMain_an_requisites && tempMain_an_requisites.length > 0){
-					setTempMain_an_requisites(null);
-				}
-
-
-				if (tempMain_an_tolerances && tempMain_an_tolerances.length > 0){
-					setTempMain_an_tolerances(null);
-				}
-
-
-				if (tempMain_bo_licenses && tempMain_bo_licenses.length > 0){
-					setTempMain_bo_licenses(null);
-				}
-
-				if (tempMain_emails && tempMain_emails.length > 0){
-					setTempMain_emails(null);
-				}
+				setTempMain_an_requisites([]);
+				setTempMain__an_licenses([]);
+				setTempMain_an_tolerances([]);
+				setTempMain_bo_licenses([]);
+				setTempMain_emails([]);
+				setTempMain_legalAddresses([]);
+				setTempMain_phones([]);
+				setTempMain_addresses([]);
+				setTempProjectsData([]);
+				setTempCallsData([]);
+				setTempNotesData([]);
+				setTempMain_addresses([]);
 				
-				if (tempMain_legalAddresses && tempMain_legalAddresses.length > 0){
-					setTempMain_legalAddresses(null);
-				}
-
-				if (tempMain_phones && tempMain_phones.length > 0){
-					setTempMain_phones(null);
-				}
+				// get_main_data_action(iid);
+	
 	}
 
 
@@ -1182,7 +1055,7 @@ const TorgPage = (props) => {
 							on_delete_section={sectionDeleteHandler}
 
 							call_to_save={callToSaveAction}
-							base_data={baseNotesData}
+							// base_data={baseNotesData}
 							// on_save={handleDataChangeApprove}
 							active_page={pageNotes}
 							on_change_page={(p) => {

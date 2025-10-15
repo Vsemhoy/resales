@@ -1162,7 +1162,7 @@ const MainTabPage = (props) => {
                 input:
                   
                   <Select
-                  showSearch
+                    showSearch
                     key={'oaddress1_' + baseData?.id}
                     value={parseInt(baseData?.id8org_towns)}
                     onChange={(value)=>{ 
@@ -1187,7 +1187,6 @@ const MainTabPage = (props) => {
                     }
                     // placeholder="Controlled autosize"
                     disabled={!editMode}
-                    readOnly={!editMode}
                     variant="borderless"
                     required={true}
                     options={selects?.towns.map((item)=>({
@@ -1223,7 +1222,7 @@ const MainTabPage = (props) => {
                     }));
                     }}
                     // placeholder="Controlled autosize"
-                    readOnly={!editMode}
+     
                     variant="borderless"
                     maxLength={2500}
                     required={false}

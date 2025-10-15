@@ -19,7 +19,7 @@ import { forIn } from 'lodash';
 import { PlusCircleOutlined } from '@ant-design/icons';
 
 
-
+import { ORGLIST_MODAL_MOCK_MAINTAB } from '../../../ORG_LIST/components/mock/ORGLISTMODALMOCK';
 
 import MianBigSectionOrg from '../sections/bigsections/MainBigSectionOrg';
 import InfoBigSectionOrg from '../sections/bigsections/InfoBigSectionOrg';
@@ -36,6 +36,8 @@ import BoLicenseMicroSectionTorg from '../sections/microsections/tolerance/BoLic
 import { FlushOrgData } from '../OrgPageDataHandler';
 import { ShortName } from '../../../../components/helpers/TextHelpers';
 import { TORG_CHEVRON_SIZE } from '../TorgConfig';
+import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
+import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
 
 
 
@@ -117,63 +119,217 @@ const TabMainTorg = (props) => {
 
 
 
+  // useEffect(() => {
+  //   if (!props.base_data){
+  //     return;
+  //   }
+  //   setBaseData(props.base_data);
+  //   // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
+  //   if (props.base_data){
+  //     setFormId8org_regions(props.base_data.id8org_regions);
+  //     setFormId8org_towns(props.base_data.id8org_towns);
+  //   }
+
+  //   if (props.base_data?.contacts){
+  //     setCONTACTS(JSON.parse(JSON.stringify(props.base_data?.contacts)));
+  //   } else { setCONTACTS([])};
+
+  //   if (props.base_data?.active_licenses_bo){
+  //     setBOLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses_bo)));
+  //   } else {setBOLICENSES([])};
+
+  //   if (props.base_data?.active_licenses){
+  //     setANLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses)));
+  //   } else {setANLICENSES([])};
+
+  //   if (props.base_data?.active_tolerance){
+  //     setANTOLERANCES(JSON.parse(JSON.stringify(props.base_data?.active_tolerance)));
+  //   } else {setANTOLERANCES([])};
+
+  //   if (props.base_data?.address){
+  //     setORGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.address)));
+  //   } else {setORGADDRESSES([])};
+
+  //   if (props.base_data?.legaladdresses){
+  //     setORLEGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.legaladdresses)));
+  //   } else {setORLEGADDRESSES([])};
+
+  //   if (props.base_data?.emails){
+  //     setORGEMAILS(JSON.parse(JSON.stringify(props.base_data?.emails)));
+  //   } else {setORGEMAILS([])};
+
+
+
+  //   if (props.base_data?.phones){
+  //     setORGPHONES(JSON.parse(JSON.stringify(props.base_data?.phones)));
+  //   } else {setORGPHONES([])};
+
+  //   if (props.base_data?.requisites){
+  //     setREQUISITES(JSON.parse(JSON.stringify(props.base_data?.requisites)));
+  //   } else {setREQUISITES([])};
+
+  //   let creator  = props.base_data?.creator;
+  //   let curator  = props.base_data?.curator;
+  //   let list     = props.base_data?.list;
+
+
+
+  //   // Очистка главного объекта от мусора
+  //   let bdt = FlushOrgData(JSON.parse(JSON.stringify(props.base_data)), [
+  //     "warningcmpcount",
+  //     "warningcmpcomment",
+  //     "tv",
+  //     "id_orgs8an_tolerance",
+  //     "id_orgs8an_project",
+  //     "id_orgs8an_phones",
+  //     "id_orgs8an_notes",
+  //     "id_orgs8an_meeting",
+  //     "id_orgs8an_log",
+  //     "id_orgs8an_licenses",
+  //     "id_orgs8an_fax",
+  //     "id_orgs8an_calls",
+  //     "id_orgs8an_email",
+  //     "id_orgs8an_address",
+  //     "contacts",
+  //     "creator",
+  //     "curator",
+  //     "list",
+  //     "legaladdresses",
+  //     "phones",
+  //     "region",
+  //     "requisites",
+  //     "statusmoney",
+  //     "town",
+  //     "emails",
+  //     "deliverytype",
+  //     "address",
+  //     "active_tolerance",
+  //     "active_licenses_bo",
+  //     "active_licenses",
+  //     "id8staff_list7author",
+  //     "id8staff_list",
+  //     "id_orgs8an_orgsusers",
+  //     "id_orgs8an_list",
+  //     "date_dealer"
+  //   ]);
+
+  //   console.log('START --------- ', bdt);
+
+  //   setBaseData(bdt);
+
+  //   console.log('bdt', bdt, props.base_data)
+
+  //     if (creator){
+  //           setAuthor(ShortName(creator?.surname, creator?.name, creator?.secondname));
+  //         } else {
+  //           setAuthor('');
+  //         };
+  //         if (curator){
+  //           setCurator(ShortName(curator?.surname, curator?.name, curator?.secondname));
+  //         } else {
+  //           setCurator('');
+  //         };
+    
+  //     setStatusmoney(bdt.id8an_statusmoney);
+  //     setConveyance(bdt.id8an_conveyance);
+      
+  //     setTypeList(list?.id8an_typelist ? list?.id8an_typelist : 0);
+  //     setListComment(list?.comment ? list?.comment : '');
+
+   
+
+
+  // }, [props.base_data]);
+
+
+
+  // Получение данных от сервера когда обновляется после сброса айдишник
   useEffect(() => {
-    if (!props.base_data){
+    if (itemId){
+      if (PRODMODE){
+        get_main_data_action();
+
+      } else {
+        set_data_to_page(ORGLIST_MODAL_MOCK_MAINTAB);
+      }
+    }
+  }, [itemId]);
+
+
+  useEffect(() => {
+    if (BLUR_FLAG && props.on_change_main_data){
+      console.log('CALLL _----------- TO ___________ save');
+      props.on_change_main_data(baseData);
+    }
+  }, [baseData]);
+
+
+
+
+
+
+  /**
+   * Расстановка данных от свервера мо объектам и массивам
+   * @param {*} masterdata 
+   * @returns 
+   */
+  const set_data_to_page = (masterdata) => {
+    if (!masterdata){
       return;
     }
-    setBaseData(props.base_data);
-    // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
-    if (props.base_data){
-      setFormId8org_regions(props.base_data.id8org_regions);
-      setFormId8org_towns(props.base_data.id8org_towns);
+    setBaseData(masterdata);
+    // console.log('BASE_DATA ++++++++++++++++++++++',masterdata);
+    if (masterdata){
+      setFormId8org_regions(masterdata.id8org_regions);
+      setFormId8org_towns(masterdata.id8org_towns);
     }
 
-    if (props.base_data?.contacts){
-      setCONTACTS(JSON.parse(JSON.stringify(props.base_data?.contacts)));
+    if (masterdata?.contacts){
+      setCONTACTS(JSON.parse(JSON.stringify(masterdata?.contacts)));
     } else { setCONTACTS([])};
 
-    if (props.base_data?.active_licenses_bo){
-      setBOLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses_bo)));
+    if (masterdata?.active_licenses_bo){
+      setBOLICENSES(JSON.parse(JSON.stringify(masterdata?.active_licenses_bo)));
     } else {setBOLICENSES([])};
 
-    if (props.base_data?.active_licenses){
-      setANLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses)));
+    if (masterdata?.active_licenses){
+      setANLICENSES(JSON.parse(JSON.stringify(masterdata?.active_licenses)));
     } else {setANLICENSES([])};
 
-    if (props.base_data?.active_tolerance){
-      setANTOLERANCES(JSON.parse(JSON.stringify(props.base_data?.active_tolerance)));
+    if (masterdata?.active_tolerance){
+      setANTOLERANCES(JSON.parse(JSON.stringify(masterdata?.active_tolerance)));
     } else {setANTOLERANCES([])};
 
-    if (props.base_data?.address){
-      setORGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.address)));
+    if (masterdata?.address){
+      setORGADDRESSES(JSON.parse(JSON.stringify(masterdata?.address)));
     } else {setORGADDRESSES([])};
 
-    if (props.base_data?.legaladdresses){
-      setORLEGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.legaladdresses)));
+    if (masterdata?.legaladdresses){
+      setORLEGADDRESSES(JSON.parse(JSON.stringify(masterdata?.legaladdresses)));
     } else {setORLEGADDRESSES([])};
 
-    if (props.base_data?.emails){
-      setORGEMAILS(JSON.parse(JSON.stringify(props.base_data?.emails)));
+    if (masterdata?.emails){
+      setORGEMAILS(JSON.parse(JSON.stringify(masterdata?.emails)));
     } else {setORGEMAILS([])};
 
 
 
-    if (props.base_data?.phones){
-      setORGPHONES(JSON.parse(JSON.stringify(props.base_data?.phones)));
+    if (masterdata?.phones){
+      setORGPHONES(JSON.parse(JSON.stringify(masterdata?.phones)));
     } else {setORGPHONES([])};
 
-    if (props.base_data?.requisites){
-      setREQUISITES(JSON.parse(JSON.stringify(props.base_data?.requisites)));
+    if (masterdata?.requisites){
+      setREQUISITES(JSON.parse(JSON.stringify(masterdata?.requisites)));
     } else {setREQUISITES([])};
 
-    let creator  = props.base_data?.creator;
-    let curator  = props.base_data?.curator;
-    let list     = props.base_data?.list;
+    let creator  = masterdata?.creator;
+    let curator  = masterdata?.curator;
+    let list     = masterdata?.list;
 
 
 
     // Очистка главного объекта от мусора
-    let bdt = FlushOrgData(JSON.parse(JSON.stringify(props.base_data)), [
+    let bdt = FlushOrgData(JSON.parse(JSON.stringify(masterdata)), [
       "warningcmpcount",
       "warningcmpcomment",
       "tv",
@@ -215,7 +371,7 @@ const TabMainTorg = (props) => {
 
     setBaseData(bdt);
 
-    console.log('bdt', bdt, props.base_data)
+    console.log('bdt', bdt, masterdata)
 
       if (creator){
             setAuthor(ShortName(creator?.surname, creator?.name, creator?.secondname));
@@ -233,107 +389,70 @@ const TabMainTorg = (props) => {
       
       setTypeList(list?.id8an_typelist ? list?.id8an_typelist : 0);
       setListComment(list?.comment ? list?.comment : '');
+  };
 
-   
-
-
-  }, [props.base_data]);
-
+  // Сеттер айдишника 
   useEffect(() => {
     setItemId(props.item_id);
   }, [props.item_id]);
 
 
 
-  useEffect(() => {
-    if (BLUR_FLAG && props.on_change_main_data){
-      console.log('CALLL _----------- TO ___________ save');
-      props.on_change_main_data(baseData);
+
+
+
+
+
+
+// ███████ ███████ ████████  ██████ ██   ██ 
+// ██      ██         ██    ██      ██   ██ 
+// █████   █████      ██    ██      ███████ 
+// ██      ██         ██    ██      ██   ██ 
+// ██      ███████    ██     ██████ ██   ██ 
+                                         
+                                         
+
+
+  /** ----------------------- FETCHES -------------------- */
+
+  const get_main_data_action = async () => {
+    try {
+      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + itemId + '/m', {
+        data: {},
+        _token: CSRF_TOKEN,
+      });
+      console.log('response', response);
+      if (response.data) {
+        // if (props.changed_user_data){
+        //     props.changed_user_data(response.data);
+        // }
+        // setBaseMainData(FlushOrgData(response.data.content));
+
+        // Отправка данных на очистку
+        set_data_to_page(response.data.content);
+        setLoading(false);
+        
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
-  }, [baseData]);
-
-  // useEffect(() => {
-  //   if (props.on_change_contact){
-  //     props.on_change_contact(CONTACTS);
-  //   }
-  // }, [CONTACTS]);
-
-  // useEffect(() => {
-  //   if (props.on_change_requisites){
-  //     props.on_change_requisites(REQUISITES);
-  //   }
-  // }, [REQUISITES]);
-
-  //   useEffect(() => {
-  //   if (props.on_change_bo_license){
-  //     props.on_change_bo_license(BOLICENSES);
-  //   }
-  // }, [BOLICENSES]);
-
-  //   useEffect(() => {
-  //   if (props.on_change_an_license){
-  //     props.on_change_an_license(ANLICENSES);
-  //   }
-  // }, [ANLICENSES]);
-
-  //   useEffect(() => {
-  //   if (props.on_change_an_tolerance){
-  //     props.on_change_an_tolerance(ANTOLERANCES);
-  //   }
-  // }, [ANTOLERANCES]);
-
-  //   useEffect(() => {
-  //   if (props.on_change_legal_address){
-  //     props.on_change_legal_address(ORGLEGADDRESSES);
-  //   }
-  // }, [ORGLEGADDRESSES]);
-
-  //     useEffect(() => {
-  //   if (props.on_change_address){
-  //     props.on_change_address(ORGADDRESSES);
-  //   }
-  // }, [ORGADDRESSES]);
-
-  //     useEffect(() => {
-  //   if (props.on_change_phone){
-  //     props.on_change_phone(ORGPHONES);
-  //   }
-  // }, [ORGPHONES]);
-
-  //     useEffect(() => {
-  //   if (props.on_change_email){
-  //     props.on_change_email(ORGEMAILS);
-  //   }
-  // }, [ORGEMAILS]);
+  };
 
 
 
+  /** ----------------------- FETCHES -------------------- */
 
 
 
-
-  // useEffect(() => {
-  //   if (BLUR_FLAG === null){ return; }
-
-  //   // baseData.site = site?.trim();
-  //   // baseData.name = name?.trim();
-  //   // baseData.id8an_fs = id8an_fs;
-  //   // baseData.inn = inn.trim();
-    
-  // // setBaseData(prev => ({ ...prev, name: ... }));
-
-  //   console.log('FINAL BASEDATA', baseData);
-  // }, [
-  //   BLUR_FLAG,
-  //   // id8an_fs,
-
-  // ]);
-
-
-
-
-
-
+// ███████ ███████ ████████  ██████ ██   ██       ██    ██ ██████  
+// ██      ██         ██    ██      ██   ██       ██    ██ ██   ██ 
+// █████   █████      ██    ██      ███████ █████ ██    ██ ██████  
+// ██      ██         ██    ██      ██   ██       ██    ██ ██      
+// ██      ███████    ██     ██████ ██   ██        ██████  ██    
 
 
 
