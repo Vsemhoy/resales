@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
-// import { nanoid } from 'nanoid';
-// import { useUserData } from '../../context/UserDataContext';
+import { nanoid } from 'nanoid';
+import { useUserData } from '../../context/UserDataContext';
 
 export const useSendSms = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [success, setSuccess] = useState(false);
-	// const { userdata } = useUserData();
-	// const currentUserId = userdata?.user?.id;
+	const { userdata } = useUserData();
+	const currentUserId = userdata?.user?.id;
 	const [newId, setNewId] = useState(null);
 
 	const sendSms = async ({ to, text, answer }) => {
@@ -39,7 +39,7 @@ export const useSendSms = () => {
 			console.log(to);
 			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
 
-			// console.log('[useSendSms] Ответ от сервера:', response);
+			console.log('[useSendSms] Ответ от сервера:', response);
 
 			if (response.status === 200) {
 				setSuccess(true);
@@ -61,7 +61,6 @@ export const useSendSms = () => {
 				if (status === 403) {
 					errorMessage = 'Доступ запрещён: ' + serverMessage;
 				} else if (status === 422) {
-					// Validation errors
 					const errors = err.response.data?.errors;
 					errorMessage = errors ? Object.values(errors).flat().join(', ') : 'Ошибка валидации';
 				} else {

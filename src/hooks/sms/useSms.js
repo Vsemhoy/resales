@@ -21,9 +21,16 @@ export default function useSms({ chatId, search }) {
 
 					if (chatId) {
 						setWho(response?.data?.content?.who);
+						console.log(
+							'[useSms] response?.data?.content?.who && sms && chatId: ',
+							response?.data?.content?.who,
+							sms,
+							chatId
+						);
 					}
 					if (sms) {
 						setMessages(sms);
+						console.log('[useSms] sms: ', sms);
 					}
 				} catch (err) {
 					console.error(
