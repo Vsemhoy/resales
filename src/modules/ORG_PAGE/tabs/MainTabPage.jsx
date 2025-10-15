@@ -1453,7 +1453,8 @@ const MainTabPage = (props) => {
 
           </div>
           <div className={'sa-org-collapse-body'}>
-        <div className={'sa-org-collapse-content'}>
+          <div className={'sa-org-collapse-content'}>
+            <div className={'sa-org-contactstack-box'}>
           {(ANLICENSES.length > 0 ||
             ANTOLERANCES.length > 0 ||
             BOLICENSES.length > 0) ? (
@@ -1502,6 +1503,7 @@ const MainTabPage = (props) => {
                 </div>
               </div>
             ) : (<Empty />)}
+          </div>
           </div>
           </div>
         </div>
