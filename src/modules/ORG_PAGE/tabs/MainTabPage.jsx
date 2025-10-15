@@ -117,6 +117,8 @@ const MainTabPage = (props) => {
 
 
 
+
+
   useEffect(() => {
     if (!props.base_data){
       return;
@@ -191,7 +193,6 @@ const MainTabPage = (props) => {
       "contacts",
       "creator",
       "curator",
-      "list",
       "legaladdresses",
       "phones",
       "region",
