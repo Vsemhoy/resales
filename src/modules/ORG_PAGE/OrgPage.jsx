@@ -1400,6 +1400,8 @@ const OrgPage = (props) => {
 							main_data={baseMainData}
 						/>
 
+							
+
 						<TabNotesTorg
 							active_tab={activeTab === 'n'}
 							edit_mode={editMode}
