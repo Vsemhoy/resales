@@ -222,7 +222,7 @@ useEffect(() => {
 
     >
       <div className={'sa-org-collpase-header sa-flex-space'}
-        onDoubleClick={(ev) => {
+        onClick={(ev) => {
           ev.preventDefault();
           ev.stopPropagation();
           setCollapsed(!collapsed)

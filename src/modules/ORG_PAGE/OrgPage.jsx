@@ -783,21 +783,21 @@ const OrgPage = (props) => {
 			if (JSON.stringify(data) !== JSON.stringify(baseProjectsData)){
 				setTempProjectsData(data);
 			} else {
-				setTempProjectsData(null);
+				setTempProjectsData([]);
 			}
 
 		} else if (tab_name === 'notes'){
 			if (JSON.stringify(data) !== JSON.stringify(baseNotesData)){
 				setTempNotesData(data);
 			} else {
-				setTempNotesData(null);
+				setTempNotesData([]);
 			}
 
 		} else if (tab_name === 'calls'){
 			if (JSON.stringify(data) !== JSON.stringify(baseCallsData)){
 				setTempCallsData(data);
 			} else {
-				setTempCallsData(null);
+				setTempCallsData([]);
 			}
 		}
 	}
@@ -861,15 +861,15 @@ const OrgPage = (props) => {
 			setTempMainData(null);
 
 			if (tempProjectsData && tempProjectsData.length > 0){
-					setTempProjectsData(null);
+					setTempProjectsData([]);
 					get_projects_data_action(iid);
 				}
 				if (tempCallsData && tempCallsData.length > 0){
-					setTempCallsData(null);
+					setTempCallsData([]);
 					get_org_calls_action(iid);
 				}
 				if (tempNotesData && tempNotesData.length > 0){
-					setTempNotesData(null);
+					setTempNotesData([]);
 					get_notes_data_action(iid);
 				}
 
@@ -1399,6 +1399,8 @@ const OrgPage = (props) => {
 							selects={baseFiltersData}
 							main_data={baseMainData}
 						/>
+
+							
 
 						<TabNotesTorg
 							active_tab={activeTab === 'n'}

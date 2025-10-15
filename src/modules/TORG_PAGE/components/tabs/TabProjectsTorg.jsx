@@ -266,7 +266,7 @@ const get_projects_data_action = async () => {
             <Spin spinning={newLoading}>
               {tempData && tempData.length > 0 && (
                 <div className='sa-org-temp-stack-collapse'>
-                  <div className={'sa-org-temp-stack-collapse-header'}>Новые заметки</div>
+                  <div className={'sa-org-temp-stack-collapse-header'}>Новые проекты</div>
                   {tempData.map((item)=>(
                     <ProjectTabSectionTorg
                       edit_mode={editMode}
@@ -276,7 +276,7 @@ const get_projects_data_action = async () => {
                       key={ "prototas_n_" +  item.id }
                       on_delete={handleDeleteNewItem}
                       on_change={props.on_change_section}
-
+                      allow_delete={true}
                       selects={selects}
                       />
                   ))}

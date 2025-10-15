@@ -158,9 +158,10 @@ const AnLicenseMicroSectionTorg = (props) => {
               baseData.name          = name;
               baseData.start_date    = start_date ? start_date.unix() : null;
               baseData.end_date      = end_date ? end_date.unix() : null;
-              baseData.comment = comment;
-              baseData.deleted = deleted;
-  
+              baseData.comment       = comment;
+              baseData.deleted       = deleted;
+              
+              console.log('CHANGE BOLIC', baseData);
               if (baseData.command === undefined || baseData.command !== 'create'){
                 if (deleted){
                   baseData.command = 'delete';
@@ -176,8 +177,6 @@ const AnLicenseMicroSectionTorg = (props) => {
             return () => clearTimeout(timer);
   
     }, [
-      start_date,
-      end_date,
       type,
       deleted,
       BLUR_FLAG,
@@ -221,7 +220,9 @@ const AnLicenseMicroSectionTorg = (props) => {
                     size={'small'}
                     key={'bodicfden_2_' + baseData?.id + id}
                     value={start_date}
-                    onChange={e => setStart_date(e)}
+                      onChange={(e) => {setStart_date(e);
+                      setBLUR_FLAG(dayjs().unix());
+                    }}
                     // placeholder="Controlled autosize"
                     readOnly={!editMode}
                     variant="borderless"

@@ -258,7 +258,7 @@ const TabNotesTorg = (props) => {
                       key={ "nototas_n_" +  item.id }
                       on_delete={handleDeleteNewItem}
                       on_change={props.on_change_section}
-
+                      allow_delete={true}
                       selects={selects}
                       />
                   ))}
