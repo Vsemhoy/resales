@@ -57,7 +57,7 @@ const TopMenu = (props) => {
 			setTopRole(2);
 		}
 		if (!activeRole || activeRole === 0) {
-			//changeUserRole(1);
+			changeUserRole(1);
 			activeRole = 1;
 		}
 		let comps = userdata.companies?.filter((item) => item.id > 1) ?? [];
@@ -77,7 +77,7 @@ const TopMenu = (props) => {
 					label: (
 						<div
 							className={place.place === activeRole ? 'active' : ''}
-							/*onClick={() => place.place !== activeRole && changeUserRole(place.place)}*/
+							onClick={() => place.place !== activeRole && changeUserRole(place.place)}
 						>
 							{place.accessname}
 						</div>
@@ -179,7 +179,7 @@ const TopMenu = (props) => {
 	};
 
 	const changeUserRole = (role_id) => {
-		set_user_role(role_id);
+		//set_user_role(role_id);
 	};
 
 	// const toggleDebugger = () => {
