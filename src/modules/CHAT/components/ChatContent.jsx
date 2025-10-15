@@ -2,31 +2,40 @@ import styles from './style/Chat.module.css';
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 import { useUserData } from '../../../context/UserDataContext';
-// import { useChatRole } from '../../../hooks/sms/useChatRole.js';
 import { Layout } from 'antd';
 import { ChatInput } from './ChatInput';
 import { ChatDivider } from './ChatDivider';
 import ChatSelfMsg from './ChatSelfMsg';
 import ChatIncomingMsg from './ChatIncomingMsg';
 import useSms from '../../../hooks/sms/useSms';
+import { useSendSms } from '../../../hooks/sms/useSendSms';
 
 export default function ChatContent({ chatId }) {
+	const { userdata } = useUserData();
 	const messagesContainerRef = useRef(null);
 	const MemoChatSelfMsg = React.memo(ChatSelfMsg);
 	const MemoChatIncomingMsg = React.memo(ChatIncomingMsg);
 	const MemoChatDivider = React.memo(ChatDivider);
 	const [localMessages, setLocalMessages] = useState([]);
-	const { userdata } = useUserData();
 	const [currentUserId, setCuttentUserId] = useState(null);
-	useEffect(() => {
-		console.log('[userdata: :OEDUBHNG:KJLSDHNBGV:KLSJDHNBGV:KLSDN: ]', userdata);
-		setCuttentUserId(userdata?.user?.id);
-	}, [userdata]);
 	// ✅ Проверяем, загружены ли данные пользователя
 	const isUserDataLoaded = !!userdata;
 
 	const { Content, Footer } = Layout;
 	const { messages, who, loading } = useSms({ chatId });
+	const {
+		sendSms,
+		// loading,
+		error,
+		success,
+		newId,
+		timestamp,
+	} = useSendSms();
+
+	useEffect(() => {
+		const localMsg = localMessages.find((msg) => +msg.timestamp === +timestamp);
+		localMsg.id = newId;
+	}, [newId, timestamp, localMessages]);
 
 	// --- Вспомогательные функции ---
 	const getMessageSenderId = useCallback((msg) => {
@@ -43,6 +52,11 @@ export default function ChatContent({ chatId }) {
 		if (msg.isLocal) return msg.id;
 		return msg.id;
 	}, []);
+
+	useEffect(() => {
+		console.log('[userdata: :OEDUBHNG:KJLSDHNBGV:KLSJDHNBGV:KLSDN: ]', userdata);
+		setCuttentUserId(userdata?.user?.id);
+	}, [userdata]);
 
 	// --- Функция нормализации с проверкой ---
 	const normalizeMessage = useCallback(
@@ -61,7 +75,7 @@ export default function ChatContent({ chatId }) {
 				text: text,
 				timestamp: msg.created_at,
 				isSelf,
-				senderName: who ? who : 'Неизвестный собеседник',
+				senderName: +currentUserId !== +senderId ? who : 'Вы',
 				isLocal: msg.isLocal || false,
 				isSending: msg.isSending || false,
 				_raw: msg,
@@ -71,6 +85,29 @@ export default function ChatContent({ chatId }) {
 		},
 		[who, currentUserId, getMessageSenderId, getMessageText, getMessageId]
 	);
+
+	// ===============================================================================================================================================================================================
+	// ===============================================================================================================================================================================================
+	// ===============================================================================================================================================================================================
+	// ===============================================================================================================================================================================================
+	const handleSend = (trimmed) => {
+		sendSms({ to: chatId, text: trimmed, answer: null, timestamp: Date.now() });
+		const localMsg = {
+			fromId: currentUserId,
+			id: Date.now(),
+			text: trimmed,
+			timestamp: Date.now(),
+			isSelf: true,
+			senderName: 'Вы',
+			isLocal: true,
+			isSending: true,
+		};
+		setLocalMessages([...localMessages, localMsg]);
+	};
+	// ===============================================================================================================================================================================================
+	// ===============================================================================================================================================================================================
+	// ===============================================================================================================================================================================================
+	// ===============================================================================================================================================================================================
 
 	// --- Объединяем и нормализуем сообщения ---
 	const allMessages = useMemo(() => {
@@ -93,24 +130,12 @@ export default function ChatContent({ chatId }) {
 
 		const normalized = uniqueMessages
 			.map(normalizeMessage)
-			.filter((msg) => msg.text && msg.text.trim() !== '') //TODO Вынести trim
+			.filter((msg) => msg.text && msg.text.trim() !== '') //TODO Вынести trim, он не работает
 			.sort((a, b) => a.timestamp - b.timestamp);
 
 		console.log('📊 [CHAT] All normalized messages:', normalized);
 		return normalized;
-	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded, currentUserId]);
-
-	// --- Рендер сообщений ---
-	// const renderMessage = useCallback(
-	// 	(message) => {
-	// 		return message.isSelf ? (
-	// 			<MemoChatSelfMsg key={message.id} message={message} />
-	// 		) : (
-	// 			<MemoChatIncomingMsg key={message.id} message={message} />
-	// 		);
-	// 	},
-	// 	[currentUserId]
-	// );
+	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded]);
 
 	// --- Автоскролл ---
 	useEffect(() => {
@@ -179,7 +204,7 @@ export default function ChatContent({ chatId }) {
 				</div>
 			</Content>
 			<Footer className={styles['chat-input__footer']}>
-				<ChatInput />
+				<ChatInput onSend={handleSend} />
 			</Footer>
 		</Layout>
 	);
