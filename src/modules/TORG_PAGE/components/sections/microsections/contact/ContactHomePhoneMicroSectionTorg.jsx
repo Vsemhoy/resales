@@ -213,6 +213,7 @@ const ContactHomePhoneMicroSectionTorg = (props) => {
                 icon={<TrashIcon height={TORG_DELETE_SIZE} />}
                 onClick={()=>{
                     setDeleted(!deleted);
+                    setBLUR_FLAG(dayjs().unix());
                 }}
                 />
             }
