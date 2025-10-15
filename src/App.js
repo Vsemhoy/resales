@@ -81,11 +81,6 @@ export const App = () => {
 
 	const devMenu = [
 		{
-			key: 'gsdfgsdgsd3',
-			label: <span>Developer mode menu</span>,
-			disabled: true,
-		},
-		{
 			key: 'devmenu_1',
 			label: <NavLink to={'/dev/icons/heroicons24'}>Иконки</NavLink>,
 		},
