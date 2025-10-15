@@ -150,7 +150,7 @@ const InfoBigSectionOrg = (props) => {
                       maxLength={2500}
                       required={true}
                       size={'small'}
-                      options={selects?.profiles?.map((item)=>({
+                      options={selects?.price_statuses?.map((item)=>({
                         key: "fsprofle_" + item.key ? item.key : item.id  ,
                         value: item.key ? item.key : item.id,
                         label: item.label ? item.label : item.name,
