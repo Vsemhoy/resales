@@ -15,7 +15,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		loading,
 		error,
 	} = useSms({
-		// chatId: chat_id,
+		// chatId,
 		// mock: MOCK,
 		search,
 	});
@@ -25,7 +25,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const chats = useMemo(() => {
 		const normalizedSearch = search.toLowerCase();
 
-		console.log('🔄 Processing chats, smsList length:', smsList.length);
+		// console.log('🔄 Processing chats, smsList length:', smsList.length);
 
 		const filtered = smsList.filter((sms) => {
 			// Сообщения себе всегда показываем
@@ -40,18 +40,8 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			const matchesSearch =
 				displayName.toLowerCase().includes(normalizedSearch) ||
 				messageText.includes(normalizedSearch);
-
-			// console.log('🔎 Search check:', {
-			// 	displayName,
-			// 	messageText,
-			// 	normalizedSearch,
-			// 	matchesSearch,
-			// });
-
 			return matchesSearch;
 		});
-
-		console.log('📱 Filtered chats after search:', filtered.length);
 
 		// Группировка по chat_id с выбором последнего сообщения
 		const uniqueChatsMap = filtered.reduce((acc, sms) => {
@@ -72,8 +62,6 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			return timeB - timeA;
 		});
 
-		console.log('💬 Final unique chats:', result.length);
-
 		// Добавляем чат "Сохранённое"
 		result.unshift({
 			chat_id: currentUserId,
@@ -90,10 +78,6 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 
 	if (loading) return <p className={styles.statusMessage}>Загрузка чатов...</p>;
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
-
-	console.log('🎯 Rendering chats:', chats.length);
-	const DEBUGGER = 'DEBUGGER CHAT LIST';
-	console.log(DEBUGGER);
 	return (
 		<div className={styles['chat-list__container']}>
 			<ul className={styles['chat-list']}>
@@ -123,7 +107,6 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 								key={chat.chat_id}
 								className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
 								onClick={() => {
-									console.log('🖱️ Selecting chat:', chat.chat_id);
 									onSelectChat?.(chat.chat_id);
 								}}
 							>
