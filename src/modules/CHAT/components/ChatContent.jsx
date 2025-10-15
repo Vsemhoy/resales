@@ -38,8 +38,8 @@ export default function ChatContent({ chatId }) {
 	const [error, setError] = useState(null);
 	const [localMessages, setLocalMessages] = useState([]);
 	const { messages, who } = useSms(chatId);
-	const DEBUGGER = 'DEBUGGER CHAT CONTENT';
-	console.log(DEBUGGER);
+	// const DEBUGGER = 'DEBUGGER CHAT CONTENT';
+	// console.log(DEBUGGER);
 
 	// // Функция для определения отправителя сообщения
 	// const getMessageSenderId = useCallback((msg) => {
@@ -445,7 +445,8 @@ export default function ChatContent({ chatId }) {
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.chatContent}>
 				<div className={styles.chatHeader}>
-					<span>{who || 'Собеседник'}</span> <span>{DEBUGGER}</span>
+					<span>{who || 'Собеседник'}</span>
+					{/* <span>{DEBUGGER}</span> */}
 				</div>
 				<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 					{loading && allMessages.length === 0 ? (
