@@ -19,6 +19,7 @@ export default function ChatContentCopy({ chatId }) {
 	const { userdata } = useUserData();
 	const [currentUserId, setCuttentUserId] = useState(null);
 	useEffect(() => {
+		console.log('[userdata: :OEDUBHNG:KJLSDHNBGV:KLSJDHNBGV:KLSDN: ]', userdata)
 		setCuttentUserId(userdata?.user?.id);
 	}, [userdata]);
 	// ✅ Проверяем, загружены ли данные пользователя
@@ -147,6 +148,7 @@ export default function ChatContentCopy({ chatId }) {
 			<Content className={styles.chatContent}>
 				<div className={styles.chatHeader}>
 					<span>{!isUserDataLoaded ? 'Загрузка...' : who ? who : 'Неизвестный собеседник'}</span>
+					<span>{currentUserId}</span>
 				</div>
 				<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 					{showLoading ? (
