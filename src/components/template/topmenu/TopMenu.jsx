@@ -21,12 +21,17 @@ import { useUserData } from '../../../context/UserDataContext'; // импорт�
 import { WebSocketDebug } from '../../helpers/WebSocketDebug';
 
 const TopMenu = (props) => {
-	const { userdata, setUserdata } = useUserData();
+		const [userdata, setUserdata] = useState(props.userdata);
+	// const { userdata, setUserdata } = useUserData();
 	const [roleMenu, setRoleMenu] = useState([]);
 	const [companiesMenu, setCompanieseMenu] = useState([]);
 	const [topRole, setTopRole] = useState(1);
 	const [showDebugger, setShowDebugger] = useState(false);
 	const debuggerRef = useRef(null);
+
+	useEffect(() => {
+		setUserdata(props.userdata);
+	}, [props.userdata]);
 
 	// Закрытие debugger при клике вне компонента
 	useEffect(() => {
@@ -138,22 +143,22 @@ const TopMenu = (props) => {
 
 	const sms = [];
 	/** ------------------ FETCHES ---------------- */
-	const set_user_role = async (newplace) => {
-		if (PRODMODE) {
-			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/auth/me', {
-					place: newplace,
-					_token: CSRF_TOKEN,
-				});
-				if (response.data) {
-					setUserdata(response.data); // Обновляем данные пользователя
-					props.changed_user_data();
-				}
-			} catch (e) {
-				console.log(e);
-			}
-		}
-	};
+	// const set_user_role = async (newplace) => {
+	// 	if (PRODMODE) {
+	// 		try {
+	// 			let response = await PROD_AXIOS_INSTANCE.post('/auth/me', {
+	// 				place: newplace,
+	// 				_token: CSRF_TOKEN,
+	// 			});
+	// 			if (response.data) {
+	// 				setUserdata(response.data); // Обновляем данные пользователя
+	// 				props.changed_user_data();
+	// 			}
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 		}
+	// 	}
+	// };
 
 	const set_user_company = async (newcom) => {
 		if (PRODMODE) {
@@ -272,6 +277,7 @@ const TopMenu = (props) => {
 					</Dropdown>
 					<Dropdown menu={{ items: companiesMenu }}>
 						<div style={{ padding: '2px 14px' }}>
+							{userdata?.user?.active_company < 2 && <span>No active company ({userdata?.user?.active_company})</span>}
 							{userdata?.user?.active_company === 2 && <LogoArstelLight height="30px" />}
 							{userdata?.user?.active_company === 3 && <LogoRondoLight height="30px" />}
 						</div>

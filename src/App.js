@@ -106,7 +106,7 @@ export const App = () => {
 			>
 				<BrowserRouter basename={BASE_NAME}>
 					<div className={'app'}>
-						<TopMenu changed_user_data={() => get_userdata()} />
+						<TopMenu changed_user_data={() => get_userdata()} userdata={userdata} />
 						<div>
 							<Routes>
 								<Route path="/" element={<Navigate to={topRole} replace />} />
