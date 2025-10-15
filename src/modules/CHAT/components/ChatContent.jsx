@@ -61,7 +61,7 @@ export default function ChatContent({ chatId }) {
 				text: text,
 				timestamp: msg.created_at,
 				isSelf,
-				senderName: who ? who : 'Неизвестный собеседник',
+				senderName: currentUserId !== senderId ? who : 'Вы',
 				isLocal: msg.isLocal || false,
 				isSending: msg.isSending || false,
 				_raw: msg,
