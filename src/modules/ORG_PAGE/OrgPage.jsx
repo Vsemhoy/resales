@@ -183,28 +183,7 @@ const OrgPage = (props) => {
 
 
 	useEffect(() => {
-		if (
-			tempMainData || 
-			tempMain_contacts?.length ||
-		tempMain_addresses?.length ||
-		tempMain_emails?.length ||
-		tempMain_legalAddresses?.length ||
-		tempMain_phones?.length ||
-		tempMain_an_licenses?.length ||
-		tempMain_an_requisites?.length ||
-		tempMain_bo_licenses?.length ||
-		tempMain_an_tolerances?.length ||
-		tempMainData?.length ||
-		tempCallsData?.length ||
-		tempProjectsData?.length ||
-		tempNotesData?.length
-		) {
-			setIsSmthChanged(true);
-			console.log('[ORG]','SOME CHANGED');
-		} else {
-			setIsSmthChanged(false);
-			console.log('[ORG]','SOME NOT CHANGED');
-		}
+
 
 		let collect = {};
 
@@ -224,6 +203,29 @@ const OrgPage = (props) => {
 
 		console.log(collect);
 		setCOLLECTOR(collect);
+
+		if (
+			tempMainData != null || 
+			tempMain_contacts?.length ||
+		tempMain_addresses?.length ||
+		tempMain_emails?.length ||
+		tempMain_legalAddresses?.length ||
+		tempMain_phones?.length ||
+		tempMain_an_licenses?.length ||
+		tempMain_an_requisites?.length ||
+		tempMain_bo_licenses?.length ||
+		tempMain_an_tolerances?.length ||
+		tempCallsData?.length ||
+		tempProjectsData?.length ||
+		tempNotesData?.length
+		) {
+			setTimeout(() => {
+				console.log('SOME CHANGED')
+				setIsSmthChanged(true);
+			}, 1500);
+		} else {
+			setIsSmthChanged(false);
+		}
 
 	}, [tempMain_contacts, 
 		tempMain_addresses,
@@ -254,6 +256,7 @@ const OrgPage = (props) => {
 
 	useEffect(()=>{
 		setIsSmthChanged(false);
+		setTempMainData(null);
 		console.log("ORG_ID:", itemId);
 	}, [itemId])
 
@@ -333,6 +336,7 @@ const OrgPage = (props) => {
       if (event.ctrlKey && event.key === 'x') {
         event.preventDefault();
         handleDiscard();
+		setTempMainData(null);
       }
 
     };
@@ -347,12 +351,12 @@ const OrgPage = (props) => {
 
 
 	const handleDiscard = () => {
-		if (isSmthChanged){
+		
 			let itt  = itemId;
+			setTempMainData(null);
+			setBaseMainData(null);
 			if (PRODMODE) {
 				setItemId(0);
-				setBaseMainData(null);
-				
 				
 				setTimeout(() => {
 					setItemId(itt);
@@ -384,9 +388,10 @@ const OrgPage = (props) => {
 
 					clearTemps();
 				}
-
-		}
-		setEditMode(false);
+				
+			setTempMainData(null);
+			setEditMode(false);
+			setIsSmthChanged(false);
 	}
 
 
@@ -704,15 +709,10 @@ const OrgPage = (props) => {
 		}, 2000);
 
 			setIsSmthChanged(false);
+			setTempMainData(null);
 	};
 
 
-
-	useEffect(() => {
-		if (editMode === false){ return; }
-		console.log(tempMainData, tempNotesData, tempCallsData);
-		console.log('isSmthChanged', isSmthChanged);
-	}, [isSmthChanged]);
 
 	// const handleMaintabObjectDataChange = (key, dataarr) => {
 	// 	if (!editMode){ return; }
@@ -917,7 +917,9 @@ const OrgPage = (props) => {
 
 
 	const handleMainDataChange = (data) => {
-		setTempMainData(data);
+		if (itemId && editMode){
+			setTempMainData(data);
+		}
 	}
 
 
@@ -1196,8 +1198,7 @@ const OrgPage = (props) => {
 										tempMain_an_licenses?.length ||
 										tempMain_an_requisites?.length ||
 										tempMain_bo_licenses?.length ||
-										tempMain_an_tolerances?.length ||
-										tempMainData?.length) ?    'sa-mite-has-some' : ''}
+										tempMain_an_tolerances?.length) ?    'sa-mite-has-some' : ''}
 										${'n' === tab.link && tempNotesData?.length ?    'sa-mite-has-some' : ''}
 										${'p' === tab.link && tempProjectsData?.length ? 'sa-mite-has-some' : ''}
 										${'c' === tab.link && tempCallsData?.length ?    'sa-mite-has-some' : ''}
