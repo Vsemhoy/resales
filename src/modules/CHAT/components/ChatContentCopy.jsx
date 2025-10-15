@@ -2,7 +2,7 @@ import styles from './style/Chat.module.css';
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 import { useUserData } from '../../../context/UserDataContext';
-import { useChatRole } from '../../../hooks/sms/useChatRole.js';
+// import { useChatRole } from '../../../hooks/sms/useChatRole.js';
 import { Layout } from 'antd';
 import { ChatInput } from './ChatInput';
 import { ChatDivider } from './ChatDivider';
@@ -16,14 +16,14 @@ export default function ChatContentCopy({ chatId }) {
 	const MemoChatIncomingMsg = React.memo(ChatIncomingMsg);
 	const MemoChatDivider = React.memo(ChatDivider);
 	const [localMessages, setLocalMessages] = useState([]);
-
-	const userdata = useUserData();
-	const currentUserId = userdata?.user?.id;
-
+	const { userdata } = useUserData();
+	const [currentUserId, setCuttentUserId] = useState(null);
+	useEffect(() => {
+		setCuttentUserId(userdata?.user?.id);
+	}, [userdata]);
 	// ✅ Проверяем, загружены ли данные пользователя
 	const isUserDataLoaded = !!userdata;
 
-	const { getRole, getDisplayName } = useChatRole(currentUserId);
 	const { Content, Footer } = Layout;
 	const { messages, who, loading } = useSms({ chatId });
 
@@ -31,12 +31,6 @@ export default function ChatContentCopy({ chatId }) {
 	const getMessageSenderId = useCallback((msg) => {
 		if (msg.isLocal) return msg.from_id;
 		return msg.from_id;
-	}, []);
-
-	const getMessageTimestamp = useCallback((msg) => {
-		if (msg.isLocal) return msg.timestamp;
-		if (msg.created_at) return msg.created_at * 1000;
-		return Date.now();
 	}, []);
 
 	const getMessageText = useCallback((msg) => {
@@ -53,34 +47,19 @@ export default function ChatContentCopy({ chatId }) {
 	const normalizeMessage = useCallback(
 		(msg) => {
 			const senderId = getMessageSenderId(msg);
-			const isSelf = senderId === currentUserId || msg.isLocal;
 
-			// Используем хук для определения роли и имени
-			const role = isSelf ? 'self' : getRole(msg);
-			const displayName = isSelf ? 'Вы' : getDisplayName(msg, role, false);
+			const isSelf = senderId === currentUserId;
+			console.log('currentUserId: ', currentUserId, 'isSelf: ', isSelf);
 
-			const timestamp = getMessageTimestamp(msg);
 			const text = getMessageText(msg);
 			const id = getMessageId(msg);
 
-			// console.log('🕒 [CHAT] Normalizing message:', {
-			// 	original: msg,
-			// 	senderId,
-			// 	currentUserId,
-			// 	isSelf,
-			// 	timestamp,
-			// 	text,
-			// 	id,
-			// 	role,
-			// 	displayName,
-			// 	isLocal: msg.isLocal,
-			// });
-
 			const normalizedMsg = {
+				fromId: msg.from_id,
 				id: id,
 				text: text,
-				timestamp: timestamp,
-				role: role,
+				timestamp: msg.created_at,
+				isSelf,
 				senderName: who ? who : 'Неизвестный собеседник',
 				isLocal: msg.isLocal || false,
 				isSending: msg.isSending || false,
@@ -89,16 +68,7 @@ export default function ChatContentCopy({ chatId }) {
 
 			return normalizedMsg;
 		},
-		[
-			who,
-			currentUserId,
-			getMessageSenderId,
-			getRole,
-			getDisplayName,
-			getMessageTimestamp,
-			getMessageText,
-			getMessageId,
-		]
+		[who, currentUserId, getMessageSenderId, getMessageText, getMessageId]
 	);
 
 	// --- Объединяем и нормализуем сообщения ---
@@ -122,21 +92,24 @@ export default function ChatContentCopy({ chatId }) {
 
 		const normalized = uniqueMessages
 			.map(normalizeMessage)
-			.filter((msg) => msg.text && msg.text.trim() !== '')
+			.filter((msg) => msg.text && msg.text.trim() !== '') //TODO Вынести trim
 			.sort((a, b) => a.timestamp - b.timestamp);
 
 		console.log('📊 [CHAT] All normalized messages:', normalized);
 		return normalized;
-	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded]);
+	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded, currentUserId]);
 
 	// --- Рендер сообщений ---
-	const renderMessage = useCallback((message) => {
-		return message.role === 'self' ? (
-			<MemoChatSelfMsg key={message.id} message={message} />
-		) : (
-			<MemoChatIncomingMsg key={message.id} message={message} />
-		);
-	}, []);
+	// const renderMessage = useCallback(
+	// 	(message) => {
+	// 		return message.isSelf ? (
+	// 			<MemoChatSelfMsg key={message.id} message={message} />
+	// 		) : (
+	// 			<MemoChatIncomingMsg key={message.id} message={message} />
+	// 		);
+	// 	},
+	// 	[currentUserId]
+	// );
 
 	// --- Автоскролл ---
 	useEffect(() => {
@@ -193,8 +166,10 @@ export default function ChatContentCopy({ chatId }) {
 									<MemoChatDivider key={item.id}>
 										{dayjs(item.timestamp).format('DD.MM.YY')}
 									</MemoChatDivider>
+								) : +item.message.fromId === +currentUserId ? (
+									<MemoChatSelfMsg key={item.message.id} message={item.message} />
 								) : (
-									renderMessage(item.message)
+									<MemoChatIncomingMsg key={item.message.id} message={item.message} />
 								)
 							)}
 						</div>
