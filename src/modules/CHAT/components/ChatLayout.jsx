@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Layout } from 'antd';
 import ChatSidebar from './ChatSidebar';
-import ChatContentCopy from './ChatContentCopy';
+import ChatContent from './ChatContent';
 import styles from './style/Chat.module.css';
 
 const { Sider, Content } = Layout;
@@ -16,7 +16,7 @@ export default function ChatLayout() {
 			</Sider>
 			<Content className={styles['chat-content']}>
 				{selectedChatId ? (
-					<ChatContentCopy chatId={selectedChatId} />
+					<ChatContent chatId={selectedChatId} />
 				) : (
 					<div className={styles.statusMessage}>Выберите чат</div>
 				)}
