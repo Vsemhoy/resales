@@ -15,8 +15,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		loading,
 		error,
 	} = useSms({
-		// chatId,
-		// mock: MOCK,
+		mock: MOCK,
 		search,
 	});
 
@@ -79,7 +78,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	if (loading)
 		return (
 			<p className={styles.statusMessage}>
-				Загрузка чатов...{dayjs(+1760430108 * 1000).format('HH:mm')}
+				Загрузка чатов... {dayjs(+1760615999 * 1000).format('DD.MM.YY')}
 			</p>
 		);
 	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;

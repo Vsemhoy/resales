@@ -9,6 +9,7 @@ import ChatSelfMsg from './ChatSelfMsg';
 import ChatIncomingMsg from './ChatIncomingMsg';
 import useSms from '../../../hooks/sms/useSms';
 import {useSendSms} from '../../../hooks/sms/useSendSms';
+import {CHAT_MOCK} from "../mock/mock";
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
@@ -22,7 +23,7 @@ export default function ChatContent({ chatId }) {
 	const isUserDataLoaded = !!userdata;
 
 	const { Content, Footer } = Layout;
-	const { messages, who, loading } = useSms({ chatId });
+	const { messages, who, loading } = useSms({ chatId, mock: CHAT_MOCK });
 	const {
 		sendSms,
 		loadingSendSms,
@@ -36,7 +37,7 @@ export default function ChatContent({ chatId }) {
 		if (!newId || !timestamp) return;
 
 		const localMsgUpd = [...localMessages];
-		const localMsgIdx = localMessages.findIndex((msg) => +msg.timestamp === +timestamp);
+		const localMsgIdx = localMessages.findIndex((msg) => +msg.created_at === +timestamp);
 
 		if (localMsgIdx !== -1) {
 			localMsgUpd[localMsgIdx] = {
@@ -46,9 +47,6 @@ export default function ChatContent({ chatId }) {
 			};
 			setLocalMessages(localMsgUpd);
 		}
-
-		//1760615022403
-		//1760615022402
 	}, [newId, timestamp]);
 
 	// --- Вспомогательные функции ---
@@ -103,7 +101,7 @@ export default function ChatContent({ chatId }) {
 	// ===============================================================================================================================================================================================
 	// ===============================================================================================================================================================================================
 	const handleSend = (trimmed) => {
-		const createdAt = Date.now();
+		const createdAt = Number(dayjs().unix());
 		sendSms({ to: chatId, text: trimmed, answer: null, timestamp: createdAt });
 		const localMsg = {
 			from_id: currentUserId,
@@ -144,7 +142,7 @@ export default function ChatContent({ chatId }) {
 		/*console.log('📊 [CHAT] All normalized messages:', normalized);*/
 		return uniqueMessages
 			.map(normalizeMessage)
-			.filter((msg) => msg.text && msg.text.trim() !== '') //TODO Вынести trim, он не работает
+			.filter((msg) => msg.text && msg.text.trim() !== '')
 			.sort((a, b) => a.timestamp - b.timestamp);
 	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded]);
 
@@ -157,13 +155,14 @@ export default function ChatContent({ chatId }) {
 
 	// --- Разделители по датам ---
 	const messagesWithDividers = useMemo(() => {
+		console.log('Messages Container');
 		if (allMessages.length === 0) return [];
 
 		const items = [];
 		let lastDayKey = null;
 
 		for (const msg of allMessages) {
-			const dayKey = new Date(msg.timestamp).toDateString();
+			const dayKey = dayjs(+msg.timestamp * 1000).format('DD.MM.YY');
 			if (lastDayKey !== dayKey) {
 				items.push({ type: 'divider', id: `divider-${dayKey}`, timestamp: msg.timestamp });
 				lastDayKey = dayKey;
