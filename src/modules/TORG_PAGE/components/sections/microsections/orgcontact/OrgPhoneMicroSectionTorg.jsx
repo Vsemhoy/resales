@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../../../TorgPageSectionRow';
 import { Button, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
+import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA, TORG_SECOND_DELAY } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 
@@ -133,16 +133,43 @@ const OrgPhoneMicroSectionTorg = (props) => {
       deleted,
     ]);
 
-    useEffect(() => {
+    // useEffect(() => {
       // if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
-      if (editMode){
-        const timer = setTimeout(() => {
-          setBLUR_FLAG(dayjs().unix());
-        }, 500);
+    //   if (editMode){
+    //     let dns = dayjs().unix();
+    //     if (props.do_delay){
+    //       props.do_delay(dns);
+    //     }
+    //     const timer = setTimeout(() => {
+    //       setBLUR_FLAG(dns);
+    //     }, TORG_SECOND_DELAY);
+    //     return () => clearTimeout(timer);
         
-        return () => clearTimeout(timer);
-      }
-    }, [number, comment, ext]);
+    //   }
+    // }, [number, comment, ext]);
+
+
+//     useEffect(() => {
+//   if (!editMode) return;
+
+//   const timer = setTimeout(() => {
+//     if (props.on_change && baseData) {
+//       const payload = {
+//         ...baseData,
+//         number: number,
+//         comment: comment,
+//         ext: ext,
+//         deleted: deleted,
+//         command: baseData.command === 'create' 
+//           ? 'create' 
+//           : deleted ? 'delete' : 'update'
+//       };
+//       props.on_change(itemId, payload, 'contact_phone');
+//     }
+//   }, 500); // 500 мс дебаунс
+
+//   return () => clearTimeout(timer);
+// }, [number, comment, ext, deleted, editMode]);
 
 
   return (

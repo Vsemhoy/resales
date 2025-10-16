@@ -1278,6 +1278,7 @@ const MainTabPage = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdatePhoneUnit}
+                do_delay={props.do_delay}
               />
             ))}
           </div>

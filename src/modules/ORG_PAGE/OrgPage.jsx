@@ -95,6 +95,9 @@ const OrgPage = (props) => {
 	const { item_id } = useParams();
 	const onPage = 30;
 
+	const [BLOCK_DELAY, setBlockDelay] = useState(null);
+	const [BLOCK_SAVE, setBlockSave] = useState(false);
+
 	// m - main
 	// b - bills
 	// o - offers
@@ -242,6 +245,19 @@ const OrgPage = (props) => {
 		tempNotesData
 
 	]);
+
+
+
+	useEffect(() => {
+		if (!BLOCK_SAVE){
+			setBlockSave(true);
+		};
+		const timer = setTimeout(() => {
+							setBlockSave(false);
+						}, 3000);
+						return () => clearTimeout(timer);
+	}, [BLOCK_DELAY]);
+
 
 
 	useEffect(() => {
@@ -1230,7 +1246,7 @@ const OrgPage = (props) => {
 										) : (
 											<Button
 												icon={<ClipboardDocumentCheckIcon height={'16px'} />}
-												disabled={blockOnSave}
+												disabled={blockOnSave || BLOCK_SAVE}
 												onClick={handleSaveData}
 												color="primary"
 												variant="solid"
@@ -1300,6 +1316,8 @@ const OrgPage = (props) => {
 							// on_save={handleDataChangeApprove}
 							userdata={userdata}
               				selects={baseFiltersData}
+
+							do_delay={(val)=>{setBlockDelay(val)}}
 							// on_change_data={handleTabDataChange}
 							// on_change_main_data_part={handleMaintabObjectDataChange}
 
