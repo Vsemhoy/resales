@@ -6,11 +6,10 @@ export default function ChatIncomingMsg({ message }) {
 	return (
 		<div className={`${styles.message} ${styles.otherMessage}`}>
 			<div className={`${styles.bubble} ${styles.otherMessageBubble}`}>
-				<div className={styles.senderName}>{senderName}</div>
+				<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>
 				<span>{text}</span>
 				<div className={styles.time}>
 					{dayjs(+timestamp * 1000).format('HH:mm')}
-					{fromId}
 				</div>
 			</div>
 		</div>
