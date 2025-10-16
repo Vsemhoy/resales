@@ -46,6 +46,9 @@ export default function ChatContent({ chatId }) {
 			};
 			setLocalMessages(localMsgUpd);
 		}
+
+		//1760615022403
+		//1760615022402
 	}, [newId, timestamp]);
 
 	// --- Вспомогательные функции ---
@@ -100,13 +103,14 @@ export default function ChatContent({ chatId }) {
 	// ===============================================================================================================================================================================================
 	// ===============================================================================================================================================================================================
 	const handleSend = (trimmed) => {
-		sendSms({ to: chatId, text: trimmed, answer: null, timestamp: Date.now() });
+		const createdAt = Date.now();
+		sendSms({ to: chatId, text: trimmed, answer: null, timestamp: createdAt });
 		const localMsg = {
 			from_id: currentUserId,
-			id: Date.now(),
+			id: createdAt,
 			text: trimmed,
-			created_at: Date.now(),
-			updated_at: Date.now(),
+			created_at: createdAt,
+			updated_at: createdAt,
 			answer: null,
 			isLocal: true,
 			isSending: true,
