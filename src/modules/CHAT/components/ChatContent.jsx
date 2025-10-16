@@ -1,14 +1,14 @@
 import styles from './style/Chat.module.css';
-import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import dayjs from 'dayjs';
-import { useUserData } from '../../../context/UserDataContext';
-import { Layout } from 'antd';
-import { ChatInput } from './ChatInput';
-import { ChatDivider } from './ChatDivider';
+import {useUserData} from '../../../context/UserDataContext';
+import {Layout} from 'antd';
+import {ChatInput} from './ChatInput';
+import {ChatDivider} from './ChatDivider';
 import ChatSelfMsg from './ChatSelfMsg';
 import ChatIncomingMsg from './ChatIncomingMsg';
 import useSms from '../../../hooks/sms/useSms';
-import { useSendSms } from '../../../hooks/sms/useSendSms';
+import {useSendSms} from '../../../hooks/sms/useSendSms';
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
@@ -35,7 +35,7 @@ export default function ChatContent({ chatId }) {
 	useEffect(() => {
 		const localMsgUpd = JSON.parse(JSON.stringify(localMessages));
 		const localMsgIdx = localMessages.findIndex((msg) => +msg.timestamp === +timestamp);
-		if (localMsgIdx) {
+		if (localMsgIdx !== -1) {
 			localMsgUpd[localMsgIdx].id = newId;
 			setLocalMessages(localMsgUpd);
 		}
@@ -58,7 +58,7 @@ export default function ChatContent({ chatId }) {
 	}, []);
 
 	useEffect(() => {
-		console.log('[userdata: :OEDUBHNG:KJLSDHNBGV:KLSJDHNBGV:KLSDN: ]', userdata);
+		/*console.log('[userdata: :OEDUBHNG:KJLSDHNBGV:KLSJDHNBGV:KLSDN: ]', userdata);*/
 		setCuttentUserId(userdata?.user?.id);
 	}, [userdata]);
 
@@ -68,7 +68,7 @@ export default function ChatContent({ chatId }) {
 			const senderId = getMessageSenderId(msg);
 
 			const isSelf = senderId === currentUserId;
-			console.log('currentUserId: ', currentUserId, 'isSelf: ', isSelf);
+			/*console.log('currentUserId: ', currentUserId, 'isSelf: ', isSelf);*/
 
 			const text = getMessageText(msg);
 			const id = getMessageId(msg);
@@ -116,7 +116,7 @@ export default function ChatContent({ chatId }) {
 	// --- Объединяем и нормализуем сообщения ---
 	const allMessages = useMemo(() => {
 		if (!isUserDataLoaded) {
-			console.log('⏳ [CHAT] User data not loaded yet, skipping normalization');
+			/*console.log('⏳ [CHAT] User data not loaded yet, skipping normalization');*/
 			return [];
 		}
 
@@ -132,13 +132,11 @@ export default function ChatContent({ chatId }) {
 			return true;
 		});
 
-		const normalized = uniqueMessages
+		/*console.log('📊 [CHAT] All normalized messages:', normalized);*/
+		return uniqueMessages
 			.map(normalizeMessage)
 			.filter((msg) => msg.text && msg.text.trim() !== '') //TODO Вынести trim, он не работает
 			.sort((a, b) => a.timestamp - b.timestamp);
-
-		console.log('📊 [CHAT] All normalized messages:', normalized);
-		return normalized;
 	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded]);
 
 	// --- Автоскролл ---
