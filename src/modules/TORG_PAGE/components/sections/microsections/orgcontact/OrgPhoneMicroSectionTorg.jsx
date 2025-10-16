@@ -27,7 +27,6 @@ const OrgPhoneMicroSectionTorg = (props) => {
   const [comment, setComment] = useState('');
   const [number, setNumber] = useState('');
   const [ext, setExt] = useState('');
-  const [id_orgsusers, setIdOrgsusers] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
   const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
@@ -48,7 +47,6 @@ const OrgPhoneMicroSectionTorg = (props) => {
       setItemId(props.data.id);
       setOrgId(props.data.id_orgs);
 
-      setIdOrgsusers(props.data?.id_orgsusers);
       setNumber(props.data?.number);
       setComment(props.data?.comment);
       setExt(props.data?.ext);
@@ -110,7 +108,6 @@ const OrgPhoneMicroSectionTorg = (props) => {
             if (props.on_change){
               // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
               
-              baseData.id_orgsusers = id_orgsusers;
               baseData.number       = number?.trim();
               baseData.comment      = comment?.trim();
               baseData.ext          = ext;
@@ -132,12 +129,20 @@ const OrgPhoneMicroSectionTorg = (props) => {
             return () => clearTimeout(timer);
   
     }, [
-      id_orgsusers,
       BLUR_FLAG,
       deleted,
-      
     ]);
 
+    useEffect(() => {
+      // if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
+      if (editMode){
+        const timer = setTimeout(() => {
+          setBLUR_FLAG(dayjs().unix());
+        }, 500);
+        
+        return () => clearTimeout(timer);
+      }
+    }, [number, comment, ext]);
 
 
   return (
