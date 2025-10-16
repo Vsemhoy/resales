@@ -5,24 +5,24 @@ import { nanoid } from 'nanoid';
 import { useUserData } from '../../context/UserDataContext';
 
 export const useSendSms = () => {
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
-	const [success, setSuccess] = useState(false);
+	const [loadingSendSms, setLoadingSendSms] = useState(false);
+	const [errorSendSms, setErrorSendSms] = useState(null);
+	const [successSendSms, setSuccessSendSms] = useState(false);
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 	const [newId, setNewId] = useState(null);
 	const [timestamp, setTimestamp] = useState(null);
 	const sendSms = async ({ to, text, answer, timestamp }) => {
-		setLoading(true);
-		setError(null);
-		setSuccess(false);
+		setLoadingSendSms(true);
+		setErrorSendSms(null);
+		setSuccessSendSms(false);
 		setNewId(null);
 
 		try {
 			if (!PRODMODE) {
 				console.log('[useSendSms] Режим разработки — сообщение не отправляется');
 				await new Promise((res) => setTimeout(res, 500));
-				setSuccess(true);
+				setSuccessSendSms(true);
 				return { success: true, mock: true };
 			}
 
@@ -43,7 +43,7 @@ export const useSendSms = () => {
 			console.log('[useSendSms] Ответ от сервера:', response);
 
 			if (response.status === 200) {
-				setSuccess(true);
+				setSuccessSendSms(true);
 				setNewId(response.data.id);
 				setTimestamp(response.data.timestamp);
 				return { success: true, data: response.data };
@@ -71,18 +71,18 @@ export const useSendSms = () => {
 				errorMessage = err.message || 'Неизвестная ошибка';
 			}
 
-			setError(errorMessage);
+			setErrorSendSms(errorMessage);
 			throw new Error(errorMessage);
 		} finally {
-			setLoading(false);
+			setLoadingSendSms(false);
 		}
 	};
 
 	return {
 		sendSms,
-		loading,
-		error,
-		success,
+		loadingSendSms,
+		errorSendSms,
+		successSendSms,
 		newId,
 		timestamp,
 	};

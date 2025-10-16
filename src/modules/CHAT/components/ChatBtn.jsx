@@ -19,7 +19,7 @@ export const ChatBtn = () => {
 	// --- Формируем smsData (чаты, где участвует текущий пользователь) ---
 	const smsData = useMemo(() => {
 		if (!Array.isArray(chats) || chats.length === 0) {
-			console.log('🔍 [ChatBtn] No chats available');
+			/*console.log('🔍 [ChatBtn] No chats available');*/
 			return { hasSms: false, messages: [] };
 		}
 
@@ -29,9 +29,9 @@ export const ChatBtn = () => {
 				const toId = chat.to?.id || chat.to_id;
 				const isParticipant = fromId === currentUserId || toId === currentUserId;
 
-				console.log(
+				/*console.log(
 					`🔍 [ChatBtn] Chat ${chat.chat_id}: from=${fromId}, to=${toId}, current=${currentUserId}, isParticipant=${isParticipant}`
-				);
+				);*/
 				return isParticipant;
 			})
 			.map((chat) => {
@@ -52,27 +52,27 @@ export const ChatBtn = () => {
 					_fullChat: chat,
 				};
 
-				console.log(`🔍 [ChatBtn] Processed chat:`, result);
+				/*console.log(`🔍 [ChatBtn] Processed chat:`, result);*/
 				return result;
 			});
 
-		console.log(`🔍 [ChatBtn] Final messages:`, messages);
+		/*console.log(`🔍 [ChatBtn] Final messages:`, messages);*/
 		return { hasSms: messages.length > 0, messages };
 	}, [chats, currentUserId, getRole, getDisplayName]);
 
 	// --- Меню для dropdown ---
 	const menuItems = useMemo(() => {
-		console.log('🔍 [ChatBtn] Generating menu items from smsData:', smsData);
+		/*console.log('🔍 [ChatBtn] Generating menu items from smsData:', smsData);*/
 
 		if (!smsData.hasSms) {
-			console.log('🔍 [ChatBtn] No messages for menu');
+			/*console.log('🔍 [ChatBtn] No messages for menu');*/
 			return [];
 		}
 
 		const { messages } = smsData;
 		const count = messages.length;
 
-		console.log(`🔍 [ChatBtn] Messages count: ${count}`, messages);
+		/*console.log(`🔍 [ChatBtn] Messages count: ${count}`, messages);*/
 
 		const label = (() => {
 			if (count === 1) return messages[0].name;
@@ -83,7 +83,7 @@ export const ChatBtn = () => {
 				.join(', ')} и ещё +${count - 2}`;
 		})();
 
-		console.log(`🔍 [ChatBtn] Generated label: "${label}"`);
+		/*console.log(`🔍 [ChatBtn] Generated label: "${label}"`);*/
 
 		return [
 			{
@@ -114,11 +114,11 @@ export const ChatBtn = () => {
 		</Button>
 	);
 
-	console.log('🔍 [ChatBtn] Rendering with:', {
+	/*console.log('🔍 [ChatBtn] Rendering with:', {
 		menuItemsCount: menuItems.length,
 		hasSms: smsData.hasSms,
 		messagesCount: smsData.messages.length,
-	});
+	});*/
 
 	return (
 		<Space style={{ padding: 0 }}>

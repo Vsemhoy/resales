@@ -2,7 +2,7 @@ import styles from './style/Chat.module.css';
 import dayjs from 'dayjs';
 
 export default function ChatSelfMsg({ message }) {
-	const { text, timestamp, isSending, senderName } = message;
+	const { text, timestamp, isSending, senderName, fromId } = message;
 
 	// Используем только существующие классы
 	const messageClass = `${styles.message} ${styles.myMessage} ${
@@ -14,7 +14,7 @@ export default function ChatSelfMsg({ message }) {
 	return (
 		<div className={messageClass}>
 			<div className={bubbleClass}>
-				<div className={styles.senderName}>{senderName}</div>
+				<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>
 				<span>{text}</span>
 				<div className={styles.time}>
 					{dayjs(+timestamp * 1000).format('HH:mm')}
