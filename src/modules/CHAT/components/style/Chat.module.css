@@ -55,8 +55,8 @@ ul {
 }
 
 .chat-list {
-	overflow-y: scroll;
-	height: 50vh;
+	/*overflow-y: scroll;*/
+	/*height: 50vh;*/
 }
 
 .chat-list::-webkit-scrollbar {
@@ -277,4 +277,11 @@ ul {
 	align-items: center;
 	grid-gap: 10px;
 	padding: 0 10px;
+}
+
+.chat-list__container {
+	height: 100%;
+	overflow-y: scroll;
+	scrollbar-color: var(--sa-primary-color) #fff;
+	scrollbar-width: thin;
 }
