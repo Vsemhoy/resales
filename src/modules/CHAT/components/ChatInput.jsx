@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Input, Button, Popover, Space, Upload } from 'antd';
-import { SendOutlined, SmileOutlined, FileAddOutlined, UploadOutlined } from '@ant-design/icons';
+import {SendOutlined, SmileOutlined, FileAddOutlined, UploadOutlined, PaperClipOutlined} from '@ant-design/icons';
 import EmojiPicker from 'emoji-picker-react';
 import styles from './style/Chat.module.css';
 
@@ -45,38 +45,40 @@ export function ChatInput({ onSend }) {
 	);
 
 	return (
-		<Space className={styles.spaceContainer}>
-			<Popover
-				content={<EmojiPicker onEmojiClick={onEmojiClick}/>}
-				trigger="hover"
-				open={showPicker}
-				onOpenChange={setShowPicker}
-				placement="topRight"
-			>
-				<Button icon={<SmileOutlined/>}/>
-			</Popover>
+			<div className={styles.chat_inputs}>
+				<Popover
+					content={
+						<Upload>
+							<Button icon={<UploadOutlined/>}>Click to Upload</Button>
+						</Upload>
+					}
+					trigger="click"
+				>
+					<Button icon={<PaperClipOutlined />} variant={'filled'} color={'primary'}/>
+				</Popover>
 
-			<Popover
-				content={
-					<Upload>
-						<Button icon={<UploadOutlined/>}>Click to Upload</Button>
-					</Upload>
-				}
-				trigger="hover"
-			>
-				<Button icon={<FileAddOutlined/>}/>
-			</Popover>
+				<Input.TextArea
+					className={styles.textArea}
+					value={inputValue}
+					onChange={(e) => setInputValue(e.target.value)}
+					onKeyDown={handleKeyDown}
+					placeholder="Введите сообщение..."
+					autoSize={{ minRows: 1, maxRows: 6 }}
+					style={{ width: '100%' }}
+					variant={'borderless'}
+				/>
 
-			<Input.TextArea
-				className={styles.textArea}
-				value={inputValue}
-				onChange={(e) => setInputValue(e.target.value)}
-				onKeyDown={handleKeyDown}
-				placeholder="Введите сообщение..."
-				autoSize={{ minRows: 1, maxRows: 6 }}
-			/>
+				<Popover
+					content={<EmojiPicker onEmojiClick={onEmojiClick}/>}
+					trigger="hover"
+					open={showPicker}
+					onOpenChange={setShowPicker}
+					placement="topRight"
+				>
+					<Button icon={<SmileOutlined/>} variant={'filled'} color={'primary'}/>
+				</Popover>
 
-			<Button type="primary" icon={<SendOutlined/>} onClick={handleSend}/>
-		</Space>
+				<Button type="primary" icon={<SendOutlined/>} onClick={handleSend}/>
+			</div>
 	);
 }

@@ -130,7 +130,7 @@ export const ChatBtn = () => {
 				<div>{ButtonNode}</div>
 			)}
 
-			<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData} />
+			<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData}/>
 		</Space>
 	);
 };
