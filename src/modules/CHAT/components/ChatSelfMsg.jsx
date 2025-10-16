@@ -14,11 +14,10 @@ export default function ChatSelfMsg({ message }) {
 	return (
 		<div className={messageClass}>
 			<div className={bubbleClass}>
-				<div className={styles.senderName}>{senderName}</div>
+				<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>
 				<span>{text}</span>
 				<div className={styles.time}>
 					{dayjs(+timestamp * 1000).format('HH:mm')}
-					{fromId}
 					{isSending && <span className={styles.sending}> • отправляется...</span>}
 				</div>
 			</div>

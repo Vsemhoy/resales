@@ -25,22 +25,28 @@ export default function ChatContent({ chatId }) {
 	const { messages, who, loading } = useSms({ chatId });
 	const {
 		sendSms,
-		// loading,
-		error,
-		success,
+		loadingSendSms,
+		errorSendSms,
+		successSendSms,
 		newId,
 		timestamp,
 	} = useSendSms();
 
 	useEffect(() => {
-		const localMsgUpd = JSON.parse(JSON.stringify(localMessages));
+		if (!newId || !timestamp) return;
+
+		const localMsgUpd = [...localMessages];
 		const localMsgIdx = localMessages.findIndex((msg) => +msg.timestamp === +timestamp);
+
 		if (localMsgIdx !== -1) {
-			localMsgUpd[localMsgIdx].id = newId;
-			localMsgUpd[localMsgIdx].isSending = false;
+			localMsgUpd[localMsgIdx] = {
+				...localMsgUpd[localMsgIdx],
+				id: newId,
+				isSending: false
+			};
 			setLocalMessages(localMsgUpd);
 		}
-	}, [newId, timestamp, localMessages]);
+	}, [newId, timestamp]);
 
 	// --- Вспомогательные функции ---
 	const getMessageSenderId = useCallback((msg) => {
