@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
 
-export default function useSms({ chatId, search }) {
+export default function useSms({ chatId, search, mock}) {
 	const [messages, setMessages] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
@@ -21,30 +21,28 @@ export default function useSms({ chatId, search }) {
 
 					if (chatId) {
 						setWho(response?.data?.content?.who);
-						console.log(
-							'[useSms] response?.data?.content?.who && sms && chatId: ',
-							response?.data?.content?.who,
-							sms,
-							chatId
-						);
 					}
 					if (sms) {
 						setMessages(sms);
-						console.log('[useSms] sms: ', sms);
 					}
 				} catch (err) {
-					console.error(
-						`[useSms] Ошибка при запросе ${chatId ? `/api/sms/${chatId}` : '/api/sms'}:`,
-						err
-					);
-					throw new Error('Не удалось загрузить SMS с сервера');
+					console.log(err);
 				} finally {
 					setLoading(false);
 				}
+			} else {
+				const sms = chatId ? mock?.content?.messages : mock?.content?.sms;
+				if (chatId) {
+					setWho(mock?.content?.who);
+				}
+				if (sms) {
+					setMessages(sms);
+				}
+				setLoading(false);
 			}
 		};
 
-		fetchMessages();
+		fetchMessages().then();
 	}, [chatId, search]);
 
 	return { messages, loading, error, who };

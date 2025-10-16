@@ -181,49 +181,36 @@ export const CHAT_MOCK = {
 	content: {
 		messages: [
 			{
-				id: 250,
-				from_id: 540,
-				answer: null,
-				to: {
-					surname: 'Кошелев',
-					name: 'Александр',
-					id: 46,
-				},
-
-				created_at: 1757342962,
-				updated_at: 1757342963,
-			},
-			{
 				id: 246,
-				from_id: 540,
+				from_id: 309,
 				answer: null,
 				text: 'Опять???',
-				created_at: 1759477587,
-				updated_at: 1759477587,
+				created_at: 1760620175,
+				updated_at: 1760620175,
 			},
 			{
 				id: 346,
 				from_id: 46,
 				answer: null,
 				text: 'А теперь?',
-				created_at: 1759477587,
-				updated_at: 1759477587,
+				created_at: 1760620175,
+				updated_at: 1760620175,
 			},
 			{
 				id: 445,
 				from_id: 46,
 				answer: null,
 				text: 'Проверка связи',
-				created_at: 1759476295,
-				updated_at: 1759476295,
+				created_at: 1760620075,
+				updated_at: 1760620075,
 			},
 			{
 				id: 144,
 				from_id: 309,
 				answer: null,
 				text: 'Привет, спишь?',
-				created_at: 1759476290,
-				updated_at: 1759476290,
+				created_at: 1760620075,
+				updated_at: 1760620075,
 			},
 			{
 				id: 143,
