@@ -605,7 +605,7 @@ const OrgPage = (props) => {
 		}
 	};
 
-	const update_data_action = async (dataToUpdate) => {
+	const update_data_action = async () => {
 		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/updateorglist/' + itemId, {
@@ -679,34 +679,11 @@ const OrgPage = (props) => {
 		let saveData = {};
 		setTimeout(() => {
 			console.log('tempMainData', tempMainData)
-			if (tempMainData){
-				saveData.orgData = tempMainData;
-				saveData.orgData.contacts = tempMain_contacts;
-				
-			} else {
-				saveData.orgData = baseMainData;
-				saveData.orgData.contacts = tempMain_contacts;
-			}
 
-			if (tempProjectsData && tempProjectsData.length > 0){
-				saveData.projects = tempProjectsData;
-			} else {
-				saveData.projects = [];
-			}
-			if (tempCallsData && tempCallsData.length > 0){
-				saveData.calls = tempCallsData;
-			} else {
-				saveData.calls = [];
-			}
-			if (tempNotesData && tempNotesData.length > 0){
-				saveData.notes = tempNotesData;
-			} else {
-				saveData.notes = [];
-			}
 			
-			update_data_action(saveData);
-			console.log('SAVEDATA FIN', saveData);
-		}, 2000);
+			update_data_action();
+			console.log('SAVEDATA FIN', COLLECTOR);
+		}, 5000);
 
 			setIsSmthChanged(false);
 			setTempMainData(null);
