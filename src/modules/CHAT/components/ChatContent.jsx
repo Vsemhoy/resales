@@ -35,8 +35,10 @@ export default function ChatContent({ chatId }) {
 	useEffect(() => {
 		const localMsgUpd = JSON.parse(JSON.stringify(localMessages));
 		const localMsgIdx = localMessages.findIndex((msg) => +msg.timestamp === +timestamp);
-		localMsgUpd[localMsgIdx].id = newId;
-		setLocalMessages(localMsgUpd);
+		if (localMsgUpd) {
+			localMsgUpd[localMsgIdx].id = newId;
+			setLocalMessages(localMsgUpd);
+		}
 	}, [newId, timestamp, localMessages]);
 
 	// --- Вспомогательные функции ---
