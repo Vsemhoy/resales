@@ -73,7 +73,7 @@ export default function ChatContent({ chatId }) {
 			const text = getMessageText(msg);
 			const id = getMessageId(msg);
 
-			const normalizedMsg = {
+			return {
 				fromId: msg.from_id,
 				id: id,
 				text: text,
@@ -84,8 +84,6 @@ export default function ChatContent({ chatId }) {
 				isSending: msg.isSending || false,
 				_raw: msg,
 			};
-
-			return normalizedMsg;
 		},
 		[who, currentUserId, getMessageSenderId, getMessageText, getMessageId]
 	);
@@ -175,7 +173,7 @@ export default function ChatContent({ chatId }) {
 			<Content className={styles.chatContent}>
 				<div className={styles.chatHeader}>
 					<span>{!isUserDataLoaded ? 'Загрузка...' : who ? who : 'Неизвестный собеседник'}</span>
-					<span>{currentUserId}</span>
+					<span>{chatId}</span>
 				</div>
 				<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 					{showLoading ? (
