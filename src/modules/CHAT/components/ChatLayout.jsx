@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layout } from 'antd';
+import {Empty, Layout} from 'antd';
 import ChatSidebar from './ChatSidebar';
 import ChatContent from './ChatContent';
 import styles from './style/Chat.module.css';
@@ -18,7 +18,10 @@ export default function ChatLayout() {
 				{selectedChatId ? (
 					<ChatContent chatId={selectedChatId} />
 				) : (
-					<div className={styles.statusMessage}>Выберите чат</div>
+					<Empty description="Выберите чат"
+						   image={Empty.PRESENTED_IMAGE_SIMPLE}
+						   className={styles.antd_empty}
+					/>
 				)}
 			</Content>
 		</Layout>

@@ -150,7 +150,7 @@ ul {
 }
 
 /* Стили для polling интерфейса */
-.chatHeader {
+.chat_header {
 	height: 40px;
 
 	display: flex;
@@ -188,7 +188,7 @@ ul {
 
 /* ОСНОВНЫЕ СТИЛИ ЧАТА */
 .chat-layout {
-	height: 500px;
+	height: 700px;
 	display: flex;
 	overflow: hidden;
 }
@@ -204,11 +204,15 @@ ul {
 	flex-direction: column;
 }
 
-.chatContent {
-	flex: 1;
+.chat_content {
+	/*flex: 1;
 	display: flex;
 	flex-direction: column;
-	overflow: hidden;
+	overflow: hidden;*/
+
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto 1fr auto;
 }
 
 .messagesList {
@@ -246,4 +250,31 @@ ul {
 	background: var(--app-top-menu);
 	color: #fff;
 	opacity: 0.8;
+}
+
+.chat_body {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+
+	overflow-y: scroll;
+	scrollbar-color: var(--sa-primary-color) #fff;
+	scrollbar-width: thin;
+}
+
+.antd_empty {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.chat_inputs {
+	width: 100%;
+	display: grid;
+	grid-template-columns: auto 1fr auto auto;
+	align-items: center;
+	grid-gap: 10px;
+	padding: 0 10px;
 }

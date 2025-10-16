@@ -108,6 +108,7 @@ export const ChatModal = ({ open, onOk, onCancel, smsData, positionCorner }) => 
 			keyboard={true}
 			mask={false}
 			className={styles.chatModal}
+			width={800}
 			modalRender={(modal) =>
 				draggable ? (
 					<Draggable
