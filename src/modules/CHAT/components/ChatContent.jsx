@@ -37,6 +37,7 @@ export default function ChatContent({ chatId }) {
 		const localMsgIdx = localMessages.findIndex((msg) => +msg.timestamp === +timestamp);
 		if (localMsgIdx !== -1) {
 			localMsgUpd[localMsgIdx].id = newId;
+			localMsgUpd[localMsgIdx].isSending = false;
 			setLocalMessages(localMsgUpd);
 		}
 	}, [newId, timestamp, localMessages]);
