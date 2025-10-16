@@ -1,29 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../../../TorgPageSectionRow';
 import { Button, Input } from 'antd';
-
+import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import TextArea from 'antd/es/input/TextArea';
 import dayjs from 'dayjs';
 
-
 const OrgLegalAddressMicroSectionTorg = (props) => {
-  const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
+  const [editMode, setEditMode] = useState(true);
 
-  // Оригинал объекта, в который сетапятся данные для отправки наружу
   const [baseData, setBaseData] = useState(null);
-
   const [itemId, setItemId] = useState(null);
   const [orgId, setOrgId] = useState(null);
-  // const [theme, setTheme] = useState('');
-  // const [author, setAuthor] = useState(1);
-  // const [date, setDate] = useState(null);
-  // const [note, setNote] = useState('');
-  // const [deleted, setDeleted] = useState(0);
-
   const [allowDelete, setAllowDelete] = useState(true);
-
 
   const [comment, setComment] = useState('');
   const [address, setAddress] = useState('');
@@ -31,15 +20,12 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
   const [id_orgs, setIdOrgs] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
+  // Флаг для блюра — обновление в массиве уровнем ниже
   const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+  // Флаг для действия — отправка в глобальный коллектор
+  const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
-  // ██    ██ ███████ ███████ 
-  // ██    ██ ██      ██      
-  // ██    ██ █████   █████   
-  // ██    ██ ██      ██      
-  //  ██████  ██      ██      
-
-
+ 
   useEffect(() => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
@@ -56,178 +42,175 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
       setComment(props.data?.comment);
       setPostIndex(props.data?.post_index);
       setDeleted(props.data?.deleted);
-
-
     }
   }, [props.data]);
 
-    
-    
   useEffect(() => {
     setAllowDelete(props.allow_delete);
   }, [props.allow_delete]);
-  
+
   useEffect(() => {
-    if (deleted && props.on_delete){
+    if (deleted && props.on_delete) {
       props.on_delete(itemId);
     }
   }, [deleted]);
 
-
-  // ██    ██ ███████ ███████       ██   ██ 
-  // ██    ██ ██      ██             ██ ██  
-  // ██    ██ █████   █████   █████   ███   
-  // ██    ██ ██      ██             ██ ██  
-  //  ██████  ██      ██            ██   ██ 
-
-
-  const handleDeleteItem = () => {
-    if (props.on_delete) {
-      props.on_delete(itemId);
-    };
-    if (allowDelete) {
-      setDeleted(!deleted);
-    }
-  }
-
+  // Сброс флагов при смене org_id
   useEffect(() => {
-    setAllowDelete(props.allow_delete);
-  }, [props.allow_delete]);
+    setBLUR_FLAG(null);
+    setACTION_FLAG(null);
+  }, [props.org_id]);
 
 
-    useEffect(() => {
-      // При монтировании компонента форма не отправляется
-      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
-      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
-      if (editMode  && baseData && baseData.command === 'create' && deleted){
-        // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
-            if (props.on_change){
-              baseData.deleted = deleted;
-              props.on_change(itemId, baseData, 'org_legaladdress');
-              return;
-            }
-          }
-  
-        const timer = setTimeout(() => {
-          // При сверх-быстром изменении полей в разных секциях могут быть гонки
-        if (editMode  && baseData){
-            if (props.on_change){
-              // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
-              
-              baseData.id_orgs      = id_orgs;
-              baseData.address      = address;
-              baseData.comment      = comment?.trim();
-              baseData.post_index   = post_index;
-              baseData.deleted      = deleted;
-             
-  
-              if (baseData.command === undefined || baseData.command !== 'create'){
-                if (deleted){
-                  baseData.command = 'delete';
-                } else {
-                  baseData.command = 'update';
-                }
-              }
-              props.on_change( itemId, baseData, 'contact_phone');
-            }
-          }
-            }, 500);
-  
-            return () => clearTimeout(timer);
-  
-    }, [
-      id_orgs,
-      BLUR_FLAG,
-      deleted,
-   
-    ]);
 
+  // Синхронизация с родителем (массивом секций) — по BLUR_FLAG
+  useEffect(() => {
+    // Не отправляем при монтировании, если deleted не изменился
+    if (!BLUR_FLAG && Boolean(deleted) === Boolean(props.data?.deleted)) return;
+
+    const timer = setTimeout(() => {
+      if (editMode && baseData && props.on_change) {
+        const payload = {
+          ...baseData,
+          id_orgs: id_orgs,
+          address: address,
+          comment: comment,
+          post_index: post_index,
+          deleted: deleted,
+          command:
+            baseData.command === 'create'
+              ? 'create'
+              : deleted
+              ? 'delete'
+              : 'update',
+        };
+        props.on_change(itemId, payload, 'org_legaladdress');
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [BLUR_FLAG, deleted]);
+
+  // Синхронизация с коллектором — по ACTION_FLAG (дебаунс)
+  useEffect(() => {
+    if (!editMode) return;
+
+    const timer = setTimeout(() => {
+      if (ACTION_FLAG && props.on_collect && baseData) {
+        const payload = {
+          ...baseData,
+          id_orgs: id_orgs,
+          address: address?.trim(),
+          comment: comment?.trim(),
+          post_index: post_index?.trim(),
+          deleted: deleted,
+          command:
+            baseData.command === 'create'
+              ? 'create'
+              : deleted
+              ? 'delete'
+              : 'update',
+        };
+        props.on_collect(payload);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [address, comment, post_index, deleted]);
 
 
   return (
-    <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''} 
-     ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}`}>
-            <TorgPageSectionRow
-              explabel={'комм'}
-              edit_mode={editMode}
-              inputs={[
-              {
-                edit_mode: editMode,
-                label: 'Юридический адрес',
-                input:
-                  
-                  <Input
-                    key={'legard_1_' + baseData?.id + orgId}
-                    value={address}
-                    onChange={e => setAddress(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={225}
-                    required={true}
-                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                  />,
-                  required: true,
-                  value: address
-              },
-                {
-                edit_mode: editMode,
-                label: 'Индекс',
-                input:
-                  
-                  <Input
-                    key={'legard_2_' + baseData?.id + orgId}
-                    value={post_index}
-                    type={'number'}
-                    onChange={e => setPostIndex(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={25}
-                    required={true}
-                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                  />,
-                  required: true,
-                  value: post_index
-              },
-            ]}
-            extratext={[
-              {
-                edit_mode: editMode,
-                label: 'Комментарий',
-                input:
-                  
-                  <TextArea
-                    key={'legard_3_' + baseData?.id + orgId}
-                    value={comment}
-                    onChange={(e)=>setComment(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={5000}
-                    onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                  />,
-                  required: false,
-                  value: comment
-              },
-            ]}
-            action={<Button
-                className='sa-org-sub-sub-section-row-action'
-                size='small'
-                color="danger"
-                variant="outlined"
-                icon={<TrashIcon height={TORG_DELETE_SIZE} />}
-                onClick={()=>{
-                  setDeleted(!deleted);
-                  setBLUR_FLAG(dayjs().unix());
+    <div
+      className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''} 
+       ${baseData?.command === 'create' ? 'sa-brand-new-row' : ''}`}
+    >
+      <TorgPageSectionRow
+        key={'tototl_' + itemId}
+        explabel={'комм'}
+        edit_mode={editMode}
+        inputs={[
+          {
+            edit_mode: editMode,
+            label: 'Юридический адрес',
+            input: (
+              <Input
+                key={`legard_1_${baseData?.id}_${orgId}`}
+                value={address}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                  if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                />
-            }
+                readOnly={!editMode}
+                variant="borderless"
+                maxLength={225}
+                required={true}
+                onBlur={() => setBLUR_FLAG(dayjs().unix())}
+              />
+            ),
+            required: true,
+            value: address,
+          },
+          {
+            edit_mode: editMode,
+            label: 'Индекс',
+            input: (
+              <Input
+                key={`legard_2_${baseData?.id}_${orgId}`}
+                value={post_index}
+                type="number"
+                onChange={(e) => {
+                  setPostIndex(e.target.value);
+                  if (!ACTION_FLAG) setACTION_FLAG(1);
+                }}
+                readOnly={!editMode}
+                variant="borderless"
+                maxLength={25}
+                required={true}
+                onBlur={() => setBLUR_FLAG(dayjs().unix())}
+              />
+            ),
+            required: true,
+            value: post_index,
+          },
+        ]}
+        extratext={[
+          {
+            edit_mode: editMode,
+            label: 'Комментарий',
+            input: (
+              <TextArea
+                key={`legard_3_${baseData?.id}_${orgId}`}
+                value={comment}
+                onChange={(e) => {
+                  setComment(e.target.value);
+                  if (!ACTION_FLAG) setACTION_FLAG(1);
+                }}
+                readOnly={!editMode}
+                variant="borderless"
+                maxLength={5000}
+                onBlur={() => setBLUR_FLAG(dayjs().unix())}
+              />
+            ),
+            required: false,
+            value: comment,
+          },
+        ]}
+        action={
+          <Button
+            className="sa-org-sub-sub-section-row-action"
+            size="small"
+            color="danger"
+            variant="outlined"
+            icon={<TrashIcon height={TORG_DELETE_SIZE} />}
+            onClick={() => {
+              setDeleted(!deleted);
+              setBLUR_FLAG(dayjs().unix());
+              setACTION_FLAG(1);
+            }}
           />
-          </div>
+        }
+      />
+    </div>
   );
 };
 
