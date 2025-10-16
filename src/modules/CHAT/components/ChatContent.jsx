@@ -95,12 +95,12 @@ export default function ChatContent({ chatId }) {
 	const handleSend = (trimmed) => {
 		sendSms({ to: chatId, text: trimmed, answer: null, timestamp: Date.now() });
 		const localMsg = {
-			fromId: currentUserId,
+			from_id: currentUserId,
 			id: Date.now(),
 			text: trimmed,
-			timestamp: Date.now(),
-			isSelf: true,
-			senderName: 'Вы',
+			created_at: Date.now(),
+			updated_at: Date.now(),
+			answer: null,
 			isLocal: true,
 			isSending: true,
 		};
