@@ -91,6 +91,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
+      console.log(BLUR_FLAG, deleted, editMode);
       // При монтировании компонента форма не отправляется
       // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
       if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
