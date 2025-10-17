@@ -439,3 +439,11 @@
 	/* border-bottom: 3px solid blue; */
 	box-shadow: 0px 3px 0px rgba(255, 0, 0, 0.259);
 }
+.sa-orgpage-body .ant-select-disabled .ant-select-selection-item,
+.sa-orgpage-body .ant-select-selection-item {
+	color: #1e1e1e !important;
+}
+
+.sa-orgpage-body .ant-select-arrow {
+	color: var(--sa-antd-button-primary-color-border) !important;
+}

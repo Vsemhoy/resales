@@ -708,6 +708,16 @@ const OrgPage = (props) => {
 			setTempMainData(null);
 	};
 
+	useEffect(() => {
+		console.log('COLLECTOR MODIFIED', COLLECTOR);
+		if (isEmptyObject(COLLECTOR)){
+			setTimeout(() => {
+				isSmthChanged(false);
+			}, 1500);
+		} else {
+			isSmthChanged(true);
+		}
+	}, [COLLECTOR]);
 
 
 	// const handleMaintabObjectDataChange = (key, dataarr) => {
@@ -1164,6 +1174,15 @@ const OrgPage = (props) => {
 		};
 	}
 
+
+	function isEmptyObject(obj) {
+  return Object.values(obj).every(value => {
+    if (Array.isArray(value)) {
+      return value.length === 0;
+    }
+    return value === null;
+  });
+}
 
 
 	return (
