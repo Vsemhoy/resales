@@ -29,10 +29,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
   const [ext, setExt] = useState('');
   const [deleted, setDeleted] = useState(0);
 
-  // Флаг для блюра - обновление объекта в массиве уровнем ниже
   const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
-  // Флад для действия пользователя - для отправки в коллектор на главной
-  const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -91,16 +88,11 @@ const OrgPhoneMicroSectionTorg = (props) => {
   }, [props.allow_delete]);
 
 
-  useEffect(() => {
-    setBLUR_FLAG(null);
-    setACTION_FLAG(null);
-  }, [props.org_id]);
-
     useEffect(() => {
+      console.log(BLUR_FLAG, deleted, editMode);
       // При монтировании компонента форма не отправляется
       // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
       if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
-      // Вот эту секцию удаляем, иначе удалится из стека, но не отправится на сервер (объект перестанет существовать до отправки)!
       // if (editMode  && baseData && baseData.command === 'create' && deleted){
       //   // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
       //       if (props.on_change){
@@ -116,8 +108,8 @@ const OrgPhoneMicroSectionTorg = (props) => {
             if (props.on_change){
               // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
               
-              baseData.number       = number;
-              baseData.comment      = comment;
+              baseData.number       = number?.trim();
+              baseData.comment      = comment?.trim();
               baseData.ext          = ext;
               baseData.deleted      = deleted;
              
@@ -132,44 +124,52 @@ const OrgPhoneMicroSectionTorg = (props) => {
               props.on_change( itemId, baseData, 'contact_phone');
             }
           }
-            }, 600);
+            }, 500);
   
             return () => clearTimeout(timer);
   
     }, [
       BLUR_FLAG,
-      deleted
+      deleted,
     ]);
 
+    // useEffect(() => {
+      // if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
+    //   if (editMode){
+    //     let dns = dayjs().unix();
+    //     if (props.do_delay){
+    //       props.do_delay(dns);
+    //     }
+    //     const timer = setTimeout(() => {
+    //       setBLUR_FLAG(dns);
+    //     }, TORG_SECOND_DELAY);
+    //     return () => clearTimeout(timer);
+        
+    //   }
+    // }, [number, comment, ext]);
 
 
+//     useEffect(() => {
+//   if (!editMode) return;
 
-  useEffect(() => {
-    if (!editMode) return;
-      const timer = setTimeout(() => {
-        if (ACTION_FLAG){
-          if (props.on_change && baseData) {
-            const payload = {
-            ...baseData,
-            number: number?.trim(),
-            comment: comment?.trim(),
-            ext: ext?.trim(),
-            deleted: deleted,
-            command: baseData.command === 'create' 
-            ? 'create' 
-            : deleted ? 'delete' : 'update'
-          };
-          if (props.on_collect){
-            console.log('CALL COOL', payload)
-            props.on_collect(payload);
-          }
-        }
-      }
-    }, 500);
-  
-    return () => clearTimeout(timer);
+//   const timer = setTimeout(() => {
+//     if (props.on_change && baseData) {
+//       const payload = {
+//         ...baseData,
+//         number: number,
+//         comment: comment,
+//         ext: ext,
+//         deleted: deleted,
+//         command: baseData.command === 'create' 
+//           ? 'create' 
+//           : deleted ? 'delete' : 'update'
+//       };
+//       props.on_change(itemId, payload, 'contact_phone');
+//     }
+//   }, 500); // 500 мс дебаунс
 
-}, [number, comment, ext, deleted, editMode]);
+//   return () => clearTimeout(timer);
+// }, [number, comment, ext, deleted, editMode]);
 
 
   return (
@@ -177,7 +177,6 @@ const OrgPhoneMicroSectionTorg = (props) => {
      ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}
     `}>
             <TorgPageSectionRow
-            key={'totoddtl_' + itemId}
               explabel={'комм'}
               edit_mode={editMode}
               inputs={[
@@ -188,10 +187,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                   <Input
                     key={'csontnumber1_' + baseData?.id + orgId}
                     value={number}
-                    onChange={e => {
-                      setNumber(e.target.value);
-                      if (!ACTION_FLAG){ setACTION_FLAG(1)}
-                    }}
+                    onChange={e => setNumber(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -212,10 +208,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                     key={'csontnumber2_' + baseData?.id + orgId}
                     value={ext}
                     type={'number'}
-                    onChange={e => {
-                      setExt(e.target.value);
-                      if (!ACTION_FLAG){ setACTION_FLAG(1)};
-                    }}
+                    onChange={e => setExt(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -237,10 +230,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                   <TextArea
                     key={'csontnumber3_' + baseData?.id + orgId}
                     value={comment}
-                    onChange={(e)=>{
-                      setComment(e.target.value);
-                      if (!ACTION_FLAG){ setACTION_FLAG(1)}
-                      }}
+                    onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -261,7 +251,6 @@ const OrgPhoneMicroSectionTorg = (props) => {
                 onClick={()=>{
                     setDeleted(!deleted);
                     setBLUR_FLAG(dayjs().unix());
-                    setACTION_FLAG(1);
                 }}
                 />
             }
