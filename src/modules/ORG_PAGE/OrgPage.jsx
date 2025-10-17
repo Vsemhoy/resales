@@ -207,29 +207,6 @@ const OrgPage = (props) => {
 		console.log(collect);
 		setCOLLECTOR(collect);
 
-		if (
-			tempMainData != null || 
-			tempMain_contacts?.length ||
-		tempMain_addresses?.length ||
-		tempMain_emails?.length ||
-		tempMain_legalAddresses?.length ||
-		tempMain_phones?.length ||
-		tempMain_an_licenses?.length ||
-		tempMain_an_requisites?.length ||
-		tempMain_bo_licenses?.length ||
-		tempMain_an_tolerances?.length ||
-		tempCallsData?.length ||
-		tempProjectsData?.length ||
-		tempNotesData?.length
-		) {
-			setTimeout(() => {
-				console.log('SOME CHANGED')
-				setIsSmthChanged(true);
-			}, 1500);
-		} else {
-			setIsSmthChanged(false);
-		}
-
 	}, [tempMain_contacts, 
 		tempMain_addresses,
 		tempMain_emails,
@@ -258,7 +235,11 @@ const OrgPage = (props) => {
 						return () => clearTimeout(timer);
 	}, [BLOCK_DELAY]);
 
-
+	useEffect(() => {
+		if (!editMode){
+			setBlockOnSave(false);
+		}
+	}, [blockOnSave]);
 
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
@@ -715,7 +696,7 @@ const OrgPage = (props) => {
 				setIsSmthChanged(false);
 			}, 1500);
 		} else {
-			setIsSmthChanged(true)
+			setIsSmthChanged(true);
 		}
 	}, [COLLECTOR]);
 
