@@ -255,11 +255,12 @@ const TabNotesTorg = (props) => {
                       collapsed={false}
                       org_id={orgId}
                       data={item}
-                      key={ "nototas_n_" +  item.id }
+                      key={ "no5totas_n_" +  item.id }
                       on_delete={handleDeleteNewItem}
                       on_change={props.on_change_section}
                       allow_delete={true}
                       selects={selects}
+                      // on_collect={(payload)=>{if (payload){ props.on_change_section('notes', payload)}}}
                       />
                   ))}
                 </div>
@@ -273,10 +274,10 @@ const TabNotesTorg = (props) => {
                       org_id={orgId}
                       data={item}
                       collapsed={true}
-                      key={ "nototas_" +  item.id }
+                      key={ "noto5tas_" +  item.id }
                       on_change={props.on_change_section}
                       // on_delete={handleDeleteNewItem}
-
+                      // on_collect={(payload)=>{if (payload){props.on_change_section('notes', payload)}}}
                       selects={selects}
                       />
                   ))}
