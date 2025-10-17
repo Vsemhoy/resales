@@ -11,7 +11,7 @@ export default function ChatLayout() {
 
 	return (
 		<Layout className={styles['chat-layout']}>
-			<Sider width={180} className={styles['chat-sidebar']}>
+			<Sider width={220} className={styles['chat-sidebar']}>
 				<ChatSidebar onSelectChat={setSelectedChatId} selectedChatId={selectedChatId} />
 			</Sider>
 			<Content className={styles['chat-content']}>
