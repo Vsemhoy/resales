@@ -712,10 +712,10 @@ const OrgPage = (props) => {
 		console.log('COLLECTOR MODIFIED', COLLECTOR);
 		if (isEmptyObject(COLLECTOR)){
 			setTimeout(() => {
-				isSmthChanged(false);
+				setIsSmthChanged(false);
 			}, 1500);
 		} else {
-			isSmthChanged(true);
+			setIsSmthChanged(true)
 		}
 	}, [COLLECTOR]);
 
