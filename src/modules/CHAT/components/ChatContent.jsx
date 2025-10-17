@@ -2,7 +2,7 @@ import styles from './style/Chat.module.css';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import dayjs from 'dayjs';
 import {useUserData} from '../../../context/UserDataContext';
-import {Layout} from 'antd';
+import {Empty, Layout, Spin} from 'antd';
 import {ChatInput} from './ChatInput';
 import {ChatDivider} from './ChatDivider';
 import ChatSelfMsg from './ChatSelfMsg';
@@ -19,11 +19,17 @@ export default function ChatContent({ chatId }) {
 	const MemoChatDivider = React.memo(ChatDivider);
 	const [localMessages, setLocalMessages] = useState([]);
 	const [currentUserId, setCuttentUserId] = useState(null);
-	// ✅ Проверяем, загружены ли данные пользователя
-	const isUserDataLoaded = !!userdata;
-
 	const { Content, Footer } = Layout;
-	const { messages, who, loading } = useSms({ chatId, mock: CHAT_MOCK });
+
+	const {
+		messages,
+		who,
+		loading
+	} = useSms({
+		chatId,
+		mock: CHAT_MOCK
+	});
+
 	const {
 		sendSms,
 		loadingSendSms,
@@ -33,105 +39,30 @@ export default function ChatContent({ chatId }) {
 		timestamp,
 	} = useSendSms();
 
-	useEffect(() => {
-		if (!newId || !timestamp) return;
-
-		const localMsgUpd = [...localMessages];
-		const localMsgIdx = localMessages.findIndex((msg) => +msg.created_at === +timestamp);
-
-		if (localMsgIdx !== -1) {
-			localMsgUpd[localMsgIdx] = {
-				...localMsgUpd[localMsgIdx],
-				id: newId,
-				isSending: false
-			};
-			setLocalMessages(localMsgUpd);
-		}
-	}, [newId, timestamp]);
-
-	// --- Вспомогательные функции ---
-	const getMessageSenderId = useCallback((msg) => {
-		if (msg.isLocal) return msg.from_id;
-		return msg.from_id;
-	}, []);
-
-	const getMessageText = useCallback((msg) => {
-		if (msg.isLocal) return msg.text;
-		return msg.text;
-	}, []);
-
-	const getMessageId = useCallback((msg) => {
-		if (msg.isLocal) return msg.id;
-		return msg.id;
-	}, []);
-
-	useEffect(() => {
-		/*console.log('[userdata: :OEDUBHNG:KJLSDHNBGV:KLSJDHNBGV:KLSDN: ]', userdata);*/
-		setCuttentUserId(userdata?.user?.id);
-	}, [userdata]);
-
-	// --- Функция нормализации с проверкой ---
 	const normalizeMessage = useCallback(
 		(msg) => {
-			const senderId = getMessageSenderId(msg);
-
-			const isSelf = senderId === currentUserId;
-			/*console.log('currentUserId: ', currentUserId, 'isSelf: ', isSelf);*/
-
-			const text = getMessageText(msg);
-			const id = getMessageId(msg);
-
 			return {
 				fromId: msg.from_id,
-				id: id,
-				text: text,
+				id: msg.id,
+				text: msg.text,
 				timestamp: msg.created_at,
-				isSelf,
-				senderName: +currentUserId !== +senderId ? who : 'Вы',
+				isSelf: msg.from_id === currentUserId,
+				senderName: +currentUserId !== +msg.from_id ? who : 'Вы',
 				isLocal: msg.isLocal || false,
 				isSending: msg.isSending || false,
 				_raw: msg,
 			};
 		},
-		[who, currentUserId, getMessageSenderId, getMessageText, getMessageId]
+		[who, currentUserId]
 	);
 
-	// ===============================================================================================================================================================================================
-	// ===============================================================================================================================================================================================
-	// ===============================================================================================================================================================================================
-	// ===============================================================================================================================================================================================
-	const handleSend = (trimmed) => {
-		const createdAt = Number(dayjs().unix());
-		sendSms({ to: chatId, text: trimmed, answer: null, timestamp: createdAt });
-		const localMsg = {
-			from_id: currentUserId,
-			id: createdAt,
-			text: trimmed,
-			created_at: createdAt,
-			updated_at: createdAt,
-			answer: null,
-			isLocal: true,
-			isSending: true,
-		};
-		setLocalMessages([...localMessages, localMsg]);
-	};
-	// ===============================================================================================================================================================================================
-	// ===============================================================================================================================================================================================
-	// ===============================================================================================================================================================================================
-	// ===============================================================================================================================================================================================
-
-	// --- Объединяем и нормализуем сообщения ---
 	const allMessages = useMemo(() => {
-		if (!isUserDataLoaded) {
-			/*console.log('⏳ [CHAT] User data not loaded yet, skipping normalization');*/
-			return [];
-		}
 
 		const combined = [...messages, ...localMessages];
 
 		const existingIds = new Set();
 		const uniqueMessages = combined.filter((msg) => {
-			const id = getMessageId(msg);
+			const id = msg.id;
 			if (existingIds.has(id?.toString())) {
 				return false;
 			}
@@ -144,18 +75,9 @@ export default function ChatContent({ chatId }) {
 			.map(normalizeMessage)
 			.filter((msg) => msg.text && msg.text.trim() !== '')
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [messages, localMessages, normalizeMessage, getMessageId, isUserDataLoaded]);
+	}, [messages, localMessages, normalizeMessage]);
 
-	// --- Автоскролл ---
-	useEffect(() => {
-		if (messagesContainerRef.current && allMessages.length > 0) {
-			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-		}
-	}, [allMessages]);
-
-	// --- Разделители по датам ---
 	const messagesWithDividers = useMemo(() => {
-		console.log('Messages Container');
 		if (allMessages.length === 0) return [];
 
 		const items = [];
@@ -172,49 +94,83 @@ export default function ChatContent({ chatId }) {
 		return items;
 	}, [allMessages]);
 
-	// ✅ Объединенная проверка загрузки
-	const showLoading = !isUserDataLoaded || (loading && allMessages.length === 0);
-	const showEmpty = isUserDataLoaded && !loading && allMessages.length === 0;
-	const showMessages = isUserDataLoaded && allMessages.length > 0;
+	useEffect(() => {
+		if (!newId || !timestamp) return;
 
-	// ✅ Единый return с правильными условиями
+		const localMsgUpd = [...localMessages];
+		const localMsgIdx = localMessages.findIndex((msg) => +msg.created_at === +timestamp);
+
+		if (localMsgIdx !== -1) {
+			localMsgUpd[localMsgIdx] = {
+				...localMsgUpd[localMsgIdx],
+				id: newId,
+				isSending: false
+			};
+			setLocalMessages(localMsgUpd);
+		}
+	}, [newId, timestamp]);
+	useEffect(() => {
+		setCuttentUserId(userdata?.user?.id);
+	}, [userdata]);
+	useEffect(() => {
+		if (messagesContainerRef.current && allMessages.length > 0) {
+			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+		}
+	}, [allMessages]);
+
+	const handleSend = (trimmed) => {
+		const createdAt = Number(dayjs().unix());
+		sendSms({ to: chatId, text: trimmed, answer: null, timestamp: createdAt });
+		const localMsg = {
+			from_id: currentUserId,
+			id: createdAt,
+			text: trimmed,
+			created_at: createdAt,
+			updated_at: createdAt,
+			answer: null,
+			isLocal: true,
+			isSending: true,
+		};
+		setLocalMessages([...localMessages, localMsg]);
+	};
+
 	return (
 		<Layout className={styles.chatcontentLayout}>
-			<Content className={styles.chatContent}>
-				<div className={styles.chatHeader}>
-					<span>{!isUserDataLoaded ? 'Загрузка...' : who ? who : 'Неизвестный собеседник'}</span>
+			<Content className={styles.chat_content}>
+				<div className={styles.chat_header}>
+					<span>{!userdata ? 'Загрузка...' : who ? who : 'Неизвестный собеседник'}</span>
 					<span>{chatId}</span>
 				</div>
-				<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-					{showLoading ? (
-						<p className={styles.loading}>
-							{!isUserDataLoaded ? 'Загрузка данных пользователя...' : 'Загрузка сообщений...'}
-						</p>
-					) : showEmpty ? (
-						<p className={styles.empty}>Нет сообщений</p>
-					) : showMessages ? (
-						<div
-							ref={messagesContainerRef}
-							className={styles.messagesList}
-							style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}
-						>
-							{messagesWithDividers.map((item) =>
-								item.type === 'divider' ? (
-									<MemoChatDivider key={item.id}>
-										{dayjs(+item.timestamp * 1000).format('DD.MM.YY')}
-									</MemoChatDivider>
-								) : +item.message.fromId === +currentUserId ? (
-									<MemoChatSelfMsg key={item.message.id} message={item.message} />
-								) : (
-									<MemoChatIncomingMsg key={item.message.id} message={item.message} />
-								)
-							)}
-						</div>
-					) : null}
-				</div>
+					<div className={styles.chat_body} ref={messagesContainerRef}>
+						{(messagesWithDividers && messagesWithDividers.length > 0) ? (
+								<Spin spinning={loading}>
+									<div className={styles.messagesList}
+										 style={{flex: 1, overflowY: 'auto', minHeight: 0}}
+									>
+										{messagesWithDividers.map((item) =>
+											item.type === 'divider' ? (
+												<MemoChatDivider key={item.id}>
+													{dayjs(+item.timestamp * 1000).format('DD.MM.YY')}
+												</MemoChatDivider>
+											) : +item.message.fromId === +currentUserId ? (
+												<MemoChatSelfMsg key={item.message.id} message={item.message}/>
+											) : (
+												<MemoChatIncomingMsg key={item.message.id} message={item.message}/>
+											)
+										)}
+									</div>
+								</Spin>
+							) : (
+								<Empty description="Еще нет сообщений"
+									   image={Empty.PRESENTED_IMAGE_SIMPLE}
+									   className={styles.antd_empty}
+								/>
+							)
+						}
+					</div>
 			</Content>
 			<Footer className={styles['chat-input__footer']}>
-				<ChatInput onSend={handleSend} />
+				<ChatInput onSend={handleSend}/>
 			</Footer>
 		</Layout>
 	);
