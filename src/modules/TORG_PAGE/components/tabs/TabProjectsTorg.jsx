@@ -278,6 +278,7 @@ const get_projects_data_action = async () => {
                       on_change={props.on_change_section}
                       allow_delete={true}
                       selects={selects}
+                      on_collect={(payload)=>{props.on_change_section('projects', payload)}}
                       />
                   ))}
                 </div>
@@ -294,7 +295,7 @@ const get_projects_data_action = async () => {
                       key={ "prototas_" +  item.id }
                       on_change={props.on_change_section}
                       // on_delete={handleDeleteNewItem}
-
+                      on_collect={(payload)=>{props.on_change_section('projects', payload)}}
                       selects={selects}
                       />
                   ))}

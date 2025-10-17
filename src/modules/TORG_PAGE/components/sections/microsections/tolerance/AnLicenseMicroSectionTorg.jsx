@@ -6,42 +6,29 @@ import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from
 import { TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 
-
 const AnLicenseMicroSectionTorg = (props) => {
-  const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
+  const [editMode, setEditMode] = useState(true);
 
-  // Оригинал объекта, в который сетапятся данные для отправки наружу
   const [baseData, setBaseData] = useState(null);
-
   const [itemId, setItemId] = useState(null);
   const [options, setOptions] = useState([]);
-    const [selects, setSelects] = useState(null);
-  // const [theme, setTheme] = useState('');
-  // const [author, setAuthor] = useState(1);
-  // const [date, setDate] = useState(null);
-  // const [note, setNote] = useState('');
-  // const [deleted, setDeleted] = useState(0);
+  const [selects, setSelects] = useState(null);
 
   const [allowDelete, setAllowDelete] = useState(true);
-
 
   const [comment, setComment] = useState('');
   const [number, setNumber] = useState('');
   const [id_orgs, setIdOrgs] = useState(null);
   const [type, setType] = useState(1);
   const [docType, setDocType] = useState(1);
-
-
   const [deleted, setDeleted] = useState(0);
 
+  // Флаг для блюра — обновление в массиве уровнем ниже
   const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
-
+  // Флаг для действия — отправка в глобальный коллектор
+  const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
-  // ██    ██ ██      ██      
-  // ██    ██ █████   █████   
-  // ██    ██ ██      ██      
-  //  ██████  ██      ██      
   useEffect(() => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
@@ -51,214 +38,220 @@ const AnLicenseMicroSectionTorg = (props) => {
 
     if (props.data.id) {
       setItemId(props.data.id);
+      setIdOrgs(props.data.id_orgs);
+      setDocType(props.doc_type);
 
-      console.log('TYPE', props.data);
-      setIdOrgs(    props.data.id_orgs);
-      if (props.doc_type ===  1){
-        setType( parseInt(props.data.id8an_typelicenses));
+      if (props.doc_type === 1) {
+        setType(parseInt(props.data.id8an_typelicenses) || 1);
       } else {
-        setType( parseInt(props.data.id8an_typetolerance));
+        setType(parseInt(props.data.id8an_typetolerance) || 1);
       }
-      setDocType(   props.doc_type);
-      setComment(   props.data.comment);
-      setDeleted(   props.data.deleted);
-      setNumber(    props.data.number);
+
+      setComment(props.data.comment);
+      setDeleted(props.data.deleted);
+      setNumber(props.data.number);
     }
-  }, [props.data]);
+  }, [props.data, props.doc_type]);
 
   useEffect(() => {
-    if (deleted && props.on_delete){
+    if (deleted && props.on_delete) {
       props.on_delete(itemId);
     }
   }, [deleted]);
 
   useEffect(() => {
-    setDocType(props.doc_type);
-  }, [props.doc_type]);
-
-
-    useEffect(() => {
-      let arrak = [];
-      if (props.selects){
-        setSelects(props.selects);
-        if (props?.selects?.tollic){
-          for (const key in props?.selects?.tollic) {
-              if (props?.selects?.tollic.hasOwnProperty(key)) {
-                if (key.startsWith(String(docType))){
-                  const davalue = props.selects.tollic[key];
-                  arrak.push({
-                    key: 'kivalas3_k' + key + '_' + itemId,
-                    value: Number(key.split('-')[1]),
-                    label: davalue
-                  });
-                }
-                  // Your logic here
-              }
-          }
-        }
-      }
-      setOptions(arrak);
-    }, [props.selects, docType, type]);
-
-  // ██    ██ ███████ ███████       ██   ██ 
-  // ██    ██ ██      ██             ██ ██  
-  // ██    ██ █████   █████   █████   ███   
-  // ██    ██ ██      ██             ██ ██  
-  //  ██████  ██      ██            ██   ██ 
-
-
-
-  const handleDeleteItem = () => {
-    if (props.on_delete) {
-      props.on_delete(itemId);
-    };
-    if (allowDelete) {
-      setDeleted(!deleted);
-    }
-  }
-
-  useEffect(() => {
     setAllowDelete(props.allow_delete);
   }, [props.allow_delete]);
 
+  // Формирование опций для Select
+  useEffect(() => {
+    if (!props.selects || !props.selects.tollic) {
+      setOptions([]);
+      return;
+    }
 
-    useEffect(() => {
-      // При монтировании компонента форма не отправляется
-      // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
-      if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
-      if (editMode  && baseData && baseData.command === 'create' && deleted){
-        // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
-            if (props.on_change){
-              baseData.deleted = deleted;
-                  baseData.command = 'delete';
-                  props.on_change('notes', itemId, baseData);
-                  return;
-            }
-          }
-  
-        const timer = setTimeout(() => {
-          // При сверх-быстром изменении полей в разных секциях могут быть гонки
-        if (editMode  && baseData){
-            if (props.on_change){
-             
-              baseData.id_orgs = id_orgs;
-              if (props.doc_type ===  1){
-                baseData.id8an_typelicenses  = type;
-              } else {
-                baseData.id8an_typetolerance = type;
-              }
-              baseData.document_type = docType;
-              baseData.comment = comment;
-              baseData.deleted = deleted;
-              baseData.number = number;
-  
-              if (baseData.command === undefined || baseData.command !== 'create'){
-                if (deleted){
-                  baseData.command = 'delete';
-                } else {
-                  baseData.command = 'update';
-                }
-              }
-              props.on_change( itemId, baseData, 'contact_phone');
-            }
-          }
-            }, 500);
-  
-            return () => clearTimeout(timer);
-  
-    }, [
-      id_orgs,
-      type,
-      deleted,
-      BLUR_FLAG,
-    ]);
+    const arrak = [];
+    const prefix = String(docType);
+    for (const key in props.selects.tollic) {
+      if (props.selects.tollic.hasOwnProperty(key) && key.startsWith(prefix)) {
+        const value = Number(key.split('-')[1]);
+        arrak.push({
+          key: `kivalas3_k${key}_${itemId}`,
+          value: value,
+          label: props.selects.tollic[key],
+        });
+      }
+    }
+    setOptions(arrak);
+  }, [props.selects, docType, itemId]);
 
+  // Сброс флагов при смене doc_type или id_orgs (контекста)
+  useEffect(() => {
+    setBLUR_FLAG(null);
+    setACTION_FLAG(null);
+  }, [props.doc_type, id_orgs]);
 
+  // ██    ██ ███████ ███████       ██   ██ 
+  // Синхронизация с родителем (массивом секций) — по BLUR_FLAG
+  useEffect(() => {
+    if (!BLUR_FLAG && Boolean(deleted) === Boolean(props.data?.deleted)) return;
+
+    const timer = setTimeout(() => {
+      if (editMode && baseData && props.on_change) {
+        const payload = { ...baseData };
+        payload.id_orgs = id_orgs;
+        payload.document_type = docType;
+        payload.comment = comment;
+        payload.deleted = deleted;
+        payload.number = number;
+
+        if (docType === 1) {
+          payload.id8an_typelicenses = type;
+          delete payload.id8an_typetolerance;
+        } else {
+          payload.id8an_typetolerance = type;
+          delete payload.id8an_typelicenses;
+        }
+
+        payload.command =
+          baseData.command === 'create'
+            ? 'create'
+            : deleted
+            ? 'delete'
+            : 'update';
+
+        props.on_change(itemId, payload, 'an_license');
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [BLUR_FLAG, deleted, docType]);
+
+  // Синхронизация с коллектором — по ACTION_FLAG (дебаунс)
+  useEffect(() => {
+    if (!editMode) return;
+
+    const timer = setTimeout(() => {
+      if (ACTION_FLAG && props.on_collect && baseData) {
+        const payload = { ...baseData };
+        payload.id_orgs = id_orgs;
+        payload.document_type = docType;
+        payload.comment = comment?.trim();
+        payload.deleted = deleted;
+        payload.number = number?.trim();
+
+        if (docType === 1) {
+          payload.id8an_typelicenses = type;
+          delete payload.id8an_typetolerance;
+        } else {
+          payload.id8an_typetolerance = type;
+          delete payload.id8an_typelicenses;
+        }
+
+        payload.command =
+          baseData.command === 'create'
+            ? 'create'
+            : deleted
+            ? 'delete'
+            : 'update';
+
+        props.on_collect(payload);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [type, number, comment, deleted]);
 
   return (
     <div className={`sa-org-sub-sub-section-row ${deleted ? 'deleted' : ''}`}>
-            <TorgPageSectionRow
-              explabel={'комм'}
-              edit_mode={editMode}
-              inputs={[
-              {
-                edit_mode: editMode,
-                label: docType === 1 ? "Лицензия" : "Допуск",
-                input:
-                  <Select
-                  key={'analicensde_2_' + baseData?.id + id_orgs}
-                    value={type}
-                    options={options}
-                    onChange={(ee)=>{
-                      setBLUR_FLAG(dayjs().unix());
-                      setType(ee);
-                      }}
-                    size={'small'}
-                    variant="borderless"
-                    disabled={!editMode}
-                    />,
-                  required: true,
-                  value: number
-              },
-                {
-                edit_mode: editMode,
-                label: 'Номер',
-                input:
-                  
-                  <Input
-                    size={'small'}
-                    key={'analicense_2_' + baseData?.id + id_orgs}
-                    value={number}
-                    // type={'number'}
-                    onChange={e => setNumber(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={55}
-                    required={false}
-                    onBlur={() => setBLUR_FLAG(dayjs().unix())}
-                  />,
-                  required: false,
-                  value: number
-              },
-            ]}
-            extratext={[
-              {
-                edit_mode: editMode,
-                label: 'Комментарий',
-                input:
-                  
-                  <TextArea
-                    key={'analicense_1_' + baseData?.id + id_orgs}
-                    value={comment}
-                    onChange={(e)=>setComment(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={5000}
-                    onBlur={() => setBLUR_FLAG(dayjs().unix())}
-                    
-                  />,
-                  required: false,
-                  value: comment
-              },
-            ]}
-            action={<Button
-                className='sa-org-sub-sub-section-row-action'
-                size='small'
-                color="danger"
-                variant="outlined"
-                icon={<TrashIcon height={TORG_DELETE_SIZE} />}
-                onClick={()=>{
-                    setDeleted(!deleted);
-                    setBLUR_FLAG(dayjs().unix());
+      <TorgPageSectionRow
+        key={`tot4525eddtl_${itemId}`}
+        explabel={'комм'}
+        edit_mode={editMode}
+        inputs={[
+          {
+            edit_mode: editMode,
+            label: docType === 1 ? 'Лицензия' : 'Допуск',
+            input: (
+              <Select
+                key={`analicensde_2_${baseData?.id}_${id_orgs}`}
+                value={type}
+                options={options}
+                onChange={(value) => {
+                  setType(value);
+                  setBLUR_FLAG(dayjs().unix());
+                  if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                />
-            }
+                size="small"
+                variant="borderless"
+                disabled={!editMode}
+              />
+            ),
+            required: true,
+            value: type,
+          },
+          {
+            edit_mode: editMode,
+            label: 'Номер',
+            input: (
+              <Input
+                size="small"
+                key={`analicense_2_${baseData?.id}_${id_orgs}`}
+                value={number}
+                onChange={(e) => {
+                  setNumber(e.target.value);
+                  if (!ACTION_FLAG) setACTION_FLAG(1);
+                }}
+                readOnly={!editMode}
+                variant="borderless"
+                maxLength={55}
+                required={false}
+                onBlur={() => setBLUR_FLAG(dayjs().unix())}
+              />
+            ),
+            required: false,
+            value: number,
+          },
+        ]}
+        extratext={[
+          {
+            edit_mode: editMode,
+            label: 'Комментарий',
+            input: (
+              <TextArea
+                key={`analicense_1_${baseData?.id}_${id_orgs}`}
+                value={comment}
+                onChange={(e) => {
+                  setComment(e.target.value);
+                  if (!ACTION_FLAG) setACTION_FLAG(1);
+                }}
+                readOnly={!editMode}
+                variant="borderless"
+                autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                maxLength={5000}
+                onBlur={() => setBLUR_FLAG(dayjs().unix())}
+              />
+            ),
+            required: false,
+            value: comment,
+          },
+        ]}
+        action={
+          <Button
+            className="sa-org-sub-sub-section-row-action"
+            size="small"
+            color="danger"
+            variant="outlined"
+            icon={<TrashIcon height={TORG_DELETE_SIZE} />}
+            onClick={() => {
+              setDeleted(!deleted);
+              setBLUR_FLAG(dayjs().unix());
+              setACTION_FLAG(1);
+            }}
           />
-          </div>
+        }
+      />
+    </div>
   );
 };
 

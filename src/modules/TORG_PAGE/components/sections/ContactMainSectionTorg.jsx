@@ -249,7 +249,7 @@ useEffect(() => {
       const timer = setTimeout(() => {
         // При сверх-быстром изменении полей в разных секциях могут быть гонки
 			  if (editMode && baseData){
-          if (props.on_change && name){
+          if (props.on_change){
             // data.theme = theme;
             // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
             // data.notes = note;
@@ -318,7 +318,65 @@ useEffect(() => {
 
 
 
+const CollectAndSend = (stackName, data) => {
+  console.log('stackName, data', stackName, data);
 
+  if (!props.on_collect || !baseData) return;
+
+  // Маппинг stackName → имя поля в baseData
+  const collectionMap = {
+    email: 'up_contactemails',
+    newemail: 'up_contactemails',
+
+    phone: 'up_contactstelephones',
+    newphone: 'up_contactstelephones',
+
+    messanger: 'up_contactmessangers',
+    newmessanger: 'up_contactmessangers',
+
+    mobile: 'up_contactmobiles',
+    newmobile: 'up_contactmobiles',
+
+    homephone: 'up_contacthomephones',
+    newhomephone: 'up_contacthomephones',
+  };
+
+  const collectionKey = collectionMap[stackName];
+  if (!collectionKey) {
+    console.warn('Неизвестный stackName:', stackName);
+    return;
+  }
+
+  // Глубокая копия baseData
+  const ndata = JSON.parse(JSON.stringify(baseData));
+
+  // Получаем текущую коллекцию (или создаём пустой массив)
+  const currentCollection = Array.isArray(ndata[collectionKey])
+    ? ndata[collectionKey]
+    : [];
+
+  // Находим индекс элемента с таким же id
+  const existingIndex = currentCollection.findIndex(item => item.id === data.id);
+
+  let newCollection;
+  if (existingIndex >= 0) {
+    // Заменяем существующий
+    newCollection = [
+      ...currentCollection.slice(0, existingIndex),
+      data,
+      ...currentCollection.slice(existingIndex + 1)
+    ];
+  } else {
+    // Добавляем новый
+    newCollection = [...currentCollection, data];
+  }
+
+  // Обновляем коллекцию в копии
+  ndata[collectionKey] = newCollection;
+
+  // Отправляем наверх
+  props.on_collect(ndata);
+};
 
 
 
@@ -1011,7 +1069,7 @@ useEffect(() => {
       <div className={'sa-org-collapse-body'}>
         <div className={'sa-org-collapse-content'}>
           <TorgPageSectionRow
-
+            key={`contabu_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -1056,7 +1114,7 @@ useEffect(() => {
 
 
           <TorgPageSectionRow
-
+            key={`kakadu_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -1099,6 +1157,7 @@ useEffect(() => {
           />
 
           <TorgPageSectionRow
+            key={`kamadu_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -1126,6 +1185,7 @@ useEffect(() => {
 
 
           <TorgPageSectionRow
+            key={`alkatu_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -1158,7 +1218,7 @@ useEffect(() => {
 
 
           <TorgPageSectionRow
-
+            key={`comatsu_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -1182,33 +1242,7 @@ useEffect(() => {
           />
 
 
-          {/* <TorgPageSectionRow
 
-            edit_mode={editMode}
-            inputs={[
-              {
-                edit_mode: editMode,
-                label: 'Комментарий',
-                input:
-                  
-                  <TextArea
-                    key={'memcard_6_' + baseData?.id}
-                    value={comment}
-                    onChange={e => setComment(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={5000}
-                  />,
-                  required: true,
-                  value: comment
-              },
-
-
-            ]}
-            extratext={[]}
-          /> */}
 
 
 
@@ -1219,6 +1253,7 @@ useEffect(() => {
           data={item}
           edit_mode={editMode}
           on_change={updateContactPhone}
+          on_collect={(payload)=>{CollectAndSend('phone',payload)}}
         />
       ))}</div>
 
@@ -1229,6 +1264,7 @@ useEffect(() => {
           data={item}
           edit_mode={editMode}
           on_change={updateContactMobile}
+          on_collect={(payload)=>{CollectAndSend('mobile',payload)}}
         />
       ))}</div>
 
@@ -1240,6 +1276,7 @@ useEffect(() => {
           data={item}
           edit_mode={editMode}
           on_change={updateContactHomePhone}
+          on_collect={(payload)=>{CollectAndSend('homephone',payload)}}
         />
       ))}</div>
 
@@ -1251,6 +1288,7 @@ useEffect(() => {
           data={item}
           edit_mode={editMode}
           on_change={updateContactEmail}
+          on_collect={(payload)=>{CollectAndSend('email',payload)}}
          />
       ))}</div>
 
@@ -1263,6 +1301,7 @@ useEffect(() => {
             edit_mode={editMode}
             on_change={updateContactMessanger}
             selects={selects}
+            on_collect={(payload)=>{CollectAndSend('messanger',payload)}}
         />
       ))}</div>
 
@@ -1280,6 +1319,7 @@ useEffect(() => {
                 on_delete={(id)=>{
                   setNewContactstelephones(newContactstelephones.filter(item2 => item2.id !== id));
                 }}
+                on_collect={(payload)=>{CollectAndSend('newtelephone',payload)}}
           />
         ))}
         </div>
@@ -1297,6 +1337,7 @@ useEffect(() => {
                 on_delete={(id)=>{
                   setNewContactmobiles(newContactmobiles.filter(item2 => item2.id !== id));
                 }}
+                on_collect={(payload)=>{CollectAndSend('newmobile',payload)}}
           />
         ))}</div>
       )}
@@ -1313,6 +1354,7 @@ useEffect(() => {
                 on_delete={(id)=>{
                   setNewContacthomephones(newContacthomephones.filter(item2 => item2.id !== id));
                 }}
+                on_collect={(payload)=>{CollectAndSend('newhomephone',payload)}}
           />
         ))}</div>
       )}
@@ -1329,6 +1371,7 @@ useEffect(() => {
                 on_delete={(id)=>{
                   setNewContactEmails(newContactemails.filter(item2 => item2.id !== id));
                 }}
+                on_collect={(payload)=>{CollectAndSend('newmail',payload)}}
               />
         ))}</div>
       )}
@@ -1346,6 +1389,7 @@ useEffect(() => {
                   setNewContactmessangers(newContactmessangers.filter(item2 => item2.id !== id));
                 }}
                 selects={selects}
+                on_collect={(payload)=>{CollectAndSend('newmessanger',payload)}}
           />
         ))}</div>
       )}

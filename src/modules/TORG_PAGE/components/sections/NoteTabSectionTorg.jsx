@@ -10,9 +10,10 @@ import { getMonthName } from '../../../../components/helpers/TextHelpers';
 const NoteTabSectionTorg = (props) => {
   const [refreshMark, setRefreshMark] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
-  const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
+  const [editMode, setEditMode] = useState(true);
 
-  const [data, setData] = useState(null);
+  // Единый источник истины — baseData (как во всех компонентах)
+  const [baseData, setBaseData] = useState(null);
 
   const [itemId, setItemId] = useState(null);
   const [theme, setTheme] = useState('');
@@ -20,58 +21,33 @@ const NoteTabSectionTorg = (props) => {
   const [date, setDate] = useState(null);
   const [note, setNote] = useState('');
   const [deleted, setDeleted] = useState(0);
-
   const [allowDelete, setAllowDelete] = useState(true);
 
-
-
+  // Флаги
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+  const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
   // ██    ██ ███████ ███████ 
-  // ██    ██ ██      ██      
-  // ██    ██ █████   █████   
-  // ██    ██ ██      ██      
-  //  ██████  ██      ██      
   useEffect(() => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
-
 
   useEffect(() => {
     setRefreshMark(props.refresh_mark);
   }, [props.refresh_mark]);
 
   useEffect(() => {
-    setData(props.data);
+    setBaseData(JSON.parse(JSON.stringify(props.data)));
 
     if (props.data.id) {
       setItemId(props.data.id);
-      setTheme(props.data.theme);
-      setAuthor(props.data.id8staff_list);
-      setDate(props.data?.date ? dayjs(props.data.date) : null);
-      setNote(props.data.notes);
-      setDeleted(props.data.deleted);
+      setTheme(props.data.theme || '');
+      setAuthor(props.data.id8staff_list || 1);
+      setDate(props.data.date ? dayjs(props.data.date) : null);
+      setNote(props.data.notes || '');
+      setDeleted(props.data.deleted || 0);
     }
   }, [props.data]);
-
-
-
-
-  // ██    ██ ███████ ███████       ██   ██ 
-  // ██    ██ ██      ██             ██ ██  
-  // ██    ██ █████   █████   █████   ███   
-  // ██    ██ ██      ██             ██ ██  
-  //  ██████  ██      ██            ██   ██ 
-
-
-
-  const handleDeleteItem = () => {
-    if (props.on_delete) {
-      props.on_delete(itemId);
-    };
-    if (allowDelete) {
-      setDeleted(!deleted);
-    }
-  }
 
   useEffect(() => {
     setAllowDelete(props.allow_delete);
@@ -81,93 +57,124 @@ const NoteTabSectionTorg = (props) => {
     setCollapsed(props.collapsed);
   }, [props.collapsed]);
 
-
+  // Сброс флагов при смене itemId (контекста)
   useEffect(() => {
-    if (editMode && !collapsed && data && data.command === 'create' && deleted){
-      // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
-          if (props.on_change){
-            data.deleted = deleted;
-                data.command = 'delete';
-                props.on_change('notes', itemId, data);
-                return;
-          }
-        }
+    setBLUR_FLAG(null);
+    setACTION_FLAG(null);
+  }, [itemId]);
 
-      const timer = setTimeout(() => {
-        // При сверх-быстром изменении полей в разных секциях могут быть гонки
-			  if (editMode && !collapsed && data){
-          if (props.on_change){
-            data.theme = theme;
-            data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
-            data.notes = note;
-            data.deleted = deleted;
+  // ██    ██ ███████ ███████       ██   ██ 
+  // Синхронизация с родителем — по BLUR_FLAG или при удалении
+  useEffect(() => {
+    if (!editMode || collapsed) return;
 
-            if (data.command === undefined || data.command !== 'create'){
-              if (deleted){
-                data.command = 'delete';
-              } else {
-                data.command = 'update';
-              }
-            }
+    // Лазейка для мгновенного удаления новых записей
+    if (baseData && baseData.command === 'create' && deleted) {
+      if (props.on_change) {
+        const payload = { ...baseData, deleted, command: 'delete' };
+        props.on_change('notes', itemId, payload);
+        return;
+      }
+    }
 
-            props.on_change('notes', itemId, data);
-          }
-        }
-			}, 500);
+    const timer = setTimeout(() => {
+      if (baseData && props.on_change) {
+        const payload = { ...baseData };
+        payload.theme = theme;
+        payload.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
+        payload.notes = note;
+        payload.deleted = deleted;
+        payload.command =
+          baseData.command === 'create'
+            ? 'create'
+            : deleted
+            ? 'delete'
+            : 'update';
 
-			return () => clearTimeout(timer);
+        props.on_change('notes', itemId, payload);
+      }
+    }, 500);
 
-  }, [
-    date,
-    theme,
-    note,
-    deleted
-  ]);
+    return () => clearTimeout(timer);
+  }, [BLUR_FLAG, deleted]);
 
+  // Синхронизация с коллектором — по ACTION_FLAG (дебаунс)
+  useEffect(() => {
+    if (!editMode || collapsed) return;
+
+    const timer = setTimeout(() => {
+      if (ACTION_FLAG && props.on_collect && baseData) {
+        const payload = { ...baseData };
+        payload.theme = theme?.trim();
+        payload.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
+        payload.notes = note?.trim();
+        payload.deleted = deleted;
+        payload.command =
+          baseData.command === 'create'
+            ? 'create'
+            : deleted
+            ? 'delete'
+            : 'update';
+
+        props.on_collect(payload);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [theme, note, deleted]);
+
+  const handleDeleteItem = () => {
+    if (allowDelete) {
+      setDeleted(!deleted);
+      setBLUR_FLAG(dayjs().unix());
+      setACTION_FLAG(1);
+    }
+    if (props.on_delete) {
+      props.on_delete(itemId);
+    }
+  };
+
+  const setActionFlagOnce = () => {
+    if (!ACTION_FLAG) setACTION_FLAG(1);
+  };
 
   return (
-    <div className={`sa-org-collapse-item
+    <div
+      className={`sa-org-collapse-item
        ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
        ${deleted ? 'deleted' : ''}`}
-
     >
-      <div className={'sa-org-collpase-header sa-flex-space'}
+      <div
+        className={'sa-org-collpase-header sa-flex-space'}
         onClick={(ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          setCollapsed(!collapsed)
-        }
-        }
+          setCollapsed(!collapsed);
+        }}
       >
         <div className={'sa-flex'}>
           <div className={'sa-pa-6'}>
-            {collapsed ? (
-              <span className={'sa-pa-3 sa-org-trigger-button'}
-                onClick={() => { setCollapsed(!collapsed) }}
-              >
+            <span
+              className={'sa-pa-3 sa-org-trigger-button'}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCollapsed(!collapsed);
+              }}
+            >
+              {collapsed ? (
                 <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
-              </span>
-
-            ) : (
-              <span className={'sa-pa-3 sa-org-trigger-button'}
-                onClick={() => { setCollapsed(!collapsed) }}
-              >
+              ) : (
                 <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
-              </span>
-            )}
-
-
+              )}
+            </span>
           </div>
           <div className={'sa-pa-6 sa-org-section-text'}>
-            <div className='sa-org-section-label'>
-              {theme ? theme : "Без темы "}
+            <div className="sa-org-section-label">
+              {theme ? theme : 'Без темы '}
             </div>
             <span className="sa-date-text">
               {date !== null
-                ? ` - ` +
-                  getMonthName(dayjs(date).month() + 1) +
-                  ' ' +
-                  date.format('YYYY')
+                ? ` - ${getMonthName(dayjs(date).month() + 1)} ${date.format('YYYY')}`
                 : ''}
             </span>{' '}
             {itemId && (
@@ -175,24 +182,22 @@ const NoteTabSectionTorg = (props) => {
                 ({itemId})
               </div>
             )}
- 
-
           </div>
-
         </div>
         <div className={'sa-flex'}>
           {allowDelete && editMode && (
-            <span className={'sa-pa-3 sa-org-remove-button'}
-              
+            <span
+              className={'sa-pa-3 sa-org-remove-button'}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
             >
-              <Button danger 
-              size='small'
+              <Button
+                danger
+                size="small"
                 onClick={handleDeleteItem}
                 icon={<TrashIcon height={TORG_CHEVRON_SIZE} />}
-              >
-
-              </Button>
-              
+              />
             </span>
           )}
         </div>
@@ -200,102 +205,97 @@ const NoteTabSectionTorg = (props) => {
       <div className={'sa-org-collapse-body'}>
         <div className={'sa-org-collapse-content'}>
           <TorgPageSectionRow
-            labels={['Gosha']}
+            key={`notabu_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
                 edit_mode: editMode,
                 label: 'Тема',
-                input:
+                input: (
                   <Input
-                    key={'textard_1_' + data?.id}
+                    key={`textard_1_${baseData?.id}`}
                     value={theme}
-                    onChange={e => setTheme(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    onChange={(e) => {
+                      setTheme(e.target.value);
+                      setActionFlagOnce();
+                    }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
-                  />,
-                  required: true,
-                  value: theme
+                    onBlur={() => setBLUR_FLAG(dayjs().unix())}
+                  />
+                ),
+                required: true,
+                value: theme,
               },
-
-
             ]}
-            extratext={[]}
           />
 
-
           <TorgPageSectionRow
+            key={`nottaky_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
                 label: 'Автор',
-                input:
+                input: (
                   <Input
-                    key={'textard_2_' + data?.id}
+                    key={`textard_2_${baseData?.id}`}
                     value={
-                      data?.creator
-                      ? data.creator.surname +
-                        ' ' +
-                        data.creator.name +
-                        ' ' +
-                        data.creator.secondname
-                      : ''
+                      baseData?.creator
+                        ? `${baseData.creator.surname} ${baseData.creator.name} ${baseData.creator.secondname}`
+                        : ''
                     }
-                    // onChange={e => setNote(e.target.value)}
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={true}
                     variant="borderless"
-                  />,
+                  />
+                ),
               },
               {
                 label: 'Дата',
-                input:
+                input: (
                   <DatePicker
-                    key={'textard_3_' + data?.id}
+                    key={`textard_3_${baseData?.id}`}
                     value={date}
-                    // onChange={e => setNote(e.target.value)}
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={true}
                     variant="borderless"
                     disabled={true}
                     format={'DD-MM-YYYY'}
-                  />,
+                  />
+                ),
               },
-
             ]}
-            extratext={[]}
           />
 
-
           <TorgPageSectionRow
-            labels={['Gosha']}
+            key={`netakus_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
                 edit_mode: editMode,
                 label: 'Заметка',
-                input:
+                input: (
                   <TextArea
-                    key={'textard_4_' + data?.id}
+                    key={`textard_4_${baseData?.id}`}
                     value={note}
-                    onChange={e => setNote(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    onChange={(e) => {
+                      setNote(e.target.value);
+                      setActionFlagOnce();
+                    }}
                     readOnly={!editMode}
                     variant="borderless"
+                    autoSize={{
+                      minRows: TORG_MIN_ROWS_TEXTAREA,
+                      maxRows: TORG_MAX_ROWS_TEXTAREA,
+                    }}
                     maxLength={5000}
                     required={true}
-                  />,
-                  required: true,
-                  value: note
+                    onBlur={() => setBLUR_FLAG(dayjs().unix())}
+                  />
+                ),
+                required: true,
+                value: note,
               },
-
-
             ]}
-            extratext={[]}
           />
         </div>
       </div>

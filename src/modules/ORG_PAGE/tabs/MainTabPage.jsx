@@ -450,9 +450,9 @@ const MainTabPage = (props) => {
       if (!editMode) {
         return;
       }
-      if (props.on_change_phone){
-        props.on_change_phone(data);
-      };
+      // if (props.on_change_phone){
+      //   props.on_change_phone(data);
+      // };
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -520,9 +520,7 @@ const MainTabPage = (props) => {
       if (!editMode) {
         return;
       }
-      if (props.on_change_legal_address){
-        props.on_change_legal_address(data);
-      };
+
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -584,9 +582,7 @@ const MainTabPage = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_address){
-        props.on_change_address(data);
-      };
+
  
       
       if (data.command !== 'create'){
@@ -654,9 +650,6 @@ const MainTabPage = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_email){
-        props.on_change_email(data);
-      };
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -722,9 +715,7 @@ const MainTabPage = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_requisite){
-        props.on_change_requisite(data);
-      };
+
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -768,9 +759,7 @@ const MainTabPage = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_an_license){
-        props.on_change_an_license(data);
-      };
+
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -813,9 +802,7 @@ const MainTabPage = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_an_tolerance){
-        props.on_change_an_tolerance(data);
-      };
+
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -877,9 +864,6 @@ const MainTabPage = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_bo_license){
-        props.on_change_bo_license(data);
-      };
 
       if (data.command !== 'create'){
         if (data.deleted){
@@ -1252,6 +1236,7 @@ const MainTabPage = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdateLegalUnit}
+                on_collect={(payload)=>{props.on_change_legal_address(payload)}}
               />
             ))}
           </div>
@@ -1265,6 +1250,7 @@ const MainTabPage = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdateAddressUnit}
+                on_collect={(payload)=>{props.on_change_address(payload)}}
               />
             ))}
           </div>
@@ -1278,6 +1264,7 @@ const MainTabPage = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdatePhoneUnit}
+                on_collect={(payload)=>{props.on_change_phone(payload)}}
               />
             ))}
           </div>
@@ -1291,6 +1278,7 @@ const MainTabPage = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdateEmailUnit}
+                on_collect={(payload)=>{props.on_change_email(payload)}}
               />
             ))}
           </div>
@@ -1477,6 +1465,7 @@ const MainTabPage = (props) => {
                     collapse={true}
                     allow_delete={true}
                     doc_type={1}
+                    on_collect={(payload)=>{props.on_change_an_license(payload)}}
                     />
                 ))}
                   {ANTOLERANCES.map((item)=>(
@@ -1490,6 +1479,7 @@ const MainTabPage = (props) => {
                     collapse={true}
                     allow_delete={true}
                     doc_type={2}
+                    on_collect={(payload)=>{props.on_change_an_tolerance(payload)}}
                     />
                 ))}
                 </div>
@@ -1504,6 +1494,7 @@ const MainTabPage = (props) => {
                     id_orgs={itemId}
                     collapse={true}
                     allow_delete={true}
+                    on_collect={(payload)=>{props.on_change_bo_license(payload)}}
                     />
                 ))}
                 </div>
@@ -1594,6 +1585,7 @@ const MainTabPage = (props) => {
                     id_orgs={itemId}
                     collapse={true}
                     allow_delete={true}
+                    on_collect={(payload)=>{props.on_change_contact(payload)}}
                     />
 
                 ))}
@@ -1690,6 +1682,7 @@ const MainTabPage = (props) => {
                     id_orgs={itemId}
                     collapse={true}
                     allow_delete={true}
+                    on_collect={(payload)=>{props.on_change_requisite(payload)}}
                     />
 
                 ))}
