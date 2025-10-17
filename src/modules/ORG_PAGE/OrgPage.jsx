@@ -609,7 +609,21 @@ const OrgPage = (props) => {
 			setSaveProcess(20);
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/updateorglist/' + itemId, {
-					data: COLLECTOR,
+					data: {
+								main : tempMainData,
+								contacts : tempMain_contacts,
+								org_phones : tempMain_phones,
+								org_emails : tempMain_emails,
+								org_addresses : tempMain_addresses,
+								org_legaladdresses : tempMain_legalAddresses,
+								org_requisites : tempMain_an_requisites,
+								org_an_licenses : tempMain_an_licenses,
+								org_an_tolerances : tempMain_an_tolerances,
+								org_bo_licenses : tempMain_bo_licenses,
+								projects : tempProjectsData.filter((item)=> item.command !== undefined  ),
+								calls : tempCallsData.filter((item)=> item.command !== undefined ),
+								notes : tempNotesData.filter((item)=> item.command !== undefined  ),
+					},
 					_token: CSRF_TOKEN,
 				});
 				console.log('response.status', response.status)
