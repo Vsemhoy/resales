@@ -1,17 +1,27 @@
 import styles from './style/Chat.module.css';
-import { useState, useMemo } from 'react';
-import { useUserData } from '../../../context/UserDataContext.js';
-import { useChatSocket } from '../../../context/ChatSocketContext.js';
-import { useChatRole } from '../../../hooks/sms/useChatRole.js';
-import { Button, Dropdown, Space } from 'antd';
-import { MessageOutlined } from '@ant-design/icons';
-import { ChatModal } from './ChatModal.jsx';
+import {useEffect, useMemo, useState} from 'react';
+import {useUserData} from '../../../context/UserDataContext.js';
+import {useChatRole} from '../../../hooks/sms/useChatRole.js';
+import {Button, Dropdown, Space} from 'antd';
+import {MessageOutlined} from '@ant-design/icons';
+import {ChatModal} from './ChatModal.jsx';
+import useSms from "../../../hooks/sms/useSms";
+import {MOCK} from "../mock/mock";
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const { userdata } = useUserData();
-	const { chats /*, connectionStatus */ } = useChatSocket();
-	const currentUserId = userdata?.user?.id;
+	/*const { chats } = useChatSocket();*/
+	const [currentUserId, setCurrentUserId] = useState(null);
+	const { messages: chats = [], loading, error } = useSms({ search: '', mock: MOCK });
+
+	useEffect(() => {
+		if (userdata?.user?.id) {
+			setCurrentUserId(userdata?.user?.id);
+		} else {
+			setCurrentUserId(null);
+		}
+	}, [userdata]);
 
 	// Используем кастомный хук для логики ролей
 	const { getRole, getDisplayName } = useChatRole(currentUserId);
@@ -19,7 +29,6 @@ export const ChatBtn = () => {
 	// --- Формируем smsData (чаты, где участвует текущий пользователь) ---
 	const smsData = useMemo(() => {
 		if (!Array.isArray(chats) || chats.length === 0) {
-			/*console.log('🔍 [ChatBtn] No chats available');*/
 			return { hasSms: false, messages: [] };
 		}
 
@@ -27,12 +36,7 @@ export const ChatBtn = () => {
 			.filter((chat) => {
 				const fromId = chat.from?.id || chat.from_id;
 				const toId = chat.to?.id || chat.to_id;
-				const isParticipant = fromId === currentUserId || toId === currentUserId;
-
-				/*console.log(
-					`🔍 [ChatBtn] Chat ${chat.chat_id}: from=${fromId}, to=${toId}, current=${currentUserId}, isParticipant=${isParticipant}`
-				);*/
-				return isParticipant;
+				return fromId === currentUserId || toId === currentUserId;
 			})
 			.map((chat) => {
 				const role = getRole(chat);
@@ -41,38 +45,28 @@ export const ChatBtn = () => {
 				// Определяем companion на основе роли
 				// const companion = role === 'self' ? chat.to : chat.from;
 
-				const result = {
+				return {
 					id: chat.chat_id || chat.id,
 					name: displayName || 'Неизвестный',
 					surname: '', // Теперь фамилия включена в displayName
 					content: chat.text || chat.last_message || '(без текста)',
 					chatId: chat.chat_id,
 					role: role, // Добавляем роль для отладки
-					// ДОБАВЛЕНО: полная структура для отладки
 					_fullChat: chat,
 				};
-
-				/*console.log(`🔍 [ChatBtn] Processed chat:`, result);*/
-				return result;
 			});
 
-		/*console.log(`🔍 [ChatBtn] Final messages:`, messages);*/
 		return { hasSms: messages.length > 0, messages };
 	}, [chats, currentUserId, getRole, getDisplayName]);
 
 	// --- Меню для dropdown ---
 	const menuItems = useMemo(() => {
-		/*console.log('🔍 [ChatBtn] Generating menu items from smsData:', smsData);*/
-
 		if (!smsData.hasSms) {
-			/*console.log('🔍 [ChatBtn] No messages for menu');*/
 			return [];
 		}
 
 		const { messages } = smsData;
 		const count = messages.length;
-
-		/*console.log(`🔍 [ChatBtn] Messages count: ${count}`, messages);*/
 
 		const label = (() => {
 			if (count === 1) return messages[0].name;
@@ -82,8 +76,6 @@ export const ChatBtn = () => {
 				.map((m) => m.name)
 				.join(', ')} и ещё +${count - 2}`;
 		})();
-
-		/*console.log(`🔍 [ChatBtn] Generated label: "${label}"`);*/
 
 		return [
 			{
@@ -113,12 +105,6 @@ export const ChatBtn = () => {
 			)}
 		</Button>
 	);
-
-	/*console.log('🔍 [ChatBtn] Rendering with:', {
-		menuItemsCount: menuItems.length,
-		hasSms: smsData.hasSms,
-		messagesCount: smsData.messages.length,
-	});*/
 
 	return (
 		<Space style={{ padding: 0 }}>

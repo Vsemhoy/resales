@@ -18,7 +18,7 @@ export default function ChatContent({ chatId }) {
 	const MemoChatIncomingMsg = React.memo(ChatIncomingMsg);
 	const MemoChatDivider = React.memo(ChatDivider);
 	const [localMessages, setLocalMessages] = useState([]);
-	const [currentUserId, setCuttentUserId] = useState(null);
+	const [currentUserId, setCurrentUserId] = useState(null);
 	const { Content, Footer } = Layout;
 
 	const {
@@ -110,13 +110,16 @@ export default function ChatContent({ chatId }) {
 		}
 	}, [newId, timestamp]);
 	useEffect(() => {
-		setCuttentUserId(userdata?.user?.id);
+		setCurrentUserId(userdata?.user?.id);
 	}, [userdata]);
 	useEffect(() => {
 		if (messagesContainerRef.current && allMessages.length > 0) {
 			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
 		}
 	}, [allMessages]);
+	useEffect(() => {
+		setLocalMessages([]);
+	}, [chatId]);
 
 	const handleSend = (trimmed) => {
 		const createdAt = Number(dayjs().unix());
