@@ -68,7 +68,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.log('WEBSOCKET CONNECTED')
 			setConnected(true);
 			setConnectionStatus('connected');
-			socket.emit('subscribe', userdata?.user?.id);
+			socket.emit('subscribe', 'CHAT'); //userdata?.user?.id
 		});
 		socket.on('disconnect', (reason) => {
 			console.log('WEBSOCKET DISCONNECTED')
