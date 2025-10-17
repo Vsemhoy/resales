@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import {
@@ -143,9 +143,59 @@ const OrgPage = (props) => {
 	const [tempMain_legalAddresses, setTempMain_legalAddresses] = useState([]);
 	const [tempMain_emails, setTempMain_emails] = useState([]);
 	const [tempMain_bo_licenses, setTempMain_bo_licenses] = useState([]);
-	const [tempMain_an_licenses, setTempMain__an_licenses] = useState([]);
+	const [tempMain_an_licenses, setTempMain_an_licenses] = useState([]);
 	const [tempMain_an_tolerances, setTempMain_an_tolerances] = useState([]);
 	const [tempMain_an_requisites, setTempMain_an_requisites] = useState([]);
+
+
+const tempMainDataRef = useRef(tempMainData);
+const tempProjectsDataRef = useRef(tempProjectsData);
+const tempCallsDataRef = useRef(tempCallsData);
+const tempNotesDataRef = useRef(tempNotesData);
+
+const tempMain_contactsRef = useRef(tempMain_contacts);
+const tempMain_phonesRef = useRef(tempMain_phones);
+const tempMain_addressesRef = useRef(tempMain_addresses);
+const tempMain_legalAddressesRef = useRef(tempMain_legalAddresses);
+const tempMain_emailsRef = useRef(tempMain_emails);
+const tempMain_bo_licensesRef = useRef(tempMain_bo_licenses);
+const tempMain_an_licensesRef = useRef(tempMain_an_licenses);
+const tempMain_an_tolerancesRef = useRef(tempMain_an_tolerances);
+const tempMain_an_requisitesRef = useRef(tempMain_an_requisites);
+
+useEffect(() => {
+  tempMainDataRef.current = tempMainData;
+  tempProjectsDataRef.current = tempProjectsData;
+  tempCallsDataRef.current = tempCallsData;
+  tempNotesDataRef.current = tempNotesData;
+
+  tempMain_contactsRef.current = tempMain_contacts;
+  tempMain_phonesRef.current = tempMain_phones;
+  tempMain_addressesRef.current = tempMain_addresses;
+  tempMain_legalAddressesRef.current = tempMain_legalAddresses;
+  tempMain_emailsRef.current = tempMain_emails;
+  tempMain_bo_licensesRef.current = tempMain_bo_licenses;
+  tempMain_an_licensesRef.current = tempMain_an_licenses;
+  tempMain_an_tolerancesRef.current = tempMain_an_tolerances;
+  tempMain_an_requisitesRef.current = tempMain_an_requisites;
+}, [
+  tempMainData,
+  tempProjectsData,
+  tempCallsData,
+  tempNotesData,
+  tempMain_contacts,
+  tempMain_phones,
+  tempMain_addresses,
+  tempMain_legalAddresses,
+  tempMain_emails,
+  tempMain_bo_licenses,
+  tempMain_an_licenses,
+  tempMain_an_tolerances,
+  tempMain_an_requisites,
+	
+]);
+
+
 
 	// При нажатии кнопочки сохранить - сюда вставляется Timestamp, слушатели в компонентах видят изменение, отправляею данные в сохранятор
 	const [callToSaveAction, setCallToSaveAction] = useState(null);
@@ -605,25 +655,29 @@ const OrgPage = (props) => {
 	};
 
 	const update_data_action = async () => {
+		alert('DURAK')
+		let data = {
+								main : tempMainData.current,
+								contacts : tempMain_contacts.current,
+								org_phones : tempMain_phones.current,
+								org_emails : tempMain_emails.current,
+								org_addresses : tempMain_addresses.current,
+								org_legaladdresses : tempMain_legalAddresses.current,
+								org_requisites : tempMain_an_requisites.current,
+								org_an_licenses : tempMain_an_licenses.current,
+								org_an_tolerances : tempMain_an_tolerances.current,
+								org_bo_licenses : tempMain_bo_licenses.current,
+
+								projects : tempProjectsData.current, // .filter((item)=> item.command !== undefined  ),
+								calls : tempCallsData.current, //.filter((item)=> item.command !== undefined ),
+								notes : tempNotesData.current, //.filter((item)=> item.command !== undefined  ),
+					};
+					console.log("COLLECTED D", data);
 		if (PRODMODE) {
 			setSaveProcess(20);
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/updateorglist/' + itemId, {
-					data: {
-								main : tempMainData,
-								contacts : tempMain_contacts,
-								org_phones : tempMain_phones,
-								org_emails : tempMain_emails,
-								org_addresses : tempMain_addresses,
-								org_legaladdresses : tempMain_legalAddresses,
-								org_requisites : tempMain_an_requisites,
-								org_an_licenses : tempMain_an_licenses,
-								org_an_tolerances : tempMain_an_tolerances,
-								org_bo_licenses : tempMain_bo_licenses,
-								projects : tempProjectsData.filter((item)=> item.command !== undefined  ),
-								calls : tempCallsData.filter((item)=> item.command !== undefined ),
-								notes : tempNotesData.filter((item)=> item.command !== undefined  ),
-					},
+					data: data,
 					_token: CSRF_TOKEN,
 				});
 				console.log('response.status', response.status)
@@ -654,11 +708,13 @@ const OrgPage = (props) => {
 
 			}
 		} else {
+			console.log('DEV STACK', data);
 			//setUserAct(USDA);
 			// console.log('SEND', dataToUpdate);
 			setTimeout(() => {
 				setSaveProcess(100);
 				setBlockOnSave(false);
+				setBlockSave(false);
 		}, 2000);
 			clearTemps();
 		}
@@ -689,19 +745,18 @@ const OrgPage = (props) => {
 
 
 	const handleSaveData = () => {
+		
 		setBlockOnSave(true);
 		setSaveProcess(5);
 		setBlockOnSave(true);
 
-
-		let saveData = {};
 		setTimeout(() => {
 			console.log('tempMainData', tempMainData)
 
 			
 			update_data_action();
 			console.log('SAVEDATA FIN', COLLECTOR);
-		}, 5000);
+		}, 3000);
 
 			setIsSmthChanged(false);
 			setTempMainData(null);
@@ -727,7 +782,7 @@ const OrgPage = (props) => {
 	// 	if (key === 'emails'){
 	// 		setTempMain_emails(dataarr);
 	// 	} else if (key === 'active_licenses'){
-	// 		setTempMain__an_licenses(dataarr);
+	// 		setTempMain_an_licenses(dataarr);
 	// 	} else if (key === 'active_tolerance'){
 	// 		setTempMain_an_tolerances(dataarr);
 	// 	} else if (key === 'active_licenses_bo'){
@@ -859,7 +914,7 @@ const OrgPage = (props) => {
 			// 	 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
 			// 	setTempMainData(null);
 			// 	setTempMain_an_requisites([]);
-			// 	setTempMain__an_licenses([]);
+			// 	setTempMain_an_licenses([]);
 			// 	setTempMain_an_tolerances([]);
 			// 	setTempMain_bo_licenses([]);
 			// 	setTempMain_emails([]);
@@ -876,7 +931,7 @@ const OrgPage = (props) => {
 				setTempProjectsData([]);
 				setTempCallsData([]);
 				setTempNotesData([]);
-				setTempMain__an_licenses([]);
+				setTempMain_an_licenses([]);
 				setTempMain_addresses([]);
 				setTempMain_an_requisites([]);
 				setTempMain_an_tolerances([]);
@@ -940,6 +995,7 @@ const OrgPage = (props) => {
 
 	// Подготовка Контактов к отправке
 	const handleContactChange = (data)=>{
+		setBlockOnSave(true);
 		console.log('data', data)
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
@@ -960,25 +1016,32 @@ const OrgPage = (props) => {
 
 	// Подготовка адресов к отправке
 	const handleAddressChange = (data)=>{
+		setBlockOnSave(true);
 			if (data.command === 'create' && data.deleted){
 				// Удаление только что добавленного
+				// tempMain_addressesRef.current = tempMain_addresses.filter((item) => item.id !== data.id);
 				setTempMain_addresses(tempMain_addresses.filter((item) => item.id !== data.id));
 			} else {
 				let existed = tempMain_addresses.find((item)=>item.id === data.id);
 				if (!existed){
 					if (data.command){
-					setTempMain_addresses([data, ...tempMain_addresses]);
+						// tempMain_addressesRef.current = [data, ...tempMain_addresses];
+						setTempMain_addresses([data, ...tempMain_addresses]);
 					}
 				} else {
+					// tempMain_addressesRef.current = tempMain_addressesRef.current.map((item) => (
+					// 	item.id === data.id ? data : item
+					// ));
 					setTempMain_addresses(tempMain_addresses.map((item) => (
 						item.id === data.id ? data : item
-					)))
+					)));
 				}
 			}
 	}
 
 		// Подготовка адресов к отправке
 	const handleLegalAddressChange = (data)=>{
+		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_legalAddresses(tempMain_legalAddresses.filter((item) => item.id !== data.id));
@@ -1000,6 +1063,7 @@ const OrgPage = (props) => {
 
 		// Подготовка email адресов к отправке
 	const handleEmailChange = (data)=>{
+		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_emails(tempMain_emails.filter((item) => item.id !== data.id));
@@ -1019,6 +1083,7 @@ const OrgPage = (props) => {
 
 		// Подготовка адресов к отправке
 	const handlePhoneChange = (data)=>{
+		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_phones(tempMain_phones.filter((item) => item.id !== data.id));
@@ -1039,6 +1104,7 @@ const OrgPage = (props) => {
 
 	// Подготовка адресов к отправке
 	const handleBoLicenseChange = (data)=>{
+		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_bo_licenses(tempMain_bo_licenses.filter((item) => item.id !== data.id));
@@ -1058,17 +1124,18 @@ const OrgPage = (props) => {
 
 		// Подготовка адресов к отправке
 	const handleAnLicenseChange = (data)=>{
+		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
-			setTempMain__an_licenses(tempMain_an_licenses.filter((item) => item.id !== data.id));
+			setTempMain_an_licenses(tempMain_an_licenses.filter((item) => item.id !== data.id));
 		} else {
 			let existed = tempMain_an_licenses.find((item)=>item.id === data.id);
 			if (!existed){
 				if (data.command){
-					setTempMain__an_licenses([data, ...tempMain_an_licenses]);
+					setTempMain_an_licenses([data, ...tempMain_an_licenses]);
 				}
 			} else {
-				setTempMain__an_licenses(tempMain_an_licenses.map((item) => (
+				setTempMain_an_licenses(tempMain_an_licenses.map((item) => (
 					item.id === data.id ? data : item
 				)))
 			}
@@ -1077,6 +1144,7 @@ const OrgPage = (props) => {
 
 		// Подготовка адресов к отправке
 	const handleAnToleranceChange = (data)=>{
+		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_an_tolerances(tempMain_an_tolerances.filter((item) => item.id !== data.id));
@@ -1096,6 +1164,7 @@ const OrgPage = (props) => {
 
 		// Подготовка адресов к отправке
 	const handleRequisitesChange = (data)=>{
+		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_an_requisites(tempMain_an_requisites.filter((item) => item.id !== data.id));
@@ -1118,6 +1187,7 @@ const OrgPage = (props) => {
 
 
 	const sectionUpdateHandler = (section, id, data) => {
+		setBlockOnSave(true);
 		console.log('section, id, data', section, id, data);
 		if (section === 'notes'){
 			let catchObject = tempNotesData.find((item)=> item.id === id);
@@ -1161,6 +1231,7 @@ const OrgPage = (props) => {
 	}
 
 	const sectionDeleteHandler = (section, id) => {
+		setBlockOnSave(true);
 		// Удаление временного элемента из стека
 		if (section === 'notes'){
 			setTempNotesData(tempNotesData.filter((item)=> item.id !== id));
