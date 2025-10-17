@@ -1,17 +1,19 @@
 import styles from './style/Chat.module.css';
-import {useState, useMemo, useEffect} from 'react';
-import { useUserData } from '../../../context/UserDataContext.js';
-import { useChatSocket } from '../../../context/ChatSocketContext.js';
-import { useChatRole } from '../../../hooks/sms/useChatRole.js';
-import { Button, Dropdown, Space } from 'antd';
-import { MessageOutlined } from '@ant-design/icons';
-import { ChatModal } from './ChatModal.jsx';
+import {useEffect, useMemo, useState} from 'react';
+import {useUserData} from '../../../context/UserDataContext.js';
+import {useChatRole} from '../../../hooks/sms/useChatRole.js';
+import {Button, Dropdown, Space} from 'antd';
+import {MessageOutlined} from '@ant-design/icons';
+import {ChatModal} from './ChatModal.jsx';
+import useSms from "../../../hooks/sms/useSms";
+import {MOCK} from "../mock/mock";
 
 export const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const { userdata } = useUserData();
-	const { chats } = useChatSocket();
+	/*const { chats } = useChatSocket();*/
 	const [currentUserId, setCurrentUserId] = useState(null);
+	const { messages: chats = [], loading, error } = useSms({ search: '', mock: MOCK });
 
 	useEffect(() => {
 		if (userdata?.user?.id) {
@@ -34,8 +36,7 @@ export const ChatBtn = () => {
 			.filter((chat) => {
 				const fromId = chat.from?.id || chat.from_id;
 				const toId = chat.to?.id || chat.to_id;
-				const isParticipant = fromId === currentUserId || toId === currentUserId;
-				return isParticipant;
+				return fromId === currentUserId || toId === currentUserId;
 			})
 			.map((chat) => {
 				const role = getRole(chat);
@@ -44,7 +45,7 @@ export const ChatBtn = () => {
 				// Определяем companion на основе роли
 				// const companion = role === 'self' ? chat.to : chat.from;
 
-				const result = {
+				return {
 					id: chat.chat_id || chat.id,
 					name: displayName || 'Неизвестный',
 					surname: '', // Теперь фамилия включена в displayName
@@ -53,7 +54,6 @@ export const ChatBtn = () => {
 					role: role, // Добавляем роль для отладки
 					_fullChat: chat,
 				};
-				return result;
 			});
 
 		return { hasSms: messages.length > 0, messages };
