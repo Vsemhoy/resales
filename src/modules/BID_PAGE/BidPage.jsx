@@ -1672,7 +1672,8 @@ const BidPage = (props) => {
 								<div className={'sa-header-label-container'}>
 									<div className={'sa-header-label-container-small'}>
 										<h1 className={`sa-header-label`}>
-											{+bidType === 1 ? 'Коммерческое предложение' : +bidType === 2 ? 'Счет' : ''}
+											{+bidType === 1 ? 'Коммерческое предложение ' : +bidType === 2 ? 'Счет ' : ''}
+											<Tag style={{fontSize: '20px', lineHeight: '30px'}}>№{bidId}</Tag>
 										</h1>
 										<div className={'sa-bid-steps-currency'}>
 											<div>
