@@ -314,6 +314,3 @@ export const CHAT_MOCK = {
 	},
 	message: 'OK!',
 };
-
-// console.log('MOCK: ', MOCK);
-// console.log('CHAT_MOCK: ', CHAT_MOCK);
