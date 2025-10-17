@@ -220,9 +220,14 @@ const OrgPage = (props) => {
 		tempProjectsData,
 		tempCallsData,
 		tempNotesData
-
 	]);
 
+
+	useEffect(() => {
+		if (!editMode){
+			setBlockSave(false);
+		}
+	}, [editMode]);
 
 
 	useEffect(() => {
@@ -235,11 +240,7 @@ const OrgPage = (props) => {
 						return () => clearTimeout(timer);
 	}, [BLOCK_DELAY]);
 
-	useEffect(() => {
-		if (!editMode){
-			setBlockOnSave(false);
-		}
-	}, [blockOnSave]);
+
 
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
@@ -389,6 +390,7 @@ const OrgPage = (props) => {
 			setTempMainData(null);
 			setEditMode(false);
 			setIsSmthChanged(false);
+			setBlockSave(false);
 	}
 
 
@@ -624,6 +626,7 @@ const OrgPage = (props) => {
 					setAlertMessage(`Произошла ошибка!`);
 					setAlertDescription(response.message || 'Неизвестная ошибка сервера');
 					setAlertType('error');
+					setBlockSave(false);
 				}
 			} catch (e) {
 				console.log(e);
@@ -631,6 +634,7 @@ const OrgPage = (props) => {
 					setAlertMessage(`Ошибка на стороне сервера`);
 					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 					setAlertType('error');
+					setBlockSave(false);
 			} finally {
 				// setLoadingOrgs(false)
 
