@@ -623,6 +623,7 @@ const OrgPage = (props) => {
 
 	const update_data_action = async () => {
 		if (PRODMODE) {
+			setSaveProcess(20);
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/updateorglist/' + itemId, {
 					data: COLLECTOR,
@@ -636,6 +637,7 @@ const OrgPage = (props) => {
 					setAlertMessage(`Успех!`);
 					setAlertDescription(response.message || 'Данные успешно обновлены');
 					setAlertType('success');
+					setSaveProcess(60);
         } else {
 					setIsAlertVisible(true);
 					setAlertMessage(`Произошла ошибка!`);
@@ -655,6 +657,10 @@ const OrgPage = (props) => {
 		} else {
 			//setUserAct(USDA);
 			// console.log('SEND', dataToUpdate);
+			setTimeout(() => {
+				setSaveProcess(100);
+				setBlockOnSave(false);
+		}, 2000);
 			clearTemps();
 		}
 
@@ -687,10 +693,7 @@ const OrgPage = (props) => {
 		setBlockOnSave(true);
 		setSaveProcess(5);
 		setBlockOnSave(true);
-		setTimeout(() => {
-			setSaveProcess(100);
-			setBlockOnSave(false);
-		}, 2000);
+
 
 		let saveData = {};
 		setTimeout(() => {
@@ -836,6 +839,7 @@ const OrgPage = (props) => {
 	// Очистка данных для сохранения (измененных)
 	const clearTemps = () => {
 		let iid = itemId;
+		setSaveProcess(80);
 		setItemId(0);
 		get_main_data_action(iid);
 		get_notes_data_action(iid);
@@ -882,6 +886,10 @@ const OrgPage = (props) => {
 			
 
 		}, 1200);
+		setTimeout(() => {
+				setSaveProcess(100);
+				setBlockOnSave(false);
+		}, 2000);
 	}
 
 
