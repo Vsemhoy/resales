@@ -117,6 +117,9 @@ export default function ChatContent({ chatId }) {
 			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
 		}
 	}, [allMessages]);
+	useEffect(() => {
+		setLocalMessages([]);
+	}, [chatId]);
 
 	const handleSend = (trimmed) => {
 		const createdAt = Number(dayjs().unix());
