@@ -123,9 +123,10 @@ export const ChatSocketProvider = ({ children, url }) => {
 		});
 
 		// --- обработчики для API-событий (из Laravel) ---
-		socket.on('sms:new_message', (data) => {
+		//socket.on('sms:new_message', (data) => {
+		socket.on('new:message', (data) => {
 			const msg = data.message;
-
+			console.log('WS new:message', data);
 			setMessages((prev) => {
 				const chatMsgs = prev[msg.chat_id] || [];
 				return {...prev, [msg.chat_id]: [...chatMsgs, msg]};
