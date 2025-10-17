@@ -33,7 +33,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 	const connect = useCallback(() => {
 
 		if (!PRODMODE) {
-			/*console.log('[Mock] WS disabled, using mock data');*/
 			setConnected(true);
 			setConnectionStatus('mock');
 
@@ -46,11 +45,9 @@ export const ChatSocketProvider = ({ children, url }) => {
 			mockChats.forEach((sms) => {
 				const chatId = sms.chat_id;
 				// берем из CHAT_MOCK все сообщения, относящиеся к этому чату
-				const chatMessages = (CHAT_MOCK?.content?.messages || [])
+				chatMessagesMap[chatId] = (CHAT_MOCK?.content?.messages || [])
 					.filter((msg) => msg.from_id === sms.from.id || msg.to?.id === sms.from.id)
-					.map((msg) => ({ ...msg, chat_id: chatId }));
-
-				chatMessagesMap[chatId] = chatMessages;
+					.map((msg) => ({...msg, chat_id: chatId}));
 			});
 			setMessages(chatMessagesMap);
 			return;
@@ -64,16 +61,19 @@ export const ChatSocketProvider = ({ children, url }) => {
 		socketRef.current = socket;
 
 		socket.on('connect', () => {
+			console.log('WEBSOCKET CONNECTED')
 			setConnected(true);
 			setConnectionStatus('connected');
 			socket.emit('chat:list:get');
 		});
 		socket.on('disconnect', (reason) => {
+			console.log('WEBSOCKET DISCONNECTED')
 			setConnected(false);
 			setConnectionStatus('disconnected');
 		});
 
 		socket.on('connect_error', (error) => {
+			console.log('WEBSOCKET CONNECT ERROR')
 			console.error('❌ WebSocket connection error:', error);
 		});
 
@@ -106,12 +106,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		socket.on('message:new', (msg) => {
 			setMessages((prev) => {
 				const chatMsgs = prev[msg.chat_id] || [];
-				const newMessages = { ...prev, [msg.chat_id]: [...chatMsgs, msg] };
-				console.log(
-					`💬 [FRONTEND] Updated messages for chat ${msg.chat_id}:`,
-					newMessages[msg.chat_id]
-				);
-				return newMessages;
+				return {...prev, [msg.chat_id]: [...chatMsgs, msg]};
 			});
 			emitToListeners('message:new', msg);
 		});
@@ -119,12 +114,10 @@ export const ChatSocketProvider = ({ children, url }) => {
 		socket.on('message:update', (msg) => {
 			setMessages((prev) => {
 				const chatMsgs = prev[msg.chat_id] || [];
-				const newMessages = {
+				return {
 					...prev,
 					[msg.chat_id]: chatMsgs.map((m) => (m.id === msg.id ? msg : m)),
 				};
-				console.log(`💬 [FRONTEND] Updated message in chat ${msg.chat_id}`);
-				return newMessages;
 			});
 			emitToListeners('message:update', msg);
 		});
@@ -207,23 +200,22 @@ export const ChatSocketProvider = ({ children, url }) => {
 		});
 
 		// Логируем все входящие события для отладки
-		socket.onAny((eventName, ...args) => {
+		/*socket.onAny((eventName, ...args) => {
 			// Особенно подробно логируем события от Laravel
 			if (eventName.startsWith('sms:')) {
 
 			}
-		});
+		});*/
 
 		// Логируем исходящие события
-		const originalEmit = socket.emit.bind(socket);
+		/*const originalEmit = socket.emit.bind(socket);
 		socket.emit = (event, ...args) => {
 			return originalEmit(event, ...args);
-		};
+		};*/
 	}, [url, emitToListeners]);
 
 	useEffect(() => {
 		connect();
-
 		return () => {
 			socketRef.current?.disconnect();
 		};
@@ -250,7 +242,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		[connected]
 	);
 
-	const sendMessage = useCallback(
+	/*const sendMessage = useCallback(
 		(chatId, text) => {
 
 			if (!chatId || !text) {
@@ -271,8 +263,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				};
 				setMessages((prev) => {
 					const chatMsgs = prev[chatId] || [];
-					const newMessages = { ...prev, [chatId]: [...chatMsgs, newMsg] };
-					return newMessages;
+					return {...prev, [chatId]: [...chatMsgs, newMsg]};
 				});
 				emitToListeners('message:new', newMsg);
 				return;
@@ -294,12 +285,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			});
 		},
 		[emitToListeners]
-	);
-
-	// Логируем изменения состояния
-	useEffect(() => {
-
-	}, [messages]);
+	);*/
 
 	return (
 		<ChatSocketContext.Provider
@@ -309,7 +295,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				chats,
 				messages,
 				joinRoom,
-				sendMessage,
+				/*sendMessage,*/
 				on,
 				off,
 
@@ -337,8 +323,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 					};
 					setMessages((prev) => {
 						const chatMsgs = prev[chatId] || [];
-						const newMessages = { ...prev, [chatId]: [...chatMsgs, replyMsg] };
-						return newMessages;
+						return {...prev, [chatId]: [...chatMsgs, replyMsg]};
 					});
 					emitToListeners('message:new', replyMsg);
 				},
@@ -346,13 +331,12 @@ export const ChatSocketProvider = ({ children, url }) => {
 				editMessage: (chatId, msgId, newText) => {
 					setMessages((prev) => {
 						const chatMsgs = prev[chatId] || [];
-						const newMessages = {
+						return {
 							...prev,
 							[chatId]: chatMsgs.map((m) =>
-								m.id === msgId ? { ...m, text: newText, updated_at: Date.now() / 100 } : m
+								m.id === msgId ? {...m, text: newText, updated_at: Date.now() / 100} : m
 							),
 						};
-						return newMessages;
 					});
 					emitToListeners('message:update', { chat_id: chatId, id: msgId, text: newText });
 				},
@@ -362,11 +346,10 @@ export const ChatSocketProvider = ({ children, url }) => {
 					if (!PRODMODE) {
 						setMessages((prev) => {
 							const chatMsgs = prev[chatId] || [];
-							const newMessages = {
+							return {
 								...prev,
 								[chatId]: chatMsgs.filter((m) => m.id !== messageId),
 							};
-							return newMessages;
 						});
 						return;
 					}
@@ -380,11 +363,10 @@ export const ChatSocketProvider = ({ children, url }) => {
 					if (!PRODMODE) {
 						setMessages((prev) => {
 							const chatMsgs = prev[chatId] || [];
-							const newMessages = {
+							return {
 								...prev,
-								[chatId]: chatMsgs.map((m) => (m.id === messageId ? { ...m, status } : m)),
+								[chatId]: chatMsgs.map((m) => (m.id === messageId ? {...m, status} : m)),
 							};
-							return newMessages;
 						});
 						return;
 					}
