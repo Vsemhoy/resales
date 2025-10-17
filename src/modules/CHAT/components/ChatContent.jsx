@@ -10,6 +10,7 @@ import ChatIncomingMsg from './ChatIncomingMsg';
 import useSms from '../../../hooks/sms/useSms';
 import {useSendSms} from '../../../hooks/sms/useSendSms';
 import {CHAT_MOCK} from "../mock/mock";
+import {useChatSocket} from "../../../context/ChatSocketContext";
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
@@ -38,6 +39,21 @@ export default function ChatContent({ chatId }) {
 		newId,
 		timestamp,
 	} = useSendSms();
+
+	const {
+		connected,           				  // boolean - подключен ли WebSocket
+		connectionStatus,    				  // string - статус подключения
+		chats: chatsSocket,  				  // [] - список чатов
+		messages: messagesSocket,             // {} - сообщения по chatId
+		joinRoom,            				  // function - войти в комнату
+		sendMessage,         				  // function - отправить сообщение
+		on, off,             				  // function - подписка на события
+		updateMessage,       				  // function - обновить сообщение
+		replyToMessage,      				  // function - ответить на сообщение
+		editMessage,         				  // function - редактировать сообщение
+		deleteMessage,       				  // function - удалить сообщение
+		updateMessageStatus, 				  // function - обновить статус
+	} = useChatSocket();
 
 	const normalizeMessage = useCallback(
 		(msg) => {
