@@ -66,14 +66,14 @@ const OrgAddressMicroSectionTorg = (props) => {
   useEffect(() => {
     if (!BLUR_FLAG && Boolean(deleted) === Boolean(props.data?.deleted)) return;
 
-    // Лазейка для мгновенного удаления новых записей
-    if (editMode && baseData && baseData.command === 'create' && deleted) {
-      if (props.on_change) {
-        const payload = { ...baseData, deleted };
-        props.on_change(itemId, payload, 'org_address');
-        return;
-      }
-    }
+    // // Лазейка для мгновенного удаления новых записей
+    // if (editMode && baseData && baseData.command === 'create' && deleted) {
+    //   if (props.on_change) {
+    //     const payload = { ...baseData, deleted };
+    //     props.on_change(itemId, payload, 'org_address');
+    //     return;
+    //   }
+    // }
 
     const timer = setTimeout(() => {
       if (editMode && baseData && props.on_change) {
