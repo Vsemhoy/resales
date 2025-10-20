@@ -19,6 +19,7 @@ import ru from "antd/es/date-picker/locale/ru_RU";
 import ruRU from "antd/es/locale/ru_RU";
 import dayjs from "dayjs";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
+import {SIMILAR_BIDS} from "../mock/mock";
 
 const buddhistLocale = {
     ...ru,
@@ -174,7 +175,7 @@ const FindSimilarDrawer = (props) => {
                 />
             ),
         },
-        {
+        /*{
             name: "Не искать среди заявок данной компании",
             key: 3,
             value: (
@@ -193,7 +194,7 @@ const FindSimilarDrawer = (props) => {
                     onChange={(v) => setNotSelf(v.target.checked)}
                 />
             ),
-        },
+        },*/
         {
             name: "Искать:",
             key: 4,
@@ -272,7 +273,7 @@ const FindSimilarDrawer = (props) => {
                 />
             ),
         },
-        {
+        /*{
             name: "Заявка создана в интервале:",
             key: 6,
             value: (
@@ -296,7 +297,7 @@ const FindSimilarDrawer = (props) => {
                     />{" "}
                 </ConfigProvider>
             ),
-        },
+        },*/
     ];
 
     useEffect(() => {
@@ -369,13 +370,16 @@ const FindSimilarDrawer = (props) => {
                     );
                     if (response.data) {
                         setLoad(false);
-                        setSimilar(response.data.data.bids);
-                        setSearchCount(response.data.data.count_match);
+                        setSimilar(response.data.content.result.bids);
+                        setSearchCount(response.data.content.result.count_all);
                     }
                 } catch (e) {
                     console.log(e);
                     props?.error_alert(path, e);
                 }
+            } else {
+                setSimilar(SIMILAR_BIDS.bids);
+                setSearchCount(SIMILAR_BIDS.count_all);
             }
         };
         if (props.isOpenDrawer) {
@@ -444,7 +448,7 @@ const FindSimilarDrawer = (props) => {
                 ),
                 align: "center",
             },
-            {
+            /*{
                 title: "Точное соответствие количества",
                 dataIndex: "mcount",
                 key: "mcount",
@@ -455,7 +459,7 @@ const FindSimilarDrawer = (props) => {
                     />
                 ),
                 align: "center",
-            },
+            },*/
         ];
     };
     const D = ({ bid }) => {
@@ -490,33 +494,35 @@ const FindSimilarDrawer = (props) => {
             </div>
         );
     };
-    const S = ({ bid }) => {
-        const models = bid?.models
-            ? bid.models
-                .sort(function (a, b) {
+    const S = ({ models }) => {
+        console.log(models)
+        const modelsPrepared = models
+            ? models
+                /*.sort(function (a, b) {
                     return b.model_match - a.model_match;
-                })
-                .map((el) => {
+                })*/
+                .map((el, idx) => {
                     return (
-                        <div style={{ margin: "0 5px" }}>
+                        <div key={Math.random()} style={{ margin: "0 5px" }}>
                             <Tag
                                 icon={
                                     <Tag className={'sa-similar__tag'}>{el.model_count}</Tag>
                                 }
                                 color={el.model_match ? "green" : "blue"}
                             >
-                                {el.name}
+                                {el.an_models_name}
                             </Tag>
                         </div>
                     );
                 })
             : [];
-        return <div className={'sa-similar__card__models__cont'}>{models}</div>;
+        return <div className={'sa-similar__card__models__cont'}>{modelsPrepared}</div>;
     };
     const similarDOM = similar ? similar.map((el, index) => {
+        console.log(el.models)
         return {
             data: <D bid={el.bid} />,
-            value: <S bid={el.bid} />,
+            value: <S models={el.models} />,
         };
     }) : null;
 
@@ -554,7 +560,7 @@ const FindSimilarDrawer = (props) => {
                     </div>
                 </div>
                 <div className={'sa-similar__tab__container'}>
-                    <Input
+                    {/*<Input
                         style={{width: "350px", margin: "0 0 10px"}}
                         placeholder={"Введите поисковый запрос..."}
                         value={text}
@@ -569,7 +575,7 @@ const FindSimilarDrawer = (props) => {
                                 setSearchType(value); // string
                             }}
                         />
-                    </div>
+                    </div>*/}
 
                     <div style={{marginTop: "10px"}}>
                         <Button onClick={(_) => setChildrenDrawer(true)}>

@@ -2,6 +2,7 @@ import {createContext, useCallback, useContext, useEffect, useRef, useState} fro
 import {io} from 'socket.io-client';
 import {PRODMODE} from '../config/config.js';
 import {CHAT_MOCK, MOCK} from '../modules/CHAT/mock/mock.js';
+import {useUserData} from "./UserDataContext";
 
 
 export const ChatSocketContext = createContext(null);
@@ -10,6 +11,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 	const socketRef = useRef(null);
 	const [connected, setConnected] = useState(false);
 	const [connectionStatus, setConnectionStatus] = useState('disconnected');
+
+	const { userdata } = useUserData();
 
 	const [chats, setChats] = useState([]); // все чаты
 	const [messages, setMessages] = useState({}); // сообщения по chatId
@@ -60,11 +63,12 @@ export const ChatSocketProvider = ({ children, url }) => {
 		const socket = io(url, { transports: ['websocket', 'polling'], withCredentials: true });
 		socketRef.current = socket;
 
+		// --- подключение к ws и подписка ---
 		socket.on('connect', () => {
 			console.log('WEBSOCKET CONNECTED')
 			setConnected(true);
 			setConnectionStatus('connected');
-			socket.emit('chat:list:get');
+			socket.emit('subscribe', 'CHAT'); //userdata?.user?.id
 		});
 		socket.on('disconnect', (reason) => {
 			console.log('WEBSOCKET DISCONNECTED')
@@ -77,32 +81,26 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.error('❌ WebSocket connection error:', error);
 		});
 
-		// --- запрос списка чатов ---
+		// --- подписка на ws ---
 		socket.on('chat:list:get', (payload) => {
 			setChats(payload);
 			emitToListeners('chat:list:get', payload);
 		});
 
-		// --- чаты ---
-		socket.on('chat:list:init', (payload) => {
-			setChats(payload);
-			emitToListeners('chat:list:init', payload);
-		});
-
-		socket.on('chat:list:update', (chat) => {
-			setChats((prev) => {
-				const idx = prev.findIndex((c) => c.chat_id === chat.chat_id);
-				if (idx >= 0) {
-					const newArr = [...prev];
-					newArr[idx] = chat;
-					return newArr;
-				}
-				return [chat, ...prev];
+		// --- обработчики для API-событий (из Laravel) ---
+		//socket.on('sms:new_message', (data) => {
+		socket.on('new:sms', (data) => {
+			const msg = data.message;
+			console.log('WS new:sms', data);
+			setMessages((prev) => {
+				const chatMsgs = prev[msg.chat_id] || [];
+				return {...prev, [msg.chat_id]: [...chatMsgs, msg]};
 			});
-			emitToListeners('chat:list:update', chat);
+			emitToListeners('message:new', msg);
+			emitToListeners('new:sms', data);
 		});
 
-		// --- сообщения ---
+		// --- получение нового сообщения ---
 		socket.on('message:new', (msg) => {
 			setMessages((prev) => {
 				const chatMsgs = prev[msg.chat_id] || [];
@@ -122,16 +120,23 @@ export const ChatSocketProvider = ({ children, url }) => {
 			emitToListeners('message:update', msg);
 		});
 
-		// --- обработчики для API-событий (из Laravel) ---
-		socket.on('sms:new_message', (data) => {
-			const msg = data.message;
+		// --- чаты ---
+		socket.on('chat:list:init', (payload) => {
+			setChats(payload);
+			emitToListeners('chat:list:init', payload);
+		});
 
-			setMessages((prev) => {
-				const chatMsgs = prev[msg.chat_id] || [];
-				return {...prev, [msg.chat_id]: [...chatMsgs, msg]};
+		socket.on('chat:list:update', (chat) => {
+			setChats((prev) => {
+				const idx = prev.findIndex((c) => c.chat_id === chat.chat_id);
+				if (idx >= 0) {
+					const newArr = [...prev];
+					newArr[idx] = chat;
+					return newArr;
+				}
+				return [chat, ...prev];
 			});
-			emitToListeners('message:new', msg);
-			emitToListeners('sms:new_message', data);
+			emitToListeners('chat:list:update', chat);
 		});
 
 		socket.on('sms:update_message', (data) => {
@@ -221,9 +226,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		};
 	}, [connect]);
 
-	const joinRoom = useCallback(
-		(chatId) => {
-
+	const joinRoom = useCallback((chatId) => {
 			if (!chatId) {
 				console.warn('⚠️ [FRONTEND] joinRoom: chatId is empty');
 				return;
