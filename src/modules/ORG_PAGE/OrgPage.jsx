@@ -722,6 +722,7 @@ useEffect(() => {
 					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 					setAlertType('error');
 					setBlockSave(false);
+					setBlockOnSave(false);
 			} finally {
 				// setLoadingOrgs(false)
 
