@@ -1499,3 +1499,155 @@ export const PROJECT_INFO = {
 		name: 'Текущий',
 	},
 };
+
+export const SIMILAR_BIDS = {
+	"count_all": 3004,
+	"bids": [
+		{
+			"pos": 16.75,
+			"bid": {
+				"org_name": "Системы видеонаблюдения",
+				"org_id": 5934,
+				"object": "Здание радиального сгустителя. Помещение компрессорной ЦОФ 'Краморовская' с фильтр-прессовым отделением. Кемеровская обл., Прокопьевск. РП Турлов",
+				"id": 120514,
+				"type": 1,
+				"towns": "Барнаул",
+				"date": 1739176841,
+				"protection_project": 0,
+				"user": "Александр Кошелев"
+			},
+			"models": [
+				{
+					"model_count": 1,
+					"an_models_name": "PA-271 D",
+					"coincidence": false
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "PF-6302",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "NCS-1000",
+					"coincidence": false
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "NC-900",
+					"coincidence": false
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "NC-S01",
+					"coincidence": false
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "RM-6800",
+					"coincidence": true
+				},
+				{
+					"model_count": 2,
+					"an_models_name": "PD-6359",
+					"coincidence": true
+				},
+				{
+					"model_count": 2,
+					"an_models_name": "PB-6207",
+					"coincidence": true
+				},
+				{
+					"model_count": 9,
+					"an_models_name": "BP-6300",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "ECS-6216P",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "SC-6224",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "EP-6216",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "VF-01N",
+					"coincidence": true
+				},
+				{
+					"model_count": 2,
+					"an_models_name": "DPA- 600S",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "ARM-911A",
+					"coincidence": false
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "PO-6106",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "NC-600",
+					"coincidence": false
+				},
+				{
+					"model_count": 4,
+					"an_models_name": "BP-6200",
+					"coincidence": false
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "BP-6100",
+					"coincidence": true
+				},
+				{
+					"model_count": 2,
+					"an_models_name": "AT-KM-093-10",
+					"coincidence": true
+				},
+				{
+					"model_count": 3,
+					"an_models_name": "AT-KM-093-1",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "RM-N3000",
+					"coincidence": false
+				},
+				{
+					"model_count": 17,
+					"an_models_name": "HS-50",
+					"coincidence": true
+				},
+				{
+					"model_count": 4,
+					"an_models_name": "HS-10-A",
+					"coincidence": false
+				},
+				{
+					"model_count": 4,
+					"an_models_name": "EOL-20",
+					"coincidence": true
+				},
+				{
+					"model_count": 1,
+					"an_models_name": "DIB-6000",
+					"coincidence": true
+				}
+			]
+		},
+	]
+}
