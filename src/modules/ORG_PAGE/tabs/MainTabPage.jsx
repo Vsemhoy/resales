@@ -1009,6 +1009,11 @@ const MainTabPage = (props) => {
                     ...updatedFields
                   }));
                 }}
+                on_change={(updatedFields)=>{
+                  const newData = JSON.parse(JSON.stringify(baseData));
+                  const mergedData = { ...newData, ...updatedFields };
+                  props.on_change_main_data(mergedData);
+                }}
                 edit_mode={editMode}
                 selects={selects}
 
@@ -1075,6 +1080,12 @@ const MainTabPage = (props) => {
                       ...prev,
                       ...updatedFields
                     }));
+                  }}
+                  // Для отпрпавки по кейдауну прямо в коллектор
+                  on_change={(updatedFields)=>{
+                    const newData = JSON.parse(JSON.stringify(baseData));
+                    const mergedData = { ...newData, ...updatedFields };
+                    props.on_change_main_data(mergedData);
                   }}
                   edit_mode={editMode}
                   selects={selects}
@@ -1292,6 +1303,11 @@ const MainTabPage = (props) => {
                 ...prev,
                 site: value?.trim()
               }));
+              }}
+              on_change={(updatedFields)=>{
+                const newData = JSON.parse(JSON.stringify(baseData));
+                const mergedData = { ...newData, ...updatedFields };
+                props.on_change_main_data(mergedData);
               }}
               edit_mode={editMode}
               />

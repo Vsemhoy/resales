@@ -4,6 +4,7 @@ import { Input, Select } from 'antd';
 import dayjs from 'dayjs';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../TorgConfig';
+import { prepareRowComponentToken } from 'antd/es/grid/style';
 
 const MianBigSectionOrg = (props) => {
   const [editMode, setEditMode] = useState(false);
@@ -24,10 +25,16 @@ const MianBigSectionOrg = (props) => {
   const [itemId, setItemId] = useState(null);
 
     const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+    const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
   useEffect(() => {
     setEditMode(props.edit_mode)
   }, [props.edit_mode]);
+
+  useEffect(() => {
+    setBLUR_FLAG(null);
+    setACTION_FLAG(null);
+   }, [props.data.id, props.org_id]);
 
   useEffect(() => {
     setItemId(props.data.id);
@@ -71,6 +78,27 @@ const MianBigSectionOrg = (props) => {
     profsound,
   });
 
+  // Для отправки прямо в коллектор по кейдауну
+  useEffect(() => {
+    if (ACTION_FLAG && props.on_change && editMode){
+      const timer = setTimeout(() => {
+        props.on_change(collectData());
+    }, 500);
+    return () => clearTimeout(timer);
+    }
+  }, [   
+    name,
+    middlename,
+    id8an_profiles,
+    id8an_fs,
+    inn,
+    source,
+    comment,
+    commentinlist,
+    kindofactivity,
+    profsound]);
+
+
   return (
     <div className={'sa-org-collapse-content'}>
             <TorgPageSectionRow
@@ -85,7 +113,11 @@ const MianBigSectionOrg = (props) => {
                       value={name}
                       // onChange={e => setAddress(e.target.value)}
                       onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                      onChange={e => setName(e.target.value)}
+                      onChange={e => {
+                        setACTION_FLAG(1);
+                        setName(e.target.value);
+                      }
+                      }
                       // placeholder="Controlled autosize"
                       readOnly={!editMode}
                       variant="borderless"
@@ -110,7 +142,7 @@ const MianBigSectionOrg = (props) => {
                   input:
                     
                     <Select
-                                    filterOption={(input, option) =>
+                    filterOption={(input, option) =>
                     option.label.toLowerCase().includes(input.toLowerCase())
                 }
                     showSearch
@@ -118,6 +150,7 @@ const MianBigSectionOrg = (props) => {
                       value={parseInt(id8an_fs)}
                       onChange={(ee)=>{
                         setId8an_fs(ee);
+                        setACTION_FLAG(1);
                         setBLUR_FLAG(dayjs().unix());
                       }}
                       // placeholder="Controlled autosize"
@@ -146,7 +179,10 @@ const MianBigSectionOrg = (props) => {
                       value={inn}
                       // onChange={e => setAddress(e.target.value)}
                       onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                      onChange={e => setInn(e.target.value)}
+                      onChange={e => {
+                        setACTION_FLAG(1);
+                        setInn(e.target.value);
+                      }}
                       // placeholder="Controlled autosize"
                       readOnly={!editMode}
                       variant="borderless"
@@ -175,7 +211,10 @@ const MianBigSectionOrg = (props) => {
                       value={kindofactivity}
                       // onChange={e => setAddress(e.target.value)}
                       onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                      onChange={e => setKindofactivity(e.target.value)}
+                      onChange={e => {
+                        setACTION_FLAG(1);
+                        setKindofactivity(e.target.value);
+                      }}
                       // placeholder="Controlled autosize"
                       readOnly={!editMode}
                       variant="borderless"
@@ -203,7 +242,10 @@ const MianBigSectionOrg = (props) => {
                       value={middlename}
                       // onChange={e => setAddress(e.target.value)}
                       onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                      onChange={e => setMiddlename(e.target.value)}
+                      onChange={e => {
+                        setACTION_FLAG(1);
+                        setMiddlename(e.target.value);
+                      }}
                       // placeholder="Controlled autosize"
                       readOnly={!editMode}
                       variant="borderless"
@@ -236,8 +278,10 @@ const MianBigSectionOrg = (props) => {
                       value={parseInt(id8an_profiles)}
                       onChange={(ee)=>{
                         setId8an_profiles(ee);
-                      setBLUR_FLAG(dayjs().unix());
+                        setACTION_FLAG(1);
+                        setBLUR_FLAG(dayjs().unix());
                       }}
+                      
                       // placeholder="Controlled autosize"
                       // readOnly={!editMode}
                       variant="borderless"
@@ -267,8 +311,9 @@ const MianBigSectionOrg = (props) => {
                       key={'fs54row_' + itemId}
                       value={profsound == 2 ? 2 : 1}
                       onChange={(ee)=> {
-                      setProfsound(ee);
-                      setBLUR_FLAG(dayjs().unix());
+                        setProfsound(ee);
+                        setACTION_FLAG(1);
+                        setBLUR_FLAG(dayjs().unix());
                       }}
                       // placeholder="Controlled autosize"
                       // readOnly={!editMode}
@@ -306,7 +351,10 @@ const MianBigSectionOrg = (props) => {
                       value={source}
                       // onChange={e => setAddress(e.target.value)}
                       onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                      onChange={e => setSource(e.target.value)}
+                      onChange={e => {
+                        setSource(e.target.value);
+                      setACTION_FLAG(1);
+                    }}
                       // placeholder="Controlled autosize"
                       readOnly={!editMode}
                       variant="borderless"
@@ -335,7 +383,10 @@ const MianBigSectionOrg = (props) => {
                       value={comment}
                       // onChange={e => setAddress(e.target.value)}
                       onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                      onChange={e => setComment(e.target.value)}
+                      onChange={e => {
+                        setACTION_FLAG(1);
+                        setComment(e.target.value);
+                      }}
                       // placeholder="Controlled autosize"
                       readOnly={!editMode}
                       variant="borderless"
@@ -364,7 +415,10 @@ const MianBigSectionOrg = (props) => {
                       value={commentinlist}
                       // onChange={e => setAddress(e.target.value)}
                       onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                      onChange={e => setCommentinlist(e.target.value)}
+                      onChange={e => {
+                        setACTION_FLAG(1);
+                        setCommentinlist(e.target.value);
+                      }}
                       // placeholder="Controlled autosize"
                       readOnly={!editMode}
                       variant="borderless"
