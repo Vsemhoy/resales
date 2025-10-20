@@ -19,6 +19,7 @@ import ru from "antd/es/date-picker/locale/ru_RU";
 import ruRU from "antd/es/locale/ru_RU";
 import dayjs from "dayjs";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
+import {SIMILAR_BIDS} from "../mock/mock";
 
 const buddhistLocale = {
     ...ru,
@@ -376,6 +377,9 @@ const FindSimilarDrawer = (props) => {
                     console.log(e);
                     props?.error_alert(path, e);
                 }
+            } else {
+                setSimilar(SIMILAR_BIDS.bids);
+                setSearchCount(SIMILAR_BIDS.count_all);
             }
         };
         if (props.isOpenDrawer) {
@@ -490,33 +494,35 @@ const FindSimilarDrawer = (props) => {
             </div>
         );
     };
-    const S = ({ mod }) => {
-        const models = mod
-            ? mod
-                .sort(function (a, b) {
+    const S = ({ models }) => {
+        console.log(models)
+        const modelsPrepared = models
+            ? models
+                /*.sort(function (a, b) {
                     return b.model_match - a.model_match;
-                })
-                .map((el) => {
+                })*/
+                .map((el, idx) => {
                     return (
-                        <div style={{ margin: "0 5px" }}>
+                        <div key={Math.random()} style={{ margin: "0 5px" }}>
                             <Tag
                                 icon={
                                     <Tag className={'sa-similar__tag'}>{el.model_count}</Tag>
                                 }
                                 color={el.model_match ? "green" : "blue"}
                             >
-                                {el.name}
+                                {el.an_models_name}
                             </Tag>
                         </div>
                     );
                 })
             : [];
-        return <div className={'sa-similar__card__models__cont'}>{models}</div>;
+        return <div className={'sa-similar__card__models__cont'}>{modelsPrepared}</div>;
     };
     const similarDOM = similar ? similar.map((el, index) => {
+        console.log(el.models)
         return {
             data: <D bid={el.bid} />,
-            value: <S bid={el.models} />,
+            value: <S models={el.models} />,
         };
     }) : null;
 
