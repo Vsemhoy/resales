@@ -490,9 +490,9 @@ const FindSimilarDrawer = (props) => {
             </div>
         );
     };
-    const S = ({ bid }) => {
-        const models = bid?.models
-            ? bid.models
+    const S = ({ mod }) => {
+        const models = mod
+            ? mod
                 .sort(function (a, b) {
                     return b.model_match - a.model_match;
                 })
@@ -516,7 +516,7 @@ const FindSimilarDrawer = (props) => {
     const similarDOM = similar ? similar.map((el, index) => {
         return {
             data: <D bid={el.bid} />,
-            value: <S bid={el.bid} />,
+            value: <S bid={el.models} />,
         };
     }) : null;
 
