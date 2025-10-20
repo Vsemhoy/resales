@@ -49,7 +49,16 @@ const ProjectTabSectionTorg = (props) => {
     const [allowDelete, setAllowDelete] = useState(true);
 
   const [selects, setSelects] = useState(null);
-  const [orgUsers, setOrgUsers] = useState([]);
+  const [orgContacts, setOrgContacts] = useState([]);
+
+
+    // Флаг для блюра — обновление в массиве уровнем ниже
+    const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+    // Флаг для действия — отправка в глобальный коллектор
+    const [ACTION_FLAG, setACTION_FLAG] = useState(null);
+
+    const [transContainer, setTransContainer] = useState([]);
+
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -104,11 +113,11 @@ const ProjectTabSectionTorg = (props) => {
 
 useEffect(() => {
 
-    if (props.org_users) {
+    if (props.org_contacts) {
      
       let usess = [];
       let uids = [];
-      let fusers = props.org_users.filter((item)=>
+      let fusers = props.org_contacts.filter((item)=>
         !(!item.lastname && !item.name && !item.middlename)
       );
 
@@ -125,9 +134,12 @@ useEffect(() => {
         }
 
       }
-      setOrgUsers(usess);
+      console.log('AAAAAAAAAAAAAAAAAA',usess );
+      setOrgContacts(usess);
+
+
     }
-  }, [props.org_users]);
+  }, [props.org_contacts]);
 
 
   // ██    ██ ███████ ███████       ██   ██ 
@@ -292,11 +304,11 @@ useEffect(() => {
                 input:
                   <Input
                     key={'texpard_2_' + data?.id}
-                    value={author}
+                    value={`${props.data.curator?.surname} ${props.data.curator?.name}  ${props.data.curator?.secondname}`}
                     // onChange={e => setNote(e.target.value)}
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={true}
                     variant="borderless"
+                    disabled={true}
                   />,
               },
               {
@@ -306,7 +318,6 @@ useEffect(() => {
                     key={'texpard_3_' + data?.id}
                     value={date}
                     // onChange={e => setNote(e.target.value)}
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={true}
                     variant="borderless"
                     disabled={true}
@@ -330,7 +341,6 @@ useEffect(() => {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
@@ -479,12 +489,37 @@ useEffect(() => {
                     key={'texpard_10_' + data?.id}
                     placeholder={'Фамилия Имя Отчество'}
                     value={contactperson}
-                    onChange={e => setContactperson(e.target.value)}
-                    options={orgUsers}
+                    size='small'
+                    variant="borderless"
+                    onChange={e => {
+                      console.log(e);
+                      setContactperson(e)}}
+                    options={transContainer['cpers'] ? transContainer['cpers'] : []}
+                    onSearch={(text)=> {
+                      let filteredOptions = [];
+                      let cmod = transContainer;
+                      if (orgContacts && text !== null && text){
+                        filteredOptions = orgContacts?.filter(item =>
+                          item.label.toLowerCase().includes(text?.toLowerCase())
+                        );
+                        // Список подгоняется в зависимости от того, что введено пользователем
+                        cmod['cpers'] = filteredOptions?.map(obj => ({
+                            key: obj.key,
+                            value: obj.label,
+                            label: obj.label,
+                          }));
+                          setTransContainer(cmod);
+                        } else {
+                            cmod['cpers'] = []
+                          setTransContainer(cmod);
+                        }
+                      }}
                     />
                   ,
                   required: true,
-                  value: contactperson
+                  value: contactperson,
+                  disabled: !editMode,
+                  readOnly: !editMode,
               },
               {
                 edit_mode: editMode,

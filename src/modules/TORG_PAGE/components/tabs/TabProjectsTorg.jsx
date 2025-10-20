@@ -49,7 +49,7 @@ const TabProjectsTorg = (props) => {
 
   const [userdata, setUserData] = useState(null);
 
-
+  const [orgContacts, setOrgContacts] = useState([]);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -105,6 +105,16 @@ const TabProjectsTorg = (props) => {
   useEffect(() => {
     setIsTabActive(props.active_tab);
   }, [props.active_tab]);
+
+
+  useEffect(() => {
+    if (props.main_data?.contacts){
+      setOrgContacts(props.main_data.contacts);
+    } else {
+      setOrgContacts([]);
+    }
+
+  }, [props.main_data]);
 
   // ██    ██ ███████ ███████       ██   ██ 
   // ██    ██ ██      ██             ██ ██  
@@ -275,10 +285,11 @@ const get_projects_data_action = async () => {
                       data={item}
                       key={ "prototas_n_" +  item.id }
                       on_delete={handleDeleteNewItem}
-                      on_change={props.on_change_section}
+                      // on_change={props.on_change_section}
                       allow_delete={true}
                       selects={selects}
                       on_collect={(payload)=>{props.on_change_section('projects', payload)}}
+                      org_contacts={orgContacts}
                       />
                   ))}
                 </div>
@@ -293,10 +304,11 @@ const get_projects_data_action = async () => {
                       data={item}
                       collapsed={true}
                       key={ "prototas_" +  item.id }
-                      on_change={props.on_change_section}
+                      // on_change={props.on_change_section}
                       // on_delete={handleDeleteNewItem}
                       on_collect={(payload)=>{props.on_change_section('projects', payload)}}
                       selects={selects}
+                      org_contacts={orgContacts}
                       />
                   ))}
                 </div>
