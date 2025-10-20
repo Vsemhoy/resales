@@ -14,6 +14,9 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 	const { userdata } = useUserData();
 
+	const userdataRef = useRef();
+	userdataRef.current = userdata;
+
 	const [chats, setChats] = useState([]); // все чаты
 	const [messages, setMessages] = useState({}); // сообщения по chatId
 
@@ -68,7 +71,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.log('WEBSOCKET CONNECTED')
 			setConnected(true);
 			setConnectionStatus('connected');
-			const userId = userdata?.user?.id;
+			const userId = userdataRef.current?.user?.id;
 			if (!userId) {
 				console.error('User ID is undefined');
 				return;
