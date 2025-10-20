@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { AutoComplete, DatePicker, Input } from 'antd';
+import { AutoComplete, DatePicker, Input, Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../../components/helpers/TextHelpers';
 import { after } from 'lodash';
+import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
+import { ORG_ERECTORS_MOCK, ORG_LINKBID_MOCK } from '../../../ORG_PAGE/components/mock/ORGPAGEMOCK';
 
 const ProjectTabSectionTorg = (props) => {
   const [refreshMark, setRefreshMark] = useState(null);
@@ -59,6 +62,9 @@ const ProjectTabSectionTorg = (props) => {
 
     const [transContainer, setTransContainer] = useState([]);
 
+      const [mountOrgList, setMountOrgList] = useState([]);
+      const [mountBidList, setMountBidList] = useState([]);
+
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -98,7 +104,7 @@ const ProjectTabSectionTorg = (props) => {
         setBidsId(props.data?.bidsId );
         setDateCreate(props.data.date_create);
         setIdCompany(props.data.id_company);
-        setDeleted(props.data.deleted);
+   
         setAuthorId(props.data.author_id);
         setAuthor(props.data.author);
         setDate(props.data?.date ? dayjs(props.data.date) : null);
@@ -151,12 +157,16 @@ useEffect(() => {
 
 
   const handleDeleteItem = () => {
-    if (props.on_delete) {
-      props.on_delete(itemId);
-    };
     if (allowDelete) {
       setDeleted(!deleted);
+      
     }
+    setTimeout(() => {
+      setBLUR_FLAG();
+      if (props.on_delete) {
+        props.on_delete(itemId);
+      };
+    }, 1000);
   }
 
   useEffect(() => {
@@ -168,17 +178,93 @@ useEffect(() => {
   }, [props.collapsed]);
 
 
-  useEffect(() => {
-    if (editMode && !collapsed && data && data.command === 'create' && deleted){
-      // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
-          if (props.on_change){
-            data.deleted = deleted;
-                data.command = 'delete';
-                props.on_change('notes', itemId, data);
-                return;
-          }
-        }
 
+
+ /**
+     * Архитектура основы от Алана такова, 
+     * что загружаются сразу все 35000 компаний в список без всякой фильтрации
+     * @param {*} id 
+     */
+  const get_orgautofill_action = async (id) => {
+
+    if (PRODMODE){
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
+          data: {
+            erector: searchErector,
+          },
+          _token: CSRF_TOKEN,
+        });
+        console.log('response', response);
+        if (response.data) {
+          setMountOrgList(response.data.selects.erector);
+          // if (props.changed_user_data){
+          //     props.changed_user_data(response.data);
+          // }
+  
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+  
+      }
+    } else {
+      setMountOrgList(ORG_ERECTORS_MOCK);
+    }
+  };
+
+
+    const get_bidautofill_action = async (id) => {
+      if (PRODMODE){
+        try {
+          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
+            data: {linkbid: searchBid, org_id: orgId},
+            _token: CSRF_TOKEN,
+          });
+          console.log('response', response);
+          if (response.data) {
+            setMountBidList(response.data.selects.linkbid);
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+
+        }
+      } else {
+        setMountBidList(ORG_LINKBID_MOCK);
+      }
+    };
+
+
+    /** -------------------API------------------ */
+
+    useEffect(() => {
+      get_orgautofill_action();
+      console.log('SET ERECTOR', erector, searchErector);
+    }, [searchErector, erector]);
+
+    useEffect(() => {
+        get_bidautofill_action();
+    }, [searchBid]);
+
+
+
+
+
+
+
+  useEffect(() => {
+    console.log('SHALLE', BLUR_FLAG, collapsed)
+    if (!BLUR_FLAG) return;
+    // if (editMode && !collapsed && data && data.command === 'create' && deleted){
+    //   // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
+    //       if (props.on_change){
+    //         data.deleted = deleted;
+    //             data.command = 'delete';
+    //             props.on_change('notes', itemId, data);
+    //             return;
+    //       }
+    //     }
       const timer = setTimeout(() => {
         // При сверх-быстром изменении полей в разных секциях могут быть гонки
 			  if (editMode && !collapsed && data){
@@ -219,11 +305,59 @@ useEffect(() => {
 			return () => clearTimeout(timer);
 
   }, [
+    BLUR_FLAG
+  ]);
+
+
+    useEffect(() => {
+      console.log('COLLLE', ACTION_FLAG, collapsed)
+      if (!ACTION_FLAG) { return; }
+      const timer = setTimeout(() => {
+        // При сверх-быстром изменении полей в разных секциях могут быть гонки
+			  if (editMode && !collapsed && data){
+          if (props.on_collect){
+            const newData = JSON.parse(JSON.stringify(data));
+            newData.name = name;
+            newData.equipment = equipment;
+            newData.customer = customer;
+            newData.address = address;
+            newData.stage = stage;
+            newData.contactperson = contactperson;
+            newData.cost = cost;
+            newData.bonus = bonus;
+            newData.comment = comment;
+            newData.typeEac = typeEac;
+            newData.dateEnd = dateEnd;
+            newData.erector = erector;
+            newData.bidsId = bidsId;
+            newData.idCompany = idCompany;
+            newData.authorId = authorId;
+            newData.author = author;
+            newData.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
+
+            newData.deleted = deleted;
+
+            if (newData.command === undefined || newData.command !== 'create'){
+              if (deleted){
+                newData.command = 'delete';
+              } else {
+                newData.command = 'update';
+              }
+            }
+            console.log('newData', newData)
+            props.on_collect(newData);
+          }
+        }
+			}, 500);
+
+			return () => clearTimeout(timer);
+
+  }, [
     orgId, projType, name, equipment, customer,
       address, stage, contactperson, date,
       cost, bonus, comment, typeEac,
       dateEnd, erector, bidsId, idCompany,
-      authorId, author
+      authorId, author, deleted
   ]);
 
 
@@ -285,7 +419,10 @@ useEffect(() => {
         <div className={'sa-flex'}>
           {allowDelete && editMode && (
             <span className={'sa-pa-3 sa-org-remove-button'}
-              onClick={handleDeleteItem}
+              onClick={()=>{
+                setACTION_FLAG(1);
+                handleDeleteItem();
+              }}
             >
               <TrashIcon height={TORG_CHEVRON_SIZE} />
             </span>
@@ -297,6 +434,7 @@ useEffect(() => {
 
 
           <TorgPageSectionRow
+          key={`projaaha_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -330,6 +468,7 @@ useEffect(() => {
           />
 
         <TorgPageSectionRow
+        key={`projaadha_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -339,12 +478,16 @@ useEffect(() => {
                   <Input
                     key={'texpard_4_' + data?.id}
                     value={name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={e => {
+                      setName(e.target.value)
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
                   value: name
@@ -356,6 +499,7 @@ useEffect(() => {
           />
 
           <TorgPageSectionRow
+          key={`projdaaha_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -365,13 +509,16 @@ useEffect(() => {
                   <Input
                     key={'texpard_5_' + data?.id}
                     value={address}
-                    onChange={e => setAddress(e.target.value)}
+                    onChange={e => {
+                      setAddress(e.target.value)
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
                   value: address
@@ -383,6 +530,7 @@ useEffect(() => {
           />
 
           <TorgPageSectionRow
+          key={`prsojaaha_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -392,13 +540,16 @@ useEffect(() => {
                   <Input
                     key={'texpard_6_' + data?.id}
                     value={customer}
-                    onChange={e => setCustomer(e.target.value)}
+                    onChange={e => {
+                      setCustomer(e.target.value);
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
                     required={true}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
                   value: customer
@@ -410,12 +561,15 @@ useEffect(() => {
                   <Input
                     key={'texpard_7_' + data?.id}
                     value={stage}
-                    onChange={e => setStage(e.target.value)}
+                    onChange={e => {
+                      setStage(e.target.value);
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
                   value: stage
@@ -425,6 +579,7 @@ useEffect(() => {
           />
 
           <TorgPageSectionRow
+          key={`pssrojaaha_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -434,12 +589,15 @@ useEffect(() => {
                   <Input
                     key={'texpard_8_' + data?.id}
                     value={equipment}
-                    onChange={e => setEquipment(e.target.value)}
+                    onChange={e => {
+                      setEquipment(e.target.value);
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: false,
                   value: equipment
@@ -451,12 +609,15 @@ useEffect(() => {
                   <Input
                     key={'texpard_9_' + data?.id}
                     value={typeEac}
-                    onChange={e => setTypeEac(e.target.value)}
+                    onChange={e => {
+                      setTypeEac(e.target.value);
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
                   value: typeEac
@@ -468,6 +629,7 @@ useEffect(() => {
 
 
         <TorgPageSectionRow
+        key={`projaasfdha_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -493,7 +655,10 @@ useEffect(() => {
                     variant="borderless"
                     onChange={e => {
                       console.log(e);
-                      setContactperson(e)}}
+                      setContactperson(e)
+                      setBLUR_FLAG(dayjs().unix())
+                      setACTION_FLAG(1);
+                      }}
                     options={transContainer['cpers'] ? transContainer['cpers'] : []}
                     onSearch={(text)=> {
                       let filteredOptions = [];
@@ -525,15 +690,19 @@ useEffect(() => {
                 edit_mode: editMode,
                 label: 'Дата завершения',
                 input:
-                  <Input
+                  <DatePicker
                     key={'texpard_11_' + data?.id}
-                    value={dateEnd}
-                    onChange={setDateEnd}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    value={dateEnd ? dayjs(dateEnd) : null}
+                    onChange={(ee)=> {
+                      setDateEnd(ee ? ee.format('YYYY-MM-DD') : null);
+                      setACTION_FLAG(1);
+                    }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
+                    disabled={!editMode}
+                    // format={'DD-MM-YYYY'}
                   />,
                   required: false,
                   value: dateEnd
@@ -545,6 +714,7 @@ useEffect(() => {
 
 
         <TorgPageSectionRow
+        key={`projaahdssaa_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -554,12 +724,16 @@ useEffect(() => {
                   <Input
                     key={'texpard_12_' + data?.id}
                     value={cost}
-                    onChange={e => setCost(e.target.value)}
+                    onChange={e => {
+                      setCost(e.target.value)
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+          
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: false,
                   value: cost
@@ -571,12 +745,15 @@ useEffect(() => {
                   <Input
                     key={'texpard_13_' + data?.id}
                     value={bonus}
-                    onChange={e => setBonus(e.target.value)}
+                    onChange={e => {
+                      setBonus(e.target.value)
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: false,
                   value: bonus
@@ -590,24 +767,37 @@ useEffect(() => {
 
 
         <TorgPageSectionRow
+        key={`projaahdsssaa_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
                 edit_mode: editMode,
                 label: 'Тип проекта',
                 input:
-                  <Input
+                  <Select
+                   
+
+                  
                     key={'texpard_14_' + data?.id}
-                    value={erector}
-                    onChange={e => setErector(e.target.value)}
+                    value={projType}
+                    onChange={e => {
+                      setProjType(e)
+                      setACTION_FLAG(1);
+                      setBLUR_FLAG(dayjs().unix())
+                      }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    options={ selects?.projecttype?.map((item)=>({
+                        key: 'keyadflj' + item.id,
+                        value: item.id,
+                        label: item.name
+                    }))}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    
                   />,
                   required: true,
-                  value: erector
+                  value: projType
               },
 
 
@@ -617,22 +807,76 @@ useEffect(() => {
 
 
           <TorgPageSectionRow
+          key={`projaaha5ewe_${itemId}`}
+            edit_mode={editMode}
+            inputs={[
+              {
+                edit_mode: editMode,
+                label: 'Монтажная организация',
+                input:
+                  <Select
+                    size='small'
+                    variant="borderless"
+                    allowClear={true}
+                    showSearch={true}
+                    optionFilterProp="children"
+                    onSearch={(et)=>{
+                      setSearchErector(et)
+                      }}                    
+                    options={mountOrgList}
+                    required={false}
+                    value={erector}
+                    placeholder={'ID организации'}
+                    onChange={
+                      (ev)=>{setErector(ev)
+                      setBLUR_FLAG(dayjs().unix())
+                      setACTION_FLAG(1);
+                      }}
+                    disabled={!editMode}
+
+                    />
+
+  
+                  ,
+                  required: false,
+                  value: erector
+              },
+
+
+            ]}
+            extratext={[]}
+          />
+
+          <TorgPageSectionRow
+          key={`projaahaewe_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
                 edit_mode: editMode,
                 label: 'Связанное КП',
                 input:
-                  <Input
-                    key={'texpard_19_' + data?.id}
-                    value={bidsId}
-                    onChange={e => setBidsId(e.target.value)}
-                    // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                <Select
+                    size='small'
                     variant="borderless"
-                    maxLength={200}
-                  />,
+                    mode={'multiple'}
+                    allowClear={true}
+                    showSearch={true}
+                    optionFilterProp="children"
+                    onSearch={(et)=>{
+                      setSearchBid(et)
+                      }}                    
+                    options={mountBidList}
+                    required={false}
+                    value={bidsId}
+                    placeholder={'ID организации'}
+                    onChange={(ev)=>{
+                      setBidsId(ev)
+                      setBLUR_FLAG(dayjs().unix());
+                      setACTION_FLAG(1);
+                    }}
+                    disabled={!editMode}
+                    />
+                    ,
                   required: false,
                   value: bidsId
               },
@@ -644,6 +888,7 @@ useEffect(() => {
 
 
           <TorgPageSectionRow
+          key={`projaahaqee_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -653,13 +898,17 @@ useEffect(() => {
                   <TextArea
                     key={'texpard_45_' + data?.id}
                     value={comment}
-                    onChange={e => setComment(e.target.value)}
+                    onChange={ e => {
+                        setComment(e.target.value)
+                      setACTION_FLAG(1);
+                      }}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={5000}
                     required={false}
+                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: false,
                   value: comment

@@ -585,7 +585,7 @@ const handleChangeData = (changed_data) => {
                 options: mountOrgList,
                   showSearch: true,
                 link: '/orgs/',
-
+                on_change: (ev)=>setErector(ev),
                 on_search: (et)=>{setSearchErector(et)}
                 },
             ]}

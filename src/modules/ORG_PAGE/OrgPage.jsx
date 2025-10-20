@@ -1110,7 +1110,7 @@ useEffect(() => {
 		if (section === 'notes'){
 			let catchObject = tempNotesData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.action && data.action === 'delete' && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.contains('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
@@ -1123,7 +1123,7 @@ useEffect(() => {
 		if (section === 'projects'){
 			let catchObject = tempProjectsData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.action && data.action === 'delete' && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.contains('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
@@ -1136,7 +1136,7 @@ useEffect(() => {
 		if (section === 'calls'){
 			let catchObject = tempCallsData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.action && data.action === 'delete' && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.contains('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
