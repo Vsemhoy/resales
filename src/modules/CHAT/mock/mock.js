@@ -1,4 +1,4 @@
-export const MOCK = {
+export const CHAT_LIST_MOCK = {
 	content: {
 		sms: [
 			{
@@ -182,7 +182,7 @@ export const CHAT_MOCK = {
 		messages: [
 			{
 				id: 246,
-				from_id: 309,
+				from_id: 540,
 				answer: null,
 				text: 'Опять???',
 				created_at: 1760620175,
@@ -206,7 +206,7 @@ export const CHAT_MOCK = {
 			},
 			{
 				id: 144,
-				from_id: 309,
+				from_id: 540,
 				answer: null,
 				text: 'Привет, спишь?',
 				created_at: 1760620075,
@@ -246,7 +246,7 @@ export const CHAT_MOCK = {
 			},
 			{
 				id: 139,
-				from_id: 309,
+				from_id: 540,
 				answer: null,
 				text: 'орпори п подпл',
 				created_at: 1759425805,
@@ -254,7 +254,7 @@ export const CHAT_MOCK = {
 			},
 			{
 				id: 138,
-				from_id: 309,
+				from_id: 540,
 				answer: null,
 				text: 'олпломдо',
 				created_at: 1759425791,
@@ -286,7 +286,7 @@ export const CHAT_MOCK = {
 			},
 			{
 				id: 120,
-				from_id: 309,
+				from_id: 540,
 				answer: null,
 				text: 'Сейчас ко мне зайди!🥰',
 				created_at: 1759416850,
@@ -302,7 +302,7 @@ export const CHAT_MOCK = {
 			},
 			{
 				id: 117,
-				from_id: 309,
+				from_id: 540,
 				answer: null,
 				text: 'Что ты маленький? Плаки-плаки',
 				created_at: 1759416795,

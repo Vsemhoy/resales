@@ -1,8 +1,10 @@
 import {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {io} from 'socket.io-client';
-import {PRODMODE} from '../config/config.js';
-import {CHAT_MOCK, MOCK} from '../modules/CHAT/mock/mock.js';
+import {CSRF_TOKEN, PRODMODE} from '../config/config.js';
+import {CHAT_LIST_MOCK, CHAT_MOCK, MOCK} from '../modules/CHAT/mock/mock.js';
 import {useUserData} from "./UserDataContext";
+import useSms from "../hooks/sms/useSms";
+import {PROD_AXIOS_INSTANCE} from "../config/Api";
 
 
 export const ChatSocketContext = createContext(null);
@@ -13,12 +15,19 @@ export const ChatSocketProvider = ({ children, url }) => {
 	const [connectionStatus, setConnectionStatus] = useState('disconnected');
 
 	const { userdata } = useUserData();
-
 	const userdataRef = useRef();
 	userdataRef.current = userdata;
 
+	const [chatsList, setChatsList] = useState([]); // боковой список чатов (последнее сообщение)
 	const [chats, setChats] = useState([]); // все чаты
-	const [messages, setMessages] = useState({}); // сообщения по chatId
+	const [currentChatId, setCurrentChatId] = useState(0); // открытый чат
+
+	const [loadingChatList, setLoadingChatList] = useState(false); // сообщения по chatId
+	const [loadingChat, setLoadingChat] = useState(false); // сообщения по chatId
+
+
+	const [search, setSearch] = useState(false); // поиск по чатам
+
 
 	const listeners = useRef({});
 
@@ -37,8 +46,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 	}, []);
 
 	const connect = useCallback(() => {
-
-		if (!PRODMODE) {
+		/*if (!PRODMODE) {
 			setConnected(true);
 			setConnectionStatus('mock');
 
@@ -57,15 +65,12 @@ export const ChatSocketProvider = ({ children, url }) => {
 			});
 			setMessages(chatMessagesMap);
 			return;
-		}
-
+		}*/
 		if (socketRef.current?.connected) {
 			return;
 		}
-
 		const socket = io(url, { transports: ['websocket', 'polling'], withCredentials: true });
 		socketRef.current = socket;
-
 		// --- подключение к ws и подписка ---
 		socket.on('connect', () => {
 			console.log('WEBSOCKET CONNECTED')
@@ -78,28 +83,25 @@ export const ChatSocketProvider = ({ children, url }) => {
 			}
 			socket.emit('subscribeToChat', userId);
 		});
-
 		// --- получаем новое сообщение ---
 		socket.on('new:sms', (data) => {
 			const msg = data.message;
 			console.log('WS new:sms', data);
-			setMessages((prev) => {
+			/*setMessages((prev) => {
 				const chatMsgs = prev[msg.chat_id] || [];
 				return {...prev, [msg.chat_id]: [...chatMsgs, msg]};
-			});
+			});*/
 			emitToListeners('message:new', msg);
 			emitToListeners('new:sms', data);
 		});
-
 		socket.on('disconnect', (reason) => {
 			console.log('WEBSOCKET DISCONNECTED')
 			setConnected(false);
 			setConnectionStatus('disconnected');
 		});
-
 		socket.on('connect_error', (error) => {
 			console.log('WEBSOCKET CONNECT ERROR')
-			console.error('❌ WebSocket connection error:', error);
+			//console.error('❌ WebSocket connection error:', error);
 		});
 		// Логируем все входящие события для отладки
 		/*socket.onAny((eventName, ...args) => {
@@ -108,7 +110,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 			}
 		});*/
-
 		// Логируем исходящие события
 		/*const originalEmit = socket.emit.bind(socket);
 		socket.emit = (event, ...args) => {
@@ -125,158 +126,89 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [userdata, connect]);
 
-	const joinRoom = useCallback((chatId) => {
-			if (!chatId) {
-				console.warn('⚠️ [FRONTEND] joinRoom: chatId is empty');
-				return;
-			}
-
-			if (!PRODMODE) {
-				return;
-			}
-
-			if (socketRef.current && connected) {
-				socketRef.current.emit('room:join', chatId);
-			} else {
-				console.warn('⚠️ [FRONTEND] joinRoom: socket not connected or not available');
-			}
-		},
-		[connected]
-	);
-
-	/*const sendMessage = useCallback(
-		(chatId, text) => {
-
-			if (!chatId || !text) {
-				console.warn('⚠️ [FRONTEND] sendMessage: chatId or text is empty');
-				return;
-			}
-
-			if (!PRODMODE) {
-				console.log(`[Mock] sendMessage: adding mock message to chat ${chatId}`);
-				// mock-режим — добавляем локально
-				const newMsg = {
-					id: Date.now(),
-					chat_id: chatId,
-					from_id: 'self',
-					text,
-					created_at: Date.now() / 100,
-					isSending: false,
-				};
-				setMessages((prev) => {
-					const chatMsgs = prev[chatId] || [];
-					return {...prev, [chatId]: [...chatMsgs, newMsg]};
+	const fetchChatsList = useCallback(async () => {
+		if (loadingChatList) return;
+		setLoadingChatList(true);
+		if (PRODMODE) {
+			try {
+				const endpoint = `/api/sms`;
+				const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
+					data: {search},
+					_token: CSRF_TOKEN,
 				});
-				emitToListeners('message:new', newMsg);
-				return;
+				if (response?.data?.content) {
+					setChatsList(response?.data?.content?.sms);
+				}
+			} catch (err) {
+				console.log(err);
+			} finally {
+				setLoadingChatList(false);
 			}
+		} else {
+			setChatsList(CHAT_LIST_MOCK?.content?.sms);
+			setLoadingChatList(false);
+		}
+	}, [loadingChatList]);
 
-			if (!socketRef.current) {
-				console.error('❌ [FRONTEND] sendMessage: socket not available');
-				return;
+	const fetchChatMessages = useCallback(async (chatId) => {
+		if (loadingChat) return;
+		setLoadingChat(true);
+		if (PRODMODE) {
+			try {
+				const endpoint = `/api/sms/${chatId}`;
+				const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
+					_token: CSRF_TOKEN,
+				});
+				if (response?.data?.content) {
+					setCurrentChatId(chatId);
+					setChatsPrepare({
+						chat_id: chatId,
+						who: response?.data?.content?.who,
+						messages: response?.data?.content?.messages,
+						fist_message_id: 0,
+						scrollHeight: 0,
+					});
+				}
+			} catch (err) {
+				console.log(err);
+			} finally {
+				setLoadingChat(false);
 			}
-
-			const msg = { chat_id: chatId, text };
-			socketRef.current.emit('sms:new_message', msg);
-
-			// добавляем локально сразу
-			setMessages((prev) => {
-				const chatMsgs = prev[chatId] || [];
-				const tempMsg = { ...msg, id: Date.now(), from_id: 'self', isSending: true };
-				return {...prev, [chatId]: [...chatMsgs, tempMsg]};
+		} else {
+			setCurrentChatId(chatId);
+			setChatsPrepare({
+				chat_id: chatId,
+				who: CHAT_MOCK?.content?.who,
+				messages: CHAT_MOCK?.content?.messages,
+				fist_message_id: 0,
+				scrollHeight: 0,
 			});
-		},
-		[emitToListeners]
-	);*/
+			setLoadingChat(false);
+		}
+	}, [loadingChat]);
+
+	const setChatsPrepare = (newChat) => {
+		if (!chats.find(chat => +chat.id === +newChat.id)) {
+			setChats([...chats, newChat]);
+		}
+	};
 
 	return (
 		<ChatSocketContext.Provider
 			value={{
-				connected,
-				connectionStatus,
-				chats,
-				messages,
-				joinRoom,
-				/*sendMessage,*/
+				/* socket */
 				on,
 				off,
-
-				// --- новые методы ---
-				updateMessage: (chatId, updatedMsg) => {
-					setMessages((prev) => {
-						const chatMsgs = prev[chatId] || [];
-						return {
-							...prev,
-							[chatId]: chatMsgs.map((m) => (m.id === updatedMsg.id ? {...m, ...updatedMsg} : m)),
-						};
-					});
-					emitToListeners('message:update', updatedMsg);
-				},
-
-				replyToMessage: (chatId, parentId, text) => {
-					const replyMsg = {
-						id: Date.now(),
-						chat_id: chatId,
-						from_id: 'self',
-						text,
-						replyTo: parentId,
-						created_at: Date.now() / 1000,
-						isSending: false,
-					};
-					setMessages((prev) => {
-						const chatMsgs = prev[chatId] || [];
-						return {...prev, [chatId]: [...chatMsgs, replyMsg]};
-					});
-					emitToListeners('message:new', replyMsg);
-				},
-
-				editMessage: (chatId, msgId, newText) => {
-					setMessages((prev) => {
-						const chatMsgs = prev[chatId] || [];
-						return {
-							...prev,
-							[chatId]: chatMsgs.map((m) =>
-								m.id === msgId ? {...m, text: newText, updated_at: Date.now() / 100} : m
-							),
-						};
-					});
-					emitToListeners('message:update', { chat_id: chatId, id: msgId, text: newText });
-				},
-
-				// --- дополнительные методы для API-событий ---
-				deleteMessage: (chatId, messageId) => {
-					if (!PRODMODE) {
-						setMessages((prev) => {
-							const chatMsgs = prev[chatId] || [];
-							return {
-								...prev,
-								[chatId]: chatMsgs.filter((m) => m.id !== messageId),
-							};
-						});
-						return;
-					}
-
-					if (socketRef.current) {
-						socketRef.current.emit('sms:delete_message', { chat_id: chatId, messageId });
-					}
-				},
-
-				updateMessageStatus: (chatId, messageId, status) => {
-					if (!PRODMODE) {
-						setMessages((prev) => {
-							const chatMsgs = prev[chatId] || [];
-							return {
-								...prev,
-								[chatId]: chatMsgs.map((m) => (m.id === messageId ? {...m, status} : m)),
-							};
-						});
-						return;
-					}
-
-					if (socketRef.current) {
-						socketRef.current.emit('sms:status_update', { chat_id: chatId, messageId, status });
-					}
-				},
+				connected,
+				connectionStatus,
+				/* chats info */
+				chats,
+				currentChatId,
+				loadingChatList,
+				loadingChat,
+				/* methods */
+				fetchChatsList,
+				fetchChatMessages,  /*const {messages,who,loading} = useSms({chatId,mock: CHAT_MOCK});*/
 			}}
 		>
 			{children}

@@ -96,9 +96,7 @@ export const App = () => {
 
 	return (
 		<UserDataProvider>
-			<ChatSocketProvider
-				url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `http://192.168.1.16:${BFF_PORT}`}
-			>
+			<ChatSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `http://192.168.1.16:${BFF_PORT}`}>
 				<BrowserRouter basename={BASE_NAME}>
 					<div className={'app'}>
 						<TopMenu changed_user_data={() => get_userdata()} userdata={userdata} />

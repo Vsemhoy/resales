@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { MOCK } from '../mock/mock';
+import { CHAT_LIST_MOCK } from '../mock/mock';
 import useSms from '../../../hooks/sms/useSms';
 import { FileOutlined } from '@ant-design/icons';
 import { useUserData } from '../../../context/UserDataContext';
@@ -15,7 +15,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		loading,
 		error,
 	} = useSms({
-		mock: MOCK,
+		mock: CHAT_LIST_MOCK,
 		search,
 	});
 

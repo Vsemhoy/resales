@@ -6,7 +6,7 @@ import {Button, Dropdown, Space} from 'antd';
 import {MessageOutlined} from '@ant-design/icons';
 import {ChatModal} from './ChatModal.jsx';
 import useSms from "../../../hooks/sms/useSms";
-import {MOCK} from "../mock/mock";
+import {CHAT_LIST_MOCK} from "../mock/mock";
 import {useChatSocket} from "../../../context/ChatSocketContext";
 
 export const ChatBtn = () => {
@@ -27,7 +27,7 @@ export const ChatBtn = () => {
 		updateMessageStatus, // function - обновить статус
 	} = useChatSocket();
 	const [currentUserId, setCurrentUserId] = useState(null);
-	const { messages: chats = [], loading, error } = useSms({ search: '', mock: MOCK });
+	const { messages: chats = [], loading, error } = useSms({ search: '', mock: CHAT_LIST_MOCK });
 
 	useEffect(() => {
 		if (userdata?.user?.id) {
