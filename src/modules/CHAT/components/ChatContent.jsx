@@ -21,14 +21,10 @@ export default function ChatContent({ chatId }) {
 	const [localMessages, setLocalMessages] = useState([]);
 	const [currentUserId, setCurrentUserId] = useState(null);
 	const { Content, Footer } = Layout;
-
-	const {
-		messages,
-		who,
-		loading
-	} = useSms({
-		chatId,
-		mock: CHAT_MOCK
+	const [chat, setChat] = useState({
+		chat_id: 0,
+		who: '',
+		messages: [],
 	});
 
 	const {
@@ -41,19 +37,24 @@ export default function ChatContent({ chatId }) {
 	} = useSendSms();
 
 	const {
+		on, off,             				  // function - подписка на события
 		connected,           				  // boolean - подключен ли WebSocket
 		connectionStatus,    				  // string - статус подключения
-		chats: chatsSocket,  				  // [] - список чатов
-		messages: messagesSocket,             // {} - сообщения по chatId
-		joinRoom,            				  // function - войти в комнату
-		sendMessage,         				  // function - отправить сообщение
-		on, off,             				  // function - подписка на события
-		updateMessage,       				  // function - обновить сообщение
-		replyToMessage,      				  // function - ответить на сообщение
-		editMessage,         				  // function - редактировать сообщение
-		deleteMessage,       				  // function - удалить сообщение
-		updateMessageStatus, 				  // function - обновить статус
+		chats,  				      		  // [] - список чатов
+		loadingChat,						  // загрузка сообщений
+		fetchChatMessages,					  // подгрузить чат с сообщениями
 	} = useChatSocket();
+
+	useEffect(() => {
+		const foundedChat = chats.find(chat => chat.chat_id === chatId || chat.id === chatId);
+		if (!foundedChat && !loadingChat && chatId) {
+			console.log('Fetching chat messages for:', chatId);
+			fetchChatMessages(chatId);
+		} else if (foundedChat) {
+			console.log('Chat found:', foundedChat);
+			setChat(foundedChat);
+		}
+	}, [chats, chatId, loadingChat]);
 
 	const normalizeMessage = useCallback(
 		(msg) => {
@@ -63,19 +64,17 @@ export default function ChatContent({ chatId }) {
 				text: msg.text,
 				timestamp: msg.created_at,
 				isSelf: msg.from_id === currentUserId,
-				senderName: +currentUserId !== +msg.from_id ? who : 'Вы',
+				senderName: +currentUserId !== +msg.from_id ? chat.who : 'Вы',
 				isLocal: msg.isLocal || false,
 				isSending: msg.isSending || false,
 				_raw: msg,
 			};
 		},
-		[who, currentUserId]
+		[chat.who, currentUserId]
 	);
 
 	const allMessages = useMemo(() => {
-
-		const combined = [...messages, ...localMessages];
-
+		const combined = [...chat.messages, ...localMessages];
 		const existingIds = new Set();
 		const uniqueMessages = combined.filter((msg) => {
 			const id = msg.id;
@@ -85,20 +84,16 @@ export default function ChatContent({ chatId }) {
 			existingIds.add(id?.toString());
 			return true;
 		});
-
-		/*console.log('📊 [CHAT] All normalized messages:', normalized);*/
 		return uniqueMessages
 			.map(normalizeMessage)
 			.filter((msg) => msg.text && msg.text.trim() !== '')
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [messages, localMessages, normalizeMessage]);
+	}, [chat, localMessages, normalizeMessage]);
 
 	const messagesWithDividers = useMemo(() => {
 		if (allMessages.length === 0) return [];
-
 		const items = [];
 		let lastDayKey = null;
-
 		for (const msg of allMessages) {
 			const dayKey = dayjs(+msg.timestamp * 1000).format('DD.MM.YY');
 			if (lastDayKey !== dayKey) {
@@ -139,7 +134,7 @@ export default function ChatContent({ chatId }) {
 
 	const handleSend = (trimmed) => {
 		const createdAt = Number(dayjs().unix());
-		sendSms({ to: chatId, text: trimmed, answer: null, timestamp: createdAt });
+		sendSms({to: chatId, text: trimmed, answer: null, timestamp: createdAt});
 		const localMsg = {
 			from_id: currentUserId,
 			id: createdAt,
@@ -157,12 +152,12 @@ export default function ChatContent({ chatId }) {
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.chat_content}>
 				<div className={styles.chat_header}>
-					<span>{!userdata ? 'Загрузка...' : who ? who : 'Неизвестный собеседник'}</span>
+					<span>{!userdata ? 'Загрузка...' : chat.who ? chat.who : 'Неизвестный собеседник'}</span>
 					<span>{chatId}</span>
 				</div>
 					<div className={styles.chat_body} ref={messagesContainerRef}>
 						{(messagesWithDividers && messagesWithDividers.length > 0) ? (
-								<Spin spinning={loading}>
+								<Spin spinning={loadingChat}>
 									<div className={styles.messagesList}
 										 style={{flex: 1, overflowY: 'auto', minHeight: 0}}
 									>
