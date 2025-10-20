@@ -490,12 +490,12 @@ const FindSimilarDrawer = (props) => {
             </div>
         );
     };
-    const S = ({ mod }) => {
-        const models = mod
-            ? mod
-                .sort(function (a, b) {
+    const S = ({ models }) => {
+        const modelsPrepared = models
+            ? models
+                /*.sort(function (a, b) {
                     return b.model_match - a.model_match;
-                })
+                })*/
                 .map((el) => {
                     return (
                         <div style={{ margin: "0 5px" }}>
@@ -505,13 +505,13 @@ const FindSimilarDrawer = (props) => {
                                 }
                                 color={el.model_match ? "green" : "blue"}
                             >
-                                {el.name}
+                                {el.an_models_name}
                             </Tag>
                         </div>
                     );
                 })
             : [];
-        return <div className={'sa-similar__card__models__cont'}>{models}</div>;
+        return <div className={'sa-similar__card__models__cont'}>{modelsPrepared}</div>;
     };
     const similarDOM = similar ? similar.map((el, index) => {
         return {
