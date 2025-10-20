@@ -447,3 +447,20 @@
 .sa-orgpage-body .ant-select-arrow {
 	color: var(--sa-antd-button-primary-color-border) !important;
 }
+
+.sa-custom-validated-input input {
+	border: 0px solid transparent;
+	border-radius: 0px;
+	outline: none;
+}
+
+.sa-custom-validated-input {
+	margin-bottom: 0px;
+}
+
+.sa-custom-validated-input.ant-form-item-has-error input {
+	border-bottom: 1px solid var(--column-divider-color);
+}
+.sa-custom-validated-input .ant-form-item-control-input {
+	min-height: 16px !important;
+}

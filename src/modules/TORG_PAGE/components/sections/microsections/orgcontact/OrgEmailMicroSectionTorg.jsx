@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../../../TorgPageSectionRow';
-import { Button, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_DELETE_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../../../TorgConfig';
 import { TrashIcon } from '@heroicons/react/24/outline';
@@ -127,19 +127,50 @@ const OrgEmailMicroSectionTorg = (props) => {
             edit_mode: editMode,
             label: 'Email',
             input: (
-              <Input
-                key={`emadres1_${baseData?.id}_${orgId}`}
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (!ACTION_FLAG) setACTION_FLAG(1);
-                }}
-                readOnly={!editMode}
-                variant="borderless"
-                maxLength={250}
-                required={true}
-                onBlur={() => setBLUR_FLAG(dayjs().unix())}
-              />
+            //   editMode ? (
+            //     <Form>
+            //     <Form.Item
+            //       className='sa-custom-validated-input'
+            //       value={email}
+            //       key={`emadres1_${baseData?.id}_${orgId}`}
+            //       name="email"
+            //       onChange={(e) => {
+            //         setEmail(e.target.value);
+            //         if (!ACTION_FLAG) setACTION_FLAG(1);
+            //       }}
+            //                       readOnly={!editMode}
+            //     variant="borderless"
+            //     maxLength={250}
+            //     required={true}
+            //     onBlur={() => setBLUR_FLAG(dayjs().unix())}
+            //       rules={[
+            //         {
+            //           type: 'email',
+            //           message: 'Пожалуйста, введите корректный email!',
+            //         },
+            //         {
+            //           required: true,
+            //           message: 'Email обязателен!',
+            //         },
+            //       ]}
+            //     >
+            //       <Input placeholder="example@domain.com" />
+            //     </Form.Item>
+            //   </Form>
+            //   ) : (
+                <Input
+                  key={`emadres1_${baseData?.id}_${orgId}`}
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (!ACTION_FLAG) setACTION_FLAG(1);
+                  }}
+                  readOnly={!editMode}
+                  variant="borderless"
+                  maxLength={250}
+                  required={true}
+                  onBlur={() => setBLUR_FLAG(dayjs().unix())}
+                />
             ),
             required: true,
             value: email,
