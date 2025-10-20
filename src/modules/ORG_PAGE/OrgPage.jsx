@@ -132,7 +132,7 @@ const OrgPage = (props) => {
 
 	// Контейнеры, куда сохраняются данные из вкладок при нажатии кнопки сохранить
 	// Далее дебаунс вызывает фильтрацию данных и отправку на сервер
-	const [tempMainData, setTempMainData] = useState(null);
+	const [tempMainData, setTempMainData] = useState({});
 	const [tempProjectsData, setTempProjectsData] = useState([]);
 	const [tempCallsData, setTempCallsData] = useState([]);
 	const [tempNotesData, setTempNotesData] = useState([]);
@@ -654,24 +654,7 @@ useEffect(() => {
 		}
 	};
 
-	const update_data_action = async () => {
-		let data = {
-								main : tempMainDataRef.current,
-								contacts : tempMain_contactsRef.current,
-								org_phones : tempMain_phonesRef.current,
-								org_emails : tempMain_emailsRef.current,
-								org_addresses : tempMain_addressesRef.current,
-								org_legaladdresses : tempMain_legalAddressesRef.current,
-								org_requisites : tempMain_an_requisitesRef.current,
-								org_an_licenses : tempMain_an_licensesRef.current,
-								org_an_tolerances : tempMain_an_tolerancesRef.current,
-								org_bo_licenses : tempMain_bo_licensesRef.current,
-
-								projects : tempProjectsDataRef.current, // Ref.filter((item)=> itemRef.command !== undefined  ),
-								calls : tempCallsDataRef.current, //Ref.filter((item)=> itemRef.command !== undefined ),
-								notes : tempNotesDataRef.current, //.filter((item)=> item.command !== undefined  ),
-					};
-					// 		let data = {
+						// 		let data = {
 					// 			main : tempMainData,
 					// 			contacts : tempMain_contacts,
 					// 			org_phones : tempMain_phones,
@@ -687,6 +670,25 @@ useEffect(() => {
 					// 			calls : tempCallsData.filter((item)=> item.command !== undefined ),
 					// 			notes : tempNotesData.filter((item)=> item.command !== undefined  ),
 					// };
+
+	const update_data_action = async () => {
+		let data = {
+								main : tempMainDataRef.current?.ID ? tempMainDataRef.current : null,
+								contacts : tempMain_contactsRef.current,
+								org_phones : tempMain_phonesRef.current,
+								org_emails : tempMain_emailsRef.current,
+								org_addresses : tempMain_addressesRef.current,
+								org_legaladdresses : tempMain_legalAddressesRef.current,
+								org_requisites : tempMain_an_requisitesRef.current,
+								org_an_licenses : tempMain_an_licensesRef.current,
+								org_an_tolerances : tempMain_an_tolerancesRef.current,
+								org_bo_licenses : tempMain_bo_licensesRef.current,
+
+								projects : tempProjectsDataRef.current, // Ref.filter((item)=> itemRef.command !== undefined  ),
+								calls : tempCallsDataRef.current, //Ref.filter((item)=> itemRef.command !== undefined ),
+								notes : tempNotesDataRef.current, //.filter((item)=> item.command !== undefined  ),
+					};
+
 					console.log("COLLECTED D", data);
 		if (PRODMODE) {
 			setSaveProcess(20);
