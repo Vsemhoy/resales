@@ -582,7 +582,7 @@ const MainTabPage = (props) => {
      if (!editMode) {
        return;
       }
-
+      
  
       
       if (data.command !== 'create'){

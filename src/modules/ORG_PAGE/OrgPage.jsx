@@ -192,7 +192,7 @@ useEffect(() => {
   tempMain_an_licenses,
   tempMain_an_tolerances,
   tempMain_an_requisites,
-	
+
 ]);
 
 
@@ -655,23 +655,38 @@ useEffect(() => {
 	};
 
 	const update_data_action = async () => {
-		alert('DURAK')
 		let data = {
-								main : tempMainData.current,
-								contacts : tempMain_contacts.current,
-								org_phones : tempMain_phones.current,
-								org_emails : tempMain_emails.current,
-								org_addresses : tempMain_addresses.current,
-								org_legaladdresses : tempMain_legalAddresses.current,
-								org_requisites : tempMain_an_requisites.current,
-								org_an_licenses : tempMain_an_licenses.current,
-								org_an_tolerances : tempMain_an_tolerances.current,
-								org_bo_licenses : tempMain_bo_licenses.current,
+								main : tempMainDataRef.current,
+								contacts : tempMain_contactsRef.current,
+								org_phones : tempMain_phonesRef.current,
+								org_emails : tempMain_emailsRef.current,
+								org_addresses : tempMain_addressesRef.current,
+								org_legaladdresses : tempMain_legalAddressesRef.current,
+								org_requisites : tempMain_an_requisitesRef.current,
+								org_an_licenses : tempMain_an_licensesRef.current,
+								org_an_tolerances : tempMain_an_tolerancesRef.current,
+								org_bo_licenses : tempMain_bo_licensesRef.current,
 
-								projects : tempProjectsData.current, // .filter((item)=> item.command !== undefined  ),
-								calls : tempCallsData.current, //.filter((item)=> item.command !== undefined ),
-								notes : tempNotesData.current, //.filter((item)=> item.command !== undefined  ),
+								projects : tempProjectsDataRef.current, // Ref.filter((item)=> itemRef.command !== undefined  ),
+								calls : tempCallsDataRef.current, //Ref.filter((item)=> itemRef.command !== undefined ),
+								notes : tempNotesDataRef.current, //.filter((item)=> item.command !== undefined  ),
 					};
+					// 		let data = {
+					// 			main : tempMainData,
+					// 			contacts : tempMain_contacts,
+					// 			org_phones : tempMain_phones,
+					// 			org_emails : tempMain_emails,
+					// 			org_addresses : tempMain_addresses,
+					// 			org_legaladdresses : tempMain_legalAddresses,
+					// 			org_requisites : tempMain_an_requisites,
+					// 			org_an_licenses : tempMain_an_licenses,
+					// 			org_an_tolerances : tempMain_an_tolerances,
+					// 			org_bo_licenses : tempMain_bo_licenses,
+
+					// 			projects : tempProjectsData.filter((item)=> item.command !== undefined  ),
+					// 			calls : tempCallsData.filter((item)=> item.command !== undefined ),
+					// 			notes : tempNotesData.filter((item)=> item.command !== undefined  ),
+					// };
 					console.log("COLLECTED D", data);
 		if (PRODMODE) {
 			setSaveProcess(20);
@@ -1336,14 +1351,14 @@ useEffect(() => {
 
 								{editMode ? (
 									<div>
-										{blockOnSave ? (
+										{blockOnSave && false ? (
 											<Button icon={<LoadingOutlined />} color="primary" variant="solid">
 												Сохраняю...
 											</Button>
 										) : (
 											<Button
 												icon={<ClipboardDocumentCheckIcon height={'16px'} />}
-												disabled={blockOnSave || BLOCK_SAVE}
+												// disabled={blockOnSave || BLOCK_SAVE}
 												onClick={handleSaveData}
 												color="primary"
 												variant="solid"
