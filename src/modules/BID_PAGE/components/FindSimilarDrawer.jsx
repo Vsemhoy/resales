@@ -174,7 +174,7 @@ const FindSimilarDrawer = (props) => {
                 />
             ),
         },
-        {
+        /*{
             name: "Не искать среди заявок данной компании",
             key: 3,
             value: (
@@ -193,7 +193,7 @@ const FindSimilarDrawer = (props) => {
                     onChange={(v) => setNotSelf(v.target.checked)}
                 />
             ),
-        },
+        },*/
         {
             name: "Искать:",
             key: 4,
@@ -272,7 +272,7 @@ const FindSimilarDrawer = (props) => {
                 />
             ),
         },
-        {
+        /*{
             name: "Заявка создана в интервале:",
             key: 6,
             value: (
@@ -296,7 +296,7 @@ const FindSimilarDrawer = (props) => {
                     />{" "}
                 </ConfigProvider>
             ),
-        },
+        },*/
     ];
 
     useEffect(() => {
@@ -369,8 +369,8 @@ const FindSimilarDrawer = (props) => {
                     );
                     if (response.data) {
                         setLoad(false);
-                        setSimilar(response.data.data.bids);
-                        setSearchCount(response.data.data.count_match);
+                        setSimilar(response.data.content.result.bids);
+                        setSearchCount(response.data.content.result.count_all);
                     }
                 } catch (e) {
                     console.log(e);
@@ -444,7 +444,7 @@ const FindSimilarDrawer = (props) => {
                 ),
                 align: "center",
             },
-            {
+            /*{
                 title: "Точное соответствие количества",
                 dataIndex: "mcount",
                 key: "mcount",
@@ -455,7 +455,7 @@ const FindSimilarDrawer = (props) => {
                     />
                 ),
                 align: "center",
-            },
+            },*/
         ];
     };
     const D = ({ bid }) => {
@@ -554,7 +554,7 @@ const FindSimilarDrawer = (props) => {
                     </div>
                 </div>
                 <div className={'sa-similar__tab__container'}>
-                    <Input
+                    {/*<Input
                         style={{width: "350px", margin: "0 0 10px"}}
                         placeholder={"Введите поисковый запрос..."}
                         value={text}
@@ -569,7 +569,7 @@ const FindSimilarDrawer = (props) => {
                                 setSearchType(value); // string
                             }}
                         />
-                    </div>
+                    </div>*/}
 
                     <div style={{marginTop: "10px"}}>
                         <Button onClick={(_) => setChildrenDrawer(true)}>
