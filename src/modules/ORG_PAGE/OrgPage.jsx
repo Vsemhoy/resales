@@ -132,7 +132,7 @@ const OrgPage = (props) => {
 
 	// Контейнеры, куда сохраняются данные из вкладок при нажатии кнопки сохранить
 	// Далее дебаунс вызывает фильтрацию данных и отправку на сервер
-	const [tempMainData, setTempMainData] = useState({});
+	const [tempMainData, setTempMainData] = useState(null);
 	const [tempProjectsData, setTempProjectsData] = useState([]);
 	const [tempCallsData, setTempCallsData] = useState([]);
 	const [tempNotesData, setTempNotesData] = useState([]);
@@ -441,6 +441,7 @@ useEffect(() => {
 			setEditMode(false);
 			setIsSmthChanged(false);
 			setBlockSave(false);
+			setBlockOnSave(false);
 	}
 
 
@@ -766,7 +767,6 @@ useEffect(() => {
 		
 		setBlockOnSave(true);
 		setSaveProcess(5);
-		setBlockOnSave(true);
 
 		setTimeout(() => {
 			console.log('tempMainData', tempMainData)
@@ -928,21 +928,6 @@ useEffect(() => {
 		get_org_calls_action(iid);
 		get_projects_data_action(iid);
 
-			// if (tempMainData || tempMain_an_licenses || tempMain_an_tolerances || tempMain_bo_licenses ||
-			// 	 tempMain_an_requisites || tempMain_addresses || tempMain_emails || tempMain_legalAddresses || tempMain_phones){
-			// 	setTempMainData(null);
-			// 	setTempMain_an_requisites([]);
-			// 	setTempMain_an_licenses([]);
-			// 	setTempMain_an_tolerances([]);
-			// 	setTempMain_bo_licenses([]);
-			// 	setTempMain_emails([]);
-			// 	setTempMain_legalAddresses([]);
-			// 	setTempMain_phones([]);
-			// 	setTempMain_addresses([]);
-			// 	setTempMain_contacts([]);
-
-			// 	get_main_data_action(iid);
-			// }
 			setTimeout(() => {
 				setTempMainData(null);
 	
@@ -1013,7 +998,7 @@ useEffect(() => {
 
 	// Подготовка Контактов к отправке
 	const handleContactChange = (data)=>{
-		setBlockOnSave(true);
+		
 		console.log('data', data)
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
@@ -1034,7 +1019,6 @@ useEffect(() => {
 
 	// Подготовка адресов к отправке
 	const handleAddressChange = (data)=>{
-		setBlockOnSave(true);
 			if (data.command === 'create' && data.deleted){
 				// Удаление только что добавленного
 				// tempMain_addressesRef.current = tempMain_addresses.filter((item) => item.id !== data.id);
@@ -1059,7 +1043,6 @@ useEffect(() => {
 
 		// Подготовка адресов к отправке
 	const handleLegalAddressChange = (data)=>{
-		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_legalAddresses(tempMain_legalAddresses.filter((item) => item.id !== data.id));
@@ -1081,7 +1064,6 @@ useEffect(() => {
 
 		// Подготовка email адресов к отправке
 	const handleEmailChange = (data)=>{
-		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_emails(tempMain_emails.filter((item) => item.id !== data.id));
@@ -1101,7 +1083,6 @@ useEffect(() => {
 
 		// Подготовка адресов к отправке
 	const handlePhoneChange = (data)=>{
-		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_phones(tempMain_phones.filter((item) => item.id !== data.id));
@@ -1122,7 +1103,6 @@ useEffect(() => {
 
 	// Подготовка адресов к отправке
 	const handleBoLicenseChange = (data)=>{
-		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_bo_licenses(tempMain_bo_licenses.filter((item) => item.id !== data.id));
@@ -1142,7 +1122,6 @@ useEffect(() => {
 
 		// Подготовка адресов к отправке
 	const handleAnLicenseChange = (data)=>{
-		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_an_licenses(tempMain_an_licenses.filter((item) => item.id !== data.id));
@@ -1162,7 +1141,6 @@ useEffect(() => {
 
 		// Подготовка адресов к отправке
 	const handleAnToleranceChange = (data)=>{
-		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_an_tolerances(tempMain_an_tolerances.filter((item) => item.id !== data.id));
@@ -1182,7 +1160,6 @@ useEffect(() => {
 
 		// Подготовка адресов к отправке
 	const handleRequisitesChange = (data)=>{
-		setBlockOnSave(true);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_an_requisites(tempMain_an_requisites.filter((item) => item.id !== data.id));
@@ -1205,7 +1182,6 @@ useEffect(() => {
 
 
 	const sectionUpdateHandler = (section, id, data) => {
-		setBlockOnSave(true);
 		console.log('section, id, data', section, id, data);
 		if (section === 'notes'){
 			let catchObject = tempNotesData.find((item)=> item.id === id);
@@ -1249,7 +1225,6 @@ useEffect(() => {
 	}
 
 	const sectionDeleteHandler = (section, id) => {
-		setBlockOnSave(true);
 		// Удаление временного элемента из стека
 		if (section === 'notes'){
 			setTempNotesData(tempNotesData.filter((item)=> item.id !== id));
@@ -1354,7 +1329,7 @@ useEffect(() => {
 
 								{editMode ? (
 									<div>
-										{blockOnSave && false ? (
+										{blockOnSave ? (
 											<Button icon={<LoadingOutlined />} color="primary" variant="solid">
 												Сохраняю...
 											</Button>
@@ -1365,6 +1340,8 @@ useEffect(() => {
 												onClick={handleSaveData}
 												color="primary"
 												variant="solid"
+												disabled={!isSmthChanged}
+												title={`${isSmthChanged ? '' : 'Нет данных для сохранения'}`}
 											>
 												Сохранить
 											</Button>
