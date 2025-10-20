@@ -148,7 +148,7 @@ const OrgPage = (props) => {
 	const [tempMain_an_requisites, setTempMain_an_requisites] = useState([]);
 
 
-const tempMainDataRef = useRef(tempMainData);
+const tempMainDataRef = useRef(null);
 const tempProjectsDataRef = useRef(tempProjectsData);
 const tempCallsDataRef = useRef(tempCallsData);
 const tempNotesDataRef = useRef(tempNotesData);
@@ -174,8 +174,8 @@ useEffect(() => {
   tempMain_addressesRef.current = tempMain_addresses;
   tempMain_legalAddressesRef.current = tempMain_legalAddresses;
   tempMain_emailsRef.current = tempMain_emails;
-  tempMain_bo_licensesRef.current = tempMain_bo_licenses;
-  tempMain_an_licensesRef.current = tempMain_an_licenses;
+  tempMain_bo_licensesRef.current   = tempMain_bo_licenses;
+  tempMain_an_licensesRef.current   = tempMain_an_licenses;
   tempMain_an_tolerancesRef.current = tempMain_an_tolerances;
   tempMain_an_requisitesRef.current = tempMain_an_requisites;
 }, [
@@ -673,7 +673,8 @@ useEffect(() => {
 
 	const update_data_action = async () => {
 		let data = {
-								main : tempMainDataRef.current?.ID ? tempMainDataRef.current : null,
+								// С объектами ref не работает, только с массивами
+								main : tempMainData, //Ref.current?.ID ? tempMainDataRef.current : null,
 								contacts : tempMain_contactsRef.current,
 								org_phones : tempMain_phonesRef.current,
 								org_emails : tempMain_emailsRef.current,
