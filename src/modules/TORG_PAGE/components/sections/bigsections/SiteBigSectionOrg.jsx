@@ -10,7 +10,8 @@ const SiteBigSectionOrg = (props) => {
 
   const [itemId, setItemId] = useState(null);
 
-    const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+  const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
   useEffect(() => {
     setEditMode(props.edit_mode)
@@ -22,6 +23,11 @@ const SiteBigSectionOrg = (props) => {
   }, [props.data]);
 
   useEffect(() => {
+      setBLUR_FLAG(null);
+      setACTION_FLAG(null);
+    }, [props.data.id, props.org_id]);
+
+  useEffect(() => {
     if (BLUR_FLAG === null){ return; }
       if (props.on_blur){
         props.on_blur(site);
@@ -31,6 +37,18 @@ const SiteBigSectionOrg = (props) => {
     BLUR_FLAG,
   ]);
 
+
+    // Для отправки прямо в коллектор по кейдауну
+    useEffect(() => {
+      if (ACTION_FLAG && props.on_change && editMode){
+        const timer = setTimeout(() => {
+          props.on_change({site: site});
+      }, 500);
+      return () => clearTimeout(timer);
+      }
+    }, [   
+      site
+    ]);
 
   return (
     <div>
@@ -46,7 +64,10 @@ const SiteBigSectionOrg = (props) => {
                   <Input
                     key={'sitefield_2_' + itemId}
                     value={site}
-                    onChange={e => setSite(e.target.value)}
+                    onChange={e => {
+                      setACTION_FLAG(1);
+                      setSite(e.target.value);
+                    }}
                     // placeholder="Controlled autosize"
                     readOnly={!editMode}
                     variant="borderless"

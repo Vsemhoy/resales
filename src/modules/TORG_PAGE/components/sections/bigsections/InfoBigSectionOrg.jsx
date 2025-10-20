@@ -21,10 +21,16 @@ const InfoBigSectionOrg = (props) => {
   const [curator, setCurator] = useState('');
 
     const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+    const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
   useEffect(() => {
     setEditMode(props.edit_mode)
   }, [props.edit_mode]);
+
+    useEffect(() => {
+      setBLUR_FLAG(null);
+      setACTION_FLAG(null);
+    }, [props.data.id, props.org_id]);
 
   useEffect(() => {
     if (props.data?.id){
@@ -74,6 +80,22 @@ const InfoBigSectionOrg = (props) => {
 				id_orgs: itemId,
 			}
   });
+
+    // Для отправки прямо в коллектор по кейдауну
+    useEffect(() => {
+      if (ACTION_FLAG && props.on_change && editMode){
+        const timer = setTimeout(() => {
+          props.on_change(collectData());
+      }, 500);
+      return () => clearTimeout(timer);
+      }
+    }, [   
+      statusmoney,
+      conveyance,
+      listComment,
+      listComment,
+      ]);
+
 
   return (
     <div className={'sa-org-collapse-content'}>
@@ -145,6 +167,7 @@ const InfoBigSectionOrg = (props) => {
                       value={parseInt(statusmoney)}
                       onChange={(ee)=>{
                         setStatusmoney(ee);
+                        setACTION_FLAG(1);
                         setBLUR_FLAG(dayjs().unix());
                         }}
                       // placeholder="Controlled autosize"
@@ -177,6 +200,7 @@ const InfoBigSectionOrg = (props) => {
                       value={parseInt(conveyance)}
                       onChange={(ee)=>{
                         setConveyance(ee);
+                        setACTION_FLAG(1);
                         setBLUR_FLAG(dayjs().unix());
                         }}
                       // placeholder="Controlled autosize"
@@ -215,6 +239,7 @@ const InfoBigSectionOrg = (props) => {
                       value={typeList}
                       onChange={(ee)=>{
                         setTypeList(ee);
+                        setACTION_FLAG(1);
                         setBLUR_FLAG(dayjs().unix());
                         }}
                       // placeholder="Controlled autosize"
@@ -242,7 +267,10 @@ const InfoBigSectionOrg = (props) => {
                       value={listComment}
                       // onChange={e => setAddress(e.target.value)}
                       onBlur={()=>{setBLUR_FLAG(dayjs().unix());}}
-                      onChange={e => setListComment(e.target.value)}
+                      onChange={e => {
+                        setListComment(e.target.value);
+                        setACTION_FLAG(1);
+                      }}
                       // placeholder="Controlled autosize"
                       readOnly={!editMode}
                       variant="borderless"
