@@ -887,7 +887,7 @@ useEffect(() => {
                     }}
                     disabled={!editMode}
                     >
-                      {mountBidList && mountOrgList?.map(opt => (
+                      {mountBidList && mountBidList?.map(opt => (
                         <Option key={'olokhom' + opt.value} value={opt.value}>
                           {opt.label}
                         </Option>
