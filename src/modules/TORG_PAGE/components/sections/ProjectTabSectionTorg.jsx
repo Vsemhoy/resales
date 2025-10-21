@@ -876,17 +876,25 @@ useEffect(() => {
                     onSearch={(et)=>{
                       setSearchBid(et)
                       }}                    
-                    options={mountBidList}
+                    // options={mountBidList}
                     required={false}
                     value={bidsId}
-                    placeholder={'ID организации'}
+                    placeholder={'ID кп/счета'}
                     onChange={(ev)=>{
                       setBidsId(ev)
                       setBLUR_FLAG(dayjs().unix());
                       setACTION_FLAG(1);
                     }}
                     disabled={!editMode}
-                    />
+                    >
+                      {mountBidList && mountOrgList?.map(opt => (
+                        <Option key={'olokhom' + opt.value} value={opt.value}>
+                          {opt.label}
+                        </Option>
+                      ))}
+
+                      </Select>
+
                     ,
                   required: false,
                   value: bidsId
