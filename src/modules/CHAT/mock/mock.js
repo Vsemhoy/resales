@@ -314,3 +314,31 @@ export const CHAT_MOCK = {
 	},
 	message: 'OK!',
 };
+export const WS_NEW_MESSAGE = {
+	"left": {
+		"id": 408,
+		"chat_id": 46,
+		"from": {
+			"surname": "Администратор",
+			"name": "Тестовый",
+			"id": 583
+		},
+		"to": {
+			"surname": "Босс",
+			"name": "Боссовый",
+			"id": 46
+		},
+		"text": "Ку",
+		"status": false,
+		"created_at": 1761039191,
+		"updated_at": 1761039191
+	},
+	"right": {
+		"id": 408,
+		"from_id": 583,
+		"answer": null,
+		"text": "Ку",
+		"created_at": 1761039191,
+		"updated_at": 1761039191
+	}
+};
