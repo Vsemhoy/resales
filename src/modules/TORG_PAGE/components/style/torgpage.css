@@ -478,3 +478,13 @@
 .sa-custom-validated-input .ant-form-item-control-input {
 	min-height: 16px !important;
 }
+
+.sa-org-question-mark {
+	color: var(--section-tab-text-name-color);
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 100%;
+    padding-top: 3px;
+    padding-right: 4px;
+}

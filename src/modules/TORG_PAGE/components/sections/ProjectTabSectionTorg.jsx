@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { AutoComplete, DatePicker, Input, Select } from 'antd';
+import { AutoComplete, DatePicker, Input, Select, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
-import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronUpIcon, QuestionMarkCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../../components/helpers/TextHelpers';
 import { after } from 'lodash';
@@ -66,6 +66,7 @@ const ProjectTabSectionTorg = (props) => {
       const [mountOrgList, setMountOrgList] = useState([]);
       const [mountBidList, setMountBidList] = useState([]);
 
+      const [userdata, setUserdata] = useState(props.user_data);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -79,6 +80,10 @@ const ProjectTabSectionTorg = (props) => {
     useEffect(() => {
       setRefreshMark(props.refresh_mark);
     }, [props.refresh_mark]);
+
+    useEffect(() => {
+      setUserdata(props.user_data);
+    }, [props.user_data]);
 
   useEffect(() => {
     setData(props.data);
@@ -434,6 +439,14 @@ useEffect(() => {
               <TrashIcon height={TORG_CHEVRON_SIZE} />
             </span>
           )}
+          {/* {(userdata?.user?.id !== authorId || userdata?.user?.id !== data?.curator?.id) && (
+            <Tooltip placement={'left'} title={<div>
+              <div>Редактировать проекты может только создатель записи</div>
+              <div>Удалять проекты нельзя</div>
+            </div>} className={'sa-org-question-mark'}>
+              <QuestionMarkCircleIcon height={'22px'} />
+            </Tooltip>
+          )} */}
         </div>
       </div>
       <div className={'sa-org-collapse-body'}>
@@ -643,18 +656,8 @@ useEffect(() => {
                 edit_mode: editMode,
                 label: 'Контактное лицо',
                 input:
-                  // <Input
-                  //   key={'texpard_10_' + data?.id}
-                  //   value={contactperson}
-                  //   onChange={e => setContactperson(e.target.value)}
-                  //   // placeholder="Controlled autosize"
-                  //   autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                  //   readOnly={!editMode}
-                  //   variant="borderless"
-                  //   maxLength={200}
-                  // />
                   <AutoComplete
-                  
+                    disabled={!editMode}
                     key={'texpard_10_' + data?.id}
                     placeholder={'Фамилия Имя Отчество'}
                     value={contactperson}
@@ -782,9 +785,6 @@ useEffect(() => {
                 label: 'Тип проекта',
                 input:
                   <Select
-                   
-
-                  
                     key={'texpard_14_' + data?.id}
                     value={projType}
                     onChange={e => {
@@ -801,6 +801,7 @@ useEffect(() => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={200}
+                    disabled={!editMode}
                     
                   />,
                   required: true,
@@ -833,7 +834,7 @@ useEffect(() => {
                     
                     required={false}
                     value={erector}
-                    placeholder={'ID организации'}
+                    placeholder={'Название организации'}
                     onChange={
                       (ev)=>{
                         setErector(ev)

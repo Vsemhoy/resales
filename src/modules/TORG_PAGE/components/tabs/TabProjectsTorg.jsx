@@ -16,10 +16,12 @@ const TabProjectsTorg = (props) => {
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
    */
   const [isTabActive, setIsTabActive] = useState(false);
-    /**
+
+  /**
    * При сбросе orgId мы перегружаем данные
-   */
-  const [editMode, setEditMode] = useState(false); // true|false - режим редактирования
+  */
+ const [editMode, setEditMode] = useState(false); // true|false - режим редактирования
+ const [prevEditMode, setPrevEditMode] = useState(false);
   /**
    * При сбросе orgId мы перегружаем данные
    */
@@ -71,6 +73,10 @@ const TabProjectsTorg = (props) => {
   useEffect(() => {
     if (props.org_id){
       setTempData([]);
+      setEditMode(props.edit_mode);
+    } else {
+      // Если нет айдишника, формы не активны
+      setEditMode(false);
     }
     setOrgId(props.org_id);
     
@@ -78,12 +84,20 @@ const TabProjectsTorg = (props) => {
   // Перегрузка данных при смене айдишника
   useEffect(() => {
     if (orgId){
-      get_projects_data_action();
+      const timer = setTimeout(() => {
+        get_projects_data_action();
+      }, 1000);
+		return () => clearTimeout(timer);
     };
-  }, [orgId]);
+  }, [orgId, currentPage, onPage]);
+
+
   // Сброс временных при входе в режим редактирования
   useEffect(() => {
     setEditMode(props.edit_mode);
+    // Режим редактирования управляется снаружи
+    // Но при отсутствии ID, устанавливает false, чтобы
+    // юзер ничего не менял в форме
     if (!props.edit_mode){
       setTempData([]);
     }
@@ -148,6 +162,7 @@ const get_projects_data_action = async () => {
           setOriginalData(JSON.parse(JSON.stringify(response.data.content.projects)));
           setBaseData(response.data.content.projects);
           setLoading(false);
+          setTotal(response.data.total);
         }
       } catch (e) {
         console.log(e);
@@ -219,6 +234,8 @@ const get_projects_data_action = async () => {
                       name: userdata?.user.name,
                       secondname: userdata?.user.secondname,
                     },
+                    author_id : userdata.user.id,
+                    author: userdata.user.id
                   };
       
                 setTempData(prevItems => [spawn, ...prevItems]);
@@ -292,7 +309,7 @@ const get_projects_data_action = async () => {
                       allow_delete={true}
                       selects={selects}
                       org_contacts={orgContacts}
-                      
+                      user_data={userdata}
                       on_collect={(payload)=>{props.on_change_section('projects', payload.id, payload)}}
                       />
                   ))}
@@ -303,7 +320,7 @@ const get_projects_data_action = async () => {
                   
                   {baseData.map((item)=>(
                     <ProjectTabSectionTorg
-                      edit_mode={editMode}
+                      edit_mode={editMode && (userdata?.user?.id === item.author_id  || userdata?.user?.id === item?.curator?.id)}
                       org_id={orgId}
                       data={item}
                       collapsed={true}
@@ -313,6 +330,7 @@ const get_projects_data_action = async () => {
                       on_collect={(payload)=>{props.on_change_section('projects', payload.id, payload)}}
                       selects={selects}
                       org_contacts={orgContacts}
+                      user_data={userdata}
                       />
                   ))}
                 </div>
