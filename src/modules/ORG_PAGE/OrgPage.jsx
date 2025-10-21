@@ -1110,40 +1110,47 @@ useEffect(() => {
 		if (section === 'notes'){
 			let catchObject = tempNotesData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.command && data.command === 'create' && data.deleted && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.includes('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
 				}
 				setTempNotesData(tempNotesData.map(item => item.id === id ? data : item));
 			} else {
-				setTempNotesData([data, ...tempNotesData]);
+				// Чтоб не залетел пустой
+				if (!(data.command && data.command === 'create' && data.deleted && data.id.includes('new'))){
+					setTempNotesData([data, ...tempNotesData]);
+				}
 			}
 		};
 		if (section === 'projects'){
 			let catchObject = tempProjectsData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.command && data.command === 'create' && data.deleted && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.includes('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
 				}
 				setTempProjectsData(tempProjectsData.map(item => item.id === id ? data : item));
 			} else {
-				setTempProjectsData([data, ...tempProjectsData]);
+				if (!(data.command && data.command === 'create' && data.deleted && data.id.includes('new'))){
+					setTempProjectsData([data, ...tempProjectsData]);
+				}
 			}
 		};
 		if (section === 'calls'){
 			let catchObject = tempCallsData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.command && data.command === 'create' && data.deleted && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.includes('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
 				}
 				setTempCallsData(tempCallsData.map(item => item.id === id ? data : item));
 			} else {
-				setTempCallsData([data, ...tempCallsData]);
+				if (!(data.command && data.command === 'create' && data.deleted && data.id.includes('new'))){
+					setTempCallsData([data, ...tempCallsData]);
+				}
 			}
 		};
 	}

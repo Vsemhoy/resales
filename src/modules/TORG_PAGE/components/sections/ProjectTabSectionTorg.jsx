@@ -240,7 +240,6 @@ useEffect(() => {
 
     useEffect(() => {
       get_orgautofill_action();
-      console.log('SET ERECTOR', erector, searchErector);
     }, [searchErector, erector]);
 
     useEffect(() => {
@@ -254,7 +253,6 @@ useEffect(() => {
 
 
   useEffect(() => {
-    console.log('SHALLE', BLUR_FLAG, collapsed)
     if (!BLUR_FLAG) return;
     // if (editMode && !collapsed && data && data.command === 'create' && deleted){
     //   // Лазейка для удаления созданных в обход таймаута - позволяет избежать гонок при очень быстром удалении
@@ -310,11 +308,10 @@ useEffect(() => {
 
 
     useEffect(() => {
-      console.log('COLLLE', ACTION_FLAG, collapsed)
       if (!ACTION_FLAG) { return; }
       const timer = setTimeout(() => {
         // При сверх-быстром изменении полей в разных секциях могут быть гонки
-			  if (editMode && !collapsed && data){
+			  if (editMode && data){
           if (props.on_collect){
             const newData = JSON.parse(JSON.stringify(data));
             newData.name = name;
@@ -344,7 +341,6 @@ useEffect(() => {
                 newData.command = 'update';
               }
             }
-            console.log('newData', newData)
             props.on_collect(newData);
           }
         }
@@ -828,7 +824,8 @@ useEffect(() => {
                     value={erector}
                     placeholder={'ID организации'}
                     onChange={
-                      (ev)=>{setErector(ev)
+                      (ev)=>{
+                        setErector(ev)
                       setBLUR_FLAG(dayjs().unix())
                       setACTION_FLAG(1);
                       }}
