@@ -34,7 +34,7 @@ const ProjectTabSectionTorg = (props) => {
     const [cost,        setCost] = useState('');
     const [bonus,       setBonus] = useState('');        
     const [comment,     setComment] = useState('');
-    const [typeEac,     setTypeEac] = useState('');
+    const [typePeac,     setTypePeac] = useState('');
     const [dateEnd,     setDateEnd] = useState(null);
     const [erector,     setErector] = useState('');
     // const [linkbidId,   setLinkbidId] = useState([]);
@@ -98,7 +98,7 @@ const ProjectTabSectionTorg = (props) => {
         setCost(props.data.cost);
         setBonus(props.data.bonus);
         setComment(props.data.comment);
-        setTypeEac(props.data.typepaec);
+        setTypePeac(props.data.typepaec);
         setDateEnd(props.data.date_end);
         setErector(props.data.erector_id);
         setSearchErector(props.data.erector_id);
@@ -278,8 +278,7 @@ useEffect(() => {
             data.cost = cost;
             data.bonus = bonus;
             data.comment = comment;
-            data.typeEac = typeEac;
-            data.dateEnd = dateEnd;
+            data.typepaec = typePeac;
             data.erector = erector;
             data.erector_id = erector; 
             data.bidsId = bidsId;
@@ -287,6 +286,8 @@ useEffect(() => {
             data.authorId = authorId;
             data.author = author;
             data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
+            data.id8an_projecttype = projType;
+            data.date_end = dateEnd;
 
             data.deleted = deleted;
 
@@ -326,8 +327,7 @@ useEffect(() => {
             newData.cost = cost;
             newData.bonus = bonus;
             newData.comment = comment;
-            newData.typeEac = typeEac;
-            newData.dateEnd = dateEnd;
+            newData.typepaec = typePeac;
             newData.erector = erector;
             newData.erector_id = erector; 
             newData.bidsId = bidsId;
@@ -335,6 +335,8 @@ useEffect(() => {
             newData.authorId = authorId;
             newData.author = author;
             newData.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
+            newData.id8an_projecttype = projType;
+            data.date_end = dateEnd;
 
             newData.deleted = deleted;
 
@@ -355,7 +357,7 @@ useEffect(() => {
   }, [
     orgId, projType, name, equipment, customer,
       address, stage, contactperson, date,
-      cost, bonus, comment, typeEac,
+      cost, bonus, comment, typePeac,
       dateEnd, erector, bidsId, idCompany,
       authorId, author, deleted
   ]);
@@ -613,9 +615,9 @@ useEffect(() => {
                 input:
                   <Input
                     key={'texpard_9_' + data?.id}
-                    value={typeEac}
+                    value={typePeac}
                     onChange={e => {
-                      setTypeEac(e.target.value);
+                      setTypePeac(e.target.value);
                       setACTION_FLAG(1);
                       }}
                     // placeholder="Controlled autosize"
@@ -625,7 +627,7 @@ useEffect(() => {
                     onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
                   />,
                   required: true,
-                  value: typeEac
+                  value: typePeac
               },
 
             ]}

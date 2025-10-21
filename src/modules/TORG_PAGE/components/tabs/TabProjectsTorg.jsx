@@ -69,6 +69,9 @@ const TabProjectsTorg = (props) => {
    * Смена или сброс на ноль/нулл org_id приводит к перегрузке формы + загрузке данных с сервака/очистке временных массивов
    */
   useEffect(() => {
+    if (props.org_id){
+      setTempData([]);
+    }
     setOrgId(props.org_id);
     
   }, [props.org_id]);
