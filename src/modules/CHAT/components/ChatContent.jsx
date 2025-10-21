@@ -7,9 +7,7 @@ import {ChatInput} from './ChatInput';
 import {ChatDivider} from './ChatDivider';
 import ChatSelfMsg from './ChatSelfMsg';
 import ChatIncomingMsg from './ChatIncomingMsg';
-import useSms from '../../../hooks/sms/useSms';
 import {useSendSms} from '../../../hooks/sms/useSendSms';
-import {CHAT_MOCK} from "../mock/mock";
 import {useChatSocket} from "../../../context/ChatSocketContext";
 
 export default function ChatContent({ chatId }) {
@@ -25,6 +23,8 @@ export default function ChatContent({ chatId }) {
 		chat_id: 0,
 		who: '',
 		messages: [],
+		fist_message_id: 0,
+		scrollHeight: 0,
 	});
 
 	const {
@@ -37,12 +37,15 @@ export default function ChatContent({ chatId }) {
 	} = useSendSms();
 
 	const {
-		on, off,             				  // function - подписка на события
-		connected,           				  // boolean - подключен ли WebSocket
-		connectionStatus,    				  // string - статус подключения
-		chats,  				      		  // [] - список чатов
-		loadingChat,						  // загрузка сообщений
-		fetchChatMessages,					  // подгрузить чат с сообщениями
+		/* socket */
+		on, off,            // function - подписка на события
+		connected,          // boolean - подключен ли WebSocket
+		connectionStatus,   // string - статус подключения
+		/* info */
+		chats,  			// [] - список чатов
+		loadingChat,		// загрузка сообщений
+		/* methods */
+		fetchChatMessages,	// подгрузить чат с сообщениями
 	} = useChatSocket();
 
 	useEffect(() => {
