@@ -17,10 +17,10 @@ const ProjectTabSectionTorg = (props) => {
   const [collapsed, setCollapsed] = useState(false);
   const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
 
-  const [data, setData] = useState(null);
+    const [data, setData] = useState(null);
     const [orgId, setOrgId] = useState(0);
-  const [itemId, setItemId] = useState(null);
-  const [projType, setProjType] = useState(0); 
+    const [itemId, setItemId] = useState(null);
+    const [projType, setProjType] = useState(0); 
     const [deleted, setDeleted] = useState(0);
     const [name, setName] = useState('');
     const [equipment, setEquipment] = useState('');
@@ -44,7 +44,7 @@ const ProjectTabSectionTorg = (props) => {
     const [authorId,    setAuthorId] = useState(null);
     const [author,    setAuthor] = useState(null);
 
-    const [searchErector, setSearchErector] = useState('');
+    const [searchErector, setSearchErector] = useState(props.data.erector_id);
     const [searchBid, setSearchBid]         = useState('');
  
 
@@ -85,6 +85,7 @@ const ProjectTabSectionTorg = (props) => {
     console.log('props.data', props.data)
     if (props.data.id) {
        setItemId(props.data.id);
+       setOrgId(props.data.id_orgs);
         setProjType(props.data.id8an_projecttype);
         setName(props.data.name);
         setEquipment(props.data.equipment);
@@ -100,7 +101,7 @@ const ProjectTabSectionTorg = (props) => {
         setTypeEac(props.data.typepaec);
         setDateEnd(props.data.date_end);
         setErector(props.data.erector_id);
-        // setSearchErector(props.data.erector_id);
+        setSearchErector(props.data.erector_id);
         // setLinkbidId(props.data?.bidsId );
         setBidsId(props.data?.bidsId );
         setDateCreate(props.data.date_create);
@@ -280,6 +281,7 @@ useEffect(() => {
             data.typeEac = typeEac;
             data.dateEnd = dateEnd;
             data.erector = erector;
+            data.erector_id = erector; 
             data.bidsId = bidsId;
             data.idCompany = idCompany;
             data.authorId = authorId;
@@ -327,6 +329,7 @@ useEffect(() => {
             newData.typeEac = typeEac;
             newData.dateEnd = dateEnd;
             newData.erector = erector;
+            newData.erector_id = erector; 
             newData.bidsId = bidsId;
             newData.idCompany = idCompany;
             newData.authorId = authorId;
@@ -835,7 +838,7 @@ useEffect(() => {
                       setBLUR_FLAG(dayjs().unix())
                       setACTION_FLAG(1);
                       }}
-                    disabled={true}
+                    disabled={!editMode}
 
                     >
                       {mountOrgList && mountOrgList?.map(opt => (
@@ -851,8 +854,6 @@ useEffect(() => {
                   required: false,
                   value: erector
               },
-
-
             ]}
             extratext={[]}
           />
@@ -884,7 +885,7 @@ useEffect(() => {
                       setBLUR_FLAG(dayjs().unix());
                       setACTION_FLAG(1);
                     }}
-                    disabled={true}
+                    disabled={!editMode}
                     />
                     ,
                   required: false,
