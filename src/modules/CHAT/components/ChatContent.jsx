@@ -28,15 +28,6 @@ export default function ChatContent({ chatId }) {
 	});
 
 	const {
-		sendSms,
-		loadingSendSms,
-		errorSendSms,
-		successSendSms,
-		newId,
-		timestamp,
-	} = useSendSms();
-
-	const {
 		/* socket */
 		on, off,            // function - подписка на события
 		connected,          // boolean - подключен ли WebSocket
@@ -44,23 +35,24 @@ export default function ChatContent({ chatId }) {
 		/* info */
 		chats,  			// [] - список чатов
 		loadingChat,		// загрузка сообщений
+		loadingSendSms,		// ожидание ответа от сервера при отправке сообщения
 		/* methods */
 		fetchChatMessages,	// подгрузить чат с сообщениями
+		sendSms,			// отправить сообщение
 	} = useChatSocket();
 
 	useEffect(() => {
 		const foundedChat = chats.find(chat => chat.chat_id === chatId || chat.id === chatId);
-		if (!foundedChat && !loadingChat && chatId) {
+		if (!foundedChat && chatId&& !loadingChat && !loadingSendSms) {
 			console.log('Fetching chat messages for:', chatId);
 			fetchChatMessages(chatId);
 		} else if (foundedChat) {
 			console.log('Chat found:', foundedChat);
 			setChat(foundedChat);
 		}
-	}, [chats, chatId, loadingChat]);
+	}, [chats, chatId, loadingChat, loadingSendSms]);
 
-	const normalizeMessage = useCallback(
-		(msg) => {
+	const normalizeMessage = useCallback((msg) => {
 			return {
 				fromId: msg.from_id,
 				id: msg.id,
@@ -72,10 +64,7 @@ export default function ChatContent({ chatId }) {
 				isSending: msg.isSending || false,
 				_raw: msg,
 			};
-		},
-		[chat.who, currentUserId]
-	);
-
+		}, [chat.who, currentUserId]);
 	const allMessages = useMemo(() => {
 		const combined = [...chat.messages, ...localMessages];
 		const existingIds = new Set();
@@ -92,7 +81,6 @@ export default function ChatContent({ chatId }) {
 			.filter((msg) => msg.text && msg.text.trim() !== '')
 			.sort((a, b) => a.timestamp - b.timestamp);
 	}, [chat, localMessages, normalizeMessage]);
-
 	const messagesWithDividers = useMemo(() => {
 		if (allMessages.length === 0) return [];
 		const items = [];
@@ -108,7 +96,7 @@ export default function ChatContent({ chatId }) {
 		return items;
 	}, [allMessages]);
 
-	useEffect(() => {
+	/*useEffect(() => {
 		if (!newId || !timestamp) return;
 
 		const localMsgUpd = [...localMessages];
@@ -122,7 +110,7 @@ export default function ChatContent({ chatId }) {
 			};
 			setLocalMessages(localMsgUpd);
 		}
-	}, [newId, timestamp]);
+	}, [newId, timestamp]);*/
 	useEffect(() => {
 		setCurrentUserId(userdata?.user?.id);
 	}, [userdata]);
@@ -136,19 +124,13 @@ export default function ChatContent({ chatId }) {
 	}, [chatId]);
 
 	const handleSend = (trimmed) => {
-		const createdAt = Number(dayjs().unix());
-		sendSms({to: chatId, text: trimmed, answer: null, timestamp: createdAt});
-		const localMsg = {
-			from_id: currentUserId,
-			id: createdAt,
+		sendSms({
+			to: chatId,
 			text: trimmed,
-			created_at: createdAt,
-			updated_at: createdAt,
 			answer: null,
-			isLocal: true,
-			isSending: true,
-		};
-		setLocalMessages([...localMessages, localMsg]);
+			timestamp: Number(dayjs().unix()),
+			from_id: currentUserId
+		});
 	};
 
 	return (
