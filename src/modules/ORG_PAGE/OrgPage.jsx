@@ -44,6 +44,9 @@ import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
 import CustomModal from '../../components/helpers/modals/CustomModal';
 import { FlushOrgData, IsSameComparedSomeOrgData, MAIN_ORG_DATA_IGNORE_KEYS } from './components/handlers/OrgPageDataHandler';
 import TabNotesTorg from '../TORG_PAGE/components/tabs/TabNotesTorg';
+import TabProjectsTorg from '../TORG_PAGE/components/tabs/TabProjectsTorg';
+
+
 
 const tabNames = [
 	{
@@ -286,8 +289,8 @@ useEffect(() => {
 		};
 		const timer = setTimeout(() => {
 							setBlockSave(false);
-						}, 3000);
-						return () => clearTimeout(timer);
+		}, 3000);
+		return () => clearTimeout(timer);
 	}, [BLOCK_DELAY]);
 
 
@@ -408,7 +411,7 @@ useEffect(() => {
 				
 				setTimeout(() => {
 					setItemId(itt);
-				}, 3200);
+				}, 2600);
 				setTimeout(() => {
 					
 					get_main_data_action(itt);
@@ -462,13 +465,7 @@ useEffect(() => {
 		// const returnPath = location.state?.from;
 		const referrer = document.referrer;
 		if (backeReturnPath) {
-			// if (backeReturnPath.includes('?')){
-			//     if (backeReturnPath.includes("target=" + itemId))
-			//     console.log('NAVIGATE', backeReturnPath  + "&target=" + itemId)
-			//     navigate(backeReturnPath  + "&target=" + itemId);
-			// } else {
-			//     console.log('NAVIGATE', backeReturnPath  + "?target=" + itemId)
-			// }
+
 			navigate(backeReturnPath);
 		} else {
 			// navigate('/orgs');
@@ -775,7 +772,7 @@ useEffect(() => {
 			
 			update_data_action();
 			console.log('SAVEDATA FIN', COLLECTOR);
-		}, 3000);
+		}, 1500);
 
 			setIsSmthChanged(false);
 			setTempMainData(null);
@@ -793,61 +790,7 @@ useEffect(() => {
 	}, [COLLECTOR]);
 
 
-	// const handleMaintabObjectDataChange = (key, dataarr) => {
-	// 	if (!editMode){ return; }
-	// 	console.log('MAIN TAB OBJECT SETTER');
-	// 	console.log(key, "-", dataarr);
 
-	// 	if (key === 'emails'){
-	// 		setTempMain_emails(dataarr);
-	// 	} else if (key === 'active_licenses'){
-	// 		setTempMain_an_licenses(dataarr);
-	// 	} else if (key === 'active_tolerance'){
-	// 		setTempMain_an_tolerances(dataarr);
-	// 	} else if (key === 'active_licenses_bo'){
-	// 		setTempMain_bo_licenses(dataarr);
-	// 	} else if (key === 'requisites'){
-	// 		setTempMain_an_requisites(dataarr);
-	// 	} else if (key === 'phones'){
-	// 		setTempMain_phones(dataarr);
-	// 	// } else if (key === 'contacts'){
-	// 	// 	setTempMain_contacts(dataarr);
-	// 	} else if (key === 'address'){
-	// 		setTempMain_addresses(dataarr);
-	// 	} else if (key === 'legaladdresses'){
-	// 		setTempMain_legalAddresses(dataarr);
-	// 	} else if (key === 'emails'){
-	// 		setTempMain_emails(dataarr);
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	if (!editMode){ return; }
-	// 	let copyData = tempMainData ? tempMainData :  JSON.parse(JSON.stringify(baseMainData));
-	// 		if (copyData){
-	// 			copyData.active_licenses =     tempMain_an_licenses;
-	// 			copyData.active_tolerance =    tempMain_an_tolerances;
-	// 			copyData.active_licenses_bo =  tempMain_bo_licenses;
-	// 			copyData.legaladdresses =      tempMain_legalAddresses;
-	// 			copyData.address =             tempMain_addresses;
-	// 			copyData.emails =              tempMain_emails;
-	// 			copyData.phones =              tempMain_phones;
-	// 			copyData.requisites =          tempMain_an_requisites;
-	// 			copyData.contacts =            tempMain_contacts;
-	// 			setTempMainData(copyData);
-	// 			console.log('END POINT ALT', copyData);
-	// 		}
-	// }, [
-	// 	tempMain_an_licenses,
-	// 	tempMain_an_tolerances,
-	// 	tempMain_bo_licenses,
-	// 	tempMain_legalAddresses,
-	// 	tempMain_addresses,
-	// 	tempMain_emails,
-	// 	tempMain_phones,
-	// 	tempMain_an_requisites,
-	// 	tempMain_contacts
-	// ]);
 
 
 
@@ -889,26 +832,6 @@ useEffect(() => {
 
 
 
-
-
-		// useEffect(() => {
-		// 	if (tempCallsData || tempNotesData || tempProjectsData || !IsSameComparedSomeOrgData(tempMainData, baseMainData)  ||
-		// 		tempMain_addresses?.length > 0 || tempMain_an_licenses?.length > 0 || tempMain_an_requisites?.length > 0 ||
-		// 		tempMain_an_requisites?.length > 0 || tempMain_an_tolerances?.length > 0 || tempMain_emails?.length > 0 ||
-		// 		tempMain_legalAddresses?.length > 0 || tempMain_phones?.length > 0
-		// 	){
-		// 		console.log('CHANGE LISTENER', tempCallsData, tempNotesData, tempProjectsData);
-
-		// 		setIsSmthChanged(true);
-		// 	}  else 
-		// 		{
-		// 		setIsSmthChanged(false);
-		// 	}
-		// }, [tempCallsData, tempMainData, tempNotesData, tempProjectsData,
-		// 	tempMain_addresses, tempMain_an_licenses, tempMain_an_requisites,
-		// 	tempMain_an_requisites, tempMain_an_tolerances, tempMain_emails,
-		// 	tempMain_legalAddresses, tempMain_phones
-		// ]);
 
 	const customClick = (button_id) => {
 		if (button_id === 1){
@@ -1187,40 +1110,47 @@ useEffect(() => {
 		if (section === 'notes'){
 			let catchObject = tempNotesData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.action && data.action === 'delete' && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.includes('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
 				}
 				setTempNotesData(tempNotesData.map(item => item.id === id ? data : item));
 			} else {
-				setTempNotesData([data, ...tempNotesData]);
+				// Чтоб не залетел пустой
+				if (!(data.command && data.command === 'create' && data.deleted && data.id.includes('new'))){
+					setTempNotesData([data, ...tempNotesData]);
+				}
 			}
 		};
 		if (section === 'projects'){
 			let catchObject = tempProjectsData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.action && data.action === 'delete' && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.includes('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
 				}
 				setTempProjectsData(tempProjectsData.map(item => item.id === id ? data : item));
 			} else {
-				setTempProjectsData([data, ...tempProjectsData]);
+				if (!(data.command && data.command === 'create' && data.deleted && data.id.includes('new'))){
+					setTempProjectsData([data, ...tempProjectsData]);
+				}
 			}
 		};
 		if (section === 'calls'){
 			let catchObject = tempCallsData.find((item)=> item.id === id);
 			if (catchObject){
-				if (data.action && data.action === 'delete' && data.id.contains('new')){
+				if (data.command && data.command === 'create' && data.deleted && data.id.includes('new')){
 					// Удаление временного элемента из стека
 					sectionDeleteHandler(section, id);
 					return;
 				}
 				setTempCallsData(tempCallsData.map(item => item.id === id ? data : item));
 			} else {
-				setTempCallsData([data, ...tempCallsData]);
+				if (!(data.command && data.command === 'create' && data.deleted && data.id.includes('new'))){
+					setTempCallsData([data, ...tempCallsData]);
+				}
 			}
 		};
 	}
@@ -1445,7 +1375,7 @@ useEffect(() => {
 							on_change_data={handleTabDataChange}
 						/>
 
-						<ProjectsTabPage
+						{/* <ProjectsTabPage
 							show={activeTab === 'p'}
 							edit_mode={editMode}
 							item_id={itemId}
@@ -1461,6 +1391,27 @@ useEffect(() => {
 							on_change_data={handleTabDataChange}
 							selects={baseFiltersData}
 							main_data={baseMainData}
+						/> */}
+
+						<TabProjectsTorg
+								active_tab={activeTab === 'p'}
+								edit_mode={editMode}
+								org_id={itemId}
+												userdata={userdata}
+								on_change_section={sectionUpdateHandler}
+								on_delete_section={sectionDeleteHandler}
+
+								call_to_save={callToSaveAction}
+								base_data={baseProjectsData}
+								// on_save={handleDataChangeApprove}
+								active_page={pageProject}
+								on_change_page={(p) => {
+									setPageProject(p);
+								}}
+								current_page={pageProject}
+								on_change_data={handleTabDataChange}
+								selects={baseFiltersData}
+								main_data={baseMainData}
 						/>
 
 							
@@ -1482,6 +1433,7 @@ useEffect(() => {
 							}}
 							current_page={pageNotes}
 							on_change_data={handleTabDataChange}
+							selects={baseFiltersData}
 						/>
 
 						{/* <NotesTabPage

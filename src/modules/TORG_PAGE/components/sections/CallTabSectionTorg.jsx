@@ -52,7 +52,10 @@ const CallTabSectionTorg = (props) => {
 
   const [allowDelete, setAllowDelete] = useState(true);
 
-    const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+  // Флаг для блюра — обновление в массиве уровнем ниже
+  const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
+  // Флаг для действия — отправка в глобальный коллектор
+  const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
 
   // ██    ██ ███████ ███████ 

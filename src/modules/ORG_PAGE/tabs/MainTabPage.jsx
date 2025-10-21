@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Badge, Button, Collapse, Empty, Input, Select } from 'antd';
+import { Badge, Button, Collapse, Empty, Input, Select, Spin } from 'antd';
 import {
   BuildingLibraryIcon,
   BuildingOfficeIcon,
@@ -949,7 +949,7 @@ const MainTabPage = (props) => {
 
 
       <div className={'sa-org-main-collapse sa-org-main-collapse-stack'}>
-
+      <Spin spinning={!itemId || !baseData}>
         {/* ============================= COLLAPSE ITEM ================================ */}
 
         <div className={`sa-org-main-collapse-item sa-org-collapse-item ${!collapsed_rows.includes('main_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
@@ -1016,7 +1016,7 @@ const MainTabPage = (props) => {
                 }}
                 edit_mode={editMode}
                 selects={selects}
-
+                org_id={itemId}
               />
 
           </div>
@@ -1091,6 +1091,7 @@ const MainTabPage = (props) => {
                   selects={selects}
                   author={author}
                   curator={curator}
+                  org_id={itemId}
                 />
           </div>
         </div>
@@ -1310,6 +1311,7 @@ const MainTabPage = (props) => {
                 props.on_change_main_data(mergedData);
               }}
               edit_mode={editMode}
+              org_id={itemId}
               />
           </div>
 
@@ -1714,6 +1716,7 @@ const MainTabPage = (props) => {
 
       <div style={{height: '40vh'}}
       ></div>
+      </Spin>
       </div>
 
 
