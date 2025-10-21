@@ -2,7 +2,7 @@ import './App.css';
 
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom';
-import { BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE, BFF_PORT } from './config/config';
+import {BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE, BFF_PORT, HTTP_HOST} from './config/config';
 import './assets/theme.css';
 import './assets/layout.css';
 import './assets/table.css';
@@ -96,7 +96,7 @@ export const App = () => {
 
 	return (
 		<UserDataProvider>
-			<ChatSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `http://192.168.1.16:${BFF_PORT}`}>
+			<ChatSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
 				<BrowserRouter basename={BASE_NAME}>
 					<div className={'app'}>
 						<TopMenu changed_user_data={() => get_userdata()} userdata={userdata} />
