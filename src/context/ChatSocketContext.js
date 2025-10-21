@@ -109,7 +109,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 			// Создаем копию массива чатов
 			const chatsUpd = [...currentChats];
-			const chatIndex = chatsUpd.findIndex(chat => chat.id === msg.from_id);
+			const chatIndex = chatsUpd.findIndex(chat => chat.chat_id === msg.from_id);
 
 			if (chatIndex === -1) {
 				console.log('Chat not found, might need to fetch chats list');
