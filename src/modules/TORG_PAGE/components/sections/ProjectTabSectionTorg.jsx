@@ -99,7 +99,7 @@ const ProjectTabSectionTorg = (props) => {
         setTypeEac(props.data.typepaec);
         setDateEnd(props.data.date_end);
         setErector(props.data.erector_id);
-        setSearchErector(props.data.erector_id);
+        // setSearchErector(props.data.erector_id);
         // setLinkbidId(props.data?.bidsId );
         setBidsId(props.data?.bidsId );
         setDateCreate(props.data.date_create);
@@ -240,7 +240,7 @@ useEffect(() => {
 
     useEffect(() => {
       get_orgautofill_action();
-    }, [searchErector, erector]);
+    }, [searchErector]);
 
     useEffect(() => {
         get_bidautofill_action();
@@ -355,6 +355,11 @@ useEffect(() => {
       dateEnd, erector, bidsId, idCompany,
       authorId, author, deleted
   ]);
+
+      useEffect(() => {
+        console.log("OLX",mountOrgList);
+        console.log("BMX", mountBidList);
+      }, [mountOrgList, mountBidList]);
 
 
   return (
