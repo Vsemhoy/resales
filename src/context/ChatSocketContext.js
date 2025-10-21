@@ -1,9 +1,8 @@
 import {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {io} from 'socket.io-client';
 import {CSRF_TOKEN, PRODMODE} from '../config/config.js';
-import {CHAT_LIST_MOCK, CHAT_MOCK, MOCK} from '../modules/CHAT/mock/mock.js';
+import {CHAT_LIST_MOCK, CHAT_MOCK} from '../modules/CHAT/mock/mock.js';
 import {useUserData} from "./UserDataContext";
-import useSms from "../hooks/sms/useSms";
 import {PROD_AXIOS_INSTANCE} from "../config/Api";
 
 
@@ -209,9 +208,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.log('[useSendSms] Ответ от сервера:', response);
 
 			if (response.data) {
-				setSuccessSendSms(true);
-				setNewId(response.data.id);
-				setTimestamp(response.data.timestamp);
+				updateMessageId(response.data.id, response.data.timestamp, to);
 			}
 		} catch (err) {
 			console.error('[useSendSms] Ошибка:', err);
@@ -229,7 +226,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 	const addMessageToChat = (msg, to = null) => {
 		const currentChats = chatsRef.current;
 		const chatsUpd = [...currentChats];
-		let chatIndex = -1;
+		let chatIndex;
 		if (to) {
 			chatIndex = chatsUpd.findIndex(chat => chat.chat_id === to);
 		} else {
@@ -239,11 +236,29 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.log('Chat not found, might need to fetch chats list');
 			return;
 		}
-		const updatedChat = {
+		chatsUpd[chatIndex] = {
 			...chatsUpd[chatIndex],
 			messages: [...chatsUpd[chatIndex].messages, msg]
 		};
-		chatsUpd[chatIndex] = updatedChat;
+		setChats(chatsUpd);
+	};
+
+	const updateMessageId = (id, timestamp, to) => {
+		const currentChats = chatsRef.current;
+		const chatsUpd = [...currentChats];
+		const chatIndex = chatsUpd.findIndex(chat => chat.chat_id === to);
+		if (chatIndex === -1) {
+			console.log('Chat not found, might need to fetch chats list');
+			return;
+		}
+		const messagesUpd = chatsUpd[chatIndex].messages;
+		const msgToUpd = messagesUpd.find(msg => msg.created_at === timestamp);
+		msgToUpd.id = id;
+		msgToUpd.isSending = false;
+		chatsUpd[chatIndex] = {
+			...chatsUpd[chatIndex],
+			messages: [...messagesUpd]
+		};
 		setChats(chatsUpd);
 	};
 
