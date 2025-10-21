@@ -129,7 +129,7 @@ const OrgPage = (props) => {
 	const [COLLECTOR, setCOLLECTOR] = useState({});
 
 	const [baseMainData, setBaseMainData] = useState(null);
-	const [baseProjectsData, setBaseProjectsData] = useState(null);
+	// const [baseProjectsData, setBaseProjectsData] = useState(null);
 	const [baseCallsData, setBaseCallsData] = useState(null);
 	const [baseNotesData, setBaseNotesData] = useState(null);
 
@@ -338,7 +338,7 @@ useEffect(() => {
 			get_main_data_action(item_id);
 			get_notes_data_action(item_id);
 			get_org_calls_action(item_id);
-			get_projects_data_action(item_id);
+			// get_projects_data_action(item_id);
 
       get_departs();
 		} else {
@@ -346,7 +346,7 @@ useEffect(() => {
 
 			setBaseMainData(FlushOrgData(ORGLIST_MODAL_MOCK_MAINTAB));
 			setBaseNotesData(MODAL_NOTES_LIST);
-			setBaseProjectsData(MODAL_PROJECTS_LIST);
+			// setBaseProjectsData(MODAL_PROJECTS_LIST);
 			setBaseCallsData(MODAL_CALLS_LIST);
 
       setDepartList(DEPARTAMENTS_MOCK);
@@ -417,7 +417,7 @@ useEffect(() => {
 					get_main_data_action(itt);
 					get_notes_data_action(itt);
 					get_org_calls_action(itt);
-					get_projects_data_action(itt);
+					// get_projects_data_action(itt);
 
 				}, 1000);
 				} else {
@@ -432,7 +432,7 @@ useEffect(() => {
 					setTimeout(() => {
 						setBaseMainData(FlushOrgData(ORGLIST_MODAL_MOCK_MAINTAB));
 						setBaseNotesData(MODAL_NOTES_LIST);
-						setBaseProjectsData(MODAL_PROJECTS_LIST);
+						// setBaseProjectsData(MODAL_PROJECTS_LIST);
 						setBaseCallsData(MODAL_CALLS_LIST);
 	
 					}, 1000);
@@ -553,32 +553,32 @@ useEffect(() => {
 		}
 	};
 
-	const get_projects_data_action = async (id) => {
-		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/p', {
-				data: {
-					page: pageProject,
-					limit: onPage,
-				},
-				_token: CSRF_TOKEN,
-			});
-			console.log('response', response);
-			if (response.data) {
-				// if (props.changed_user_data){
-				//     props.changed_user_data(response.data);
-				// }
-				setBaseProjectsData(response.data.content);
-				setLoading(false);
+	// const get_projects_data_action = async (id) => {
+	// 	try {
+	// 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/p', {
+	// 			data: {
+	// 				page: pageProject,
+	// 				limit: onPage,
+	// 			},
+	// 			_token: CSRF_TOKEN,
+	// 		});
+	// 		console.log('response', response);
+	// 		if (response.data) {
+	// 			// if (props.changed_user_data){
+	// 			//     props.changed_user_data(response.data);
+	// 			// }
+	// 			setBaseProjectsData(response.data.content);
+	// 			setLoading(false);
 
-			}
-		} catch (e) {
-			console.log(e);
-		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 1000);
-		}
-	};
+	// 		}
+	// 	} catch (e) {
+	// 		console.log(e);
+	// 	} finally {
+	// 		setTimeout(() => {
+	// 			setLoading(false);
+	// 		}, 1000);
+	// 	}
+	// };
 
 	const get_notes_data_action = async (id) => {
 		try {
@@ -754,11 +754,11 @@ useEffect(() => {
 		}
 	}, [pageCalls]);
 
-	useEffect(() => {
-		if (PRODMODE){
-			get_projects_data_action(itemId);
-		}
-	}, [pageProject]);
+	// useEffect(() => {
+	// 	if (PRODMODE){
+	// 		get_projects_data_action(itemId);
+	// 	}
+	// }, [pageProject]);
 
 
 	const handleSaveData = () => {
@@ -802,11 +802,11 @@ useEffect(() => {
 		if (!editMode) return;
 		console.log('END POOINT', tab_name, data);
 	 if (tab_name === 'projects'){
-			if (JSON.stringify(data) !== JSON.stringify(baseProjectsData)){
+			// if (JSON.stringify(data) !== JSON.stringify(baseProjectsData)){
 				setTempProjectsData(data);
-			} else {
-				setTempProjectsData([]);
-			}
+			// } else {
+			// 	setTempProjectsData([]);
+			// }
 
 		} else if (tab_name === 'notes'){
 			if (JSON.stringify(data) !== JSON.stringify(baseNotesData)){
@@ -850,7 +850,7 @@ useEffect(() => {
 		get_main_data_action(iid);
 		get_notes_data_action(iid);
 		get_org_calls_action(iid);
-		get_projects_data_action(iid);
+		// get_projects_data_action(iid);
 
 			setTimeout(() => {
 				setTempMainData(null);
@@ -1402,7 +1402,7 @@ useEffect(() => {
 								on_delete_section={sectionDeleteHandler}
 
 								call_to_save={callToSaveAction}
-								base_data={baseProjectsData}
+								// base_data={baseProjectsData}
 								// on_save={handleDataChangeApprove}
 								active_page={pageProject}
 								on_change_page={(p) => {
