@@ -24,8 +24,9 @@ export const ChatSocketProvider = ({ children, url }) => {
 	chatsRef.current = chats;
 	const [currentChatId, setCurrentChatId] = useState(0); // открытый чат
 
-	const [loadingChatList, setLoadingChatList] = useState(false); // сообщения по chatId
-	const [loadingChat, setLoadingChat] = useState(false); // сообщения по chatId
+	const [loadingChatList, setLoadingChatList] = useState(false); // ожидаем ответа со списком чатов
+	const [loadingChat, setLoadingChat] = useState(false); // ожидаем ответа с чатом
+	const [loadingSendSms, setLoadingSendSms] = useState(false); // ожидаем ответа при отправке сообщения
 
 
 	const [search, setSearch] = useState(false); // поиск по чатам
@@ -86,69 +87,22 @@ export const ChatSocketProvider = ({ children, url }) => {
 			socket.emit('subscribeToChat', userId);
 		});
 		// --- получаем новое сообщение ---
-		/*socket.on('new:sms', (data) => {
-			console.log('WS new:sms', data);
-
-			const chatsUpd = [...chats];
-			const msg = data.right;
-			const chat = chatsUpd.find(chat => chat.id === msg.from_id);
-			if (!chat) return;
-			chat.messages.push(msg);
-			setChats(chatsUpd);
-
-
-			emitToListeners('message:new', msg);
-			emitToListeners('new:sms', data);
-		});*/
 		socket.on('new:sms', (data) => {
 			console.log('WS new:sms', data);
 
-			// Используем chatsRef.current вместо chats
-			const currentChats = chatsRef.current;
-			const msg = data.right;
+			addMessageToChat(data.right);
 
-			// Создаем копию массива чатов
-			const chatsUpd = [...currentChats];
-			const chatIndex = chatsUpd.findIndex(chat => chat.chat_id === msg.from_id);
-
-			if (chatIndex === -1) {
-				console.log('Chat not found, might need to fetch chats list');
-				return;
-			}
-
-			// Создаем копию чата и добавляем сообщение
-			const updatedChat = {
-				...chatsUpd[chatIndex],
-				messages: [...chatsUpd[chatIndex].messages, msg]
-			};
-
-			chatsUpd[chatIndex] = updatedChat;
-			setChats(chatsUpd);
-
-			emitToListeners('message:new', msg);
+			emitToListeners('message:new', data.right);
 			emitToListeners('new:sms', data);
 		});
 		socket.on('disconnect', (reason) => {
-			console.log('WEBSOCKET DISCONNECTED')
+			console.log('WEBSOCKET DISCONNECTED');
 			setConnected(false);
 			setConnectionStatus('disconnected');
 		});
 		socket.on('connect_error', (error) => {
-			console.log('WEBSOCKET CONNECT ERROR')
-			//console.error('❌ WebSocket connection error:', error);
+			console.log('WEBSOCKET CONNECT ERROR');
 		});
-		// Логируем все входящие события для отладки
-		/*socket.onAny((eventName, ...args) => {
-			// Особенно подробно логируем события от Laravel
-			if (eventName.startsWith('sms:')) {
-
-			}
-		});*/
-		// Логируем исходящие события
-		/*const originalEmit = socket.emit.bind(socket);
-		socket.emit = (event, ...args) => {
-			return originalEmit(event, ...args);
-		};*/
 	}, [url, emitToListeners]);
 
 	useEffect(() => {
@@ -224,10 +178,73 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [loadingChat]);
 
+	const sendSms = useCallback(async ({ to, text, answer, timestamp }) => {
+		const localMsg = {
+			from_id: userdata?.user?.id,
+			id: timestamp,
+			text: text,
+			created_at: timestamp,
+			updated_at: timestamp,
+			answer: null,
+			isLocal: true,
+			isSending: true,
+		};
+		addMessageToChat(localMsg, to);
+		setLoadingSendSms(true);
+		try {
+			const formData = new FormData();
+			formData.append('_token', CSRF_TOKEN);
+			formData.append(
+				'data',
+				JSON.stringify({
+					to,
+					text,
+					answer,
+					timestamp,
+				})
+			);
+			console.log(to);
+			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
+
+			console.log('[useSendSms] Ответ от сервера:', response);
+
+			if (response.data) {
+				setSuccessSendSms(true);
+				setNewId(response.data.id);
+				setTimestamp(response.data.timestamp);
+			}
+		} catch (err) {
+			console.error('[useSendSms] Ошибка:', err);
+		} finally {
+			setLoadingSendSms(false);
+		}
+	}, [loadingSendSms]);
+
 	const setChatsPrepare = (newChat) => {
 		if (!chats.find(chat => +chat.id === +newChat.id)) {
 			setChats([...chats, newChat]);
 		}
+	};
+
+	const addMessageToChat = (msg, to = null) => {
+		const currentChats = chatsRef.current;
+		const chatsUpd = [...currentChats];
+		let chatIndex = -1;
+		if (to) {
+			chatIndex = chatsUpd.findIndex(chat => chat.chat_id === to);
+		} else {
+			chatIndex = chatsUpd.findIndex(chat => chat.chat_id === msg.from_id);
+		}
+		if (chatIndex === -1) {
+			console.log('Chat not found, might need to fetch chats list');
+			return;
+		}
+		const updatedChat = {
+			...chatsUpd[chatIndex],
+			messages: [...chatsUpd[chatIndex].messages, msg]
+		};
+		chatsUpd[chatIndex] = updatedChat;
+		setChats(chatsUpd);
 	};
 
 	return (
@@ -243,9 +260,11 @@ export const ChatSocketProvider = ({ children, url }) => {
 				currentChatId,
 				loadingChatList,
 				loadingChat,
+				loadingSendSms,
 				/* methods */
 				fetchChatsList,
 				fetchChatMessages,  /*const {messages,who,loading} = useSms({chatId,mock: CHAT_MOCK});*/
+				sendSms,
 			}}
 		>
 			{children}
