@@ -16,7 +16,6 @@ export default function ChatContent({ chatId }) {
 	const MemoChatSelfMsg = React.memo(ChatSelfMsg);
 	const MemoChatIncomingMsg = React.memo(ChatIncomingMsg);
 	const MemoChatDivider = React.memo(ChatDivider);
-	const [localMessages, setLocalMessages] = useState([]);
 	const [currentUserId, setCurrentUserId] = useState(null);
 	const { Content, Footer } = Layout;
 	const [chat, setChat] = useState({
@@ -66,7 +65,7 @@ export default function ChatContent({ chatId }) {
 			};
 		}, [chat.who, currentUserId]);
 	const allMessages = useMemo(() => {
-		const combined = [...chat.messages, ...localMessages];
+		const combined = [...chat.messages];
 		const existingIds = new Set();
 		const uniqueMessages = combined.filter((msg) => {
 			const id = msg.id;
@@ -80,7 +79,7 @@ export default function ChatContent({ chatId }) {
 			.map(normalizeMessage)
 			.filter((msg) => msg.text && msg.text.trim() !== '')
 			.sort((a, b) => a.timestamp - b.timestamp);
-	}, [chat, localMessages, normalizeMessage]);
+	}, [chat, normalizeMessage]);
 	const messagesWithDividers = useMemo(() => {
 		if (allMessages.length === 0) return [];
 		const items = [];
@@ -96,21 +95,6 @@ export default function ChatContent({ chatId }) {
 		return items;
 	}, [allMessages]);
 
-	/*useEffect(() => {
-		if (!newId || !timestamp) return;
-
-		const localMsgUpd = [...localMessages];
-		const localMsgIdx = localMessages.findIndex((msg) => +msg.created_at === +timestamp);
-
-		if (localMsgIdx !== -1) {
-			localMsgUpd[localMsgIdx] = {
-				...localMsgUpd[localMsgIdx],
-				id: newId,
-				isSending: false
-			};
-			setLocalMessages(localMsgUpd);
-		}
-	}, [newId, timestamp]);*/
 	useEffect(() => {
 		setCurrentUserId(userdata?.user?.id);
 	}, [userdata]);
@@ -119,9 +103,6 @@ export default function ChatContent({ chatId }) {
 			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
 		}
 	}, [allMessages]);
-	useEffect(() => {
-		setLocalMessages([]);
-	}, [chatId]);
 
 	const handleSend = (trimmed) => {
 		sendSms({
