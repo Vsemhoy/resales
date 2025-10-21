@@ -20,6 +20,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 	const [chatsList, setChatsList] = useState([]); // боковой список чатов (последнее сообщение)
 	const [chats, setChats] = useState([]); // все чаты
+	const chatsRef = useRef();
+	chatsRef.current = chats;
 	const [currentChatId, setCurrentChatId] = useState(0); // открытый чат
 
 	const [loadingChatList, setLoadingChatList] = useState(false); // сообщения по chatId
