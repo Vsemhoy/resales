@@ -177,9 +177,9 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [loadingChat]);
 
-	const sendSms = useCallback(async ({ to, text, answer, timestamp }) => {
+	const sendSms = useCallback(async ({ to, text, answer, timestamp, from_id }) => {
 		const localMsg = {
-			from_id: userdata?.user?.id,
+			from_id: from_id,
 			id: timestamp,
 			text: text,
 			created_at: timestamp,
