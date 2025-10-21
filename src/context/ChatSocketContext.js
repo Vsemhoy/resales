@@ -86,7 +86,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			socket.emit('subscribeToChat', userId);
 		});
 		// --- получаем новое сообщение ---
-		socket.on('new:sms', (data) => {
+		/*socket.on('new:sms', (data) => {
 			console.log('WS new:sms', data);
 
 			const chatsUpd = [...chats];
@@ -96,6 +96,34 @@ export const ChatSocketProvider = ({ children, url }) => {
 			chat.messages.push(msg);
 			setChats(chatsUpd);
 
+
+			emitToListeners('message:new', msg);
+			emitToListeners('new:sms', data);
+		});*/
+		socket.on('new:sms', (data) => {
+			console.log('WS new:sms', data);
+
+			// Используем chatsRef.current вместо chats
+			const currentChats = chatsRef.current;
+			const msg = data.right;
+
+			// Создаем копию массива чатов
+			const chatsUpd = [...currentChats];
+			const chatIndex = chatsUpd.findIndex(chat => chat.id === msg.from_id);
+
+			if (chatIndex === -1) {
+				console.log('Chat not found, might need to fetch chats list');
+				return;
+			}
+
+			// Создаем копию чата и добавляем сообщение
+			const updatedChat = {
+				...chatsUpd[chatIndex],
+				messages: [...chatsUpd[chatIndex].messages, msg]
+			};
+
+			chatsUpd[chatIndex] = updatedChat;
+			setChats(chatsUpd);
 
 			emitToListeners('message:new', msg);
 			emitToListeners('new:sms', data);
@@ -131,6 +159,9 @@ export const ChatSocketProvider = ({ children, url }) => {
 			};
 		}
 	}, [userdata, connect]);
+	useEffect(() => {
+		chatsRef.current = chats;
+	}, [chats]);
 
 	const fetchChatsList = useCallback(async () => {
 		if (loadingChatList) return;
