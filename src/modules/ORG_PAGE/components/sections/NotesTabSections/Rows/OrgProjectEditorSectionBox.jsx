@@ -330,6 +330,10 @@ const handleChangeData = (changed_data) => {
 
 
     
+    useEffect(() => {
+      console.log("OLX",mountOrgList);
+      console.log("BMX", mountBidList);
+    }, [dependencies]);
 
   return (
     <div className={'sk-omt-stack'}
