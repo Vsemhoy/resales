@@ -124,7 +124,13 @@ export default function ChatContent({ chatId }) {
 	}, [chatId]);
 
 	const handleSend = (trimmed) => {
-		sendSms({to: chatId, text: trimmed, answer: null, timestamp: Number(dayjs().unix())});
+		sendSms({
+			to: chatId,
+			text: trimmed,
+			answer: null,
+			timestamp: Number(dayjs().unix()),
+			from_id: currentUserId
+		});
 	};
 
 	return (
