@@ -10,6 +10,7 @@ import { after } from 'lodash';
 import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
 import { ORG_ERECTORS_MOCK, ORG_LINKBID_MOCK } from '../../../ORG_PAGE/components/mock/ORGPAGEMOCK';
+import { Option } from 'antd/es/mentions';
 
 const ProjectTabSectionTorg = (props) => {
   const [refreshMark, setRefreshMark] = useState(null);
@@ -824,7 +825,7 @@ useEffect(() => {
                     onSearch={(et)=>{
                       setSearchErector(et)
                       }}                    
-                    options={mountOrgList}
+                    
                     required={false}
                     value={erector}
                     placeholder={'ID организации'}
@@ -834,9 +835,16 @@ useEffect(() => {
                       setBLUR_FLAG(dayjs().unix())
                       setACTION_FLAG(1);
                       }}
-                    disabled={!editMode}
+                    disabled={true}
 
-                    />
+                    >
+                      {mountOrgList && mountOrgList?.map(opt => (
+                        <Option key={'olokm' + opt.value} value={opt.value}>
+                          {opt.label}
+                        </Option>
+                      ))}
+
+                      </Select>
 
   
                   ,
@@ -876,7 +884,7 @@ useEffect(() => {
                       setBLUR_FLAG(dayjs().unix());
                       setACTION_FLAG(1);
                     }}
-                    disabled={!editMode}
+                    disabled={true}
                     />
                     ,
                   required: false,
