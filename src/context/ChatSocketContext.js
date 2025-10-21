@@ -18,6 +18,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 	userdataRef.current = userdata;
 
 	const [chatsList, setChatsList] = useState([]); // боковой список чатов (последнее сообщение)
+	const chatsListRef = useRef();
+	chatsListRef.current = chatsList;
 	const [chats, setChats] = useState([]); // все чаты
 	const chatsRef = useRef();
 	chatsRef.current = chats;
@@ -26,10 +28,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 	const [loadingChatList, setLoadingChatList] = useState(false); // ожидаем ответа со списком чатов
 	const [loadingChat, setLoadingChat] = useState(false); // ожидаем ответа с чатом
 	const [loadingSendSms, setLoadingSendSms] = useState(false); // ожидаем ответа при отправке сообщения
-
-
-	const [search, setSearch] = useState(false); // поиск по чатам
-
 
 	const listeners = useRef({});
 
@@ -48,26 +46,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 	}, []);
 
 	const connect = useCallback(() => {
-		/*if (!PRODMODE) {
-			setConnected(true);
-			setConnectionStatus('mock');
-
-			// --- загружаем mock-чаты ---
-			const mockChats = MOCK?.content?.sms || [];
-			setChats(mockChats.map((sms) => ({ chat_id: sms.chat_id, ...sms })));
-
-			// --- загружаем mock-сообщения по chatId ---
-			const chatMessagesMap = {};
-			mockChats.forEach((sms) => {
-				const chatId = sms.chat_id;
-				// берем из CHAT_MOCK все сообщения, относящиеся к этому чату
-				chatMessagesMap[chatId] = (CHAT_MOCK?.content?.messages || [])
-					.filter((msg) => msg.from_id === sms.from.id || msg.to?.id === sms.from.id)
-					.map((msg) => ({...msg, chat_id: chatId}));
-			});
-			setMessages(chatMessagesMap);
-			return;
-		}*/
 		if (socketRef.current?.connected) {
 			return;
 		}
@@ -89,9 +67,10 @@ export const ChatSocketProvider = ({ children, url }) => {
 		socket.on('new:sms', (data) => {
 			console.log('WS new:sms', data);
 
-			addMessageToChat(data.right);
+			if (data.left) addMessageToChatList(data.left);
+			if (data.right) addMessageToChat(data.right);
 
-			emitToListeners('message:new', data.right);
+			if (data.right)  emitToListeners('message:new', data.right);
 			emitToListeners('new:sms', data);
 		});
 		socket.on('disconnect', (reason) => {
@@ -113,11 +92,14 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [userdata, connect]);
 	useEffect(() => {
+		console.log('BEFORE UPDATE CHATS chatsRef', chats);
 		chatsRef.current = chats;
 	}, [chats]);
+	useEffect(() => {
+		chatsListRef.current = chatsList;
+	}, [chatsList]);
 
-	const fetchChatsList = useCallback(async () => {
-		if (loadingChatList) return;
+	const fetchChatsList = useCallback(async (search) => {
 		setLoadingChatList(true);
 		if (PRODMODE) {
 			try {
@@ -178,7 +160,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 	}, [loadingChat]);
 
 	const sendSms = useCallback(async ({ to, text, answer, timestamp, from_id }) => {
-		const localMsg = {
+		addMessageToChat({
 			from_id: from_id,
 			id: timestamp,
 			text: text,
@@ -187,8 +169,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			answer: null,
 			isLocal: true,
 			isSending: true,
-		};
-		addMessageToChat(localMsg, to);
+		}, to);
 		setLoadingSendSms(true);
 		try {
 			const formData = new FormData();
@@ -218,48 +199,78 @@ export const ChatSocketProvider = ({ children, url }) => {
 	}, [loadingSendSms]);
 
 	const setChatsPrepare = (newChat) => {
-		if (!chats.find(chat => +chat.id === +newChat.id)) {
-			setChats([...chats, newChat]);
+		if (!chats.find(chat => +chat.chat_id === +newChat.chat_id)) {
+			console.log('BEFORE UPDATE CHATS fetchChatMessages', chats);
+			setChats(prevChats => [...prevChats, newChat]);
 		}
 	};
-
+	const addMessageToChatList = (msg) => {
+		setChatsList(prevChatsList => {
+			const chatIndex = prevChatsList.findIndex(chat => chat.chat_id === msg.chat_id);
+			if (chatIndex === -1) {
+				return [
+					prevChatsList[0],
+					msg,
+					...prevChatsList.slice(1)
+				];
+			} else {
+				return prevChatsList.map((message, index) => {
+					if (index === chatIndex) {
+						return msg;
+					}
+					return message;
+				});
+			}
+		});
+	};
 	const addMessageToChat = (msg, to = null) => {
-		const currentChats = chatsRef.current;
-		const chatsUpd = [...currentChats];
-		let chatIndex;
-		if (to) {
-			chatIndex = chatsUpd.findIndex(chat => chat.chat_id === to);
-		} else {
-			chatIndex = chatsUpd.findIndex(chat => chat.chat_id === msg.from_id);
-		}
-		if (chatIndex === -1) {
-			console.log('Chat not found, might need to fetch chats list');
-			return;
-		}
-		chatsUpd[chatIndex] = {
-			...chatsUpd[chatIndex],
-			messages: [...chatsUpd[chatIndex].messages, msg]
-		};
-		setChats(chatsUpd);
+		setChats(prevChats => {
+			const chatIdToUpdate = to || msg.from_id;
+			const chatIndex = prevChats.findIndex(chat => chat.chat_id === chatIdToUpdate);
+			if (chatIndex === -1) {
+				console.log('Chat not found, might need to fetch chats list');
+				return prevChats;
+			}
+			return prevChats.map((chat, index) => {
+				if (index === chatIndex) {
+					return {
+						...chat,
+						messages: [...chat.messages, msg]
+					};
+				}
+				return chat;
+			});
+		});
 	};
-
 	const updateMessageId = (id, timestamp, to) => {
-		const currentChats = chatsRef.current;
-		const chatsUpd = [...currentChats];
-		const chatIndex = chatsUpd.findIndex(chat => chat.chat_id === to);
-		if (chatIndex === -1) {
-			console.log('Chat not found, might need to fetch chats list');
-			return;
-		}
-		const messagesUpd = chatsUpd[chatIndex].messages;
-		const msgToUpd = messagesUpd.find(msg => msg.created_at === timestamp);
-		msgToUpd.id = id;
-		msgToUpd.isSending = false;
-		chatsUpd[chatIndex] = {
-			...chatsUpd[chatIndex],
-			messages: [...messagesUpd]
-		};
-		setChats(chatsUpd);
+		setChats(prevChats => {
+			const chatIndex = prevChats.findIndex(chat => chat.chat_id === to);
+
+			if (chatIndex === -1) {
+				console.log('Chat not found, might need to fetch chats list');
+				return prevChats;
+			}
+
+			return prevChats.map((chat, index) => {
+				if (index === chatIndex) {
+					const updatedMessages = chat.messages.map(message => {
+						if (message.created_at === timestamp) {
+							return {
+								...message,
+								id: id,
+								isSending: false
+							};
+						}
+						return message;
+					});
+					return {
+						...chat,
+						messages: updatedMessages
+					};
+				}
+				return chat;
+			});
+		});
 	};
 
 	return (
@@ -271,6 +282,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				connected,
 				connectionStatus,
 				/* chats info */
+				chatsList,
 				chats,
 				currentChatId,
 				loadingChatList,
@@ -278,7 +290,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				loadingSendSms,
 				/* methods */
 				fetchChatsList,
-				fetchChatMessages,  /*const {messages,who,loading} = useSms({chatId,mock: CHAT_MOCK});*/
+				fetchChatMessages,
 				sendSms,
 			}}
 		>

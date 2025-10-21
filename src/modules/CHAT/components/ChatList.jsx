@@ -1,32 +1,37 @@
-import { useMemo } from 'react';
-import { CHAT_LIST_MOCK } from '../mock/mock';
-import useSms from '../../../hooks/sms/useSms';
-import { FileOutlined } from '@ant-design/icons';
-import { useUserData } from '../../../context/UserDataContext';
-import { useChatRole } from '../../../hooks/sms/useChatRole';
+import {useEffect, useMemo} from 'react';
+import {FileOutlined} from '@ant-design/icons';
+import {useUserData} from '../../../context/UserDataContext';
+import {useChatRole} from '../../../hooks/sms/useChatRole';
 import styles from './style/Chat.module.css';
 import dayjs from 'dayjs';
+import {useChatSocket} from "../../../context/ChatSocketContext";
+
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
 	const currentUserId = userdata?.user?.id;
 
 	const {
-		messages: smsList = [],
-		loading,
-		error,
-	} = useSms({
-		mock: CHAT_LIST_MOCK,
-		search,
-	});
+		/* socket */
+		on, off,            // function - подписка на события
+		connected,          // boolean - подключен ли WebSocket
+		connectionStatus,   // string - статус подключения
+		/* info */
+		chatsList,
+		loadingChatList,
+		/* methods */
+		fetchChatsList
+	} = useChatSocket();
+
+	useEffect(() => {
+		fetchChatsList(search);
+	}, [search]);
 
 	const { getRole, getDisplayName } = useChatRole(currentUserId);
 
 	const chats = useMemo(() => {
 		const normalizedSearch = search.toLowerCase();
 
-		// console.log('🔄 Processing chats, smsList length:', smsList.length);
-
-		const filtered = smsList.filter((sms) => {
+		const filtered = chatsList.filter((sms) => {
 			// Сообщения себе всегда показываем
 			if (sms.to?.id === currentUserId && sms.from?.id === currentUserId) {
 				return true;
@@ -36,10 +41,8 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			const displayName = getDisplayName(sms, role, false);
 			const messageText = sms.text?.toLowerCase() || '';
 
-			const matchesSearch =
-				displayName.toLowerCase().includes(normalizedSearch) ||
+			return displayName.toLowerCase().includes(normalizedSearch) ||
 				messageText.includes(normalizedSearch);
-			return matchesSearch;
 		});
 
 		// Группировка по chat_id с выбором последнего сообщения
@@ -73,15 +76,8 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 		});
 
 		return result;
-	}, [smsList, search, currentUserId, getRole, getDisplayName]);
+	}, [chatsList, search, currentUserId, getRole, getDisplayName]);
 
-	if (loading)
-		return (
-			<p className={styles.statusMessage}>
-				Загрузка чатов... {dayjs(+1760615999 * 1000).format('DD.MM.YY')}
-			</p>
-		);
-	if (error) return <p className={styles.statusMessage}>Ошибка: {error}</p>;
 	return (
 		<div className={styles['chat-list__container']}>
 			<ul className={styles['chat-list']}>
