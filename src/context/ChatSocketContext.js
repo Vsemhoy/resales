@@ -85,12 +85,16 @@ export const ChatSocketProvider = ({ children, url }) => {
 		});
 		// --- получаем новое сообщение ---
 		socket.on('new:sms', (data) => {
-			const msg = data.message;
 			console.log('WS new:sms', data);
-			/*setMessages((prev) => {
-				const chatMsgs = prev[msg.chat_id] || [];
-				return {...prev, [msg.chat_id]: [...chatMsgs, msg]};
-			});*/
+
+			const chatsUpd = [...chats];
+			const msg = data.right;
+			const chat = chatsUpd.find(chat => chat.id === msg.from_id);
+			if (!chat) return;
+			chat.messages.push(msg);
+			setChats(chatsUpd);
+
+
 			emitToListeners('message:new', msg);
 			emitToListeners('new:sms', data);
 		});
