@@ -111,8 +111,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 				if (response?.data?.content) {
 					setChatsList(response?.data?.content?.sms);
 				}
-			} catch (err) {
-				console.log(err);
+			} catch (e) {
+				console.log(e);
 			} finally {
 				setLoadingChatList(false);
 			}
@@ -121,7 +121,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 			setLoadingChatList(false);
 		}
 	}, [loadingChatList]);
-
 	const fetchChatMessages = useCallback(async (chatId) => {
 		if (loadingChat) return;
 		setLoadingChat(true);
@@ -141,8 +140,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 						scrollHeight: 0,
 					});
 				}
-			} catch (err) {
-				console.log(err);
+			} catch (e) {
+				console.log(e);
 			} finally {
 				setLoadingChat(false);
 			}
@@ -158,7 +157,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 			setLoadingChat(false);
 		}
 	}, [loadingChat]);
-
 	const sendSms = useCallback(async ({ to, text, files, answer, timestamp, from_id }) => {
 		insertMessagesToArrays(to, text, files, answer, timestamp, from_id);
 		setLoadingSendSms(true);
@@ -193,12 +191,24 @@ export const ChatSocketProvider = ({ children, url }) => {
 				updateMessageId(response.data.id, response.data.timestamp, response.data.files, to);
 				addMessageToChatList(response.data.left);
 			}
-		} catch (err) {
-			console.error('[useSendSms] Ошибка:', err);
+		} catch (e) {
+			console.error('[useSendSms] Ошибка:', e);
 		} finally {
 			setLoadingSendSms(false);
 		}
 	}, [loadingSendSms]);
+	const markMessagesAsRead = useCallback(async (messageIds, chatId) => {
+		if (PRODMODE) {
+			try {
+				const endpoint = `/api/sms/read/${messageIds}`;
+				await PROD_AXIOS_INSTANCE.post(endpoint, {
+					_token: CSRF_TOKEN,
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		}
+	}, []);
 
 	const insertMessagesToArrays = (to, text, files, answer, timestamp, from_id) => {
 		addMessageToChat({
@@ -213,7 +223,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 			isSending: true,
 		}, to);
 	};
-
 	const setChatsPrepare = (newChat) => {
 		if (!chats.find(chat => +chat.chat_id === +newChat.chat_id)) {
 			console.log('BEFORE UPDATE CHATS fetchChatMessages', chats);
@@ -275,7 +284,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 								...message,
 								id: id,
 								isSending: false,
-								files
+								files: files,
 							};
 						}
 						return message;
@@ -309,6 +318,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				fetchChatsList,
 				fetchChatMessages,
 				sendSms,
+				markMessagesAsRead,
 			}}
 		>
 			{children}
