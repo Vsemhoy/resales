@@ -104,10 +104,11 @@ export default function ChatContent({ chatId }) {
 		}
 	}, [allMessages]);
 
-	const handleSend = (trimmed) => {
+	const handleSend = (trimmed, fileList) => {
 		sendSms({
 			to: chatId,
 			text: trimmed,
+			files: fileList,
 			answer: null,
 			timestamp: Number(dayjs().unix()),
 			from_id: currentUserId

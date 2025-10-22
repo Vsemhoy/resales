@@ -159,17 +159,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [loadingChat]);
 
-	const sendSms = useCallback(async ({ to, text, answer, timestamp, from_id }) => {
-		addMessageToChat({
-			from_id: from_id,
-			id: timestamp,
-			text: text,
-			created_at: timestamp,
-			updated_at: timestamp,
-			answer: null,
-			isLocal: true,
-			isSending: true,
-		}, to);
+	const sendSms = useCallback(async ({ to, text, files, answer, timestamp, from_id }) => {
+		insertMessagesToArrays(to, text, answer, timestamp, from_id);
 		setLoadingSendSms(true);
 		try {
 			const formData = new FormData();
@@ -183,6 +174,16 @@ export const ChatSocketProvider = ({ children, url }) => {
 					timestamp,
 				})
 			);
+			if (files && files.length > 0) {
+				files.forEach((uploadFile) => {
+					if (uploadFile.originFileObj) {
+						formData.append('file[]', uploadFile.originFileObj);
+					}
+					/*else if (uploadFile.url) {
+						console.log('Файл уже загружен:', uploadFile.url);
+					}*/
+				});
+			}
 			console.log(to);
 			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
 
@@ -190,6 +191,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 			if (response.data) {
 				updateMessageId(response.data.id, response.data.timestamp, to);
+				addMessageToChatList(response.data.left);
 			}
 		} catch (err) {
 			console.error('[useSendSms] Ошибка:', err);
@@ -197,6 +199,19 @@ export const ChatSocketProvider = ({ children, url }) => {
 			setLoadingSendSms(false);
 		}
 	}, [loadingSendSms]);
+
+	const insertMessagesToArrays = (to, text, answer, timestamp, from_id) => {
+		addMessageToChat({
+			from_id: from_id,
+			id: timestamp,
+			text: text,
+			created_at: timestamp,
+			updated_at: timestamp,
+			answer: null,
+			isLocal: true,
+			isSending: true,
+		}, to);
+	};
 
 	const setChatsPrepare = (newChat) => {
 		if (!chats.find(chat => +chat.chat_id === +newChat.chat_id)) {
