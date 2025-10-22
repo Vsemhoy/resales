@@ -81,16 +81,16 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	return (
 		<div className={styles['chat-list__container']}>
 			<ul className={styles['chat-list']}>
-				{chats.map((chat) => {
+				{chats.map((chat, idx) => {
 					const isSaved = chat.chat_id === 'saved' || chat.isSavedChat;
 					const role = isSaved ? 'self' : getRole(chat);
 					const displayName = getDisplayName(chat, role, isSaved);
 					const isActive = chat.chat_id === selectedChatId;
 
 					const lastMessageText = chat.text || (
-						<>
+						<div>
 							<FileOutlined /> Файл
-						</>
+						</div>
 					);
 
 					const truncatedText =
@@ -101,10 +101,9 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 							: lastMessageText;
 
 					return (
-						<>
+						<div key={`chat-${chat.chat_id}-${idx}`}>
 							{/* {DEBUGGER} */}
 							<li
-								key={chat.chat_id}
 								className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
 								onClick={() => {
 									onSelectChat?.(chat.chat_id);
@@ -113,7 +112,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 								<div className={styles.companionName}>{displayName || 'Неизвестный'}</div>
 								<div className={styles.lastMessage}>{truncatedText}</div>
 							</li>
-						</>
+						</div>
 					);
 				})}
 			</ul>

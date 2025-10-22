@@ -43,11 +43,11 @@ export default function ChatIncomingMsg({ message }) {
 	return (
 		<div className={`${styles.message} ${styles.otherMessage}`} data-message-id={message.id}>
 			<div className={`${styles.bubble} ${styles.otherMessageBubble}`}>
-				<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>
+				<div className={styles.senderName}>{/*<span style={{color: 'red'}}>{fromId}</span>*/}{senderName}</div>
 				<span>{text}</span>
 				<div className={styles.files_container}>
 					{files && files.length > 0 && files.map((file, index) => (
-						<a href={`${HTTP_HOST}/${file.route}`} target={'_blank'} className={styles.file}>
+						<a href={`${HTTP_HOST}/${file.route}`} target={'_blank'} className={styles.file} key={`file-${file.id}-${index}`}>
 							<div className={`${styles.file_circle}`}>
 								{pasteFileIcon(file.extension)}
 							</div>
