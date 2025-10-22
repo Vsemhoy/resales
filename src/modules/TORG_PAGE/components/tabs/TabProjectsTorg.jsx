@@ -206,7 +206,7 @@ const get_projects_data_action = async () => {
                       dayjs().unix() +
                       dayjs().millisecond() +
                       tempData.length,
-                    id_orgs: props.item_id,
+                    id_orgs: props.org_id,
                     id8staff_list: userdata.user.id,
                     date: dayjs().format("YYYY-MM-DD HH:mm:ss"), //"2016-09-04T21:00:00.000000Z",
                     id8an_projecttype: 0,
