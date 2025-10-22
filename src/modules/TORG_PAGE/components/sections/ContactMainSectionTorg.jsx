@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { Button, Checkbox, DatePicker, Input } from 'antd';
+import { Button, Checkbox, DatePicker, Input, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
-import { CameraIcon, ChevronDownIcon, ChevronUpIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { BellSlashIcon, CameraIcon, ChevronDownIcon, ChevronUpIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../../components/helpers/TextHelpers';
 import ContactEmailMicroSectionTorg from './microsections/contact/ContactEmailMicroSectionTorg';
@@ -11,6 +11,7 @@ import ContactHomePhoneMicroSectionTorg from './microsections/contact/ContactHom
 import ContactMessangerMicroSectionTorg from './microsections/contact/ContactMessangerMicroSectionTorg';
 import ContactMobileMicroSectionTorg from './microsections/contact/ContactMobileMicroSectionTorg';
 import ContactPhoneMicroSectionTorg from './microsections/contact/ContactPhoneMicroSectionTorg';
+import { WarningFilled, WarningOutlined } from '@ant-design/icons';
 
 const ContactMainSectionTorg = (props) => {
   const [refreshMark, setRefreshMark] = useState(null);
@@ -1031,6 +1032,36 @@ const CollectAndSend = (stackName, data) => {
               (`${lastName ?lastName : ""}${name ? " " + name : ''}${middleName ?  " " + middleName : ""}`)
                : "Без имени "}
             </div>
+            <span className="sa-author-text">
+							
+							{(!job || unsubscribe) ? (
+								<Tooltip
+									placement={'right'}
+									title={
+										<div>
+                      {!job && (
+                        <div>- Не работает в организации</div>
+                      )}
+                      {unsubscribe && (
+                        <div>- Запрещена рассылка писем</div>
+                      )}
+										</div>
+									}
+									className={'sa-lock-mark'}
+								>
+                  <div className={'sa-flex'}>
+                    {!job && (
+									<WarningOutlined height={'32px'} style={{fontSize: '20px'}} />
+                  )}
+                  {(unsubscribe !== 0 && unsubscribe !== false) && (
+                  <span style={{height: '24px', marginBottom: '-3px'}}>
+                    <BellSlashIcon height={'22px'} style={{fontSize: '18px'}} />
+                    </span>
+                    )}
+                    </div>
+								</Tooltip>
+							) : ''}
+						</span>{' '}
             {/* <span className="sa-date-text">
               {date !== null
                 ? ` - ` +

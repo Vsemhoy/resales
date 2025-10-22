@@ -9,7 +9,7 @@ import ChatSelfMsg from './ChatSelfMsg';
 import ChatIncomingMsg from './ChatIncomingMsg';
 import {useSendSms} from '../../../hooks/sms/useSendSms';
 import {useChatSocket} from "../../../context/ChatSocketContext";
-import { useMarkMessagesRead } from '../../../hooks/useMarkMessagesRead';
+import { useMarkMessagesRead } from '../../../hooks/sms/useMarkMessagesRead';
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
