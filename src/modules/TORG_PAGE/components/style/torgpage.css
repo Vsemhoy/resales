@@ -391,6 +391,7 @@
 .sa-org-section-text {
 	display: flex;
 	grid-gap: 6px;
+	align-items: center;
 }
 
 .torg-section .sa-required-field-block {
@@ -450,7 +451,8 @@
 .sa-orgpage-body .ant-select-disabled .ant-select-selection-item,
 .sa-orgpage-body .ant-select-selection-item,
 .sa-orgpage-body .ant-picker-disabled input ,
-.sa-orgpage-body .ant-input-disabled 
+.sa-orgpage-body .ant-input-disabled,
+.sa-orgpage-body .ant-select-selection-search 
 {
 	color: var(--org-modal-content-text) !important;
 }
@@ -487,4 +489,22 @@
     height: 100%;
     padding-top: 3px;
     padding-right: 4px;
+}
+
+.sa-author-text {
+	color:  var(--org-page-trigger-treasure-text);
+	display: flex;
+}
+.sa-author-text .sa-lock-mark {
+	color: var(--current-color);
+	padding-left: 9px;
+}
+.sa-org-item-notedit .ant-input,
+.sa-org-item-notedit .ant-input-disabled,
+.sa-org-item-notedit .ant-select-selection-search-input,
+.sa-org-item-notedit .ant-select-selection-item,
+.sa-org-item-notedit .ant-select-selector,
+.sa-org-item-notedit .ant-picker-input
+{
+	color: var(--org-page-trigger-treasure-text) !important;
 }

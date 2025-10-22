@@ -95,6 +95,28 @@ export const ShortName = (surname, name, patronymic) => {
 	return shortName;
 };
 
+
+export const FullNameText = (user) => {
+	if (!user) {
+		return '';
+	}
+
+	let ocName = '';
+
+	if (user.surname) {
+		ocName += user.surname + ' ';
+	}
+	if (user.name) {
+		ocName += user.name + ' ';
+	}
+	if (user.secondname) {
+		ocName += user.secondname;
+	}
+
+	return ocName;
+};
+
+
 export const FullNameWithOccupy = (user) => {
 	if (!user) {
 		return <span></span>;

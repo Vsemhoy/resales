@@ -5,12 +5,13 @@ import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { ChevronDownIcon, ChevronUpIcon, QuestionMarkCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
-import { getMonthName } from '../../../../components/helpers/TextHelpers';
+import { FullNameText, FullNameWithOccupy, getMonthName, ShortName } from '../../../../components/helpers/TextHelpers';
 import { after } from 'lodash';
 import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
 import { ORG_ERECTORS_MOCK, ORG_LINKBID_MOCK } from '../../../ORG_PAGE/components/mock/ORGPAGEMOCK';
 import { Option } from 'antd/es/mentions';
+import { LockFilled } from '@ant-design/icons';
 
 const ProjectTabSectionTorg = (props) => {
   const [refreshMark, setRefreshMark] = useState(null);
@@ -84,6 +85,20 @@ const ProjectTabSectionTorg = (props) => {
     useEffect(() => {
       setUserdata(props.user_data);
     }, [props.user_data]);
+
+
+
+
+      const [authorFullName, setAuthorFullName] = useState('');
+      const [authorShortName, setAuthorShortName] = useState('');
+
+
+      useEffect(() => {
+        setAuthorFullName(FullNameText(props.data?.curator));
+        setAuthorShortName(ShortName(props.data?.curator?.surname , props.data?.curator?.name , props.data?.curator?.secondname));
+      }, [props.data?.curator]);
+
+
 
   useEffect(() => {
     setData(props.data);
@@ -376,7 +391,9 @@ useEffect(() => {
   return (
     <div className={`sa-org-collapse-item
        ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
-       ${deleted ? 'deleted' : ''}`}
+       ${deleted ? 'deleted' : ''} 
+       ${editMode ? '' : 'sa-org-item-notedit'} 
+       ${(userdata?.user?.id !== authorId || userdata?.user?.id !== data?.curator?.id) ? 'sa-noedit-item' : ''}`}
 
     >
       <div className={'sa-org-collpase-header sa-flex-space'}
@@ -417,6 +434,19 @@ useEffect(() => {
                   ' ' +
                   date?.format('YYYY')
                 : ''}
+            </span>{' '}
+            <span className="sa-author-text">
+              {authorShortName !== null
+                ? ` - ` +
+                  authorShortName + ' '
+                : ''}
+                {(userdata?.user?.id !== authorId || userdata?.user?.id !== data?.curator?.id) && (
+                  <Tooltip placement={'left'} title={<div>
+                    <div>Этот проект может редактировать только создатель записи</div>
+                  </div>} className={'sa-lock-mark'}>
+                    <LockFilled height={'22px'} />
+                  </Tooltip>
+                )}
             </span>{' '}
             {itemId && (
               <div className={'sa-org-row-header-id sa-text-phantom'}>
@@ -462,7 +492,7 @@ useEffect(() => {
                 input:
                   <Input
                     key={'texpard_2_' + data?.id}
-                    value={`${props.data.curator?.surname} ${props.data.curator?.name}  ${props.data.curator?.secondname}`}
+                    value={authorFullName}
                     // onChange={e => setNote(e.target.value)}
                     readOnly={true}
                     variant="borderless"
@@ -787,6 +817,7 @@ useEffect(() => {
                   <Select
                     key={'texpard_14_' + data?.id}
                     value={projType}
+                    size='small'
                     onChange={e => {
                       setProjType(e)
                       setACTION_FLAG(1);
