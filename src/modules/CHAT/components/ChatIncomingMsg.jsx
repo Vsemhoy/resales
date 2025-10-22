@@ -51,7 +51,7 @@ export default function ChatIncomingMsg({ message }) {
 							<div className={`${styles.file_circle}`}>
 								{pasteFileIcon(file.extension)}
 							</div>
-							<p className={styles.href_label}>{file.route}</p>
+							<p className={styles.href_label}>{file?.name}</p>
 						</a>
 					))}
 				</div>
