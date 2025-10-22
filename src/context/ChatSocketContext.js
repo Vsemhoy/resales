@@ -160,7 +160,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 	}, [loadingChat]);
 
 	const sendSms = useCallback(async ({ to, text, files, answer, timestamp, from_id }) => {
-		insertMessagesToArrays(to, text, answer, timestamp, from_id);
+		insertMessagesToArrays(to, text, files, answer, timestamp, from_id);
 		setLoadingSendSms(true);
 		try {
 			const formData = new FormData();
@@ -190,7 +190,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.log('[useSendSms] Ответ от сервера:', response);
 
 			if (response.data) {
-				updateMessageId(response.data.id, response.data.timestamp, to);
+				updateMessageId(response.data.id, response.data.timestamp, response.data.files, to);
 				addMessageToChatList(response.data.left);
 			}
 		} catch (err) {
@@ -200,11 +200,12 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [loadingSendSms]);
 
-	const insertMessagesToArrays = (to, text, answer, timestamp, from_id) => {
+	const insertMessagesToArrays = (to, text, files, answer, timestamp, from_id) => {
 		addMessageToChat({
 			from_id: from_id,
 			id: timestamp,
 			text: text,
+			files: files,
 			created_at: timestamp,
 			updated_at: timestamp,
 			answer: null,
@@ -257,7 +258,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			});
 		});
 	};
-	const updateMessageId = (id, timestamp, to) => {
+	const updateMessageId = (id, timestamp, files, to) => {
 		setChats(prevChats => {
 			const chatIndex = prevChats.findIndex(chat => chat.chat_id === to);
 
@@ -273,7 +274,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 							return {
 								...message,
 								id: id,
-								isSending: false
+								isSending: false,
+								files
 							};
 						}
 						return message;

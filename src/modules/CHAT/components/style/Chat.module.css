@@ -285,3 +285,32 @@ ul {
 	scrollbar-color: var(--sa-primary-color) #f5f5f5;
 	scrollbar-width: thin;
 }
+.files_container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+.file {
+	width: 100%;
+	padding: 0 5px;
+	border-radius: 5px;
+	color: #333;
+	display: flex;
+	align-items: center;
+	gap: 10px
+}
+.file_circle {
+	background-color: #99BAD3FF;
+	border-radius: 50%;
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.file_circle.self {
+	background-color: #9ED399FF;
+}
+.href_label {
+	margin: 0;
+}
