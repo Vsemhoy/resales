@@ -301,12 +301,15 @@ ul {
 	gap: 10px
 }
 .file_circle {
-	background-color: var(--sa-bid-page-divide);
+	background-color: #99BAD3FF;
 	border-radius: 50%;
 	padding: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+.file_circle.self {
+	background-color: #9ED399FF;
 }
 .href_label {
 	margin: 0;
