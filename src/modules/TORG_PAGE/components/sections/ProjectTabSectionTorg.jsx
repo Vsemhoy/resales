@@ -172,7 +172,6 @@ const ProjectTabSectionTorg = (props) => {
 					});
 				}
 			}
-			console.log('AAAAAAAAAAAAAAAAAA', usess);
 			setOrgContacts(usess);
 		}
 	}, [props.org_contacts]);
@@ -209,6 +208,7 @@ const ProjectTabSectionTorg = (props) => {
 	 * @param {*} id
 	 */
 	const get_orgautofill_action = async (id) => {
+    if (!searchErector){ return; }
 		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
@@ -234,6 +234,7 @@ const ProjectTabSectionTorg = (props) => {
 	};
 
 	const get_bidautofill_action = async (id) => {
+    if (!orgId){ return; }
 		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
@@ -444,7 +445,7 @@ const ProjectTabSectionTorg = (props) => {
 							{authorShortName !== null ? ` - ` + authorShortName + ' ' : ''}
 							{(userdata?.user?.id !== data?.curator?.id) && (
 								<Tooltip
-									placement={'left'}
+									placement={'right'}
 									title={
 										<div>
 											<div>Этот проект может редактировать только создатель записи</div>
