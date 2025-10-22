@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { Button, DatePicker, Input } from 'antd';
+import { Button, Checkbox, DatePicker, Input, Select, TimePicker, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
-import { getMonthName } from '../../../../components/helpers/TextHelpers';
+import { FullNameText, getMonthName, ShortName } from '../../../../components/helpers/TextHelpers';
+import { LockFilled } from '@ant-design/icons';
 
 const CallTabSectionTorg = (props) => {
   const [refreshMark, setRefreshMark] = useState(null);
@@ -57,6 +58,13 @@ const CallTabSectionTorg = (props) => {
   // Флаг для действия — отправка в глобальный коллектор
   const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
+  const [authorFullName, setAuthorFullName] = useState('');
+  const [authorShortName, setAuthorShortName] = useState('');
+
+
+    const [transContainer, setTransContainer] = useState([]);
+    const [userdata, setUserdata] = useState(props.user_data);
+
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -66,6 +74,18 @@ const CallTabSectionTorg = (props) => {
   useEffect(() => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
+
+
+    useEffect(() => {
+      setAuthorFullName(FullNameText(props.data?.creator));
+      setAuthorShortName(
+        ShortName(
+          props.data?.creator?.surname,
+          props.data?.creator?.name,
+          props.data?.creator?.secondname
+        )
+      );
+    }, [props.data?.creator]);
 
 
   useEffect(() => {
@@ -349,10 +369,15 @@ const CallTabSectionTorg = (props) => {
 
   return (
     <div className={`sa-org-collapse-item
-       ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
-       ${deleted ? 'deleted' : ''}`}
-
-    >
+      ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
+       ${deleted ? 'deleted' : ''} 
+       ${editMode ? 'sa-org-item-yesedit' : 'sa-org-item-notedit'} 
+       ${
+					userdata?.user?.id !== creator || userdata?.user?.id !== baseData?.curator?.id
+						? 'sa-noedit-item'
+						: ''
+				}`}
+		>
       <div className={'sa-org-collpase-header sa-flex-space'}
         onClick={(ev) => {
           ev.preventDefault();
@@ -395,13 +420,30 @@ const CallTabSectionTorg = (props) => {
               {theme ? theme : "Без темы "}
             </div>
             <span className="sa-date-text">
-              {(date !== null && false)
+              {(date !== null)
                 ? ` - ` +
                   getMonthName(dayjs(date).month() + 1) +
                   ' ' +
                   dayjs(date).format('YYYY')
                 : ''}
             </span>{' '}
+            
+						<span className="sa-author-text">
+							{authorShortName !== null ? ` - ` + authorShortName + ' ' : ''}
+							{(userdata?.user?.id !== baseData?.creator) && (
+								<Tooltip
+									placement={'right'}
+									title={
+										<div>
+											<div>Этот звонок может редактировать только создатель записи</div>
+										</div>
+									}
+									className={'sa-lock-mark'}
+								>
+									<LockFilled height={'22px'} />
+								</Tooltip>
+							)}
+						</span>{' '}
             {itemId && (
               <div className={'sa-org-row-header-id sa-text-phantom'}>
                 ({itemId})
@@ -431,8 +473,44 @@ const CallTabSectionTorg = (props) => {
       </div>
       <div className={'sa-org-collapse-body'}>
         <div className={'sa-org-collapse-content'}>
+
           <TorgPageSectionRow
-            labels={['Gosha']}
+						key={`caloshaa_00_${itemId}`}
+						edit_mode={editMode}
+						inputs={[
+							{
+								label: 'Автор',
+								input: (
+									<Input
+										key={'texpard_33_2_' + baseData?.id}
+										value={authorFullName}
+										// onChange={e => setNote(e.target.value)}
+										readOnly={true}
+										variant="borderless"
+										disabled={true}
+									/>
+								),
+							},
+							{
+								label: 'Дата',
+								input: (
+									<DatePicker
+										key={'texpard_66_3_' + baseData?.id}
+										value={date ? dayjs(date) : null}
+										// onChange={e => setNote(e.target.value)}
+										readOnly={true}
+										variant="borderless"
+										disabled={true}
+										format={'DD-MM-YYYY'}
+									/>
+								),
+							},
+						]}
+						extratext={[]}
+					/>
+
+          <TorgPageSectionRow
+            key={`caloshaa_${itemId}`}
             edit_mode={editMode}
             inputs={[
               {
@@ -442,19 +520,46 @@ const CallTabSectionTorg = (props) => {
                   <Input
                     key={'tdextard_1_' + baseData?.id}
                     value={theme}
-                    onChange={e => setTheme(e.target.value)}
+                    size={'small'}
+                    onChange={(e) => {
+											setTheme(e.target.value);
+											setACTION_FLAG(1);
+										}}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={250}
-                    onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}
+                    onBlur={() => {
+                      setBLUR_FLAG(dayjs().unix());
+                    }}
                   />,
                   required: true,
                   value: theme
               },
-
-
+              {
+                edit_mode: editMode,
+                label: 'Отдел',
+                input:
+                  <Select
+                    key={'tdextard_1_' + baseData?.id}
+                    value={theme}
+                    size={'small'}
+                    onChange={(e) => {
+											setTheme(e.target.value);
+											setACTION_FLAG(1);
+                      setBLUR_FLAG(dayjs().unix());
+										}}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    // onBlur={() => {
+                    //   setBLUR_FLAG(dayjs().unix());
+                    // }}
+                    options={departList}
+                  />,
+                  required: true,
+                  value: theme
+              },
             ]}
             extratext={[]}
           />
@@ -462,49 +567,151 @@ const CallTabSectionTorg = (props) => {
 
           <TorgPageSectionRow
             edit_mode={editMode}
+            key={'tdextdsard_1_' + baseData?.id}
             inputs={[
               {
-                label: 'Автор',
+                edit_mode: editMode,
+                label: 'Контактное лицо*',
                 input:
                   <Input
-                    key={'textard_2_' + baseData?.id}
-                    value={
-                      baseData?.creator
-                      ? baseData.creator.surname +
-                        ' ' +
-                        baseData.creator.name +
-                        ' ' +
-                        baseData.creator.secondname
-                      : ''
-                    }
-                    // onChange={e => setNote(e.target.value)}
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={true}
+                    key={'textard_34_' + baseData?.id}
+                    value={subscriber}
+                    onChange={(e) => {
+											setSubscriber(e.target.value);
+											setACTION_FLAG(1);
+										}}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
                     variant="borderless"
+                    maxLength={120}
+                    required={true}
+                    options={orgUsers}
                   />,
+                  required: true,
+                  value: subscriber
               },
               {
-                label: 'Дата',
+                edit_mode: editMode,
+                label: 'Должность',
                 input:
-                  <DatePicker
-                    key={'textard_3_' + baseData?.id}
-                    value={date ? dayjs(date) : null}
-                    // onChange={e => setNote(e.target.value)}
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={true}
+                  <Input
+                    key={'textard_44_' + baseData?.id}
+                    value={post}
+                    onChange={(e) => {
+											setPost(e.target.value);
+											setACTION_FLAG(1);
+										}}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
                     variant="borderless"
-                    disabled={true}
-                    format={'DD-MM-YYYY'}
+                    maxLength={120}
+                    required={true}
+                    onBlur={() => {
+                      setBLUR_FLAG(dayjs().unix());
+                    }}
                   />,
+                  required: true,
+                  value: post
               },
-
             ]}
             extratext={[]}
           />
 
 
           <TorgPageSectionRow
-            labels={['Gosha']}
+            edit_mode={editMode}
+            key={'tdextdtred_1_' + baseData?.id}
+            inputs={[
+              {
+                edit_mode: editMode,
+                label: 'Телефон*',
+                input:
+                  <Input
+                    key={'textard_134_' + baseData?.id}
+                    value={phone}
+                    onChange={(e) => {
+											setPhone(e.target.value);
+											setACTION_FLAG(1);
+										}}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={120}
+                    required={true}
+                    options={orgPhones}
+                  />,
+                  required: true,
+                  value: phone
+              },
+              {
+                edit_mode: editMode,
+                label: 'Добавочный*',
+                input:
+                  <Input
+                    key={'textard_144_' + baseData?.id}
+                    value={addPhone}
+                    onChange={(e) => {
+											setAddPhone(e.target.value);
+											setACTION_FLAG(1);
+										}}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={22}
+                    required={false}
+                    onBlur={() => {
+                      setBLUR_FLAG(dayjs().unix());
+                    }}
+                  />,
+                  required: false,
+                  value: addPhone
+              },
+            ]}
+            extratext={[]}
+          />
+
+
+          {(editMode && subscriber.length > 3 && !targetOrgUserId && phone.length > 3) && (
+          <TorgPageSectionRow
+            edit_mode={editMode}
+            key={'tdexteeed_1_' + baseData?.id}
+            inputs={[
+              {
+                edit_mode: editMode,
+                label: 'Сохранить контакт',
+                input:
+                <div>
+                  <Checkbox
+                    key={'textarred_234_' + baseData?.id}
+                    checked={saveContact}
+                    onChange={(e) => {
+											setSaveContact(e.target.checked);
+											setACTION_FLAG(1);
+                      setBLUR_FLAG(dayjs().unix());
+										}}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    required={false}
+                  />
+                  <span className={'sa-org-checkbox-legend'}>
+                    {saveContact ? (
+                      "* Контакт сохранится в список контактных лиц"
+                    ) : ("* Установите галочку для создания контакта на основе указанных данных")}
+                    </span>
+                  </div>,
+                  required: false,
+                  value: saveContact
+              },
+              
+            ]}
+            extratext={[]}
+          />
+          )}
+
+
+          <TorgPageSectionRow
+            key={'tdexteeed_1_' + baseData?.id}
             edit_mode={editMode}
             inputs={[
               {
@@ -512,24 +719,132 @@ const CallTabSectionTorg = (props) => {
                 label: 'Заметка',
                 input:
                   <TextArea
-                    key={'textard_4_' + baseData?.id}
+                    key={'tex4tard_654_' + baseData?.id}
                     value={note}
-                    onChange={e => setNote(e.target.value)}
+                    onChange={(e) => {
+											setNote(e.target.value);
+											setACTION_FLAG(1);
+										}}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
                     variant="borderless"
-                    maxLength={5000}
+                    maxLength={9999}
                     required={true}
+                    onBlur={() => {
+                      setBLUR_FLAG(dayjs().unix());
+                    }}
                   />,
                   required: true,
                   value: note
               },
-
-
             ]}
             extratext={[]}
           />
+
+
+          <TorgPageSectionRow
+            key={'tdex7546_1_' + baseData?.id}
+            edit_mode={editMode}
+            inputs={[
+              {
+                edit_mode: editMode,
+                label: 'Результат',
+                input:
+                  <TextArea
+                    key={'tex45ta34rd_654_' + baseData?.id}
+                    value={result}
+                    onChange={(e) => {
+											setResult(e.target.value);
+											setACTION_FLAG(1);
+										}}
+                    // placeholder="Controlled autosize"
+                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    readOnly={!editMode}
+                    variant="borderless"
+                    maxLength={9999}
+                    required={false}
+                    onBlur={() => {
+                      setBLUR_FLAG(dayjs().unix());
+                    }}
+                  />,
+                  required: false,
+                  value: result
+              },
+            ]}
+            extratext={[]}
+          />
+
+          {editMode ? (
+
+            <TorgPageSectionRow
+              key={'tdexteeedds_1_' + baseData?.id}
+              edit_mode={editMode}
+              inputs={[
+                {
+                  label: 'Дата',
+                  input: (
+                    <DatePicker
+                      key={'texpd654s_3_' + baseData?.id}
+                      value={nexCallDate ? dayjs(nexCallDate) : null}
+                      // onChange={e => setNote(e.target.value)}
+                      readOnly={!editMode}
+                      variant="borderless"
+                      disabled={!editMode}
+                      format={'DD-MM-YYYY'}
+                      onChange={(val) => {
+                        setNextCallDate(val ? val.format('YYYY-MM-DD') : null);
+                        setACTION_FLAG(1);
+                      }}
+                    />
+                  ),
+                  required: false,
+                  value: nexCallDate
+                },
+                // {
+                //   label: 'Время',
+                //   input: (
+                //     <TimePicker
+                //       key={'texdpds_3_' + baseData?.id}
+                //       value={nexCallDate ? dayjs(nexCallDate) : null}
+                //       // onChange={e => setNote(e.target.value)}
+                //       readOnly={!editMode}
+                //       variant="borderless"
+                //       disabled={!editMode}
+                //       format={'DD-MM-YYYY'}
+                //     />
+                //   ),
+                // },
+                {
+                  label: 'Тип события',
+                  input: (
+                  <Select
+                    key={'tdextard_1_' + baseData?.id}
+                    value={theme}
+                    size={'small'}
+                    onChange={(e) => {
+											setTheme(e.target.value);
+											setACTION_FLAG(1);
+                      setBLUR_FLAG(dayjs().unix());
+										}}
+                    // placeholder="Controlled autosize"
+                    readOnly={!editMode}
+                    variant="borderless"
+                    // onBlur={() => {
+                    //   setBLUR_FLAG(dayjs().unix());
+                    // }}
+                    options={nexVariants}
+                  />
+                  ),
+                  required: false,
+                  value: nexCallDate
+                },
+              ]}
+              extratext={[]}
+            />
+          ):("")}
+
+
         </div>
       </div>
     </div>

@@ -47,7 +47,6 @@ const TabProjectsTorg = (props) => {
   const [loading, setLoading] = useState(false);
   const [newLoading, setNewLoading] = useState(false);
 
-  const [openedSections, setOpenedSections] = useState([]);
 
   const [userdata, setUserData] = useState(null);
 
@@ -81,9 +80,12 @@ const TabProjectsTorg = (props) => {
     setOrgId(props.org_id);
     
   }, [props.org_id]);
+
+
   // Перегрузка данных при смене айдишника
   useEffect(() => {
     if (orgId){
+      setLoading(true);
       const timer = setTimeout(() => {
         get_projects_data_action();
       }, 1000);
@@ -104,13 +106,13 @@ const TabProjectsTorg = (props) => {
   }, [props.edit_mode]);
 
 
-  useEffect(() => {
-    if (props.on_save_command && props.on_save_command > 0){
-      if (props.on_change_data){
-        props.on_change_data({tab: 'projects', section: 'main', data: {}});
-      }
-    }
-  }, [props.on_save_command]);
+  // useEffect(() => {
+  //   if (props.on_save_command && props.on_save_command > 0){
+  //     if (props.on_change_data){
+  //       props.on_change_data({tab: 'projects', section: 'main', data: {}});
+  //     }
+  //   }
+  // }, [props.on_save_command]);
 
   
   useEffect(() => {
@@ -149,6 +151,7 @@ const TabProjectsTorg = (props) => {
 
 const get_projects_data_action = async () => {
   if (PRODMODE){
+    setLoading(true);
     try {
       let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + orgId + '/p', {
           data: {
@@ -161,8 +164,8 @@ const get_projects_data_action = async () => {
         if (response.data && response.data.content) {
           setOriginalData(JSON.parse(JSON.stringify(response.data.content.projects)));
           setBaseData(response.data.content.projects);
-          setLoading(false);
           setTotal(response.data.total);
+          setLoading(false);
         }
       } catch (e) {
         console.log(e);
@@ -175,6 +178,7 @@ const get_projects_data_action = async () => {
       setOriginalData(JSON.parse(JSON.stringify(MODAL_PROJECTS_LIST.projects)));
       setBaseData(MODAL_PROJECTS_LIST.projects);
     }
+    setLoading(false);
 
   };
 
@@ -187,13 +191,13 @@ const get_projects_data_action = async () => {
   // ------------------------------------------------------------------- //
 
 
-  const reload_all_data = () => {
-    if (!orgId){ return; };
-    // Flush temporary data
-    setTempData([]);
-    // Load main data
+  // const reload_all_data = () => {
+  //   if (!orgId){ return; };
+  //   // Flush temporary data
+  //   setTempData([]);
+  //   // Load main data
     
-  }
+  // }
 
   const MAKE_BLANK = () => {
      setNewLoading(true);
@@ -240,15 +244,21 @@ const get_projects_data_action = async () => {
       
                 setTempData(prevItems => [spawn, ...prevItems]);
                 // console.log(spawn);
-                setNewLoading(false);
-          }, 460);
+              }, 460);
+      setTimeout(() => {
+        setNewLoading(false);
+      }, 500);
   }
 
   const handleDeleteNewItem = (id) => {
+    setNewLoading(true);
     setTempData(tempData.filter((item)=> item.id !== id));
     if (props.on_delete_section){
       props.on_delete_section('notes', id);
     };
+      setTimeout(() => {
+        setNewLoading(false);
+      }, 500);
   };
 
 
