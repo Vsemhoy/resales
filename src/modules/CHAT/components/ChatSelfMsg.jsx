@@ -59,9 +59,9 @@ export default function ChatSelfMsg({ message }) {
 				<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>
 				<span>{text}</span>
 				<div className={styles.files_container}>
-					{files.length > 0 && files.map((file, index) => (
+					{files && files.length > 0 && files.map((file, index) => (
 						<a href={`${HTTP_HOST}/${file.route}`} target={'_blank'} className={styles.file}>
-							<div className={styles.file_circle}>
+							<div className={`${styles.file_circle} ${styles.self}`}>
 								{pasteFileIcon(file.extension)}
 							</div>
 							<p className={styles.href_label}>{file.route}</p>

@@ -160,7 +160,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 	}, [loadingChat]);
 
 	const sendSms = useCallback(async ({ to, text, files, answer, timestamp, from_id }) => {
-		insertMessagesToArrays(to, text, answer, timestamp, from_id);
+		insertMessagesToArrays(to, text, files, answer, timestamp, from_id);
 		setLoadingSendSms(true);
 		try {
 			const formData = new FormData();
@@ -200,11 +200,12 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [loadingSendSms]);
 
-	const insertMessagesToArrays = (to, text, answer, timestamp, from_id) => {
+	const insertMessagesToArrays = (to, text, files, answer, timestamp, from_id) => {
 		addMessageToChat({
 			from_id: from_id,
 			id: timestamp,
 			text: text,
+			files: files,
 			created_at: timestamp,
 			updated_at: timestamp,
 			answer: null,
