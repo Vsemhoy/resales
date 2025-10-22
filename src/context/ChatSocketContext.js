@@ -213,7 +213,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 			isSending: true,
 		}, to);
 	};
-
 	const setChatsPrepare = (newChat) => {
 		if (!chats.find(chat => +chat.chat_id === +newChat.chat_id)) {
 			console.log('BEFORE UPDATE CHATS fetchChatMessages', chats);
