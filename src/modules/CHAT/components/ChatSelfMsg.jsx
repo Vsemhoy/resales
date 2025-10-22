@@ -15,7 +15,7 @@ import {
 import {HTTP_HOST} from "../../../config/config";
 
 export default function ChatSelfMsg({ message }) {
-	const { text, files, timestamp, isSending, senderName, fromId, read } = message;
+	const { text, files, timestamp, isSending, senderName, fromId, status } = message;
 
 	// Используем только существующие классы
 	const messageClass = `${styles.message} ${styles.myMessage} ${
@@ -56,7 +56,7 @@ export default function ChatSelfMsg({ message }) {
 	return (
 		<div className={messageClass}>
 			<div className={bubbleClass}>
-				<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>
+				{/*<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>*/}
 				<span>{text}</span>
 				<div className={styles.files_container}>
 					{files && files.length > 0 && files.map((file, index) => (
@@ -72,11 +72,11 @@ export default function ChatSelfMsg({ message }) {
 					<div>{dayjs(+timestamp * 1000).format('HH:mm')}</div>
 					{!isSending &&
 						<span style={{width: '18px', height: '18px', position: 'relative'}}
-							  title={read ? 'Прочитано' : 'Отправлено'}
+							  title={status ? 'Прочитано' : 'Отправлено'}
 						>
-							<CheckOutlined style={{color: read ? 'green' : ''}}/>
-							{read && <CheckOutlined
-								style={{position: 'absolute', top: '4px', left: '3px', color: read ? 'green' : ''}}/>}
+							<CheckOutlined style={{color: status ? 'green' : ''}}/>
+							{status && <CheckOutlined
+								style={{position: 'absolute', top: '4px', left: '3px', color: status ? 'green' : ''}}/>}
 						</span>
 					}
 				</div>
