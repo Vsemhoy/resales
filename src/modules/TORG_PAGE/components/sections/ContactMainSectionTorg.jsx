@@ -1039,12 +1039,12 @@ const CollectAndSend = (stackName, data) => {
 									placement={'right'}
 									title={
 										<div>
-                      {!job && (
+                      {!job ? (
                         <div>- Не работает в организации</div>
-                      )}
-                      {unsubscribe && (
+                      ) : ("")}
+                      {unsubscribe ? (
                         <div>- Запрещена рассылка писем</div>
-                      )}
+                      ) : ("")}
 										</div>
 									}
 									className={'sa-lock-mark'}
@@ -1053,11 +1053,11 @@ const CollectAndSend = (stackName, data) => {
                     {!job && (
 									<WarningOutlined height={'32px'} style={{fontSize: '20px'}} />
                   )}
-                  {(unsubscribe !== 0 && unsubscribe !== false) && (
+                  {(unsubscribe !== 0 && unsubscribe !== false) ? (
                   <span style={{height: '24px', marginBottom: '-3px'}}>
                     <BellSlashIcon height={'22px'} style={{fontSize: '18px'}} />
                     </span>
-                    )}
+                    ) : ("")}
                     </div>
 								</Tooltip>
 							) : ''}

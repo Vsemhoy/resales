@@ -513,3 +513,9 @@
 {
 	color: var(--org-page-trigger-treasure-text) !important;
 }
+
+.sa-org-checkbox-legend {
+		padding-left: 12px;
+    color: #898989;
+    font-family: monospace;
+}

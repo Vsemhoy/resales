@@ -37,15 +37,16 @@ const TabCallsTorg = (props) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [onPage, setOnPage] = useState(20);
+  const [total, setTotal] = useState(1);
+
   const [loading, setLoading] = useState(false);
+  const [newLoading, setNewLoading] = useState(false);
+  
+  
+  
+    const [orgContacts, setOrgContacts] = useState([]);
 
 
-    const [total, setTotal] = useState(1);
-    const [newLoading, setNewLoading] = useState(false);
-  
-    const [openedSections, setOpenedSections] = useState([]);
-  
-  
   
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -58,13 +59,43 @@ const TabCallsTorg = (props) => {
     setUserData(props.userdata)
   }, [props.userdata]);
 
+
+  // Сброс временных при входе в режим редактирования
   useEffect(() => {
     setEditMode(props.edit_mode);
+    // Режим редактирования управляется снаружи
+    // Но при отсутствии ID, устанавливает false, чтобы
+    // юзер ничего не менял в форме
+    if (!props.edit_mode){
+      setTempData([]);
+    }
   }, [props.edit_mode]);
+
 
   useEffect(() => {
     setRefreshMark(props.refresh_mark);
   }, [props.refresh_mark]);
+
+
+  // Перегрузка данных при смене айдишника
+  useEffect(() => {
+    if (orgId){
+      const timer = setTimeout(() => {
+        get_org_calls_action();
+      }, 1000);
+    return () => clearTimeout(timer);
+    };
+  }, [orgId, currentPage, onPage]);
+
+
+  useEffect(() => {
+    if (props.selects){
+      setSelects(props.selects);
+    }
+  }, [props.selects]);
+
+
+
 
   /**
    * Смена или сброс на ноль/нулл org_id приводит к перегрузке формы + загрузке данных с сервака/очистке временных массивов
@@ -95,19 +126,15 @@ const TabCallsTorg = (props) => {
     }
   }, [props.org_id]);
 
-  useEffect(() => {
-    if (props.selects){
-      setSelects(props.selects);
-    }
-  }, [props.selects]);
 
-  useEffect(() => {
-    if (props.on_save_command && props.on_save_command > 0){
-      if (props.on_change_data){
-        props.on_change_data({tab: 'projects', section: 'main', data: {}});
-      }
-    }
-  }, [props.on_save_command]);
+
+  // useEffect(() => {
+  //   if (props.on_save_command && props.on_save_command > 0){
+  //     if (props.on_change_data){
+  //       props.on_change_data({tab: 'projects', section: 'main', data: {}});
+  //     }
+  //   }
+  // }, [props.on_save_command]);
 
   
   useEffect(() => {
@@ -119,6 +146,16 @@ const TabCallsTorg = (props) => {
   useEffect(() => {
     setIsTabActive(props.active_tab);
   }, [props.active_tab]);
+
+
+  useEffect(() => {
+    if (props.main_data?.contacts){
+      setOrgContacts(props.main_data.contacts);
+    } else {
+      setOrgContacts([]);
+    }
+
+  }, [props.main_data]);
 
   // ██    ██ ███████ ███████       ██   ██ 
   // ██    ██ ██      ██             ██ ██  
@@ -136,46 +173,53 @@ const TabCallsTorg = (props) => {
 
 
   const get_org_calls_action = async (id) => {
-    try {
-      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
-        data: {
-          page: currentPage,
-          limit: onPage,
-        },
-        _token: CSRF_TOKEN,
-      });
-      console.log('response', response);
-      if (response.data) {
-
-        let arr = [];
-        if (response.data.content?.calls.length){
-          for (let i = 0; i < response.data.content?.calls.length; i++) {
-            const element = response.data.content?.calls[i];
-            element._type = "call";
-            arr.push(element);
-          }
-        };
-        if (response.data.content?.meetings.length){
-          for (let i = 0; i < response.data.content?.meetings.length; i++) {
-            const element = response.data.content?.meetings[i];
-            element._type = "meeting";
-            arr.push(element);
-          }
-        };
-        setBaseData(arr.sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf()));
-
-        console.log('response.data', response.data);
-        // setBaseData(response.data.content.calls);
-        setLoading(false);
-
+    if (PRODMODE){
+      setLoading(true);
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
+          data: {
+            page: currentPage,
+            limit: onPage,
+          },
+          _token: CSRF_TOKEN,
+        });
+        console.log('response', response);
+        if (response.data) {
+  
+          let arr = [];
+          if (response.data.content?.calls.length){
+            for (let i = 0; i < response.data.content?.calls.length; i++) {
+              const element = response.data.content?.calls[i];
+              element._type = "call";
+              arr.push(element);
+            }
+          };
+          if (response.data.content?.meetings.length){
+            for (let i = 0; i < response.data.content?.meetings.length; i++) {
+              const element = response.data.content?.meetings[i];
+              element._type = "meeting";
+              arr.push(element);
+            }
+          };
+          setBaseData(arr.sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf()));
+  
+          console.log('response.data', response.data);
+          // setBaseData(response.data.content.calls);
+          setLoading(false);
+  
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+    } else {
+      setBaseData(MODAL_CALLS_LIST.calls.concat(MODAL_CALLS_LIST.meetings));
+      setLoading(false);
     }
+
   };
 
 
@@ -196,8 +240,8 @@ const MAKE_BLANK = (type) => {
                     _type: type,
                     command: 'create',
                     id: 'new_' + dayjs().unix() + dayjs().millisecond() + tempData.length,
-                    id_orgs: props.item_id,
-                    id8staff_list: userdata.user.id,
+                    id_orgs: orgId,
+                    id8staff_list: userdata?.user.id,
                     id8ref_departaments: 5,
                     theme: '',
                     date: dayjs().format('YYYY-MM-DD HH:mm:ss'), //"2016-09-04T21:00:00.000000Z",
@@ -208,7 +252,7 @@ const MAKE_BLANK = (type) => {
                     subscriber: '',
                     deleted: 0,
                     creator: {
-                      id: userdata.user.id,
+                      id: userdata?.user.id,
                       surname: userdata?.user.surname,
                       name: userdata?.user.name,
                       secondname: userdata?.user.secondname,
@@ -226,16 +270,22 @@ const MAKE_BLANK = (type) => {
       
                 setTempData(prevItems => [spawn, ...prevItems]);
                 // console.log(spawn);
-                setNewLoading(false);
-          }, 460);
+              }, 460);
+              setNewLoading(false);
   }
 
   const handleDeleteNewItem = (id) => {
+        setNewLoading(true);
     setTempData(tempData.filter((item)=> item.id !== id));
     if (props.on_delete_section){
       props.on_delete_section('notes', id);
     };
+          setTimeout(() => {
+        setNewLoading(false);
+      }, 500);
   };
+
+
 
 
   return (
@@ -298,16 +348,21 @@ const MAKE_BLANK = (type) => {
                       collapsed={false}
                       org_id={orgId}
                       data={item}
-                      key={ "nototas_n_" +  item.id }
+                      key={ "cotonatas_n_" +  item.id }
                       on_delete={handleDeleteNewItem}
                       on_change={props.on_change_section}
                       allow_delete={true}
                       selects={selects}
+
+                      org_contacts={orgContacts}
+                      user_data={userdata}
+                      on_collect={(payload)=>{props.on_change_section('calls', payload.id, payload)}}
                       />
                   ))}
                 </div>
               )}</Spin>
               {baseData && baseData.length > 0 && (
+                
                 <div className='sa-org-stack-collapse'>
                   
                   {baseData.map((item)=>(
@@ -316,11 +371,13 @@ const MAKE_BLANK = (type) => {
                       org_id={orgId}
                       data={item}
                       collapsed={true}
-                      key={ "nototas_" +  item.id }
+                      key={ "comatonatas_" +  item.id }
                       on_change={props.on_change_section}
                       // on_delete={handleDeleteNewItem}
-
+                      on_collect={(payload)=>{props.on_change_section('calls', payload.id, payload)}}
                       selects={selects}
+                      org_contacts={orgContacts}
+                      user_data={userdata}
                       />
                   ))}
                 </div>
