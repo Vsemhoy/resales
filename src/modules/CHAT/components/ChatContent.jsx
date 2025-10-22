@@ -9,6 +9,7 @@ import ChatSelfMsg from './ChatSelfMsg';
 import ChatIncomingMsg from './ChatIncomingMsg';
 import {useSendSms} from '../../../hooks/sms/useSendSms';
 import {useChatSocket} from "../../../context/ChatSocketContext";
+import { useMarkMessagesRead } from '../../../hooks/useMarkMessagesRead';
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
@@ -26,31 +27,6 @@ export default function ChatContent({ chatId }) {
 		scrollHeight: 0,
 	});
 
-	const {
-		/* socket */
-		on, off,            // function - подписка на события
-		connected,          // boolean - подключен ли WebSocket
-		connectionStatus,   // string - статус подключения
-		/* info */
-		chats,  			// [] - список чатов
-		loadingChat,		// загрузка сообщений
-		loadingSendSms,		// ожидание ответа от сервера при отправке сообщения
-		/* methods */
-		fetchChatMessages,	// подгрузить чат с сообщениями
-		sendSms,			// отправить сообщение
-	} = useChatSocket();
-
-	useEffect(() => {
-		const foundedChat = chats.find(chat => chat.chat_id === chatId || chat.id === chatId);
-		if (!foundedChat && chatId&& !loadingChat && !loadingSendSms) {
-			console.log('Fetching chat messages for:', chatId);
-			fetchChatMessages(chatId);
-		} else if (foundedChat) {
-			console.log('Chat found:', foundedChat);
-			setChat(foundedChat);
-		}
-	}, [chats, chatId, loadingChat, loadingSendSms]);
-
 	const normalizeMessage = useCallback((msg) => {
 			return {
 				fromId: msg.from_id,
@@ -62,6 +38,7 @@ export default function ChatContent({ chatId }) {
 				senderName: +currentUserId !== +msg.from_id ? chat.who : 'Вы',
 				isLocal: msg.isLocal || false,
 				isSending: msg.isSending || false,
+				status: msg.status || false,
 				_raw: msg,
 			};
 		}, [chat.who, currentUserId]);
@@ -96,6 +73,38 @@ export default function ChatContent({ chatId }) {
 		return items;
 	}, [allMessages]);
 
+	const {
+		/* socket */
+		on, off,            // function - подписка на события
+		connected,          // boolean - подключен ли WebSocket
+		connectionStatus,   // string - статус подключения
+		/* info */
+		chats,  			// [] - список чатов
+		loadingChat,		// загрузка сообщений
+		loadingSendSms,		// ожидание ответа от сервера при отправке сообщения
+		/* methods */
+		fetchChatMessages,	// подгрузить чат с сообщениями
+		sendSms,			// отправить сообщение
+		markMessagesAsRead,
+	} = useChatSocket();
+
+	const { processedMessages } = useMarkMessagesRead(
+		messagesWithDividers,
+		currentUserId,
+		chatId,
+		markMessagesAsRead
+	);
+
+	useEffect(() => {
+		const foundedChat = chats.find(chat => chat.chat_id === chatId || chat.id === chatId);
+		if (!foundedChat && chatId&& !loadingChat && !loadingSendSms) {
+			console.log('Fetching chat messages for:', chatId);
+			fetchChatMessages(chatId);
+		} else if (foundedChat) {
+			console.log('Chat found:', foundedChat);
+			setChat(foundedChat);
+		}
+	}, [chats, chatId, loadingChat, loadingSendSms]);
 	useEffect(() => {
 		setCurrentUserId(userdata?.user?.id);
 	}, [userdata]);
@@ -141,6 +150,7 @@ export default function ChatContent({ chatId }) {
 											) : (
 												<MemoChatIncomingMsg key={item.message.id}
 																	 message={item.message}
+																	 data-message-id={item.message.id}
 												/>
 											)
 										)}
