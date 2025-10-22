@@ -190,7 +190,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.log('[useSendSms] Ответ от сервера:', response);
 
 			if (response.data) {
-				updateMessageId(response.data.id, response.data.timestamp, to);
+				updateMessageId(response.data.id, response.data.timestamp, response.data.files, to);
 				addMessageToChatList(response.data.left);
 			}
 		} catch (err) {
@@ -257,7 +257,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			});
 		});
 	};
-	const updateMessageId = (id, timestamp, to) => {
+	const updateMessageId = (id, timestamp, files, to) => {
 		setChats(prevChats => {
 			const chatIndex = prevChats.findIndex(chat => chat.chat_id === to);
 
@@ -273,7 +273,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 							return {
 								...message,
 								id: id,
-								isSending: false
+								isSending: false,
+								files
 							};
 						}
 						return message;

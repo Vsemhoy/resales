@@ -56,6 +56,7 @@ export default function ChatContent({ chatId }) {
 				fromId: msg.from_id,
 				id: msg.id,
 				text: msg.text,
+				files: msg.files,
 				timestamp: msg.created_at,
 				isSelf: msg.from_id === currentUserId,
 				senderName: +currentUserId !== +msg.from_id ? chat.who : 'Вы',
@@ -77,7 +78,7 @@ export default function ChatContent({ chatId }) {
 		});
 		return uniqueMessages
 			.map(normalizeMessage)
-			.filter((msg) => msg.text && msg.text.trim() !== '')
+			/*.filter((msg) => msg.text && msg.text.trim() !== '')*/
 			.sort((a, b) => a.timestamp - b.timestamp);
 	}, [chat, normalizeMessage]);
 	const messagesWithDividers = useMemo(() => {
@@ -134,9 +135,13 @@ export default function ChatContent({ chatId }) {
 													{dayjs(+item.timestamp * 1000).format('DD.MM.YY')}
 												</MemoChatDivider>
 											) : +item.message.fromId === +currentUserId ? (
-												<MemoChatSelfMsg key={item.message.id} message={item.message}/>
+												<MemoChatSelfMsg key={item.message.id}
+																 message={item.message}
+												/>
 											) : (
-												<MemoChatIncomingMsg key={item.message.id} message={item.message}/>
+												<MemoChatIncomingMsg key={item.message.id}
+																	 message={item.message}
+												/>
 											)
 										)}
 									</div>
