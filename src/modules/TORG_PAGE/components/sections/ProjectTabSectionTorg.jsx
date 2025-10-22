@@ -393,7 +393,7 @@ const ProjectTabSectionTorg = (props) => {
 			className={`sa-org-collapse-item
        ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
        ${deleted ? 'deleted' : ''} 
-       ${editMode ? '' : 'sa-org-item-notedit'} 
+       ${editMode ? 'sa-org-item-yesedit' : 'sa-org-item-notedit'} 
        ${
 					userdata?.user?.id !== authorId || userdata?.user?.id !== data?.curator?.id
 						? 'sa-noedit-item'
