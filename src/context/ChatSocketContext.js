@@ -275,7 +275,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 								...message,
 								id: id,
 								isSending: false,
-								files
+								files: files,
 							};
 						}
 						return message;

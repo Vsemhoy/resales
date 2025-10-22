@@ -64,7 +64,7 @@ export default function ChatSelfMsg({ message }) {
 							<div className={`${styles.file_circle} ${styles.self}`}>
 								{pasteFileIcon(file.extension)}
 							</div>
-							<p className={styles.href_label}>{file.route}</p>
+							<p className={styles.href_label}>{file?.name}</p>
 						</a>
 					))}
 				</div>
