@@ -46,6 +46,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 	}, []);
 
 	const connect = useCallback(() => {
+		if (!PRODMODE) return;
 		if (socketRef.current?.connected) {
 			return;
 		}
@@ -72,6 +73,14 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 			if (data.right)  emitToListeners('message:new', data.right);
 			emitToListeners('new:sms', data);
+		});
+		socket.on('update:sms', (data) => {
+			console.log('WS update:sms', data);
+
+			if (data.sms) addMessageToChat(data.sms);
+
+			//if (data.right)  emitToListeners('message:new', data.right);
+			//emitToListeners('new:sms', data);
 		});
 		socket.on('disconnect', (reason) => {
 			console.log('WEBSOCKET DISCONNECTED');
@@ -198,16 +207,20 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [loadingSendSms]);
 	const markMessagesAsRead = useCallback(async (messageIds, chatId) => {
-		if (PRODMODE) {
-			try {
-				const endpoint = `/api/sms/read/${messageIds}`;
-				await PROD_AXIOS_INSTANCE.post(endpoint, {
-					_token: CSRF_TOKEN,
-				});
-			} catch (e) {
-				console.log(e);
+		messageIds.forEach((id) => {
+			if (PRODMODE) {
+				try {
+					const endpoint = `/api/sms/read/${id}`;
+					PROD_AXIOS_INSTANCE.post(endpoint, {
+						_token: CSRF_TOKEN,
+					});
+				} catch (e) {
+					console.log(e);
+				}
+			} else {
+				console.log(`/api/sms/read/${id}`)
 			}
-		}
+		});
 	}, []);
 
 	const insertMessagesToArrays = (to, text, files, answer, timestamp, from_id) => {

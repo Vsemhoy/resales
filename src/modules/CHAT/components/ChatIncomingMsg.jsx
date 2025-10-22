@@ -47,7 +47,7 @@ export default function ChatIncomingMsg({ message }) {
 				<span>{text}</span>
 				<div className={styles.files_container}>
 					{files && files.length > 0 && files.map((file, index) => (
-						<a href={`${HTTP_HOST}/${file.route}`} target={'_blank'} className={styles.file}>
+						<a href={`${HTTP_HOST}/${file.route}`} target={'_blank'} className={styles.file} key={`file-${file.id}-${index}`}>
 							<div className={`${styles.file_circle}`}>
 								{pasteFileIcon(file.extension)}
 							</div>
