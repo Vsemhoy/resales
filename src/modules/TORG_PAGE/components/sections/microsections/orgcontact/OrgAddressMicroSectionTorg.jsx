@@ -147,7 +147,7 @@ const OrgAddressMicroSectionTorg = (props) => {
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
                 onBlur={() => setBLUR_FLAG(dayjs().unix())}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={250}
                 required={true}
@@ -169,7 +169,7 @@ const OrgAddressMicroSectionTorg = (props) => {
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
                 onBlur={() => setBLUR_FLAG(dayjs().unix())}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={25}
                 required={false}
@@ -191,7 +191,7 @@ const OrgAddressMicroSectionTorg = (props) => {
                   setComment(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={5000}
                 onBlur={() => setBLUR_FLAG(dayjs().unix())}

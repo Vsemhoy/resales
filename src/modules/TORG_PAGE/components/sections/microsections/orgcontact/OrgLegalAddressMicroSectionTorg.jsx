@@ -140,7 +140,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
                   setAddress(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={225}
                 required={true}
@@ -162,7 +162,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
                   setPostIndex(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={25}
                 required={true}
@@ -185,7 +185,7 @@ const OrgLegalAddressMicroSectionTorg = (props) => {
                   setComment(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={5000}
                 onBlur={() => setBLUR_FLAG(dayjs().unix())}

@@ -129,7 +129,7 @@ const ContactEmailMicroSectionTorg = (props) => {
                   setEmail(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={64}
                 required={true}
@@ -152,7 +152,7 @@ const ContactEmailMicroSectionTorg = (props) => {
                   setComment(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                 maxLength={5000}

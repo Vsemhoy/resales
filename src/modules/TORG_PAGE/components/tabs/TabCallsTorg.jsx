@@ -9,7 +9,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { MODAL_CALLS_LIST } from '../../../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 
 const TabCallsTorg = (props) => {
-    const [refreshMark, setRefreshMark] = useState(null);
+
   const [userdata, setUserData] = useState(null);
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
@@ -72,11 +72,6 @@ const TabCallsTorg = (props) => {
   }, [props.edit_mode]);
 
 
-  useEffect(() => {
-    setRefreshMark(props.refresh_mark);
-  }, [props.refresh_mark]);
-
-
   // Перегрузка данных при смене айдишника
   useEffect(() => {
     if (orgId){
@@ -135,14 +130,6 @@ const TabCallsTorg = (props) => {
   }, [props.org_id]);
 
 
-
-  // useEffect(() => {
-  //   if (props.on_save_command && props.on_save_command > 0){
-  //     if (props.on_change_data){
-  //       props.on_change_data({tab: 'projects', section: 'main', data: {}});
-  //     }
-  //   }
-  // }, [props.on_save_command]);
 
   
   useEffect(() => {
@@ -375,7 +362,7 @@ const MAKE_BLANK = (type) => {
                   
                   {baseData.map((item)=>(
                     <CallTabSectionTorg
-                      edit_mode={editMode}
+                      edit_mode={editMode && (userdata?.user?.id === item.id8staff_list  || userdata?.user?.id === item?.creator?.id)}
                       org_id={orgId}
                       data={item}
                       collapsed={true}

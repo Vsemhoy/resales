@@ -137,7 +137,7 @@ const ContactMessangerMicroSectionTorg = (props) => {
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
                 placeholder="@contact_id"
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={250}
                 required={true}

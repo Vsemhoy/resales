@@ -119,7 +119,7 @@ const MianBigSectionOrg = (props) => {
                       }
                       }
                       // placeholder="Controlled autosize"
-                      readOnly={!editMode}
+                      disabled={!editMode}
                       variant="borderless"
                       maxLength={550}
                       required={true}
@@ -154,7 +154,7 @@ const MianBigSectionOrg = (props) => {
                         setBLUR_FLAG(dayjs().unix());
                       }}
                       // placeholder="Controlled autosize"
-                      // readOnly={!editMode}
+                      // disabled={!editMode}
                       variant="borderless"
                       maxLength={2500}
                       required={true}
@@ -184,7 +184,7 @@ const MianBigSectionOrg = (props) => {
                         setInn(e.target.value);
                       }}
                       // placeholder="Controlled autosize"
-                      readOnly={!editMode}
+                      disabled={!editMode}
                       variant="borderless"
                       maxLength={66}
                       required={true}
@@ -216,7 +216,7 @@ const MianBigSectionOrg = (props) => {
                         setKindofactivity(e.target.value);
                       }}
                       // placeholder="Controlled autosize"
-                      readOnly={!editMode}
+                      disabled={!editMode}
                       variant="borderless"
                       maxLength={550}
                       required={true}
@@ -247,7 +247,7 @@ const MianBigSectionOrg = (props) => {
                         setMiddlename(e.target.value);
                       }}
                       // placeholder="Controlled autosize"
-                      readOnly={!editMode}
+                      disabled={!editMode}
                       variant="borderless"
                       maxLength={550}
                       required={true}
@@ -283,7 +283,7 @@ const MianBigSectionOrg = (props) => {
                       }}
                       
                       // placeholder="Controlled autosize"
-                      // readOnly={!editMode}
+                      // disabled={!editMode}
                       variant="borderless"
                       maxLength={2500}
                       required={true}
@@ -316,7 +316,7 @@ const MianBigSectionOrg = (props) => {
                         setBLUR_FLAG(dayjs().unix());
                       }}
                       // placeholder="Controlled autosize"
-                      // readOnly={!editMode}
+                      // disabled={!editMode}
                       variant="borderless"
                       maxLength={2500}
                       required={true}
@@ -356,7 +356,7 @@ const MianBigSectionOrg = (props) => {
                       setACTION_FLAG(1);
                     }}
                       // placeholder="Controlled autosize"
-                      readOnly={!editMode}
+                      disabled={!editMode}
                       variant="borderless"
                       maxLength={550}
                       required={false}
@@ -388,7 +388,7 @@ const MianBigSectionOrg = (props) => {
                         setComment(e.target.value);
                       }}
                       // placeholder="Controlled autosize"
-                      readOnly={!editMode}
+                      disabled={!editMode}
                       variant="borderless"
                       maxLength={5000}
                       required={false}
@@ -420,7 +420,7 @@ const MianBigSectionOrg = (props) => {
                         setCommentinlist(e.target.value);
                       }}
                       // placeholder="Controlled autosize"
-                      readOnly={!editMode}
+                      disabled={!editMode}
                       variant="borderless"
                       maxLength={5550}
                       required={false}

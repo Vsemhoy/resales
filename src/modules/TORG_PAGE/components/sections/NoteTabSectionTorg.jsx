@@ -165,7 +165,7 @@ const NoteTabSectionTorg = (props) => {
       ${deleted ? 'deleted' : ''} 
        ${editMode ? 'sa-org-item-yesedit' : 'sa-org-item-notedit'} 
        ${
-					userdata?.user?.id !== author || userdata?.user?.id !== author?.curator?.id
+					userdata?.user?.id !== author || userdata?.user?.id !== author?.creator?.id
 						? 'sa-noedit-item'
 						: ''
 				}`}
@@ -276,6 +276,7 @@ const NoteTabSectionTorg = (props) => {
                         : ''
                     }
                     readOnly={true}
+                    disabled={true}
                     variant="borderless"
                   />
                 ),

@@ -9,7 +9,6 @@ import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
 import { PlusOutlined } from '@ant-design/icons';
 
 const TabNotesTorg = (props) => {
-   const [refreshMark, setRefreshMark] = useState(null);
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
    */
@@ -43,7 +42,6 @@ const TabNotesTorg = (props) => {
   const [loading, setLoading] = useState(false);
   const [newLoading, setNewLoading] = useState(false);
 
-  const [openedSections, setOpenedSections] = useState([]);
 
   const [userdata, setUserData] = useState(null);
 
@@ -56,11 +54,23 @@ const TabNotesTorg = (props) => {
   //  ██████  ██      ██      
 
 
+
+
+  // Перегрузка данных при смене айдишника
   useEffect(() => {
-    setRefreshMark(props.refresh_mark);
-  }, [props.refresh_mark]);
+    if (orgId){
+      const timer = setTimeout(() => {
+        get_notes_data_action();
+      }, 1000);
+    return () => clearTimeout(timer);
+    };
+  }, [orgId, currentPage, onPage]);
 
-
+  useEffect(() => {
+    if (!orgId){
+      setTempData([]);
+    }
+  }, [orgId]);
 
   useEffect(() => {
     setUserData(props.userdata)
@@ -73,11 +83,8 @@ const TabNotesTorg = (props) => {
     setOrgId(props.org_id);
   }, [props.org_id]);
   // Перегрузка данных при смене айдишника
-  useEffect(() => {
-    if (orgId){
-      get_notes_data_action();
-    };
-  }, [orgId, currentPage, onPage]);
+
+
   // Смена режима на редактировние - сброс временных
   useEffect(() => {
     setEditMode(props.edit_mode);
@@ -161,13 +168,6 @@ const TabNotesTorg = (props) => {
   // ------------------------------------------------------------------- //
 
 
-  const reload_all_data = () => {
-    if (!orgId){ return; };
-    // Flush temporary data
-    setTempData([]);
-    // Load main data
-    
-  }
 
   const MAKE_BLANK = () => {
      setNewLoading(true);
@@ -269,7 +269,7 @@ const TabNotesTorg = (props) => {
                   
                   {baseData.map((item)=>(
                     <NoteTabSectionTorg
-                      edit_mode={editMode}
+                      edit_mode={editMode && (userdata?.user?.id === item.id8staff_list  || userdata?.user?.id === item?.creator?.id)}
                       org_id={orgId}
                       data={item}
                       collapsed={true}

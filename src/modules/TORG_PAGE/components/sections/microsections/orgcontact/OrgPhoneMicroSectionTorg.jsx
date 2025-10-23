@@ -187,7 +187,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                     }}
                     // placeholder="Controlled autosize"
                     
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={55}
                     required={true}
@@ -211,7 +211,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                     }}
                     // placeholder="Controlled autosize"
                 
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={64}
                     required={false}
@@ -236,7 +236,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                       }}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={5000}
                     onBlur={()=>{setBLUR_FLAG(dayjs().unix())}}

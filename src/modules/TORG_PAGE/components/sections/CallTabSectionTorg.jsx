@@ -666,6 +666,7 @@ const CallTabSectionTorg = (props) => {
 										}}
                     // placeholder="Controlled autosize"
                     readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     // onBlur={() => {
                     //   setBLUR_FLAG(dayjs().unix());
@@ -771,6 +772,7 @@ const CallTabSectionTorg = (props) => {
 										}}
                     // placeholder="Controlled autosize"
                     readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={120}
                     required={true}

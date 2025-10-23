@@ -152,7 +152,7 @@ const AnToleranceMicroSectionTorg = (props) => {
                     onChange={e => setNumber(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={25}
                     required={true}
@@ -172,7 +172,7 @@ const AnToleranceMicroSectionTorg = (props) => {
                     onChange={e => setExt(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={25}
                     required={false}
@@ -193,7 +193,7 @@ const AnToleranceMicroSectionTorg = (props) => {
                     onChange={(e)=>setComment(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={5000}
                     

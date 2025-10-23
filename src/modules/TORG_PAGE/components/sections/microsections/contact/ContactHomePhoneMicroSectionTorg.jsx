@@ -132,7 +132,7 @@ const ContactHomePhoneMicroSectionTorg = (props) => {
                   setNumber(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={25}
                 required={true}
@@ -154,7 +154,7 @@ const ContactHomePhoneMicroSectionTorg = (props) => {
                   setExt(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={25}
                 required={false}
@@ -177,7 +177,7 @@ const ContactHomePhoneMicroSectionTorg = (props) => {
                   setComment(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                 maxLength={5000}
