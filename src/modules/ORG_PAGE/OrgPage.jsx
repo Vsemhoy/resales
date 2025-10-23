@@ -337,7 +337,7 @@ useEffect(() => {
 			get_org_filters();
 
 			get_main_data_action(item_id);
-			get_notes_data_action(item_id);
+			// get_notes_data_action(item_id);
 			// get_org_calls_action(item_id);
 			// get_projects_data_action(item_id);
 
@@ -416,7 +416,7 @@ useEffect(() => {
 				setTimeout(() => {
 					
 					get_main_data_action(itt);
-					get_notes_data_action(itt);
+					// get_notes_data_action(itt);
 					// get_org_calls_action(itt);
 					// get_projects_data_action(itt);
 
@@ -581,31 +581,31 @@ useEffect(() => {
 	// 	}
 	// };
 
-	const get_notes_data_action = async (id) => {
-		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/n', {
-				data: {
-					page: pageNotes,
-					limit: onPage,
-				},
-				_token: CSRF_TOKEN,
-			});
-			console.log('response', response);
-			if (response.data) {
-				// if (props.changed_user_data){
-				//     props.changed_user_data(response.data);
-				// }
-				setBaseNotesData(response.data.content);
-				setLoading(false);
-			}
-		} catch (e) {
-			console.log(e);
-		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 1000);
-		}
-	};
+	// const get_notes_data_action = async (id) => {
+	// 	try {
+	// 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/n', {
+	// 			data: {
+	// 				page: pageNotes,
+	// 				limit: onPage,
+	// 			},
+	// 			_token: CSRF_TOKEN,
+	// 		});
+	// 		console.log('response', response);
+	// 		if (response.data) {
+	// 			// if (props.changed_user_data){
+	// 			//     props.changed_user_data(response.data);
+	// 			// }
+	// 			setBaseNotesData(response.data.content);
+	// 			setLoading(false);
+	// 		}
+	// 	} catch (e) {
+	// 		console.log(e);
+	// 	} finally {
+	// 		setTimeout(() => {
+	// 			setLoading(false);
+	// 		}, 1000);
+	// 	}
+	// };
 
 	/**
 	 * Получение списка select data
@@ -743,11 +743,11 @@ useEffect(() => {
 
 
 
-	useEffect(() => {
-		if (PRODMODE){
-			get_notes_data_action(itemId);
-		}
-	}, [pageNotes]);
+	// useEffect(() => {
+	// 	if (PRODMODE){
+	// 		get_notes_data_action(itemId);
+	// 	}
+	// }, [pageNotes]);
 
 	// useEffect(() => {
 	// 	if (PRODMODE){
@@ -849,7 +849,7 @@ useEffect(() => {
 		setSaveProcess(80);
 		setItemId(0);
 		get_main_data_action(iid);
-		get_notes_data_action(iid);
+		// get_notes_data_action(iid);
 		// get_org_calls_action(iid);
 		// get_projects_data_action(iid);
 
@@ -1342,8 +1342,6 @@ useEffect(() => {
               				selects={baseFiltersData}
 
 							do_delay={(val)=>{setBlockDelay(val)}}
-							// on_change_data={handleTabDataChange}
-							// on_change_main_data_part={handleMaintabObjectDataChange}
 
 							on_change_main_data={handleMainDataChange}
 							on_change_contact={handleContactChange}
@@ -1375,44 +1373,7 @@ useEffect(() => {
 							main_data={baseMainData}
 							on_change_section={sectionUpdateHandler}
 						/>
-{/* 
-						<CallsTabPage
-							show={activeTab === 'c'}
-							edit_mode={editMode}
-							item_id={itemId}
-							call_to_save={callToSaveAction}
-							base_data={baseCallsData}
-							// on_save={handleDataChangeApprove}
-							active_page={pageCalls}
-							on_change_page={(p) => {
-								setPageCalls(p);
-							}}
-							current_page={pageCalls}
-							userdata={userdata}
-							selects={baseFiltersData}
-							departaments={departList}
-							main_data={baseMainData}
-							on_change_data={handleTabDataChange}
-						/> */}
 
-
-						{/* <ProjectsTabPage
-							show={activeTab === 'p'}
-							edit_mode={editMode}
-							item_id={itemId}
-							call_to_save={callToSaveAction}
-							base_data={baseProjectsData}
-							// on_save={handleDataChangeApprove}
-							active_page={pageProject}
-							on_change_page={(p) => {
-								setPageProject(p);
-							}}
-							current_page={pageProject}
-							userdata={userdata}
-							on_change_data={handleTabDataChange}
-							selects={baseFiltersData}
-							main_data={baseMainData}
-						/> */}
 
 						<TabProjectsTorg
 								active_tab={activeTab === 'p'}
@@ -1423,8 +1384,7 @@ useEffect(() => {
 								on_delete_section={sectionDeleteHandler}
 
 								call_to_save={callToSaveAction}
-								// base_data={baseProjectsData}
-								// on_save={handleDataChangeApprove}
+
 								active_page={pageProject}
 								on_change_page={(p) => {
 									setPageProject(p);
@@ -1447,7 +1407,7 @@ useEffect(() => {
 
 							call_to_save={callToSaveAction}
 							base_data={baseNotesData}
-							// on_save={handleDataChangeApprove}
+
 							active_page={pageNotes}
 							on_change_page={(p) => {
 								setPageNotes(p);

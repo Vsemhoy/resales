@@ -12,15 +12,15 @@ const MianBigSectionOrg = (props) => {
   const [selects, setSelects] = useState([]);
 
     const [name,           setName]             = useState('');
-    const [id8an_profiles, setId8an_profiles]   = useState(0);
+    const [id8an_profiles, setId8an_profiles]   = useState(null);
     const [middlename,     setMiddlename]       = useState('');
-    const [id8an_fs,       setId8an_fs]         = useState(0);
+    const [id8an_fs,       setId8an_fs]         = useState(null);
     const [inn,            setInn]              = useState('');
     const [source,         setSource]           = useState('');
     const [comment,        setComment]          = useState('');
     const [commentinlist,  setCommentinlist]    = useState('');
     const [kindofactivity, setKindofactivity]  = useState('');
-    const [profsound,      setProfsound]        = useState(0);
+    const [profsound,      setProfsound]        = useState(null);
 
   const [itemId, setItemId] = useState(null);
 
@@ -42,13 +42,13 @@ const MianBigSectionOrg = (props) => {
     setName(props.data.name);
     setMiddlename(props.data.middlename);
     setSource(props.data.source);
-    setId8an_profiles(props.data.id8an_profiles);
-    setId8an_fs(props.data.id8an_fs);
+    setId8an_profiles(props.data.id8an_profiles ? props.data.id8an_profiles : null);
+    setId8an_fs(props.data.id8an_fs ? props.data.id8an_fs  : null);
     setInn(props.data.inn);
     setComment(props.data.comment);
     setCommentinlist(props.data.commentinlist);
     setKindofactivity(props.data.kindofactivity);
-    setProfsound(props.data.profsound);
+    setProfsound(props.data.profsound ? props.data.profsound : null);
   }, [props.data]);
 
   useEffect(() => {
