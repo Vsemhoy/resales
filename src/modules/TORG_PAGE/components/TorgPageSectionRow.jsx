@@ -1,4 +1,5 @@
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 
 const TorgPageSectionRow = (props) => {
@@ -48,7 +49,9 @@ const TorgPageSectionRow = (props) => {
       <div className='sk-omt-row-wrapper sk-omt-rw-first'>
           <div className={`sk-omt-row omt-${props.inputs?.length}-col`}>
             {props.inputs.map((item, index)=>(
-              <div className={`${(item.edit_mode && item.required && !(item?.value && item.value)) ? 'sa-required-field-block' : ''}`}>
+              <div 
+                key={'torgrow_' + "_" + index + (props.trans_key ? props.trans_key : '')}
+              className={`${(item.edit_mode && item.required && !(item?.value && item.value)) ? 'sa-required-field-block' : ''}`}>
                 <div className={'sk-omt-legend sa-flex-space'}>
 
               

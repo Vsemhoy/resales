@@ -1281,6 +1281,7 @@ const CollectAndSend = (stackName, data) => {
       <div>
       {contactstelephones.map((item)=>(
         <ContactPhoneMicroSectionTorg
+        key={'lusenro_' + item.id}
           data={item}
           edit_mode={editMode}
           on_change={updateContactPhone}
@@ -1292,6 +1293,7 @@ const CollectAndSend = (stackName, data) => {
       <div>
       {contactmobiles.map((item)=>(
         <ContactMobileMicroSectionTorg
+          key={'lusenco_' + item.id}
           data={item}
           edit_mode={editMode}
           on_change={updateContactMobile}
@@ -1304,6 +1306,7 @@ const CollectAndSend = (stackName, data) => {
       <div>
       {contacthomephones.map((item)=>(
         <ContactHomePhoneMicroSectionTorg
+        key={'kosenco_' + item.id}
           data={item}
           edit_mode={editMode}
           on_change={updateContactHomePhone}
@@ -1316,6 +1319,7 @@ const CollectAndSend = (stackName, data) => {
       <div>
       {contactemails.map((item)=>(
         <ContactEmailMicroSectionTorg
+        key={'dustenco_' + item.id}
           data={item}
           edit_mode={editMode}
           on_change={updateContactEmail}
@@ -1328,6 +1332,7 @@ const CollectAndSend = (stackName, data) => {
       <div>
       {contactmessangers.map((item)=>(
         <ContactMessangerMicroSectionTorg
+        key={'gazenco_' + item.id}
             data={item}
             edit_mode={editMode}
             on_change={updateContactMessanger}
@@ -1344,6 +1349,7 @@ const CollectAndSend = (stackName, data) => {
         <div className='sa-org-temp-stack-collapse'>
         {newContactstelephones.map((item)=>(
           <ContactPhoneMicroSectionTorg
+          key={'brisenco_' + item.id}
                 data={item}
                 edit_mode={editMode}
                 on_change={updateNewContactPhone}
@@ -1362,6 +1368,7 @@ const CollectAndSend = (stackName, data) => {
         <div className='sa-org-temp-stack-collapse'>
         {newContactmobiles.map((item)=>(
           <ContactMobileMicroSectionTorg
+          key={'dubenco_' + item.id}
                 data={item}
                 edit_mode={editMode}
                 on_change={updateNewContactMobile}
@@ -1379,6 +1386,7 @@ const CollectAndSend = (stackName, data) => {
         <div className='sa-org-temp-stack-collapse'>
         {newContacthomephones.map((item)=>(
           <ContactHomePhoneMicroSectionTorg
+          key={'keranco_' + item.id}
                 data={item}
                 edit_mode={editMode}
                 on_change={updateNewContactHomePhone}
@@ -1396,6 +1404,7 @@ const CollectAndSend = (stackName, data) => {
         <div className='sa-org-temp-stack-collapse'>
         {newContactemails.map((item)=>(
               <ContactEmailMicroSectionTorg
+              key={'glinomesco_' + item.id}
                 data={item}
                 edit_mode={editMode}
                 on_change={updateNewContactEmail}
@@ -1413,6 +1422,7 @@ const CollectAndSend = (stackName, data) => {
         <div className='sa-org-temp-stack-collapse'>
         {newContactmessangers.map((item)=>(
           <ContactMessangerMicroSectionTorg
+          key={'goncharenco_' + item.id}
                 data={item}
                 edit_mode={editMode}
                 on_change={updateNewContactMessanger}

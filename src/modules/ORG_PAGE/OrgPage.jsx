@@ -45,6 +45,7 @@ import CustomModal from '../../components/helpers/modals/CustomModal';
 import { FlushOrgData, IsSameComparedSomeOrgData, MAIN_ORG_DATA_IGNORE_KEYS } from './components/handlers/OrgPageDataHandler';
 import TabNotesTorg from '../TORG_PAGE/components/tabs/TabNotesTorg';
 import TabProjectsTorg from '../TORG_PAGE/components/tabs/TabProjectsTorg';
+import TabCallsTorg from '../TORG_PAGE/components/tabs/TabCallsTorg';
 
 
 
@@ -1356,6 +1357,25 @@ useEffect(() => {
 							on_change_requisite={handleRequisitesChange}
 						/>
 
+						<TabCallsTorg
+							active_tab={activeTab === 'c'}
+							edit_mode={editMode}
+							org_id={itemId}
+							call_to_save={callToSaveAction}
+							base_data={baseCallsData}
+							// on_save={handleDataChangeApprove}
+							active_page={pageCalls}
+							on_change_page={(p) => {
+								setPageCalls(p);
+							}}
+							current_page={pageCalls}
+							userdata={userdata}
+							selects={baseFiltersData}
+							departaments={departList}
+							main_data={baseMainData}
+							on_change_section={sectionUpdateHandler}
+						/>
+{/* 
 						<CallsTabPage
 							show={activeTab === 'c'}
 							edit_mode={editMode}
@@ -1373,7 +1393,8 @@ useEffect(() => {
 							departaments={departList}
 							main_data={baseMainData}
 							on_change_data={handleTabDataChange}
-						/>
+						/> */}
+
 
 						{/* <ProjectsTabPage
 							show={activeTab === 'p'}

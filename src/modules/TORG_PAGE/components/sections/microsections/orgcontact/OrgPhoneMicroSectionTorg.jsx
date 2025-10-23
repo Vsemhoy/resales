@@ -90,7 +90,6 @@ const OrgPhoneMicroSectionTorg = (props) => {
 
 
     useEffect(() => {
-      console.log(BLUR_FLAG, deleted, editMode);
       // При монтировании компонента форма не отправляется
       // Если не проверять deleted, то после монтирования формы и нажатии удалить - форма не отправится
       if (!BLUR_FLAG && (Boolean(deleted) === Boolean(props.data?.deleted))) return;
@@ -170,7 +169,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
      ${baseData && baseData.command && baseData.command === 'create' ? 'sa-brand-new-row' : ''}
     `}>
             <TorgPageSectionRow
-            key={'totoddtl_' + itemId}
+              key={'totoddtl_' + itemId}
               explabel={'комм'}
               edit_mode={editMode}
               inputs={[
@@ -179,6 +178,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                 label: 'Телефон',
                 input:
                   <Input
+                    trans_key={'ttans_csontnumber1_' + baseData?.id + orgId}
                     key={'csontnumber1_' + baseData?.id + orgId}
                     value={number}
                      onChange={e => {
@@ -186,7 +186,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                       if (!ACTION_FLAG){ setACTION_FLAG(1)}
                     }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                    
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={55}
@@ -210,7 +210,7 @@ const OrgPhoneMicroSectionTorg = (props) => {
                       if (!ACTION_FLAG){ setACTION_FLAG(1)};
                     }}
                     // placeholder="Controlled autosize"
-                    autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
+                
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={64}

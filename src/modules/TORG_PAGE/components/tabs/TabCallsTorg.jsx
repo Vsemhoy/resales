@@ -350,13 +350,14 @@ const MAKE_BLANK = (type) => {
                       data={item}
                       key={ "cotonatas_n_" +  item.id }
                       on_delete={handleDeleteNewItem}
-                      on_change={props.on_change_section}
+                      // on_change={props.on_change_section}
                       allow_delete={true}
                       selects={selects}
 
                       org_contacts={orgContacts}
                       user_data={userdata}
                       on_collect={(payload)=>{props.on_change_section('calls', payload.id, payload)}}
+                      departaments={props.departaments}
                       />
                   ))}
                 </div>
@@ -372,12 +373,13 @@ const MAKE_BLANK = (type) => {
                       data={item}
                       collapsed={true}
                       key={ "comatonatas_" +  item.id }
-                      on_change={props.on_change_section}
+                      // on_change={props.on_change_section}
                       // on_delete={handleDeleteNewItem}
                       on_collect={(payload)=>{props.on_change_section('calls', payload.id, payload)}}
                       selects={selects}
                       org_contacts={orgContacts}
                       user_data={userdata}
+                      departaments={props.departaments}
                       />
                   ))}
                 </div>
