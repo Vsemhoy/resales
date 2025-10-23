@@ -43,7 +43,7 @@ const TabCallsTorg = (props) => {
   const [newLoading, setNewLoading] = useState(false);
   
   
-  
+    const [departaments, setDepartaments] = useState([]);
     const [orgContacts, setOrgContacts] = useState([]);
 
 
@@ -89,13 +89,21 @@ const TabCallsTorg = (props) => {
 
 
   useEffect(() => {
+    if (!orgId){
+      setTempData([]);
+    }
+  }, [orgId]);
+
+  useEffect(() => {
     if (props.selects){
       setSelects(props.selects);
     }
   }, [props.selects]);
 
 
-
+  useEffect(() => {
+    setDepartaments(props.departaments)
+  }, [props.departaments]);
 
   /**
    * Смена или сброс на ноль/нулл org_id приводит к перегрузке формы + загрузке данных с сервака/очистке временных массивов
@@ -357,7 +365,7 @@ const MAKE_BLANK = (type) => {
                       org_contacts={orgContacts}
                       user_data={userdata}
                       on_collect={(payload)=>{props.on_change_section('calls', payload.id, payload)}}
-                      departaments={props.departaments}
+                      departaments={departaments}
                       />
                   ))}
                 </div>
@@ -379,7 +387,7 @@ const MAKE_BLANK = (type) => {
                       selects={selects}
                       org_contacts={orgContacts}
                       user_data={userdata}
-                      departaments={props.departaments}
+                      departaments={departaments}
                       />
                   ))}
                 </div>

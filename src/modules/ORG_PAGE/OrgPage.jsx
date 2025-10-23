@@ -338,7 +338,7 @@ useEffect(() => {
 
 			get_main_data_action(item_id);
 			get_notes_data_action(item_id);
-			get_org_calls_action(item_id);
+			// get_org_calls_action(item_id);
 			// get_projects_data_action(item_id);
 
       get_departs();
@@ -417,7 +417,7 @@ useEffect(() => {
 					
 					get_main_data_action(itt);
 					get_notes_data_action(itt);
-					get_org_calls_action(itt);
+					// get_org_calls_action(itt);
 					// get_projects_data_action(itt);
 
 				}, 1000);
@@ -519,40 +519,40 @@ useEffect(() => {
 		}
 	};
 
-	const get_org_calls_action = async (id) => {
-		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
-				data: {
-					page: pageCalls,
-					limit: onPage,
-				},
-				_token: CSRF_TOKEN,
-			});
-			console.log('response', response);
-			if (response.data) {
-				// if (props.changed_user_data){
-				//     props.changed_user_data(response.data);
-				// }
-				// setBaseCallsData(response.data.content?.calls.map((item)=>{
-				// 	item._savecontact = false;
-				// 	return item;
-				// }));
-				// setBaseCallsData(response.data.content?.calls.map((item)=>{
-				// 	item._savecontact = false;
-				// 	return item;
-				// }));
-				setBaseCallsData(response.data.content);
-				setLoading(false);
+	// const get_org_calls_action = async (id) => {
+	// 	try {
+	// 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
+	// 			data: {
+	// 				page: pageCalls,
+	// 				limit: onPage,
+	// 			},
+	// 			_token: CSRF_TOKEN,
+	// 		});
+	// 		console.log('response', response);
+	// 		if (response.data) {
+	// 			// if (props.changed_user_data){
+	// 			//     props.changed_user_data(response.data);
+	// 			// }
+	// 			// setBaseCallsData(response.data.content?.calls.map((item)=>{
+	// 			// 	item._savecontact = false;
+	// 			// 	return item;
+	// 			// }));
+	// 			// setBaseCallsData(response.data.content?.calls.map((item)=>{
+	// 			// 	item._savecontact = false;
+	// 			// 	return item;
+	// 			// }));
+	// 			setBaseCallsData(response.data.content);
+	// 			setLoading(false);
 
-			}
-		} catch (e) {
-			console.log(e);
-		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 1000);
-		}
-	};
+	// 		}
+	// 	} catch (e) {
+	// 		console.log(e);
+	// 	} finally {
+	// 		setTimeout(() => {
+	// 			setLoading(false);
+	// 		}, 1000);
+	// 	}
+	// };
 
 	// const get_projects_data_action = async (id) => {
 	// 	try {
@@ -749,11 +749,11 @@ useEffect(() => {
 		}
 	}, [pageNotes]);
 
-	useEffect(() => {
-		if (PRODMODE){
-			get_org_calls_action(itemId);
-		}
-	}, [pageCalls]);
+	// useEffect(() => {
+	// 	if (PRODMODE){
+	// 		get_org_calls_action(itemId);
+	// 	}
+	// }, [pageCalls]);
 
 	// useEffect(() => {
 	// 	if (PRODMODE){
@@ -850,7 +850,7 @@ useEffect(() => {
 		setItemId(0);
 		get_main_data_action(iid);
 		get_notes_data_action(iid);
-		get_org_calls_action(iid);
+		// get_org_calls_action(iid);
 		// get_projects_data_action(iid);
 
 			setTimeout(() => {
