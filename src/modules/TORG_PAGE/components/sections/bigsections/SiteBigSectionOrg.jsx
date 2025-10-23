@@ -69,7 +69,7 @@ const SiteBigSectionOrg = (props) => {
                       setSite(e.target.value);
                     }}
                     // placeholder="Controlled autosize"
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={128}
                     required={false}

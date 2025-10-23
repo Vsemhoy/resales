@@ -39,7 +39,7 @@ const ContactMainSectionTorg = (props) => {
   const [comment, setComment] = useState('');
   const [occupy, setOccupy] = useState('');
   const [job, setJob] = useState('');
-  const [exittoorg_id, setExittoorg_id] = useState('');
+  const [exittoorg_id, setExittoorg_id] = useState(null);
   const [deleted, setDeleted] = useState(0);
 
   const [objectResult, setObjectResult] = useState({});
@@ -144,7 +144,7 @@ useEffect(() => {
     }
 
     if (exittoorg_id !== props.data?.exittoorg_id) {
-      setExittoorg_id(props.data?.exittoorg_id);
+      setExittoorg_id(props.data?.exittoorg_id ? props.data?.exittoorg_id : null);
     }
     if (deleted !== props.data?.deleted) {
       setDeleted(props.data?.deleted);
@@ -1113,7 +1113,7 @@ const CollectAndSend = (stackName, data) => {
                     onChange={e => setName(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={60}
                   />,
@@ -1130,7 +1130,7 @@ const CollectAndSend = (stackName, data) => {
                     onChange={e => setMiddleName(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={60}
                     required={false}
@@ -1158,7 +1158,7 @@ const CollectAndSend = (stackName, data) => {
                     onChange={e => setLastName(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={60}
                   />,
@@ -1175,7 +1175,7 @@ const CollectAndSend = (stackName, data) => {
                     onChange={e => setOccupy(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={60}
                   />,
@@ -1201,7 +1201,7 @@ const CollectAndSend = (stackName, data) => {
                     onChange={e => setComment(e.target.value)}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
-                    readOnly={!editMode}
+                    disabled={!editMode}
                     variant="borderless"
                     maxLength={5000}
                   />,

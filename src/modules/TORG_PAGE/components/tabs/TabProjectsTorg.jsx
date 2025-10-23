@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
 import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
-import { MODAL_NOTES_LIST } from '../../../ORG_LIST/components/mock/MODALNOTESTABMOCK';
-import NoteTabSectionTorg from '../sections/NoteTabSectionTorg';
 import dayjs from 'dayjs';
 import { Button, Empty, Pagination, Spin } from 'antd';
 import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
@@ -11,7 +9,7 @@ import { MODAL_PROJECTS_LIST } from '../../../ORG_LIST/components/mock/MODALPROJ
 import ProjectTabSectionTorg from '../sections/ProjectTabSectionTorg';
 
 const TabProjectsTorg = (props) => {
-  const [refreshMark, setRefreshMark] = useState(null);
+
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
    */
@@ -21,7 +19,7 @@ const TabProjectsTorg = (props) => {
    * При сбросе orgId мы перегружаем данные
   */
  const [editMode, setEditMode] = useState(false); // true|false - режим редактирования
- const [prevEditMode, setPrevEditMode] = useState(false);
+
   /**
    * При сбросе orgId мы перегружаем данные
    */
@@ -58,9 +56,7 @@ const TabProjectsTorg = (props) => {
   // ██    ██ ██      ██      
   //  ██████  ██      ██      
 
-  useEffect(() => {
-    setRefreshMark(props.refresh_mark);
-  }, [props.refresh_mark]);
+
 
   useEffect(() => {
     setUserData(props.userdata)
@@ -106,15 +102,7 @@ const TabProjectsTorg = (props) => {
   }, [props.edit_mode]);
 
 
-  // useEffect(() => {
-  //   if (props.on_save_command && props.on_save_command > 0){
-  //     if (props.on_change_data){
-  //       props.on_change_data({tab: 'projects', section: 'main', data: {}});
-  //     }
-  //   }
-  // }, [props.on_save_command]);
 
-  
   useEffect(() => {
     if (props.selects){
       setSelects(props.selects);
@@ -189,14 +177,6 @@ const get_projects_data_action = async () => {
 
   // ------------------------------------------------------------------- //
 
-
-  // const reload_all_data = () => {
-  //   if (!orgId){ return; };
-  //   // Flush temporary data
-  //   setTempData([]);
-  //   // Load main data
-    
-  // }
 
   const MAKE_BLANK = () => {
      setNewLoading(true);

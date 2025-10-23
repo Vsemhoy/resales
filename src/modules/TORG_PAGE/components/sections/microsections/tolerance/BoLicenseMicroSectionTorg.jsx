@@ -176,7 +176,7 @@ const BoLicenseMicroSectionTorg = (props) => {
                   setName(e.target.value);
                   setActionFlagOnce();
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={255}
                 required={true}
@@ -199,7 +199,7 @@ const BoLicenseMicroSectionTorg = (props) => {
                   setBLUR_FLAG(dayjs().unix());
                   setActionFlagOnce();
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 required={false}
               />
@@ -263,7 +263,7 @@ const BoLicenseMicroSectionTorg = (props) => {
                   setBLUR_FLAG(dayjs().unix());
                   setActionFlagOnce();
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 required={false}
               />
@@ -284,7 +284,7 @@ const BoLicenseMicroSectionTorg = (props) => {
                   setComment(e.target.value);
                   setActionFlagOnce();
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                 maxLength={5000}

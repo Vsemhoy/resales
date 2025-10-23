@@ -138,7 +138,7 @@ const OrgEmailMicroSectionTorg = (props) => {
             //         setEmail(e.target.value);
             //         if (!ACTION_FLAG) setACTION_FLAG(1);
             //       }}
-            //                       readOnly={!editMode}
+            //                       disabled={!editMode}
             //     variant="borderless"
             //     maxLength={250}
             //     required={true}
@@ -165,7 +165,7 @@ const OrgEmailMicroSectionTorg = (props) => {
                     setEmail(e.target.value);
                     if (!ACTION_FLAG) setACTION_FLAG(1);
                   }}
-                  readOnly={!editMode}
+                  disabled={!editMode}
                   variant="borderless"
                   maxLength={250}
                   required={true}
@@ -188,7 +188,7 @@ const OrgEmailMicroSectionTorg = (props) => {
                   setComment(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={5000}
                 onBlur={() => setBLUR_FLAG(dayjs().unix())}

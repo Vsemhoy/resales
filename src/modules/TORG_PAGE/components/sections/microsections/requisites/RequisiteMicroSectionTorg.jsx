@@ -136,7 +136,7 @@ const RequisiteMicroSectionTorg = (props) => {
                   setOrgName(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={200}
                 required={true}
@@ -179,7 +179,7 @@ const RequisiteMicroSectionTorg = (props) => {
                   setInn(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={64}
                 required={true}
@@ -200,7 +200,7 @@ const RequisiteMicroSectionTorg = (props) => {
                   setKpp(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={64}
                 required={true}
@@ -223,7 +223,7 @@ const RequisiteMicroSectionTorg = (props) => {
                   setRequisites(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                 maxLength={5000}

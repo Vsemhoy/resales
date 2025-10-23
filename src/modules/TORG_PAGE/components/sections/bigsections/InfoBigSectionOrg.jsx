@@ -12,9 +12,9 @@ const InfoBigSectionOrg = (props) => {
   const [selects, setSelects] = useState([]);
 
   const [itemId,         setItemId]           = useState(0);
-  const [statusmoney, setStatusmoney]         = useState(0);
-  const [conveyance, setConveyance]           = useState(0);
-  const [typeList, setTypeList] = useState(0);
+  const [statusmoney, setStatusmoney]         = useState(1);
+  const [conveyance, setConveyance]           = useState(null);
+  const [typeList, setTypeList] = useState(null);
   const [listComment,       setListComment] = useState('');
 
   const [author, setAuthor] = useState(''); //id8staff_list7author
@@ -48,9 +48,9 @@ const InfoBigSectionOrg = (props) => {
           };
     
           setStatusmoney(props.data?.id8an_statusmoney);
-          setConveyance(props.data?.id8an_conveyance);
+          setConveyance(props.data?.id8an_conveyance ? props.data?.id8an_conveyance : null);
           
-          setTypeList(props.data?.list?.id8an_typelist ? props.data?.list?.id8an_typelist : 0);
+          setTypeList(props.data?.list?.id8an_typelist ? props.data?.list?.id8an_typelist : null);
           setListComment(props.data?.list?.comment ? props.data?.list?.comment : '');
       };
     
@@ -115,7 +115,7 @@ const InfoBigSectionOrg = (props) => {
                       // onChange={e => setAddress(e.target.value)}
   
                       // placeholder="Controlled autosize"
-                      readOnly={true}
+                      disabled={true}
                       variant="borderless"
                       maxLength={1550}
                       required={false}
@@ -132,7 +132,7 @@ const InfoBigSectionOrg = (props) => {
                       // onChange={e => setAddress(e.target.value)}
   
                       // placeholder="Controlled autosize"
-                      readOnly={true}
+                      disabled={true}
                       variant="borderless"
                       maxLength={1550}
                       required={false}
@@ -171,7 +171,7 @@ const InfoBigSectionOrg = (props) => {
                         setBLUR_FLAG(dayjs().unix());
                         }}
                       // placeholder="Controlled autosize"
-                      // readOnly={!editMode}
+                      // disabled={!editMode}
                       variant="borderless"
                       maxLength={2500}
                       required={true}
@@ -204,7 +204,7 @@ const InfoBigSectionOrg = (props) => {
                         setBLUR_FLAG(dayjs().unix());
                         }}
                       // placeholder="Controlled autosize"
-                      // readOnly={!editMode}
+                      // disabled={!editMode}
                       variant="borderless"
                       maxLength={2500}
                       required={true}
@@ -243,7 +243,7 @@ const InfoBigSectionOrg = (props) => {
                         setBLUR_FLAG(dayjs().unix());
                         }}
                       // placeholder="Controlled autosize"
-                      // readOnly={!editMode}
+                      // disabled={!editMode}
                       variant="borderless"
                       maxLength={2500}
                       required={true}
@@ -272,7 +272,7 @@ const InfoBigSectionOrg = (props) => {
                         setACTION_FLAG(1);
                       }}
                       // placeholder="Controlled autosize"
-                      readOnly={!editMode}
+                      disabled={!editMode}
                       variant="borderless"
                       maxLength={1550}
                       required={false}

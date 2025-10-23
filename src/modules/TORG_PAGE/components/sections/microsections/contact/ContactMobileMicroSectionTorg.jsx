@@ -132,7 +132,7 @@ const ContactMobileMicroSectionTorg = (props) => {
                   setNumber(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 maxLength={25}
                 required={true}
@@ -155,7 +155,7 @@ const ContactMobileMicroSectionTorg = (props) => {
                   setComment(e.target.value);
                   if (!ACTION_FLAG) setACTION_FLAG(1);
                 }}
-                readOnly={!editMode}
+                disabled={!editMode}
                 variant="borderless"
                 autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                 maxLength={5000}
