@@ -181,6 +181,7 @@ const TabCallsTorg = (props) => {
 
 
   const get_org_calls_action = async (id) => {
+    if (!id){return;}
     if (PRODMODE){
       setLoading(true);
       try {

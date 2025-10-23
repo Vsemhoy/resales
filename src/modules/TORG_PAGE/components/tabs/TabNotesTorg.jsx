@@ -77,7 +77,7 @@ const TabNotesTorg = (props) => {
     if (orgId){
       get_notes_data_action();
     };
-  }, [orgId]);
+  }, [orgId, currentPage, onPage]);
   // Смена режима на редактировние - сброс временных
   useEffect(() => {
     setEditMode(props.edit_mode);
@@ -137,6 +137,7 @@ const TabNotesTorg = (props) => {
           setOriginalData(JSON.parse(JSON.stringify(response.data.content.notes)));
           setBaseData(response.data.content.notes);
           setLoading(false);
+          setTotal(response.data.total);
         }
       } catch (e) {
         console.log(e);
