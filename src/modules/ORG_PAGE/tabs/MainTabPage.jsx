@@ -892,37 +892,6 @@ const MainTabPage = (props) => {
 
 
 
-                                    
-
-
-  // useEffect(() => {
-  //   // console.log('DATA UPDATED');
-  //   if (props.on_change_data){
-  //     // console.log(baseData);
-  //     props.on_change_data('main', baseData);
-  //   };
-  // }, [baseData]);
-
-  // useEffect(() => {
-  //   if (props.on_change_main_data) {
-  //     // console.log('CALL TO CHANGE BASEDATA ON 1 LEVEL', baseData);
-  //     props.on_change_main_data(baseData);
-  //   }
-  // }, [baseData]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

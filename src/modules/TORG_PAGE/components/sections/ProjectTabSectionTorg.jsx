@@ -110,7 +110,6 @@ const ProjectTabSectionTorg = (props) => {
 
 	useEffect(() => {
 		setData(props.data);
-		console.log('props.data', props.data);
 		if (props.data.id) {
 			setItemId(props.data.id);
 			setOrgId(props.data.id_orgs);
@@ -217,7 +216,6 @@ const ProjectTabSectionTorg = (props) => {
 					},
 					_token: CSRF_TOKEN,
 				});
-				console.log('response', response);
 				if (response.data) {
 					setMountOrgList(response.data.selects.erector);
 					// if (props.changed_user_data){
@@ -241,7 +239,6 @@ const ProjectTabSectionTorg = (props) => {
 					data: { linkbid: searchBid, org_id: orgId },
 					_token: CSRF_TOKEN,
 				});
-				console.log('response', response);
 				if (response.data) {
 					setMountBidList(response.data.selects.linkbid);
 				}
@@ -384,10 +381,7 @@ const ProjectTabSectionTorg = (props) => {
 		deleted,
 	]);
 
-	useEffect(() => {
-		console.log('OLX', mountOrgList);
-		console.log('BMX', mountBidList);
-	}, [mountOrgList, mountBidList]);
+
 
 	return (
 		<div

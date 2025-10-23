@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
-import { Badge, Button, Collapse, Empty, Input, Select } from 'antd';
+import { Badge, Button, Collapse, Empty, Input, Select, Spin } from 'antd';
 import {
   BuildingLibraryIcon,
   BuildingOfficeIcon,
-  CameraIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  DevicePhoneMobileIcon,
-  EnvelopeIcon,
-  PaperAirplaneIcon,
-  PhoneIcon,
-  TrashIcon,
+	CameraIcon,
+	ChevronDownIcon,
+	ChevronUpIcon,
+	DevicePhoneMobileIcon,
+	EnvelopeIcon,
+	PaperAirplaneIcon,
+	PhoneIcon,
+	TrashIcon,
 } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { forIn } from 'lodash';
 
 import { PlusCircleOutlined } from '@ant-design/icons';
-
-
-import { ORGLIST_MODAL_MOCK_MAINTAB } from '../../../ORG_LIST/components/mock/ORGLISTMODALMOCK';
-
+import { FlushOrgData } from '../handlers/OrgPageDataHandler';
+import { ShortName } from '../../../../components/helpers/TextHelpers';
+import { TORG_CHEVRON_SIZE } from '../TorgConfig';
 import MianBigSectionOrg from '../sections/bigsections/MainBigSectionOrg';
 import InfoBigSectionOrg from '../sections/bigsections/InfoBigSectionOrg';
 import TorgPageSectionRow from '../TorgPageSectionRow';
@@ -30,15 +29,9 @@ import OrgPhoneMicroSectionTorg from '../sections/microsections/orgcontact/OrgPh
 import OrgEmailMicroSectionTorg from '../sections/microsections/orgcontact/OrgEmailMicroSectionTorg';
 import SiteBigSectionOrg from '../sections/bigsections/SiteBigSectionOrg';
 import AnLicenseMicroSectionTorg from '../sections/microsections/tolerance/AnLicenseMicroSectionTorg';
+import BoLicenseMicroSectionTorg from '../sections/microsections/tolerance/BoLicenseMicroSectionTorg';
 import ContactMainSectionTorg from '../sections/ContactMainSectionTorg';
 import RequisiteMicroSectionTorg from '../sections/microsections/requisites/RequisiteMicroSectionTorg';
-import BoLicenseMicroSectionTorg from '../sections/microsections/tolerance/BoLicenseMicroSectionTorg';
-import { FlushOrgData } from '../OrgPageDataHandler';
-import { ShortName } from '../../../../components/helpers/TextHelpers';
-import { TORG_CHEVRON_SIZE } from '../TorgConfig';
-import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
-
 
 
 
@@ -49,9 +42,9 @@ const TabMainTorg = (props) => {
   const [show, setShow] = useState(false);
   const [itemId, setItemId] = useState(props.item_id);
 
-  const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
 
-  const [newLoading, setNewLoading] = useState(false);
+	const [newLoading, setNewLoading] = useState(false);
 
   const [baseData, setBaseData] = useState([]);
 
@@ -104,10 +97,10 @@ const TabMainTorg = (props) => {
   const [collapsed_rows, setCollapsedRows] = useState(['main_row', 'info_row', 'contactinfo_row', 'licenses_row', 'contacts_row', 'requisites_row']);
 
 
-  const [selects, setSelects] = useState(null);
-  useEffect(() => {
-    setSelects(props.selects);
-  }, [props.selects]);
+	const [selects, setSelects] = useState(null);
+	useEffect(() => {
+		setSelects(props.selects);
+	}, [props.selects]);
 
   useEffect(() => {
     setShow(props.show);
@@ -120,91 +113,64 @@ const TabMainTorg = (props) => {
 
 
 
-  // Получение данных от сервера когда обновляется после сброса айдишник
-  useEffect(() => {
-    if (itemId){
-      if (PRODMODE){
-        get_main_data_action();
-
-      } else {
-        set_data_to_page(ORGLIST_MODAL_MOCK_MAINTAB);
-      }
-    }
-  }, [itemId]);
-
 
   useEffect(() => {
-    if (BLUR_FLAG && props.on_change_main_data){
-      props.on_change_main_data(baseData);
-    }
-  }, [baseData]);
-
-
-
-
-
-
-  /**
-   * Расстановка данных от свервера мо объектам и массивам
-   * @param {*} masterdata 
-   * @returns 
-   */
-  const set_data_to_page = (masterdata) => {
-    if (!masterdata){
+    if (!props.base_data){
       return;
     }
-    setBaseData(masterdata);
-    if (masterdata){
-      setFormId8org_regions(masterdata.id8org_regions);
-      setFormId8org_towns(masterdata.id8org_towns);
+    setBaseData(props.base_data);
+    // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
+    if (props.base_data){
+      setFormId8org_regions(props.base_data.id8org_regions);
+      setFormId8org_towns(props.base_data.id8org_towns);
     }
 
-    if (masterdata?.contacts){
-      setCONTACTS(JSON.parse(JSON.stringify(masterdata?.contacts)));
+    if (props.base_data?.contacts){
+      setCONTACTS(JSON.parse(JSON.stringify(props.base_data?.contacts)));
     } else { setCONTACTS([])};
 
-    if (masterdata?.active_licenses_bo){
-      setBOLICENSES(JSON.parse(JSON.stringify(masterdata?.active_licenses_bo)));
+    if (props.base_data?.active_licenses_bo){
+      setBOLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses_bo)));
     } else {setBOLICENSES([])};
 
-    if (masterdata?.active_licenses){
-      setANLICENSES(JSON.parse(JSON.stringify(masterdata?.active_licenses)));
+    if (props.base_data?.active_licenses){
+      setANLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses)));
     } else {setANLICENSES([])};
 
-    if (masterdata?.active_tolerance){
-      setANTOLERANCES(JSON.parse(JSON.stringify(masterdata?.active_tolerance)));
+    if (props.base_data?.active_tolerance){
+      setANTOLERANCES(JSON.parse(JSON.stringify(props.base_data?.active_tolerance)));
     } else {setANTOLERANCES([])};
 
-    if (masterdata?.address){
-      setORGADDRESSES(JSON.parse(JSON.stringify(masterdata?.address)));
+    if (props.base_data?.address){
+      setORGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.address)));
     } else {setORGADDRESSES([])};
 
-    if (masterdata?.legaladdresses){
-      setORLEGADDRESSES(JSON.parse(JSON.stringify(masterdata?.legaladdresses)));
+    if (props.base_data?.legaladdresses){
+      setORLEGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.legaladdresses)));
     } else {setORLEGADDRESSES([])};
 
-    if (masterdata?.emails){
-      setORGEMAILS(JSON.parse(JSON.stringify(masterdata?.emails)));
+    if (props.base_data?.emails){
+      setORGEMAILS(JSON.parse(JSON.stringify(props.base_data?.emails)));
     } else {setORGEMAILS([])};
 
 
 
-    if (masterdata?.phones){
-      setORGPHONES(JSON.parse(JSON.stringify(masterdata?.phones)));
+    if (props.base_data?.phones){
+      setORGPHONES(JSON.parse(JSON.stringify(props.base_data?.phones)));
     } else {setORGPHONES([])};
 
-    if (masterdata?.requisites){
-      setREQUISITES(JSON.parse(JSON.stringify(masterdata?.requisites)));
+    if (props.base_data?.requisites){
+      setREQUISITES(JSON.parse(JSON.stringify(props.base_data?.requisites)));
     } else {setREQUISITES([])};
 
-    let creator  = masterdata?.creator;
-    let curator  = masterdata?.curator;
-    let list     = masterdata?.list;
+    let creator  = props.base_data?.creator;
+    let curator  = props.base_data?.curator;
+    let list     = props.base_data?.list;
 
 
 
     // Очистка главного объекта от мусора
-    let bdt = FlushOrgData(JSON.parse(JSON.stringify(masterdata)), [
+    let bdt = FlushOrgData(JSON.parse(JSON.stringify(props.base_data)), [
       "warningcmpcount",
       "warningcmpcomment",
       "tv",
@@ -222,7 +188,6 @@ const TabMainTorg = (props) => {
       "contacts",
       "creator",
       "curator",
-      "list",
       "legaladdresses",
       "phones",
       "region",
@@ -242,9 +207,11 @@ const TabMainTorg = (props) => {
       "date_dealer"
     ]);
 
+    console.log('START --------- ', bdt);
 
     setBaseData(bdt);
 
+    console.log('bdt', bdt, props.base_data)
 
       if (creator){
             setAuthor(ShortName(creator?.surname, creator?.name, creator?.secondname));
@@ -262,85 +229,49 @@ const TabMainTorg = (props) => {
       
       setTypeList(list?.id8an_typelist ? list?.id8an_typelist : 0);
       setListComment(list?.comment ? list?.comment : '');
-  };
 
-  // Сеттер айдишника 
+   
+
+
+  }, [props.base_data]);
+
   useEffect(() => {
     setItemId(props.item_id);
   }, [props.item_id]);
 
 
 
-
-
-
-
-
-
-// ███████ ███████ ████████  ██████ ██   ██ 
-// ██      ██         ██    ██      ██   ██ 
-// █████   █████      ██    ██      ███████ 
-// ██      ██         ██    ██      ██   ██ 
-// ██      ███████    ██     ██████ ██   ██ 
-                                         
-                                         
-
-
-  /** ----------------------- FETCHES -------------------- */
-
-  const get_main_data_action = async () => {
-    try {
-      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + itemId + '/m', {
-        data: {},
-        _token: CSRF_TOKEN,
-      });
-      if (response.data) {
-        // if (props.changed_user_data){
-        //     props.changed_user_data(response.data);
-        // }
-        // setBaseMainData(FlushOrgData(response.data.content));
-
-        // Отправка данных на очистку
-        set_data_to_page(response.data.content);
-        setLoading(false);
-        
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+  useEffect(() => {
+    if (BLUR_FLAG && props.on_change_main_data){
+      console.log('CALLL _----------- TO ___________ save');
+      props.on_change_main_data(baseData);
     }
-  };
+  }, [baseData]);
 
 
 
-  /** ----------------------- FETCHES -------------------- */
 
 
 
-// ███████ ███████ ████████  ██████ ██   ██       ██    ██ ██████  
-// ██      ██         ██    ██      ██   ██       ██    ██ ██   ██ 
-// █████   █████      ██    ██      ███████ █████ ██    ██ ██████  
-// ██      ██         ██    ██      ██   ██       ██    ██ ██      
-// ██      ███████    ██     ██████ ██   ██        ██████  ██    
+
 
 
 
 
     const triggerCollapse = (itemname) => {
+      console.log(itemname);
       if (collapsed_rows.includes(itemname)){
         setCollapsedRows(collapsed_rows.filter((item)=> item !== itemname));
       } else {
+        console.log('HOHOHO');
         setCollapsedRows([...collapsed_rows, itemname]);
       }
     }
 
 
-    // useEffect(() => {
-    //   console.log(collapsed_rows);
-    // }, [collapsed_rows]);
+    useEffect(() => {
+      console.log(collapsed_rows);
+    }, [collapsed_rows]);
 
 
 //  ██████  ██████  ███    ██ ████████  █████   ██████ ████████ 
@@ -355,18 +286,18 @@ const TabMainTorg = (props) => {
       props.on_change_contact(data);
     }
     if (data.command === 'create' && data.deleted){
-      // Удаление только что добавленного
-      setCONTACTS(CONTACTS.filter((item) => item.id !== data.id));
-    } else {
-      let existed = CONTACTS.find((item)=>item.id === data.id);
-      if (!existed){
-        setCONTACTS([data, ...CONTACTS]);
-      } else {
-        setCONTACTS(CONTACTS.map((item) => (
-          item.id === data.id ? data : item
-        )))
-      }
-    }
+			// Удаление только что добавленного
+			setCONTACTS(CONTACTS.filter((item) => item.id !== data.id));
+		} else {
+			let existed = CONTACTS.find((item)=>item.id === data.id);
+			if (!existed){
+				setCONTACTS([data, ...CONTACTS]);
+			} else {
+				setCONTACTS(CONTACTS.map((item) => (
+					item.id === data.id ? data : item
+				)))
+			}
+		}
   }
 
 
@@ -438,9 +369,9 @@ const TabMainTorg = (props) => {
       if (!editMode) {
         return;
       }
-      if (props.on_change_phone){
-        props.on_change_phone(data);
-      };
+      // if (props.on_change_phone){
+      //   props.on_change_phone(data);
+      // };
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -508,9 +439,7 @@ const TabMainTorg = (props) => {
       if (!editMode) {
         return;
       }
-      if (props.on_change_legal_address){
-        props.on_change_legal_address(data);
-      };
+
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -572,9 +501,7 @@ const TabMainTorg = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_address){
-        props.on_change_address(data);
-      };
+      
  
       
       if (data.command !== 'create'){
@@ -642,9 +569,6 @@ const TabMainTorg = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_email){
-        props.on_change_email(data);
-      };
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -710,9 +634,7 @@ const TabMainTorg = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_requisite){
-        props.on_change_requisite(data);
-      };
+
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -756,9 +678,7 @@ const TabMainTorg = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_an_license){
-        props.on_change_an_license(data);
-      };
+
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -801,9 +721,7 @@ const TabMainTorg = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_an_tolerance){
-        props.on_change_an_tolerance(data);
-      };
+
   
       if (data.command !== 'create'){
         if (data.deleted){
@@ -865,9 +783,6 @@ const TabMainTorg = (props) => {
      if (!editMode) {
        return;
       }
-      if (props.on_change_bo_license){
-        props.on_change_bo_license(data);
-      };
 
       if (data.command !== 'create'){
         if (data.deleted){
@@ -893,37 +808,6 @@ const TabMainTorg = (props) => {
         }
       });
     };
-
-
-
-                                    
-
-
-  // useEffect(() => {
-  //   // console.log('DATA UPDATED');
-  //   if (props.on_change_data){
-  //     // console.log(baseData);
-  //     props.on_change_data('main', baseData);
-  //   };
-  // }, [baseData]);
-
-  // useEffect(() => {
-  //   if (props.on_change_main_data) {
-  //     // console.log('CALL TO CHANGE BASEDATA ON 1 LEVEL', baseData);
-  //     props.on_change_main_data(baseData);
-  //   }
-  // }, [baseData]);
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -953,7 +837,7 @@ const TabMainTorg = (props) => {
 
 
       <div className={'sa-org-main-collapse sa-org-main-collapse-stack'}>
-
+      <Spin spinning={!itemId || !baseData}>
         {/* ============================= COLLAPSE ITEM ================================ */}
 
         <div className={`sa-org-main-collapse-item sa-org-collapse-item ${!collapsed_rows.includes('main_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
@@ -1013,9 +897,14 @@ const TabMainTorg = (props) => {
                     ...updatedFields
                   }));
                 }}
+                on_change={(updatedFields)=>{
+                  const newData = JSON.parse(JSON.stringify(baseData));
+                  const mergedData = { ...newData, ...updatedFields };
+                  props.on_change_main_data(mergedData);
+                }}
                 edit_mode={editMode}
                 selects={selects}
-
+                org_id={itemId}
               />
 
           </div>
@@ -1080,10 +969,17 @@ const TabMainTorg = (props) => {
                       ...updatedFields
                     }));
                   }}
+                  // Для отпрпавки по кейдауну прямо в коллектор
+                  on_change={(updatedFields)=>{
+                    const newData = JSON.parse(JSON.stringify(baseData));
+                    const mergedData = { ...newData, ...updatedFields };
+                    props.on_change_main_data(mergedData);
+                  }}
                   edit_mode={editMode}
                   selects={selects}
                   author={author}
                   curator={curator}
+                  org_id={itemId}
                 />
           </div>
         </div>
@@ -1149,9 +1045,11 @@ const TabMainTorg = (props) => {
                 edit_mode: editMode,
                 label: 'Город',
                 input:
-                  
                   <Select
-                  showSearch
+                    showSearch
+                    filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                }
                     key={'oaddress1_' + baseData?.id}
                     value={parseInt(baseData?.id8org_towns)}
                     onChange={(value)=>{ 
@@ -1176,14 +1074,13 @@ const TabMainTorg = (props) => {
                     }
                     // placeholder="Controlled autosize"
                     disabled={!editMode}
-                    readOnly={!editMode}
                     variant="borderless"
                     required={true}
-                    options={selects?.towns.map((item)=>({
+                    options={selects?.towns ? selects?.towns.map((item)=>({
                       key: "twnitm_" + item.value,
                       value: parseInt(item.value),
                       label: item.name
-                    }))}
+                    })) : ([])}
                   />,
                   required: true,
                   value: form_id8org_towns
@@ -1195,6 +1092,9 @@ const TabMainTorg = (props) => {
                   
                   <Select
                   showSearch
+                  filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                    }
                     options={selects?.regions.map((item)=>({
                       key: "regitm_" + item.value,
                       value: parseInt(item.value),
@@ -1212,7 +1112,7 @@ const TabMainTorg = (props) => {
                     }));
                     }}
                     // placeholder="Controlled autosize"
-                    readOnly={!editMode}
+     
                     variant="borderless"
                     maxLength={2500}
                     required={false}
@@ -1235,6 +1135,7 @@ const TabMainTorg = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdateLegalUnit}
+                on_collect={(payload)=>{props.on_change_legal_address(payload)}}
               />
             ))}
           </div>
@@ -1248,6 +1149,7 @@ const TabMainTorg = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdateAddressUnit}
+                on_collect={(payload)=>{props.on_change_address(payload)}}
               />
             ))}
           </div>
@@ -1261,6 +1163,7 @@ const TabMainTorg = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdatePhoneUnit}
+                on_collect={(payload)=>{props.on_change_phone(payload)}}
               />
             ))}
           </div>
@@ -1274,6 +1177,7 @@ const TabMainTorg = (props) => {
                 org_id={itemId}
                 edit_mode={editMode}
                 on_change={handleUpdateEmailUnit}
+                on_collect={(payload)=>{props.on_change_email(payload)}}
               />
             ))}
           </div>
@@ -1288,7 +1192,13 @@ const TabMainTorg = (props) => {
                 site: value?.trim()
               }));
               }}
+              on_change={(updatedFields)=>{
+                const newData = JSON.parse(JSON.stringify(baseData));
+                const mergedData = { ...newData, ...updatedFields };
+                props.on_change_main_data(mergedData);
+              }}
               edit_mode={editMode}
+              org_id={itemId}
               />
           </div>
 
@@ -1448,8 +1358,6 @@ const TabMainTorg = (props) => {
             ANTOLERANCES.length > 0 ||
             BOLICENSES.length > 0) ? (
               <div className='sa-org-contactstack-box'>
-                  {(ANLICENSES.length > 0 ||
-            ANTOLERANCES.length) ? (
                 <div className={'sa-tolerance-old-v'}>
                   {ANLICENSES.map((item)=>(
                   <AnLicenseMicroSectionTorg
@@ -1462,6 +1370,7 @@ const TabMainTorg = (props) => {
                     collapse={true}
                     allow_delete={true}
                     doc_type={1}
+                    on_collect={(payload)=>{props.on_change_an_license(payload)}}
                     />
                 ))}
                   {ANTOLERANCES.map((item)=>(
@@ -1475,11 +1384,10 @@ const TabMainTorg = (props) => {
                     collapse={true}
                     allow_delete={true}
                     doc_type={2}
+                    on_collect={(payload)=>{props.on_change_an_tolerance(payload)}}
                     />
                 ))}
-                </div>)
-                : ("")}
-
+                </div>
                 <div>
                 {BOLICENSES.map((item)=>(
                   <BoLicenseMicroSectionTorg
@@ -1491,6 +1399,7 @@ const TabMainTorg = (props) => {
                     id_orgs={itemId}
                     collapse={true}
                     allow_delete={true}
+                    on_collect={(payload)=>{props.on_change_bo_license(payload)}}
                     />
                 ))}
                 </div>
@@ -1581,6 +1490,7 @@ const TabMainTorg = (props) => {
                     id_orgs={itemId}
                     collapse={true}
                     allow_delete={true}
+                    on_collect={(payload)=>{props.on_change_contact(payload)}}
                     />
 
                 ))}
@@ -1677,6 +1587,7 @@ const TabMainTorg = (props) => {
                     id_orgs={itemId}
                     collapse={true}
                     allow_delete={true}
+                    on_collect={(payload)=>{props.on_change_requisite(payload)}}
                     />
 
                 ))}
@@ -1692,6 +1603,7 @@ const TabMainTorg = (props) => {
 
       <div style={{height: '40vh'}}
       ></div>
+      </Spin>
       </div>
 
 
