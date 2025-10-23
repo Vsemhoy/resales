@@ -485,6 +485,7 @@ const ProjectTabSectionTorg = (props) => {
 			<div className={'sa-org-collapse-body'}>
 				<div className={'sa-org-collapse-content'}>
 					<TorgPageSectionRow
+            trans_key={`trans_projaaha_${itemId}`}
 						key={`projaaha_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -520,6 +521,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+            trans_key={`trans_projaadha_${itemId}`}
 						key={`projaadha_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -552,6 +554,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+          trans_key={`trans_projdaaha_${itemId}`}
 						key={`projdaaha_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -584,6 +587,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+            trans_key={`trans_prsojaaha_${itemId}`}
 						key={`prsojaaha_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -639,6 +643,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+          trans_key={`trans_pssrojaaha_${itemId}`}
 						key={`pssrojaaha_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -693,6 +698,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+          trans_key={`trans_projaasfdha_${itemId}`}
 						key={`projaasfdha_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -769,6 +775,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+          trans_key={`trans_projaahdssaa_${itemId}`}
 						key={`projaahdssaa_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -824,6 +831,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+          trans_key={`trans_projaahdsssaa_${itemId}`}
 						key={`projaahdsssaa_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -860,6 +868,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+          trans_key={`trans_projaaha5ewe_${itemId}`}
 						key={`projaaha5ewe_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -888,9 +897,9 @@ const ProjectTabSectionTorg = (props) => {
 									>
 										{mountOrgList &&
 											mountOrgList?.map((opt) => (
-												<Option key={'olokm' + opt.value} value={opt.value}>
+												<Select.Option key={'olokm' + opt.value} value={opt.value}>
 													{opt.label}
-												</Option>
+												</Select.Option>
 											))}
 									</Select>
 								),
@@ -903,6 +912,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+          trans_key={`trans_projaahaewe_${itemId}`}
 						key={`projaahaewe_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -948,6 +958,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
+          trans_key={`trans_projaahaqee_${itemId}`}
 						key={`projaahaqee_${itemId}`}
 						edit_mode={editMode}
 						inputs={[

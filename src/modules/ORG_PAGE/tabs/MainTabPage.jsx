@@ -1157,10 +1157,9 @@ const MainTabPage = (props) => {
                 edit_mode: editMode,
                 label: 'Город',
                 input:
-                  
                   <Select
                     showSearch
-                                    filterOption={(input, option) =>
+                    filterOption={(input, option) =>
                     option.label.toLowerCase().includes(input.toLowerCase())
                 }
                     key={'oaddress1_' + baseData?.id}
@@ -1189,11 +1188,11 @@ const MainTabPage = (props) => {
                     disabled={!editMode}
                     variant="borderless"
                     required={true}
-                    options={selects?.towns.map((item)=>({
+                    options={selects?.towns ? selects?.towns.map((item)=>({
                       key: "twnitm_" + item.value,
                       value: parseInt(item.value),
                       label: item.name
-                    }))}
+                    })) : ([])}
                   />,
                   required: true,
                   value: form_id8org_towns

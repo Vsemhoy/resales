@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { Button, Checkbox, DatePicker, Input, Select, TimePicker, Tooltip } from 'antd';
+import { AutoComplete, Button, Checkbox, DatePicker, Input, Select, TimePicker, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -30,7 +30,7 @@ const CallTabSectionTorg = (props) => {
   const [addPhone,      setAddPhone] = useState("");
   const [result,     setResult] = useState("");
   const [nexCallDate, setNextCallDate] = useState(null);
-  const [nexType, setNextType] = useState(null);
+  const [nexType, setNextType] = useState('call');
 
   const [saveContact, setSaveContact] = useState(false);
 
@@ -64,7 +64,7 @@ const CallTabSectionTorg = (props) => {
 
     const [transContainer, setTransContainer] = useState([]);
     const [userdata, setUserdata] = useState(props.user_data);
-
+    const [orgContacts, setOrgContacts] = useState([]);
 
   // ██    ██ ███████ ███████ 
   // ██    ██ ██      ██      
@@ -74,6 +74,10 @@ const CallTabSectionTorg = (props) => {
   useEffect(() => {
     setEditMode(props.edit_mode);
   }, [props.edit_mode]);
+
+  useEffect(() => {
+    setUserdata(props.user_data);
+  }, [props.user_data]);
 
 
     useEffect(() => {
@@ -112,7 +116,6 @@ const CallTabSectionTorg = (props) => {
       let pho = phn.number;
       let add = phn.add;
 
-      console.log(phn);
 
       setPhone(pho);
       setAddPhone(add);
@@ -165,19 +168,19 @@ const CallTabSectionTorg = (props) => {
     let id = null;
     let of = [];
     setTargetOrgUserId(null);
-    if (!props.org_users || !subscriber.trim()) {
+    if (!props.org_contacts || !subscriber.trim()) {
       setOrgPhones([]);
       return; // ничего не ищем, если нет данных или пустой ввод
     }
-
+    
     const searchWords = subscriber
-      .toLowerCase()
-      .split(' ')
+    .toLowerCase()
+    .split(' ')
       .filter(word => word.length > 0); // убираем пустые строки
-
+      
     if (searchWords.length === 0) return;
-
-    const foundUser = props.org_users.find(user => {
+    
+    const foundUser = props.org_contacts.find(user => {
       const fullName = `${user.lastname} ${user.name} ${user.middlename}`.toLowerCase();
 
       // Проверяем, что КАЖДОЕ слово из ввода есть в ФИО
@@ -185,13 +188,11 @@ const CallTabSectionTorg = (props) => {
     });
 
     if (foundUser) {
-      console.log('Найден пользователь:', foundUser);
       id = foundUser.id;
       setTargetOrgUserId(id);
       // 👇 Тут можешь сохранить ID или весь объект
       // Например: setSelectedUserId(foundUser.id);
     } else {
-      console.log('Пользователь не найден');
       setOrgPhones([]);
       return;
       // setSelectedUserId(null);
@@ -199,12 +200,11 @@ const CallTabSectionTorg = (props) => {
     if (foundUser.occupy){
       setPost(foundUser.occupy.trim());
     }
-
+    
     
     if (foundUser.contactstelephones.length){
       for (let index = 0; index < foundUser.contactstelephones.length; index++) {
         const element = foundUser.contactstelephones[index];
-        console.log('contactstelephones', element);
         if (!of.includes(element.number) && element.number !== null){
           let ltlt = element.number + `${element.ext !== null && element.ext !== "" ? (" (" + element.ext + ")") : ""}`;
           // let vall = element.number + `${element.number !== null && element.number !== '' &&
@@ -231,31 +231,31 @@ const CallTabSectionTorg = (props) => {
       }
     }
     setOrgPhones(of);
-  }, [subscriber, props.org_users, itemId, trigger]);
+  }, [subscriber, props.org_contacts, itemId, trigger]);
 
 
-  const handleChangeNumbers = (ev)=> {
-    console.log('ONCHANGER !!!!!!!!!!!', ev.phone);
-    if (ev.phone){
-      let splitak = bracketSplitter(ev.phone);
-      console.log('splitak', splitak.number);
+  const handleChangeNumbers = (evphone)=> {
+    if (evphone){
+      let splitak = bracketSplitter(evphone);
         setPrevPhone(splitak.number);
         setTimeout(() => {
           setPhone(splitak.number);
       }, 300);
       if (splitak.add){
          setAddPhone(splitak.add);
+      } else {
+        setAddPhone('');
       }
     }
   }
 
 
-  useEffect(() => {
-    if (prevPhone !== null && prevPhone !== phone){
-      setAddPhone('');
-      setPrevPhone(phone);
-    };
-  }, [phone]);
+  // useEffect(() => {
+  //   if (prevPhone !== null && prevPhone !== phone){
+  //     setAddPhone('');
+  //     setPrevPhone(phone);
+  //   };
+  // }, [phone]);
 
 
     useEffect(() => {
@@ -266,7 +266,37 @@ const CallTabSectionTorg = (props) => {
     setCollapsed(props.collapsed);
   }, [props.collapsed]);
 
+    useEffect(() => {
+      if (props.org_contacts) {
+        let usess = [];
+        let uids = [];
+        let fusers = props.org_contacts.filter(
+          (item) => !(!item.lastname && !item.name && !item.middlename)
+        );
   
+        for (let i = 0; i < fusers.length; i++) {
+          const element = fusers[i];
+          if (!uids.includes(element.id)) {
+            let nm = `${
+              (element.lastname ? element.lastname : '') +
+              (element.lastname ? ' ' : '') +
+              (element.name ? element.name : '') +
+              (element.name ? ' ' : '') +
+              (element.middlename ? element.middlename : '')
+            }`;
+            usess.push({
+              key: 'kjfealllo' + element.id,
+              value: element.value,
+              label: nm,
+            });
+          }
+        }
+        setOrgContacts(usess);
+      }
+    }, [props.org_contacts]);
+
+
+
 
   // ██    ██ ███████ ███████       ██   ██ 
   // ██    ██ ██      ██             ██ ██  
@@ -293,21 +323,42 @@ const CallTabSectionTorg = (props) => {
     } else {
       pho = number;
     }
-    console.log('SPLITAK', {number: pho, add: add});
     return {number: pho, add: add};
   }
 
 
   const handleDeleteItem = () => {
-    if (props.on_delete) {
-      props.on_delete(itemId);
-    };
-    if (allowDelete) {
-      setDeleted(!deleted);
+		if (allowDelete) {
+			setDeleted(!deleted);
+		}
+		setTimeout(() => {
+			setBLUR_FLAG();
+			if (props.on_delete) {
+				props.on_delete(itemId);
+			}
+		}, 1000);
+    	};
+
+
+  // useEffect(() => {
+  //   if (prevPhone !== null && prevPhone !== phone){
+  //     setAddPhone('');
+  //     setPrevPhone(phone);
+  //   };
+  // }, [phone]);
+
+  useEffect(() => {
+    if (nexCallDate && !nexType){
+      if (baseData?._type === 'call'){
+        setNextType('call');
+      } else {
+        setNextType('meeting');
+      }
+    } 
+    if (!nexCallDate){
+      setNextType(null);
     }
-  }
-
-
+  }, [nexCallDate]);
 
 
       useEffect(() => {
@@ -330,9 +381,9 @@ const CallTabSectionTorg = (props) => {
                 // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
                 
                 baseData.theme = theme;
-                baseData.post = post;
-                baseData.date = date;
-                baseData.note = note;
+                baseData.post  = post;
+                baseData.date  = date;
+                baseData.note  = note;
                 baseData.subscriber = subscriber;
                 baseData.result = result;
                 baseData.id8ref_departaments = depart;
@@ -343,7 +394,6 @@ const CallTabSectionTorg = (props) => {
 
                 if (addPhone && addPhone.trim() !== '' && phone && phone.trim() !== ''){
                     baseData.phone = phone + ' (' + addPhone + ')';
-
                 }
                
     
@@ -362,9 +412,64 @@ const CallTabSectionTorg = (props) => {
               return () => clearTimeout(timer);
     
       }, [
-        BLUR_FLAG,
-        deleted,
+        BLUR_FLAG
       ]);
+
+
+    useEffect(() => {
+      if (!ACTION_FLAG) {
+        return;
+      }
+        const timer = setTimeout(() => {
+          // При сверх-быстром изменении полей в разных секциях могут быть гонки
+        if (editMode  && baseData){
+            if (props.on_collect){
+              // data.date = date ? date.format('DD.MM.YYYY HH:mm:ss') : null;
+              const newData = JSON.parse(JSON.stringify(baseData));
+              newData.theme = theme;
+              newData.post  = post;
+              newData.date  = date;
+              newData.note  = note;
+              newData.subscriber = subscriber;
+              newData.result = result;
+              newData.id8ref_departaments = depart;
+              newData._savecontact = saveContact;
+              newData.next_call_date = nexCallDate;
+              newData.next_type = nexType;
+              newData.phone = phone;
+
+              if (addPhone && addPhone.trim() !== '' && phone && phone.trim() !== ''){
+                  newData.phone = phone + ' (' + addPhone + ')';
+              }
+              newData.deleted = deleted;
+
+              if (newData.command === undefined || newData.command !== 'create'){
+                if (deleted){
+                  newData.command = 'delete';
+                } else {
+                  newData.command = 'update';
+                }
+              }
+              props.on_collect(newData);
+            }
+          }
+            }, 500);
+
+            return () => clearTimeout(timer);
+
+    }, [
+      theme,
+      deleted,
+      date,
+      note,
+      subscriber,
+      result,
+      depart,
+      saveContact,
+      nexCallDate,
+      nexType,
+      phone
+    ]);
 
 
   return (
@@ -430,12 +535,12 @@ const CallTabSectionTorg = (props) => {
             
 						<span className="sa-author-text">
 							{authorShortName !== null ? ` - ` + authorShortName + ' ' : ''}
-							{(userdata?.user?.id !== baseData?.creator) && (
+							{(userdata?.user?.id !== baseData?.creator.id) && (
 								<Tooltip
 									placement={'right'}
 									title={
 										<div>
-											<div>Этот звонок может редактировать только создатель записи</div>
+											<div>Этот звонок может редактировать только создатель записи </div>
 										</div>
 									}
 									className={'sa-lock-mark'}
@@ -461,7 +566,10 @@ const CallTabSectionTorg = (props) => {
             >
               <Button danger 
               size='small'
-                onClick={handleDeleteItem}
+                onClick={()=>{
+                  setACTION_FLAG(1); 
+                  handleDeleteItem();
+                }}
                 icon={<TrashIcon height={TORG_CHEVRON_SIZE} />}
               >
 
@@ -542,10 +650,10 @@ const CallTabSectionTorg = (props) => {
                 input:
                   <Select
                     key={'tdextard_1_' + baseData?.id}
-                    value={theme}
+                    value={depart}
                     size={'small'}
                     onChange={(e) => {
-											setTheme(e.target.value);
+											setDepart(e);
 											setACTION_FLAG(1);
                       setBLUR_FLAG(dayjs().unix());
 										}}
@@ -573,21 +681,41 @@ const CallTabSectionTorg = (props) => {
                 edit_mode: editMode,
                 label: 'Контактное лицо*',
                 input:
-                  <Input
-                    key={'textard_34_' + baseData?.id}
-                    value={subscriber}
-                    onChange={(e) => {
-											setSubscriber(e.target.value);
+                <AutoComplete
+										disabled={!editMode}
+										key={'texpard_10_' + baseData?.id}
+										placeholder={'Фамилия Имя Отчество'}
+										value={subscriber}
+										size="small"
+										variant="borderless"
+                    onClick={ ()=>{setTrigger(dayjs().unix())}}
+										onChange={(e) => {
+											setSubscriber(e);
+											setBLUR_FLAG(dayjs().unix());
 											setACTION_FLAG(1);
 										}}
-                    // placeholder="Controlled autosize"
-                    readOnly={!editMode}
-                    variant="borderless"
-                    maxLength={120}
-                    required={true}
-                    options={orgUsers}
-                  />,
-                  required: true,
+										options={transContainer['cpers'] ? transContainer['cpers'] : []}
+										onSearch={(text) => {
+											let filteredOptions = [];
+											let cmod = transContainer;
+											if (orgContacts && text !== null && text) {
+												filteredOptions = orgContacts?.filter((item) =>
+													item.label.toLowerCase().includes(text?.toLowerCase())
+												);
+												// Список подгоняется в зависимости от того, что введено пользователем
+												cmod['cpers'] = filteredOptions?.map((obj) => ({
+													key: obj.key,
+													value: obj.label,
+													label: obj.label,
+												}));
+												setTransContainer(cmod);
+											} else {
+												cmod['cpers'] = [];
+												setTransContainer(cmod);
+											}
+										}}
+									/>,
+                  required: false,
                   value: subscriber
               },
               {
@@ -605,12 +733,12 @@ const CallTabSectionTorg = (props) => {
                     readOnly={!editMode}
                     variant="borderless"
                     maxLength={120}
-                    required={true}
+                    required={false}
                     onBlur={() => {
                       setBLUR_FLAG(dayjs().unix());
                     }}
                   />,
-                  required: true,
+                  required: false,
                   value: post
               },
             ]}
@@ -626,12 +754,13 @@ const CallTabSectionTorg = (props) => {
                 edit_mode: editMode,
                 label: 'Телефон*',
                 input:
-                  <Input
+                  <AutoComplete
                     key={'textard_134_' + baseData?.id}
                     value={phone}
                     onChange={(e) => {
-											setPhone(e.target.value);
+											setPhone(e);
 											setACTION_FLAG(1);
+                      handleChangeNumbers(e);
 										}}
                     // placeholder="Controlled autosize"
                     readOnly={!editMode}
@@ -639,6 +768,7 @@ const CallTabSectionTorg = (props) => {
                     maxLength={120}
                     required={true}
                     options={orgPhones}
+                     onClick={ ()=>{setTrigger(dayjs().unix())}}
                   />,
                   required: true,
                   value: phone
@@ -711,7 +841,7 @@ const CallTabSectionTorg = (props) => {
 
 
           <TorgPageSectionRow
-            key={'tdexteeed_1_' + baseData?.id}
+            key={'tdexteeed_A_' + baseData?.id}
             edit_mode={editMode}
             inputs={[
               {
@@ -722,9 +852,9 @@ const CallTabSectionTorg = (props) => {
                     key={'tex4tard_654_' + baseData?.id}
                     value={note}
                     onChange={(e) => {
-											setNote(e.target.value);
-											setACTION_FLAG(1);
-										}}
+                        setNote(e.target.value);
+                        setACTION_FLAG(1);
+                    }}
                     // placeholder="Controlled autosize"
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     readOnly={!editMode}
@@ -786,6 +916,7 @@ const CallTabSectionTorg = (props) => {
                   input: (
                     <DatePicker
                       key={'texpd654s_3_' + baseData?.id}
+                      size={'small'}
                       value={nexCallDate ? dayjs(nexCallDate) : null}
                       // onChange={e => setNote(e.target.value)}
                       readOnly={!editMode}
@@ -795,6 +926,7 @@ const CallTabSectionTorg = (props) => {
                       onChange={(val) => {
                         setNextCallDate(val ? val.format('YYYY-MM-DD') : null);
                         setACTION_FLAG(1);
+                      setBLUR_FLAG(dayjs().unix());
                       }}
                     />
                   ),
@@ -820,10 +952,10 @@ const CallTabSectionTorg = (props) => {
                   input: (
                   <Select
                     key={'tdextard_1_' + baseData?.id}
-                    value={theme}
+                    value={nexType}
                     size={'small'}
                     onChange={(e) => {
-											setTheme(e.target.value);
+											setNextType(e);
 											setACTION_FLAG(1);
                       setBLUR_FLAG(dayjs().unix());
 										}}
@@ -834,9 +966,10 @@ const CallTabSectionTorg = (props) => {
                     //   setBLUR_FLAG(dayjs().unix());
                     // }}
                     options={nexVariants}
+                    required={nexCallDate ? true : false}
                   />
                   ),
-                  required: false,
+                  required: nexCallDate ? true : false,
                   value: nexCallDate
                 },
               ]}
