@@ -1578,6 +1578,8 @@ const TabMainTorg = (props) => {
             ANTOLERANCES.length > 0 ||
             BOLICENSES.length > 0) ? (
               <div className='sa-org-contactstack-box'>
+                  {(ANLICENSES.length > 0 ||
+            ANTOLERANCES.length) ? (
                 <div className={'sa-tolerance-old-v'}>
                   {ANLICENSES.map((item)=>(
                   <AnLicenseMicroSectionTorg
@@ -1605,7 +1607,9 @@ const TabMainTorg = (props) => {
                     doc_type={2}
                     />
                 ))}
-                </div>
+                </div>)
+                : ("")}
+
                 <div>
                 {BOLICENSES.map((item)=>(
                   <BoLicenseMicroSectionTorg
