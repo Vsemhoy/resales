@@ -15,6 +15,7 @@ const CallTabSectionTorg = (props) => {
 
   const [baseData, setBaseData] = useState(null);
 
+  
     const [itemId, setItemId] = useState(0);
     const [org,         setOrg] = useState(0);
   const [theme,       setTheme] = useState("");
@@ -90,6 +91,8 @@ const CallTabSectionTorg = (props) => {
         )
       );
     }, [props.data?.creator]);
+
+
 
 
   useEffect(() => {
@@ -236,16 +239,20 @@ const CallTabSectionTorg = (props) => {
 
   const handleChangeNumbers = (evphone)=> {
     if (evphone){
+      const timer = setTimeout(() => {
       let splitak = bracketSplitter(evphone);
         setPrevPhone(splitak.number);
-        setTimeout(() => {
+
+
+        if (splitak.add){
           setPhone(splitak.number);
-      }, 300);
-      if (splitak.add){
-         setAddPhone(splitak.add);
-      } else {
-        setAddPhone('');
-      }
+            setAddPhone(splitak.add);
+          } else {
+            setAddPhone('');
+          }
+        }, 1500);
+    
+      return () => clearTimeout(timer);
     }
   }
 
