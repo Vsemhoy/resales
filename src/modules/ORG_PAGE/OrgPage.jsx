@@ -258,7 +258,6 @@ useEffect(() => {
 		collect.calls = tempCallsData.filter((item)=> item.command !== undefined );
 		collect.notes = tempNotesData.filter((item)=> item.command !== undefined  );
 
-		console.log(collect);
 		setCOLLECTOR(collect);
 
 	}, [tempMain_contacts, 
@@ -309,7 +308,6 @@ useEffect(() => {
 	useEffect(()=>{
 		setIsSmthChanged(false);
 		setTempMainData(null);
-		console.log("ORG_ID:", itemId);
 	}, [itemId])
 
 
@@ -500,7 +498,6 @@ useEffect(() => {
 				data: {},
 				_token: CSRF_TOKEN,
 			});
-			console.log('response', response);
 			if (response.data) {
 				// if (props.changed_user_data){
 				//     props.changed_user_data(response.data);
@@ -519,93 +516,6 @@ useEffect(() => {
 		}
 	};
 
-	// const get_org_calls_action = async (id) => {
-	// 	try {
-	// 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
-	// 			data: {
-	// 				page: pageCalls,
-	// 				limit: onPage,
-	// 			},
-	// 			_token: CSRF_TOKEN,
-	// 		});
-	// 		console.log('response', response);
-	// 		if (response.data) {
-	// 			// if (props.changed_user_data){
-	// 			//     props.changed_user_data(response.data);
-	// 			// }
-	// 			// setBaseCallsData(response.data.content?.calls.map((item)=>{
-	// 			// 	item._savecontact = false;
-	// 			// 	return item;
-	// 			// }));
-	// 			// setBaseCallsData(response.data.content?.calls.map((item)=>{
-	// 			// 	item._savecontact = false;
-	// 			// 	return item;
-	// 			// }));
-	// 			setBaseCallsData(response.data.content);
-	// 			setLoading(false);
-
-	// 		}
-	// 	} catch (e) {
-	// 		console.log(e);
-	// 	} finally {
-	// 		setTimeout(() => {
-	// 			setLoading(false);
-	// 		}, 1000);
-	// 	}
-	// };
-
-	// const get_projects_data_action = async (id) => {
-	// 	try {
-	// 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/p', {
-	// 			data: {
-	// 				page: pageProject,
-	// 				limit: onPage,
-	// 			},
-	// 			_token: CSRF_TOKEN,
-	// 		});
-	// 		console.log('response', response);
-	// 		if (response.data) {
-	// 			// if (props.changed_user_data){
-	// 			//     props.changed_user_data(response.data);
-	// 			// }
-	// 			setBaseProjectsData(response.data.content);
-	// 			setLoading(false);
-
-	// 		}
-	// 	} catch (e) {
-	// 		console.log(e);
-	// 	} finally {
-	// 		setTimeout(() => {
-	// 			setLoading(false);
-	// 		}, 1000);
-	// 	}
-	// };
-
-	// const get_notes_data_action = async (id) => {
-	// 	try {
-	// 		let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/n', {
-	// 			data: {
-	// 				page: pageNotes,
-	// 				limit: onPage,
-	// 			},
-	// 			_token: CSRF_TOKEN,
-	// 		});
-	// 		console.log('response', response);
-	// 		if (response.data) {
-	// 			// if (props.changed_user_data){
-	// 			//     props.changed_user_data(response.data);
-	// 			// }
-	// 			setBaseNotesData(response.data.content);
-	// 			setLoading(false);
-	// 		}
-	// 	} catch (e) {
-	// 		console.log(e);
-	// 	} finally {
-	// 		setTimeout(() => {
-	// 			setLoading(false);
-	// 		}, 1000);
-	// 	}
-	// };
 
 	/**
 	 * Получение списка select data
@@ -619,7 +529,6 @@ useEffect(() => {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
-				console.log('me2: ', response);
 				setBaseFilterstData(response.data.filters);
 				setBaseCompanies(response.data.filters?.companies);
 			} catch (e) {
@@ -689,7 +598,6 @@ useEffect(() => {
 								notes : tempNotesDataRef.current, //.filter((item)=> item.command !== undefined  ),
 					};
 
-					console.log("COLLECTED D", data);
 		if (PRODMODE) {
 			setSaveProcess(20);
 			try {
@@ -697,7 +605,6 @@ useEffect(() => {
 					data: data,
 					_token: CSRF_TOKEN,
 				});
-				console.log('response.status', response.status)
 				if (response.status === 200){
           // При успешной записи - очищаем все временные списки и загружаем данные заново
 					clearTemps();
@@ -726,9 +633,6 @@ useEffect(() => {
 
 			}
 		} else {
-			console.log('DEV STACK', data);
-			//setUserAct(USDA);
-			// console.log('SEND', dataToUpdate);
 			setTimeout(() => {
 				setSaveProcess(100);
 				setBlockOnSave(false);
@@ -743,24 +647,6 @@ useEffect(() => {
 
 
 
-	// useEffect(() => {
-	// 	if (PRODMODE){
-	// 		get_notes_data_action(itemId);
-	// 	}
-	// }, [pageNotes]);
-
-	// useEffect(() => {
-	// 	if (PRODMODE){
-	// 		get_org_calls_action(itemId);
-	// 	}
-	// }, [pageCalls]);
-
-	// useEffect(() => {
-	// 	if (PRODMODE){
-	// 		get_projects_data_action(itemId);
-	// 	}
-	// }, [pageProject]);
-
 
 	const handleSaveData = () => {
 		
@@ -768,11 +654,7 @@ useEffect(() => {
 		setSaveProcess(5);
 
 		setTimeout(() => {
-			console.log('tempMainData', tempMainData)
-
-			
 			update_data_action();
-			console.log('SAVEDATA FIN', COLLECTOR);
 		}, 1500);
 
 			setIsSmthChanged(false);
@@ -794,14 +676,8 @@ useEffect(() => {
 
 
 
-
-
-
-
-
 	const handleTabDataChange = (tab_name, data) => {
 		if (!editMode) return;
-		console.log('END POOINT', tab_name, data);
 	 if (tab_name === 'projects'){
 			// if (JSON.stringify(data) !== JSON.stringify(baseProjectsData)){
 				setTempProjectsData(data);
@@ -824,9 +700,6 @@ useEffect(() => {
 			}
 		}
 	}
-
-
-
 
 
 
@@ -923,8 +796,6 @@ useEffect(() => {
 
 	// Подготовка Контактов к отправке
 	const handleContactChange = (data)=>{
-		
-		console.log('data', data)
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_contacts(tempMain_contacts.filter((item) => item.id !== data.id));
@@ -1091,7 +962,6 @@ useEffect(() => {
 		} else {
 			let existed = tempMain_an_requisites.find((item)=>item.id === data.id);
 			if (!existed){
-				console.log('COMMAND', data);
 				if (data.command){
 					setTempMain_an_requisites([data, ...tempMain_an_requisites]);
 				}
@@ -1107,7 +977,6 @@ useEffect(() => {
 
 
 	const sectionUpdateHandler = (section, id, data) => {
-		console.log('section, id, data', section, id, data);
 		if (section === 'notes'){
 			let catchObject = tempNotesData.find((item)=> item.id === id);
 			if (catchObject){

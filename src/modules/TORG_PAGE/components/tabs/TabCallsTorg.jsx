@@ -36,7 +36,7 @@ const TabCallsTorg = (props) => {
   const [tempData, setTempData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [onPage, setOnPage] = useState(20);
+  const [onPage, setOnPage] = useState(50);
   const [total, setTotal] = useState(1);
 
   const [loading, setLoading] = useState(false);
@@ -192,7 +192,6 @@ const TabCallsTorg = (props) => {
           },
           _token: CSRF_TOKEN,
         });
-        console.log('response', response);
         if (response.data) {
   
           let arr = [];
@@ -211,8 +210,7 @@ const TabCallsTorg = (props) => {
             }
           };
           setBaseData(arr.sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf()));
-  
-          console.log('response.data', response.data);
+          setTotal(response.data.total);
           // setBaseData(response.data.content.calls);
           setLoading(false);
   
@@ -307,7 +305,7 @@ const MAKE_BLANK = (type) => {
 									disabled={editMode}
 									size={'small'}
 									current={currentPage}
-									pageSizeOptions={[10, 30, 50, 100]}
+									pageSizeOptions={[50, 100]}
 									defaultPageSize={onPage}
 									locale={ANTD_PAGINATION_LOCALE}
 									showQuickJumper

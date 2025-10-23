@@ -38,7 +38,7 @@ const TabNotesTorg = (props) => {
   const [tempData, setTempData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [onPage, setOnPage] = useState(20);
+  const [onPage, setOnPage] = useState(50);
   const [total, setTotal] = useState(1);
   const [loading, setLoading] = useState(false);
   const [newLoading, setNewLoading] = useState(false);
@@ -132,7 +132,6 @@ const TabNotesTorg = (props) => {
           },
           _token: CSRF_TOKEN,
         });
-        console.log('response', response);
         if (response.data && response.data.content) {
           setOriginalData(JSON.parse(JSON.stringify(response.data.content.notes)));
           setBaseData(response.data.content.notes);
@@ -172,7 +171,6 @@ const TabNotesTorg = (props) => {
 
   const MAKE_BLANK = () => {
      setNewLoading(true);
-          // console.log('ADDED NEW DDDDDDDDDD')
           setTimeout(() => {
             let spawn = {
                   "command": "create",
@@ -192,7 +190,6 @@ const TabNotesTorg = (props) => {
                 };
       
                 setTempData(prevItems => [spawn, ...prevItems]);
-                // console.log(spawn);
                 setNewLoading(false);
           }, 460);
   }
@@ -216,7 +213,7 @@ const TabNotesTorg = (props) => {
 									disabled={editMode}
 									size={'small'}
 									current={currentPage}
-									pageSizeOptions={[10, 30, 50, 100]}
+									pageSizeOptions={[50, 100]}
 									defaultPageSize={onPage}
 									locale={ANTD_PAGINATION_LOCALE}
 									showQuickJumper
@@ -261,6 +258,7 @@ const TabNotesTorg = (props) => {
                       on_change={props.on_change_section}
                       allow_delete={true}
                       selects={selects}
+                      user_data={userdata}
                       // on_collect={(payload)=>{if (payload){ props.on_change_section('notes', payload)}}}
                       />
                   ))}
@@ -280,6 +278,7 @@ const TabNotesTorg = (props) => {
                       // on_delete={handleDeleteNewItem}
                       // on_collect={(payload)=>{if (payload){props.on_change_section('notes', payload)}}}
                       selects={selects}
+                      user_data={userdata}
                       />
                   ))}
                 </div>

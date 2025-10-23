@@ -119,129 +119,6 @@ const TabMainTorg = (props) => {
 
 
 
-  // useEffect(() => {
-  //   if (!props.base_data){
-  //     return;
-  //   }
-  //   setBaseData(props.base_data);
-  //   // console.log('BASE_DATA ++++++++++++++++++++++',props.base_data);
-  //   if (props.base_data){
-  //     setFormId8org_regions(props.base_data.id8org_regions);
-  //     setFormId8org_towns(props.base_data.id8org_towns);
-  //   }
-
-  //   if (props.base_data?.contacts){
-  //     setCONTACTS(JSON.parse(JSON.stringify(props.base_data?.contacts)));
-  //   } else { setCONTACTS([])};
-
-  //   if (props.base_data?.active_licenses_bo){
-  //     setBOLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses_bo)));
-  //   } else {setBOLICENSES([])};
-
-  //   if (props.base_data?.active_licenses){
-  //     setANLICENSES(JSON.parse(JSON.stringify(props.base_data?.active_licenses)));
-  //   } else {setANLICENSES([])};
-
-  //   if (props.base_data?.active_tolerance){
-  //     setANTOLERANCES(JSON.parse(JSON.stringify(props.base_data?.active_tolerance)));
-  //   } else {setANTOLERANCES([])};
-
-  //   if (props.base_data?.address){
-  //     setORGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.address)));
-  //   } else {setORGADDRESSES([])};
-
-  //   if (props.base_data?.legaladdresses){
-  //     setORLEGADDRESSES(JSON.parse(JSON.stringify(props.base_data?.legaladdresses)));
-  //   } else {setORLEGADDRESSES([])};
-
-  //   if (props.base_data?.emails){
-  //     setORGEMAILS(JSON.parse(JSON.stringify(props.base_data?.emails)));
-  //   } else {setORGEMAILS([])};
-
-
-
-  //   if (props.base_data?.phones){
-  //     setORGPHONES(JSON.parse(JSON.stringify(props.base_data?.phones)));
-  //   } else {setORGPHONES([])};
-
-  //   if (props.base_data?.requisites){
-  //     setREQUISITES(JSON.parse(JSON.stringify(props.base_data?.requisites)));
-  //   } else {setREQUISITES([])};
-
-  //   let creator  = props.base_data?.creator;
-  //   let curator  = props.base_data?.curator;
-  //   let list     = props.base_data?.list;
-
-
-
-  //   // Очистка главного объекта от мусора
-  //   let bdt = FlushOrgData(JSON.parse(JSON.stringify(props.base_data)), [
-  //     "warningcmpcount",
-  //     "warningcmpcomment",
-  //     "tv",
-  //     "id_orgs8an_tolerance",
-  //     "id_orgs8an_project",
-  //     "id_orgs8an_phones",
-  //     "id_orgs8an_notes",
-  //     "id_orgs8an_meeting",
-  //     "id_orgs8an_log",
-  //     "id_orgs8an_licenses",
-  //     "id_orgs8an_fax",
-  //     "id_orgs8an_calls",
-  //     "id_orgs8an_email",
-  //     "id_orgs8an_address",
-  //     "contacts",
-  //     "creator",
-  //     "curator",
-  //     "list",
-  //     "legaladdresses",
-  //     "phones",
-  //     "region",
-  //     "requisites",
-  //     "statusmoney",
-  //     "town",
-  //     "emails",
-  //     "deliverytype",
-  //     "address",
-  //     "active_tolerance",
-  //     "active_licenses_bo",
-  //     "active_licenses",
-  //     "id8staff_list7author",
-  //     "id8staff_list",
-  //     "id_orgs8an_orgsusers",
-  //     "id_orgs8an_list",
-  //     "date_dealer"
-  //   ]);
-
-  //   console.log('START --------- ', bdt);
-
-  //   setBaseData(bdt);
-
-  //   console.log('bdt', bdt, props.base_data)
-
-  //     if (creator){
-  //           setAuthor(ShortName(creator?.surname, creator?.name, creator?.secondname));
-  //         } else {
-  //           setAuthor('');
-  //         };
-  //         if (curator){
-  //           setCurator(ShortName(curator?.surname, curator?.name, curator?.secondname));
-  //         } else {
-  //           setCurator('');
-  //         };
-    
-  //     setStatusmoney(bdt.id8an_statusmoney);
-  //     setConveyance(bdt.id8an_conveyance);
-      
-  //     setTypeList(list?.id8an_typelist ? list?.id8an_typelist : 0);
-  //     setListComment(list?.comment ? list?.comment : '');
-
-   
-
-
-  // }, [props.base_data]);
-
-
 
   // Получение данных от сервера когда обновляется после сброса айдишник
   useEffect(() => {
@@ -258,7 +135,6 @@ const TabMainTorg = (props) => {
 
   useEffect(() => {
     if (BLUR_FLAG && props.on_change_main_data){
-      console.log('CALLL _----------- TO ___________ save');
       props.on_change_main_data(baseData);
     }
   }, [baseData]);
@@ -278,7 +154,6 @@ const TabMainTorg = (props) => {
       return;
     }
     setBaseData(masterdata);
-    // console.log('BASE_DATA ++++++++++++++++++++++',masterdata);
     if (masterdata){
       setFormId8org_regions(masterdata.id8org_regions);
       setFormId8org_towns(masterdata.id8org_towns);
@@ -367,11 +242,9 @@ const TabMainTorg = (props) => {
       "date_dealer"
     ]);
 
-    console.log('START --------- ', bdt);
 
     setBaseData(bdt);
 
-    console.log('bdt', bdt, masterdata)
 
       if (creator){
             setAuthor(ShortName(creator?.surname, creator?.name, creator?.secondname));
@@ -421,7 +294,6 @@ const TabMainTorg = (props) => {
         data: {},
         _token: CSRF_TOKEN,
       });
-      console.log('response', response);
       if (response.data) {
         // if (props.changed_user_data){
         //     props.changed_user_data(response.data);
@@ -458,19 +330,17 @@ const TabMainTorg = (props) => {
 
 
     const triggerCollapse = (itemname) => {
-      console.log(itemname);
       if (collapsed_rows.includes(itemname)){
         setCollapsedRows(collapsed_rows.filter((item)=> item !== itemname));
       } else {
-        console.log('HOHOHO');
         setCollapsedRows([...collapsed_rows, itemname]);
       }
     }
 
 
-    useEffect(() => {
-      console.log(collapsed_rows);
-    }, [collapsed_rows]);
+    // useEffect(() => {
+    //   console.log(collapsed_rows);
+    // }, [collapsed_rows]);
 
 
 //  ██████  ██████  ███    ██ ████████  █████   ██████ ████████ 
