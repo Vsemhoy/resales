@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import {
-	NavLink,
-	Outlet,
 	useLocation,
 	useNavigate,
 	useParams,
@@ -13,10 +11,8 @@ import { Affix, Alert, Button, DatePicker, Input, Layout, Pagination, Select, Ta
 
 import { ArrowSmallLeftIcon, CircleStackIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import {
-	ArrowLeftCircleIcon,
 	ClipboardDocumentCheckIcon,
 	PencilIcon,
-	PhoneXMarkIcon,
 	XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { CloseOutlined, ExclamationOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -26,9 +22,6 @@ import './components/style/orgpage.css';
 import '../ORG_LIST/components/style/orgmodal.css';
 
 import MainTabPage from './tabs/MainTabPage';
-import CallsTabPage from './tabs/CallsTabPage';
-import NotesTabPage from './tabs/NotesTabPage';
-import ProjectsTabPage from './tabs/ProjectsTabPage';
 
 import OrgListModalBillsTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalBillsTab';
 import OrgListModalOffersTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalOffersTab';
@@ -37,7 +30,6 @@ import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { useURLParams } from '../../components/helpers/UriHelpers';
 import { ORGLIST_MODAL_MOCK_MAINTAB } from '../ORG_LIST/components/mock/ORGLISTMODALMOCK';
 import { MODAL_NOTES_LIST } from '../ORG_LIST/components/mock/MODALNOTESTABMOCK';
-import { MODAL_PROJECTS_LIST } from '../ORG_LIST/components/mock/MODALPROJECTSTABMOCK';
 import { MODAL_CALLS_LIST } from '../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
@@ -61,29 +53,6 @@ const tabNames = [
 	{ link: 'n', name: 'Заметки' },
 	{ link: 'h', name: 'История' },
 ];
-// Максиму: Я поставил заглушку, departList чтобы сбилдить проект
-// let departList = [];
-
-/**
- *
- * Пайплайн:
- * 1. Загрузить все данные для вкладок - разные фетчи в разные контейнеры?
- * - Основная информация
- * - Проекты
- * - Всетречи\Звонки
- * - Заметки
- * 2. Смонтировать компоненты вышеуказанных данных независимо от таба
- * 3. Передать данные
- * 4. Отрендерить данные
- * 5. Сделать один центр обновления данных
- * 6. Сделать механику получения только измененных данных
- * 7. Отправлять на обновление только измененные данные
- * 8. Сделать мултисекционные компоненты
- * 9. Сделать мультистроковые компоненты
- * 10. Раскидать данные, собрать данные
- */
-
-
 
 const OrgPage = (props) => {
 	const { userdata } = props;
@@ -97,7 +66,6 @@ const OrgPage = (props) => {
 	const [isSmthChanged, setIsSmthChanged] = useState(false);
 
 	const { item_id } = useParams();
-	const onPage = 30;
 
 	const [BLOCK_DELAY, setBlockDelay] = useState(null);
 	const [BLOCK_SAVE, setBlockSave] = useState(false);
@@ -414,10 +382,6 @@ useEffect(() => {
 				setTimeout(() => {
 					
 					get_main_data_action(itt);
-					// get_notes_data_action(itt);
-					// get_org_calls_action(itt);
-					// get_projects_data_action(itt);
-
 				}, 1000);
 				} else {
 
@@ -562,22 +526,6 @@ useEffect(() => {
 		}
 	};
 
-						// 		let data = {
-					// 			main : tempMainData,
-					// 			contacts : tempMain_contacts,
-					// 			org_phones : tempMain_phones,
-					// 			org_emails : tempMain_emails,
-					// 			org_addresses : tempMain_addresses,
-					// 			org_legaladdresses : tempMain_legalAddresses,
-					// 			org_requisites : tempMain_an_requisites,
-					// 			org_an_licenses : tempMain_an_licenses,
-					// 			org_an_tolerances : tempMain_an_tolerances,
-					// 			org_bo_licenses : tempMain_bo_licenses,
-
-					// 			projects : tempProjectsData.filter((item)=> item.command !== undefined  ),
-					// 			calls : tempCallsData.filter((item)=> item.command !== undefined ),
-					// 			notes : tempNotesData.filter((item)=> item.command !== undefined  ),
-					// };
 
 	const update_data_action = async () => {
 		let data = {
@@ -1286,27 +1234,8 @@ useEffect(() => {
 							selects={baseFiltersData}
 						/>
 
-						{/* <NotesTabPage
-							show={activeTab === 'n'}
-							edit_mode={editMode}
-							item_id={itemId}
-							call_to_save={callToSaveAction}
-							base_data={baseNotesData}
-							// on_save={handleDataChangeApprove}
-							active_page={pageNotes}
-							on_change_page={(p) => {
-								setPageNotes(p);
-							}}
-							current_page={pageNotes}
-							userdata={userdata}
-							on_change_data={handleTabDataChange}
-						/> */}
 
 						{activeTab === 'h' && (
-							// <HistoryTabPage
-							//     edit_mode={editMode}
-							//     item_id={itemId}
-							//  />
 							<OrgListModalHistoryTab data={{ id: itemId }} environment={'editor'} />
 						)}
 					</div>
