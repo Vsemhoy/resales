@@ -42,7 +42,7 @@ const TabProjectsTorg = (props) => {
   const [tempData, setTempData] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [onPage, setOnPage] = useState(20);
+  const [onPage, setOnPage] = useState(50);
   const [total, setTotal] = useState(1);
   const [loading, setLoading] = useState(false);
   const [newLoading, setNewLoading] = useState(false);
@@ -160,7 +160,6 @@ const get_projects_data_action = async () => {
           },
           _token: CSRF_TOKEN,
         });
-        console.log('response', response);
         if (response.data && response.data.content) {
           setOriginalData(JSON.parse(JSON.stringify(response.data.content.projects)));
           setBaseData(response.data.content.projects);
@@ -201,7 +200,6 @@ const get_projects_data_action = async () => {
 
   const MAKE_BLANK = () => {
      setNewLoading(true);
-          // console.log('ADDED NEW DDDDDDDDDD')
           setTimeout(() => {
             let spawn = {
                     command: "create",
@@ -273,7 +271,7 @@ const get_projects_data_action = async () => {
 									disabled={editMode}
 									size={'small'}
 									current={currentPage}
-									pageSizeOptions={[10, 30, 50, 100]}
+									pageSizeOptions={[50, 100]}
 									defaultPageSize={onPage}
 									locale={ANTD_PAGINATION_LOCALE}
 									showQuickJumper

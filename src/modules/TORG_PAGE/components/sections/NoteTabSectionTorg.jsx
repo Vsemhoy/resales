@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { Button, DatePicker, Input } from 'antd';
+import { Button, DatePicker, Input, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
-import { getMonthName } from '../../../../components/helpers/TextHelpers';
+import { FullNameText, getMonthName, ShortName } from '../../../../components/helpers/TextHelpers';
+import { LockFilled } from '@ant-design/icons';
 
 const NoteTabSectionTorg = (props) => {
   const [refreshMark, setRefreshMark] = useState(null);
@@ -23,9 +24,24 @@ const NoteTabSectionTorg = (props) => {
   const [deleted, setDeleted] = useState(0);
   const [allowDelete, setAllowDelete] = useState(true);
 
+  const [authorFullName, setAuthorFullName] = useState('');
+  const [authorShortName, setAuthorShortName] = useState('');
+
+  const [userdata, setUserdata] = useState(null);
   // Флаги
   const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
   const [ACTION_FLAG, setACTION_FLAG] = useState(null);
+
+  useEffect(() => {
+    setAuthorFullName(FullNameText(props.data?.curator));
+    setAuthorShortName(
+      ShortName(
+        props.data?.creator?.surname,
+        props.data?.creator?.name,
+        props.data?.creator?.secondname
+      )
+    );
+  }, [props.data?.creator]);
 
   // ██    ██ ███████ ███████ 
   useEffect(() => {
@@ -48,6 +64,10 @@ const NoteTabSectionTorg = (props) => {
       setDeleted(props.data.deleted || 0);
     }
   }, [props.data]);
+
+  useEffect(() => {
+    setUserdata(props.user_data);
+  }, [props.user_data]);
 
   useEffect(() => {
     setAllowDelete(props.allow_delete);
@@ -142,7 +162,13 @@ const NoteTabSectionTorg = (props) => {
     <div
       className={`sa-org-collapse-item
        ${collapsed ? 'sa-collapsed-item' : 'sa-opened-item'}
-       ${deleted ? 'deleted' : ''}`}
+      ${deleted ? 'deleted' : ''} 
+       ${editMode ? 'sa-org-item-yesedit' : 'sa-org-item-notedit'} 
+       ${
+					userdata?.user?.id !== author || userdata?.user?.id !== author?.curator?.id
+						? 'sa-noedit-item'
+						: ''
+				}`}
     >
       <div
         className={'sa-org-collpase-header sa-flex-space'}
@@ -177,6 +203,10 @@ const NoteTabSectionTorg = (props) => {
                 ? ` - ${getMonthName(dayjs(date).month() + 1)} ${date.format('YYYY')}`
                 : ''}
             </span>{' '}
+						<span className="sa-author-text">
+							{authorShortName !== null ? ` - ` + authorShortName + ' ' : ''}
+							
+						</span>{' '}
             {itemId && (
               <div className={'sa-org-row-header-id sa-text-phantom'}>
                 ({itemId})
