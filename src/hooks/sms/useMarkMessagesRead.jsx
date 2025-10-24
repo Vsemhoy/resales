@@ -5,7 +5,6 @@ export const useMarkMessagesRead = (messages, currentUserId, chatId, markMessage
     const [processedMessages, setProcessedMessages] = useState(new Set());
 
     useEffect(() => {
-        console.log(33333)
         if (!messages.length || !markMessagesAsRead) return;
 
         // Находим непрочитанные входящие сообщения
@@ -18,13 +17,11 @@ export const useMarkMessagesRead = (messages, currentUserId, chatId, markMessage
                 element: document.querySelector(`[data-message-id="${item.message.id}"]`)
             }))
             .filter(item => item.element);
-        console.log(33333)
         if (unreadMessages.length === 0) return;
 
         // Создаем Intersection Observer
         observerRef.current = new IntersectionObserver(
             (entries) => {
-                console.log(11111)
                 const newlyVisible = [];
 
                 entries.forEach(entry => {
@@ -51,7 +48,6 @@ export const useMarkMessagesRead = (messages, currentUserId, chatId, markMessage
 
         // Начинаем наблюдение за всеми непрочитанными сообщениями
         unreadMessages.forEach(({ element }) => {
-            console.log(22222)
             observerRef.current.observe(element);
         });
 

@@ -130,24 +130,31 @@ export const ChatSocketProvider = ({ children, url }) => {
 			setLoadingChatList(false);
 		}
 	}, [loadingChatList]);
-	const fetchChatMessages = useCallback(async (chatId) => {
+	const fetchChatMessages = useCallback(async (chatId, lastMsg = null) => {
+        if (lastMsg) {
+            //console.log('lastMsg', lastMsg);
+            return;
+        }
 		if (loadingChat) return;
 		setLoadingChat(true);
 		if (PRODMODE) {
 			try {
 				const endpoint = `/api/sms/${chatId}`;
 				const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
+                    data: {
+                        last_id: lastMsg,
+                    },
 					_token: CSRF_TOKEN,
 				});
 				if (response?.data?.content) {
 					setCurrentChatId(chatId);
-					setChatsPrepare({
-						chat_id: chatId,
-						who: response?.data?.content?.who,
-						messages: response?.data?.content?.messages,
-						fist_message_id: 0,
-						scrollHeight: 0,
-					});
+                    setChatsPrepare({
+                        chat_id: chatId,
+                        who: response?.data?.content?.who,
+                        messages: response?.data?.content?.messages,
+                        fist_message_id: 0,
+                        scrollHeight: 0,
+                    });
 				}
 			} catch (e) {
 				console.log(e);
@@ -237,10 +244,25 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}, to);
 	};
 	const setChatsPrepare = (newChat) => {
-		if (!chats.find(chat => +chat.chat_id === +newChat.chat_id)) {
+        const chat = chats.find(chat => +chat.chat_id === +newChat.chat_id);
+		if (!chat) {
 			console.log('BEFORE UPDATE CHATS fetchChatMessages', chats);
 			setChats(prevChats => [...prevChats, newChat]);
-		}
+		} else {
+            const chatUpd = {
+                ...chat,
+                messages: [...chat.messages, ...newChat.messages],
+            };
+            setChats(prevChats => {
+                //[...prevChats, newChat]
+                return prevChats.map((chat, index) => {
+                    if (chat.chat_id === chatUpd.chat_id) {
+                        return chatUpd;
+                    }
+                    return chat;
+                });
+            });
+        }
 	};
 	const addMessageToChatList = (msg) => {
 		setChatsList(prevChatsList => {
@@ -273,7 +295,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				if (index === chatIndex) {
 					return {
 						...chat,
-						messages: [...chat.messages, msg]
+						messages: [msg, ...chat.messages]
 					};
 				}
 				return chat;
