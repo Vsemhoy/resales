@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 
 /**
  * Хук для подгрузки данных при скролле вверх.
@@ -9,39 +9,43 @@ import { useEffect, useRef, useState } from 'react';
  * @param {boolean} params.hasMore - есть ли ещё данные для подгрузки
  * @param {number} [params.offset=100] - сколько пикселей от верха считать "почти докрутили"
  */
-export const useInfiniteScrollUp = ({ containerRef, fetchMoreMessages, hasMore, offset = 150 }) => {
+export const useInfiniteScrollUp = ({
+                                        containerRef,
+                                        fetchMoreMessages,
+                                        hasMore,
+                                        offset = 150,
+                                    }) => {
     const isFetchingRef = useRef(false);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const container = containerRef.current;
         if (!container || !fetchMoreMessages) return;
 
         const handleScroll = async () => {
-            // Блокируем повторные вызовы
             if (isFetchingRef.current || !hasMore) return;
 
             if (container.scrollTop <= offset) {
                 isFetchingRef.current = true;
+
                 const prevScrollHeight = container.scrollHeight;
+                const prevScrollTop = container.scrollTop;
 
                 try {
                     await fetchMoreMessages();
                 } finally {
-                    // Корректируем позицию скролла, чтобы не прыгал
+                    // Используем двойной requestAnimationFrame для плавности без лагов
                     requestAnimationFrame(() => {
-                        const newScrollHeight = container.scrollHeight;
-                        container.scrollTop =
-                            newScrollHeight - prevScrollHeight + container.scrollTop;
-                        setTimeout(() => {
+                        requestAnimationFrame(() => {
+                            const newScrollHeight = container.scrollHeight;
+                            container.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
                             isFetchingRef.current = false;
-                        }, 300);
+                        });
                     });
                 }
             }
         };
 
         container.addEventListener('scroll', handleScroll);
-
         return () => container.removeEventListener('scroll', handleScroll);
     }, [containerRef, fetchMoreMessages, hasMore, offset]);
 };

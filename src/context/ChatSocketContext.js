@@ -131,10 +131,6 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [loadingChatList]);
 	const fetchChatMessages = useCallback(async (chatId, lastMsg = null) => {
-        if (lastMsg) {
-            //console.log('lastMsg', lastMsg);
-            return;
-        }
 		if (loadingChat) return;
 		setLoadingChat(true);
 		if (PRODMODE) {
@@ -152,8 +148,7 @@ export const ChatSocketProvider = ({ children, url }) => {
                         chat_id: chatId,
                         who: response?.data?.content?.who,
                         messages: response?.data?.content?.messages,
-                        fist_message_id: 0,
-                        scrollHeight: 0,
+                        total: response?.data?.content?.total,
                     });
 				}
 			} catch (e) {
@@ -167,8 +162,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				chat_id: chatId,
 				who: CHAT_MOCK?.content?.who,
 				messages: CHAT_MOCK?.content?.messages,
-				fist_message_id: 0,
-				scrollHeight: 0,
+                total: CHAT_MOCK?.content?.total - CHAT_MOCK?.content?.messages?.length,
 			});
 			setLoadingChat(false);
 		}

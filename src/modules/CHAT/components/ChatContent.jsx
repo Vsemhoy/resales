@@ -27,6 +27,7 @@ export default function ChatContent({ chatId }) {
 		messages: [],
 	});
     const [hasMore, setHasMore] = useState(true);
+    const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
 
 	const normalizeMessage = useCallback((msg) => {
 			return {
@@ -100,7 +101,7 @@ export default function ChatContent({ chatId }) {
         containerRef: messagesContainerRef,
         fetchMoreMessages: () => fetchChatMessages(chatId, chat.messages[chat.messages.length - 1]),
         hasMore,
-        offset: 300,
+        offset: 500,
     });
 
 	useEffect(() => {
@@ -117,10 +118,17 @@ export default function ChatContent({ chatId }) {
 		setCurrentUserId(userdata?.user?.id);
 	}, [userdata]);
 	useEffect(() => {
-		if (messagesContainerRef.current && allMessages.length > 0) {
+		if (messagesContainerRef.current && allMessages.length > 0 && !isScrolledToBottom) {
 			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+            setIsScrolledToBottom(true);
 		}
 	}, [allMessages]);
+    useEffect(() => {
+        setIsScrolledToBottom(false);
+    }, [chatId]);
+    useEffect(() => {
+        setHasMore(Boolean(chat?.total - chat?.messages?.length));
+    }, [chat]);
 
 	const handleSend = (trimmed, fileList) => {
 		sendSms({
