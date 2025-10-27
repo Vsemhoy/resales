@@ -1,16 +1,16 @@
 import styles from './style/Chat.module.css';
 import dayjs from 'dayjs';
 import {
-	CheckOutlined, FileExcelOutlined,
-	FileGifOutlined,
-	FileImageOutlined,
-	FileJpgOutlined,
-	FileMarkdownOutlined,
-	FileOutlined,
-	FilePdfOutlined, FilePptOutlined,
-	FileTextOutlined,
-	FileWordOutlined,
-	FileZipOutlined
+    CheckOutlined, FileExcelFilled, FileExcelOutlined, FileFilled,
+    FileGifOutlined, FileImageFilled,
+    FileImageOutlined,
+    FileJpgOutlined, FileMarkdownFilled,
+    FileMarkdownOutlined,
+    FileOutlined, FilePdfFilled,
+    FilePdfOutlined, FilePptFilled, FilePptOutlined, FileTextFilled,
+    FileTextOutlined, FileWordFilled,
+    FileWordOutlined, FileZipFilled,
+    FileZipOutlined
 } from "@ant-design/icons";
 import {HTTP_HOST} from "../../../config/config";
 
@@ -29,27 +29,27 @@ export default function ChatSelfMsg({ message }) {
 			// Изображения
 			case 'jpg': case 'jpeg': case 'png': case 'gif': case 'bmp': case 'webp': case 'svg':
 			case 'tiff': case 'ico': case 'psd': case 'ai':
-				return <FileImageOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FileImageFilled style={{fontSize: '25px', color: '#555555'}}/>;
 			// Документы
 			case 'pdf':
-				return <FilePdfOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FilePdfFilled style={{fontSize: '25px', color: '#555555'}}/>;
 			case 'doc': case 'docx': case 'rtf': case 'odt':
-				return <FileWordOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FileWordFilled style={{fontSize: '25px', color: '#555555'}}/>;
 			case 'xls': case 'xlsx': case 'csv': case 'ods':
-				return <FileExcelOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FileExcelFilled style={{fontSize: '25px', color: '#555555'}}/>;
 			case 'ppt': case 'pptx': case 'odp':
-				return <FilePptOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FilePptFilled style={{fontSize: '25px', color: '#555555'}}/>;
 			case 'md': case 'markdown':
-				return <FileMarkdownOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FileMarkdownFilled style={{fontSize: '25px', color: '#555555'}}/>;
 			// Архивы
 			case 'zip': case 'rar': case '7z': case 'tar': case 'gz':
-				return <FileZipOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FileZipFilled style={{fontSize: '25px', color: '#555555'}}/>;
 			// Текстовые файлы
 			case 'txt': case 'log': case 'ini': case 'xml': case 'json': case 'yaml':
-				return <FileTextOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FileTextFilled style={{fontSize: '25px', color: '#555555'}}/>;
 			// Остальное - общая иконка
 			default:
-				return <FileOutlined style={{fontSize: '25px', color: '#555555'}}/>;
+				return <FileFilled style={{fontSize: '25px', color: '#555555'}}/>;
 		}
 	};
 

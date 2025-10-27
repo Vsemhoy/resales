@@ -1,7 +1,7 @@
 import {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {io} from 'socket.io-client';
 import {CSRF_TOKEN, PRODMODE} from '../config/config.js';
-import {CHAT_LIST_MOCK, CHAT_MOCK} from '../modules/CHAT/mock/mock.js';
+import {CHAT_LIST_MOCK, CHAT_MOCK, CHAT_MOCK_NEW} from '../modules/CHAT/mock/mock.js';
 import {useUserData} from "./UserDataContext";
 import {PROD_AXIOS_INSTANCE} from "../config/Api";
 
@@ -169,9 +169,9 @@ export const ChatSocketProvider = ({ children, url }) => {
                 setCurrentChatId(chatId);
                 setChatsPrepare({
                     chat_id: chatId,
-                    who: CHAT_MOCK?.content?.who,
-                    messages: CHAT_MOCK?.content?.messages,
-                    total: CHAT_MOCK?.content?.total - CHAT_MOCK?.content?.messages?.length,
+                    who: CHAT_MOCK_NEW?.content?.who,
+                    messages: CHAT_MOCK_NEW?.content?.messages,
+                    total: CHAT_MOCK_NEW?.content?.total - CHAT_MOCK_NEW?.content?.messages?.length,
                 });
             }
 			setLoadingChat(false);
