@@ -68,7 +68,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		socket.on('new:sms', (data) => {
 			console.log('WS new:sms', data);
 
-			if (data.left) addMessageToChatList(data.left);
+			if (data.left) addMessageToChatList(data.left, false);
 			if (data.right) addMessageToChat(data.right);
 
 			if (data.right)  emitToListeners('message:new', data.right);
@@ -157,13 +157,23 @@ export const ChatSocketProvider = ({ children, url }) => {
 				setLoadingChat(false);
 			}
 		} else {
-			setCurrentChatId(chatId);
-			setChatsPrepare({
-				chat_id: chatId,
-				who: CHAT_MOCK?.content?.who,
-				messages: CHAT_MOCK?.content?.messages,
-                total: CHAT_MOCK?.content?.total - CHAT_MOCK?.content?.messages?.length,
-			});
+            if (!lastMsg) {
+                setCurrentChatId(chatId);
+                setChatsPrepare({
+                    chat_id: chatId,
+                    who: CHAT_MOCK?.content?.who,
+                    messages: CHAT_MOCK?.content?.messages,
+                    total: CHAT_MOCK?.content?.total - CHAT_MOCK?.content?.messages?.length,
+                });
+            } else {
+                setCurrentChatId(chatId);
+                setChatsPrepare({
+                    chat_id: chatId,
+                    who: CHAT_MOCK?.content?.who,
+                    messages: CHAT_MOCK?.content?.messages,
+                    total: CHAT_MOCK?.content?.total - CHAT_MOCK?.content?.messages?.length,
+                });
+            }
 			setLoadingChat(false);
 		}
 	}, [loadingChat]);
@@ -199,7 +209,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 			if (response.data) {
 				updateMessageId(response.data.id, response.data.timestamp, response.data.files, to);
-				addMessageToChatList(response.data.left);
+				addMessageToChatList(response.data.left, true);
 			}
 		} catch (e) {
 			console.error('[useSendSms] Ошибка:', e);
@@ -238,14 +248,14 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}, to);
 	};
 	const setChatsPrepare = (newChat) => {
-        const chat = chats.find(chat => +chat.chat_id === +newChat.chat_id);
+        const chat = chatsRef.current.find(chat => +chat.chat_id === +newChat.chat_id);
 		if (!chat) {
-			console.log('BEFORE UPDATE CHATS fetchChatMessages', chats);
+			console.log('BEFORE UPDATE CHATS fetchChatMessages', chatsRef.current);
 			setChats(prevChats => [...prevChats, newChat]);
 		} else {
             const chatUpd = {
                 ...chat,
-                messages: [...chat.messages, ...newChat.messages],
+                messages: [...newChat.messages, ...chat.messages],
             };
             setChats(prevChats => {
                 //[...prevChats, newChat]
@@ -258,9 +268,14 @@ export const ChatSocketProvider = ({ children, url }) => {
             });
         }
 	};
-	const addMessageToChatList = (msg) => {
+	const addMessageToChatList = (msg, isSelfMsg = true) => {
 		setChatsList(prevChatsList => {
-			const chatIndex = prevChatsList.findIndex(chat => chat.chat_id === msg.chat_id);
+            let chatIndex = -1;
+            if (isSelfMsg) {
+                chatIndex = prevChatsList.findIndex(chat => chat.chat_id === msg.chat_id);
+            } else {
+                chatIndex = prevChatsList.findIndex(chat => chat.chat_id === msg.from.id);
+            }
 			if (chatIndex === -1) {
 				return [
 					prevChatsList[0],
@@ -289,7 +304,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				if (index === chatIndex) {
 					return {
 						...chat,
-						messages: [msg, ...chat.messages]
+						messages: [...chat.messages, msg]
 					};
 				}
 				return chat;

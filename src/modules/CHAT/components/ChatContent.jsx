@@ -59,8 +59,7 @@ export default function ChatContent({ chatId }) {
 	}, [chat, normalizeMessage]);
     const messagesWithDividers = useMemo(() => {
         if (!allMessages || allMessages.length === 0) return [];
-        const isDesc = allMessages.length > 1 &&
-            Number(allMessages[0].timestamp) > Number(allMessages[allMessages.length - 1].timestamp);
+        const isDesc = allMessages.length > 1 && Number(allMessages[0].timestamp) > Number(allMessages[allMessages.length - 1].timestamp);
         const sorted = isDesc ? [...allMessages].slice().reverse() : [...allMessages];
         const items = [];
         let lastDayKey = null;
@@ -99,7 +98,7 @@ export default function ChatContent({ chatId }) {
 
     useInfiniteScrollUp({
         containerRef: messagesContainerRef,
-        fetchMoreMessages: () => fetchChatMessages(chatId, chat.messages[chat.messages.length - 1]),
+        fetchMoreMessages: () => fetchChatMessages(chatId, chat.messages[0].id),
         hasMore,
         offset: 500,
     });
