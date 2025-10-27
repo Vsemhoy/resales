@@ -41,7 +41,7 @@ export default function ChatIncomingMsg({ message }) {
 	};
 
 	return (
-		<div className={`${styles.message} ${styles.otherMessage}`} data-message-id={message.id}>
+		<div className={`message ${styles.message} ${styles.otherMessage}`} data-message-id={message.id} data-id={message.id}>
 			<div className={`${styles.bubble} ${styles.otherMessageBubble}`}>
 				<div className={styles.senderName}>{/*<span style={{color: 'red'}}>{fromId}</span>*/}{senderName}</div>
 				<span>{text}</span>

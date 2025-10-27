@@ -10,6 +10,8 @@ import ChatIncomingMsg from './ChatIncomingMsg';
 import {useSendSms} from '../../../hooks/sms/useSendSms';
 import {useChatSocket} from "../../../context/ChatSocketContext";
 import { useMarkMessagesRead } from '../../../hooks/sms/useMarkMessagesRead';
+import {useInfiniteScrollUp} from "../../../hooks/sms/useInfiniteScrollUp";
+import {logDOM} from "@testing-library/dom";
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
@@ -23,9 +25,9 @@ export default function ChatContent({ chatId }) {
 		chat_id: 0,
 		who: '',
 		messages: [],
-		fist_message_id: 0,
-		scrollHeight: 0,
 	});
+    const [hasMore, setHasMore] = useState(true);
+    const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
 
 	const normalizeMessage = useCallback((msg) => {
 			return {
@@ -53,25 +55,24 @@ export default function ChatContent({ chatId }) {
 			existingIds.add(id?.toString());
 			return true;
 		});
-		return uniqueMessages
-			.map(normalizeMessage)
-			/*.filter((msg) => msg.text && msg.text.trim() !== '')*/
-			.sort((a, b) => a.timestamp - b.timestamp);
+		return uniqueMessages.map(normalizeMessage);
 	}, [chat, normalizeMessage]);
-	const messagesWithDividers = useMemo(() => {
-		if (allMessages.length === 0) return [];
-		const items = [];
-		let lastDayKey = null;
-		for (const msg of allMessages) {
-			const dayKey = dayjs(+msg.timestamp * 1000).format('DD.MM.YY');
-			if (lastDayKey !== dayKey) {
-				items.push({ type: 'divider', id: `divider-${dayKey}`, timestamp: msg.timestamp });
-				lastDayKey = dayKey;
-			}
-			items.push({ type: 'msg', id: msg.id, message: msg });
-		}
-		return items;
-	}, [allMessages]);
+    const messagesWithDividers = useMemo(() => {
+        if (!allMessages || allMessages.length === 0) return [];
+        const isDesc = allMessages.length > 1 && Number(allMessages[0].timestamp) > Number(allMessages[allMessages.length - 1].timestamp);
+        const sorted = isDesc ? [...allMessages].slice().reverse() : [...allMessages];
+        const items = [];
+        let lastDayKey = null;
+        for (const msg of sorted) {
+            const dayKey = dayjs(Number(msg.timestamp) * 1000).format('DD.MM.YY');
+            if (lastDayKey !== dayKey) {
+                items.push({ type: 'divider', id: `divider-${dayKey}`, timestamp: msg.timestamp });
+                lastDayKey = dayKey;
+            }
+            items.push({ type: 'msg', id: msg.id, message: msg });
+        }
+        return isDesc ? items.slice().reverse() : items;
+    }, [allMessages]);
 
 	const {
 		/* socket */
@@ -95,6 +96,13 @@ export default function ChatContent({ chatId }) {
 		markMessagesAsRead
 	);
 
+    useInfiniteScrollUp({
+        containerRef: messagesContainerRef,
+        fetchMoreMessages: () => fetchChatMessages(chatId, chat.messages[0].id),
+        hasMore,
+        offset: 500,
+    });
+
 	useEffect(() => {
 		const foundedChat = chats.find(chat => chat.chat_id === chatId || chat.id === chatId);
 		if (!foundedChat && chatId&& !loadingChat && !loadingSendSms) {
@@ -109,10 +117,17 @@ export default function ChatContent({ chatId }) {
 		setCurrentUserId(userdata?.user?.id);
 	}, [userdata]);
 	useEffect(() => {
-		if (messagesContainerRef.current && allMessages.length > 0) {
+		if (messagesContainerRef.current && allMessages.length > 0 && !isScrolledToBottom) {
 			messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+            setIsScrolledToBottom(true);
 		}
 	}, [allMessages]);
+    useEffect(() => {
+        setIsScrolledToBottom(false);
+    }, [chatId]);
+    useEffect(() => {
+        setHasMore(Boolean(chat?.total - chat?.messages?.length));
+    }, [chat]);
 
 	const handleSend = (trimmed, fileList) => {
 		sendSms({

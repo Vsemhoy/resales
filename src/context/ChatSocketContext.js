@@ -68,7 +68,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		socket.on('new:sms', (data) => {
 			console.log('WS new:sms', data);
 
-			if (data.left) addMessageToChatList(data.left);
+			if (data.left) addMessageToChatList(data.left, false);
 			if (data.right) addMessageToChat(data.right);
 
 			if (data.right)  emitToListeners('message:new', data.right);
@@ -130,24 +130,26 @@ export const ChatSocketProvider = ({ children, url }) => {
 			setLoadingChatList(false);
 		}
 	}, [loadingChatList]);
-	const fetchChatMessages = useCallback(async (chatId) => {
+	const fetchChatMessages = useCallback(async (chatId, lastMsg = null) => {
 		if (loadingChat) return;
 		setLoadingChat(true);
 		if (PRODMODE) {
 			try {
 				const endpoint = `/api/sms/${chatId}`;
 				const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
+                    data: {
+                        last_id: lastMsg,
+                    },
 					_token: CSRF_TOKEN,
 				});
 				if (response?.data?.content) {
 					setCurrentChatId(chatId);
-					setChatsPrepare({
-						chat_id: chatId,
-						who: response?.data?.content?.who,
-						messages: response?.data?.content?.messages,
-						fist_message_id: 0,
-						scrollHeight: 0,
-					});
+                    setChatsPrepare({
+                        chat_id: chatId,
+                        who: response?.data?.content?.who,
+                        messages: response?.data?.content?.messages,
+                        total: response?.data?.content?.total,
+                    });
 				}
 			} catch (e) {
 				console.log(e);
@@ -155,14 +157,23 @@ export const ChatSocketProvider = ({ children, url }) => {
 				setLoadingChat(false);
 			}
 		} else {
-			setCurrentChatId(chatId);
-			setChatsPrepare({
-				chat_id: chatId,
-				who: CHAT_MOCK?.content?.who,
-				messages: CHAT_MOCK?.content?.messages,
-				fist_message_id: 0,
-				scrollHeight: 0,
-			});
+            if (!lastMsg) {
+                setCurrentChatId(chatId);
+                setChatsPrepare({
+                    chat_id: chatId,
+                    who: CHAT_MOCK?.content?.who,
+                    messages: CHAT_MOCK?.content?.messages,
+                    total: CHAT_MOCK?.content?.total - CHAT_MOCK?.content?.messages?.length,
+                });
+            } else {
+                setCurrentChatId(chatId);
+                setChatsPrepare({
+                    chat_id: chatId,
+                    who: CHAT_MOCK?.content?.who,
+                    messages: CHAT_MOCK?.content?.messages,
+                    total: CHAT_MOCK?.content?.total - CHAT_MOCK?.content?.messages?.length,
+                });
+            }
 			setLoadingChat(false);
 		}
 	}, [loadingChat]);
@@ -198,7 +209,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 
 			if (response.data) {
 				updateMessageId(response.data.id, response.data.timestamp, response.data.files, to);
-				addMessageToChatList(response.data.left);
+				addMessageToChatList(response.data.left, true);
 			}
 		} catch (e) {
 			console.error('[useSendSms] Ошибка:', e);
@@ -237,14 +248,34 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}, to);
 	};
 	const setChatsPrepare = (newChat) => {
-		if (!chats.find(chat => +chat.chat_id === +newChat.chat_id)) {
-			console.log('BEFORE UPDATE CHATS fetchChatMessages', chats);
+        const chat = chatsRef.current.find(chat => +chat.chat_id === +newChat.chat_id);
+		if (!chat) {
+			console.log('BEFORE UPDATE CHATS fetchChatMessages', chatsRef.current);
 			setChats(prevChats => [...prevChats, newChat]);
-		}
+		} else {
+            const chatUpd = {
+                ...chat,
+                messages: [...newChat.messages, ...chat.messages],
+            };
+            setChats(prevChats => {
+                //[...prevChats, newChat]
+                return prevChats.map((chat, index) => {
+                    if (chat.chat_id === chatUpd.chat_id) {
+                        return chatUpd;
+                    }
+                    return chat;
+                });
+            });
+        }
 	};
-	const addMessageToChatList = (msg) => {
+	const addMessageToChatList = (msg, isSelfMsg = true) => {
 		setChatsList(prevChatsList => {
-			const chatIndex = prevChatsList.findIndex(chat => chat.chat_id === msg.chat_id);
+            let chatIndex = -1;
+            if (isSelfMsg) {
+                chatIndex = prevChatsList.findIndex(chat => chat.chat_id === msg.chat_id);
+            } else {
+                chatIndex = prevChatsList.findIndex(chat => chat.chat_id === msg.from.id);
+            }
 			if (chatIndex === -1) {
 				return [
 					prevChatsList[0],

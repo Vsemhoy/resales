@@ -18,7 +18,7 @@ export default function ChatSelfMsg({ message }) {
 	const { text, files, timestamp, isSending, senderName, fromId, status } = message;
 
 	// Используем только существующие классы
-	const messageClass = `${styles.message} ${styles.myMessage} ${
+	const messageClass = `message ${styles.message} ${styles.myMessage} ${
 		isSending ? styles.localMessage : ''
 	}`;
 
@@ -54,7 +54,7 @@ export default function ChatSelfMsg({ message }) {
 	};
 
 	return (
-		<div className={messageClass}>
+		<div className={messageClass} data-id={message.id}>
 			<div className={bubbleClass}>
 				{/*<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>*/}
 				<span>{text}</span>
