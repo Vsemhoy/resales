@@ -221,7 +221,8 @@ ul {
 	padding: 8px;
 	min-height: 0;
     display: flex;
-    flex-direction: column-reverse;
+    /*flex-direction: column-reverse;*/
+    flex-direction: column;
 }
 
 .messagesList::-webkit-scrollbar,
