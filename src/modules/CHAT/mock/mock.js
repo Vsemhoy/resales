@@ -178,701 +178,683 @@ export const CHAT_LIST_MOCK = {
 };
 
 export const CHAT_MOCK = {
-	content: {
-        total: 1000,
-		messages: [
-			{
-				"id": 429,
-				"from_id": 46,
-				"answer": null,
-				"text": "А может ты",
-				"files": [],
-				"status": false,
-				"created_at": 1761136855,
-				"updated_at": 1761136855
-			},
-			{
-				"id": 428,
-				"from_id": 46,
-				"answer": null,
-				"text": "",
-				"files": [
-					{
-						"id": 6,
-						"route": "sms_files/bo_sms_files_1_428_sms_files_1_417_Коммерческое предложение для Тестовая карточка (13).docx",
-						"extension": "docx",
-						"name": "bo_sms_files_1_428_sms_files_1_417_Коммерческое предложение для Тестовая карточка (13).docx"
-					}
-				],
-				"status": false,
-				"created_at": 1761133010,
-				"updated_at": 1761133010
-			},
-			{
-				"id": 427,
-				"from_id": 583,
-				"answer": null,
-				"text": "z",
-				"files": [
-					{
-						"id": 5,
-						"route": "sms_files/bo_sms_files_1_427_excel_1759916999.xlsx",
-						"extension": "xlsx",
-						"name": "bo_sms_files_1_427_excel_1759916999.xlsx"
-					}
-				],
-				"status": false,
-				"created_at": 1761132449,
-				"updated_at": 1761132449
-			},
-			{
-				"id": 426,
-				"from_id": 46,
-				"answer": null,
-				"text": "s",
-				"files": [],
-				"status": false,
-				"created_at": 1761132411,
-				"updated_at": 1761132411
-			},
-			{
-				"id": 425,
-				"from_id": 583,
-				"answer": null,
-				"text": "z",
-				"files": [],
-				"status": false,
-				"created_at": 1761132173,
-				"updated_at": 1761132173
-			},
-			{
-				"id": 424,
-				"from_id": 46,
-				"answer": null,
-				"text": "zzzooovvvv",
-				"files": [],
-				"status": false,
-				"created_at": 1761131985,
-				"updated_at": 1761131985
-			},
-			{
-				"id": 423,
-				"from_id": 583,
-				"answer": null,
-				"text": "z",
-				"files": [],
-				"status": false,
-				"created_at": 1761131705,
-				"updated_at": 1761131705
-			},
-			{
-				"id": 422,
-				"from_id": 583,
-				"answer": null,
-				"text": "аа",
-				"files": [],
-				"status": false,
-				"created_at": 1761130843,
-				"updated_at": 1761130843
-			},
-			{
-				"id": 421,
-				"from_id": 46,
-				"answer": null,
-				"text": "fв",
-				"files": [],
-				"status": false,
-				"created_at": 1761130796,
-				"updated_at": 1761130796
-			},
-			{
-				"id": 420,
-				"from_id": 583,
-				"answer": null,
-				"text": "",
-				"files": [],
-				"status": false,
-				"created_at": 1761130767,
-				"updated_at": 1761130767
-			},
-			{
-				"id": 419,
-				"from_id": 583,
-				"answer": null,
-				"text": "",
-				"files": [],
-				"status": false,
-				"created_at": 1761130706,
-				"updated_at": 1761130706
-			},
-			{
-				"id": 418,
-				"from_id": 583,
-				"answer": null,
-				"text": "",
-				"files": [],
-				"status": false,
-				"created_at": 1761125845,
-				"updated_at": 1761125845
-			},
-			{
-				"id": 417,
-				"from_id": 46,
-				"answer": null,
-				"text": "ghdsfgsdfgdsfg",
-				"files": [
-					{
-						"id": 1,
-						"route": "sms_files/sms_files_1_417_Коммерческое предложение для Тестовая карточка (13).docx",
-						"extension": "docx",
-						"name": "sms_files_1_417_Коммерческое предложение для Тестовая карточка (13).docx"
-					},
-					{
-						"id": 2,
-						"route": "sms_files/sms_files_2_417_Коммерческое предложение для Тестовая карточка (12).docx",
-						"extension": "docx",
-						"name": "sms_files_2_417_Коммерческое предложение для Тестовая карточка (12).docx"
-					},
-					{
-						"id": 3,
-						"route": "sms_files/sms_files_3_417_Коммерческое предложение для Тестовая карточка (11).docx",
-						"extension": "docx",
-						"name": "sms_files_3_417_Коммерческое предложение для Тестовая карточка (11).docx"
-					},
-					{
-						"id": 4,
-						"route": "sms_files/sms_files_4_417_Коммерческое предложение для Главстрой-СПб специализированный застройщик.docx",
-						"extension": "docx",
-						"name": "sms_files_4_417_Коммерческое предложение для Главстрой-СПб специализированный застройщик.docx"
-					}
-				],
-				"status": false,
-				"created_at": 1761124843,
-				"updated_at": 1761124843
-			},
-			{
-				"id": 416,
-				"from_id": 46,
-				"answer": null,
-				"text": "dfhghdfghdfghdfghdf",
-				"files": [],
-				"status": false,
-				"created_at": 1761124832,
-				"updated_at": 1761124832
-			},
-			{
-				"id": 415,
-				"from_id": 46,
-				"answer": null,
-				"text": "sdfgsdfdfsggsdf",
-				"files": [],
-				"status": false,
-				"created_at": 1761124755,
-				"updated_at": 1761124755
-			},
-			{
-				"id": 414,
-				"from_id": 46,
-				"answer": null,
-				"text": "",
-				"files": [],
-				"status": false,
-				"created_at": 1761124622,
-				"updated_at": 1761124622
-			},
-			{
-				"id": 412,
-				"from_id": 46,
-				"answer": null,
-				"text": "gf",
-				"files": [],
-				"status": false,
-				"created_at": 1761124213,
-				"updated_at": 1761124213
-			},
-			{
-				"id": 411,
-				"from_id": 583,
-				"answer": null,
-				"text": "да ничего",
-				"files": [],
-				"status": false,
-				"created_at": 1761119522,
-				"updated_at": 1761119522
-			},
-			{
-				"id": 410,
-				"from_id": 46,
-				"answer": null,
-				"text": "сори, не заметил",
-				"files": [],
-				"status": false,
-				"created_at": 1761119510,
-				"updated_at": 1761119510
-			},
-			{
-				"id": 409,
-				"from_id": 46,
-				"answer": null,
-				"text": "ку",
-				"files": [],
-				"status": false,
-				"created_at": 1761119503,
-				"updated_at": 1761119503
-			},
-			{
-				"id": 408,
-				"from_id": 583,
-				"answer": null,
-				"text": "Ку",
-				"files": [],
-				"status": false,
-				"created_at": 1761039191,
-				"updated_at": 1761039191
-			},
-			{
-				"id": 407,
-				"from_id": 46,
-				"answer": null,
-				"text": "Всё чётко 😎",
-				"files": [],
-				"status": false,
-				"created_at": 1760955989,
-				"updated_at": 1760955989
-			},
-			{
-				"id": 406,
-				"from_id": 583,
-				"answer": null,
-				"text": "Как Ваше ничего?",
-				"files": [],
-				"status": false,
-				"created_at": 1760952992,
-				"updated_at": 1760952992
-			},
-			{
-				"id": 405,
-				"from_id": 46,
-				"answer": null,
-				"text": "Здарова!!!",
-				"files": [],
-				"status": false,
-				"created_at": 1760952800,
-				"updated_at": 1760952800
-			},
-			{
-				"id": 404,
-				"from_id": 583,
-				"answer": null,
-				"text": "Привет!",
-				"files": [],
-				"status": false,
-				"created_at": 1760952366,
-				"updated_at": 1760952366
-			},
-			{
-				"id": 403,
-				"from_id": 583,
-				"answer": null,
-				"text": "еще как буду!!!",
-				"files": [],
-				"status": false,
-				"created_at": 1760714098,
-				"updated_at": 1760714098
-			},
-			{
-				"id": 402,
-				"from_id": 583,
-				"answer": null,
-				"text": "а вот буду!",
-				"files": [],
-				"status": false,
-				"created_at": 1760714020,
-				"updated_at": 1760714020
-			},
-			{
-				"id": 401,
-				"from_id": 46,
-				"answer": null,
-				"text": "не обижайся только",
-				"files": [],
-				"status": false,
-				"created_at": 1760713516,
-				"updated_at": 1760713516
-			},
-			{
-				"id": 400,
-				"from_id": 583,
-				"answer": null,
-				"text": "ладно....",
-				"files": [],
-				"status": false,
-				"created_at": 1760712230,
-				"updated_at": 1760712230
-			},
-			{
-				"id": 399,
-				"from_id": 46,
-				"answer": null,
-				"text": "общайся попроще",
-				"files": [],
-				"status": false,
-				"created_at": 1760707017,
-				"updated_at": 1760707017
-			}
-		],
-		who: 'Бобко Александр',
-	},
-	message: 'OK!',
-};
-
-export const CHAT_MOCK_NEW = {
-    content: {
-        total: 1000,
-        who: 'Бобко Александр',
-        messages: [
+    "content": {
+        "messages": [
+            {
+                "id": 470,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761293811,
+                "updated_at": 1761294843
+            },
+            {
+                "id": 471,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761293881,
+                "updated_at": 1761294843
+            },
+            {
+                "id": 472,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761293929,
+                "updated_at": 1761294843
+            },
+            {
+                "id": 473,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294041,
+                "updated_at": 1761294843
+            },
+            {
+                "id": 474,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294262,
+                "updated_at": 1761294843
+            },
+            {
+                "id": 475,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294346,
+                "updated_at": 1761294843
+            },
+            {
+                "id": 476,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294608,
+                "updated_at": 1761294844
+            },
+            {
+                "id": 477,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294764,
+                "updated_at": 1761294844
+            },
+            {
+                "id": 478,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294844,
+                "updated_at": 1761295047
+            },
+            {
+                "id": 479,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294876,
+                "updated_at": 1761295047
+            },
+            {
+                "id": 480,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294959,
+                "updated_at": 1761295047
+            },
+            {
+                "id": 481,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761294993,
+                "updated_at": 1761295047
+            },
+            {
+                "id": 482,
+                "from_id": 46,
+                "answer": null,
+                "text": "1",
+                "files": [],
+                "status": true,
+                "created_at": 1761295071,
+                "updated_at": 1761295071
+            },
+            {
+                "id": 483,
+                "from_id": 583,
+                "answer": null,
+                "text": "2",
+                "files": [],
+                "status": true,
+                "created_at": 1761295183,
+                "updated_at": 1761295183
+            },
+            {
+                "id": 484,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761295206,
+                "updated_at": 1761300511
+            },
+            {
+                "id": 485,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [
+                    {
+                        "id": 13,
+                        "route": "sms_files/bo_sms_files_1_485_Коммерческое предложение для Тестовая карточка (8)",
+                        "extension": "",
+                        "name": "bo_sms_files_1_485_Коммерческое предложение для Тестовая карточка (8)"
+                    }
+                ],
+                "status": true,
+                "created_at": 1761295305,
+                "updated_at": 1761295413
+            },
+            {
+                "id": 486,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [
+                    {
+                        "id": 14,
+                        "route": "sms_files/bo_sms_files_1_486_excel_1759916999",
+                        "extension": "",
+                        "name": "bo_sms_files_1_486_excel_1759916999"
+                    }
+                ],
+                "status": true,
+                "created_at": 1761295370,
+                "updated_at": 1761295413
+            },
+            {
+                "id": 487,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [
+                    {
+                        "id": 15,
+                        "route": "sms_files/bo_sms_files_1_487_Коммерческое предложение для Тестовая карточка (10)",
+                        "extension": "",
+                        "name": "bo_sms_files_1_487_Коммерческое предложение для Тестовая карточка (10)"
+                    }
+                ],
+                "status": true,
+                "created_at": 1761295729,
+                "updated_at": 1761296160
+            },
+            {
+                "id": 490,
+                "from_id": 583,
+                "answer": null,
+                "text": "1",
+                "files": [],
+                "status": true,
+                "created_at": 1761564754,
+                "updated_at": 1761564757
+            },
+            {
+                "id": 491,
+                "from_id": 583,
+                "answer": null,
+                "text": "2",
+                "files": [],
+                "status": true,
+                "created_at": 1761566022,
+                "updated_at": 1761566549
+            },
+            {
+                "id": 492,
+                "from_id": 583,
+                "answer": null,
+                "text": "222",
+                "files": [],
+                "status": true,
+                "created_at": 1761566067,
+                "updated_at": 1761566548
+            },
+            {
+                "id": 493,
+                "from_id": 583,
+                "answer": null,
+                "text": "111",
+                "files": [],
+                "status": true,
+                "created_at": 1761566167,
+                "updated_at": 1761566262
+            },
+            {
+                "id": 494,
+                "from_id": 46,
+                "answer": null,
+                "text": "111",
+                "files": [],
+                "status": true,
+                "created_at": 1761566323,
+                "updated_at": 1761567112
+            },
+            {
+                "id": 495,
+                "from_id": 46,
+                "answer": null,
+                "text": "34543534534543",
+                "files": [],
+                "status": true,
+                "created_at": 1761566774,
+                "updated_at": 1761567049
+            },
+            {
+                "id": 496,
+                "from_id": 46,
+                "answer": null,
+                "text": "rwerwerewrewrewrew",
+                "files": [],
+                "status": true,
+                "created_at": 1761566967,
+                "updated_at": 1761567049
+            },
+            {
+                "id": 497,
+                "from_id": 46,
+                "answer": null,
+                "text": "234",
+                "files": [],
+                "status": true,
+                "created_at": 1761567251,
+                "updated_at": 1761567257
+            },
+            {
+                "id": 498,
+                "from_id": 46,
+                "answer": null,
+                "text": "334",
+                "files": [],
+                "status": true,
+                "created_at": 1761567370,
+                "updated_at": 1761567377
+            },
+            {
+                "id": 499,
+                "from_id": 46,
+                "answer": null,
+                "text": "1",
+                "files": [],
+                "status": true,
+                "created_at": 1761567491,
+                "updated_at": 1761567610
+            },
             {
                 "id": 500,
                 "from_id": 46,
                 "answer": null,
-                "text": "А может ты",
+                "text": "апва",
                 "files": [],
-                "status": false,
-                "created_at": 1761136855,
-                "updated_at": 1761136855
+                "status": true,
+                "created_at": 1761567664,
+                "updated_at": 1761567695
             },
             {
                 "id": 501,
                 "from_id": 46,
                 "answer": null,
-                "text": "",
-                "files": [
-                    {
-                        "id": 6,
-                        "route": "sms_files/bo_sms_files_1_428_sms_files_1_417_Коммерческое предложение для Тестовая карточка (13).docx",
-                        "extension": "docx",
-                        "name": "bo_sms_files_1_428_sms_files_1_417_Коммерческое предложение для Тестовая карточка (13).docx"
-                    }
-                ],
-                "status": false,
-                "created_at": 1761133010,
-                "updated_at": 1761133010
-            },
-            {
-                "id": 502,
-                "from_id": 583,
-                "answer": null,
-                "text": "z",
-                "files": [
-                    {
-                        "id": 5,
-                        "route": "sms_files/bo_sms_files_1_427_excel_1759916999.xlsx",
-                        "extension": "xlsx",
-                        "name": "bo_sms_files_1_427_excel_1759916999.xlsx"
-                    }
-                ],
-                "status": false,
-                "created_at": 1761132449,
-                "updated_at": 1761132449
-            },
-            {
-                "id": 503,
-                "from_id": 46,
-                "answer": null,
-                "text": "s",
+                "text": "rgtg",
                 "files": [],
-                "status": false,
-                "created_at": 1761132411,
-                "updated_at": 1761132411
-            },
-            {
-                "id": 504,
-                "from_id": 583,
-                "answer": null,
-                "text": "z",
-                "files": [],
-                "status": false,
-                "created_at": 1761132173,
-                "updated_at": 1761132173
-            },
-            {
-                "id": 505,
-                "from_id": 46,
-                "answer": null,
-                "text": "zzzooovvvv",
-                "files": [],
-                "status": false,
-                "created_at": 1761131985,
-                "updated_at": 1761131985
-            },
-            {
-                "id": 506,
-                "from_id": 583,
-                "answer": null,
-                "text": "z",
-                "files": [],
-                "status": false,
-                "created_at": 1761131705,
-                "updated_at": 1761131705
-            },
-            {
-                "id": 507,
-                "from_id": 583,
-                "answer": null,
-                "text": "аа",
-                "files": [],
-                "status": false,
-                "created_at": 1761130843,
-                "updated_at": 1761130843
-            },
-            {
-                "id": 508,
-                "from_id": 46,
-                "answer": null,
-                "text": "fв",
-                "files": [],
-                "status": false,
-                "created_at": 1761130796,
-                "updated_at": 1761130796
-            },
-            {
-                "id": 509,
-                "from_id": 583,
-                "answer": null,
-                "text": "",
-                "files": [],
-                "status": false,
-                "created_at": 1761130767,
-                "updated_at": 1761130767
-            },
-            {
-                "id": 510,
-                "from_id": 583,
-                "answer": null,
-                "text": "",
-                "files": [],
-                "status": false,
-                "created_at": 1761130706,
-                "updated_at": 1761130706
-            },
-            {
-                "id": 511,
-                "from_id": 583,
-                "answer": null,
-                "text": "",
-                "files": [],
-                "status": false,
-                "created_at": 1761125845,
-                "updated_at": 1761125845
-            },
-            {
-                "id": 512,
-                "from_id": 46,
-                "answer": null,
-                "text": "ghdsfgsdfgdsfg",
-                "files": [
-                    {
-                        "id": 1,
-                        "route": "sms_files/sms_files_1_417_Коммерческое предложение для Тестовая карточка (13).docx",
-                        "extension": "docx",
-                        "name": "sms_files_1_417_Коммерческое предложение для Тестовая карточка (13).docx"
-                    },
-                    {
-                        "id": 2,
-                        "route": "sms_files/sms_files_2_417_Коммерческое предложение для Тестовая карточка (12).docx",
-                        "extension": "docx",
-                        "name": "sms_files_2_417_Коммерческое предложение для Тестовая карточка (12).docx"
-                    },
-                    {
-                        "id": 3,
-                        "route": "sms_files/sms_files_3_417_Коммерческое предложение для Тестовая карточка (11).docx",
-                        "extension": "docx",
-                        "name": "sms_files_3_417_Коммерческое предложение для Тестовая карточка (11).docx"
-                    },
-                    {
-                        "id": 4,
-                        "route": "sms_files/sms_files_4_417_Коммерческое предложение для Главстрой-СПб специализированный застройщик.docx",
-                        "extension": "docx",
-                        "name": "sms_files_4_417_Коммерческое предложение для Главстрой-СПб специализированный застройщик.docx"
-                    }
-                ],
-                "status": false,
-                "created_at": 1761124843,
-                "updated_at": 1761124843
-            },
-            {
-                "id": 513,
-                "from_id": 46,
-                "answer": null,
-                "text": "dfhghdfghdfghdfghdf",
-                "files": [],
-                "status": false,
-                "created_at": 1761124832,
-                "updated_at": 1761124832
-            },
-            {
-                "id": 514,
-                "from_id": 46,
-                "answer": null,
-                "text": "sdfgsdfdfsggsdf",
-                "files": [],
-                "status": false,
-                "created_at": 1761124755,
-                "updated_at": 1761124755
-            },
-            {
-                "id": 515,
-                "from_id": 46,
-                "answer": null,
-                "text": "",
-                "files": [],
-                "status": false,
-                "created_at": 1761124622,
-                "updated_at": 1761124622
-            },
-            {
-                "id": 516,
-                "from_id": 46,
-                "answer": null,
-                "text": "gf",
-                "files": [],
-                "status": false,
-                "created_at": 1761124213,
-                "updated_at": 1761124213
-            },
-            {
-                "id": 516,
-                "from_id": 583,
-                "answer": null,
-                "text": "да ничего",
-                "files": [],
-                "status": false,
-                "created_at": 1761119522,
-                "updated_at": 1761119522
-            },
-            {
-                "id": 517,
-                "from_id": 46,
-                "answer": null,
-                "text": "сори, не заметил",
-                "files": [],
-                "status": false,
-                "created_at": 1761119510,
-                "updated_at": 1761119510
-            },
-            {
-                "id": 518,
-                "from_id": 46,
-                "answer": null,
-                "text": "ку",
-                "files": [],
-                "status": false,
-                "created_at": 1761119503,
-                "updated_at": 1761119503
-            },
-            {
-                "id": 519,
-                "from_id": 583,
-                "answer": null,
-                "text": "Ку",
-                "files": [],
-                "status": false,
-                "created_at": 1761039191,
-                "updated_at": 1761039191
-            },
-            {
-                "id": 520,
-                "from_id": 46,
-                "answer": null,
-                "text": "Всё чётко 😎",
-                "files": [],
-                "status": false,
-                "created_at": 1760955989,
-                "updated_at": 1760955989
-            },
-            {
-                "id": 521,
-                "from_id": 583,
-                "answer": null,
-                "text": "Как Ваше ничего?",
-                "files": [],
-                "status": false,
-                "created_at": 1760952992,
-                "updated_at": 1760952992
-            },
-            {
-                "id": 522,
-                "from_id": 46,
-                "answer": null,
-                "text": "Здарова!!!",
-                "files": [],
-                "status": false,
-                "created_at": 1760952800,
-                "updated_at": 1760952800
-            },
-            {
-                "id": 523,
-                "from_id": 583,
-                "answer": null,
-                "text": "Привет!",
-                "files": [],
-                "status": false,
-                "created_at": 1760952366,
-                "updated_at": 1760952366
-            },
-            {
-                "id": 524,
-                "from_id": 583,
-                "answer": null,
-                "text": "еще как буду!!!",
-                "files": [],
-                "status": false,
-                "created_at": 1760714098,
-                "updated_at": 1760714098
-            },
-            {
-                "id": 525,
-                "from_id": 583,
-                "answer": null,
-                "text": "а вот буду!",
-                "files": [],
-                "status": false,
-                "created_at": 1760714020,
-                "updated_at": 1760714020
-            },
-            {
-                "id": 526,
-                "from_id": 46,
-                "answer": null,
-                "text": "не обижайся только",
-                "files": [],
-                "status": false,
-                "created_at": 1760713516,
-                "updated_at": 1760713516
-            },
-            {
-                "id": 527,
-                "from_id": 583,
-                "answer": null,
-                "text": "ладно....",
-                "files": [],
-                "status": false,
-                "created_at": 1760712230,
-                "updated_at": 1760712230
-            },
-            {
-                "id": 528,
-                "from_id": 46,
-                "answer": null,
-                "text": "общайся попроще",
-                "files": [],
-                "status": false,
-                "created_at": 1760707017,
-                "updated_at": 1760707017
+                "status": true,
+                "created_at": 1761567707,
+                "updated_at": 1761567709
             }
         ],
+        "who": "Администратор Тестовый",
+        "total": 112
     },
-    message: 'OK!',
+    "message": "OK!"
+};
+
+export const CHAT_MOCK_NEW = {
+    "content": {
+        "messages": [
+            {
+                "id": 436,
+                "from_id": 583,
+                "answer": null,
+                "text": "авапвапdfs",
+                "files": [],
+                "status": true,
+                "created_at": 1761140672,
+                "updated_at": 1761140673
+            },
+            {
+                "id": 437,
+                "from_id": 583,
+                "answer": null,
+                "text": "fsdfsdfsdfsd",
+                "files": [],
+                "status": true,
+                "created_at": 1761140778,
+                "updated_at": 1761140803
+            },
+            {
+                "id": 438,
+                "from_id": 583,
+                "answer": null,
+                "text": "fdsfsdfs",
+                "files": [],
+                "status": true,
+                "created_at": 1761140817,
+                "updated_at": 1761140856
+            },
+            {
+                "id": 439,
+                "from_id": 583,
+                "answer": null,
+                "text": "fghdfg",
+                "files": [],
+                "status": true,
+                "created_at": 1761141323,
+                "updated_at": 1761141323
+            },
+            {
+                "id": 440,
+                "from_id": 46,
+                "answer": null,
+                "text": "sdfgdfsgsdfgdfsgdfsgdfs",
+                "files": [],
+                "status": true,
+                "created_at": 1761141475,
+                "updated_at": 1761141475
+            },
+            {
+                "id": 441,
+                "from_id": 46,
+                "answer": null,
+                "text": "dsffdsfsdfsd",
+                "files": [],
+                "status": true,
+                "created_at": 1761141612,
+                "updated_at": 1761141612
+            },
+            {
+                "id": 444,
+                "from_id": 583,
+                "answer": null,
+                "text": "fsdfsdfds",
+                "files": [],
+                "status": true,
+                "created_at": 1761141719,
+                "updated_at": 1761141720
+            },
+            {
+                "id": 445,
+                "from_id": 583,
+                "answer": null,
+                "text": "fsdfsd",
+                "files": [],
+                "status": true,
+                "created_at": 1761141941,
+                "updated_at": 1761141941
+            },
+            {
+                "id": 446,
+                "from_id": 46,
+                "answer": null,
+                "text": "jhdfsgjhdfbjhdfbgjhkdfsbdfsbjkhgsdfbkjhgdfssdf",
+                "files": [],
+                "status": true,
+                "created_at": 1761141988,
+                "updated_at": 1761142016
+            },
+            {
+                "id": 447,
+                "from_id": 583,
+                "answer": null,
+                "text": "",
+                "files": [
+                    {
+                        "id": 7,
+                        "route": "sms_files/bo_sms_files_1_447_excel_1759917054.xlsx",
+                        "extension": "xlsx",
+                        "name": "bo_sms_files_1_447_excel_1759917054.xlsx"
+                    },
+                    {
+                        "id": 8,
+                        "route": "sms_files/bo_sms_files_2_447_excel_1759916999.xlsx",
+                        "extension": "xlsx",
+                        "name": "bo_sms_files_2_447_excel_1759916999.xlsx"
+                    },
+                    {
+                        "id": 9,
+                        "route": "sms_files/bo_sms_files_3_447_excel_1759916984.xlsx",
+                        "extension": "xlsx",
+                        "name": "bo_sms_files_3_447_excel_1759916984.xlsx"
+                    }
+                ],
+                "status": true,
+                "created_at": 1761142177,
+                "updated_at": 1761142177
+            },
+            {
+                "id": 450,
+                "from_id": 46,
+                "answer": null,
+                "text": "Привед, сосед! Кагдила!??",
+                "files": [],
+                "status": true,
+                "created_at": 1761143477,
+                "updated_at": 1761143477
+            },
+            {
+                "id": 451,
+                "from_id": 46,
+                "answer": null,
+                "text": "🎀",
+                "files": [],
+                "status": true,
+                "created_at": 1761143761,
+                "updated_at": 1761143761
+            },
+            {
+                "id": 452,
+                "from_id": 46,
+                "answer": null,
+                "text": "d",
+                "files": [
+                    {
+                        "id": 10,
+                        "route": "sms_files/bo_sms_files_1_452_Коммерческое предложение для Тестовая карточка (13).docx",
+                        "extension": "docx",
+                        "name": "bo_sms_files_1_452_Коммерческое предложение для Тестовая карточка (13).docx"
+                    }
+                ],
+                "status": true,
+                "created_at": 1761230552,
+                "updated_at": 1761294847
+            },
+            {
+                "id": 453,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761230594,
+                "updated_at": 1761294847
+            },
+            {
+                "id": 454,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761230645,
+                "updated_at": 1761294847
+            },
+            {
+                "id": 455,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761230693,
+                "updated_at": 1761294847
+            },
+            {
+                "id": 456,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761230770,
+                "updated_at": 1761294846
+            },
+            {
+                "id": 457,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761230909,
+                "updated_at": 1761294846
+            },
+            {
+                "id": 458,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761231009,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 459,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [
+                    {
+                        "id": 11,
+                        "route": "sms_files/bo_sms_files_1_459_Коммерческое предложение для Андрей Юрьев (1)",
+                        "extension": "",
+                        "name": "bo_sms_files_1_459_Коммерческое предложение для Андрей Юрьев (1)"
+                    }
+                ],
+                "status": true,
+                "created_at": 1761231086,
+                "updated_at": 1761294846
+            },
+            {
+                "id": 460,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [
+                    {
+                        "id": 12,
+                        "route": "sms_files/bo_sms_files_1_460_Коммерческое предложение для Инфотех (8)",
+                        "extension": "",
+                        "name": "bo_sms_files_1_460_Коммерческое предложение для Инфотех (8)"
+                    }
+                ],
+                "status": true,
+                "created_at": 1761231241,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 461,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761231316,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 462,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761292252,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 463,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761292370,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 464,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761292471,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 465,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761292557,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 466,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761292790,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 467,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761293555,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 468,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761293616,
+                "updated_at": 1761294845
+            },
+            {
+                "id": 469,
+                "from_id": 46,
+                "answer": null,
+                "text": "",
+                "files": [],
+                "status": true,
+                "created_at": 1761293642,
+                "updated_at": 1761294843
+            }
+        ],
+        "who": "Администратор Тестовый",
+        "total": 112,
+    }
 };
 
 export const WS_NEW_MESSAGE = {

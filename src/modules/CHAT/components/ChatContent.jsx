@@ -12,6 +12,7 @@ import {useChatSocket} from "../../../context/ChatSocketContext";
 import { useMarkMessagesRead } from '../../../hooks/sms/useMarkMessagesRead';
 import {useInfiniteScrollUp} from "../../../hooks/sms/useInfiniteScrollUp";
 import {logDOM} from "@testing-library/dom";
+import {LoadingOutlined} from "@ant-design/icons";
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
@@ -107,6 +108,7 @@ export default function ChatContent({ chatId }) {
 		const foundedChat = chats.find(chat => chat.chat_id === chatId || chat.id === chatId);
 		if (!foundedChat && chatId&& !loadingChat && !loadingSendSms) {
 			console.log('Fetching chat messages for:', chatId);
+            messagesWithDividers.length = 0;
 			fetchChatMessages(chatId);
 		} else if (foundedChat) {
 			console.log('Chat found:', foundedChat);
@@ -126,7 +128,7 @@ export default function ChatContent({ chatId }) {
         setIsScrolledToBottom(false);
     }, [chatId]);
     useEffect(() => {
-        setHasMore(Boolean(chat?.total - chat?.messages?.length));
+        setHasMore( (chat?.total - chat?.messages?.length) > 0);
     }, [chat]);
 
 	const handleSend = (trimmed, fileList) => {
@@ -145,40 +147,33 @@ export default function ChatContent({ chatId }) {
 			<Content className={styles.chat_content}>
 				<div className={styles.chat_header}>
 					<span>{!userdata ? 'Загрузка...' : chat.who ? chat.who : 'Неизвестный собеседник'}</span>
-					<span>{chatId}</span>
+                    {loadingChat ? (<LoadingOutlined />) : (<span>{chatId}</span>)}
 				</div>
-					<div className={styles.chat_body} ref={messagesContainerRef}>
-						{(messagesWithDividers && messagesWithDividers.length > 0) ? (
-								<Spin spinning={loadingChat}>
-									<div className={styles.messagesList}
-										 style={{flex: 1, overflowY: 'auto', minHeight: 0}}
-									>
-										{messagesWithDividers.map((item) =>
-											item.type === 'divider' ? (
-												<MemoChatDivider key={item.id}>
-													{dayjs(+item.timestamp * 1000).format('DD.MM.YY')}
-												</MemoChatDivider>
-											) : +item.message.fromId === +currentUserId ? (
-												<MemoChatSelfMsg key={item.message.id}
-																 message={item.message}
-												/>
-											) : (
-												<MemoChatIncomingMsg key={item.message.id}
-																	 message={item.message}
-																	 data-message-id={item.message.id}
-												/>
-											)
-										)}
-									</div>
-								</Spin>
-							) : (
-								<Empty description="Еще нет сообщений"
-									   image={Empty.PRESENTED_IMAGE_SIMPLE}
-									   className={styles.antd_empty}
-								/>
-							)
-						}
-					</div>
+                <div className={styles.chat_body} ref={messagesContainerRef}>
+                    {(messagesWithDividers && messagesWithDividers.length > 0) ? messagesWithDividers.map((item) =>
+                                item.type === 'divider' ? (
+                                    <MemoChatDivider key={item.id}>
+                                        {dayjs(+item.timestamp * 1000).format('DD.MM.YY')}
+                                    </MemoChatDivider>
+                                ) : +item.message.fromId === +currentUserId ? (
+                                    <MemoChatSelfMsg key={item.message.id}
+                                                     message={item.message}
+                                    />
+                                ) : (
+                                    <MemoChatIncomingMsg key={item.message.id}
+                                                         message={item.message}
+                                                         data-message-id={item.message.id}
+                                    />
+                                )
+
+                        ) : (
+                            <Empty description="Еще нет сообщений"
+                                   image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                   className={styles.antd_empty}
+                            />
+                        )
+                    }
+                </div>
 			</Content>
 			<Footer className={styles['chat-input__footer']}>
 				<ChatInput onSend={handleSend}/>

@@ -105,7 +105,7 @@ export const useInfiniteScrollUp = ({
 
             // Выполняем подгрузку
             await fetchMoreMessages();
-
+            console.log('— после fetch, до RAF —', container.scrollHeight);
             // Ждём, пока картинки загрузятся и DOM стабилизируется
             await waitImagesLoaded(container, imageLoadTimeout);
 
@@ -113,6 +113,7 @@ export const useInfiniteScrollUp = ({
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     if (savedId != null) {
+                        console.log('— после 2x RAF —', container.scrollHeight);
                         const newScrollHeight = container.scrollHeight;
                         const selector = `${messageSelector}[data-id="${savedId}"]`;
                         const sameMessage = container.querySelector(selector);
