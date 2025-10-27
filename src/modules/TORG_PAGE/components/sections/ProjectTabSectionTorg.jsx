@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { AutoComplete, DatePicker, Input, Select, Tooltip } from 'antd';
+import { Alert, AutoComplete, Button, DatePicker, Input, Select, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import {
@@ -27,6 +27,12 @@ const ProjectTabSectionTorg = (props) => {
 	const [refreshMark, setRefreshMark] = useState(null);
 	const [collapsed, setCollapsed] = useState(false);
 	const [editMode, setEditMode] = useState(true); // true|false - режим редактирования
+
+	const [isAlertVisible, setIsAlertVisible] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertDescription, setAlertDescription] = useState('');
+	const [alertType, setAlertType] = useState('');
+
 
 	const [data, setData] = useState(null);
 	const [orgId, setOrgId] = useState(0);
@@ -251,6 +257,38 @@ const ProjectTabSectionTorg = (props) => {
 		}
 	};
 
+
+	const order_project = async (id) => {
+    if (!id){ return; }
+		
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post('/api/curators/create', {
+					data: {id_project: id, user_id: userdata.user?.id},
+					_token: CSRF_TOKEN,
+				});
+				if (response.status === 200){
+          			// При успешной записи - очищаем все временные списки и загружаем данные заново
+					
+					setIsAlertVisible(true);
+					setAlertMessage(`Успех!`);
+					setAlertDescription(response.message || 'Заявка успешно отправлена');
+					setAlertType('success');
+					
+        		} else {
+					setIsAlertVisible(true);
+					setAlertMessage(`Произошла ошибка!`);
+					setAlertDescription(response.message || 'Неизвестная ошибка сервера');
+					setAlertType('error');
+					
+				}
+			} catch (e) {
+				console.log(e);
+			} finally {
+				
+			}
+		
+	};
+
 	/** -------------------API------------------ */
 
 	useEffect(() => {
@@ -454,8 +492,19 @@ const ProjectTabSectionTorg = (props) => {
 						{itemId && <div className={'sa-org-row-header-id sa-text-phantom'}>({itemId})</div>}
 					</div>
 				</div>
-				<div className={'sa-flex'}>
-					{allowDelete && editMode && (
+				<div className={'sa-flex'} style={{alignItems: 'center'}}>
+					{(userdata?.user?.id !== data?.curator?.id) && (
+					<Button
+					 size={'small'}
+					 onClick={(ev) => {
+								ev.stopPropagation();
+								order_project(itemId);
+							}}
+						>
+							Подать заявку на проект
+						</Button>
+					)}
+					{allowDelete && editMode ? (
 						<span
 							className={'sa-pa-3 sa-org-remove-button'}
 							onClick={() => {
@@ -465,7 +514,7 @@ const ProjectTabSectionTorg = (props) => {
 						>
 							<TrashIcon height={TORG_CHEVRON_SIZE} />
 						</span>
-					)}
+					) : (<span> </span>)}
 					{/* {(userdata?.user?.id !== authorId || userdata?.user?.id !== data?.curator?.id) && (
             <Tooltip placement={'left'} title={<div>
               <div>Редактировать проекты может только создатель записи</div>
@@ -952,7 +1001,7 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 
 					<TorgPageSectionRow
-          trans_key={`trans_projaahaqee_${itemId}`}
+          				trans_key={`trans_projaahaqee_${itemId}`}
 						key={`projaahaqee_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -986,6 +1035,23 @@ const ProjectTabSectionTorg = (props) => {
 					/>
 				</div>
 			</div>
+			{isAlertVisible && (
+				<Alert
+					message={alertMessage}
+					description={alertDescription}
+					type={alertType}
+					showIcon
+					closable
+					style={{
+						position: 'fixed',
+						top: 20,
+						right: 20,
+						zIndex: 9999,
+						width: 350,
+					}}
+					onClose={() => setIsAlertVisible(false)}
+				/>
+			)}
 		</div>
 	);
 };
