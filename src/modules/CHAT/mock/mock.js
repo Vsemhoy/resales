@@ -417,7 +417,7 @@ export const CHAT_MOCK = {
                 "answer": null,
                 "text": "111",
                 "files": [],
-                "status": true,
+                "status": false,
                 "created_at": 1761566167,
                 "updated_at": 1761566262
             },
