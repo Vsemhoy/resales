@@ -19,8 +19,11 @@ const MianBigSectionOrg = (props) => {
     const [source,         setSource]           = useState('');
     const [comment,        setComment]          = useState('');
     const [commentinlist,  setCommentinlist]    = useState('');
-    const [kindofactivity, setKindofactivity]  = useState('');
+    const [kindofactivity, setKindofactivity]   = useState('');
+    const [subcompanies,   setSubcompanies]     = useState([]);
     const [profsound,      setProfsound]        = useState(null);
+
+
 
   const [itemId, setItemId] = useState(null);
 
@@ -232,6 +235,7 @@ const MianBigSectionOrg = (props) => {
 
               <TorgPageSectionRow
                 edit_mode={editMode}
+                explabel={'СУБ'}
                 inputs={[
                 {
                   edit_mode: editMode,
@@ -251,6 +255,29 @@ const MianBigSectionOrg = (props) => {
                       variant="borderless"
                       maxLength={550}
                       required={true}
+                    />,
+                    required: true,
+                    value: middlename
+                },
+              ]}
+              extratext={[
+                {
+                  edit_mode: editMode,
+                  label: 'Второе название',
+                  input:
+                     <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      placeholder="Tags Mode"
+                      onChange={(ev)=>{
+                        console.log(ev);
+                      }}
+                      options={subcompanies?.map((item)=>({
+                        key: "subcoming_" + item.id,
+                        value: item.id,
+                        label: item.name
+                      }))}
+                      
                     />,
                     required: true,
                     value: middlename

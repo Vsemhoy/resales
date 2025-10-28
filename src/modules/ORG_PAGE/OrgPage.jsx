@@ -38,6 +38,7 @@ import { FlushOrgData, IsSameComparedSomeOrgData, MAIN_ORG_DATA_IGNORE_KEYS } fr
 import TabNotesTorg from '../TORG_PAGE/components/tabs/TabNotesTorg';
 import TabProjectsTorg from '../TORG_PAGE/components/tabs/TabProjectsTorg';
 import TabCallsTorg from '../TORG_PAGE/components/tabs/TabCallsTorg';
+import TabMainTorg from '../TORG_PAGE/components/tabs/TabMainTorg';
 
 
 
@@ -317,6 +318,9 @@ useEffect(() => {
 			setBaseCallsData(MODAL_CALLS_LIST);
 
       setDepartList(DEPARTAMENTS_MOCK);
+			setTimeout(() => {
+				setLoading(false);
+			}, 1000);
 		}
 	}, []);
 
@@ -457,6 +461,7 @@ useEffect(() => {
 	/** ----------------------- FETCHES -------------------- */
 
 	const get_main_data_action = async (id) => {
+		setLoading(true);
 		try {
 			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/m', {
 				data: {},
@@ -474,10 +479,11 @@ useEffect(() => {
 		} catch (e) {
 			console.log(e);
 		} finally {
+
+		}
 			setTimeout(() => {
 				setLoading(false);
 			}, 1000);
-		}
 	};
 
 
@@ -1148,7 +1154,7 @@ useEffect(() => {
 							/>
 						)}
 
-						<MainTabPage
+						<TabMainTorg
 							show={activeTab === 'm'}
 							edit_mode={editMode}
 							item_id={itemId}
@@ -1159,6 +1165,7 @@ useEffect(() => {
               				selects={baseFiltersData}
 
 							do_delay={(val)=>{setBlockDelay(val)}}
+							is_loading={loading}
 
 							on_change_main_data={handleMainDataChange}
 							on_change_contact={handleContactChange}
