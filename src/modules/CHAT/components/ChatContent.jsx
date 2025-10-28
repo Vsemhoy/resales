@@ -78,7 +78,7 @@ export default function ChatContent({ chatId }) {
         return isDesc ? items.slice().reverse() : items;
     }, [allMessages]);
     const countOfUnreadMessages = useMemo(() => {
-        return allMessages.filter((msg) => !msg.status)?.length;
+        return allMessages.filter((msg) => (!msg.status && +msg.fromId !== +currentUserId))?.length;
     }, [allMessages]);
 
 	const {
