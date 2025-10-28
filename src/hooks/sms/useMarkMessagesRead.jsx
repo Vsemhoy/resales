@@ -1,14 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
 
-export const useMarkMessagesRead = (messages, currentUserId, chatId, markMessagesAsRead) => {
+/**
+ * Хук который вызывает колбэк метод когда во вьюпорт попадает конкретный объект
+ * (например в чате со скроллом появляется непрочитанное сообщение)
+ *
+ * @param {object} params - объект конфигурации
+ * @param {Array} params.messagesWithDividers - сообщения, их количество изменится - сработает хук
+ * @param {number} params.currentUserId - id пользователя
+ * @param {number} [params.chatId] - id чата
+ * @param {function} [params.markMessagesAsRead] - функция срабатываемая при попадании сообщения в обсервер
+ */
+export const useMarkMessagesRead = ({
+                                        messagesWithDividers,
+                                        currentUserId,
+                                        chatId,
+                                        markMessagesAsRead
+}) => {
     const observerRef = useRef(null);
     const [processedMessages, setProcessedMessages] = useState(new Set());
 
     useEffect(() => {
-        if (!messages.length || !markMessagesAsRead) return;
+        if (!messagesWithDividers.length || !markMessagesAsRead) return;
 
         // Находим непрочитанные входящие сообщения
-        const unreadMessages = messages
+        const unreadMessages = messagesWithDividers
             .filter(item => item.type !== 'divider')
             .filter(item => +item.message.fromId !== +currentUserId)
             .filter(item => !item.message.status)
@@ -56,8 +71,14 @@ export const useMarkMessagesRead = (messages, currentUserId, chatId, markMessage
                 observerRef.current.disconnect();
             }
         };
-    }, [messages, currentUserId, chatId, markMessagesAsRead, processedMessages]);
+    }, [
+        messagesWithDividers,
+        currentUserId,
+        chatId,
+        markMessagesAsRead,
+        processedMessages
+    ]);
 
-    return { processedMessages };
+    //return { processedMessages };
 };
 export default useMarkMessagesRead;
