@@ -1,10 +1,10 @@
 .sa-table-box-orgs {
 	display: grid;
-	grid-template-columns: 64px 5fr 4fr 4fr 114px 200px 66px 66px 2fr 76px 76px 76px;
+	grid-template-columns: 64px 5fr 4fr 4fr 114px 200px 66px 66px 2fr 76px 76px 76px 76px;
 }
 
 .sa-filer-opened .sa-table-box-orgs {
-	grid-template-columns: 64px 5fr 4fr 4fr 114px 170px 50px 50px 2fr 72px 72px !important;
+	grid-template-columns: 64px 5fr 4fr 4fr 114px 170px 50px 50px 2fr 72px 72px 72px !important;
 }
 .sa-filer-opened .sa-table-box-orgs > *:last-child {
 	display: none;
@@ -68,4 +68,17 @@
 }
 .sa-pagination-panel {
 	background-color: var(--app-background);
+}
+
+.sa-table-orgs-middlename {
+	  color: gray;
+    border-top: 1px solid #80808031;
+    font-size: smaller;
+		padding-top: 4px;
+		display: inline-grid;
+		max-height: 140px;
+		overflow: hidden;
+}
+.sa-table-orgs-middlename > div {
+	    display: ruby-text;
 }
