@@ -452,6 +452,7 @@ const MianBigSectionOrg = (props) => {
                       style={{ width: '100%' }}
                       variant="borderless"
                       size='small'
+                      value={subcompanies?.map(item => item.name) || []} 
                       placeholder={'ООО "Новый Свет"'}
                       onChange={(names)=>{
                         const newTags  = names.map(tagName => {
@@ -462,12 +463,10 @@ const MianBigSectionOrg = (props) => {
                             let nn = {id: "new_" + dayjs().unix() + "_" + subcompanies.length,
                               name: tagName
                             };
-                            console.log("NN", nn);
                             return(nn);
                           };
                         });
                         setACTION_FLAG(1);
-                        console.log(newTags);
                         setSubcompanies(newTags);
                         setBLUR_FLAG(dayjs().unix());
                       }}
