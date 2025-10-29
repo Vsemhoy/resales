@@ -400,6 +400,9 @@ useEffect(() => {
 					}, 1000);
 
 					clearTemps();
+					setTimeout(() => {
+						setLoading(false);
+					}, 1000);
 				}
 				
 			setTempMainData(null);
@@ -473,10 +476,10 @@ useEffect(() => {
 		} catch (e) {
 			console.log(e);
 		} finally {
-			setTimeout(() => {
-				setLoading(false);
-			}, 1000);
 		}
+		setTimeout(() => {
+			setLoading(false);
+		}, 1000);
 	};
 
 

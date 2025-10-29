@@ -72,6 +72,8 @@ const TabMainTorg = (props) => {
   const [curator, setCurator] = useState('');
 
 
+
+  
   /**
    * Оперативные массивы - сюда загружаются все массивы и здесь же они модифицируются
    */
@@ -112,7 +114,9 @@ const TabMainTorg = (props) => {
 
 
 
-
+  useEffect(() => {
+    setLoading(props.is_loading);
+  }, [props.is_loading]);
 
   useEffect(() => {
     if (!props.base_data){
@@ -837,7 +841,7 @@ const TabMainTorg = (props) => {
 
 
       <div className={'sa-org-main-collapse sa-org-main-collapse-stack'}>
-      <Spin spinning={!itemId || !baseData}>
+      <Spin spinning={!itemId || !baseData || loading}>
         {/* ============================= COLLAPSE ITEM ================================ */}
 
         <div className={`sa-org-main-collapse-item sa-org-collapse-item ${!collapsed_rows.includes('main_row') ? 'sa-collapsed-item' : 'sa-opened-item'}`}
