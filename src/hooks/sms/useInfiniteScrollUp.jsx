@@ -1,15 +1,15 @@
-import { useEffect, useRef } from 'react';
+import {useEffect, useRef} from 'react';
 
 /**
  * Хук для подгрузки сообщений при скролле вверх.
  * Работает даже если DOM-элементы пересоздаются при обновлении.
  *
- * @param {object} params
- * @param {React.RefObject} params.containerRef
- * @param {function} params.fetchMoreMessages
- * @param {boolean} params.hasMore
- * @param {number} [params.offset=100]
- * @param {string} [params.messageSelector='.message']
+ * @param {object} params - объект конфигурации
+ * @param {React.RefObject} params.containerRef - контейнер с сообщениями, за которым следим
+ * @param {function} params.fetchMoreMessages - метод выполняемый в точке офсета
+ * @param {boolean} params.hasMore - флаг надо ли еще реагировать на офсет
+ * @param {number} [params.offset=100] - офсет, расстояние до топа контейнера, в котором срабатывает метод
+ * @param {string} [params.messageSelector='.message'] - идентификатор наблюдаемого сообщения
  * @param {function} [params.getMessageId] - функция, возвращающая уникальный id сообщения по DOM-элементу
  */
 export const useInfiniteScrollUp = ({
@@ -43,10 +43,6 @@ export const useInfiniteScrollUp = ({
                     // offsetTop даёт позицию внутри контента (от начала scrollable)
                     topVisibleOffsetTopRef.current = topEl.offsetTop;
                     prevScrollTopRef.current = container.scrollTop;
-
-                    console.log('OBSERVER topVisibleIdRef', topVisibleIdRef.current)
-                    console.log('OBSERVER topVisibleOffsetTopRef', topVisibleOffsetTopRef.current)
-                    console.log('OBSERVER prevScrollTopRef', prevScrollTopRef.current)
                 }
             },
             { root: container, threshold: 0 }
@@ -98,14 +94,8 @@ export const useInfiniteScrollUp = ({
             const savedScrollTop = prevScrollTopRef.current ?? container.scrollTop;
             const prevScrollHeight = container.scrollHeight;
 
-            console.log('SCROLL savedId', savedId)
-            console.log('SCROLL savedOffsetTop', savedOffsetTop)
-            console.log('SCROLL savedScrollTop', savedScrollTop)
-            console.log('SCROLL prevScrollHeight', prevScrollHeight)
-
             // Выполняем подгрузку
             await fetchMoreMessages();
-            console.log('— после fetch, до RAF —', container.scrollHeight);
             // Ждём, пока картинки загрузятся и DOM стабилизируется
             await waitImagesLoaded(container, imageLoadTimeout);
 
@@ -113,7 +103,6 @@ export const useInfiniteScrollUp = ({
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     if (savedId != null) {
-                        console.log('— после 2x RAF —', container.scrollHeight);
                         const newScrollHeight = container.scrollHeight;
                         const selector = `${messageSelector}[data-id="${savedId}"]`;
                         const sameMessage = container.querySelector(selector);
@@ -125,13 +114,7 @@ export const useInfiniteScrollUp = ({
                             // Если newOffsetTop не изменился — компенсируем разницу по scrollHeight
                             const scrollHeightDiff = newScrollHeight - prevScrollHeight;
 
-                            const adjustedScrollTop = (savedScrollTop || 0) + (delta || scrollHeightDiff);
-
-                            container.scrollTop = adjustedScrollTop;
-
-                            console.log('SCROLL delta', delta);
-                            console.log('SCROLL heightDiff', scrollHeightDiff);
-                            console.log('SCROLL final', adjustedScrollTop);
+                            container.scrollTop = (savedScrollTop || 0) + (delta || scrollHeightDiff);
                         }
                     }
 

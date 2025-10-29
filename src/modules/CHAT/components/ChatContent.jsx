@@ -2,7 +2,7 @@ import styles from './style/Chat.module.css';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import dayjs from 'dayjs';
 import {useUserData} from '../../../context/UserDataContext';
-import {Empty, Layout, Spin} from 'antd';
+import {Empty, FloatButton, Layout, Spin} from 'antd';
 import {ChatInput} from './ChatInput';
 import {ChatDivider} from './ChatDivider';
 import ChatSelfMsg from './ChatSelfMsg';
@@ -12,7 +12,8 @@ import {useChatSocket} from "../../../context/ChatSocketContext";
 import { useMarkMessagesRead } from '../../../hooks/sms/useMarkMessagesRead';
 import {useInfiniteScrollUp} from "../../../hooks/sms/useInfiniteScrollUp";
 import {logDOM} from "@testing-library/dom";
-import {LoadingOutlined} from "@ant-design/icons";
+import {ArrowDownOutlined, LoadingOutlined} from "@ant-design/icons";
+import {useScrollDown} from "../../../hooks/sms/useScrollDown";
 
 export default function ChatContent({ chatId }) {
 	const { userdata } = useUserData();
@@ -29,8 +30,10 @@ export default function ChatContent({ chatId }) {
 	});
     const [hasMore, setHasMore] = useState(true);
     const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
+    const [isShowScrollButton, setIsShowScrollButton] = useState(false);
 
-	const normalizeMessage = useCallback((msg) => {
+
+    const normalizeMessage = useCallback((msg) => {
 			return {
 				fromId: msg.from_id,
 				id: msg.id,
@@ -74,6 +77,9 @@ export default function ChatContent({ chatId }) {
         }
         return isDesc ? items.slice().reverse() : items;
     }, [allMessages]);
+    const countOfUnreadMessages = useMemo(() => {
+        return allMessages.filter((msg) => (!msg.status && +msg.fromId !== +currentUserId))?.length;
+    }, [allMessages]);
 
 	const {
 		/* socket */
@@ -90,18 +96,26 @@ export default function ChatContent({ chatId }) {
 		markMessagesAsRead,
 	} = useChatSocket();
 
-	const { processedMessages } = useMarkMessagesRead(
-		messagesWithDividers,
-		currentUserId,
-		chatId,
-		markMessagesAsRead
-	);
+	useMarkMessagesRead({
+        messagesWithDividers, // сообщения с разделителями
+        currentUserId,        // id пользователя
+        chatId,               // id открытого чата
+        markMessagesAsRead    // метод срабатываемый при попадании непрочитанного сообщения во вьюпорт контейнера со скроллом
+    });
 
     useInfiniteScrollUp({
-        containerRef: messagesContainerRef,
-        fetchMoreMessages: () => fetchChatMessages(chatId, chat.messages[0].id),
-        hasMore,
-        offset: 500,
+        containerRef: messagesContainerRef,                 // контейнер с сообщениями, за которым следим
+        fetchMoreMessages: () => {
+            fetchChatMessages(chatId, chat.messages[0].id); // метод выполняемый в точке офсета
+        },
+        hasMore,                                            // флаг надо ли еще реагировать на офсет
+        offset: 500,                                        // офсет, расстояние до топа контейнера, в котором срабатывает метод
+    });
+
+    useScrollDown({
+        messagesWithDividers,                               // сообщения с разделителями
+        containerRef: messagesContainerRef,                 // контейнер с сообщениями, за которым следим
+        offset: 500,                                        // офсет, расстояние до низа контейнера
     });
 
 	useEffect(() => {
@@ -142,6 +156,20 @@ export default function ChatContent({ chatId }) {
 		});
 	};
 
+    useEffect(() => {
+        const container = messagesContainerRef.current;
+        if (!container) return;
+
+        const checkScrollPosition = () => {
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            // Показываем кнопку если до низа больше 200px
+            setIsShowScrollButton(scrollHeight - scrollTop - clientHeight > 200);
+        };
+
+        container.addEventListener('scroll', checkScrollPosition);
+        return () => container.removeEventListener('scroll', checkScrollPosition);
+    }, []);
+
 	return (
 		<Layout className={styles.chatcontentLayout}>
 			<Content className={styles.chat_content}>
@@ -173,6 +201,17 @@ export default function ChatContent({ chatId }) {
                             />
                         )
                     }
+                    {isShowScrollButton && (
+                        <FloatButton shape="circle"
+                                  style={{insetInlineEnd: 20}}
+                                  badge={{count: countOfUnreadMessages ?? null}}
+                                  icon={<ArrowDownOutlined/>}
+                                  onClick={() => {
+                                      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+                                      setIsShowScrollButton(false);
+                                  }}
+                        />
+                    )}
                 </div>
 			</Content>
 			<Footer className={styles['chat-input__footer']}>

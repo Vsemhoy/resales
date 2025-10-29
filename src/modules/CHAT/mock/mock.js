@@ -417,7 +417,7 @@ export const CHAT_MOCK = {
                 "answer": null,
                 "text": "111",
                 "files": [],
-                "status": true,
+                "status": false,
                 "created_at": 1761566167,
                 "updated_at": 1761566262
             },
@@ -487,7 +487,7 @@ export const CHAT_MOCK = {
                 "answer": null,
                 "text": "апва",
                 "files": [],
-                "status": true,
+                "status": false,
                 "created_at": 1761567664,
                 "updated_at": 1761567695
             },
@@ -497,7 +497,7 @@ export const CHAT_MOCK = {
                 "answer": null,
                 "text": "rgtg",
                 "files": [],
-                "status": true,
+                "status": false,
                 "created_at": 1761567707,
                 "updated_at": 1761567709
             }
