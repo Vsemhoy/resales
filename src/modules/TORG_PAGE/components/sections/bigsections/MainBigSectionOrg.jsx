@@ -452,7 +452,7 @@ const MianBigSectionOrg = (props) => {
                       style={{ width: '100%' }}
                       variant="borderless"
                       size='small'
-                      placeholder="Tags Mode"
+                      placeholder={'ООО "Новый Свет"'}
                       onChange={(names)=>{
                         const newTags  = names.map(tagName => {
                           const existing = subcompanies?.find(t => t.name === tagName);
