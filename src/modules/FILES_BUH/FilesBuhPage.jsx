@@ -255,6 +255,7 @@ const FilesBuhPage = (props) => {
                             </div>
                         ))}
 
+
                         <h1> Файлы, с которыми есть проблемы: </h1>
                         {problemFiles.map((index) => (
                             <div key={index.id}>
