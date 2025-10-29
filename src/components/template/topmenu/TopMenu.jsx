@@ -61,6 +61,12 @@ const TopMenu = (props) => {
 		} else {
 			setTopRole(2);
 		}
+
+		if (userdata.user.sales_role === 3) {
+			setTopRole(3);
+		}
+
+
 		if (!activeRole || activeRole === 0) {
 			changeUserRole(1);
 			activeRole = 1;
@@ -201,19 +207,19 @@ const TopMenu = (props) => {
 						</div>
 					</NavLink>
 
-					{topRole === 2 && (
+					{[2, 3].includes(topRole) && (
 						<NavLink to="/orgs">
 							<div className={'sa-topmenu-button'}>Организации</div>
 						</NavLink>
 					)}
 
-					{topRole === 2 && (
+					{[2, 3].includes(topRole) && (
 						<NavLink to="/bids">
 							<div className={'sa-topmenu-button'}>Заявки</div>
 						</NavLink>
 					)}
 
-					{topRole === 2 && (
+					{[2, 3].includes(topRole) && (
 						<NavLink to="/price">
 							<div className={'sa-topmenu-button'}>Прайс</div>
 						</NavLink>
@@ -224,6 +230,7 @@ const TopMenu = (props) => {
 							<div className={'sa-topmenu-button'}>Кураторство</div>
 						</NavLink>
 					)}
+
 					<NavLink to="/regtown">
 						<div className={'sa-topmenu-button'}>Города и регионы</div>
 					</NavLink>
@@ -231,6 +238,12 @@ const TopMenu = (props) => {
 					<NavLink to="/engineer">
 						<div className={'sa-topmenu-button'}>Инженеры</div>
 					</NavLink>
+
+					{topRole === 3 && (
+						<NavLink to="/files_buh">
+							<div className={'sa-topmenu-button'}>Выгрузка счетов</div>
+						</NavLink>
+					)}
 
 					{/* {userdata?.user?.super === 1 && (
 						<div ref={debuggerRef} style={{ position: 'relative', display: 'inline-block' }}>

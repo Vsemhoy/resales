@@ -30,6 +30,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Dropdown } from 'antd';
 import TorgPage from './modules/TORG_PAGE/TorgPage';
 import Regtown from './modules/REGTOWN/Regtown';
+import FilesBuhPage from "./modules/FILES_BUH/FilesBuhPage";
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -141,6 +142,11 @@ export const App = () => {
 								<Route
 									path="/bids/:bidId"
 									element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
+								/>
+
+								<Route
+									path={BASE_ROUTE + '/files_buh'}
+									element={<FilesBuhPage userdata={userdata} changed_user_data={setUserdata} />}
 								/>
 
 								<Route
