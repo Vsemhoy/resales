@@ -357,6 +357,16 @@ const OrgListTable = (props) => {
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
+								<Tooltip
+								 title="Компании, входящие в группу компаний"
+								>
+									Суб.Комп.
+								</Tooltip>
+								<div className={'sa-pa-3'}></div>
+							</div>
+						</div>
+						<div className={'sa-table-box-cell'}>
+							<div className={'sa-table-head-on'}>
 								<TableHeadNameWithSort
 									sort_key={'bids'}
 									on_sort_change={handleActivateSorter}
