@@ -51,6 +51,7 @@ const MianBigSectionOrg = (props) => {
     setComment(props.data.comment);
     setCommentinlist(props.data.commentinlist);
     setKindofactivity(props.data.kindofactivity);
+    setSubcompanies(props.data.subcompanies ? props.data.subcompanies : []);
     setProfsound(props.data.profsound ? props.data.profsound : null);
   }, [props.data]);
 
@@ -79,6 +80,7 @@ const MianBigSectionOrg = (props) => {
     commentinlist,
     kindofactivity,
     profsound,
+    subcompanies
   });
 
   // Для отправки прямо в коллектор по кейдауну
@@ -99,6 +101,7 @@ const MianBigSectionOrg = (props) => {
     comment,
     commentinlist,
     kindofactivity,
+    subcompanies,
     profsound]);
 
 
@@ -255,29 +258,6 @@ const MianBigSectionOrg = (props) => {
                       variant="borderless"
                       maxLength={550}
                       required={true}
-                    />,
-                    required: true,
-                    value: middlename
-                },
-              ]}
-              extratext={[
-                {
-                  edit_mode: editMode,
-                  label: 'Второе название',
-                  input:
-                     <Select
-                      mode="tags"
-                      style={{ width: '100%' }}
-                      placeholder="Tags Mode"
-                      onChange={(ev)=>{
-                        console.log(ev);
-                      }}
-                      options={subcompanies?.map((item)=>({
-                        key: "subcoming_" + item.id,
-                        value: item.id,
-                        label: item.name
-                      }))}
-                      
                     />,
                     required: true,
                     value: middlename
@@ -454,6 +434,52 @@ const MianBigSectionOrg = (props) => {
                     />,
                     required: false,
                     value: commentinlist
+                },
+              ]}
+              action={<div></div>}
+            />
+
+            <TorgPageSectionRow
+                edit_mode={editMode}
+
+                inputs={[
+{
+                  edit_mode: editMode,
+                  label: 'Дочерние компании',
+                  input:
+                     <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      variant="borderless"
+                      size='small'
+                      placeholder="Tags Mode"
+                      onChange={(names)=>{
+                        const newTags  = names.map(tagName => {
+                          const existing = subcompanies?.find(t => t.name === tagName);
+                          if (existing) {
+                            return existing;
+                          } else {
+                            let nn = {id: "new_" + dayjs().unix() + "_" + subcompanies.length,
+                              name: tagName
+                            };
+                            console.log("NN", nn);
+                            return(nn);
+                          };
+                        });
+                        setACTION_FLAG(1);
+                        console.log(newTags);
+                        setSubcompanies(newTags);
+                        setBLUR_FLAG(dayjs().unix());
+                      }}
+                      disabled={!editMode}
+                      options={subcompanies?.map((item)=>({
+                        key: "subcoming_" + item.id,
+                        value: item.name,
+                        label: item.name
+                      }))}
+                    />,
+                    required: false,
+                    value: subcompanies
                 },
               ]}
               action={<div></div>}
