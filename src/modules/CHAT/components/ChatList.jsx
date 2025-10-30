@@ -5,6 +5,7 @@ import {useChatRole} from '../../../hooks/sms/useChatRole';
 import styles from './style/Chat.module.css';
 import dayjs from 'dayjs';
 import {useChatSocket} from "../../../context/ChatSocketContext";
+import {Badge} from "antd";
 
 export default function ChatList({ search, onSelectChat, selectedChatId }) {
 	const { userdata } = useUserData();
@@ -102,7 +103,6 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 
 					return (
 						<div key={`chat-${chat.chat_id}-${idx}`}>
-							{/* {DEBUGGER} */}
 							<li
 								className={`${styles.chatItem} ${isActive ? styles.activeChatItem : ''}`}
 								onClick={() => {
@@ -111,6 +111,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 							>
 								<div className={styles.companionName}>{displayName || 'Неизвестный'}</div>
 								<div className={styles.lastMessage}>{truncatedText}</div>
+                                <Badge count={10} />
 							</li>
 						</div>
 					);
