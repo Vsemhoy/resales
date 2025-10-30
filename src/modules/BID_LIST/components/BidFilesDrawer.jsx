@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Drawer, Table} from "antd";
 import {DownloadOutlined} from "@ant-design/icons";
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {CSRF_TOKEN, HTTP_HOST, PRODMODE} from "../../../config/config";
 import {PROD_API_URL, PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import dayjs from "dayjs";
 import {FILES} from "../../BID_PAGE/mock/mock";
@@ -9,8 +9,9 @@ import {FILES} from "../../BID_PAGE/mock/mock";
 const BidFilesDrawer = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [files, setFiles] = useState(false);
+    const [columns, setColumns] = useState([]);
 
-    const columns = [
+    const columnsKP = [
         {
             title: "Дата",
             dataIndex: "date",
@@ -30,12 +31,79 @@ const BidFilesDrawer = (props) => {
             width: 30,
             render: (e, v) => (
                 <a onClick={() => fetchDownloadFile(v.template_id, v.key, v.type)}>
-                    <DownloadOutlined style={{ fontSize: "16px", color: "#5099ff" }} />
+                    <DownloadOutlined className={'download-outlined'} />
                 </a>
             ),
             align: "center",
         },
     ];
+
+    const columnsBill = [
+        {
+            title: "Дата создания",
+            dataIndex: "date_create",
+            key: "date_create",
+            render: (e) => <span style={{ fontSize: "12px" }}>{e}</span>,
+        },
+        {
+            title: "Дата оплаты",
+            dataIndex: "date_pay",
+            key: "date_pay",
+            render: (e) => <span style={{ fontSize: "12px" }}>{e}</span>,
+        },
+        {
+            title: "Номер счета",
+            dataIndex: "number_invoice",
+            key: "number_invoice",
+            render: (e) => <span style={{ fontSize: "12px" }}>{e}</span>,
+        },
+        {
+            title: "Номер заказа 1С",
+            dataIndex: "number_bid",
+            key: "number_bid",
+            render: (e) => <span style={{ fontSize: "12px" }}>{e}</span>,
+        },
+        {
+            title: "Скачать",
+            dataIndex: "bo_file_invoice",
+            key: "bo_file_invoice",
+            width: 30,
+            render: (e, v) => (
+                <div>
+                    {e ? (
+                        <a href={`${HTTP_HOST}/${e}`} target="_blank">
+                            <DownloadOutlined className={'download-outlined'}/>
+                        </a>
+                    ) : (<div></div>)}
+                </div>
+            ),
+            align: "center",
+        },
+        {
+            title: "zend2",
+            dataIndex: "file_invoice",
+            key: "file_invoice",
+            width: 30,
+            render: (e, v) => (
+                <div>
+                    {e ? (
+                        <a href={`http://zend2.arstel.su/files/${e}`} target="_blank">
+                            <DownloadOutlined className={'download-outlined'}/>
+                        </a>
+                    ) : (<div></div>)}
+                </div>
+            ),
+            align: "center",
+        },
+    ];
+
+    useEffect(() => {
+        if (+props.bidType === 1) {
+            setColumns(columnsKP);
+        } else if (+props.bidType === 2) {
+            setColumns(columnsBill);
+        }
+    }, [props.bidType]);
 
     useEffect(() => {
         if (props.bidId && props.isOpenDrawer) {
@@ -60,12 +128,19 @@ const BidFilesDrawer = (props) => {
                     setFiles(
                         response.data.data.files.map((el) => {
                             return {
-                                key: el.id,
-                                date: get_date_by_unix(el.created_at),
-                                name: parseNameFromFilePath(el.name_file),
+                                key: el?.id,
+                                date: get_date_by_unix(el?.created_at),
+                                name: parseNameFromFilePath(el?.name_file),
                                 download: "download",
-                                template_id: el.template_id,
-                                type: el.type,
+                                template_id: el?.template_id,
+                                type: el?.type,
+
+                                date_create: get_date_by_unix(el?.date),
+                                date_pay: get_date_by_unix(el?.date_pay),
+                                number_invoice: el?.number_invoice,
+                                number_bid: el?.number_bid,
+                                bo_file_invoice: el?.bo_file_invoice,
+                                file_invoice: el?.file_invoice,
                             };
                         }),
                     );
@@ -135,7 +210,7 @@ const BidFilesDrawer = (props) => {
         <Drawer
             title={`Файлы`}
             placement="right"
-            width={600}
+            width={props.bidType === 2 ? 1000 : 600}
             onClose={() => props.closeDrawer()}
             open={props.isOpenDrawer}
         >

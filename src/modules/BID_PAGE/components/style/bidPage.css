@@ -29,7 +29,16 @@
 	transition: 1s;
 }
 
-
+.ant-radio-button-checked {
+    background-color: var(--sa-primary-color) !important;
+    border-color: var(--sa-primary-color) !important;
+}
+.ant-radio-button-wrapper:hover .ant-radio-button-label {
+    color: var(--sa-primary-color) !important;
+}
+.ant-radio-button-wrapper-checked:hover .ant-radio-button-label {
+    color: white !important
+}
 
 .sa-custom-steps .ant-steps-item-title {
 	font-size: 12px !important;
@@ -654,4 +663,8 @@
 	box-sizing: border-box;
 	justify-content: space-between;
 	align-items: center;
+}
+.download-outlined {
+    font-size: 16px;
+    color: var(--sa-primary-color);
 }

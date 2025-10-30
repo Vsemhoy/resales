@@ -1185,10 +1185,22 @@ const BidPage = (props) => {
 	const customClick = (button_id, selectValue) => {
 		console.log(button_id)
 		switch (customModalType) {
-			case 'pdf':
+			case 'word':
+				if (+button_id === 2) {
+					setIsSavingInfo(true);
+					setTimeout(() => fetchWordFile().then(), 200);
+				}
+				break;
+            case 'pdf':
 				if (+button_id === 2) {
 					setIsSavingInfo(true);
 					setTimeout(() => navigate(`/bidsPDF/${bidId}`), 200);
+				}
+				break;
+            case 'duplicate':
+				if (+button_id === 2) {
+					setIsSavingInfo(true);
+					setTimeout(() => setIsBidDuplicateDrawerOpen(true), 200);
 				}
 				break;
 			case 'bill':
@@ -1703,13 +1715,19 @@ const BidPage = (props) => {
 														style={{
 															textAlign: 'center',
 															fontSize: '14px',
-															cursor: 'pointer'
+															cursor: 'pointer',
 														}}
 														color="geekblue"
 														onClick={() => window.open(`${BASE_ROUTE}/orgs/${bidOrg.id}`, '_blank')}
 													>
 														{bidOrg.name}
 													</Tag>
+                                                    <Tag style={{
+                                                        textAlign: 'center',
+                                                        fontSize: '14px',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    >№{bidOrg.id}</Tag>
 													Ваша роль:
 													{userData && userData?.user?.sales_role === 1 && (
 														<Tag color={'blue'}>менеджер</Tag>
@@ -1912,7 +1930,19 @@ const BidPage = (props) => {
 										color="primary"
 										variant="outlined"
 										icon={<FileWordOutlined className={'sa-bid-page-btn-icon'}/>}
-										onClick={() => fetchWordFile()}
+										onClick={() => {
+                                            if (isSmthChanged) {
+                                                openCustomModal(
+                                                    'word',
+                                                    'Создание Word документа',
+                                                    'У Вас есть несохраненные изменения! Подтвердите сохранение перед созданием документа.',
+                                                    [],
+                                                    baseButtons
+                                                );
+                                            } else {
+                                                fetchWordFile().then();
+                                            }
+                                        }}
 									></Button>
 								</Tooltip>
 							)}
@@ -2009,7 +2039,19 @@ const BidPage = (props) => {
 										color="primary"
 										variant="outlined"
 										icon={<CopyOutlined className={'sa-bid-page-btn-icon'}/>}
-										onClick={() => setIsBidDuplicateDrawerOpen(true)}
+										onClick={() => {
+                                            if (isSmthChanged) {
+                                                openCustomModal(
+                                                    'duplicate',
+                                                    'Создание дубликата',
+                                                    'У Вас есть несохраненные изменения! Подтвердите сохранение перед созданием дубликата.',
+                                                    [],
+                                                    baseButtons
+                                                );
+                                            } else {
+                                                setIsBidDuplicateDrawerOpen(true);
+                                            }
+                                        }}
 									></Button>
 								</Tooltip>
 							)}
@@ -2564,6 +2606,7 @@ const BidPage = (props) => {
 			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
 							closeDrawer={() => setIsBidFilesDrawerOpen(false)}
 							bidId={bidId}
+                            bidType={bidType}
 							error_alert={(path, e) => {
 								setIsAlertVisible(true);
 								setAlertMessage(`Произошла ошибка! ${path}`);
