@@ -69,9 +69,13 @@ const BidFilesDrawer = (props) => {
             key: "bo_file_invoice",
             width: 30,
             render: (e, v) => (
-                <a href={`${HTTP_HOST}/${e}`} target="_blank">
-                    <DownloadOutlined className={'download-outlined'}/>
-                </a>
+                <div>
+                    {e ? (
+                        <a href={`${HTTP_HOST}/${e}`} target="_blank">
+                            <DownloadOutlined className={'download-outlined'}/>
+                        </a>
+                    ) : (<div></div>)}
+                </div>
             ),
             align: "center",
         },
@@ -81,9 +85,13 @@ const BidFilesDrawer = (props) => {
             key: "file_invoice",
             width: 30,
             render: (e, v) => (
-                <a href={`http://zend2.arstel.su/files/${e}`} target="_blank">
-                    <DownloadOutlined className={'download-outlined'}/>
-                </a>
+                <div>
+                    {e ? (
+                        <a href={`http://zend2.arstel.su/files/${e}`} target="_blank">
+                            <DownloadOutlined className={'download-outlined'}/>
+                        </a>
+                    ) : (<div></div>)}
+                </div>
             ),
             align: "center",
         },
