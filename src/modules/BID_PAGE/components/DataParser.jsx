@@ -5,6 +5,21 @@ import { Table } from "antd";
 const DataParser = ({ models, additionData, setAdditionData }) => {
     const [value, setValue] = useState("");
 
+    const replace_alfabet = {
+        'а': 'a',
+        'в': 'b',
+        'с': 'c',
+        'д': 'd',
+        'е': 'e',
+        'н': 'h',
+        'к': 'k',
+        'м': 'm',
+        'о': 'o',
+        'р': 'p',
+        'т': 't',
+        'х': 'x',
+    };
+
     // Функция для получения имени (первого слова в верхнем регистре)
     const getName = (str) => {
         let name = '';
@@ -59,8 +74,89 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             return null;
         }
     }
-    const getModelCurrency = (name) =>
-        models.find((model) => model.name === name)?.currency;
+    const getModelNameV2 = (name) => {
+        // Проверяем, что models существует и не пустой
+        if (!models || models.length === 0) {
+            console.warn('Models array is empty or not defined');
+            return '';
+        }
+
+        // Проверка на число
+        if (!isNaN(name) && name !== '') return '';
+
+        // Очистка и проверка длины
+        name = name.toString().trim();
+        if (name.length <= 1) {
+            return '';
+        }
+
+        let nameLower = name.toLowerCase();
+        let trname = nameLower;
+
+        // Транслитерация символов
+        Object.entries(replace_alfabet).forEach(([cyrillic, latin]) => {
+            trname = trname.replace(new RegExp(cyrillic, 'ig'), latin);
+        });
+
+        // Поиск в моделях
+        for (let i = 0; i < models.length; i++) {
+            let modelNameSeo = models[i].name?.toLowerCase();
+
+            if (!modelNameSeo) continue; // Пропускаем если нет name_seo
+
+            if (modelNameSeo === nameLower || modelNameSeo === trname) {
+                return models[i];
+            }
+
+            // Дополнительная проверка: если имя содержит часть названия модели
+            if (nameLower.includes(modelNameSeo) || modelNameSeo.includes(nameLower)) {
+                return models[i];
+            }
+        }
+
+        console.log('Model not found');
+        return '';
+    };
+    const findModel = (line, index) => {
+        let l = line.trim();
+        l = l.replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
+
+        if ( l !== '') {
+            let part = l.split(' ');
+            let mod = {
+                errorname: true,
+                errorcount: false,
+
+                key: 0,
+                num: 0,
+                name: '',
+                count: 0,
+                id: 0,
+                currency: 0,
+            };
+
+            part.forEach((value, key) => {
+
+                if (key > 0 && !isNaN(parseInt(value)) ) {
+                    mod.count = parseInt(value);
+                    mod.errorcount = false
+                }
+
+                let name = getModelNameV2(value);
+                if ( name !== '') {
+                    mod.name = name.name;
+                    mod.errorname = false;
+                    mod.id = name.id;
+                    mod.num = index + 1;
+                    mod.key = index;
+                    mod.currency = getModelCurrency(name);
+                }
+
+            });
+            return mod;
+        }
+    }
+    const getModelCurrency = (name) => models.find((model) => model.name === name)?.currency;
     useEffect(() => {
         if (!value) {
             setAdditionData([]);
@@ -72,14 +168,16 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             const name = getName(line);
             if (!name) return null;
 
-            return {
+            return findModel(line, index);
+
+            /*return {
                 key: index,
                 num: index + 1,
                 name: getModelName(name) ? getModelName(name) : name,
                 count: getCount(line),
                 id: getModelId(name),
                 currency: getModelCurrency(name),
-            };
+            };*/
         }).filter(Boolean);
 
         setAdditionData(parsedData);
