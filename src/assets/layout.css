@@ -591,3 +591,13 @@ td:first-child {
 	font-weight: 400;
 	opacity: 0.8;
 }
+
+
+.sa-flex-2-columns {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+}
+.sa-flex-3-columns {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+}
