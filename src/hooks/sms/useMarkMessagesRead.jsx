@@ -8,12 +8,14 @@ import { useEffect, useRef, useState } from 'react';
  * @param {Array} params.messagesWithDividers - сообщения, их количество изменится - сработает хук
  * @param {number} params.currentUserId - id пользователя
  * @param {number} [params.chatId] - id чата
+ * @param {React.RefObject} params.containerRef - контейнер с сообщениями, за которым следим
  * @param {function} [params.markMessagesAsRead] - функция срабатываемая при попадании сообщения в обсервер
  */
 export const useMarkMessagesRead = ({
                                         messagesWithDividers,
                                         currentUserId,
                                         chatId,
+                                        containerRef,
                                         markMessagesAsRead
                                     }) => {
     const observerRef = useRef(null);
@@ -34,7 +36,7 @@ export const useMarkMessagesRead = ({
             .filter(item => item.element);
 
         if (unreadMessages.length === 0) return;
-
+        console.log("unreadMessages", unreadMessages);
         // Создаем Intersection Observer
         const observer = new IntersectionObserver(
             (entries) => {
@@ -60,8 +62,9 @@ export const useMarkMessagesRead = ({
                 }
             },
             {
-                threshold: 0.7,    // 70% видимости сообщения
-                rootMargin: '50px' // Небольшой запас
+                root: containerRef.current,
+                threshold: 0.3,    // 70% видимости сообщения
+                rootMargin: '0px 0px 100px 0px' // Небольшой запас
             }
         );
 
@@ -79,6 +82,7 @@ export const useMarkMessagesRead = ({
         messagesWithDividers,
         currentUserId,
         chatId,
+        containerRef,
         markMessagesAsRead
     ]);
 
