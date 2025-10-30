@@ -98,10 +98,11 @@ export default function ChatContent({ chatId }) {
 	} = useChatSocket();
 
 	useMarkMessagesRead({
-        messagesWithDividers, // сообщения с разделителями
-        currentUserId,        // id пользователя
-        chatId,               // id открытого чата
-        markMessagesAsRead    // метод срабатываемый при попадании непрочитанного сообщения во вьюпорт контейнера со скроллом
+        messagesWithDividers,                               // сообщения с разделителями
+        currentUserId,                                      // id пользователя
+        chatId,                                             // id открытого чата
+        containerRef: messagesContainerRef,                 // контейнер с сообщениями, за которым следим
+        markMessagesAsRead                                  // метод срабатываемый при попадании непрочитанного сообщения во вьюпорт контейнера со скроллом
     });
 
     useInfiniteScrollUp({
