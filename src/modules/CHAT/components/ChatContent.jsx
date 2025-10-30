@@ -209,6 +209,16 @@ export default function ChatContent({ chatId }) {
                                   onClick={() => {
                                       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
                                       setIsShowScrollButton(false);
+
+                                      const unreadIds = messagesWithDividers
+                                          .filter(item => item.type !== 'divider')
+                                          .filter(item => +item.message.fromId !== +currentUserId)
+                                          .filter(item => !item.message.status)
+                                          .map(item => item.message.id);
+
+                                      if (unreadIds.length > 0) {
+                                          markMessagesAsRead(unreadIds, chatId);
+                                      }
                                   }}
                         />
                     )}
