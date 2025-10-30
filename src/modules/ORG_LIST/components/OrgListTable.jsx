@@ -29,6 +29,12 @@ const OrgListTable = (props) => {
 
 	const [SKIPPER, setSKIPPER] = useState(2);
 
+
+
+	useEffect(() => {
+		
+	}, [props.filter_name]);
+
 	useEffect(() => {
 		setSelectedItem(props.selected_item);
 	}, [props.selected_item]);
@@ -400,6 +406,7 @@ const OrgListTable = (props) => {
 			<div className={'sa-table-box-stack'}>
 				{props.base_orgs.map((borg, index) => (
 					<OrgListRow
+						filter_name={filterName}
 						data={borg}
 						is_active={selectedItem === borg.id}
 						on_double_click={handlePreviewOpen}
