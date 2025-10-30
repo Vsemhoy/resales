@@ -90,7 +90,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             return '';
         }
 
-        let nameLower = name.toLowerCase();
+        let nameLower = name.toLowerCase().replace(/\s/g, "");
         let trname = nameLower;
 
         // Транслитерация символов
@@ -100,7 +100,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
 
         // Поиск в моделях
         for (let i = 0; i < models.length; i++) {
-            let modelNameSeo = models[i].name?.toLowerCase();
+            let modelNameSeo = models[i].name?.toLowerCase().replace(/\s/g, "");
 
             if (!modelNameSeo) continue; // Пропускаем если нет name_seo
 
@@ -228,7 +228,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             </div>
             <div className={'dataParser__container__table'}>
                 <Table
-                    dataSource={additionData}
+                    dataSource={additionData.filter(d => d.id !== 0)}
                     columns={columns}
                     size="small"
                     pagination={false}
