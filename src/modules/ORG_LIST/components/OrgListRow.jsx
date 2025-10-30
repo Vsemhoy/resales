@@ -19,6 +19,7 @@ import {
 	InboxStackIcon,
 	MusicalNoteIcon,
 	PhoneArrowUpRightIcon,
+	TicketIcon,
 } from '@heroicons/react/24/solid';
 import { getBidsItems, getCallsItems, getMeetingsItems } from './hooks/AlansOrgHooks';
 import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
@@ -33,6 +34,8 @@ const OrgListRow = (props) => {
 	const [active, setActive] = useState(false);
 	const [compColor, setCompColor] = useState('#00000000');
 	const [menuItems, setMenuItems] = useState([]);
+
+	const [requisitesMenu, setRequisitesMenu] = useState([]);
 
 	const { userdata } = props;
 
@@ -150,6 +153,49 @@ const truncateText = (text, maxLength = 200) => {
 			props.on_double_click(orgData.id);
 		}
 	};
+
+
+	useEffect(() => {
+		let arrm = [];
+		if (orgData.subcompanies?.length > 0){
+				arrm.push({
+									key: "Subco_00000000",
+									value: '',
+									label: "Дочерние компании:",
+									disabled: true,
+							});
+				for (let i = 0; i < orgData.subcompanies?.length; i++) {
+					const subco = orgData.subcompanies[i];
+					arrm.push({
+									key: "Subco_" + subco.id,
+									value: subco.name,
+									label: subco.name,
+									danger: subco.deleted_at? true : false,
+									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <BuildingOffice2Icon height={'18px'} />,
+							});
+				}
+			}
+		if (orgData.requisites?.length > 0){
+				arrm.push({
+									key: "Subcor_00000000",
+									value: '',
+									label: "Фирмы/плательщики:",
+									disabled: true,
+							});
+				for (let i = 0; i < orgData.requisites?.length; i++) {
+					const subco = orgData.requisites[i];
+					arrm.push({
+									key: "Subcor_" + subco.id,
+									value: subco.name,
+									label: subco.name,
+									danger: subco.deleted_at? true : false,
+									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <TicketIcon height={'18px'} />,
+							});
+				}
+			}
+			setRequisitesMenu(arrm);
+
+	}, [orgData.subcompanies, orgData.requisites]);
 
 
 	const handleCallBecomeCurator = async () => {
@@ -284,7 +330,7 @@ const truncateText = (text, maxLength = 200) => {
 										<Tooltip
 											color={'white'}
 											title={
-												orgData.middlename || orgData.subcompanies?.length > 0  ? (
+												orgData.middlename || orgData.subcompanies?.length > 0 || orgData.requisites?.length > 0  ? (
 											<div style={{padding: '6px'}}>
 												{orgData.middlename ? (
 													<>
@@ -299,7 +345,7 @@ const truncateText = (text, maxLength = 200) => {
 												{orgData.middlename && (
 													<div style={{padding: '8px'}}></div>
 												)}
-												<div className={'sa-table-orgs-header-in-tooltip'}>Суб-компании:</div>
+												<div className={'sa-table-orgs-header-in-tooltip'}>Дочерние компании :</div>
 												<List
 													style={{padding: '0px'}}
 													size="small"
@@ -308,10 +354,24 @@ const truncateText = (text, maxLength = 200) => {
 													dataSource={orgData.subcompanies?.map((subco)=>(subco.name))}
 													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}><BuildingOffice2Icon height={'18px'} /> {item}</div></List.Item>}
 												/>
-												
 												</>
 											)}
-											
+											{orgData.requisites?.length > 0 && (
+												<>
+												{orgData.middlename || orgData.subcompanies?.length > 0 ? (
+													<div style={{padding: '8px'}}></div>
+												): ""}
+												<div className={'sa-table-orgs-header-in-tooltip'}>Фирмы/плательщики :</div>
+												<List
+													style={{padding: '0px'}}
+													size="small"
+													className='sa-org-more-list-ee'
+													bordered
+													dataSource={orgData.requisites?.map((subco)=>(subco.name))}
+													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}>
+														<TicketIcon height={'18px'} /> {item}</div></List.Item>}/>
+												</>
+											)}
 										
 										</div>) : null
 									} 
@@ -405,29 +465,15 @@ const truncateText = (text, maxLength = 200) => {
 							)}
 						</div>
 						<div>
-							{orgData.subcompanies?.length > 0 && (
-							<Dropdown menu={{ items: [ {
-									key: "Subco_00000000",
-									value: '',
-									label: "Суб-компании-плательщики:",
-									disabled: true,
-							}, ...orgData.subcompanies?.map((subco)=>{
-								return {
-									key: "Subco_" + subco.id,
-									value: subco.name,
-									label: subco.name,
-									danger: subco.deleted_at? true : false,
-									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <BuildingOffice2Icon height={'18px'} />,
-								}
-
-							}) ]}} placement="bottom">
+							{orgData.subcompanies?.length > 0 || orgData.requisites?.length > 0  ? (
+							<Dropdown menu={{ items: requisitesMenu}} placement="bottom">
 								<div
 									className={'sa-col-with-menu'}
 								>
 									<BuildingOffice2Icon height={'18px'} />
 								</div>
 							</Dropdown>
-						)}
+						): ""}
 						</div>
 						{/* <div>
               
