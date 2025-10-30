@@ -7,7 +7,7 @@ import {
 	FlagIcon,
 	NewspaperIcon,
 } from '@heroicons/react/24/outline';
-import { Dropdown, Menu, Tag, Tooltip } from 'antd';
+import { Divider, Dropdown, List, Menu, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ShortName } from '../../../components/helpers/TextHelpers';
@@ -280,11 +280,53 @@ const truncateText = (text, maxLength = 200) => {
 					<div className={'sa-align-left'}>
 						<NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
 							<div>
-								<div>{orgData.name}</div>
-								{orgData.middlename ? (
-									<div className={'sa-table-orgs-middlename'}>
-										<Tooltip title={orgData.middlename} placement='bottom'>
-										<div>{truncateText(orgData.middlename, 60)}</div>
+								<div className='sa-org-list-row-name-name'>{orgData.name}</div>
+								{orgData.middlename || orgData.subcompanies?.length > 0  ? (
+									<div 
+											onClick={(ev)=>{
+												ev.stopPropagation();
+											}}
+										className={'sa-table-orgs-middlename'}>
+										<Tooltip
+											color={'white'}
+
+										title={
+											<div>
+												{orgData.middlename ? (
+													<>
+													<div className={'sa-table-orgs-header-in-tooltip'}>Второе название:</div>
+														<div style={{color: 'black'}}>
+															{orgData.middlename}
+														</div>
+													</>
+											): ""}
+											{orgData.subcompanies?.length > 0 && (
+												<>
+												{orgData.middlename && (
+													<div style={{padding: '8px'}}></div>
+												)}
+												<div className={'sa-table-orgs-header-in-tooltip'}>Суб-компании:</div>
+												<List
+													size="small"
+													className='sa-org-more-list-ee'
+													bordered
+													dataSource={orgData.subcompanies?.map((subco)=>(subco.name))}
+													renderItem={(item) => <List.Item>{item}</List.Item>}
+												/>
+												
+												</>
+											)}
+											
+										
+										</div>
+									} placement='bottom'>
+										<div>{orgData.middlename ? (
+											<div>{truncateText(orgData.middlename, 60)}</div>
+										) : (
+											<div>
+												{orgData.subcompanies?.length} суб-компании
+											</div>
+										)}</div>
 										</Tooltip>
 									</div>
 								) : ""}
@@ -331,7 +373,7 @@ const truncateText = (text, maxLength = 200) => {
 					</div>
 				</div>
 				<div className={'sa-table-box-cell'}>
-					<div className={'sa-flex-2-columns'}>
+					<div className={'sa-flex-3-columns'}>
 						<div>
 							{orgData.website && (
 								<Tooltip
@@ -356,26 +398,8 @@ const truncateText = (text, maxLength = 200) => {
 								</Tooltip>
 							)}
 						</div>
-						{/* <div>
-              
-            </div>
-            <div>
-              
-            </div>
-            <div>
-              
-            </div>
-            <div>
-              
-            </div>
-            <div>
-              
-            </div> */}
-					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>
-						{orgData.subcompanies?.length > 0 && (
+						<div>
+							{orgData.subcompanies?.length > 0 && (
 							<Dropdown menu={{ items: [ {
 									key: "Subco_00000000",
 									value: '',
@@ -395,12 +419,28 @@ const truncateText = (text, maxLength = 200) => {
 									className={'sa-col-with-menu'}
 								>
 									<BuildingOffice2Icon height={'18px'} />
-									<Tag color={'yellow'}>{orgData.subcompanies?.length}</Tag>
 								</div>
 							</Dropdown>
 						)}
+						</div>
+						{/* <div>
+              
+            </div>
+            <div>
+              
+            </div>
+            <div>
+              
+            </div>
+            <div>
+              
+            </div>
+            <div>
+              
+            </div> */}
 					</div>
 				</div>
+
 				<div className={'sa-table-box-cell'}>
 					<div>
 						{orgData.bids?.length > 0 && (

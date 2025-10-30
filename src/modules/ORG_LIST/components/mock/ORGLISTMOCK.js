@@ -4137,7 +4137,7 @@ export const OM_COMP_LIST = [
 		website: '',
 		profile: 5,
 		kindofactivity: 'Проектирование СС, СОУЭ, ОПС.',
-		middlename: 'СИБПИ',
+		middlename: '',
 		id8an_status: 0,
 		curator_id: 0,
 		source: 'СТБ справочник предприятий и организаций города, № 16',
