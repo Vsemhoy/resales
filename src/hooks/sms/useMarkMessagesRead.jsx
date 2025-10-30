@@ -63,8 +63,8 @@ export const useMarkMessagesRead = ({
             },
             {
                 root: containerRef.current,
-                threshold: 0.7,    // 70% видимости сообщения
-                rootMargin: '50px' // Небольшой запас
+                threshold: 0.3,    // 70% видимости сообщения
+                rootMargin: '0px 0px 100px 0px' // Небольшой запас
             }
         );
 
