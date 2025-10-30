@@ -15,9 +15,9 @@ export const useMarkMessagesRead = ({
                                         currentUserId,
                                         chatId,
                                         markMessagesAsRead
-}) => {
+                                    }) => {
     const observerRef = useRef(null);
-    const [processedMessages, setProcessedMessages] = useState(new Set());
+    const processedMessagesRef = useRef(new Set());
 
     useEffect(() => {
         if (!messagesWithDividers.length || !markMessagesAsRead) return;
@@ -32,23 +32,27 @@ export const useMarkMessagesRead = ({
                 element: document.querySelector(`[data-message-id="${item.message.id}"]`)
             }))
             .filter(item => item.element);
+
         if (unreadMessages.length === 0) return;
 
         // Создаем Intersection Observer
-        observerRef.current = new IntersectionObserver(
+        const observer = new IntersectionObserver(
             (entries) => {
                 const newlyVisible = [];
 
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const messageId = entry.target.dataset.messageId;
+
                         // Проверяем, не обрабатывали ли уже это сообщение
-                        if (!processedMessages.has(messageId)) {
+                        if (!processedMessagesRef.current.has(messageId)) {
                             newlyVisible.push(messageId);
-                            setProcessedMessages(prev => new Set([...prev, messageId]));
+                            processedMessagesRef.current.add(messageId); // Добавляем в ref
                         }
                     }
                 });
+
+                console.log('newlyVisible', newlyVisible);
 
                 // Если есть новые видимые непрочитанные сообщения - отмечаем как прочитанные
                 if (newlyVisible.length > 0) {
@@ -56,29 +60,30 @@ export const useMarkMessagesRead = ({
                 }
             },
             {
-                threshold: 0.7, // 70% видимости сообщения
+                threshold: 0.7,    // 70% видимости сообщения
                 rootMargin: '50px' // Небольшой запас
             }
         );
 
+        observerRef.current = observer;
+
         // Начинаем наблюдение за всеми непрочитанными сообщениями
         unreadMessages.forEach(({ element }) => {
-            observerRef.current.observe(element);
+            observer.observe(element);
         });
 
         return () => {
-            if (observerRef.current) {
-                observerRef.current.disconnect();
-            }
+            observer.disconnect();
         };
     }, [
         messagesWithDividers,
         currentUserId,
         chatId,
-        markMessagesAsRead,
-        processedMessages
+        markMessagesAsRead
     ]);
 
-    //return { processedMessages };
+    // Очищаем processedMessages при смене чата
+    useEffect(() => {
+        processedMessagesRef.current.clear();
+    }, [chatId]);
 };
-export default useMarkMessagesRead;
