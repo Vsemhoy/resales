@@ -278,20 +278,14 @@ const truncateText = (text, maxLength = 200) => {
 				</div>
 				<div className={'sa-table-box-cell'}>
 					<div className={'sa-align-left'}>
-						<NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
+						
 							<div>
-								<div className='sa-org-list-row-name-name'>{orgData.name}</div>
-								{orgData.middlename || orgData.subcompanies?.length > 0  ? (
-									<div 
-											onClick={(ev)=>{
-												ev.stopPropagation();
-											}}
-										className={'sa-table-orgs-middlename'}>
+
 										<Tooltip
 											color={'white'}
-
-										title={
-											<div>
+											title={
+												orgData.middlename || orgData.subcompanies?.length > 0  ? (
+											<div style={{padding: '6px'}}>
 												{orgData.middlename ? (
 													<>
 													<div className={'sa-table-orgs-header-in-tooltip'}>Второе название:</div>
@@ -307,33 +301,45 @@ const truncateText = (text, maxLength = 200) => {
 												)}
 												<div className={'sa-table-orgs-header-in-tooltip'}>Суб-компании:</div>
 												<List
+													style={{padding: '0px'}}
 													size="small"
 													className='sa-org-more-list-ee'
 													bordered
 													dataSource={orgData.subcompanies?.map((subco)=>(subco.name))}
-													renderItem={(item) => <List.Item>{item}</List.Item>}
+													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}><BuildingOffice2Icon height={'18px'} /> {item}</div></List.Item>}
 												/>
 												
 												</>
 											)}
 											
 										
-										</div>
-									} placement='bottom'>
+										</div>) : null
+									} 
+									placement='bottom'>
+										
+
+								<div className='sa-org-list-row-name-name'>
+									<NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
+									{orgData.name}
+									</NavLink>
+									</div>
+
+									{orgData.middlename || orgData.subcompanies?.length > 0  ? (
 										<div>{orgData.middlename ? (
 											<div>{truncateText(orgData.middlename, 60)}</div>
 										) : (
 											<div>
-												{orgData.subcompanies?.length} суб-компании
+												{/* {orgData.subcompanies?.length} суб-компании */}
 											</div>
 										)}</div>
+									) : ""}
 										</Tooltip>
-									</div>
-								) : ""}
+
+								
 								
 							</div>
 							
-						</NavLink>
+						
 					</div>
 				</div>
 				<div className={'sa-table-box-cell'}>
@@ -411,7 +417,7 @@ const truncateText = (text, maxLength = 200) => {
 									value: subco.name,
 									label: subco.name,
 									danger: subco.deleted_at? true : false,
-									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <FlagIcon height={'18px'} />,
+									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <BuildingOffice2Icon height={'18px'} />,
 								}
 
 							}) ]}} placement="bottom">
