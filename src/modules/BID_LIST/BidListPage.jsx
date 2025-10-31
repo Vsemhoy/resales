@@ -31,7 +31,7 @@ import {useWebSocket} from "../../context/ResalesWebSocketContext";
 
 const BidListPage = (props) => {
 	const { userdata } = props;
-    const { emit } = useWebSocket();
+    const { connected, emit } = useWebSocket();
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -216,11 +216,14 @@ const BidListPage = (props) => {
 			setUserInfo(userdata.user);
 			setActiveRole(userdata.user.sales_role);
 		}
-        if (userdata) {
-            emit('subscribeToBidList', userdata?.user?.id);
-            return () => emit('unsubscribeFromBidList', userdata?.user?.id);
-        }
 	}, [userdata]);
+    useEffect(() => {
+        console.log('CONNECTED bidList', connected)
+        if (connected) {
+            emit('SUBSCRIBE_BID_ACTIVITY', userdata?.user?.id);
+            return () => emit('UNSUBSCRIBE_BID_ACTIVITY', userdata?.user?.id);
+        }
+    }, [connected]);
 	useEffect(() => {
 		setCompanies(
 			baseCompanies.map((item) => ({

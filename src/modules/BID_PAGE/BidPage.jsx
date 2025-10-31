@@ -58,7 +58,7 @@ const { TextArea } = Input;
 
 const BidPage = (props) => {
 	const { bidId } = useParams();
-    const { emit } = useWebSocket();
+    const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
 	const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -245,6 +245,11 @@ const BidPage = (props) => {
 	useEffect(() => {
 		if (props.userdata) {
 			setUserData(props.userdata);
+		}
+	}, [props.userdata]);
+    useEffect(() => {
+        console.log('CONNECTED bidPage', connected)
+        if (connected) {
             emit('HIGHLIGHT_BID', {
                 bidId: bidId,
                 userId: props.userdata?.user?.id,
@@ -254,8 +259,8 @@ const BidPage = (props) => {
                 bidId: bidId,
                 userId: props.userdata?.user?.id,
             });
-		}
-	}, [props.userdata]);
+        }
+    }, [connected]);
 	useEffect(() => {
 		if (isSavingInfo) {
 			fetchUpdates().then(() => {
