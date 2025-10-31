@@ -3,6 +3,7 @@ import {
 	ArrowRightEndOnRectangleIcon,
 	ArrowRightStartOnRectangleIcon,
 	DocumentCurrencyDollarIcon,
+	LinkIcon,
 	NewspaperIcon,
 } from '@heroicons/react/24/outline';
 import { Dropdown, Menu, Tag, Tooltip } from 'antd';
@@ -18,15 +19,30 @@ import dayjs from 'dayjs';
 import PositionList from './PositionList';
 import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
+import HighlightText from '../../../components/helpers/HighlightText';
+import { useURLParams } from '../../../components/helpers/UriHelpers';
 
 const BidListRow = (props) => {
 	const navigate = useNavigate();
+
+const { getCurrentParamsString } = useURLParams();
 
 	const [active, setActive] = useState(false);
 	const [compColor, setCompColor] = useState('#00000000');
 	const [data, setData] = useState(props.data);
 	const [acls, setAcls] = useState(null);
 	const [menuItems, setMenuItems] = useState([]);
+
+	// Название компании в поиске
+	const [filterName, setFilterName] = useState(null);
+
+	useEffect(() => {
+		if (props.filter_name){
+			setFilterName(props.filter_name);
+		} else {
+			setFilterName(null);
+		}
+	}, [props.filter_name]);
 
 	useEffect(() => {
 		setData(props.data);
@@ -46,7 +62,7 @@ const BidListRow = (props) => {
 		if (acls && acls.length > 0) {
 			setMenuItems(getMenu());
 		}
-	}, [acls]);
+	}, [acls, props.filter_triggered]);
 
 	const fetchNewBid = async (type) => {
 		if (PRODMODE) {
@@ -107,7 +123,13 @@ const BidListRow = (props) => {
 				icon: <ArchiveBoxXMarkIcon height="18px" onClick={fetchDeleteBid}/>,
 				label: <div onClick={fetchDeleteBid}>Удалить</div>,
 			});
-		}
+		};
+
+		arr.push({
+				key: '4',
+				icon: <LinkIcon height="18px"/>,
+				label: <NavLink to={`/orgs/${data.org_id}?frompage=bids&` + getCurrentParamsString()}><div>Перейти в организацию</div></NavLink>,
+			});
 		return arr;
 	};
 	const handleDoubleClick = () => {
@@ -137,7 +159,9 @@ const BidListRow = (props) => {
 					</div>
 					<div className={'sa-table-box-cell'}>
 						<div className={'text-align-left'}>
-							<NavLink to={`/orgs/${data.org_id}`}>{data.company_name}</NavLink>
+							<NavLink to={`/bids/${data.id}`} target={'_blank'}>
+								<HighlightText text={data.company_name} highlight={filterName} />
+							</NavLink>
 						</div>
 					</div>
 					<div className={'sa-table-box-cell'}>
