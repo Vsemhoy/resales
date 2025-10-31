@@ -164,10 +164,24 @@ const BidListPage = (props) => {
 	const showGetItem = null; //searchParams.get('show');
 
     const handleHighlightBid = useCallback((data) => {
-        console.log('HIGHLIGHT_BID', data)
+        console.log('HIGHLIGHT_BID', data);
+        setBids(prev => {
+            return prev.map(bid => {
+                if (+bid.id === +data.subscribedBidId) {
+                    return { ...bid, highlight: true }
+                } else return bid;
+            });
+        });
     }, []);
     const handleUnHighlightBid = useCallback((data) => {
-        console.log('UNHIGHLIGHT_BID', data)
+        console.log('UNHIGHLIGHT_BID', data);
+        setBids(prev => {
+            return prev.map(bid => {
+                if (+bid.id === +data.subscribedBidId) {
+                    return { ...bid, highlight: false }
+                } else return bid;
+            });
+        });
     }, []);
 
     useWebSocketSubscription('HIGHLIGHT_BID', handleHighlightBid);

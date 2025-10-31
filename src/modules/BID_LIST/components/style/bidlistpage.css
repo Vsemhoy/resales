@@ -172,5 +172,5 @@
 	background-color: var(--row-self-accent-color);
 }
 .sa-busy-row {
-	background-color: var(--row-self-busy-color);
+	background-color: var(--row-self-busy-color) !important;
 }

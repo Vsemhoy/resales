@@ -21,7 +21,17 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
         if (socketRef.current?.connected) {
             return;
         }
-        const socket = io(url, { transports: ['websocket', 'polling'], withCredentials: true });
+
+        const socket = io(url, {
+            transports: ['websocket', 'polling'],
+            withCredentials: true,
+            // ✅ Добавляем опции для лучшего управления переподключением
+            autoConnect: true,
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000
+        });
+
         socketRef.current = socket;
 
         socket.on('connect', () => {
@@ -38,14 +48,35 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
         });
 
         socket.on('disconnect', (reason) => {
-            console.log('RESALES WEBSOCKET DISCONNECTED');
+            console.log('RESALES WEBSOCKET DISCONNECTED, reason:', reason);
             setConnected(false);
             setConnectionStatus('disconnected');
+
+            // ✅ НЕ очищаем обработчики при disconnect, чтобы восстановить при reconnect
+            // eventHandlersRef.current остается нетронутым
         });
 
         socket.on('connect_error', (error) => {
-            console.log('RESALES WEBSOCKET CONNECT ERROR');
+            console.log('RESALES WEBSOCKET CONNECT ERROR:', error.message);
+            setConnectionStatus('error');
         });
+
+        // ✅ Добавляем обработчик reconnect
+        socket.on('reconnect', (attemptNumber) => {
+            console.log('RESALES WEBSOCKET RECONNECTED after', attemptNumber, 'attempts');
+            setConnected(true);
+            setConnectionStatus('connected');
+        });
+
+        socket.on('reconnect_error', (error) => {
+            console.log('RESALES WEBSOCKET RECONNECT ERROR:', error.message);
+        });
+
+        socket.on('reconnect_failed', () => {
+            console.log('RESALES WEBSOCKET RECONNECT FAILED');
+            setConnectionStatus('failed');
+        });
+
     }, [url]);
 
     // Функция подписки на событие
@@ -77,18 +108,48 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
 
     // Функция отправки сообщений
     const emit = useCallback((event, data) => {
-        socketRef.current?.emit(event, data);
+        if (socketRef.current?.connected) {
+            socketRef.current.emit(event, data);
+        } else {
+            console.warn('WebSocket not connected, cannot emit:', event);
+        }
+    }, []);
+
+    // ✅ Функция для ручного отключения
+    const disconnect = useCallback(() => {
+        if (socketRef.current) {
+            console.log('Manually disconnecting WebSocket');
+            socketRef.current.disconnect();
+        }
     }, []);
 
     useEffect(() => {
         if (userdata) {
             connect();
+
+            // ✅ Правильный cleanup: отключаем сокет, но НЕ очищаем обработчики
             return () => {
-                socketRef.current?.disconnect();
-                eventHandlersRef.current.clear();
+                console.log('WebSocketProvider cleanup - disconnecting');
+                if (socketRef.current) {
+                    socketRef.current.disconnect();
+                    // НЕ очищаем eventHandlersRef.current здесь!
+                    // Это позволит восстановить подписки при реконнекте
+                }
             };
         }
     }, [userdata, connect]);
+
+    // ✅ Эффект для полной очистки при полном размонтировании
+    useEffect(() => {
+        return () => {
+            console.log('WebSocketProvider unmounting - full cleanup');
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+                socketRef.current = null;
+            }
+            eventHandlersRef.current.clear();
+        };
+    }, []);
 
     return (
         <ResalesWebSocketContext.Provider
@@ -97,6 +158,7 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
                 connectionStatus,
                 subscribe,
                 emit,
+                disconnect, // ✅ Экспортируем функцию disconnect
                 socket: socketRef.current
             }}
         >

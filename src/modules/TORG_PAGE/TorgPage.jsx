@@ -178,6 +178,7 @@ useEffect(() => {
 
 	const [baseFiltersData, setBaseFilterstData] = useState(null);
 
+	const [refreshMark, setRefreshMark] = useState(null);
 
 	const [isOpenCustomModal,  setIsOpenCustomModal]  = useState(false);
 	const [customModalTitle,   setCustomModalTitle]   = useState('Некоторые данные не сохранены. Выйти из режима редактирования и отменить изменения?');
@@ -207,7 +208,7 @@ useEffect(() => {
 
 
 	useEffect(() => {
-
+		if (!editMode) return;
 
 		let collect = {};
 
@@ -225,9 +226,12 @@ useEffect(() => {
 		collect.calls = tempCallsData.filter((item)=> item.command !== undefined );
 		collect.notes = tempNotesData.filter((item)=> item.command !== undefined  );
 
+		log_save_action('useEffect');
+		
 		setCOLLECTOR(collect);
 
-	}, [tempMain_contacts, 
+	}, [
+		tempMain_contacts, 
 		tempMain_addresses,
 		tempMain_emails,
 		tempMain_legalAddresses,
@@ -283,9 +287,16 @@ useEffect(() => {
 		let rp = getCurrentParamsString();
 
 		if (rp.includes('frompage=orgs')) {
-			rp.replace('frompage=orgs&', '');
-			rp.replace('frompage=orgs', '');
+			rp = rp.replace('frompage=orgs&', '');
+			rp = rp.replace('frompage=orgs', '');
 			rp = '/orgs?' + rp;
+			setBackeReturnPath(rp);
+		}
+		if (rp.includes('frompage=bids')) {
+			rp = rp.replace('frompage=bids&', '');
+			rp = rp.replace('frompage=bids', '');
+			console.log('rp', rp);
+			rp = '/bids?' + rp;
 			setBackeReturnPath(rp);
 		}
 		let t = searchParams.get('tab');
@@ -316,6 +327,9 @@ useEffect(() => {
 			setBaseCallsData(MODAL_CALLS_LIST);
 
       setDepartList(DEPARTAMENTS_MOCK);
+			setTimeout(() => {
+				setLoading(false);
+			}, 1000);
 		}
 	}, []);
 
@@ -400,9 +414,6 @@ useEffect(() => {
 					}, 1000);
 
 					clearTemps();
-					setTimeout(() => {
-						setLoading(false);
-					}, 1000);
 				}
 				
 			setTempMainData(null);
@@ -459,6 +470,7 @@ useEffect(() => {
 	/** ----------------------- FETCHES -------------------- */
 
 	const get_main_data_action = async (id) => {
+		setLoading(true);
 		try {
 			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/m', {
 				data: {},
@@ -476,10 +488,11 @@ useEffect(() => {
 		} catch (e) {
 			console.log(e);
 		} finally {
+
 		}
-		setTimeout(() => {
-			setLoading(false);
-		}, 1000);
+			setTimeout(() => {
+				setLoading(false);
+			}, 1000);
 	};
 
 
@@ -530,6 +543,8 @@ useEffect(() => {
 
 
 	const update_data_action = async () => {
+		log_save_action('save_action');
+
 		let data = {
 								// С объектами ref не работает, только с массивами
 								main : tempMainData, //Ref.current?.ID ? tempMainDataRef.current : null,
@@ -569,6 +584,7 @@ useEffect(() => {
 					setAlertDescription(response.message || 'Неизвестная ошибка сервера');
 					setAlertType('error');
 					setBlockSave(false);
+					setBlockOnSave(false);
 				}
 			} catch (e) {
 				console.log(e);
@@ -592,6 +608,51 @@ useEffect(() => {
 		}
 
 	};
+
+
+	const  log_save_action = async (src = null) => {
+		let data = {
+								// С объектами ref не работает, только с массивами
+								main : tempMainData, //Ref.current?.ID ? tempMainDataRef.current : null,
+								contacts : tempMain_contactsRef.current,
+								org_phones : tempMain_phonesRef.current,
+								org_emails : tempMain_emailsRef.current,
+								org_addresses : tempMain_addressesRef.current,
+								org_legaladdresses : tempMain_legalAddressesRef.current,
+								org_requisites : tempMain_an_requisitesRef.current,
+								org_an_licenses : tempMain_an_licensesRef.current,
+								org_an_tolerances : tempMain_an_tolerancesRef.current,
+								org_bo_licenses : tempMain_bo_licensesRef.current,
+
+								projects : tempProjectsDataRef.current, // Ref.filter((item)=> itemRef.command !== undefined  ),
+								calls : tempCallsDataRef.current, //Ref.filter((item)=> itemRef.command !== undefined ),
+								notes : tempNotesDataRef.current, //.filter((item)=> item.command !== undefined  ),
+								__src : src
+					};
+
+		if (PRODMODE) {
+			setSaveProcess(20);
+			try {
+				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/logupdateorglist/' + itemId, {
+					data: data,
+					save_pushed: blockOnSave,
+					_token: CSRF_TOKEN,
+				});
+				if (response.status === 200){
+          // При успешной записи - очищаем все временные списки и загружаем данные заново
+				
+        } else {
+					
+				}
+			} catch (e) {
+				console.log(e);
+			} finally {
+				// setLoadingOrgs(false)
+
+			}
+		}
+	}
+
 
 	/** ----------------------- FETCHES -------------------- */
 
@@ -1161,6 +1222,7 @@ useEffect(() => {
               				selects={baseFiltersData}
 
 							do_delay={(val)=>{setBlockDelay(val)}}
+							is_loading={loading}
 
 							on_change_main_data={handleMainDataChange}
 							on_change_contact={handleContactChange}

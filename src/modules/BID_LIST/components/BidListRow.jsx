@@ -143,7 +143,13 @@ const { getCurrentParamsString } = useURLParams();
 		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
 			<Tooltip title={data.last_message ?? ''}>
 				<div
-					className={`sa-table-box-bids sa-table-box-row ${active ? 'active' : ''} ${data.last_message ? 'sa-error-row' : ''}`}
+					className={`
+                        sa-table-box-bids 
+                        sa-table-box-row 
+                        ${active ? 'active' : ''} 
+                        ${data.last_message ? 'sa-error-row' : ''}
+                        ${data?.highlight ? 'sa-busy-row' : ''}
+					`}
 					style={{color: compColor, cursor: 'pointer'}}
 					onDoubleClick={handleDoubleClick}
 				>

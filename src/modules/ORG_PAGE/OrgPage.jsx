@@ -285,14 +285,15 @@ useEffect(() => {
 		let rp = getCurrentParamsString();
 
 		if (rp.includes('frompage=orgs')) {
-			rp.replace('frompage=orgs&', '');
-			rp.replace('frompage=orgs', '');
+			rp = rp.replace('frompage=orgs&', '');
+			rp = rp.replace('frompage=orgs', '');
 			rp = '/orgs?' + rp;
 			setBackeReturnPath(rp);
 		}
 		if (rp.includes('frompage=bids')) {
-			rp.replace('frompage=bids&', '');
-			rp.replace('frompage=bids', '');
+			rp = rp.replace('frompage=bids&', '');
+			rp = rp.replace('frompage=bids', '');
+			console.log('rp', rp);
 			rp = '/bids?' + rp;
 			setBackeReturnPath(rp);
 		}
