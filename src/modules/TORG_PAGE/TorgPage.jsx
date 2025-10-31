@@ -635,7 +635,7 @@ useEffect(() => {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/logupdateorglist/' + itemId, {
 					data: data,
-					save_pushed: blockOnSave,
+					save_pushed: src === 'save_action' ? true : false,
 					_token: CSRF_TOKEN,
 				});
 				if (response.status === 200){

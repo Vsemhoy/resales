@@ -181,6 +181,14 @@ const ProjectTabSectionTorg = (props) => {
 		}
 	}, [props.org_contacts]);
 
+	useEffect(() => {
+		if (!props.org_id){
+			setACTION_FLAG(null);
+			setBLUR_FLAG(null);
+		}
+		setOrgId(props.org_id);
+	}, [props.org_id]);
+
 	// ██    ██ ███████ ███████       ██   ██
 	// ██    ██ ██      ██             ██ ██
 	// ██    ██ █████   █████   █████   ███
@@ -358,7 +366,7 @@ const ProjectTabSectionTorg = (props) => {
 		}
 		const timer = setTimeout(() => {
 			// При сверх-быстром изменении полей в разных секциях могут быть гонки
-			if (editMode && data) {
+			if (editMode && data && orgId) {
 				if (props.on_collect) {
 					const newData = JSON.parse(JSON.stringify(data));
 					newData.name = name;

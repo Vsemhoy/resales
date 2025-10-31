@@ -93,7 +93,12 @@ const CallTabSectionTorg = (props) => {
     }, [props.data?.creator]);
 
 
-
+  useEffect(() => {
+    if (!props.org_id){
+      setACTION_FLAG(null);
+      setBLUR_FLAG(null);
+    }
+  }, [props.org_id]);
 
   useEffect(() => {
     setRefreshMark(props.refresh_mark);
