@@ -209,7 +209,7 @@ useEffect(() => {
 
 
 	useEffect(() => {
-
+		if (!editMode || !itemId) return;
 
 		let collect = {};
 
@@ -227,9 +227,12 @@ useEffect(() => {
 		collect.calls = tempCallsData.filter((item)=> item.command !== undefined );
 		collect.notes = tempNotesData.filter((item)=> item.command !== undefined  );
 
+		log_save_action('useEffect');
+		
 		setCOLLECTOR(collect);
 
-	}, [tempMain_contacts, 
+	}, [
+		tempMain_contacts, 
 		tempMain_addresses,
 		tempMain_emails,
 		tempMain_legalAddresses,
@@ -541,6 +544,8 @@ useEffect(() => {
 
 
 	const update_data_action = async () => {
+		log_save_action('save_action');
+
 		let data = {
 								// С объектами ref не работает, только с массивами
 								main : tempMainData, //Ref.current?.ID ? tempMainDataRef.current : null,
@@ -580,6 +585,7 @@ useEffect(() => {
 					setAlertDescription(response.message || 'Неизвестная ошибка сервера');
 					setAlertType('error');
 					setBlockSave(false);
+					setBlockOnSave(false);
 				}
 			} catch (e) {
 				console.log(e);
@@ -603,6 +609,51 @@ useEffect(() => {
 		}
 
 	};
+
+
+	const  log_save_action = async (src = null) => {
+		let data = {
+								// С объектами ref не работает, только с массивами
+								main : tempMainData, //Ref.current?.ID ? tempMainDataRef.current : null,
+								contacts : tempMain_contactsRef.current,
+								org_phones : tempMain_phonesRef.current,
+								org_emails : tempMain_emailsRef.current,
+								org_addresses : tempMain_addressesRef.current,
+								org_legaladdresses : tempMain_legalAddressesRef.current,
+								org_requisites : tempMain_an_requisitesRef.current,
+								org_an_licenses : tempMain_an_licensesRef.current,
+								org_an_tolerances : tempMain_an_tolerancesRef.current,
+								org_bo_licenses : tempMain_bo_licensesRef.current,
+
+								projects : tempProjectsDataRef.current, // Ref.filter((item)=> itemRef.command !== undefined  ),
+								calls : tempCallsDataRef.current, //Ref.filter((item)=> itemRef.command !== undefined ),
+								notes : tempNotesDataRef.current, //.filter((item)=> item.command !== undefined  ),
+								__src : src
+					};
+
+		if (PRODMODE) {
+			setSaveProcess(20);
+			try {
+				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/logupdateorglist/' + itemId, {
+					data: data,
+					save_pushed: src === 'save_action' ? true : false,
+					_token: CSRF_TOKEN,
+				});
+				if (response.status === 200){
+          // При успешной записи - очищаем все временные списки и загружаем данные заново
+				
+        } else {
+					
+				}
+			} catch (e) {
+				console.log(e);
+			} finally {
+				// setLoadingOrgs(false)
+
+			}
+		}
+	}
+
 
 	/** ----------------------- FETCHES -------------------- */
 

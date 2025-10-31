@@ -33,6 +33,13 @@ const NoteTabSectionTorg = (props) => {
   const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 
   useEffect(() => {
+    if (!props.org_id){
+      setACTION_FLAG(null);
+      setBLUR_FLAG(null);
+    }
+  }, [props.org_id]);
+
+  useEffect(() => {
     setAuthorFullName(FullNameText(props.data?.curator));
     setAuthorShortName(
       ShortName(
