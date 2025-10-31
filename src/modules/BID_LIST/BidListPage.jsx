@@ -167,7 +167,7 @@ const BidListPage = (props) => {
         console.log('HIGHLIGHT_BID', data);
         setBids(prev => {
             return prev.map(bid => {
-                if (+bid.id === +data.subscribedBidId) {
+                if (+bid.id === +data.bidId) {
                     return { ...bid, highlight: true }
                 } else return bid;
             });
@@ -177,7 +177,7 @@ const BidListPage = (props) => {
         console.log('UNHIGHLIGHT_BID', data);
         setBids(prev => {
             return prev.map(bid => {
-                if (+bid.id === +data.subscribedBidId) {
+                if (+bid.id === +data.bidId) {
                     return { ...bid, highlight: false }
                 } else return bid;
             });
