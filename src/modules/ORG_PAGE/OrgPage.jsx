@@ -290,6 +290,12 @@ useEffect(() => {
 			rp = '/orgs?' + rp;
 			setBackeReturnPath(rp);
 		}
+		if (rp.includes('frompage=bids')) {
+			rp.replace('frompage=bids&', '');
+			rp.replace('frompage=bids', '');
+			rp = '/bids?' + rp;
+			setBackeReturnPath(rp);
+		}
 		let t = searchParams.get('tab');
 		if (t && ['m', 'b', 'o', 'p', 'c', 'n', 'h'].includes(t)) {
 			setSearchParams({ tab: t });

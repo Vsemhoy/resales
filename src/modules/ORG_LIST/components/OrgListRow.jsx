@@ -536,7 +536,6 @@ const antiTruncateText = (text, maxLength = 200) => {
 							{orgData.subcompanies?.length > 0  ? (
 							<Dropdown menu={{ items: requisitesMenu}} placement="bottom">
 								<div
-								 title={filterName}
 									className={`sa-col-with-menu ${matchSubcompany ? "sa-col-win" : ""}`}
 								>
 									<BuildingOffice2Icon height={'18px'} />

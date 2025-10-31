@@ -10,6 +10,10 @@ const BidListTable = (props) => {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 	const [previewItem, setPreviewItem] = useState(null);
 
+	// Название компании в поиске
+	const [filterName, setFilterName] = useState(null);
+	const [filterTriggered, setFilterTriggered] = useState(null);
+
 	const [bidId, setBidId] = useState(null);
 	const [companyName, setCompanyName] = useState(null);
 	const [type, setType] = useState(null);
@@ -27,6 +31,7 @@ const BidListTable = (props) => {
 		}
 		if (props.filter_box.company_name !== companyName) {
 			setCompanyName(props.filter_box.company_name);
+			setFilterName(props.filter_box.company_name);
 		}
 		if (props.filter_box.type !== type) {
 			setType(props.filter_box.type);
@@ -52,6 +57,7 @@ const BidListTable = (props) => {
 		if (props.filter_box.object_name !== objectName) {
 			setObjectName(props.filter_box.object_name);
 		}
+		setFilterTriggered(dayjs().unix());
 	}, [props.filter_box]);
 
 	useEffect(() => {
@@ -70,6 +76,7 @@ const BidListTable = (props) => {
 			};
 			console.log(newFilterBox);
 			props.on_change_filter_box(newFilterBox);
+			setFilterTriggered(dayjs().unix());
 		}, 700); // ⏱️ 1 секунда задержки
 		return () => clearTimeout(timer);
 	}, [
@@ -84,6 +91,17 @@ const BidListTable = (props) => {
 		comment,
 		objectName,
 	]);
+
+
+	useEffect(() => {
+		const timer = setTimeout((filterBox) => {
+			setFilterName(companyName);
+		}, 1500);
+		return () => clearTimeout(timer);
+	}, [
+		companyName,
+	]);
+
 
 	useEffect(() => {
 		if (props.my_bids && props.user_info) {
@@ -414,6 +432,8 @@ const BidListTable = (props) => {
 				{(props.bids && props.bids.length > 0) ?
 					props.bids.map((bid, index) => (
 						<BidListRow
+							filter_triggered={filterTriggered}
+							filter_name={filterName}
 							data={bid}
 							is_active={isPreviewOpen && previewItem === bid.id}
 							on_double_click={handlePreviewOpen}
