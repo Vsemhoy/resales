@@ -583,13 +583,13 @@ const ProjectTabSectionTorg = (props) => {
 										readOnly={!editMode}
 										variant="borderless"
 										maxLength={200}
-										required={true}
+										required={false}
 										onBlur={() => {
 											setBLUR_FLAG(dayjs().unix());
 										}}
 									/>
 								),
-								required: true,
+								required: false,
 								value: name,
 							},
 						]}
@@ -616,13 +616,13 @@ const ProjectTabSectionTorg = (props) => {
 										readOnly={!editMode}
 										variant="borderless"
 										maxLength={200}
-										required={true}
+										required={false}
 										onBlur={() => {
 											setBLUR_FLAG(dayjs().unix());
 										}}
 									/>
 								),
-								required: true,
+								required: false,
 								value: address,
 							},
 						]}
@@ -649,13 +649,13 @@ const ProjectTabSectionTorg = (props) => {
 										readOnly={!editMode}
 										variant="borderless"
 										maxLength={200}
-										required={true}
+										required={false}
 										onBlur={() => {
 											setBLUR_FLAG(dayjs().unix());
 										}}
 									/>
 								),
-								required: true,
+								required: false,
 								value: customer,
 							},
 							{
@@ -678,7 +678,7 @@ const ProjectTabSectionTorg = (props) => {
 										}}
 									/>
 								),
-								required: true,
+								required: false,
 								value: stage,
 							},
 						]}
@@ -733,7 +733,7 @@ const ProjectTabSectionTorg = (props) => {
 										}}
 									/>
 								),
-								required: true,
+								required: false,
 								value: typePeac,
 							},
 						]}
@@ -784,7 +784,7 @@ const ProjectTabSectionTorg = (props) => {
 										}}
 									/>
 								),
-								required: true,
+								required: false,
 								value: contactperson,
 								disabled: !editMode,
 								readOnly: !editMode,
@@ -880,7 +880,7 @@ const ProjectTabSectionTorg = (props) => {
 						inputs={[
 							{
 								edit_mode: editMode,
-								label: 'Тип проекта',
+								label: 'Состояния',
 								input: (
 									<Select
 										key={'texpard_14_' + data?.id}
@@ -903,9 +903,10 @@ const ProjectTabSectionTorg = (props) => {
 										disabled={!editMode}
 									/>
 								),
-								required: true,
+								required: false,
 								value: projType,
 							},
+							
 						]}
 						extratext={[]}
 					/>
