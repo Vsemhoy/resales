@@ -53,10 +53,12 @@ import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
 import OrgProjectEditorSectionBox
 	from "../ORG_PAGE/components/sections/NotesTabSections/Rows/OrgProjectEditorSectionBox";
+import {useWebSocket} from "../../context/ResalesWebSocketContext";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
 	const { bidId } = useParams();
+    const { emit } = useWebSocket();
 	const navigate = useNavigate();
 	const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -243,6 +245,15 @@ const BidPage = (props) => {
 	useEffect(() => {
 		if (props.userdata) {
 			setUserData(props.userdata);
+            emit('HIGHLIGHT_BID', {
+                bidId: bidId,
+                userId: props.userdata?.user?.id,
+            });
+
+            return () => emit('UNHIGHLIGHT_BID', {
+                bidId: bidId,
+                userId: props.userdata?.user?.id,
+            });
 		}
 	}, [props.userdata]);
 	useEffect(() => {
