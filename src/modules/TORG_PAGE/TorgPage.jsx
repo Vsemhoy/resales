@@ -226,7 +226,7 @@ useEffect(() => {
 		collect.calls = tempCallsData.filter((item)=> item.command !== undefined );
 		collect.notes = tempNotesData.filter((item)=> item.command !== undefined  );
 
-		log_save_action();
+		log_save_action('useEffect');
 		
 		setCOLLECTOR(collect);
 
@@ -543,6 +543,8 @@ useEffect(() => {
 
 
 	const update_data_action = async () => {
+		log_save_action('save_action');
+
 		let data = {
 								// С объектами ref не работает, только с массивами
 								main : tempMainData, //Ref.current?.ID ? tempMainDataRef.current : null,
@@ -582,6 +584,7 @@ useEffect(() => {
 					setAlertDescription(response.message || 'Неизвестная ошибка сервера');
 					setAlertType('error');
 					setBlockSave(false);
+					setBlockOnSave(false);
 				}
 			} catch (e) {
 				console.log(e);
@@ -607,7 +610,7 @@ useEffect(() => {
 	};
 
 
-	const  log_save_action = async () => {
+	const  log_save_action = async (src = null) => {
 		let data = {
 								// С объектами ref не работает, только с массивами
 								main : tempMainData, //Ref.current?.ID ? tempMainDataRef.current : null,
@@ -624,6 +627,7 @@ useEffect(() => {
 								projects : tempProjectsDataRef.current, // Ref.filter((item)=> itemRef.command !== undefined  ),
 								calls : tempCallsDataRef.current, //Ref.filter((item)=> itemRef.command !== undefined ),
 								notes : tempNotesDataRef.current, //.filter((item)=> item.command !== undefined  ),
+								__src : src
 					};
 
 		if (PRODMODE) {
