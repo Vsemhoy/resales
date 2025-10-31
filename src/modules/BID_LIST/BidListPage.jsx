@@ -168,7 +168,11 @@ const BidListPage = (props) => {
         setBids(prev => {
             return prev.map(bid => {
                 if (+bid.id === +data.bidId) {
-                    return { ...bid, highlight: true }
+                    return {
+                        ...bid,
+                        highlight: true,
+                        editor: data.userFIO,
+                    }
                 } else return bid;
             });
         });
@@ -178,7 +182,11 @@ const BidListPage = (props) => {
         setBids(prev => {
             return prev.map(bid => {
                 if (+bid.id === +data.bidId) {
-                    return { ...bid, highlight: false }
+                    return {
+                        ...bid,
+                        highlight: false,
+                        editor: null,
+                    }
                 } else return bid;
             });
         });
