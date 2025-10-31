@@ -146,7 +146,7 @@ export const App = () => {
                                         path="/bids/:bidId"
                                         element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
                                     />
-									
+
 								{/*<Route*/}
 								{/*	path={BASE_ROUTE + '/files_buh'}*/}
 								{/*	element={<FilesBuhPage userdata={userdata} changed_user_data={setUserdata} />}*/}
