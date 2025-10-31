@@ -32,29 +32,56 @@ const InfoBigSectionOrg = (props) => {
       setACTION_FLAG(null);
     }, [props.data.id, props.org_id]);
 
-  useEffect(() => {
-    if (props.data?.id){
-          setItemId(props.data?.id);
-          // setObjectResult(props.data);
-          if (props.data?.creator){
-            setAuthor(ShortName(props.data?.creator?.surname, props.data?.creator?.name, props.data?.creator?.secondname));
-          } else {
-            setAuthor('');
-          };
-          if (props.data?.curator){
-            setCurator(ShortName(props.data?.curator?.surname, props.data?.curator?.name, props.data?.curator?.secondname));
-          } else {
-            setCurator('');
-          };
+  // useEffect(() => {
+  //   if (props.data?.id){
+  //         setItemId(props.data?.id);
+  //         // setObjectResult(props.data);
+  //         if (props.data?.creator){
+  //           setAuthor(ShortName(props.data?.creator?.surname, props.data?.creator?.name, props.data?.creator?.secondname));
+  //         } else {
+  //           setAuthor('');
+  //         };
+  //         if (props.data?.curator){
+  //           setCurator(ShortName(props.data?.curator?.surname, props.data?.curator?.name, props.data?.curator?.secondname));
+  //         } else {
+  //           setCurator('');
+  //         };
     
-          setStatusmoney(props.data?.id8an_statusmoney);
-          setConveyance(props.data?.id8an_conveyance ? props.data?.id8an_conveyance : null);
+  //         setStatusmoney(props.data?.id8an_statusmoney);
+  //         setConveyance(props.data?.id8an_conveyance ? props.data?.id8an_conveyance : null);
           
-          setTypeList(props.data?.list?.id8an_typelist ? props.data?.list?.id8an_typelist : null);
-          setListComment(props.data?.list?.comment ? props.data?.list?.comment : '');
-      };
+  //         setTypeList(props.data?.list?.id8an_typelist ? props.data?.list?.id8an_typelist : null);
+  //         setListComment(props.data?.list?.comment ? props.data?.list?.comment : '');
+  //     };
     
-  }, [props.data]);
+  // }, [props.data]);
+
+  useEffect(() => {
+    if (!props.data?.id) return;
+
+    // Обновляем стейт ТОЛЬКО если пришла новая запись (по id)
+    if (itemId !== props.data.id) {
+      setItemId(props.data.id);
+      }
+      const newAuthor = props.data.creator
+        ? ShortName(props.data.creator.surname, props.data.creator.name, props.data.creator.secondname)
+        : '';
+      // setAuthor(newAuthor);
+
+      const newCurator = props.data.curator
+        ? ShortName(props.data.curator.surname, props.data.curator.name, props.data.curator.secondname)
+        : '';
+      // setCurator(newCurator);
+
+  if (author !== newAuthor) setAuthor(newAuthor);
+  if (curator !== newCurator) setCurator(newCurator);
+  if (statusmoney !== props.data.id8an_statusmoney) setStatusmoney(props.data.id8an_statusmoney);
+  if (conveyance !== (props.data.id8an_conveyance ?? null)) setConveyance(props.data.id8an_conveyance ?? null);
+  if (typeList !== (props.data.list?.id8an_typelist ?? null)) setTypeList(props.data.list?.id8an_typelist ?? null);
+  if (listComment !== (props.data.list?.comment ?? '')) setListComment(props.data.list?.comment ?? '');
+   
+  }, [props.data]);  
+
 
   useEffect(() => {
     if (BLUR_FLAG === null){ return; }

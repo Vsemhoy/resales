@@ -18,8 +18,12 @@ const SiteBigSectionOrg = (props) => {
   }, [props.edit_mode]);
 
   useEffect(() => {
-    setItemId(props.data?.id);
-    setSite(props.data?.site)
+    if (props.data?.id !== itemId){
+      setItemId(props.data?.id);
+    }
+    if (site !== props.data?.site){
+      setSite(props.data?.site)
+    }
   }, [props.data]);
 
   useEffect(() => {

@@ -39,21 +39,50 @@ const MianBigSectionOrg = (props) => {
     setACTION_FLAG(null);
    }, [props.data.id, props.org_id]);
 
-  useEffect(() => {
-    setItemId(props.data.id);
+  // useEffect(() => {
+  //   setItemId(props.data.id);
     
-    setName(props.data.name);
-    setMiddlename(props.data.middlename);
-    setSource(props.data.source);
-    setId8an_profiles(props.data.id8an_profiles ? props.data.id8an_profiles : null);
-    setId8an_fs(props.data.id8an_fs ? props.data.id8an_fs  : null);
-    setInn(props.data.inn);
-    setComment(props.data.comment);
-    setCommentinlist(props.data.commentinlist);
-    setKindofactivity(props.data.kindofactivity);
-    setSubcompanies(props.data.subcompanies ? props.data.subcompanies : []);
-    setProfsound(props.data.profsound ? props.data.profsound : null);
-  }, [props.data]);
+  //   setName(props.data.name);
+  //   setMiddlename(props.data.middlename);
+  //   setSource(props.data.source);
+  //   setId8an_profiles(props.data.id8an_profiles ? props.data.id8an_profiles : null);
+  //   setId8an_fs(props.data.id8an_fs ? props.data.id8an_fs  : null);
+  //   setInn(props.data.inn);
+  //   setComment(props.data.comment);
+  //   setCommentinlist(props.data.commentinlist);
+  //   setKindofactivity(props.data.kindofactivity);
+  //   setSubcompanies(props.data.subcompanies ? props.data.subcompanies : []);
+  //   setProfsound(props.data.profsound ? props.data.profsound : null);
+  // }, [props.data]);
+
+  useEffect(() => {
+  if (!props.data) return;
+
+  // Только если значение изменилось — обновляем стейт
+  if (itemId !== props.data.id) setItemId(props.data.id);
+  if (name !== props.data.name) setName(props.data.name);
+  if (middlename !== props.data.middlename) setMiddlename(props.data.middlename);
+  if (source !== props.data.source) setSource(props.data.source);
+  if (id8an_profiles !== (props.data.id8an_fs ?? null)) setId8an_profiles(props.data.id8an_profiles ?? null);
+  if (id8an_fs !== (props.data.id8an_fs ?? null)) setId8an_fs(props.data.id8an_fs ?? null);
+  if (inn !== props.data.inn) setInn(props.data.inn);
+  if (comment !== props.data.comment) setComment(props.data.comment);
+  if (commentinlist !== props.data.commentinlist) setCommentinlist(props.data.commentinlist);
+  if (kindofactivity !== props.data.kindofactivity) setKindofactivity(props.data.kindofactivity);
+  
+  // Для массивов и объектов — будь осторожен!
+  // Простое !== не сработает, если родитель пересоздаёт массив каждый раз
+  const subcompaniesFromProps = props.data.subcompanies ?? [];
+  if (subcompanies.length !== subcompaniesFromProps.length || 
+      subcompanies.some((item, i) => item !== subcompaniesFromProps[i])) {
+    setSubcompanies(subcompaniesFromProps);
+  }
+
+  if (profsound !== (props.data.profsound ?? null)) setProfsound(props.data.profsound ?? null);
+
+}, [props.data, 
+   itemId, name, middlename, source, id8an_profiles, id8an_fs, inn, 
+   comment, commentinlist, kindofactivity, subcompanies, profsound]);
 
   useEffect(() => {
     if (BLUR_FLAG === null){ return; }
