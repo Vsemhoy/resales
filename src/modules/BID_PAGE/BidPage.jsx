@@ -1698,6 +1698,7 @@ const BidPage = (props) => {
 				textArea.select();
 				document.execCommand('copy');
 				document.body.removeChild(textArea);
+				bufAlert('Данные скопированы в буфер', 'success');
 			} catch (err) {
 				console.error('Ошибка копирования:', err);
 				bufAlert('Проблемы с копированием в буфер', 'error');
