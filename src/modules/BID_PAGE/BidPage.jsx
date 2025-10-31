@@ -11,7 +11,7 @@ import {
 	Steps,
 	Tag,
 	Tooltip,
-	Space, Empty, Divider
+	Space, Empty, Divider, message
 } from 'antd';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE} from '../../config/config';
@@ -210,6 +210,9 @@ const BidPage = (props) => {
 		author_id: null,
 		author: null,
 	});
+
+	const [messageApi, contextHolder] = message.useMessage();
+
 
 	useEffect(() => {
 		if (!isMounted) {
@@ -1673,8 +1676,39 @@ const BidPage = (props) => {
 		},
 	];
 
+	const bufAlert = (content, type) => {
+		messageApi.open({
+			type: type,
+			content: content,
+		});
+	};
+
+	const handleClick = async (bidModelID) => {
+		const result = modelsSelect.filter(item => item.id === bidModelID);
+
+		try {
+			await navigator.clipboard.writeText(result[0].name);
+			console.log('Данные скопированы в буфер');
+			bufAlert('Данные скопированы в буфер', 'success');
+		} catch (err) {
+			try {
+				const textArea = document.createElement('textarea');
+				textArea.value = result[0].name;
+				document.body.appendChild(textArea);
+				textArea.select();
+				document.execCommand('copy');
+				document.body.removeChild(textArea);
+				bufAlert('Данные скопированы в буфер', 'success');
+			} catch (err) {
+				console.error('Ошибка копирования:', err);
+				bufAlert('Проблемы с копированием в буфер', 'error');
+			}
+		}
+	};
+
 	return (
 		<div className={'sa-bid-page-container'}>
+			{contextHolder}
 			<Spin size="large" spinning={isLoading}>
 				<div className={'sa-bid-page'}>
 					<Affix>
@@ -2295,6 +2329,11 @@ const BidPage = (props) => {
 														model={bidModel}
 														disabled={isDisabledInputManager()}
 														onUpdateModelName={handleChangeModel}
+													/>
+
+													<Button
+														icon={<CopyOutlined />}
+														onClick={() => handleClick(bidModel.model_id)}
 													/>
 												</div>
 												<div className={'sa-models-table-cell'}>
