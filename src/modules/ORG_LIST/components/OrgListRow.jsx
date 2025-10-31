@@ -19,6 +19,7 @@ import {
 	InboxStackIcon,
 	MusicalNoteIcon,
 	PhoneArrowUpRightIcon,
+	TicketIcon,
 } from '@heroicons/react/24/solid';
 import { getBidsItems, getCallsItems, getMeetingsItems } from './hooks/AlansOrgHooks';
 import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
@@ -26,6 +27,7 @@ import { useURLParams } from '../../../components/helpers/UriHelpers';
 import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { values } from 'lodash';
+import HighlightText from '../../../components/helpers/HighlightText';
 
 const OrgListRow = (props) => {
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
@@ -34,12 +36,34 @@ const OrgListRow = (props) => {
 	const [compColor, setCompColor] = useState('#00000000');
 	const [menuItems, setMenuItems] = useState([]);
 
+	const [requisitesMenu, setRequisitesMenu] = useState([]);
+	const [paymersMenu,    setPaymersMenu] = useState([]);
+
 	const { userdata } = props;
+
+	const [filterName, setFilterName] = useState(null);
+
+	const [matchRequisite,  setMatchRequisite]  = useState(false);
+	const [matchSubcompany, setmatchSubcompany] = useState(false);
+
 
 const truncateText = (text, maxLength = 200) => {
   if (!text) return '';
-  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+  return text.length > maxLength ? text.slice(0, maxLength) : text;
 };
+
+const antiTruncateText = (text, maxLength = 200) => {
+  if (!text) return '';
+  return text.length > maxLength ? text.slice(maxLength, text.length): '';
+};
+
+	useEffect(() => {
+		if (props.filter_name){
+			setFilterName(props.filter_name);
+		} else {
+			setFilterName(null);
+		}
+	}, [props.filter_name]);
 
 	const menuItemsd = [
 		{
@@ -119,7 +143,7 @@ const truncateText = (text, maxLength = 200) => {
 							icon: <ArchiveBoxXMarkIcon height="18px" />,
 							label: <div
 								onClick={handleDeletOrg}
-							>Удалить пасспорт из списка</div>,
+							>Удалить паспорт из списка</div>,
 						},
 				)
 			};
@@ -150,6 +174,90 @@ const truncateText = (text, maxLength = 200) => {
 			props.on_double_click(orgData.id);
 		}
 	};
+
+
+	useEffect(() => {
+			setSubComs();
+	}, [orgData.subcompanies]);
+
+		useEffect(() => {
+		if (!filterName && orgData.subcompanies?.length === 0) return;
+			const timer = setTimeout(() => {
+				setSubComs();
+			}, 1600);
+			return () => clearTimeout(timer);
+	}, [filterName]);
+
+
+	const setSubComs = () => {
+			setmatchSubcompany(false);
+			
+			let arrm = [];
+		if (orgData.subcompanies?.length > 0){
+				arrm.push({
+									key: "Subco_00000000",
+									value: '',
+									label: "Дочерние компании:",
+									disabled: true,
+							});
+				for (let i = 0; i < orgData.subcompanies?.length; i++) {
+					const subco = orgData.subcompanies[i];
+
+					if (subco.name && filterName?.trim() && subco.name?.toLowerCase().includes(filterName?.toLowerCase().trim())){
+						setmatchSubcompany(true);
+					}
+					arrm.push({
+									key: "Subco_" + subco.id,
+									value: subco.name,
+									label: <HighlightText text={subco.name} highlight={filterName} />,
+									danger: subco.deleted_at? true : false,
+									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <BuildingOffice2Icon height={'18px'} />,
+							});
+				}
+			}
+			setRequisitesMenu(arrm);
+	}
+
+
+		useEffect(() => {
+			setRequizMenu();					
+	}, [orgData.requisites]);
+
+			useEffect(() => {
+			if (!filterName && orgData.requisites?.length === 0) return;
+			const timer = setTimeout(() => {
+				setRequizMenu();					
+		}, 1600);
+		return () => clearTimeout(timer);
+	}, [filterName]);
+
+	const setRequizMenu = () => {
+	setMatchRequisite(false);
+		let arrm = [];
+		if (orgData.requisites?.length > 0){
+				arrm.push({
+									key: "Subcor_00000000",
+									value: '',
+									label: "Фирмы/плательщики:",
+									disabled: true,
+							});
+				for (let i = 0; i < orgData.requisites?.length; i++) {
+					const subco = orgData.requisites[i];
+					
+					if (subco.name && filterName?.trim() && subco.name?.toLowerCase().includes(filterName?.trim().toLowerCase())){
+						setMatchRequisite(true);
+					}
+					arrm.push({
+									key: "Subcor_" + subco.id,
+									value: subco.name,
+									label: <HighlightText text={subco.name} highlight={filterName} />,
+									danger: subco.deleted_at? true : false,
+									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <TicketIcon height={'18px'} />,
+							});
+				}
+			}
+			setPaymersMenu(arrm);
+	}
 
 
 	const handleCallBecomeCurator = async () => {
@@ -278,19 +386,17 @@ const truncateText = (text, maxLength = 200) => {
 				</div>
 				<div className={'sa-table-box-cell'}>
 					<div className={'sa-align-left'}>
-						
 							<div>
-
 										<Tooltip
 											color={'white'}
 											title={
-												orgData.middlename || orgData.subcompanies?.length > 0  ? (
+												orgData.middlename || orgData.subcompanies?.length > 0 || orgData.requisites?.length > 0  ? (
 											<div style={{padding: '6px'}}>
 												{orgData.middlename ? (
 													<>
 													<div className={'sa-table-orgs-header-in-tooltip'}>Второе название:</div>
 														<div style={{color: 'black'}}>
-															{orgData.middlename}
+															<HighlightText text={orgData.middlename} highlight={filterName} />
 														</div>
 													</>
 											): ""}
@@ -299,19 +405,34 @@ const truncateText = (text, maxLength = 200) => {
 												{orgData.middlename && (
 													<div style={{padding: '8px'}}></div>
 												)}
-												<div className={'sa-table-orgs-header-in-tooltip'}>Суб-компании:</div>
+												<div className={'sa-table-orgs-header-in-tooltip'}>Дочерние компании :</div>
 												<List
 													style={{padding: '0px'}}
 													size="small"
 													className='sa-org-more-list-ee'
 													bordered
 													dataSource={orgData.subcompanies?.map((subco)=>(subco.name))}
-													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}><BuildingOffice2Icon height={'18px'} /> {item}</div></List.Item>}
+													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}>
+														<span><BuildingOffice2Icon height={'18px'} /></span> <span><HighlightText text={item} highlight={filterName} /></span></div></List.Item>}
 												/>
-												
 												</>
 											)}
-											
+											{orgData.requisites?.length > 0 && (
+												<>
+												{orgData.middlename || orgData.subcompanies?.length > 0 ? (
+													<div style={{padding: '8px'}}></div>
+												): ""}
+												<div className={'sa-table-orgs-header-in-tooltip'}>Фирмы/плательщики :</div>
+												<List
+													style={{padding: '0px'}}
+													size="small"
+													className='sa-org-more-list-ee'
+													bordered
+													dataSource={orgData.requisites?.map((subco)=>(subco.name))}
+													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}>
+														<span><TicketIcon height={'18px'} /></span> <span><HighlightText text={item} highlight={filterName} /></span></div></List.Item>}/>
+												</>
+											)}
 										
 										</div>) : null
 									} 
@@ -320,13 +441,20 @@ const truncateText = (text, maxLength = 200) => {
 
 								<div className='sa-org-list-row-name-name'>
 									<NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
-									{orgData.name}
+										<HighlightText text={orgData.name} highlight={filterName} />
 									</NavLink>
 									</div>
 
-									{orgData.middlename || orgData.subcompanies?.length > 0  ? (
-										<div>{orgData.middlename ? (
-											<div>{truncateText(orgData.middlename, 60)}</div>
+									{orgData.middlename ? (
+										<div className={'sa-org-list-row-name-midname'}>{orgData.middlename ? (
+											<div><HighlightText text={truncateText(orgData.middlename, 55)} 
+											highlight={filterName} />{antiTruncateText(orgData.middlename, 55) ? (
+												<>
+												{(orgData?.middlename && filterName && orgData.middlename?.toLowerCase().includes(filterName?.toLowerCase())) ? (
+													<span className='sa-text-higlighted'>...</span>
+												):('...')}
+												</>
+											) : ''}</div>
 										) : (
 											<div>
 												{/* {orgData.subcompanies?.length} суб-компании */}
@@ -379,7 +507,7 @@ const truncateText = (text, maxLength = 200) => {
 					</div>
 				</div>
 				<div className={'sa-table-box-cell'}>
-					<div className={'sa-flex-3-columns'}>
+					<div className={'sa-flex-4-columns'}>
 						<div>
 							{orgData.website && (
 								<Tooltip
@@ -405,29 +533,27 @@ const truncateText = (text, maxLength = 200) => {
 							)}
 						</div>
 						<div>
-							{orgData.subcompanies?.length > 0 && (
-							<Dropdown menu={{ items: [ {
-									key: "Subco_00000000",
-									value: '',
-									label: "Суб-компании-плательщики:",
-									disabled: true,
-							}, ...orgData.subcompanies?.map((subco)=>{
-								return {
-									key: "Subco_" + subco.id,
-									value: subco.name,
-									label: subco.name,
-									danger: subco.deleted_at? true : false,
-									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <BuildingOffice2Icon height={'18px'} />,
-								}
-
-							}) ]}} placement="bottom">
+							{orgData.subcompanies?.length > 0  ? (
+							<Dropdown menu={{ items: requisitesMenu}} placement="bottom">
 								<div
-									className={'sa-col-with-menu'}
+								 title={filterName}
+									className={`sa-col-with-menu ${matchSubcompany ? "sa-col-win" : ""}`}
 								>
 									<BuildingOffice2Icon height={'18px'} />
 								</div>
 							</Dropdown>
-						)}
+						): ""}
+						</div>
+						<div>
+							{ orgData.requisites?.length > 0  ? (
+							<Dropdown menu={{ items: paymersMenu}} placement="bottom">
+								<div
+									className={`sa-col-with-menu ${matchRequisite ? "sa-col-win" : ""}`}
+								>
+									<TicketIcon height={'18px'} />
+								</div>
+							</Dropdown>
+						): ""}
 						</div>
 						{/* <div>
               

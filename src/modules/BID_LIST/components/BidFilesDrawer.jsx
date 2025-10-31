@@ -41,8 +41,8 @@ const BidFilesDrawer = (props) => {
     const columnsBill = [
         {
             title: "Дата создания",
-            dataIndex: "date",
-            key: "date",
+            dataIndex: "date_create",
+            key: "date_create",
             render: (e) => <span style={{ fontSize: "12px" }}>{e}</span>,
         },
         {
@@ -69,9 +69,13 @@ const BidFilesDrawer = (props) => {
             key: "bo_file_invoice",
             width: 30,
             render: (e, v) => (
-                <a href={`${HTTP_HOST}/${e}`}>
-                    <DownloadOutlined className={'download-outlined'}/>
-                </a>
+                <div>
+                    {e ? (
+                        <a href={`${HTTP_HOST}/${e}`} target="_blank">
+                            <DownloadOutlined className={'download-outlined'}/>
+                        </a>
+                    ) : (<div></div>)}
+                </div>
             ),
             align: "center",
         },
@@ -81,9 +85,13 @@ const BidFilesDrawer = (props) => {
             key: "file_invoice",
             width: 30,
             render: (e, v) => (
-                <a href={`http://zend2.arstel.su/kpischet/api/downloadinvoice?id=${v.key}`}>
-                    <DownloadOutlined className={'download-outlined'}/>
-                </a>
+                <div>
+                    {e ? (
+                        <a href={`http://zend2.arstel.su/files/${e}`} target="_blank">
+                            <DownloadOutlined className={'download-outlined'}/>
+                        </a>
+                    ) : (<div></div>)}
+                </div>
             ),
             align: "center",
         },
@@ -127,7 +135,8 @@ const BidFilesDrawer = (props) => {
                                 template_id: el?.template_id,
                                 type: el?.type,
 
-                                date_pay: el?.date_pay,
+                                date_create: get_date_by_unix(el?.date),
+                                date_pay: get_date_by_unix(el?.date_pay),
                                 number_invoice: el?.number_invoice,
                                 number_bid: el?.number_bid,
                                 bo_file_invoice: el?.bo_file_invoice,

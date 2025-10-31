@@ -19,6 +19,7 @@ export const CHAT_LIST_MOCK = {
 				status: false,
 				created_at: 1757342961,
 				updated_at: 1757342961,
+                count_unread: 10,
 			},
 			{
 				id: 250,

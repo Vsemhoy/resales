@@ -1217,6 +1217,7 @@ const BidPage = (props) => {
 			case 'toAdmin':
 				if (+button_id === 2) {
 					fetchUpdates(2).then();
+                    setIsLoadingChangePlaceBtn('');
 				}
 				break;
 			case 'backManager':
@@ -1250,6 +1251,7 @@ const BidPage = (props) => {
 			case 'toBuh':
 				if (+button_id === 2) {
 					fetchUpdates(3).then();
+                    setIsLoadingChangePlaceBtn('');
 				}
 				break;
 			case 'backAdminWithSelect':

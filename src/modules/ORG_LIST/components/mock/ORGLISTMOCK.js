@@ -4107,6 +4107,16 @@ export const OM_COMP_LIST = [
 		change_curator: false,
 		change_curator_me: false,
 		bids: [],
+    requisites: [
+        {
+            "id": 2239,
+            "name": "ООО Лайт"
+        },
+        {
+            "id": 2230,
+            "name": "Сочиархпроект"
+        }
+    ]
 	},
 	{
     subcompanies: [

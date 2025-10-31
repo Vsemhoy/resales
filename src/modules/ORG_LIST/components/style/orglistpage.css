@@ -108,3 +108,6 @@
 	align-items: center;
 	grid-gap: 10px;
 }
+.sa-org-list-row-name-midname {
+	padding-top: 6px;
+}
