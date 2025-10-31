@@ -77,7 +77,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		socket.on('update:sms', (data) => {
 			console.log('WS update:sms', data);
 
-			if (data.sms) updateMessageStatus(data.sms, data.sms.to);
+			if (data.sms) updateMessageStatus(data.sms, data.sms.to, true);
 
 			//if (data.right)  emitToListeners('message:new', data.right);
 			//emitToListeners('new:sms', data);
@@ -218,21 +218,24 @@ export const ChatSocketProvider = ({ children, url }) => {
 		}
 	}, [loadingSendSms]);
 	const markMessagesAsRead = useCallback(async (messageIds, chatId) => {
-		messageIds.forEach((id) => {
+		for (const id of messageIds) {
 			if (PRODMODE) {
 				try {
 					const endpoint = `/api/sms/read/${id}`;
-					PROD_AXIOS_INSTANCE.post(endpoint, {
+					const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
 						_token: CSRF_TOKEN,
 					});
+                    if (response?.data) {
+                        updateMessageStatus(response?.data?.sms, response?.data?.from, false);
+                    }
 				} catch (e) {
 					console.log(e);
 				}
 			} else {
 				console.log(`/api/sms/read/${id}`)
 			}
-		});
-	}, []);
+		}
+    }, []);
 
 	const insertMessagesToArrays = (to, text, files, answer, timestamp, from_id) => {
 		addMessageToChat({
@@ -342,9 +345,14 @@ export const ChatSocketProvider = ({ children, url }) => {
 			});
 		});
 	};
-	const updateMessageStatus = (msg, to) => {
+	const updateMessageStatus = (msg, to, isSelfMsg = true) => {
 		setChats(prevChats => {
-			const chatIndex = prevChats.findIndex(chat => chat.chat_id === to);
+            let chatIndex = -1;
+            if (isSelfMsg) {
+                chatIndex = prevChats.findIndex(chat => chat.chat_id === to);
+            } else {
+                chatIndex = prevChats.findIndex(chat => chat.chat_id === msg.from);
+            }
 
 			if (chatIndex === -1) {
 				console.log('Chat not found, might need to fetch chats list');

@@ -78,6 +78,7 @@ export default function ChatContent({ chatId }) {
         return isDesc ? items.slice().reverse() : items;
     }, [allMessages]);
     const countOfUnreadMessages = useMemo(() => {
+        console.log(allMessages)
         return allMessages.filter((msg) => (!msg.status && +msg.fromId !== +currentUserId))?.length;
     }, [allMessages]);
 
@@ -97,10 +98,11 @@ export default function ChatContent({ chatId }) {
 	} = useChatSocket();
 
 	useMarkMessagesRead({
-        messagesWithDividers, // сообщения с разделителями
-        currentUserId,        // id пользователя
-        chatId,               // id открытого чата
-        markMessagesAsRead    // метод срабатываемый при попадании непрочитанного сообщения во вьюпорт контейнера со скроллом
+        messagesWithDividers,                               // сообщения с разделителями
+        currentUserId,                                      // id пользователя
+        chatId,                                             // id открытого чата
+        containerRef: messagesContainerRef,                 // контейнер с сообщениями, за которым следим
+        markMessagesAsRead                                  // метод срабатываемый при попадании непрочитанного сообщения во вьюпорт контейнера со скроллом
     });
 
     useInfiniteScrollUp({
@@ -144,6 +146,18 @@ export default function ChatContent({ chatId }) {
     useEffect(() => {
         setHasMore( (chat?.total - chat?.messages?.length) > 0);
     }, [chat]);
+    useEffect(() => {
+        const container = messagesContainerRef.current;
+        if (!container) return;
+
+        const checkScrollPosition = () => {
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            setIsShowScrollButton(scrollHeight - scrollTop - clientHeight > 200);
+        };
+
+        container.addEventListener('scroll', checkScrollPosition);
+        return () => container.removeEventListener('scroll', checkScrollPosition);
+    }, []);
 
 	const handleSend = (trimmed, fileList) => {
 		sendSms({
@@ -155,20 +169,6 @@ export default function ChatContent({ chatId }) {
 			from_id: currentUserId
 		});
 	};
-
-    useEffect(() => {
-        const container = messagesContainerRef.current;
-        if (!container) return;
-
-        const checkScrollPosition = () => {
-            const { scrollTop, scrollHeight, clientHeight } = container;
-            // Показываем кнопку если до низа больше 200px
-            setIsShowScrollButton(scrollHeight - scrollTop - clientHeight > 200);
-        };
-
-        container.addEventListener('scroll', checkScrollPosition);
-        return () => container.removeEventListener('scroll', checkScrollPosition);
-    }, []);
 
 	return (
 		<Layout className={styles.chatcontentLayout}>
@@ -209,6 +209,16 @@ export default function ChatContent({ chatId }) {
                                   onClick={() => {
                                       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
                                       setIsShowScrollButton(false);
+
+                                      const unreadIds = messagesWithDividers
+                                          .filter(item => item.type !== 'divider')
+                                          .filter(item => +item.message.fromId !== +currentUserId)
+                                          .filter(item => !item.message.status)
+                                          .map(item => item.message.id);
+
+                                      if (unreadIds.length > 0) {
+                                          markMessagesAsRead(unreadIds, chatId);
+                                      }
                                   }}
                         />
                     )}

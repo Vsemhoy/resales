@@ -60,6 +60,29 @@ export const OM_COMP_LIST = [
 		rating_value: null,
 		rating_comment: null,
 		rating_name: null,
+    subcompanies: [
+      {
+          "id": 12,
+          "name": "ООО Новая заря",
+          "an_orgs_id": 2
+      },
+      {
+          "id": 13,
+          "name": "Зря я часы потерял",
+          "an_orgs_id": 2
+      },
+      {
+          "id": 14,
+          "name": "Ура, мне повезло",
+          "an_orgs_id": 2
+      },
+      {
+          "id": 15,
+          "name": "Здесь будет компания",
+          "an_orgs_id": 2,
+          "deleted": "hello"
+      }
+  ],
 		contact_list: {
 			id: 92676,
 			name: 'sdfgdsf',
@@ -4086,12 +4109,35 @@ export const OM_COMP_LIST = [
 		bids: [],
 	},
 	{
+    subcompanies: [
+      {
+          "id": 12,
+          "name": "ООО Новая заря",
+          "an_orgs_id": 2
+      },
+      {
+          "id": 13,
+          "name": "Зря я часы потерял, но не нашел, а потом снова потерял, чтобы снова найти и потерять себя среди леса",
+          "an_orgs_id": 2
+      },
+      {
+          "id": 14,
+          "name": "Ура, мне повезло, это не длинный текст",
+          "an_orgs_id": 2
+      },
+      {
+          "id": 15,
+          "name": "Здесь будет компания",
+          "an_orgs_id": 2,
+          "deleted_at": "hello"
+      }
+  ],
 		id: 28,
 		name: 'Сибирский проектный институт',
 		website: '',
 		profile: 5,
 		kindofactivity: 'Проектирование СС, СОУЭ, ОПС.',
-		middlename: 'СИБПИ',
+		middlename: '',
 		id8an_status: 0,
 		curator_id: 0,
 		source: 'СТБ справочник предприятий и организаций города, № 16',

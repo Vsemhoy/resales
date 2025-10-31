@@ -355,6 +355,7 @@ const OrgListTable = (props) => {
 								<div className={'sa-pa-3'}></div>
 							</div>
 						</div>
+
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
 								<TableHeadNameWithSort

@@ -4,14 +4,17 @@ import {
 	ArrowRightStartOnRectangleIcon,
 	Bars3BottomLeftIcon,
 	DocumentCurrencyDollarIcon,
+	FlagIcon,
 	NewspaperIcon,
 } from '@heroicons/react/24/outline';
-import { Dropdown, Menu, Tag, Tooltip } from 'antd';
+import { Divider, Dropdown, List, Menu, Tag, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ShortName } from '../../../components/helpers/TextHelpers';
 import {
+	BanknotesIcon,
 	BriefcaseIcon,
+	BuildingOffice2Icon,
 	GlobeAltIcon,
 	InboxStackIcon,
 	MusicalNoteIcon,
@@ -22,6 +25,7 @@ import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
 import { useURLParams } from '../../../components/helpers/UriHelpers';
 import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
+import { values } from 'lodash';
 
 const OrgListRow = (props) => {
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
@@ -31,6 +35,11 @@ const OrgListRow = (props) => {
 	const [menuItems, setMenuItems] = useState([]);
 
 	const { userdata } = props;
+
+const truncateText = (text, maxLength = 200) => {
+  if (!text) return '';
+  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+};
 
 	const menuItemsd = [
 		{
@@ -269,9 +278,68 @@ const OrgListRow = (props) => {
 				</div>
 				<div className={'sa-table-box-cell'}>
 					<div className={'sa-align-left'}>
-						<NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
-							{orgData.name}
-						</NavLink>
+						
+							<div>
+
+										<Tooltip
+											color={'white'}
+											title={
+												orgData.middlename || orgData.subcompanies?.length > 0  ? (
+											<div style={{padding: '6px'}}>
+												{orgData.middlename ? (
+													<>
+													<div className={'sa-table-orgs-header-in-tooltip'}>Второе название:</div>
+														<div style={{color: 'black'}}>
+															{orgData.middlename}
+														</div>
+													</>
+											): ""}
+											{orgData.subcompanies?.length > 0 && (
+												<>
+												{orgData.middlename && (
+													<div style={{padding: '8px'}}></div>
+												)}
+												<div className={'sa-table-orgs-header-in-tooltip'}>Суб-компании:</div>
+												<List
+													style={{padding: '0px'}}
+													size="small"
+													className='sa-org-more-list-ee'
+													bordered
+													dataSource={orgData.subcompanies?.map((subco)=>(subco.name))}
+													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}><BuildingOffice2Icon height={'18px'} /> {item}</div></List.Item>}
+												/>
+												
+												</>
+											)}
+											
+										
+										</div>) : null
+									} 
+									placement='bottom'>
+										
+
+								<div className='sa-org-list-row-name-name'>
+									<NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
+									{orgData.name}
+									</NavLink>
+									</div>
+
+									{orgData.middlename || orgData.subcompanies?.length > 0  ? (
+										<div>{orgData.middlename ? (
+											<div>{truncateText(orgData.middlename, 60)}</div>
+										) : (
+											<div>
+												{/* {orgData.subcompanies?.length} суб-компании */}
+											</div>
+										)}</div>
+									) : ""}
+										</Tooltip>
+
+								
+								
+							</div>
+							
+						
 					</div>
 				</div>
 				<div className={'sa-table-box-cell'}>
@@ -311,7 +379,7 @@ const OrgListRow = (props) => {
 					</div>
 				</div>
 				<div className={'sa-table-box-cell'}>
-					<div className={'sa-flex-2-columns'}>
+					<div className={'sa-flex-3-columns'}>
 						<div>
 							{orgData.website && (
 								<Tooltip
@@ -336,6 +404,31 @@ const OrgListRow = (props) => {
 								</Tooltip>
 							)}
 						</div>
+						<div>
+							{orgData.subcompanies?.length > 0 && (
+							<Dropdown menu={{ items: [ {
+									key: "Subco_00000000",
+									value: '',
+									label: "Суб-компании-плательщики:",
+									disabled: true,
+							}, ...orgData.subcompanies?.map((subco)=>{
+								return {
+									key: "Subco_" + subco.id,
+									value: subco.name,
+									label: subco.name,
+									danger: subco.deleted_at? true : false,
+									icon: subco.deleted_at ? <ArchiveBoxXMarkIcon height={'18px'}/> : <BuildingOffice2Icon height={'18px'} />,
+								}
+
+							}) ]}} placement="bottom">
+								<div
+									className={'sa-col-with-menu'}
+								>
+									<BuildingOffice2Icon height={'18px'} />
+								</div>
+							</Dropdown>
+						)}
+						</div>
 						{/* <div>
               
             </div>
@@ -353,6 +446,7 @@ const OrgListRow = (props) => {
             </div> */}
 					</div>
 				</div>
+
 				<div className={'sa-table-box-cell'}>
 					<div>
 						{orgData.bids?.length > 0 && (
