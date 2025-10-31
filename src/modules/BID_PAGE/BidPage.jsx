@@ -214,6 +214,7 @@ const BidPage = (props) => {
 	});
 
 	const [messageApi, contextHolder] = message.useMessage();
+	const [socketTimestamp, setSocketTimestamp] = useState(0);
 
 
 	useEffect(() => {
@@ -253,15 +254,19 @@ const BidPage = (props) => {
     useEffect(() => {
         console.log('CONNECTED bidPage', connected)
         if (connected) {
+            const timestamp = +new Date();
+            setSocketTimestamp(timestamp);
             emit('HIGHLIGHT_BID', {
                 bidId: bidId,
                 userId: props.userdata?.user?.id,
-                userFIO: `${props.userdata?.user?.surname} ${props.userdata?.user?.name} ${props.userdata?.user?.secondname}`
+                userFIO: `${props.userdata?.user?.surname} ${props.userdata?.user?.name} ${props.userdata?.user?.secondname}`,
+                timestamp,
             });
 
             return () => emit('UNHIGHLIGHT_BID', {
                 bidId: bidId,
                 userId: props.userdata?.user?.id,
+                timestamp: socketTimestamp,
             });
         }
     }, [connected]);
