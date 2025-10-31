@@ -54,7 +54,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		socketRef.current = socket;
 		// --- подключение к ws и подписка ---
 		socket.on('connect', () => {
-			console.log('WEBSOCKET CONNECTED')
+			console.log('CHAT WEBSOCKET CONNECTED')
 			setConnected(true);
 			setConnectionStatus('connected');
 			const userId = userdataRef.current?.user?.id;
@@ -83,12 +83,12 @@ export const ChatSocketProvider = ({ children, url }) => {
 			//emitToListeners('new:sms', data);
 		});
 		socket.on('disconnect', (reason) => {
-			console.log('WEBSOCKET DISCONNECTED');
+			console.log('CHAT WEBSOCKET DISCONNECTED');
 			setConnected(false);
 			setConnectionStatus('disconnected');
 		});
 		socket.on('connect_error', (error) => {
-			console.log('WEBSOCKET CONNECT ERROR');
+			console.log('CHAT WEBSOCKET CONNECT ERROR');
 		});
 	}, [url, emitToListeners]);
 

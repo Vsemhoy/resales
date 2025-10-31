@@ -141,9 +141,20 @@ const { getCurrentParamsString } = useURLParams();
 
 	return (
 		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
-			<Tooltip title={data.last_message ?? ''}>
+			<Tooltip title={ data.editor || data.last_message ?
+                (<div>
+                    <div>{data.editor ? `Редактирует: ${data.editor}` : ''}</div>
+                    <div>{data.last_message ? `Причина возврата: ${data.last_message}` : ''}</div>
+                </div>) : null
+            }>
 				<div
-					className={`sa-table-box-bids sa-table-box-row ${active ? 'active' : ''} ${data.last_message ? 'sa-error-row' : ''}`}
+					className={`
+                        sa-table-box-bids 
+                        sa-table-box-row 
+                        ${active ? 'active' : ''} 
+                        ${data.last_message ? 'sa-error-row' : ''}
+                        ${data?.highlight ? 'sa-busy-row' : ''}
+					`}
 					style={{color: compColor, cursor: 'pointer'}}
 					onDoubleClick={handleDoubleClick}
 				>

@@ -13,6 +13,7 @@
 	--row-selected-color: #66c7f4;
 	--row-selected-color_2: #1e88e5;
 	/* #ffab91; */
+    --row-self-busy-color: #ed7523c2;
 	--row-self-accent-color: #fe938c;
 	--row-self-accent-faded-color: #f5d5d3;
 	--row-self-accent-color_2: #ff6b6b;
@@ -190,7 +191,10 @@
 	--row-selected-color: #66c7f4;
 	--row-selected-color_2: #1e88e5;
 	/* #ffab91; */
+	--row-self-busy-color: #ed7523c2;
+
 	--row-self-accent-color: #fe938c;
+
 	--row-self-accent-faded-color: #f5d5d3;
 	--row-self-accent-color_2: #ff6b6b;
 	/* --row-self-accent-faded-color: #f5d5d3; */
