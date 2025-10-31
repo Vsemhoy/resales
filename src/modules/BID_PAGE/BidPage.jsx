@@ -1691,8 +1691,17 @@ const BidPage = (props) => {
 			console.log('Данные скопированы в буфер');
 			bufAlert('Данные скопированы в буфер', 'success');
 		} catch (err) {
-			console.error('Ошибка копирования:', err);
-			bufAlert('Проблемы с копированием в буфер', 'error');
+			try {
+				const textArea = document.createElement('textarea');
+				textArea.value = result[0].name;
+				document.body.appendChild(textArea);
+				textArea.select();
+				document.execCommand('copy');
+				document.body.removeChild(textArea);
+			} catch (err) {
+				console.error('Ошибка копирования:', err);
+				bufAlert('Проблемы с копированием в буфер', 'error');
+			}
 		}
 	};
 
