@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import { useUserData } from '../../context/UserDataContext';
 import './components/style/bidlistpage.css';
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
@@ -26,9 +26,12 @@ import BidListSiderFilters from './components/BidListSiderFilters';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { BID_LIST, FILTERS } from './mock/mock';
 import dayjs from 'dayjs';
+import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
+import {useWebSocket} from "../../context/ResalesWebSocketContext";
 
 const BidListPage = (props) => {
 	const { userdata } = props;
+    const { connected, emit } = useWebSocket();
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
@@ -160,6 +163,30 @@ const BidListPage = (props) => {
 	const [previewItem, setPreviewItem] = useState(null);
 	const showGetItem = null; //searchParams.get('show');
 
+    const handleHighlightBid = useCallback((data) => {
+        console.log('HIGHLIGHT_BID', data);
+        setBids(prev => {
+            return prev.map(bid => {
+                if (+bid.id === +data.subscribedBidId) {
+                    return { ...bid, highlight: true }
+                } else return bid;
+            });
+        });
+    }, []);
+    const handleUnHighlightBid = useCallback((data) => {
+        console.log('UNHIGHLIGHT_BID', data);
+        setBids(prev => {
+            return prev.map(bid => {
+                if (+bid.id === +data.subscribedBidId) {
+                    return { ...bid, highlight: false }
+                } else return bid;
+            });
+        });
+    }, []);
+
+    useWebSocketSubscription('HIGHLIGHT_BID', handleHighlightBid);
+    useWebSocketSubscription('UNHIGHLIGHT_BID', handleUnHighlightBid);
+
 	useEffect(() => {
 		fetchInfo().then();
 		if (showGetItem !== null) {
@@ -204,6 +231,13 @@ const BidListPage = (props) => {
 			setActiveRole(userdata.user.sales_role);
 		}
 	}, [userdata]);
+    useEffect(() => {
+        console.log('CONNECTED bidList', connected)
+        if (connected) {
+            emit('SUBSCRIBE_BID_ACTIVITY', userdata?.user?.id);
+            return () => emit('UNSUBSCRIBE_BID_ACTIVITY', userdata?.user?.id);
+        }
+    }, [connected]);
 	useEffect(() => {
 		setCompanies(
 			baseCompanies.map((item) => ({
