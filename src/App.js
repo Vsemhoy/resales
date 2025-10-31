@@ -30,6 +30,8 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { Dropdown } from 'antd';
 import TorgPage from './modules/TORG_PAGE/TorgPage';
 import Regtown from './modules/REGTOWN/Regtown';
+import FilesBuhPage from "./modules/FILES_BUH/FilesBuhPage";
+
 import {ResalesWebSocketProvider} from "./context/ResalesWebSocketContext";
 
 export const App = () => {
@@ -145,14 +147,10 @@ export const App = () => {
                                         element={<BidPage userdata={userdata} changed_user_data={setUserdata} />}
                                     />
 
-                                    <Route
-                                        path={BASE_ROUTE + '/bidsPDF/:bidId'}
-                                        element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
-                                    />
-                                    <Route
-                                        path="/bidsPDF/:bidId"
-                                        element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
-                                    />
+								{/*<Route*/}
+								{/*	path={BASE_ROUTE + '/files_buh'}*/}
+								{/*	element={<FilesBuhPage userdata={userdata} changed_user_data={setUserdata} />}*/}
+								{/*/>*/}
 
                                     <Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />
                                     <Route path="/price" element={<Price userdata={userdata} />} />
