@@ -143,8 +143,8 @@ const { getCurrentParamsString } = useURLParams();
 		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
 			<Tooltip title={ data.editor || data.last_message ?
                 (<div>
-                    <div>{data.editor ?? ''}</div>
-                    <div>{data.last_message ?? ''}</div>
+                    <div>{data.editor ? `Редактирует: ${data.editor}` : ''}</div>
+                    <div>{data.last_message ? `Причина возврата: ${data.last_message}` : ''}</div>
                 </div>) : null
             }>
 				<div
