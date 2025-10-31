@@ -13,7 +13,6 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
     const [connected, setConnected] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState('disconnected');
 
-    // Хранилище обработчиков событий
     const eventHandlersRef = useRef(new Map());
 
     const connect = useCallback(() => {
@@ -25,7 +24,6 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
         const socket = io(url, {
             transports: ['websocket', 'polling'],
             withCredentials: true,
-            // ✅ Добавляем опции для лучшего управления переподключением
             autoConnect: true,
             reconnection: true,
             reconnectionAttempts: 5,
@@ -39,7 +37,6 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
             setConnected(true);
             setConnectionStatus('connected');
 
-            // При переподключении переподписываем все активные обработчики
             eventHandlersRef.current.forEach((handlers, event) => {
                 handlers.forEach(handler => {
                     socket.on(event, handler);
@@ -51,9 +48,6 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
             console.log('RESALES WEBSOCKET DISCONNECTED, reason:', reason);
             setConnected(false);
             setConnectionStatus('disconnected');
-
-            // ✅ НЕ очищаем обработчики при disconnect, чтобы восстановить при reconnect
-            // eventHandlersRef.current остается нетронутым
         });
 
         socket.on('connect_error', (error) => {
@@ -61,7 +55,6 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
             setConnectionStatus('error');
         });
 
-        // ✅ Добавляем обработчик reconnect
         socket.on('reconnect', (attemptNumber) => {
             console.log('RESALES WEBSOCKET RECONNECTED after', attemptNumber, 'attempts');
             setConnected(true);
@@ -115,7 +108,6 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
         }
     }, []);
 
-    // ✅ Функция для ручного отключения
     const disconnect = useCallback(() => {
         if (socketRef.current) {
             console.log('Manually disconnecting WebSocket');
@@ -127,19 +119,15 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
         if (userdata) {
             connect();
 
-            // ✅ Правильный cleanup: отключаем сокет, но НЕ очищаем обработчики
             return () => {
                 console.log('WebSocketProvider cleanup - disconnecting');
                 if (socketRef.current) {
                     socketRef.current.disconnect();
-                    // НЕ очищаем eventHandlersRef.current здесь!
-                    // Это позволит восстановить подписки при реконнекте
                 }
             };
         }
     }, [userdata, connect]);
 
-    // ✅ Эффект для полной очистки при полном размонтировании
     useEffect(() => {
         return () => {
             console.log('WebSocketProvider unmounting - full cleanup');
@@ -158,7 +146,7 @@ export const ResalesWebSocketProvider = ({ children, url }) => {
                 connectionStatus,
                 subscribe,
                 emit,
-                disconnect, // ✅ Экспортируем функцию disconnect
+                disconnect,
                 socket: socketRef.current
             }}
         >

@@ -141,7 +141,12 @@ const { getCurrentParamsString } = useURLParams();
 
 	return (
 		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
-			<Tooltip title={data.last_message ?? ''}>
+			<Tooltip title={ data.editor || data.last_message ?
+                (<div>
+                    <div>{data.editor ?? ''}</div>
+                    <div>{data.last_message ?? ''}</div>
+                </div>) : null
+            }>
 				<div
 					className={`
                         sa-table-box-bids 

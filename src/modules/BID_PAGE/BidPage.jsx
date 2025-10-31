@@ -256,6 +256,7 @@ const BidPage = (props) => {
             emit('HIGHLIGHT_BID', {
                 bidId: bidId,
                 userId: props.userdata?.user?.id,
+                userFIO: `${props.userdata?.user?.surname} ${props.userdata?.user?.name} ${props.userdata?.user?.secondname}`
             });
 
             return () => emit('UNHIGHLIGHT_BID', {
