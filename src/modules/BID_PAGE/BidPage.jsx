@@ -54,6 +54,7 @@ import customModal from "../../components/helpers/modals/CustomModal";
 import OrgProjectEditorSectionBox
 	from "../ORG_PAGE/components/sections/NotesTabSections/Rows/OrgProjectEditorSectionBox";
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
+import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
 const { TextArea } = Input;
 
 const BidPage = (props) => {

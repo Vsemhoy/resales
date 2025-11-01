@@ -1,30 +1,16 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import { useUserData } from '../../context/UserDataContext';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './components/style/bidlistpage.css';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
-import { NavLink, useParams, useSearchParams } from 'react-router-dom';
-import {
-	Affix,
-	Space,
-	Button,
-	Dropdown,
-	Layout,
-	Pagination,
-	Select,
-	Spin,
-	Tag,
-	Tooltip,
-	Alert,
-	message,
-} from 'antd';
-import { Content } from 'antd/es/layout/layout';
+import {CSRF_TOKEN, PRODMODE} from '../../config/config';
+import {NavLink, useParams, useSearchParams} from 'react-router-dom';
+import {Affix, Alert, Button, Dropdown, Layout, Pagination, Select, Space, Spin, Tag, Tooltip,} from 'antd';
+import {Content} from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
-import { CaretLeftFilled, CloseOutlined, FilterOutlined } from '@ant-design/icons';
+import {CaretLeftFilled, CloseOutlined, FilterOutlined} from '@ant-design/icons';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import BidListTable from './components/BidListTable';
 import BidListSiderFilters from './components/BidListSiderFilters';
-import { PROD_AXIOS_INSTANCE } from '../../config/Api';
-import { BID_LIST, FILTERS } from './mock/mock';
+import {PROD_AXIOS_INSTANCE} from '../../config/Api';
+import {BID_LIST, FILTERS} from './mock/mock';
 import dayjs from 'dayjs';
 import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
@@ -163,6 +149,55 @@ const BidListPage = (props) => {
 	const [previewItem, setPreviewItem] = useState(null);
 	const showGetItem = null; //searchParams.get('show');
 
+
+
+    useEffect(() => {
+        console.log(bids)
+    }, [bids]);
+    const [highlightData, setHighlightData] = useState(null);
+    const highlightDataRef = useRef();
+    highlightDataRef.current = highlightData;
+    const setHighlightBids = useCallback((data) => {
+        const activeUsers = data?.activeUsers || [];
+        const bidsWithUsers = activeUsers.reduce((acc, item) => {
+            if (!acc[item.bidId]) {
+                acc[item.bidId] = {
+                    bidId: item.bidId,
+                    users: []
+                };
+            }
+            if (!acc[item.bidId].users.find(user => user.userId === item.userId)) {
+                acc[item.bidId].users.push({
+                    userId: item.userId,
+                    userFIO: item.userFIO
+                });
+            }
+            return acc;
+        }, {});
+
+        setHighlightData(bidsWithUsers);
+    }, []);
+    const setBidsWithHighlight = useCallback((newBids) => {
+        if (highlightDataRef.current) {
+            // Если есть данные подсветки - применяем их
+            const highlightedBids = newBids.map(bid => {
+                const bidHighlightInfo = highlightDataRef.current[bid.id];
+                if (bidHighlightInfo) {
+                    return {
+                        ...bid,
+                        highlight: true,
+                        editor: bidHighlightInfo.users.map(user => user.userFIO).join(', '),
+                        userCount: bidHighlightInfo.users.length
+                    }
+                }
+                return bid;
+            });
+            setBids(highlightedBids);
+        } else {
+            // Если данных подсветки еще нет - просто устанавливаем заявки
+            setBids(newBids);
+        }
+    }, [highlightDataRef.current]);
     const handleHighlightBid = useCallback((data) => {
         console.log('HIGHLIGHT_BID', data);
         setBids(prev => {
@@ -191,9 +226,14 @@ const BidListPage = (props) => {
             });
         });
     }, []);
+    const refreshPage = useCallback((data) => {
+        fetchBids().then();
+    }, []);
 
+    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST', setHighlightBids);
     useWebSocketSubscription('HIGHLIGHT_BID', handleHighlightBid);
     useWebSocketSubscription('UNHIGHLIGHT_BID', handleUnHighlightBid);
+    useWebSocketSubscription('refresh_page', refreshPage);
 
 	useEffect(() => {
 		fetchInfo().then();
@@ -372,7 +412,8 @@ const BidListPage = (props) => {
 					data,
 					_token: CSRF_TOKEN,
 				});
-				setBids(response.data.bid_list);
+                setBidsWithHighlight(response.data.bid_list)
+                //setBids(response.data.bid_list);
 				setTotal(response.data.total_count);
 
 				let max = onPage * currentPage - (onPage - 1);
