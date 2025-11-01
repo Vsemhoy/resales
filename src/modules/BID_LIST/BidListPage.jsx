@@ -155,6 +155,7 @@ const BidListPage = (props) => {
     const [highlightData, setHighlightData] = useState(null);
     const highlightDataRef = useRef();
     highlightDataRef.current = highlightData;
+
     const setHighlightBids = useCallback((data) => {
         const activeUsers = data?.activeUsers || [];
         const bidsWithUsers = activeUsers.reduce((acc, item) => {
@@ -174,10 +175,24 @@ const BidListPage = (props) => {
         }, {});
 
         setHighlightData(bidsWithUsers);
+
+        const highlightedBids = bids.map(bid => {
+            const bidHighlightInfo = highlightDataRef.current[bid.id];
+            if (bidHighlightInfo) {
+                return {
+                    ...bid,
+                    highlight: true,
+                    editor: bidHighlightInfo.users.map(user => user.userFIO).join(', '),
+                    userCount: bidHighlightInfo.users.length
+                }
+            }
+            return bid;
+        });
+        setBids(highlightedBids);
     }, []);
+
     const setBidsWithHighlight = useCallback((newBids) => {
         if (highlightDataRef.current) {
-            // Если есть данные подсветки - применяем их
             const highlightedBids = newBids.map(bid => {
                 const bidHighlightInfo = highlightDataRef.current[bid.id];
                 if (bidHighlightInfo) {
@@ -192,10 +207,10 @@ const BidListPage = (props) => {
             });
             setBids(highlightedBids);
         } else {
-            // Если данных подсветки еще нет - просто устанавливаем заявки
             setBids(newBids);
         }
     }, [highlightDataRef.current]);
+
     /*const handleHighlightBid = useCallback((data) => {
         console.log('HIGHLIGHT_BID', data);
         setBids(prev => {
@@ -224,6 +239,7 @@ const BidListPage = (props) => {
             });
         });
     }, []);*/
+
     const refreshPage = useCallback((data) => {
         fetchBids().then();
     }, []);
