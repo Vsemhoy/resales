@@ -80,9 +80,7 @@ const MianBigSectionOrg = (props) => {
 
   if (profsound !== (props.data.profsound ?? null)) setProfsound(props.data.profsound ?? null);
 
-}, [props.data, 
-   itemId, name, middlename, source, id8an_profiles, id8an_fs, inn, 
-   comment, commentinlist, kindofactivity, subcompanies, profsound]);
+}, [props.data]);
 
   useEffect(() => {
     if (BLUR_FLAG === null){ return; }

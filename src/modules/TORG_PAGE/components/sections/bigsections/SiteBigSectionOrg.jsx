@@ -26,6 +26,8 @@ const SiteBigSectionOrg = (props) => {
     }
   }, [props.data]);
 
+  
+
   useEffect(() => {
       setBLUR_FLAG(null);
       setACTION_FLAG(null);
