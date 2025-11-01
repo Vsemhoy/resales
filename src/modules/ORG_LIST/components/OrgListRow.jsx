@@ -46,6 +46,30 @@ const OrgListRow = (props) => {
 	const [matchRequisite,  setMatchRequisite]  = useState(false);
 	const [matchSubcompany, setmatchSubcompany] = useState(false);
 
+	const [busyModers, setBusyModers] = useState(null);
+	const [busyMode, setBusyMode]   = useState(null); // 1 - explore // 2 - edit
+	const [busyEditor, setBusyEditor]   = useState(null);
+	const [busyExplorers, setBusyExplorers] = useState([]);
+
+	useEffect(() => {
+		setBusyModers(props.busy);
+		if (props.busy?.length > 0){
+			let hasEditor = props.busy.find((item)=>item.action === "edit");
+			if (hasEditor){
+				setBusyEditor(hasEditor);
+				setBusyMode(2);
+			} else {
+				setBusyEditor(null);
+				setBusyMode(1);
+			}
+			setBusyExplorers(props.busy.filter((item)=>item.action === "explore"));
+		} else {
+			setBusyMode(null);
+			setBusyEditor(null);
+			setBusyExplorers([]);
+		}
+	}, [props.busy]);
+
 
 const truncateText = (text, maxLength = 200) => {
   if (!text) return '';
@@ -365,8 +389,33 @@ const antiTruncateText = (text, maxLength = 200) => {
 
 	return (
 		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']} key={`orgrow_${orgData.id}`}>
+			<Tooltip title={
+				busyMode !== null ? (
+					<div>
+						{busyMode === 2 ? (
+							<div>
+								<div>Редактирует:</div>
+								<div>{busyEditor?.username}</div>
+							</div>
+						) : ""}
+						{busyExplorers.length > 0 && busyMode === 2 ? (
+							<hr></hr>
+						) : ""}
+						{busyExplorers.length > 0 ? (
+							<div>
+								<div>Просматривают:</div>
+								{busyExplorers.map(item=> (
+									<div>{item?.username}</div>
+								))}
+							</div>
+						) : ""}
+					</div>
+				) : ""
+			}>
 			<div
-				className={`sa-table-box-orgs sa-table-box-row ${active ? 'active' : ''}`}
+				className={`sa-table-box-orgs sa-table-box-row ${active ? 'active' : ''}
+				${busyMode === 1 ? "sa-explore-row" : ""} ${busyMode === 2 ? "sa-busy-row" : ""}
+				`}
 				style={{ color: compColor }}
 				onDoubleClick={handleDoubleClick}
 				id={'orgrow_' + orgData.id}
@@ -636,6 +685,7 @@ const antiTruncateText = (text, maxLength = 200) => {
         <div>1</div>
         </div> */}
 			</div>
+			</Tooltip>
 		</Dropdown>
 	);
 };

@@ -20,6 +20,8 @@ const InfoBigSectionOrg = (props) => {
   const [author, setAuthor] = useState(''); //id8staff_list7author
   const [curator, setCurator] = useState('');
 
+
+
     const [BLUR_FLAG, setBLUR_FLAG] = useState(null);
     const [ACTION_FLAG, setACTION_FLAG] = useState(null);
 

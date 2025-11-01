@@ -29,11 +29,11 @@ const OrgListTable = (props) => {
 
 	const [SKIPPER, setSKIPPER] = useState(2);
 
-
+	const [socketBusyOrglist, setsocketBusyOrglist] = useState([]);
 
 	useEffect(() => {
-		
-	}, [props.filter_name]);
+		setsocketBusyOrglist(props.busy_orgs);
+	}, [props.busy_orgs]);
 
 	useEffect(() => {
 		setSelectedItem(props.selected_item);
@@ -413,6 +413,7 @@ const OrgListTable = (props) => {
 						key={`borg_${borg.id}`}
 						userdata={userdata}
 						company_color={props.base_companies?.find((item) => item.id === borg.id_company)?.color}
+						busy={socketBusyOrglist.filter((item)=> item.org_id === borg.id)}
 					/>
 				))}
 			</div>

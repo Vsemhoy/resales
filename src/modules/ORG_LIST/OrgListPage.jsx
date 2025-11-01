@@ -91,6 +91,26 @@ const OrgListPage = (props) => {
 
 	const [SKIPPER, setSKIPPER] = useState(0);
 
+
+
+	const [socketBusyOrglist, setsocketBusyOrglist] = useState([
+		{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", id_company: 3, action: 'edit'},
+		{org_id: 4, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'explore'},
+		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'edit'},
+		{org_id: 22, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'edit'},
+		{org_id: 40, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},
+		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'explore'},
+		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},
+	]);
+
+	const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);
+
+
+	useEffect(() => {
+		setSocketBusyOrgIds(socketBusyOrglist.map(item => item.id));
+	}, [socketBusyOrglist]);
+
+
 	useEffect(() => {
 		setUserdata(props.userdata);
 	}, [props.userdata]);
@@ -738,6 +758,7 @@ const OrgListPage = (props) => {
 					<div className={`${openedFilters ? 'sa-pa-tb-12 sa-pa-s-3' : 'sa-pa-12'}`}>
 						<Spin spinning={showLoader} delay={500}>
 							<OrgListTable
+								busy_orgs={socketBusyOrglist}
 								companies={companies}
 								base_companies={baseCompanies}
 								base_orgs={orgList}
@@ -775,6 +796,7 @@ const OrgListPage = (props) => {
 				</Content>
 			</Layout>
 			<OrgListPreviewModal
+				busy_orgs={socketBusyOrglist}
 				is_open={isPreviewOpen}
 				current_tab={currentTab}
 				data={{ id: previewItem }}
