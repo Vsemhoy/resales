@@ -173,22 +173,24 @@ const BidListPage = (props) => {
             }
             return acc;
         }, {});
-
         setHighlightData(bidsWithUsers);
 
-        const highlightedBids = bids.map(bid => {
-            const bidHighlightInfo = highlightDataRef.current[bid.id];
-            if (bidHighlightInfo) {
-                return {
-                    ...bid,
-                    highlight: true,
-                    editor: bidHighlightInfo.users.map(user => user.userFIO).join(', '),
-                    userCount: bidHighlightInfo.users.length
+        if (bids && bids.length > 0) {
+            const highlightedBids = bids.map(bid => {
+                const bidHighlightInfo = bidsWithUsers[bid.id];
+                if (bidHighlightInfo) {
+                    return {
+                        ...bid,
+                        highlight: true,
+                        editor: bidHighlightInfo.users.map(user => user.userFIO).join(', '),
+                        userCount: bidHighlightInfo.users.length
+                    }
                 }
-            }
-            return bid;
-        });
-        setBids(highlightedBids);
+                return bid;
+            });
+            console.log('highlightedBids', highlightedBids);
+            setBids(highlightedBids);
+        }
     }, []);
 
     const setBidsWithHighlight = useCallback((newBids) => {
@@ -203,7 +205,12 @@ const BidListPage = (props) => {
                         userCount: bidHighlightInfo.users.length
                     }
                 }
-                return bid;
+                return {
+                    ...bid,
+                    highlight: false,
+                    editor: '',
+                    userCount: 0
+                };
             });
             setBids(highlightedBids);
         } else {
