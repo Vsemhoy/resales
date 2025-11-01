@@ -43,9 +43,12 @@ import {
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { readOrgURL, updateURL, useURLParams } from '../../components/helpers/UriHelpers';
+import {useWebSocket} from "../../context/ResalesWebSocketContext";
+import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
 // import dayjs from 'dayjs';
 
 const OrgListPage = (props) => {
+    const { connected, emit } = useWebSocket();
 	// const { userdata } = props.userdata;
 	const [userdata, setUserdata] = useState(props.userdata);
 	const { updateURL, readOrgURL } = useURLParams();
@@ -94,21 +97,32 @@ const OrgListPage = (props) => {
 
 
 	const [socketBusyOrglist, setsocketBusyOrglist] = useState([
-		{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", id_company: 3, action: 'edit'},
-		{org_id: 4, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'explore'},
-		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'edit'},
-		{org_id: 22, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'edit'},
-		{org_id: 40, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},
-		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'explore'},
-		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},
+		{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", action: 'edit'},
+		{org_id: 4, user_id: 18, username: "Лескова Алеся Павловна",     action: 'explore'},
+		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна",    action: 'edit'},
+		{org_id: 22, user_id: 33, username: "Зубенко Михаил Петрович",   action: 'edit'},
+		{org_id: 40, user_id: 33, username: "Зубенко Михаил Петрович",   action: 'explore'},
+		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна",    action: 'explore'},
+		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович",   action: 'explore'},
 	]);
 
-	const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);
+	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
+    //
+    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', (array) => {});
+    useWebSocketSubscription('REFRESH_PAGE', () => {});
+    useWebSocketSubscription('UPDATE_ORG', (id) => {});
 
+    useEffect(() => {
+        if (connected && userdata.user.id) {
+            console.log('CONNECTED orgList', connected)
+            emit('SUBSCRIBE_ORG_ACTIVITY', userdata?.user?.id);
+            return () => emit('UNSUBSCRIBE_ORG_ACTIVITY', userdata?.user?.id);
+        }
+    }, [connected, userdata?.user?.id]);
 
-	useEffect(() => {
+	/*useEffect(() => {
 		setSocketBusyOrgIds(socketBusyOrglist.map(item => item.id));
-	}, [socketBusyOrglist]);
+	}, [socketBusyOrglist]);*/
 
 
 	useEffect(() => {
