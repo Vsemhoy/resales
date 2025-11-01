@@ -171,6 +171,9 @@
 .sa-error-row {
 	background-color: var(--row-self-accent-color);
 }
-.sa-busy-row {
+.sa-busy-row > div {
 	background-color: var(--row-self-busy-color) !important;
+}
+.sa-explore-row > div {
+	background-color: #0959d938 !important;
 }

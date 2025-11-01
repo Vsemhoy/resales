@@ -53,6 +53,28 @@ const OrgListPreviewModal = (props) => {
 	const [orgId, setOrgId] = useState(null);
 	const [orgName, setOrgName] = useState(null);
 
+
+
+	const [socketBusyOrglist, setsocketBusyOrglist] = useState([]);
+	const [busyEditor, setBusyEditor] = useState([]);
+	const [iAmEditor, setIAmEditor] = useState(null);
+
+	useEffect(() => {
+		if (props.busy_orgs?.length > 0){
+			setsocketBusyOrglist(props.busy_orgs);
+			let eddy = props.busy_orgs.find((item) => item.action === "edit");
+			if (eddy.user_id === props?.userdata?.user?.id){
+				setIAmEditor(true);
+			} else {
+				setIAmEditor(false);
+			}
+		} else {
+			setsocketBusyOrglist([]);
+			setBusyEditor(null);
+			setIAmEditor(null);
+		}
+	}, [props.busy_orgs]);
+
 	// // Это локалсторадж открытых секций
 	// const [modalSectionsOpened, setModalSectionsOpened] = useState(['st_commoninfo','st_departinfo','st_contactinfo','st_contacts']);
 	// // будут ли все юзеры раскрыты
