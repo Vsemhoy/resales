@@ -151,9 +151,7 @@ const BidListPage = (props) => {
 
 
 
-    useEffect(() => {
-        console.log(bids)
-    }, [bids]);
+
     const [highlightData, setHighlightData] = useState(null);
     const highlightDataRef = useRef();
     highlightDataRef.current = highlightData;
@@ -198,7 +196,7 @@ const BidListPage = (props) => {
             setBids(newBids);
         }
     }, [highlightDataRef.current]);
-    const handleHighlightBid = useCallback((data) => {
+    /*const handleHighlightBid = useCallback((data) => {
         console.log('HIGHLIGHT_BID', data);
         setBids(prev => {
             return prev.map(bid => {
@@ -225,15 +223,15 @@ const BidListPage = (props) => {
                 } else return bid;
             });
         });
-    }, []);
+    }, []);*/
     const refreshPage = useCallback((data) => {
         fetchBids().then();
     }, []);
 
-    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST', setHighlightBids);
-    useWebSocketSubscription('HIGHLIGHT_BID', handleHighlightBid);
-    useWebSocketSubscription('UNHIGHLIGHT_BID', handleUnHighlightBid);
-    useWebSocketSubscription('refresh_page', refreshPage);
+    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_BIDS', setHighlightBids);
+    //useWebSocketSubscription('HIGHLIGHT_BID', handleHighlightBid);
+    //useWebSocketSubscription('UNHIGHLIGHT_BID', handleUnHighlightBid);
+    useWebSocketSubscription('REFRESH_PAGE', refreshPage);
 
 	useEffect(() => {
 		fetchInfo().then();
