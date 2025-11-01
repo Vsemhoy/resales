@@ -39,6 +39,8 @@ import TabNotesTorg from '../TORG_PAGE/components/tabs/TabNotesTorg';
 import TabProjectsTorg from '../TORG_PAGE/components/tabs/TabProjectsTorg';
 import TabCallsTorg from '../TORG_PAGE/components/tabs/TabCallsTorg';
 import TabMainTorg from '../TORG_PAGE/components/tabs/TabMainTorg';
+import {useWebSocket} from "../../context/ResalesWebSocketContext";
+import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
 
 
 
@@ -57,6 +59,7 @@ const tabNames = [
 
 const OrgPage = (props) => {
 	const { userdata } = props;
+    const { connected, emit } = useWebSocket();
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
 	const [departList, setDepartList] = useState(null);
 	const [open, setOpen] = useState(false);
@@ -148,12 +151,34 @@ const tempMain_an_requisitesRef = useRef(tempMain_an_requisites);
 		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},
 	]);
 
-	const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);
+    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', (array) => {});
 
+    useEffect(() => {
+        console.log('CONNECTED orgPage', connected)
+        if (connected) {
+            emit('HIGHLIGHT_ORG', {
+                orgId: itemId,
+                userId: userdata?.user?.id,
+                userFIO: `${userdata?.user?.surname} ${userdata?.user?.name} ${userdata?.user?.secondname}`,
+                action: editMode ? 'edit' : 'observe'
+            });
 
-	useEffect(() => {
-		setSocketBusyOrgIds(socketBusyOrglist.map(item => item.id));
-	}, [socketBusyOrglist]);
+            return () => emit('UNHIGHLIGHT_ORG', {
+                orgId: itemId,
+                userId: userdata?.user?.id,
+            });
+        }
+    }, [connected]);
+
+    useEffect(() => {
+        if (!itemId) return;
+        emit('HIGHLIGHT_ORG', {
+            orgId: itemId,
+            userId: userdata?.user?.id,
+            userFIO: `${userdata?.user?.surname} ${userdata?.user?.name} ${userdata?.user?.secondname}`,
+            action: editMode ? 'edit' : 'observe'
+        });
+    }, [editMode]);
 
 
 
