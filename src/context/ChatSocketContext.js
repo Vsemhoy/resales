@@ -288,7 +288,10 @@ export const ChatSocketProvider = ({ children, url }) => {
 			} else {
 				return prevChatsList.map((message, index) => {
 					if (index === chatIndex) {
-						return msg;
+						return {
+                            ...msg,
+                            count_unread: isSelfMsg ? message.count_unread : msg.count_unread
+                        };
 					}
 					return message;
 				});

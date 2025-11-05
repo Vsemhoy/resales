@@ -246,6 +246,9 @@ ul {
 }
 .chatItem {
 	padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 .activeChatItem {
 	/* background: linear-gradient(to right, #c1c1c1, #e1e1e1, transparent);

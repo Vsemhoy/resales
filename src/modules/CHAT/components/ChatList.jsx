@@ -109,9 +109,11 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 									onSelectChat?.(chat.chat_id);
 								}}
 							>
-								<div className={styles.companionName}>{displayName || 'Неизвестный'}</div>
-								<div className={styles.lastMessage}>{truncatedText}</div>
-                                <Badge count={10} />
+                                <div>
+                                    <div className={styles.companionName}>{displayName || 'Неизвестный'}</div>
+                                    <div className={styles.lastMessage}>{truncatedText}</div>
+                                </div>
+                                <Badge count={chat.count_unread} />
 							</li>
 						</div>
 					);
