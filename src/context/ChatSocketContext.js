@@ -227,6 +227,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 					});
                     if (response?.data) {
                         updateMessageStatus(response?.data?.sms, response?.data?.from, false);
+                        updateChatListCountUnread(response?.data?.sms?.from, response?.data?.sms?.count_unread);
                     }
 				} catch (e) {
 					console.log(e);
@@ -280,12 +281,12 @@ export const ChatSocketProvider = ({ children, url }) => {
                 chatIndex = prevChatsList.findIndex(chat => chat.chat_id === msg.from.id);
             }
 			if (chatIndex === -1) {
-				return [
-					prevChatsList[0],
-					msg,
-					...prevChatsList.slice(1)
-				];
-			} else {
+                return [
+                    prevChatsList[0],
+                    msg,
+                    ...prevChatsList.slice(1)
+                ];
+            } else {
 				return prevChatsList.map((message, index) => {
 					if (index === chatIndex) {
 						return {
@@ -382,6 +383,21 @@ export const ChatSocketProvider = ({ children, url }) => {
 			});
 		});
 	};
+    const updateChatListCountUnread = (from, updCountUnread) => {
+        setChatsList(prevChatsList => {
+            let chatIndex = -1;
+            chatIndex = prevChatsList.findIndex(chat => chat.chat_id === from);
+            return prevChatsList.map((message, index) => {
+                if (index === chatIndex) {
+                    return {
+                        ...message,
+                        count_unread: updCountUnread
+                    };
+                }
+                return message;
+            });
+        });
+    };
 
 	return (
 		<ChatSocketContext.Provider

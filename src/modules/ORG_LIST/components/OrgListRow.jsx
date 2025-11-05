@@ -62,7 +62,7 @@ const OrgListRow = (props) => {
 				setBusyEditor(null);
 				setBusyMode(1);
 			}
-			setBusyExplorers(props.busy.filter((item)=>item.action === "explore"));
+			setBusyExplorers(props.busy.filter((item)=>item.action === "observe"));
 		} else {
 			setBusyMode(null);
 			setBusyEditor(null);
