@@ -108,9 +108,9 @@ const OrgListPage = (props) => {
 
 	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
     //
-    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', (array) => {});
+    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', (obj) => console.log(obj));
     useWebSocketSubscription('REFRESH_PAGE', () => {});
-    useWebSocketSubscription('UPDATE_ORG', (id) => {});
+    useWebSocketSubscription('UPDATE_ORG', ({ id }) => console.log(id));
 
     useEffect(() => {
         if (connected && userdata.user.id) {
