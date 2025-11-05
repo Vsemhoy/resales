@@ -61,6 +61,7 @@ const BidListPage = (props) => {
 	const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('currentPage')) || 1);
 
 	const [bids, setBids] = useState([]);
+    const bidsRef = useRef(bids);
 
 	const [myBids, setMyBids] = useState(false);
 
@@ -149,14 +150,12 @@ const BidListPage = (props) => {
 	const [previewItem, setPreviewItem] = useState(null);
 	const showGetItem = null; //searchParams.get('show');
 
-
-
-
     const [highlightData, setHighlightData] = useState(null);
     const highlightDataRef = useRef();
     highlightDataRef.current = highlightData;
 
     const setHighlightBids = useCallback((data) => {
+        console.log('setHighlightBids', data)
         const activeUsers = data?.activeUsers || [];
         const bidsWithUsers = activeUsers.reduce((acc, item) => {
             if (!acc[item.bidId]) {
@@ -175,22 +174,32 @@ const BidListPage = (props) => {
         }, {});
         setHighlightData(bidsWithUsers);
 
-        if (bids && bids.length > 0) {
-            const highlightedBids = bids.map(bid => {
-                const bidHighlightInfo = bidsWithUsers[bid.id];
-                if (bidHighlightInfo) {
+        setBids(prevBids => {
+            console.log('Previous bids in setState:', prevBids);
+
+            if (prevBids && prevBids.length > 0) {
+                const highlightedBids = prevBids.map(bid => {
+                    const bidHighlightInfo = bidsWithUsers[bid.id];
+                    if (bidHighlightInfo) {
+                        return {
+                            ...bid,
+                            highlight: true,
+                            editor: bidHighlightInfo.users.map(user => user.userFIO).join(', '),
+                            userCount: bidHighlightInfo.users.length
+                        }
+                    }
                     return {
                         ...bid,
-                        highlight: true,
-                        editor: bidHighlightInfo.users.map(user => user.userFIO).join(', '),
-                        userCount: bidHighlightInfo.users.length
-                    }
-                }
-                return bid;
-            });
-            console.log('highlightedBids', highlightedBids);
-            setBids(highlightedBids);
-        }
+                        highlight: false,
+                        editor: null,
+                        userCount: 0
+                    };
+                });
+                console.log('highlightedBids', highlightedBids);
+                return highlightedBids;
+            }
+            return prevBids;
+        });
     }, []);
 
     const setBidsWithHighlight = useCallback((newBids) => {
@@ -218,43 +227,19 @@ const BidListPage = (props) => {
         }
     }, [highlightDataRef.current]);
 
-    /*const handleHighlightBid = useCallback((data) => {
-        console.log('HIGHLIGHT_BID', data);
-        setBids(prev => {
-            return prev.map(bid => {
-                if (+bid.id === +data.bidId) {
-                    return {
-                        ...bid,
-                        highlight: true,
-                        editor: data.userFIO,
-                    }
-                } else return bid;
-            });
-        });
-    }, []);
-    const handleUnHighlightBid = useCallback((data) => {
-        console.log('UNHIGHLIGHT_BID', data);
-        setBids(prev => {
-            return prev.map(bid => {
-                if (+bid.id === +data.bidId) {
-                    return {
-                        ...bid,
-                        highlight: false,
-                        editor: null,
-                    }
-                } else return bid;
-            });
-        });
-    }, []);*/
-
-    const refreshPage = useCallback((data) => {
+    const refreshPage = useCallback(() => {
         fetchBids().then();
     }, []);
 
+    const refreshBidOnPage = useCallback(({ bid_id }) => {
+        if (bid_id && bidsRef.current.find(bid => +bid.id === +bid_id)) {
+            fetchBids().then();
+        }
+    }, []);
+
     useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_BIDS', setHighlightBids);
-    //useWebSocketSubscription('HIGHLIGHT_BID', handleHighlightBid);
-    //useWebSocketSubscription('UNHIGHLIGHT_BID', handleUnHighlightBid);
     useWebSocketSubscription('REFRESH_PAGE', refreshPage);
+    useWebSocketSubscription('REFRESH_BID', refreshBidOnPage);
 
 	useEffect(() => {
 		fetchInfo().then();
@@ -270,6 +255,9 @@ const BidListPage = (props) => {
 		handleSearchParamsChange('currentPage', currentPage);
 		handleSearchParamsChange('onPage', onPage);
 	}, []);
+    useEffect(() => {
+        bidsRef.current = bids;
+    }, [bids]);
 	useEffect(() => {
 		if (isMounted && currentPage && onPage && filterBox && orderBox) {
 			const timer = setTimeout(() => {

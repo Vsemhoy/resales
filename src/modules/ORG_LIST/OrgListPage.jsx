@@ -97,13 +97,13 @@ const OrgListPage = (props) => {
 
 
 	const [socketBusyOrglist, setsocketBusyOrglist] = useState([
-		{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", action: 'edit'},
+		/*{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", action: 'edit'},
 		{org_id: 4, user_id: 18, username: "Лескова Алеся Павловна",     action: 'explore'},
 		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна",    action: 'edit'},
 		{org_id: 22, user_id: 33, username: "Зубенко Михаил Петрович",   action: 'edit'},
 		{org_id: 40, user_id: 33, username: "Зубенко Михаил Петрович",   action: 'explore'},
 		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна",    action: 'explore'},
-		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович",   action: 'explore'},
+		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович",   action: 'explore'},*/
 	]);
 
 	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
