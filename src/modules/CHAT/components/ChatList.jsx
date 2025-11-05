@@ -34,22 +34,22 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 
 		const filtered = chatsList.filter((sms) => {
 			// Сообщения себе всегда показываем
-			if (sms.to?.id === currentUserId && sms.from?.id === currentUserId) {
+			if (sms?.to?.id === currentUserId && sms?.from?.id === currentUserId) {
 				return true;
 			}
 
 			const role = getRole(sms);
 			const displayName = getDisplayName(sms, role, false);
-			const messageText = sms.text?.toLowerCase() || '';
+			const messageText = sms?.text?.toLowerCase() || '';
 
-			return displayName.toLowerCase().includes(normalizedSearch) ||
-				messageText.includes(normalizedSearch);
+			return sms && (displayName.toLowerCase().includes(normalizedSearch) ||
+				messageText.includes(normalizedSearch));
 		});
 
 		// Группировка по chat_id с выбором последнего сообщения
 		const uniqueChatsMap = filtered.reduce((acc, sms) => {
-			const chatId = sms.chat_id;
-			const currentTime = sms.updated_at || sms.created_at;
+			const chatId = sms?.chat_id;
+			const currentTime = sms?.updated_at || sms?.created_at;
 			const existing = acc[chatId];
 
 			if (!existing || currentTime > (existing.updated_at || existing.created_at)) {
@@ -65,6 +65,11 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			return timeB - timeA;
 		});
 
+        const myChatIdx = result.findIndex((chat) => (+chat.from.id === +currentUserId) && (+chat.to.id === +currentUserId));
+        if (myChatIdx !== -1) {
+            result.splice(myChatIdx, 1);
+        }
+
 		// Добавляем чат "Сохранённое"
 		result.unshift({
 			chat_id: currentUserId,
@@ -73,6 +78,7 @@ export default function ChatList({ search, onSelectChat, selectedChatId }) {
 			text: '📁',
 			updated_at: Infinity,
 			created_at: Infinity,
+            count_unread: 0,
 			isSavedChat: true,
 		});
 

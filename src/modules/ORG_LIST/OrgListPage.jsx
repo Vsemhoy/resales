@@ -45,6 +45,7 @@ import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { readOrgURL, updateURL, useURLParams } from '../../components/helpers/UriHelpers';
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
 import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
+import {PRICE as usr} from "../PRICE/mock/mock";
 // import dayjs from 'dayjs';
 
 const OrgListPage = (props) => {
@@ -108,9 +109,22 @@ const OrgListPage = (props) => {
 
 	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
     //
-    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', (obj) => console.log(obj));
-    useWebSocketSubscription('REFRESH_PAGE', () => {});
-    useWebSocketSubscription('UPDATE_ORG', ({ id }) => console.log(id));
+    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', ({ activeUsers }) => setsocketBusyOrglist(prev => {
+        return activeUsers.map((usr) => {
+            return {
+                org_id: usr.orgId,
+                user_id: usr.userId,
+                username: usr.userFIO,
+                action: usr.action,
+            }
+        });
+    }));
+    useWebSocketSubscription('REFRESH_PAGE', () => get_orglist_async());
+    useWebSocketSubscription('UPDATE_ORG', ({ org_id }) => {
+        if (orgList.find(org => +org.id === +org_id)) {
+            get_orglist_async().then();
+        }
+    });
 
     useEffect(() => {
         if (connected && userdata.user.id) {

@@ -21,7 +21,7 @@ export const useChatRole = (currentUserId) => {
 	const getDisplayName = useCallback((sms, role, isSaved = false) => {
 		if (isSaved) return 'Сохранённое';
 
-		const user = role === 'self' ? sms.to : sms.from;
+		const user = role === 'self' ? sms?.to : sms?.from;
 		return `${user?.surname ?? ''} ${user?.name ?? ''}`.trim();
 	}, []);
 

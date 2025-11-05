@@ -63,6 +63,7 @@ const OrgListPreviewModal = (props) => {
 		if (props.busy_orgs?.length > 0){
 			setsocketBusyOrglist(props.busy_orgs);
 			let eddy = props.busy_orgs.find((item) => item.action === "edit");
+            if (!eddy) return;
 			if (eddy.user_id === props?.userdata?.user?.id){
 				setIAmEditor(true);
 			} else {
