@@ -547,7 +547,7 @@ const CallTabSectionTorg = (props) => {
             
 						<span className="sa-author-text">
 							{authorShortName !== null ? ` - ` + authorShortName + ' ' : ''}
-							{(userdata?.user?.id !== baseData?.creator.id) && (
+							{(userdata?.user?.id !== baseData?.creator?.id) && (
 								<Tooltip
 									placement={'right'}
 									title={
