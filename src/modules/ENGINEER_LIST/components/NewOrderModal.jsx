@@ -72,7 +72,7 @@ const NewOrderModal = (props) => {
             <Select
                 mode="multiple"
                 style={{width: '100%'}}
-                placeholder="select one country"
+                placeholder="Выберите инженеров(инженера)"
                 onChange={handleChangeEngineers}
                 options={engineersSelect.map(eng => {
                     return {
