@@ -174,6 +174,7 @@ export const CHAT_LIST_MOCK = {
 				updated_at: 1757341930,
 			},
 		],
+        total_unread: 10,
 	},
 	message: 'OK!',
 };

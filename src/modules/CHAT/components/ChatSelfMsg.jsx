@@ -54,7 +54,7 @@ export default function ChatSelfMsg({ message }) {
 	};
 
 	return (
-		<div className={messageClass} data-id={message.id}>
+		<div className={messageClass} data-id={message.id} data-message-id={message.id}>
 			<div className={bubbleClass}>
 				{/*<div className={styles.senderName}><span style={{color: 'red'}}>{fromId}</span> {senderName}</div>*/}
 				<span>{text}</span>
