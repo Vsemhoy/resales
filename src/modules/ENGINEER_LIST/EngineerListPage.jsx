@@ -98,6 +98,8 @@ const EngineerListPage = () => {
 	const [alertDescription, setAlertDescription] = useState('');
 	const [alertType, setAlertType] = useState('');
 
+	const [engineerSelect, setEngineerSelect] = useState([]);
+
 	const [modalTitle, setModalTitle] = useState('');
 
 	const success = (content) => {
@@ -206,6 +208,7 @@ const EngineerListPage = () => {
 					setFilterStatusSelect(filters.statuses);
 					setFilterCompaniesSelect(filters.companies);
 					setBaseCompanies(filters.companies);
+					setEngineerSelect(filters.engineers);
 				}
 			} catch (e) {
 				console.log(e);
@@ -214,6 +217,7 @@ const EngineerListPage = () => {
 			setFilterStatusSelect(FILTERS.statuses);
 			setFilterCompaniesSelect(FILTERS.companies);
 			setBaseCompanies(FILTERS.companies);
+			setEngineerSelect(FILTERS.engineers);
 		}
 	};
 
@@ -466,6 +470,7 @@ const EngineerListPage = () => {
 
 	const [modalText, setModalText] = useState('');
 	const [modalFileList, setModalFileList] = useState([]);
+	const [modelEngineers, setModelEngineers] = useState([]);
 
 	const handleSetModalText = (text) => {
 		setModalText(text);
@@ -482,23 +487,24 @@ const EngineerListPage = () => {
 		setModalTitle('');
 		setModalFileList([]);
 	};
-	const handleModalOk = (title, text, files) => {
-		console.log('HERE: handleModalOk', text, title);
+	const handleModalOk = (title, text, files, engineers) => {
+		console.log('HERE: handleModalOk', text, title, engineers);
 		setModalTitle(title);
 		setModalText(text);
 		setModalFileList(files);
+
 		console.log(files);
 
-		fetchCreateNewOrder(files, text, title).then(() => {
+		fetchCreateNewOrder(files, text, title, engineers).then(() => {
 			setBlockNewSpec(false);
 		});
 	};
 
-	const fetchCreateNewOrder = async (files, text, title) => {
+	const fetchCreateNewOrder = async (files, text, title, engineers) => {
 		if (PRODMODE) {
 			const formData = new FormData();
 			formData.append('_token', CSRF_TOKEN);
-			formData.append('data', JSON.stringify({ text: text, title: title }));
+			formData.append('data', JSON.stringify({ text: text, title: title, engineers }));
 
 			console.log('Files: ', files);
 			console.log('Text: ', text);
@@ -741,6 +747,8 @@ const EngineerListPage = () => {
 						open={blockNewSpec}
 						text={modalText}
 						title={modalTitle}
+						engineers={modelEngineers}
+						engineersSelect={engineerSelect}
 						handleOk={handleModalOk}
 						handleCancel={handleModalCancel}
 						handleSetModalText={handleSetModalText}
