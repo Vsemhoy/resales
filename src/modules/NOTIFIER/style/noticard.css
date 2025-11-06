@@ -1,0 +1,66 @@
+.ma-noticard {
+    grid-gap: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+    padding: 9px;
+    transition: all .3s;
+    box-shadow: 3px 11px 18px -12px #00000061;
+    border-radius: 9px;
+}
+
+.ma-noticard * {
+    font-size: 85%;
+}
+
+.ma-notread {
+    border: 1px dashed ;
+
+}
+
+.ma-notread:hover {
+    box-shadow: 1px 1px 12px gray;
+}
+
+.ma-notcontent {
+    font-size: medium;
+}
+.ma-notfooter {
+    display: flex;
+        justify-content: space-between;
+        align-items: center;
+}
+
+.ma-blow {
+    /* box-shadow:-3px -3px  6px rgba(18, 135, 231, 0.384), 3px 3px  6px rgba(231, 18, 64, 0.363); */
+    animation: horizontal-shaking 0.30s infinite;
+}
+
+.ma-global {
+    border: 0px;
+    background-color: #d5e6eb;
+    border-radius: 0px;
+    box-shadow: -45px 0px 0px #d5e6eb, 45px 0px 0px #d5e6eb;
+}
+
+.ma-notihead {
+    color: #666;
+    border-bottom: 1px solid #bbb;
+    margin-bottom: 10px;
+    font-variant: all-small-caps;
+    font-size: large;
+}
+
+@keyframes horizontal-shaking {
+    0% { transform: translateX(0) }
+    25% { transform: translateX(5px) }
+    50% { transform: translateX(-5px) }
+    75% { transform: translateX(5px) }
+    100% { transform: translateX(0) }
+   }
+
+.my-markdown-light {
+  background-color: white !important;
+  color: black !important;
+}
