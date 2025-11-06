@@ -2,7 +2,7 @@ import styles from './style/Chat.module.css';
 import {useEffect, useMemo, useState} from 'react';
 import {useUserData} from '../../../context/UserDataContext.js';
 import {useChatRole} from '../../../hooks/sms/useChatRole.js';
-import {Button, Dropdown, Space} from 'antd';
+import {Badge, Button, Dropdown, Space} from 'antd';
 import {MessageOutlined} from '@ant-design/icons';
 import {ChatModal} from './ChatModal.jsx';
 import useSms from "../../../hooks/sms/useSms";
@@ -15,7 +15,8 @@ export const ChatBtn = () => {
 	const {
 		connected,           // boolean - подключен ли WebSocket
 		connectionStatus,    // string - статус подключения
-		chats: chatsSocket,  // [] - список чатов
+        totalUnread,         // количество непрочитанных сообщений
+        chatsList,           // [] - список чатов
 		messages,            // {} - сообщения по chatId
 		joinRoom,            // function - войти в комнату
 		sendMessage,         // function - отправить сообщение
@@ -25,9 +26,17 @@ export const ChatBtn = () => {
 		editMessage,         // function - редактировать сообщение
 		deleteMessage,       // function - удалить сообщение
 		updateMessageStatus, // function - обновить статус
+        fetchChatsList,
 	} = useChatSocket();
 	const [currentUserId, setCurrentUserId] = useState(null);
-	const { messages: chats = [], loading, error } = useSms({ search: '', mock: CHAT_LIST_MOCK });
+	//const { messages: chats = [], loading, error } = useSms({ search: '', mock: CHAT_LIST_MOCK });
+
+    useEffect(() => {
+        fetchChatsList();
+    }, []);
+    useEffect(() => {
+        fetchChatsList();
+    }, [totalUnread]);
 
 	useEffect(() => {
 		if (userdata?.user?.id) {
@@ -42,16 +51,19 @@ export const ChatBtn = () => {
 
 	// --- Формируем smsData (чаты, где участвует текущий пользователь) ---
 	const smsData = useMemo(() => {
-		if (!Array.isArray(chats) || chats.length === 0) {
+        console.log(chatsList);
+
+		if (!Array.isArray(chatsList) || chatsList.length === 0) {
 			return { hasSms: false, messages: [] };
 		}
 
-		const messages = chats
+		const messages = chatsList
 			.filter((chat) => {
 				const fromId = chat.from?.id || chat.from_id;
 				const toId = chat.to?.id || chat.to_id;
 				return fromId === currentUserId || toId === currentUserId;
 			})
+            .filter((chat) => chat.count_unread > 0)
 			.map((chat) => {
 				const role = getRole(chat);
 				const displayName = getDisplayName(chat, role, false);
@@ -66,45 +78,29 @@ export const ChatBtn = () => {
 					content: chat.text || chat.last_message || '(без текста)',
 					chatId: chat.chat_id,
 					role: role, // Добавляем роль для отладки
+                    countUnread: chat.count_unread,
 					_fullChat: chat,
 				};
 			});
 
 		return { hasSms: messages.length > 0, messages };
-	}, [chats, currentUserId, getRole, getDisplayName]);
+	}, [chatsList, currentUserId, getRole, getDisplayName]);
 
 	// --- Меню для dropdown ---
 	const menuItems = useMemo(() => {
-		if (!smsData.hasSms) {
-			return [];
-		}
-
+		if (!smsData.hasSms) return [];
 		const { messages } = smsData;
-		const count = messages.length;
-
-		const label = (() => {
-			if (count === 1) return messages[0].name;
-			if (count === 2) return `${messages[0].name} и ${messages[1].name}`;
-			return `${messages
-				.slice(0, 2)
-				.map((m) => m.name)
-				.join(', ')} и ещё +${count - 2}`;
-		})();
-
-		return [
-			{
-				key: 'sms-section',
-				label: (
-					<div className={styles['sms-section']}>
-						<Space direction="vertical" size={4}>
-							<Space size={2} wrap>
-								<span className={styles['sms-counter']}>{label}</span>
-							</Space>
-						</Space>
-					</div>
-				),
-			},
-		];
+        return messages.map((message, idx) => {
+            return {
+                key: `message-${idx}-${message.id}`,
+                label: (
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px'}}>
+                        <div>{message.name}</div>
+                        <div>{message.countUnread}</div>
+                    </div>
+                ),
+            }
+        });
 	}, [smsData]);
 
 	const showModal = () => setIsModalOpen(true);
@@ -114,8 +110,8 @@ export const ChatBtn = () => {
 	const ButtonNode = (
 		<Button style={{ background: 'transparent' }} type="primary" onClick={showModal}>
 			<MessageOutlined />
-			{smsData.hasSms && (
-				<span className={styles['notification-badge']}>{smsData.messages.length}</span>
+			{totalUnread > 0 && (
+				<span className={styles['notification-badge']}>{totalUnread}</span>
 			)}
 		</Button>
 	);

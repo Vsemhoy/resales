@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * Хук который вызывает колбэк метод когда во вьюпорт попадает конкретный объект
+ * Хук, который вызывает колбэк метод когда во вьюпорт попадает конкретный объект
  * (например в чате со скроллом появляется непрочитанное сообщение)
  *
  * @param {object} params - объект конфигурации
@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
  * @param {number} params.currentUserId - id пользователя
  * @param {number} [params.chatId] - id чата
  * @param {React.RefObject} params.containerRef - контейнер с сообщениями, за которым следим
- * @param {function} [params.markMessagesAsRead] - функция срабатываемая при попадании сообщения в обсервер
+ * @param {function} [params.markMessagesAsRead] - функция срабатываемая при попадании сообщения в observer
  */
 export const useMarkMessagesRead = ({
                                         messagesWithDividers,
@@ -27,7 +27,7 @@ export const useMarkMessagesRead = ({
         const timeout = setTimeout(() => {
             const unreadMessages = messagesWithDividers
                 .filter(item => item.type !== 'divider')
-                .filter(item => +item.message.fromId !== +currentUserId)
+                .filter(item => +item.message.fromId === +chatId) /*|| +item.message.fromId !== +currentUserId*/
                 .filter(item => !item.message.status)
                 .map(item => ({
                     id: item.message.id,
@@ -35,6 +35,7 @@ export const useMarkMessagesRead = ({
                 }))
                 .filter(item => item.element);
 
+            console.log(unreadMessages);
             if (unreadMessages.length === 0) return;
 
             const observer = new IntersectionObserver(

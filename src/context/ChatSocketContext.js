@@ -25,6 +25,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 	chatsRef.current = chats;
 	const [currentChatId, setCurrentChatId] = useState(0); // открытый чат
 
+	const [totalUnread, setTotalUnread] = useState(0); // количество всех непрочитанных сообщений
+
 	const [loadingChatList, setLoadingChatList] = useState(false); // ожидаем ответа со списком чатов
 	const [loadingChat, setLoadingChat] = useState(false); // ожидаем ответа с чатом
 	const [loadingSendSms, setLoadingSendSms] = useState(false); // ожидаем ответа при отправке сообщения
@@ -69,6 +71,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.log('WS new:sms', data);
 
 			if (data.left) addMessageToChatList(data.left, false);
+            if (data.left) setTotalUnread(data.left?.total_unread);
 			if (data.right) addMessageToChat(data.right);
 
 			if (data.right)  emitToListeners('message:new', data.right);
@@ -119,6 +122,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				});
 				if (response?.data?.content) {
 					setChatsList(response?.data?.content?.sms);
+                    setTotalUnread(response?.data?.content?.total_unread);
 				}
 			} catch (e) {
 				console.log(e);
@@ -127,6 +131,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			}
 		} else {
 			setChatsList(CHAT_LIST_MOCK?.content?.sms);
+            setTotalUnread(CHAT_LIST_MOCK?.content?.total_unread);
 			setLoadingChatList(false);
 		}
 	}, [loadingChatList]);
@@ -228,6 +233,7 @@ export const ChatSocketProvider = ({ children, url }) => {
                     if (response?.data) {
                         updateMessageStatus(response?.data?.sms, response?.data?.from, false);
                         updateChatListCountUnread(response?.data?.sms?.from, response?.data?.sms?.count_unread);
+                        setTotalUnread(response?.data?.sms?.total_unread);
                     }
 				} catch (e) {
 					console.log(e);
@@ -408,6 +414,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				connected,
 				connectionStatus,
 				/* chats info */
+                totalUnread,
 				chatsList,
 				chats,
 				currentChatId,
