@@ -84,7 +84,21 @@ export const FILTERS = {
 			"id": 4,
 			"name": "\u0413\u043e\u0442\u043e\u0432\u0430"
 		}
-	]
+	],
+	"engineers": [
+		{
+			"id": 1,
+			"name": "Бобко Александр",
+		},
+		{
+			"id": 2,
+			"name": "Дегелевич Юрий",
+		},
+		{
+			"id": 3,
+			"name": "Фокин Сергей ",
+		},
+	],
 };
 
 export const ORDERS = [

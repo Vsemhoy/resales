@@ -1,4 +1,4 @@
-import {Button, Modal, Upload, message, Input} from "antd";
+import {Button, Modal, Upload, message, Input, Space, Select} from "antd";
 import React, {useEffect, useState} from "react";
 import TextArea from "antd/es/input/TextArea";
 import {UploadOutlined} from "@ant-design/icons";
@@ -10,10 +10,16 @@ const NewOrderModal = (props) => {
     const [text, setText] = useState("");
     const [title, setTitle] = useState("");
     const [fileList, setFileList] = useState([]);
+    const [engineersSelect, setEngineersSelect] = useState([]);
+    const [engineers, setEngineers] = useState([]);
 
     useEffect(() => {
         setText(props.text);
     }, [props.text]);
+
+    useEffect(() => {
+        setEngineersSelect(props.engineersSelect);
+    }, [props.engineersSelect]);
 
     useEffect(() => {
         setOpen(props.open);
@@ -39,7 +45,7 @@ const NewOrderModal = (props) => {
     }
 
     const handleOk = () => {
-        props.handleOk(title, text, fileList)
+        props.handleOk(title, text, fileList, engineers)
     }
 
     const handleUploadChange = ({ fileList: newFileList }) => {
@@ -50,6 +56,10 @@ const NewOrderModal = (props) => {
         setFileList(fileList.filter(f => f.uid !== file.uid));
     };
 
+    const handleChangeEngineers = (data) => {
+        setEngineers(data);
+    }
+
     return (
         <Modal
             title={"Новая задача для инженеров"}
@@ -58,6 +68,25 @@ const NewOrderModal = (props) => {
             onCancel={props.handleCancel}
             closeIcon={false}
         >
+            <h4> Инженеры </h4>
+            <Select
+                mode="multiple"
+                style={{width: '100%'}}
+                placeholder="select one country"
+                onChange={handleChangeEngineers}
+                options={engineersSelect.map(eng => {
+                    return {
+                        label: eng.name,
+                        value: eng.id,
+                    }
+                })}
+                optionRender={option => (
+                    <Space>
+                        {option.label}
+                    </Space>
+                )}
+            />
+
             <h4> Название заявки </h4>
             <Input value={title}
                    placeholder={"Введите коротко что делать"}
