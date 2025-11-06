@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './style/topmenu.css';
-// import ChatBtn from '../../../modules/CHAT/components/ChatBtn';
 import { ChatBtn } from '../../../modules/CHAT/components/ChatBtn';
 import { NavLink } from 'react-router-dom';
 import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE } from '../../../config/config';
-import { CloseCircleOutlined, HomeFilled, WechatWorkOutlined } from '@ant-design/icons';
+import {CloseCircleOutlined, HomeFilled, NotificationOutlined, WechatWorkOutlined} from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
-import { Dropdown } from 'antd';
+import {Button, Dropdown} from 'antd';
 import { ShortName } from '../../helpers/TextHelpers';
 import {
 	ArrowTopRightOnSquareIcon,
@@ -17,8 +16,7 @@ import {
 	UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
-import { useUserData } from '../../../context/UserDataContext'; // импортируем хук
-import { WebSocketDebug } from '../../helpers/WebSocketDebug';
+import NotiBtn from "../../../modules/NOTIFIER/NotiBtn";
 
 const TopMenu = (props) => {
 		const [userdata, setUserdata] = useState(props.userdata);
@@ -147,25 +145,7 @@ const TopMenu = (props) => {
 		},
 	];
 
-	const sms = [];
 	/** ------------------ FETCHES ---------------- */
-	// const set_user_role = async (newplace) => {
-	// 	if (PRODMODE) {
-	// 		try {
-	// 			let response = await PROD_AXIOS_INSTANCE.post('/auth/me', {
-	// 				place: newplace,
-	// 				_token: CSRF_TOKEN,
-	// 			});
-	// 			if (response.data) {
-	// 				setUserdata(response.data); // Обновляем данные пользователя
-	// 				props.changed_user_data();
-	// 			}
-	// 		} catch (e) {
-	// 			console.log(e);
-	// 		}
-	// 	}
-	// };
-
 	const set_user_company = async (newcom) => {
 		if (PRODMODE) {
 			try {
@@ -186,16 +166,12 @@ const TopMenu = (props) => {
 	};
 
 	const changeUserCompany = (company_id) => {
-		set_user_company(company_id);
+		set_user_company(company_id).then();
 	};
 
 	const changeUserRole = (role_id) => {
 		//set_user_role(role_id);
 	};
-
-	// const toggleDebugger = () => {
-	// 	setShowDebugger(!showDebugger);
-	// };
 
 	return (
 		<div className="sa-top-menu" style={{ padding: '0 12px' }}>
@@ -244,45 +220,11 @@ const TopMenu = (props) => {
 							<div className={'sa-topmenu-button'}>Выгрузка счетов</div>
 						</NavLink>
 					)}
-
-					{/* {userdata?.user?.super === 1 && (
-						<div ref={debuggerRef} style={{ position: 'relative', display: 'inline-block' }}>
-							<div
-								className={'sa-topmenu-button'}
-								style={{
-									color: 'transparent',
-									backgroundColor: 'transparent',
-								}}
-								onClick={toggleDebugger}
-							>
-								DEBUGGER
-							</div>
-							{showDebugger && (
-								<div
-									style={{
-										position: 'absolute',
-										top: '100%',
-										right: 0,
-										zIndex: 10000,
-										marginTop: '5px',
-										backgroundColor: 'white',
-										border: '1px solid #d9d9d9',
-										borderRadius: '6px',
-										boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-										padding: '8px',
-										minWidth: '300px',
-									}}
-								>
-									<p>Пора подебажить</p>
-									<WebSocketDebug />
-								</div>
-							)}
-						</div>
-					)} */}
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
-					<ChatBtn sms={sms} />
+                    <ChatBtn />
+                    <NotiBtn />
 					<Dropdown menu={{ items: userMenu }}>
 						<div className={'sa-flex-gap'}>
 							{ShortName(userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname)}
