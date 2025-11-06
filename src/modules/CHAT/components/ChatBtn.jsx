@@ -9,7 +9,7 @@ import useSms from "../../../hooks/sms/useSms";
 import {CHAT_LIST_MOCK} from "../mock/mock";
 import {useChatSocket} from "../../../context/ChatSocketContext";
 
-export const ChatBtn = () => {
+const ChatBtn = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const { userdata } = useUserData();
 	const {
@@ -126,7 +126,12 @@ export const ChatBtn = () => {
 				<div>{ButtonNode}</div>
 			)}
 
-			<ChatModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel} smsData={smsData}/>
+			<ChatModal open={isModalOpen}
+                       onOk={handleOk}
+                       onCancel={handleCancel}
+                       smsData={smsData}
+            />
 		</Space>
 	);
 };
+export default ChatBtn;

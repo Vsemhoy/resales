@@ -65,6 +65,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				return;
 			}
 			socket.emit('subscribeToChat', userId);
+			socket.emit('subscribeToNotification', userId);
 		});
 		// --- получаем новое сообщение ---
 		socket.on('new:sms', (data) => {
@@ -79,12 +80,11 @@ export const ChatSocketProvider = ({ children, url }) => {
 		});
 		socket.on('update:sms', (data) => {
 			console.log('WS update:sms', data);
-
 			if (data.sms) updateMessageStatus(data.sms, data.sms.to, true);
-
-			//if (data.right)  emitToListeners('message:new', data.right);
-			//emitToListeners('new:sms', data);
 		});
+        socket.on('new:notification', (data) => {
+            console.log('WS new:notification', data);
+        });
 		socket.on('disconnect', (reason) => {
 			console.log('CHAT WEBSOCKET DISCONNECTED');
 			setConnected(false);
