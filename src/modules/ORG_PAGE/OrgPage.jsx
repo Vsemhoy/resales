@@ -151,7 +151,16 @@ const tempMain_an_requisitesRef = useRef(tempMain_an_requisites);
 		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},*/
 	]);
 
-    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', (obj) => console.log(obj));
+    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', ({ activeUsers }) => setsocketBusyOrglist(prev => {
+        return activeUsers.map((usr) => {
+            return {
+                org_id: usr.orgId,
+                user_id: usr.userId,
+                username: usr.userFIO,
+                action: usr.action,
+            }
+        });
+    }));
 
     useEffect(() => {
         console.log('CONNECTED orgPage', connected)
