@@ -169,6 +169,7 @@ const BidPage = (props) => {
 	const [factAddressSelect, setFactAddressSelect] = useState([]);
 	const [phoneSelect, setPhoneSelect] = useState([]);
 	const [emailSelect, setEmailSelect] = useState([]);
+	const [reasonsSelect, setReasonsSelect] = useState([]);
 	/* ОСТАЛЬНОЕ */
 	const [modelIdExtra, setModelIdExtra] = useState(null);
 	const [modelNameExtra, setModelNameExtra] = useState('');
@@ -553,6 +554,7 @@ const BidPage = (props) => {
 					setStageSelect(selects.stage_select);
 					setTemplateWordSelect(selects.template_word_select);
 					setCompanies(selects.companies);
+                    setReasonsSelect(selects.reasons);
 				}
 			} catch (e) {
 				console.log(e);
@@ -579,6 +581,7 @@ const BidPage = (props) => {
 			setStageSelect(SELECTS.stage_select);
 			setTemplateWordSelect(SELECTS.template_word_select);
 			setCompanies(SELECTS.companies);
+            setReasonsSelect(SELECTS.reasons);
 		}
 	};
 	const fetchOrgSelects = async () => {
@@ -1867,14 +1870,7 @@ const BidPage = (props) => {
 																		[<Select key="return-reason-select"
 																				 		style={{width:'100%'}}
 																						placeholder={'Причина возврата заявки'}
-																						options={[
-																							{value: 'По просьбе менеджера', label: 'По просьбе менеджера'},
-																							{value: 'Нет ИНН', label: 'Нет ИНН'},
-																							{value: 'Не указан способ транспортировки', label: 'Не указан способ транспортировки'},
-																							{value: 'Не указаны сроки поставки', label: 'Не указаны сроки поставки'},
-																							{value: 'Необходимо разбить на несколько заявок', label: 'Необходимо разбить на несколько заявок'},
-																							{value: 'Не указан склад отгрузки', label: 'Не указан склад отгрузки'},
-																						]}
+																						options={prepareSelect(reasonsSelect)}
 																		/>],
 																		returnButtons
 																	);
@@ -1924,15 +1920,7 @@ const BidPage = (props) => {
 																	[<Select key="return-reason-select"
 																			 style={{width:'100%'}}
 																			 placeholder={'Причина возврата заявки'}
-																			 options={[
-																				 {value: 'По просьбе менеджера', label: 'По просьбе менеджера'},
-																				 {value: 'Нет ИНН', label: 'Нет ИНН'},
-																				 {value: 'Не указан способ транспортировки', label: 'Не указан способ транспортировки'},
-																				 {value: 'Не указаны сроки поставки', label: 'Не указаны сроки поставки'},
-																				 {value: 'Необходимо разбить на несколько заявок', label: 'Необходимо разбить на несколько заявок'},
-																				 {value: 'Не указан склад отгрузки', label: 'Не указан склад отгрузки'},
-																				 {value: 'Убрать статус завершено', label: 'Убрать статус завершено'},
-																			 ]}
+																			 options={prepareSelect(reasonsSelect)}
 																	/>],
 																	returnButtons
 																);
