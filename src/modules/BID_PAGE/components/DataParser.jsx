@@ -4,8 +4,7 @@ import { Table } from "antd";
 
 const DataParser = ({ models, additionData, setAdditionData }) => {
     const [value, setValue] = useState("");
-
-    const replace_alfabet = {
+    const replace_alphabet = {
         'а': 'a',
         'в': 'b',
         'с': 'c',
@@ -19,62 +18,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
         'т': 't',
         'х': 'x',
     };
-
-    // Функция для получения имени (первого слова в верхнем регистре)
-    const getName = (str) => {
-        let name = '';
-        const splited = str.trim().split(" ")
-        for (let i = 0; i < splited.length; i++) {
-            if (isNaN(splited[i]) && splited[i] !== '-') {
-                name += splited[i] + ' ';
-            } else {
-                break;
-            }
-        }
-        return name.trim();
-    };
-
-    // Функция для получения количества (число в конце строки или 1 по умолчанию)
-    const getCount = (str) => {
-        console.log('test')
-        const parts = str.trim().split(" ");
-
-        let numberStr = 1;
-        for (let i = parts.length - 1; i >= 0; i--) {
-            if (!isNaN(Number(parts[i]))) {
-                numberStr = parts[i];
-            }
-        }
-
-        return numberStr;
-    };
-
-    // Получение id модели по имени
-    const getModelId = (searchName) => {
-        const model = models.find((model) => model.name.toLowerCase() === searchName.toLowerCase());
-        if (model && model.id) {
-            return model.id;
-        } else {
-            if (searchName.includes('-')) {
-                const formattedName = searchName.replace(/-/g, '- ');
-                const model2 = models.find((model) => model.name.toLowerCase() === formattedName.toLowerCase());
-                if (model2 && model2.id) {
-                    return model2.id;
-                } else {
-                    return null;
-                }
-            }
-        }
-    }
-    const getModelName = (searchName) => {
-        const model =  models.find((model) => model.name.toLowerCase() === searchName.toLowerCase());
-        if (model && model.name) {
-            return model.name;
-        } else {
-            return null;
-        }
-    }
-    const getModelNameV2 = (name) => {
+    const getModelName = (name) => {
         // Проверяем, что models существует и не пустой
         if (!models || models.length === 0) {
             console.warn('Models array is empty or not defined');
@@ -94,7 +38,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
         let trname = nameLower;
 
         // Транслитерация символов
-        Object.entries(replace_alfabet).forEach(([cyrillic, latin]) => {
+        Object.entries(replace_alphabet).forEach(([cyrillic, latin]) => {
             trname = trname.replace(new RegExp(cyrillic, 'ig'), latin);
         });
 
@@ -130,7 +74,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
                 key: 0,
                 num: 0,
                 name: '',
-                count: 0,
+                count: 1,
                 id: 0,
                 currency: 0,
             };
@@ -142,7 +86,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
                     mod.errorcount = false
                 }
 
-                let name = getModelNameV2(value);
+                let name = getModelName(value);
                 if ( name !== '') {
                     mod.name = name.name;
                     mod.errorname = false;
@@ -165,19 +109,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
 
         const lines = value.split("\n");
         const parsedData = lines.map((line, index) => {
-            const name = getName(line);
-            if (!name) return null;
-
             return findModel(line, index);
-
-            /*return {
-                key: index,
-                num: index + 1,
-                name: getModelName(name) ? getModelName(name) : name,
-                count: getCount(line),
-                id: getModelId(name),
-                currency: getModelCurrency(name),
-            };*/
         }).filter(Boolean);
 
         setAdditionData(parsedData);
