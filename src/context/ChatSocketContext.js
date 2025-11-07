@@ -4,6 +4,7 @@ import {CSRF_TOKEN, PRODMODE} from '../config/config.js';
 import {CHAT_LIST_MOCK, CHAT_MOCK, CHAT_MOCK_NEW} from '../modules/CHAT/mock/mock.js';
 import {useUserData} from "./UserDataContext";
 import {PROD_AXIOS_INSTANCE} from "../config/Api";
+import dayjs from "dayjs";
 
 
 export const ChatSocketContext = createContext(null);
@@ -30,6 +31,13 @@ export const ChatSocketProvider = ({ children, url }) => {
 	const [loadingChatList, setLoadingChatList] = useState(false); // ожидаем ответа со списком чатов
 	const [loadingChat, setLoadingChat] = useState(false); // ожидаем ответа с чатом
 	const [loadingSendSms, setLoadingSendSms] = useState(false); // ожидаем ответа при отправке сообщения
+
+    const [refreshKey, setRefreshKey] = useState(0);
+    const [alertInfo, setAlertInfo] = useState({
+        message: '',
+        description: '',
+        type: 'info', //"success" | "info" | "warning" | "error"
+    });
 
 	const listeners = useRef({});
 
@@ -65,6 +73,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				return;
 			}
 			socket.emit('subscribeToChat', userId);
+			socket.emit('subscribeToNotification', userId);
 		});
 		// --- получаем новое сообщение ---
 		socket.on('new:sms', (data) => {
@@ -79,12 +88,17 @@ export const ChatSocketProvider = ({ children, url }) => {
 		});
 		socket.on('update:sms', (data) => {
 			console.log('WS update:sms', data);
-
 			if (data.sms) updateMessageStatus(data.sms, data.sms.to, true);
-
-			//if (data.right)  emitToListeners('message:new', data.right);
-			//emitToListeners('new:sms', data);
 		});
+        socket.on('new:notification', (data) => {
+            console.log('WS new:notification', data);
+            setRefreshKey(dayjs().unix());
+            setAlertInfo({
+                message: 'Новое уведомление.',
+                description: data.message,
+                type: 'info',
+            });
+        });
 		socket.on('disconnect', (reason) => {
 			console.log('CHAT WEBSOCKET DISCONNECTED');
 			setConnected(false);
@@ -413,6 +427,8 @@ export const ChatSocketProvider = ({ children, url }) => {
 				off,
 				connected,
 				connectionStatus,
+                refreshKey,
+                alertInfo,
 				/* chats info */
                 totalUnread,
 				chatsList,
