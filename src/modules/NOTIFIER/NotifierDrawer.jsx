@@ -4,6 +4,7 @@ import NotiCard from './NotiCard';
 import { MOCK_NOTICES } from './mock/NoticeMock';
 import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
+import {useChatSocket} from "../../context/ChatSocketContext";
 
 /**
  * Компонент нотификации - показывает уведомления, присланные с бэка
@@ -14,26 +15,35 @@ import {PROD_AXIOS_INSTANCE} from "../../config/Api";
  * @returns
  */
 const NotifierDrawer = ({is_open, on_count_change, on_close}) => {
-  const [notifications, setNotifications] = useState([]);
-  const [noticePage, setNoticePage] = useState(1);
-  const [noticeIgnore, setNoticeIgnore] = useState([]);
-  const [countOfNotifications, setCountOfNotifications] = useState(0);
-  const [countOfNewNotifications, setCountOfNewNotifications] = useState(0);
+    const [notifications, setNotifications] = useState([]);
+    const [noticePage, setNoticePage] = useState(1);
+    const [noticeIgnore, setNoticeIgnore] = useState([]);
+    const [countOfNotifications, setCountOfNotifications] = useState(0);
+    const [countOfNewNotifications, setCountOfNewNotifications] = useState(0);
 
-  const [notificatorOpened, setNotificatorOpened] = useState(false);
-  const [notificatorLoading, setNotificatorLoading] = useState(true);
-  
+    const [notificatorOpened, setNotificatorOpened] = useState(false);
+    const [notificatorLoading, setNotificatorLoading] = useState(true);
+
+    const {
+        connected,           // boolean - подключен ли WebSocket
+        refreshKey,          // провоцирует refetch
+    } = useChatSocket();
+
     const notificationRead = (id) => {
-      setNotifications(prev => 
-        prev.map(notification => 
-          notification.id === id 
-            ? { ...notification, is_read: true } 
+      setNotifications(prev =>
+        prev.map(notification =>
+          notification.id === id
+            ? { ...notification, is_read: true }
             : notification
         )
       );
       markNoteRead(id);
       setCountOfNewNotifications(countOfNewNotifications - 1);
     };
+
+    useEffect(() => {
+        getFreshNotices().then();
+    }, [refreshKey]);
 
     useEffect(() => {
       if (on_count_change){
@@ -49,26 +59,26 @@ const NotifierDrawer = ({is_open, on_count_change, on_close}) => {
 
     useEffect(() => {
       if (notificatorOpened === true){
-        getFreshNotices();
+        getFreshNotices().then();
       }
     }, [notificatorOpened]);
 
-      // EFFECTS
-      useEffect(() => {
-        if (PRODMODE){
-          getFreshNotices();
-        } else {
+    // EFFECTS
+    useEffect(() => {
+    if (PRODMODE){
+      getFreshNotices().then();
+    } else {
 
-          setNotifications(MOCK_NOTICES);
-          console.log("MANOK" , MOCK_NOTICES);
-          
-        }
-      }, []);
+      setNotifications(MOCK_NOTICES);
+      console.log("MANOK" , MOCK_NOTICES);
+
+    }
+    }, []);
 
 
-      useEffect(() => {
-        setNotificatorLoading(false);
-      }, [notifications]);
+    useEffect(() => {
+    setNotificatorLoading(false);
+    }, [notifications]);
 
 
 
@@ -156,7 +166,7 @@ const NotifierDrawer = ({is_open, on_count_change, on_close}) => {
 
 
 
-  return (
+    return (
     <Drawer
         closable
         destroyOnClose
@@ -172,14 +182,14 @@ const NotifierDrawer = ({is_open, on_count_change, on_close}) => {
         <p>Новых уведомлений не найдено...</p> */}
         <div>
           {notifications.map((item)=>(
-            <NotiCard 
+            <NotiCard
               data={item}
               key={`notic_${item.id}`}
               on_read={notificationRead}
             />
           ))}
         </div>
-          
+
         { noticePage > 0 && (
           <Button type="dashed" block
             onClick={getOldNotices}
@@ -189,7 +199,7 @@ const NotifierDrawer = ({is_open, on_count_change, on_close}) => {
         )}
 
       </Drawer>
-  );
+    );
 };
 
 export default NotifierDrawer;
