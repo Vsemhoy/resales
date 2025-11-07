@@ -33,6 +33,7 @@ import Regtown from './modules/REGTOWN/Regtown';
 import FilesBuhPage from "./modules/FILES_BUH/FilesBuhPage";
 
 import {ResalesWebSocketProvider} from "./context/ResalesWebSocketContext";
+import AlertCustom from "./components/template/Alert/AlertCustom";
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -210,6 +211,7 @@ export const App = () => {
                                     </Dropdown>
                                 )}
                             </div>
+                            <AlertCustom />
                         </div>
                     </BrowserRouter>
                 </ChatSocketProvider>
