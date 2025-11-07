@@ -703,7 +703,7 @@ const EngineerPage = (props) => {
                   </Badge>
                 </Tooltip>
 
-                {(engineer === null && +bidPlace === 2) ? (
+                {(!engineer?.id && +bidPlace === 2) ? (
                         <>
                           <Tooltip title={'Принять заявку'} placement={'right'}>
                             <Button className={'sa-engineer-page-btn'}
