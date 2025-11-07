@@ -20,7 +20,7 @@ import './components/style/engPage.css'
 import {SELECTS, ALLMODELS_LIST, CALC_INFO, MODELS_LIST, PREBID, CUR_COMPANY, CUR_CURRENCY} from './mock/mock';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import {
-  BlockOutlined,
+  BlockOutlined, CheckOutlined,
   CopyOutlined,
   DeleteOutlined,
   DollarOutlined,
@@ -230,7 +230,8 @@ const EngineerPage = (props) => {
     } else {
       console.log("HERE: 1");
       setManager(PREBID.manager);
-      setEngineer(PREBID.engineer);
+      // setEngineer(PREBID.engineer);
+      setEngineer(null);
 
       setBidCommentEngineer(PREBID.comment_engineer);
       setBidCommentManager(PREBID.comment_manager);
@@ -238,12 +239,42 @@ const EngineerPage = (props) => {
       setBidModels(MODELS_LIST);
       setEngineerParameters(CALC_INFO.models_data);
 
-      setBidPlace(4);
+      setBidPlace(2);
 
       setBidFilesCount(1);
 
       // setEditMode(!((bidPlace === 4) || (bidPlace === 1)));
       setEditMode(false)
+    }
+  };
+
+  const acceptOrder = async (order_id, engineer) => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post(
+            '/api/sales/engineer/orders/accept/' + order_id,
+            {
+              _token: CSRF_TOKEN,
+            }
+        );
+
+        setIsAlertVisible(true);
+        setAlertMessage('Успех!');
+        setAlertDescription(response.data.message);
+        setAlertType('success');
+
+      } catch (e) {
+        console.log(e);
+        setIsAlertVisible(true);
+        setAlertMessage('Произошла ошибка!');
+        setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+        setAlertType('error');
+      }
+    } else {
+      setIsAlertVisible(true);
+      setAlertMessage('Успех!');
+      setAlertDescription('Успешное обновление');
+      setAlertType('success');
     }
   };
 
@@ -665,12 +696,26 @@ const EngineerPage = (props) => {
                     <Button className={'sa-engineer-page-btn'}
                             color="primary"
                             variant="outlined"
-                            disabled={!editMode}
+                            // disabled={!editMode}
                             icon={<DownloadOutlined className={'sa-engineer-page-btn-icon'}/>}
                             onClick={() => setIsEngineerFilesDrawerOpen(true)}
                     ></Button>
                   </Badge>
                 </Tooltip>
+
+                {(engineer === null && +bidPlace === 2) ? (
+                        <>
+                          <Tooltip title={'Принять заявку'} placement={'right'}>
+                            <Button className={'sa-engineer-page-btn'}
+                                    color="primary"
+                                    variant="outlined"
+                                    icon={<CheckOutlined className={'sa-engineer-page-btn-icon'}/>}
+                                    onClick={() => {acceptOrder(bidId).then(fetchBidInfo().then());}}
+                            ></Button>
+                          </Tooltip>
+                        </>
+                ) : ""}
+
               </div>
               <div className={'sa-engineer-page-info-wrapper'}>
                 <div className={'sa-info-models-header'}>Основные данные</div>
