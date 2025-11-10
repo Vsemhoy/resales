@@ -575,7 +575,8 @@ const antiTruncateText = (text, maxLength = 200) => {
 							)}
 						</div>
 						<div>
-							{(orgData.is_prosound === 1) && (
+							{/*{(orgData.is_prosound !== null || orgData.is_prosound === 2) && (*/}
+								{(rgData.is_prosound === 2) && (
 								<Tooltip title={'Профзвук'}>
 									<MusicalNoteIcon height={'16px'} />
 								</Tooltip>
