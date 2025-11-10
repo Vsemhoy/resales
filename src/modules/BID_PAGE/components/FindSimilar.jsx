@@ -46,7 +46,7 @@ const FindSimilar = (props) => {
     const [childrenDrawer, setChildrenDrawer] = useState(false);
     const settingsColumns = [
         {
-            title: "",
+            title: "Настройки поиска",
             dataIndex: "name",
             key: "name",
         },
@@ -82,16 +82,16 @@ const FindSimilar = (props) => {
     ];
     const DS_SIMILAR_COLUMNS = [
         {
-            title: "",
+            title: "Найденное",
             dataIndex: "data",
             key: "data",
             width: 500,
         },
-        {
+        /*{
             title: "",
             dataIndex: "value",
             key: "value",
-        },
+        },*/
     ];
     const limitsMarks = [
         {
@@ -370,12 +370,10 @@ const FindSimilar = (props) => {
                 setSearchCount(SIMILAR_BIDS.count_all);
             }
         };
-        if (props.isOpenDrawer) {
-            const delayInputTimeoutId = setTimeout(() => {
-                /*PRODMODE && similarData.length > 1 && */ similar_data();
-            }, 1000);
-            return () => clearTimeout(delayInputTimeoutId);
-        }
+        const delayInputTimeoutId = setTimeout(() => {
+            similar_data().then();
+        }, 1000);
+        return () => clearTimeout(delayInputTimeoutId);
     }, [
         dates,
         type,
@@ -389,7 +387,6 @@ const FindSimilar = (props) => {
         range,
         notMatchLimit,
         notCompany,
-        props.isOpenDrawer
     ]);
 
     const change = (value, id, type) => {
@@ -450,7 +447,7 @@ const FindSimilar = (props) => {
             },*/
         ];
     };
-    const D = ({ bid }) => {
+    const D = ({ bid, models }) => {
         return (
             <div className={'sa-similar__card__subcont__item'}>
                 <div className={'sa-similar__text__title'}>
@@ -476,9 +473,14 @@ const FindSimilar = (props) => {
                     <b>Заявка от: </b>
                     {bid.user}
                 </div>
-                <div
-                    className={'sa-similar__text__data'}
-                >{`Дата: ${dayjs(bid.date * 1000).format("DD.MM.YYYY")}`}</div>
+                <div>
+                    <b>Дата: </b>
+                    {`${dayjs(bid.date * 1000).format("DD.MM.YYYY")}`}
+                </div>
+                <div>
+                    <b>Модели: </b>
+                    <S models={models}/>
+                </div>
             </div>
         );
     };
@@ -491,15 +493,9 @@ const FindSimilar = (props) => {
                 })*/
                 .map((el, idx) => {
                     return (
-                        <div key={Math.random()} style={{ margin: "0 5px" }}>
-                            <Tag
-                                icon={
-                                    <Tag className={'sa-similar__tag'}>{el.model_count}</Tag>
-                                }
-                                color={el.model_match ? "green" : "blue"}
-                            >
-                                {el.an_models_name}
-                            </Tag>
+                        <div key={Math.random()} className={'model-with-tag'}>
+                            {el.an_models_name}
+                            <Tag className={'sa-similar__tag'}>{el.model_count}</Tag>,
                         </div>
                     );
                 })
@@ -509,14 +505,14 @@ const FindSimilar = (props) => {
     const similarDOM = similar ? similar.map((el, index) => {
         console.log(el.models)
         return {
-            data: <D bid={el.bid} />,
-            value: <S models={el.models} />,
+            data: <D bid={el.bid} models={el.models} />,
+            /*value: <S models={el.models} />,*/
         };
     }) : null;
 
     return (
         <div className={'sa-find-similar'}>
-            <div style={{userSelect: "none", overflow: "auto", paddingBottom: "50px"}}>
+            <div className={'sa-find-similar-info'}>
                 <div className={'sa-position__one'}>
                     <div style={{padding: "0", width: "100%"}}>
                         <Table
@@ -524,7 +520,8 @@ const FindSimilar = (props) => {
                             dataSource={defaultSimilarAddData}
                             pagination={false}
                             size={"small"}
-                            showHeader={false}
+                            showHeader={true}
+                            bordered={true}
                         />
                     </div>
                     <div style={{margin: "20px 0 0", width: "100%"}}>
@@ -532,9 +529,10 @@ const FindSimilar = (props) => {
                             columns={modelsColumns(change)}
                             dataSource={similarData}
                             pagination={false}
+                            bordered={true}
                             size={"small"}
                             scroll={{
-                                y: 200,
+                                y: 250,
                             }}
                         />
                     </div>
@@ -564,15 +562,16 @@ const FindSimilar = (props) => {
                     </div>
                 </div>*/}
             </div>
-            <div style={{marginBottom: "40px"}}>
+            <div className={'sa-find-similar-founded'}>
                 <Table
                     loading={load}
                     dataSource={similarDOM}
                     columns={DS_SIMILAR_COLUMNS}
                     pagination={false}
                     size={"small"}
-                    showHeader={false}
-                    bordered={false}
+                    showHeader={true}
+                    bordered={true}
+                    scroll={{ x: true, y: 515 }}
                 />
             </div>
         </div>

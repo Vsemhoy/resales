@@ -615,8 +615,8 @@
 }
 
 .sa-similar__tag {
-	margin-left: -3px !important;
-	margin-right: 10px !important;
+	/*margin-left: -3px !important;
+	margin-right: 10px !important;*/
 }
 .sa-similar__text__title {
 	font-size: 16px;
@@ -624,7 +624,8 @@
 	margin: 10px auto 0;
 }
 .sa-similar__card__subcont__item {
-	width: 200px;
+	/*width: 200px;*/
+	width: 100%;
 	font-size: 12px;
 	margin-bottom: 10px;
 }
@@ -634,14 +635,14 @@
 }
 .sa-similar__card__models__cont {
 	display: flex;
-	width: 340px;
+	/*width: 340px;*/
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: flex-start;
 	flex-wrap: wrap;
 	align-content: flex-start;
 	/*    box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2) inset;*/
-	padding: 10px;
+	/*padding: 10px;*/
 	box-sizing: border-box;
 }
 .sa-similar__card__models__cont span {
@@ -671,6 +672,23 @@
 
 .sa-find-similar {
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    max-height: 570px;
+    overflow: hidden;
+    overflow-x: auto;
+    display: flex;
+    /*grid-template-columns: calc(1fr - 24px) calc(1fr - 24px);*/
+    gap: 10px;
+}
+
+.sa-find-similar-info, .sa-find-similar-founded {
+    width: calc(50% - 24px);
+    max-height: 570px;
+    z-index: 10;
+}
+.model-with-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3px;
+    margin: 0 5px;
 }
