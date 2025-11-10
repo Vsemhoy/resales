@@ -263,6 +263,8 @@ const EngineerPage = (props) => {
         setAlertDescription(response.data.message);
         setAlertType('success');
 
+        await fetchBidInfo();
+
       } catch (e) {
         console.log(e);
         setIsAlertVisible(true);
@@ -275,6 +277,8 @@ const EngineerPage = (props) => {
       setAlertMessage('Успех!');
       setAlertDescription('Успешное обновление');
       setAlertType('success');
+
+      await fetchBidInfo();
     }
   };
 
@@ -710,7 +714,7 @@ const EngineerPage = (props) => {
                                     color="primary"
                                     variant="outlined"
                                     icon={<CheckOutlined className={'sa-engineer-page-btn-icon'}/>}
-                                    onClick={() => {acceptOrder(bidId).then(fetchBidInfo().then());}}
+                                    onClick={() => {acceptOrder(bidId);}}
                             ></Button>
                           </Tooltip>
                         </>
