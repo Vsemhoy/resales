@@ -33,6 +33,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 	const [loadingSendSms, setLoadingSendSms] = useState(false); // ожидаем ответа при отправке сообщения
 
     const [refreshKey, setRefreshKey] = useState(0);
+    const [isAlertVisibleKey, setIsAlertVisibleKey] = useState(0);
     const [alertInfo, setAlertInfo] = useState({
         message: '',
         description: '',
@@ -93,11 +94,15 @@ export const ChatSocketProvider = ({ children, url }) => {
         socket.on('new:notification', (data) => {
             console.log('WS new:notification', data);
             setRefreshKey(dayjs().unix());
+            setIsAlertVisibleKey(dayjs().unix());
             setAlertInfo({
                 message: 'Новое уведомление.',
                 description: data.message,
                 type: 'info',
             });
+        });
+        socket.on('read:notification', () => {
+            setRefreshKey(dayjs().unix());
         });
 		socket.on('disconnect', (reason) => {
 			console.log('CHAT WEBSOCKET DISCONNECTED');
@@ -428,6 +433,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				connected,
 				connectionStatus,
                 refreshKey,
+                isAlertVisibleKey,
                 alertInfo,
 				/* chats info */
                 totalUnread,

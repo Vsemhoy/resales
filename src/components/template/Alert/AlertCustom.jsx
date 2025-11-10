@@ -11,16 +11,15 @@ const AlertCustom = () => {
 
     const {
         connected,           // boolean - подключен ли WebSocket
-        refreshKey,
+        isAlertVisibleKey,
         alertInfo,
-        /*hideAlert,*/
     } = useChatSocket();
 
     useEffect(() => {
-        if (refreshKey) {
+        if (isAlertVisibleKey) {
             setIsAlertVisible(true);
         }
-    }, [refreshKey]);
+    }, [isAlertVisibleKey]);
 
     useEffect(() => {
         setAlertMessage(alertInfo.message);
@@ -30,7 +29,6 @@ const AlertCustom = () => {
 
     const hideAlertCustom = () => {
         setIsAlertVisible(false);
-        /*hideAlert();*/
     };
 
     return (

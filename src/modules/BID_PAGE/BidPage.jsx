@@ -55,6 +55,7 @@ import OrgProjectEditorSectionBox
 	from "../ORG_PAGE/components/sections/NotesTabSections/Rows/OrgProjectEditorSectionBox";
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
 import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
+import FindSimilar from "./components/FindSimilar";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -169,6 +170,7 @@ const BidPage = (props) => {
 	const [factAddressSelect, setFactAddressSelect] = useState([]);
 	const [phoneSelect, setPhoneSelect] = useState([]);
 	const [emailSelect, setEmailSelect] = useState([]);
+	const [reasonsSelect, setReasonsSelect] = useState([]);
 	/* ОСТАЛЬНОЕ */
 	const [modelIdExtra, setModelIdExtra] = useState(null);
 	const [modelNameExtra, setModelNameExtra] = useState('');
@@ -553,6 +555,7 @@ const BidPage = (props) => {
 					setStageSelect(selects.stage_select);
 					setTemplateWordSelect(selects.template_word_select);
 					setCompanies(selects.companies);
+                    setReasonsSelect(selects.reasons);
 				}
 			} catch (e) {
 				console.log(e);
@@ -579,6 +582,7 @@ const BidPage = (props) => {
 			setStageSelect(SELECTS.stage_select);
 			setTemplateWordSelect(SELECTS.template_word_select);
 			setCompanies(SELECTS.companies);
+            setReasonsSelect(SELECTS.reasons);
 		}
 	};
 	const fetchOrgSelects = async () => {
@@ -1867,14 +1871,7 @@ const BidPage = (props) => {
 																		[<Select key="return-reason-select"
 																				 		style={{width:'100%'}}
 																						placeholder={'Причина возврата заявки'}
-																						options={[
-																							{value: 'По просьбе менеджера', label: 'По просьбе менеджера'},
-																							{value: 'Нет ИНН', label: 'Нет ИНН'},
-																							{value: 'Не указан способ транспортировки', label: 'Не указан способ транспортировки'},
-																							{value: 'Не указаны сроки поставки', label: 'Не указаны сроки поставки'},
-																							{value: 'Необходимо разбить на несколько заявок', label: 'Необходимо разбить на несколько заявок'},
-																							{value: 'Не указан склад отгрузки', label: 'Не указан склад отгрузки'},
-																						]}
+																						options={prepareSelect(reasonsSelect)}
 																		/>],
 																		returnButtons
 																	);
@@ -1924,15 +1921,7 @@ const BidPage = (props) => {
 																	[<Select key="return-reason-select"
 																			 style={{width:'100%'}}
 																			 placeholder={'Причина возврата заявки'}
-																			 options={[
-																				 {value: 'По просьбе менеджера', label: 'По просьбе менеджера'},
-																				 {value: 'Нет ИНН', label: 'Нет ИНН'},
-																				 {value: 'Не указан способ транспортировки', label: 'Не указан способ транспортировки'},
-																				 {value: 'Не указаны сроки поставки', label: 'Не указаны сроки поставки'},
-																				 {value: 'Необходимо разбить на несколько заявок', label: 'Необходимо разбить на несколько заявок'},
-																				 {value: 'Не указан склад отгрузки', label: 'Не указан склад отгрузки'},
-																				 {value: 'Убрать статус завершено', label: 'Убрать статус завершено'},
-																			 ]}
+																			 options={prepareSelect(reasonsSelect)}
 																	/>],
 																	returnButtons
 																);
@@ -2641,6 +2630,46 @@ const BidPage = (props) => {
 					models={modelsSelect}
 				/>
 			</Modal>
+            <Modal
+                title="Поиск похожих"
+                open={isFindSimilarDrawerOpen}
+                onCancel={() => setIsFindSimilarDrawerOpen(false)}
+                footer={null}
+                className={'sa-bid-page-modal'}
+                width={'80%'}
+                styles={{
+                    body: {
+                        height: "600px",
+                        overflowY: "auto",
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                    }
+                }}
+            >
+                <FindSimilar bid_id={bidId}
+                             bid_models={bidModels}
+                             protection_project={bidProtectionProject}
+                             error_alert={(path, e) => {
+                                 setIsAlertVisible(true);
+                                 setAlertMessage(`Произошла ошибка! ${path}`);
+                                 setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                                 setAlertType('error');
+                             }}
+                />
+            </Modal>
+            {/*<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
+                               closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
+                               bid_id={bidId}
+                               bid_models={bidModels}
+                               protection_project={bidProtectionProject}
+                               error_alert={(path, e) => {
+                                   setIsAlertVisible(true);
+                                   setAlertMessage(`Произошла ошибка! ${path}`);
+                                   setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                                   setAlertType('error');
+                               }}
+            />*/}
 			<ModelInfoExtraDrawer model_id={modelIdExtra}
 								  model_name={modelNameExtra}
 								  closeDrawer={handleCloseDrawerExtra}
@@ -2677,18 +2706,6 @@ const BidPage = (props) => {
 								setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 								setAlertType('error');
 							}}
-			/>
-			<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
-							   closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
-							   bid_id={bidId}
-							   bid_models={bidModels}
-							   protection_project={bidProtectionProject}
-							   error_alert={(path, e) => {
-								   setIsAlertVisible(true);
-								   setAlertMessage(`Произошла ошибка! ${path}`);
-								   setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-								   setAlertType('error');
-							   }}
 			/>
 			<CustomModal
 				customClick={customClick}
