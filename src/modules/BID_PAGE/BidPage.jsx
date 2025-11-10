@@ -55,6 +55,7 @@ import OrgProjectEditorSectionBox
 	from "../ORG_PAGE/components/sections/NotesTabSections/Rows/OrgProjectEditorSectionBox";
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
 import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
+import FindSimilar from "./components/FindSimilar";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -2629,6 +2630,46 @@ const BidPage = (props) => {
 					models={modelsSelect}
 				/>
 			</Modal>
+            <Modal
+                title="Поиск похожих"
+                open={isFindSimilarDrawerOpen}
+                onCancel={() => setIsFindSimilarDrawerOpen(false)}
+                footer={null}
+                className={'sa-bid-page-modal'}
+                width={'80%'}
+                styles={{
+                    body: {
+                        height: "600px",
+                        overflowY: "auto",
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                    }
+                }}
+            >
+                <FindSimilar bid_id={bidId}
+                             bid_models={bidModels}
+                             protection_project={bidProtectionProject}
+                             error_alert={(path, e) => {
+                                 setIsAlertVisible(true);
+                                 setAlertMessage(`Произошла ошибка! ${path}`);
+                                 setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                                 setAlertType('error');
+                             }}
+                />
+            </Modal>
+            {/*<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
+                               closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
+                               bid_id={bidId}
+                               bid_models={bidModels}
+                               protection_project={bidProtectionProject}
+                               error_alert={(path, e) => {
+                                   setIsAlertVisible(true);
+                                   setAlertMessage(`Произошла ошибка! ${path}`);
+                                   setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+                                   setAlertType('error');
+                               }}
+            />*/}
 			<ModelInfoExtraDrawer model_id={modelIdExtra}
 								  model_name={modelNameExtra}
 								  closeDrawer={handleCloseDrawerExtra}
@@ -2665,18 +2706,6 @@ const BidPage = (props) => {
 								setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 								setAlertType('error');
 							}}
-			/>
-			<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
-							   closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
-							   bid_id={bidId}
-							   bid_models={bidModels}
-							   protection_project={bidProtectionProject}
-							   error_alert={(path, e) => {
-								   setIsAlertVisible(true);
-								   setAlertMessage(`Произошла ошибка! ${path}`);
-								   setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-								   setAlertType('error');
-							   }}
 			/>
 			<CustomModal
 				customClick={customClick}

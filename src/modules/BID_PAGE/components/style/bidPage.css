@@ -668,3 +668,9 @@
     font-size: 16px;
     color: var(--sa-primary-color);
 }
+
+.sa-find-similar {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
