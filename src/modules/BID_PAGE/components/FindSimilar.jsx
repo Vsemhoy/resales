@@ -41,7 +41,7 @@ const FindSimilar = (props) => {
     const [notMatchLimit, setNotMatchLimit] = useState(0); //  Результаты поиска
     /*    const [debouncedInputValue, setDebouncedInputValue] = useState("")              //*/
     const [load, setLoad] = useState(false);
-    const [searchCount, setSearchCount] = useState(0);
+    const [searchCountTitle, setSearchCountTitle] = useState(`Найдено: 0`);
     const [notCompany, setNotCompany] = useState(0);
     const [childrenDrawer, setChildrenDrawer] = useState(false);
     const settingsColumns = [
@@ -82,7 +82,7 @@ const FindSimilar = (props) => {
     ];
     const DS_SIMILAR_COLUMNS = [
         {
-            title: "Найденное",
+            title: searchCountTitle,
             dataIndex: "data",
             key: "data",
             width: 500,
@@ -359,7 +359,7 @@ const FindSimilar = (props) => {
                     if (response.data) {
                         setLoad(false);
                         setSimilar(response.data.content.result.bids);
-                        setSearchCount(response.data.content.result.count_all);
+                        setSearchCountTitle(`Найдено: ${response.data.content.result.count_all}`);
                     }
                 } catch (e) {
                     console.log(e);
@@ -367,7 +367,7 @@ const FindSimilar = (props) => {
                 }
             } else {
                 setSimilar(SIMILAR_BIDS.bids);
-                setSearchCount(SIMILAR_BIDS.count_all);
+                setSearchCountTitle(`Найдено: ${SIMILAR_BIDS.count_all}`);
             }
         };
         const delayInputTimeoutId = setTimeout(() => {
@@ -457,7 +457,14 @@ const FindSimilar = (props) => {
                         href={`/resales/bids/${bid.id}`}
                     >
                         {"  ID " + bid.id}
-                    </a>
+                    </a>{" "}
+                    <Tag>{+bid.type === 1 ? 'КП' : +bid.type === 2 ? 'Счет' : ''}</Tag>
+                </div>
+                <div>
+                    <b>Защита проекта: </b>
+                    {+bid.protection_project === 1 ? 'ЗП' :
+                    +bid.protection_project === 2 ? 'РП'
+                        : 'Нет'}
                 </div>
                 <Tooltip title={bid.object}>
                     <div>

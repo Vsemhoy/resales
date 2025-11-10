@@ -218,6 +218,7 @@ const BidPage = (props) => {
 
 	const [messageApi, contextHolder] = message.useMessage();
 	const [socketTimestamp, setSocketTimestamp] = useState(0);
+	const [findSimilarTitle, setFindSimilarTitle] = useState(`Поиск похожих`);
 
 
 	useEffect(() => {
@@ -243,6 +244,11 @@ const BidPage = (props) => {
 			fetchProjectInfo().then();
 		}
 	}, [bidProject]);
+    useEffect(() => {
+		if (bidObject) {
+            setFindSimilarTitle(`Поиск похожих: "${bidObject}"`);
+        }
+    }, [bidObject]);
 	useEffect(() => {
 		if (bidType) {
 			document.title = `${+bidType === 1 ? 'КП' : +bidType === 2 ? 'Счет' : ''} | ${bidId}`;
@@ -2631,7 +2637,7 @@ const BidPage = (props) => {
 				/>
 			</Modal>
             <Modal
-                title="Поиск похожих"
+                title={findSimilarTitle}
                 open={isFindSimilarDrawerOpen}
                 onCancel={() => setIsFindSimilarDrawerOpen(false)}
                 footer={null}
