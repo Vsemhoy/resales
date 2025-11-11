@@ -121,8 +121,6 @@ const BidPage = (props) => {
 	const [bidPriceStatus, setBidPriceStatus] = useState(null);
 	const [bidPercent, setBidPercent] = useState(null);
 	const [bidNds, setBidNds] = useState(null);
-	/* ЛОГИ */
-	const [bidActionsLogs, setBidActionsLogs] = useState({});
 	/* ФАЙЛЫ */
 	const [bidFilesCount, setBidFilesCount] = useState(0);
 	/* ПРОЕКТ */
@@ -1445,6 +1443,16 @@ const BidPage = (props) => {
 						) : (
 							<MinusOutlined />
 						)}
+					</div>
+                    <div className={'sa-info-list-row'}>
+						<div className={'sa-list-row-label'}>
+							<p>Дата создания</p>
+						</div>
+                        <Input
+                            style={{ width: '100%', height: '32px' }}
+                            value={bidActions.create?.date ? dayjs(bidActions.create?.date * 1000).format("DD.MM.YYYY HH:mm:ss") : ''}
+                            disabled={true}
+                        />
 					</div>
 				</div>
 			),
