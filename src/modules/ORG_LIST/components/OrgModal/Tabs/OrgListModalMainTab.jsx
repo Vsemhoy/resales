@@ -92,7 +92,7 @@ const OrgListMainTab = (props) => {
 						key: `contitems_0N_1${contact.id}`,
 						label: (
 							<div className="sk-omt-sub-title">
-								{contact.lastname} {contact.name} {contact.middlename}{' '}
+								{contact.lastname} {contact.name} {contact.middlename} {contact?.occupy} {' '}
 								<span style={{ color: 'gray', fontWeight: '100' }}>({contact.id})</span>
 							</div>
 						),
