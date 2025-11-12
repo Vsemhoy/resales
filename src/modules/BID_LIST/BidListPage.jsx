@@ -227,15 +227,15 @@ const BidListPage = (props) => {
         }
     }, [highlightDataRef.current]);
 
-    const refreshPage = useCallback(() => {
+    const refreshPage = () => {
         fetchBids().then();
-    }, []);
+    };
 
-    const refreshBidOnPage = useCallback(({ bid_id }) => {
+    const refreshBidOnPage = ({ bid_id }) => {
         if (bid_id && bidsRef.current.find(bid => +bid.id === +bid_id)) {
             fetchBids().then();
         }
-    }, []);
+    };
 
     useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_BIDS', setHighlightBids);
     useWebSocketSubscription('REFRESH_PAGE', refreshPage);
