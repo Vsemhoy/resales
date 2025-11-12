@@ -40,7 +40,7 @@ const OrgBillModalRow = (props) => {
 				</div>
 
 				<div>
-					<div style={{ textAlign: 'left' }}>
+					<div style={{textAlign: 'left'}}>
 						{baseData?.orguser_id ? (
 							<div>
 								{baseData.contactuser?.lastname +
@@ -74,7 +74,7 @@ const OrgBillModalRow = (props) => {
 						{baseData?.statusbid_id && baseData?.statusbid_id === 1 ? (
 							'Оплачено'
 						) : (
-							<span style={{ color: 'gray' }}>Не оплачено</span>
+							<span style={{color: 'gray'}}>Не оплачено</span>
 						)}
 					</div>
 				</div>
@@ -82,16 +82,19 @@ const OrgBillModalRow = (props) => {
 					<div>{baseData?.deleted === 1 ? 'Удалено' : <div>{baseData?.place?.name}</div>}</div>
 				</div>
 				<div>
-					<div style={{ textAlign: 'left' }}>{baseData?.comment}</div>
+					<div style={{textAlign: 'left'}}>{baseData?.comment}</div>
 				</div>
 				<div>
-					<div style={{ textAlign: 'left' }}>{baseData?.project}</div>
+					<div style={{textAlign: 'left'}}>{baseData?.object}</div>
 				</div>
 				<div>
-					<div style={{ wordBreak: 'break-all' }}>
+					<div style={{textAlign: 'left'}}>{baseData?.project}</div>
+				</div>
+				<div>
+					<div style={{wordBreak: 'break-all'}}>
 						<Tooltip
 							placement="leftTop"
-							title={<PositionList bidId={baseData?.id} path={'/sales/data/getbidmodels'} />}
+							title={<PositionList bidId={baseData?.id} path={'/sales/data/getbidmodels'}/>}
 							color="white"
 							overlayInnerStyle={{
 								color: 'black',
