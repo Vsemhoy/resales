@@ -130,7 +130,7 @@
 
 .sa-org-bid-row {
 	display: grid;
-	grid-template-columns: 80px 100px 2fr 1fr 100px 140px 2fr 2fr 2fr 120px;
+	grid-template-columns: 80px 100px minmax(50px, 2fr) minmax(50px, 1fr) 100px 140px minmax(50px, 2fr) minmax(50px, 2fr) minmax(50px, 2fr) 120px;
 	border-bottom: 1px solid var(--column-divider-color);
 	background-color: var(--section-row-color);
 }
