@@ -98,7 +98,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
 
                 if (key > 0 && !isNaN(parseInt(value)) ) {
                     mod.count = parseInt(value);
-                    mod.errorcount = false
+                    //mod.errorcount = false;
                 }
 
                 let model = getModelName(value);
