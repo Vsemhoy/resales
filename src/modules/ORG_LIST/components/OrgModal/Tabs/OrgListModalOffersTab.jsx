@@ -177,7 +177,7 @@ const OrgListModalOffersTab = (props) => {
 												Создать КП
 											</Button>
 						<NavLink to={navigateLink}>
-							<Button size={'small'}>Открыть в полном списке</Button>
+							<Button size={'small'}>Открыть в полном списке!</Button>
 						</NavLink>
 					</div>
 				</div>
