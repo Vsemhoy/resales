@@ -692,3 +692,12 @@
     gap: 3px;
     margin: 0 5px;
 }
+
+@media screen and (max-width: 1200px) {
+    .sa-bid-page-info-container {
+        grid-template-columns: 65px 1fr;
+    }
+    .sa-bid-page-info-wrapper {
+        display: none;
+    }
+}
