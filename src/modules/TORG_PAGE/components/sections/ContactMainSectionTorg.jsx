@@ -1028,8 +1028,8 @@ const CollectAndSend = (stackName, data) => {
           </div>
           <div className={'sa-pa-3 sa-org-section-text'}>
             <div className='sa-org-section-label'>
-              {(name || middleName || lastName) ?
-              (`${lastName ?lastName : ""}${name ? " " + name : ''}${middleName ?  " " + middleName : ""}`)
+              {(name || middleName || lastName || occupy) ?
+              (`${lastName ?lastName : ""}${name ? " " + name : ''}${middleName ?  " " + middleName : ""}${occupy ?  " " + occupy : ""}`)
                : "Без имени "}
             </div>
             <span className="sa-author-text">
