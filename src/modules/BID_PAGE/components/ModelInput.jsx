@@ -39,6 +39,7 @@ const ModelInput = (props) => {
     }, [timeoutId]);
 
     const handleChange = (newValue) => {
+        if (props?.isOnlyPositive && +newValue.replace(/^0+/, '') < 1 && newValue !== '' && newValue === '-') return;
         setValue(newValue);
         if (timeoutId) {
             clearTimeout(timeoutId);
@@ -49,14 +50,34 @@ const ModelInput = (props) => {
         setTimeoutId(newTimeoutId);
     };
 
+    const handleBlur = (newValue) => {
+        if (!props?.isOnlyPositive) return;
+        let num = 1;
+        if (+newValue.replace(/^0+/, '') < 1) {
+            setValue(1);
+        } else {
+            setValue(+newValue.replace(/^0+/, ''));
+            num = +newValue.replace(/^0+/, '');
+        }
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        const newTimeoutId = setTimeout(() => {
+            props.onChangeModel(type, num, bidModelId, bidModelSort);
+        }, 300);
+        setTimeoutId(newTimeoutId);
+    };
+
     return (
         <Input style={{width: '100%'}}
                type="number"
                value={value}
                onChange={(e) => handleChange(e.target.value)}
+               onBlur={(e) => handleBlur(e.target.value)}
                disabled={props?.disabled}
                danger={props?.danger}
                status={props?.error ? 'error' : ''}
+               min={props?.isOnlyPositive ? 1 : undefined}
         />
     );
 }
