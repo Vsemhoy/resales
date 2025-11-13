@@ -4,6 +4,7 @@ import { Table } from "antd";
 
 const DataParser = ({ models, additionData, setAdditionData }) => {
     const [value, setValue] = useState("");
+    const [hashModels, setHashModels] = useState({});
     const replace_alphabet = {
         'а': 'a',
         'в': 'b',
@@ -18,20 +19,33 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
         'т': 't',
         'х': 'x',
     };
+
+    useEffect(() => {
+        if (models && models.length > 0) {
+            models.forEach(model => {
+                setHashModels(prev => {
+                    let modelNameSeo = model.name?.toLowerCase().replace(/\s/g, "");
+                    let obj = prev;
+                    obj[`${modelNameSeo}`] = model.id;
+                    return obj;
+                });
+            });
+        }
+    }, [models])
+
     const getModelName = (name) => {
         // Проверяем, что models существует и не пустой
-        if (!models || models.length === 0) {
-            console.warn('Models array is empty or not defined');
-            return '';
-        }
+        if (!models || models.length === 0) return null;
 
         // Проверка на число
-        if (!isNaN(name) && name !== '') return '';
+        if (!isNaN(name) && name !== '') {
+            return null;
+        }
 
         // Очистка и проверка длины
         name = name.toString().trim();
         if (name.length <= 1) {
-            return '';
+            return null;
         }
 
         let nameLower = name.toLowerCase().replace(/\s/g, "");
@@ -42,34 +56,35 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             trname = trname.replace(new RegExp(cyrillic, 'ig'), latin);
         });
 
-        // Поиск в моделях
-        for (let i = 0; i < models.length; i++) {
-            let modelNameSeo = models[i].name?.toLowerCase().replace(/\s/g, "");
+        if (hashModels[`${nameLower}`]) {
+            const modelId = hashModels[`${nameLower}`];
+            return models.find((model) => model.id === modelId) ?? null;
+        } else {
+            for (let i = 0; i < models.length; i++) {
+                let modelNameSeo = models[i].name?.toLowerCase().replace(/\s/g, "");
 
-            if (!modelNameSeo) continue; // Пропускаем если нет name_seo
+                if (!modelNameSeo) continue; // Пропускаем если нет name_seo
 
-            if (modelNameSeo === nameLower || modelNameSeo === trname) {
-                return models[i];
+                if (modelNameSeo === nameLower || modelNameSeo === trname) {
+                    return models[i];
+                }
+
+                // Дополнительная проверка: если имя содержит часть названия модели
+                if (nameLower.includes(modelNameSeo) || modelNameSeo.includes(nameLower)) {
+                    return models[i];
+                }
             }
-
-            // Дополнительная проверка: если имя содержит часть названия модели
-            if (nameLower.includes(modelNameSeo) || modelNameSeo.includes(nameLower)) {
-                return models[i];
-            }
+            return null;
         }
-
-        console.log('Model not found');
-        return '';
     };
     const findModel = (line, index) => {
-        let l = line.trim();
-        l = l.replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
+        const l = line.trim().replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
 
         if ( l !== '') {
-            let part = l.split(' ');
-            let mod = {
+            const part = l.split(' ');
+            const mod = {
                 errorname: true,
-                errorcount: false,
+                /*errorcount: false,*/
 
                 key: 0,
                 num: 0,
@@ -83,24 +98,25 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
 
                 if (key > 0 && !isNaN(parseInt(value)) ) {
                     mod.count = parseInt(value);
-                    mod.errorcount = false
+                    //mod.errorcount = false;
                 }
 
-                let name = getModelName(value);
-                if ( name !== '') {
-                    mod.name = name.name;
+                let model = getModelName(value);
+
+                if (model) {
+                    mod.name = model.name;
                     mod.errorname = false;
-                    mod.id = name.id;
+                    mod.id = model.id;
                     mod.num = index + 1;
                     mod.key = index;
-                    mod.currency = getModelCurrency(name);
+                    mod.currency = model.currency;
+                } else if (!mod.name) {
+                    mod.name = value;
                 }
-
             });
             return mod;
         }
     }
-    const getModelCurrency = (name) => models.find((model) => model.name === name)?.currency;
     useEffect(() => {
         if (!value) {
             setAdditionData([]);
@@ -112,6 +128,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             return findModel(line, index);
         }).filter(Boolean);
 
+        console.log(parsedData);
         setAdditionData(parsedData);
     }, [value, models, setAdditionData]);
 
@@ -160,7 +177,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             </div>
             <div className={'dataParser__container__table'}>
                 <Table
-                    dataSource={additionData.filter(d => d.id !== 0)}
+                    dataSource={additionData} /* .filter(d => d.id !== 0) */
                     columns={columns}
                     size="small"
                     pagination={false}

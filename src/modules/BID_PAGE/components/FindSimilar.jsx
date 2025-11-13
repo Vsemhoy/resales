@@ -502,7 +502,11 @@ const FindSimilar = (props) => {
                     return (
                         <div key={Math.random()} className={'model-with-tag'}>
                             {el.an_models_name}
-                            <Tag className={'sa-similar__tag'}>{el.model_count}</Tag>,
+                            <Tag className={'sa-similar__tag'}
+                                 color={el.coincidence ? 'success' : 'error'}
+                            >
+                                {el.model_count}
+                            </Tag>,
                         </div>
                     );
                 })
