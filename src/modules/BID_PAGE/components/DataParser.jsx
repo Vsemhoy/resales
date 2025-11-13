@@ -5,6 +5,7 @@ import { Table } from "antd";
 const DataParser = ({ models, additionData, setAdditionData }) => {
     const [value, setValue] = useState("");
     const [hashModels, setHashModels] = useState({});
+    const [addition, setAddition] = useState(null);
     const replace_alphabet = {
         'а': 'a',
         'в': 'b',
@@ -31,7 +32,13 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
                 });
             });
         }
-    }, [models])
+    }, [models]);
+
+    useEffect(() => {
+        if (additionData) {
+            setAddition(additionData);
+        }
+    }, [additionData]);
 
     const getModelName = (name) => {
         // Проверяем, что models существует и не пустой
@@ -177,7 +184,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             </div>
             <div className={'dataParser__container__table'}>
                 <Table
-                    dataSource={additionData} /* .filter(d => d.id !== 0) */
+                    dataSource={addition}
                     columns={columns}
                     size="small"
                     pagination={false}
