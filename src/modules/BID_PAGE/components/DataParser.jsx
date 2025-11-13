@@ -60,7 +60,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             const modelId = hashModels[`${nameLower}`];
             return models.find((model) => model.id === modelId) ?? null;
         } else {
-            for (let i = 0; i < models.length; i++) {
+            /*for (let i = 0; i < models.length; i++) {
                 let modelNameSeo = models[i].name?.toLowerCase().replace(/\s/g, "");
 
                 if (!modelNameSeo) continue; // Пропускаем если нет name_seo
@@ -73,7 +73,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
                 if (nameLower.includes(modelNameSeo) || modelNameSeo.includes(nameLower)) {
                     return models[i];
                 }
-            }
+            }*/
             return null;
         }
     };

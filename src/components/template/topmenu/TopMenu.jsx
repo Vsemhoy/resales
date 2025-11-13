@@ -1,8 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './style/topmenu.css';
 import ChatBtn from '../../../modules/CHAT/components/ChatBtn';
+
+import { Chat, ChatSocketProvider } from 'corp-chat-library-antd-react-socket';
+//import 'corp-chat-library-antd-react-socket/dist/style.css';
+
 import { NavLink } from 'react-router-dom';
-import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE } from '../../../config/config';
+import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE} from '../../../config/config';
 import {CloseCircleOutlined, HomeFilled, NotificationOutlined, WechatWorkOutlined} from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
@@ -224,6 +228,30 @@ const TopMenu = (props) => {
 
 				<div className={'sa-topmenu-userbox'}>
                     <ChatBtn />
+                    {/*<ChatSocketProvider url={PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
+                        <Chat
+                            userdata={userdata}
+                            httpParams={{
+                                HTTP_HOST: HTTP_HOST,
+                                BFF_PORT: BFF_PORT,
+                                CSRF_TOKEN: CSRF_TOKEN,
+                                PRODMODE: PRODMODE,
+                            }}
+                            fetchParams={{
+                                fetchChatsListPath: `/api/sms`,
+                                fetchChatMessagesPath: `/api/sms`,
+                                sendSmsPath: '/api/sms/create/sms',
+                                markMessagesAsReadPath: `/api/sms/read`,
+                            }}
+                            socketSubscribe={{
+                                subscribeToChat: 'subscribeToChat'
+                            }}
+                            socketActions={{
+                                newSms: 'new:sms',
+                                updateSms: 'update:sms',
+                            }}
+                        />
+                    </ChatSocketProvider>*/}
                     <NotiBtn />
 					<Dropdown menu={{ items: userMenu }}>
 						<div className={'sa-flex-gap'}>
