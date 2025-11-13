@@ -406,6 +406,29 @@ export default [
 		currency: 0,
 		isBox: 0,
 	},
+    {
+        "info": {
+            "unit": 0,
+            "power_consumption": 0,
+            "rated_power_speaker": 3,
+            "max_power": 0,
+            "mass": 0.9,
+            "size": 0.0077,
+            "l": 0.465,
+            "b": 0.67,
+            "h": 0.248,
+            "inGroupBox": 1,
+            "countInGroupBox": 10
+        },
+        "id": 208,
+        "name": "CS-03A (W)",
+        "count_spb": 1,
+        "sklad_at_spb": 3837,
+        "delivery_date": 0,
+        "type_model": 0,
+        "currency": 0,
+        "isBox": 0
+    },
 	{
 		info: {
 			unit: 0,

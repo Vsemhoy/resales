@@ -379,6 +379,25 @@ const BidPage = (props) => {
 		/* bid_models */
 		bidModels
 	]);
+    useEffect(() => {
+        if (bidModels && bidModels.length > 0 && modelsSelect && modelsSelect.length > 0) {
+            setModelsSelect(prev => {
+                return prev.map((model) => {
+                    if (bidModels.find(bidModel => +bidModel.model_id === +model.id)) {
+                        return {
+                            ...model,
+                            used: true,
+                        }
+                    } else {
+                        return {
+                            ...model,
+                            used: false,
+                        }
+                    }
+                });
+            });
+        }
+    }, [bidModels]);
 
 	const fetchInfo = async () => {
 		setIsLoading(true);
@@ -1008,7 +1027,7 @@ const BidPage = (props) => {
 	};
 	const prepareSelect = (select) => {
 	  if (select) {
-		  return select.map((item) => ({value: item.id, label: item.name}));
+		  return select.map((item) => ({value: item.id, label: item.name, used: item.used}));
 	  } else {
 		  return [];
 	  }
@@ -1051,7 +1070,7 @@ const BidPage = (props) => {
 		  "id": 0,
 		  "bid_id": bidId,
 		  "model_id": null,
-		  "model_count": null,
+		  "model_count": 1,
 		  "model_name": "",
 		  "not_available": 0,
 		  "percent": null,
@@ -1062,12 +1081,26 @@ const BidPage = (props) => {
 	  });
 	  setBidModels(bidModelsUpd);
 	};
-	const handleDeleteModelFromBid = (bidModelId, bidModelSort) => {
-	  const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
-	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-	  bidModelsUpd.splice(bidModelIdx, 1);
-	  setBidModels(bidModelsUpd);
-	  setIsNeedCalcMoney(true);
+	const handleDeleteModelFromBid = (bidModelId, bidModelSort, bidModelSeletId) => {
+        const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
+        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        bidModelsUpd.splice(bidModelIdx, 1);
+        setBidModels(bidModelsUpd);
+        setModelsSelect(prev => {
+            const index = prev.findIndex(model => model.id === bidModelSeletId);
+            if (index === -1) return prev;
+            return prev.map((model, idx) => {
+                if (+idx === +index) {
+                    return {
+                        ...model,
+                        used: false,
+                    }
+                } else {
+                    return model;
+                }
+            });
+        });
+	    setIsNeedCalcMoney(true);
 	};
 	const handleChangeModel = (newId, oldId, oldSort) => {
 	  const newModel = modelsSelect.find(model => model.id === newId);
@@ -1089,6 +1122,23 @@ const BidPage = (props) => {
 	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
 	  bidModelsUpd[oldModelIdx] = newModelObj;
 	  setBidModels(bidModelsUpd);
+      setModelsSelect(prev => {
+          const index = prev.findIndex(model => model.id === newId);
+          if (index === -1) return prev;
+          return prev.map((model, idx) => {
+              if (+idx === +index) {
+                  return {
+                      ...model,
+                      used: true,
+                  }
+              } else {
+                  return {
+                      ...model,
+                      used: false,
+                  };
+              }
+          });
+      });
 	  setIsNeedCalcMoney(true);
 	  setLastUpdModel(newId);
 	};
@@ -2272,6 +2322,7 @@ const BidPage = (props) => {
 														bidModelSort={bidModel.sort}
 														disabled={isDisabledInputManager()}
 														type={'model_count'}
+                                                        isOnlyPositive={true}
 														onChangeModel={handleChangeModelInfo}
 													/>
 												</div>
@@ -2282,6 +2333,7 @@ const BidPage = (props) => {
 														bidModelSort={bidModel.sort}
 														disabled={isDisabledInputManager()}
 														type={'percent'}
+                                                        isOnlyPositive={false}
 														onChangeModel={handleChangeModelInfo}
 													/>
 												</div>
@@ -2328,7 +2380,7 @@ const BidPage = (props) => {
 														color="danger"
 														variant="filled"
 														icon={<DeleteOutlined/>}
-														onClick={( ) => handleDeleteModelFromBid(bidModel.id, bidModel.sort)}
+														onClick={( ) => handleDeleteModelFromBid(bidModel.id, bidModel.sort, bidModel.model_id)}
 														disabled={isDisabledInputManager()}
 													></Button>
 												</div>
