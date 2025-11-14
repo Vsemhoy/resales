@@ -103,6 +103,7 @@ const NotifierDrawer = ({is_open, on_count_change, on_close}) => {
 
     const getFreshNotices = async (item)=> {
       try {
+          if (!PRODMODE || !CSRF_TOKEN) return;
         // setLoadingOrgs(true)
         const format_data = {
             CSRF_TOKEN,

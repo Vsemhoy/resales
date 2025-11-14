@@ -4,7 +4,7 @@ export const PRODMODE = !(
 // Тянем токен со страницы
 export const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
 	? document.querySelector('meta[name="csrf-token"]').content
-	: null;
+	: 'http://localhost/';
 export const HTTP_HOST = document.querySelector('meta[name="host"]')
 	? document.querySelector('meta[name="host"]').content
 	: null;

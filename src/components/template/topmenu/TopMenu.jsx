@@ -227,31 +227,28 @@ const TopMenu = (props) => {
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
-                    <ChatBtn />
-                    {/*<ChatSocketProvider url={PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
-                        <Chat
-                            userdata={userdata}
-                            httpParams={{
-                                HTTP_HOST: HTTP_HOST,
-                                BFF_PORT: BFF_PORT,
-                                CSRF_TOKEN: CSRF_TOKEN,
-                                PRODMODE: PRODMODE,
-                            }}
-                            fetchParams={{
-                                fetchChatsListPath: `/api/sms`,
-                                fetchChatMessagesPath: `/api/sms`,
-                                sendSmsPath: '/api/sms/create/sms',
-                                markMessagesAsReadPath: `/api/sms/read`,
-                            }}
-                            socketSubscribe={{
-                                subscribeToChat: 'subscribeToChat'
-                            }}
-                            socketActions={{
-                                newSms: 'new:sms',
-                                updateSms: 'update:sms',
-                            }}
-                        />
-                    </ChatSocketProvider>*/}
+                    <Chat userdata={userdata}
+                          httpParams={{
+                              HTTP_HOST: HTTP_HOST,
+                              BFF_PORT: BFF_PORT,
+                              CSRF_TOKEN: CSRF_TOKEN,
+                              PRODMODE: PRODMODE,
+                              PROD_AXIOS_INSTANCE: null,
+                          }}
+                          fetchParams={{
+                              fetchChatsListPath: `/api/sms`,
+                              fetchChatMessagesPath: `/api/sms`,
+                              sendSmsPath: '/api/sms/create/sms',
+                              markMessagesAsReadPath: `/api/sms/read`,
+                          }}
+                          socketSubscribe={{
+                              subscribeToChat: 'subscribeToChat'
+                          }}
+                          socketActions={{
+                              newSms: 'new:sms',
+                              updateSms: 'update:sms',
+                          }}
+                    />
                     <NotiBtn />
 					<Dropdown menu={{ items: userMenu }}>
 						<div className={'sa-flex-gap'}>
