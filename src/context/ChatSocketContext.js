@@ -74,7 +74,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				return;
 			}
 			//socket.emit('subscribeToChat', userId);
-			socket.emit('subscribeToNotification', userId);
+			/*socket.emit('subscribeToNotification', userId);*/
 		});
 		// --- получаем новое сообщение ---
 		/*socket.on('new:sms', (data) => {
@@ -91,7 +91,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 			console.log('WS update:sms', data);
 			if (data.sms) updateMessageStatus(data.sms, data.sms.to, true);
 		});*/
-        socket.on('new:notification', (data) => {
+        /*socket.on('new:notification', (data) => {
             console.log('WS new:notification', data);
             setRefreshKey(dayjs().unix());
             setIsAlertVisibleKey(dayjs().unix());
@@ -103,7 +103,7 @@ export const ChatSocketProvider = ({ children, url }) => {
         });
         socket.on('read:notification', () => {
             setRefreshKey(dayjs().unix());
-        });
+        });*/
 		socket.on('disconnect', (reason) => {
 			console.log('CHAT WEBSOCKET DISCONNECTED');
 			setConnected(false);

@@ -21,6 +21,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import NotiBtn from "../../../modules/NOTIFIER/NotiBtn";
+import Notificator from "corp-notificator-library-antd-react-socket";
 
 const TopMenu = (props) => {
 		const [userdata, setUserdata] = useState(props.userdata);
@@ -249,7 +250,23 @@ const TopMenu = (props) => {
                               updateSms: 'update:sms',
                           }}
                     />
-                    <NotiBtn />
+                    <Notificator userdata={userdata}
+                                 httpParams={{
+                                     HTTP_HOST: HTTP_HOST,
+                                     BFF_PORT: BFF_PORT,
+                                     CSRF_TOKEN: CSRF_TOKEN,
+                                     PRODMODE: PRODMODE,
+                                     PROD_AXIOS_INSTANCE: null,
+                                 }}
+                                 socketSubscribe={{
+                                     subscribeToNotification: 'subscribeToNotification'
+                                 }}
+                                 socketActions={{
+                                     newNotification: 'new:notification',
+                                     readNotification: 'read:notification',
+                                 }}
+                    />
+                    {/*<NotiBtn />*/}
 					<Dropdown menu={{ items: userMenu }}>
 						<div className={'sa-flex-gap'}>
 							{ShortName(userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname)}
