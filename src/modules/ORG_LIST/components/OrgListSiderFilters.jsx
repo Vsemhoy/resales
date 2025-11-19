@@ -23,6 +23,7 @@ const OrgListSiderFilter = (props) => {
 	const [filterPhone, setFilterPhone] = useState(null);
 	const [filterEmail, setFilterEmail] = useState(null);
 	const [filterWebsite, setFilterWebsite] = useState(null);
+	const [filterCreator, setFilterCreator] = useState(null);
 	// const [filterCreatedAt,    setFilterCreatedAt] = useState([null, null]);
 	// const [filterUpdatedAt,    setFilterupdatedAt] = useState([null, null]);
 
@@ -38,6 +39,9 @@ const OrgListSiderFilter = (props) => {
 	const [listPrices, setListPrices] = useState([]);
 	const [listRegions, setListRegions] = useState([]);
 	const [listClientStatuses, setListClientStatuses] = useState([]);
+	const [listCreators, setListCreators] = useState([]);
+
+
 
 	const [SKIPPER, setSKIPPER] = useState(2);
 
@@ -74,6 +78,7 @@ const OrgListSiderFilter = (props) => {
 			filterBox.site = toNullable(filterWebsite);
 			filterBox.profiles = toNullable(filterProfile);
 			filterBox.profsound = toNullable(filterProfsound);
+			filterBox.creator = toNullable(filterCreator);
 			// filterBox.created_date    = [filterCreatedBefore, filterCreatedUntil];
 			// filterBox.updated_date    = [filterUpdateddBefore, filterUpdatedUntil];
 			filterBox.created_until = toNullable(filterCreatedUntil);
@@ -107,6 +112,7 @@ const OrgListSiderFilter = (props) => {
 		filterUpdatedUntil,
 		filterUpdatedBefore,
 		filterRegion,
+		filterCreator,
 	]);
 
 	useEffect(() => {
@@ -118,7 +124,7 @@ const OrgListSiderFilter = (props) => {
 				setFilterCompany(null);
 			}
 			if (props.filters_data.regions) {
-				setFilterRegion(props.filters_data.regions);
+				setFilterRegion(props.filters_data.regions ? parseInt(props.filters_data.regions) : null);
 			} else {
 				setFilterRegion(null);
 			}
@@ -173,6 +179,11 @@ const OrgListSiderFilter = (props) => {
 				setFilterName(props.filters_data.name);
 			} else {
 				setFilterName(null);
+			}
+			if (props.filters_data.creator) {
+				setFilterCreator(props.filters_data.creator ? parseInt(props.filters_data.creator) : null);
+			} else {
+				setFilterCreator(null);
 			}
 			if (props.filters_data.site) {
 				setFilterWebsite(props.filters_data.site);
@@ -280,6 +291,19 @@ const OrgListSiderFilter = (props) => {
 				label: item.name,
 			}))
 		);
+
+		if (
+			props.base_filters?.curators !== null &&
+			props.base_filters?.curators !== '' &&
+			props.base_filters?.curators !== 'null' &&
+			props.base_filters?.curators !== NaN &&
+			props.base_filters?.curators !== undefined
+		) {
+			setListCreators(props.base_filters.curators);
+		} else {
+			setListCreators(null);
+		}
+
 	}, [props.base_filters]);
 
 	// Утилита: если строка пустая — возвращаем null
@@ -326,13 +350,15 @@ const OrgListSiderFilter = (props) => {
                     value={filterRegion}
                     onChange={setFilterRegion}
                  /> */}
-						<Input
+						<Select
+						style={{ width: '100%' }}
 							placeholder="Северо-западный..."
 							allowClear
 							value={filterRegion}
 							onChange={(ev) => {
-								setFilterRegion(ev.target.value);
+								setFilterRegion(ev);
 							}}
+							options={listRegions}
 						/>
 					</div>
 				</div>
@@ -341,7 +367,7 @@ const OrgListSiderFilter = (props) => {
 					<div className="sider-unit-title">Адрес</div>
 					<div className="sider-unit-control">
 						<Input
-							placeholder="имя, телефон, заметка"
+							placeholder="Набережная 42"
 							allowClear
 							value={filterAddress}
 							onChange={(ev) => {
@@ -420,7 +446,7 @@ const OrgListSiderFilter = (props) => {
 					<div className="sider-unit-title">Телефон</div>
 					<div className="sider-unit-control">
 						<Input
-							placeholder="имя, телефон, заметка"
+							placeholder="812"
 							allowClear
 							value={filterPhone}
 							onChange={(ev) => {
@@ -434,7 +460,7 @@ const OrgListSiderFilter = (props) => {
 					<div className="sider-unit-title">Электронная почта</div>
 					<div className="sider-unit-control">
 						<Input
-							placeholder="имя, телефон, заметка"
+							placeholder="email@list.com"
 							allowClear
 							value={filterEmail}
 							onChange={(ev) => {
@@ -448,12 +474,28 @@ const OrgListSiderFilter = (props) => {
 					<div className="sider-unit-title">Вебсайт</div>
 					<div className="sider-unit-control">
 						<Input
-							placeholder="имя, телефон, заметка"
+							placeholder="website.ru"
 							allowClear
 							value={filterWebsite}
 							onChange={(ev) => {
 								setFilterWebsite(ev.target.value);
 							}}
+						/>
+					</div>
+				</div>
+
+				<div className={'sider-unit'}>
+					<div className="sider-unit-title">Создатель</div>
+					<div className="sider-unit-control">
+						<Select
+						style={{ width: '100%' }}
+							placeholder="кто создал карточку клиента"
+							allowClear
+							value={filterCreator}
+							onChange={(ev) => {
+								setFilterCreator(ev);
+							}}
+							options={listCreators}
 						/>
 					</div>
 				</div>
