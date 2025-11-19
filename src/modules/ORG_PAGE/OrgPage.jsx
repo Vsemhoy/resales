@@ -142,25 +142,16 @@ const tempMain_an_requisitesRef = useRef(tempMain_an_requisites);
 
 
 	const [socketBusyOrglist, setsocketBusyOrglist] = useState([
-		/*{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", id_company: 3, action: 'edit'},
+		{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", id_company: 3, action: 'edit'},
 		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'edit'},
 		{org_id: 4, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'explore'},
 		{org_id: 22, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'edit'},
 		{org_id: 40, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},
 		{org_id: 16, user_id: 18, username: "Лескова Алеся Павловна", id_company: 2, action: 'explore'},
-		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},*/
+		{org_id: 16, user_id: 33, username: "Зубенко Михаил Петрович", id_company: 2, action: 'explore'},
 	]);
 
-    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', ({ activeUsers }) => setsocketBusyOrglist(prev => {
-        return activeUsers.map((usr) => {
-            return {
-                org_id: usr.orgId,
-                user_id: usr.userId,
-                username: usr.userFIO,
-                action: usr.action,
-            }
-        });
-    }));
+    useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', (array) => {});
 
     useEffect(() => {
         console.log('CONNECTED orgPage', connected)
