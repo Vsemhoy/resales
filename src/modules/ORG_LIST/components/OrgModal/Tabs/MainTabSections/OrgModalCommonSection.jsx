@@ -34,7 +34,7 @@ const OrgModalCommonSection = (props) => {
 			<OrgModalRow
 				key={'orgmodalrowcname_vd'}
 				titles={['Вид деятельности']}
-				datas={['Тестовая  ']}
+				datas={[orgData.kindofactivity]}
 			/>
 
 			<OrgModalRow

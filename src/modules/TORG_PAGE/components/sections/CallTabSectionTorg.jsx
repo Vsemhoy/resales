@@ -322,9 +322,9 @@ const CallTabSectionTorg = (props) => {
     let add = '';
 
     const splitter = "(";
-    let result = number.split(splitter);
+    let result = number?.split(splitter);
 
-    if (result[0] && result[0].trim() !== "")
+    if (result && result[0] && result[0].trim() !== "")
     {
       pho = result[0].trim();
       

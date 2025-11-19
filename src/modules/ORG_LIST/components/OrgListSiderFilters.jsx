@@ -351,7 +351,11 @@ const OrgListSiderFilter = (props) => {
                     onChange={setFilterRegion}
                  /> */}
 						<Select
-						style={{ width: '100%' }}
+							showSearch
+							filterOption={(input, option) =>
+								(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+							}
+							style={{ width: '100%' }}
 							placeholder="Северо-западный..."
 							allowClear
 							value={filterRegion}
@@ -488,6 +492,10 @@ const OrgListSiderFilter = (props) => {
 					<div className="sider-unit-title">Создатель</div>
 					<div className="sider-unit-control">
 						<Select
+						showSearch
+						filterOption={(input, option) =>
+							(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+						}
 						style={{ width: '100%' }}
 							placeholder="кто создал карточку клиента"
 							allowClear
