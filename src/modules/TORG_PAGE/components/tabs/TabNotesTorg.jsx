@@ -8,6 +8,7 @@ import { Button, Empty, Pagination, Spin } from 'antd';
 import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
 import { PlusOutlined } from '@ant-design/icons';
 
+
 const TabNotesTorg = (props) => {
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
@@ -110,6 +111,9 @@ const TabNotesTorg = (props) => {
 
   useEffect(() => {
     setIsTabActive(props.active_tab);
+    if (props.active_tab && editMode){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [props.active_tab]);
 
 
