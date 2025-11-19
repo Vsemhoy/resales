@@ -815,7 +815,7 @@ const CallTabSectionTorg = (props) => {
           />
 
 
-          {(editMode && subscriber.length > 3 && !targetOrgUserId && phone.length > 3) && (
+          {(editMode && subscriber?.length > 3 && !targetOrgUserId && phone.length > 3) && (
           <TorgPageSectionRow
             edit_mode={editMode}
             key={'tdexteeed_1_' + baseData?.id}
