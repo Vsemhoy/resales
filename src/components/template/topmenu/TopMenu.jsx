@@ -265,6 +265,7 @@ const TopMenu = (props) => {
                                      newNotification: 'new:notification',
                                      readNotification: 'read:notification',
                                  }}
+                                 onNewAlert={props.onNewAlert}
                     />
                     {/*<NotiBtn />*/}
 					<Dropdown menu={{ items: userMenu }}>

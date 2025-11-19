@@ -34,11 +34,19 @@ import FilesBuhPage from "./modules/FILES_BUH/FilesBuhPage";
 
 import {ResalesWebSocketProvider} from "./context/ResalesWebSocketContext";
 import AlertCustom from "./components/template/Alert/AlertCustom";
+import dayjs from "dayjs";
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [topRole, setTopRole] = useState('');
+
+    const [isAlertVisibleKey, setIsAlertVisibleKey] = useState(0);
+    const [alertInfo, setAlertInfo] = useState({
+        message: '',
+        description: '',
+        type: 'info', //"success" | "info" | "warning" | "error"
+    });
 
 	useEffect(() => {
 		if (PRODMODE) {
@@ -98,13 +106,21 @@ export const App = () => {
 
 	if (!pageLoaded) return null; // можно заменить на спиннер загрузки
 
+    const updateAlert = (alert) => {
+        setIsAlertVisibleKey(dayjs().unix());
+        setAlertInfo(alert);
+    };
+
 	return (
 		<UserDataProvider>
             <ResalesWebSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
                 <ChatSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
                     <BrowserRouter basename={BASE_NAME}>
                         <div className={'app'}>
-                            <TopMenu changed_user_data={() => get_userdata()} userdata={userdata} />
+                            <TopMenu changed_user_data={() => get_userdata()}
+                                     onNewAlert={updateAlert}
+                                     userdata={userdata}
+                            />
                             <div>
                                 <Routes>
                                     <Route path="/" element={<Navigate to={topRole} replace />} />
@@ -211,7 +227,7 @@ export const App = () => {
                                     </Dropdown>
                                 )}
                             </div>
-                            <AlertCustom />
+                            <AlertCustom alertInfo={alertInfo} isAlertVisibleKey={isAlertVisibleKey}/>
                         </div>
                     </BrowserRouter>
                 </ChatSocketProvider>
