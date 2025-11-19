@@ -2,18 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {Alert} from "antd";
 import {useChatSocket} from "../../../context/ChatSocketContext";
 
-const AlertCustom = () => {
+const AlertCustom = ({ alertInfo, isAlertVisibleKey }) => {
     const [alertMessage, setAlertMessage] = useState('');
     const [alertDescription, setAlertDescription] = useState('');
     const [alertType, setAlertType] = useState('');
 
     const [isAlertVisible, setIsAlertVisible] = useState(false);
-
-    const {
-        connected,           // boolean - подключен ли WebSocket
-        isAlertVisibleKey,
-        alertInfo,
-    } = useChatSocket();
 
     useEffect(() => {
         if (isAlertVisibleKey) {
@@ -33,7 +27,7 @@ const AlertCustom = () => {
 
     return (
         <div>
-            {isAlertVisible && (
+            {isAlertVisible && alertType && alertMessage && alertDescription && (
                 <Alert
                     message={alertMessage}
                     description={alertDescription}
