@@ -6,6 +6,7 @@ export const SPECS_LIST = [
 		comment: 'РП Котострофов 7%',
 		created_at: 1757429497,
 		id_company: 2,
+		status: 3,
 	},
 	{
 		id: 120837,
@@ -14,6 +15,7 @@ export const SPECS_LIST = [
 		comment: 'РП Котострофов 7%',
 		created_at: 1757429497,
 		id_company: 2,
+		status: 3,
 	},
 	{
 		id: 120837,
@@ -22,6 +24,7 @@ export const SPECS_LIST = [
 		comment: 'РП Котострофов 7%',
 		created_at: 1757429497,
 		id_company: 2,
+		status: 3,
 	},
 	{
 		id: 120837,
@@ -30,6 +33,7 @@ export const SPECS_LIST = [
 		comment: 'РП Котострофов 7%',
 		created_at: 1757429497,
 		id_company: 2,
+		status: 3,
 	},
 	{
 		id: 120837,
@@ -38,6 +42,7 @@ export const SPECS_LIST = [
 		comment: 'РП Котострофов 7%',
 		created_at: 1757429497,
 		id_company: 2,
+		status: 3,
 	},
 	{
 		id: 120837,
@@ -46,6 +51,7 @@ export const SPECS_LIST = [
 		comment: 'РП Котострофов 7%',
 		created_at: 1757429497,
 		id_company: 2,
+		status: 4,
 	},
 ];
 
