@@ -176,7 +176,7 @@ const CallTabSectionTorg = (props) => {
     let id = null;
     let of = [];
     setTargetOrgUserId(null);
-    if (!props.org_contacts || !subscriber.trim()) {
+    if (!props.org_contacts || !subscriber) {
       setOrgPhones([]);
       return; // ничего не ищем, если нет данных или пустой ввод
     }
@@ -206,7 +206,7 @@ const CallTabSectionTorg = (props) => {
       // setSelectedUserId(null);
     }
     if (foundUser.occupy){
-      setPost(foundUser.occupy.trim());
+      setPost(foundUser.occupy?.trim());
     }
     
     
@@ -322,14 +322,14 @@ const CallTabSectionTorg = (props) => {
     let add = '';
 
     const splitter = "(";
-    let result = number.split(splitter);
+    let result = number?.split(splitter);
 
-    if (result[0] && result[0].trim() !== "")
+    if (result && result[0] && !result[0] && result[0]?.trim() !== "")
     {
-      pho = result[0].trim();
+      pho = result[0]?.trim();
       
       if (result[1] && result[1] !== ''){
-        add = result[1].replace(')', '').trim();
+        add = result[1].replace(')', '')?.trim();
       }
 
     } else {
@@ -404,7 +404,7 @@ const CallTabSectionTorg = (props) => {
                 baseData.next_type = nexType;
                 baseData.phone = phone;
 
-                if (addPhone && addPhone.trim() !== '' && phone && phone.trim() !== ''){
+                if (addPhone && addPhone?.trim() !== '' && phone && phone?.trim() !== ''){
                     baseData.phone = phone + ' (' + addPhone + ')';
                 }
                
@@ -450,7 +450,7 @@ const CallTabSectionTorg = (props) => {
               newData.next_type = nexType;
               newData.phone = phone;
 
-              if (addPhone && addPhone.trim() !== '' && phone && phone.trim() !== ''){
+              if (addPhone && addPhone?.trim() !== '' && phone && phone?.trim() !== ''){
                   newData.phone = phone + ' (' + addPhone + ')';
               }
               newData.deleted = deleted;
@@ -815,7 +815,7 @@ const CallTabSectionTorg = (props) => {
           />
 
 
-          {(editMode && subscriber.length > 3 && !targetOrgUserId && phone.length > 3) && (
+          {(editMode && subscriber?.length > 3 && !targetOrgUserId && phone.length > 3) && (
           <TorgPageSectionRow
             edit_mode={editMode}
             key={'tdexteeed_1_' + baseData?.id}

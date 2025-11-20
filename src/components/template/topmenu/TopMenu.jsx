@@ -1,8 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './style/topmenu.css';
 import ChatBtn from '../../../modules/CHAT/components/ChatBtn';
+
+import { Chat, ChatSocketProvider } from 'corp-chat-library-antd-react-socket';
+//import 'corp-chat-library-antd-react-socket/dist/style.css';
+
 import { NavLink } from 'react-router-dom';
-import { BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE } from '../../../config/config';
+import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE} from '../../../config/config';
 import {CloseCircleOutlined, HomeFilled, NotificationOutlined, WechatWorkOutlined} from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
@@ -17,6 +21,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import NotiBtn from "../../../modules/NOTIFIER/NotiBtn";
+import Notificator from "corp-notificator-library-antd-react-socket";
 
 const TopMenu = (props) => {
 		const [userdata, setUserdata] = useState(props.userdata);
@@ -223,8 +228,46 @@ const TopMenu = (props) => {
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
-                    <ChatBtn />
-                    <NotiBtn />
+                    <Chat userdata={userdata}
+                          httpParams={{
+                              HTTP_HOST: HTTP_HOST,
+                              BFF_PORT: BFF_PORT,
+                              CSRF_TOKEN: CSRF_TOKEN,
+                              PRODMODE: PRODMODE,
+                              PROD_AXIOS_INSTANCE: null,
+                          }}
+                          fetchParams={{
+                              fetchChatsListPath: `/api/sms`,
+                              fetchChatMessagesPath: `/api/sms`,
+                              sendSmsPath: '/api/sms/create/sms',
+                              markMessagesAsReadPath: `/api/sms/read`,
+                          }}
+                          socketSubscribe={{
+                              subscribeToChat: 'subscribeToChat'
+                          }}
+                          socketActions={{
+                              newSms: 'new:sms',
+                              updateSms: 'update:sms',
+                          }}
+                    />
+                    <Notificator userdata={userdata}
+                                 httpParams={{
+                                     HTTP_HOST: HTTP_HOST,
+                                     BFF_PORT: BFF_PORT,
+                                     CSRF_TOKEN: CSRF_TOKEN,
+                                     PRODMODE: PRODMODE,
+                                     PROD_AXIOS_INSTANCE: null,
+                                 }}
+                                 socketSubscribe={{
+                                     subscribeToNotification: 'subscribeToNotification'
+                                 }}
+                                 socketActions={{
+                                     newNotification: 'new:notification',
+                                     readNotification: 'read:notification',
+                                 }}
+                                 onNewAlert={props.onNewAlert}
+                    />
+                    {/*<NotiBtn />*/}
 					<Dropdown menu={{ items: userMenu }}>
 						<div className={'sa-flex-gap'}>
 							{ShortName(userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname)}

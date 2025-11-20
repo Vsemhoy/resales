@@ -12,6 +12,8 @@
 		"@uiw/react-md-editor": "^4.0.8",
 		"antd": "^5.26.4",
 		"axios": "^1.10.0",
+		"corp-chat-library-antd-react-socket": "^1.2.5",
+		"corp-notificator-library-antd-react-socket": "^0.0.12",
 		"dayjs": "^1.11.13",
 		"emoji-picker-react": "^4.13.3",
 		"exceljs": "^4.4.0",

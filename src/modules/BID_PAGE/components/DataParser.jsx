@@ -5,6 +5,7 @@ import { Table } from "antd";
 const DataParser = ({ models, additionData, setAdditionData }) => {
     const [value, setValue] = useState("");
     const [hashModels, setHashModels] = useState({});
+    const [addition, setAddition] = useState(null);
     const replace_alphabet = {
         'а': 'a',
         'в': 'b',
@@ -31,7 +32,13 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
                 });
             });
         }
-    }, [models])
+    }, [models]);
+
+    useEffect(() => {
+        if (additionData) {
+            setAddition(additionData);
+        }
+    }, [additionData]);
 
     const getModelName = (name) => {
         // Проверяем, что models существует и не пустой
@@ -60,7 +67,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             const modelId = hashModels[`${nameLower}`];
             return models.find((model) => model.id === modelId) ?? null;
         } else {
-            for (let i = 0; i < models.length; i++) {
+            /*for (let i = 0; i < models.length; i++) {
                 let modelNameSeo = models[i].name?.toLowerCase().replace(/\s/g, "");
 
                 if (!modelNameSeo) continue; // Пропускаем если нет name_seo
@@ -73,7 +80,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
                 if (nameLower.includes(modelNameSeo) || modelNameSeo.includes(nameLower)) {
                     return models[i];
                 }
-            }
+            }*/
             return null;
         }
     };
@@ -177,7 +184,7 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
             </div>
             <div className={'dataParser__container__table'}>
                 <Table
-                    dataSource={additionData} /* .filter(d => d.id !== 0) */
+                    dataSource={addition}
                     columns={columns}
                     size="small"
                     pagination={false}

@@ -111,6 +111,9 @@ const TabProjectsTorg = (props) => {
 
   useEffect(() => {
     setIsTabActive(props.active_tab);
+    if (props.active_tab && editMode){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [props.active_tab]);
 
 

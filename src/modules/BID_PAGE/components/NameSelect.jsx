@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Input, Select} from "antd";
+import {Select} from "antd";
 
 const NameSelect = (props) => {
     const [modelId, setModelId] = useState(null);
@@ -36,7 +36,12 @@ const NameSelect = (props) => {
     return (
         <Select style={{width: '100%'}}
                 value={modelId}
-                options={options.filter(option => !option.used)}
+                options={options.map(option => {
+                    return {
+                        ...option,
+                        disabled: option.used
+                    }
+                })}
                 showSearch
                 optionFilterProp="label"
                 filterOption={(input, option) =>
