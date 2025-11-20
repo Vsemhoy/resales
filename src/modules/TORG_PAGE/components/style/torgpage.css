@@ -519,3 +519,11 @@
     color: #898989;
     font-family: monospace;
 }
+
+.sa-busy-header > div > div {
+	background-color: var(--row-self-accent-color);
+}
+.sa-editor-org-name {
+	padding: 3px 12px;
+    color: black;
+}

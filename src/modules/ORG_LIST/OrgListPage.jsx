@@ -134,9 +134,9 @@ const OrgListPage = (props) => {
         }
     }, [connected, userdata?.user?.id]);
 
-	/*useEffect(() => {
-		setSocketBusyOrgIds(socketBusyOrglist.map(item => item.id));
-	}, [socketBusyOrglist]);*/
+		useEffect(() => {
+			console.log('SOCK CHANGED', socketBusyOrglist);
+		}, [socketBusyOrglist]);
 
 
 	useEffect(() => {

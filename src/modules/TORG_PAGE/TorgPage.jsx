@@ -39,7 +39,8 @@ import TabProjectsTorg from './components/tabs/TabProjectsTorg';
 import TabCallsTorg from './components/tabs/TabCallsTorg';
 import TabMainTorg from './components/tabs/TabMainTorg';
 
-
+import {useWebSocket} from "../../context/ResalesWebSocketContext";
+import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
 
 const tabNames = [
 	{
@@ -134,6 +135,106 @@ const tempMain_bo_licensesRef = useRef(tempMain_bo_licenses);
 const tempMain_an_licensesRef = useRef(tempMain_an_licenses);
 const tempMain_an_tolerancesRef = useRef(tempMain_an_tolerances);
 const tempMain_an_requisitesRef = useRef(tempMain_an_requisites);
+
+const [viewersBySocket, setViewersBySocket] = useState([]);
+const [lockBySocket, setLockBySocket] = useState(false);
+const [lockUser, setLockUser] = useState(null);
+const { connected, emit } = useWebSocket();
+const [socketBusyOrglist, setsocketBusyOrglist] = useState([
+		/*{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", action: 'edit'},*/
+	]);
+
+	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
+		//
+		useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', ({ activeUsers }) => setsocketBusyOrglist(prev => {
+				return activeUsers.map((usr) => {
+						return {
+								org_id: usr.orgId,
+								user_id: usr.userId,
+								username: usr.userFIO,
+								action: usr.action,
+						}
+				});
+		}));
+
+		// Подписываюсь на открытие орпейджа
+		useEffect(() => {
+				console.log('CONNECTED orgPage', connected)
+				if (connected) {
+						emit('HIGHLIGHT_ORG', {
+								orgId: itemId,
+								userId: userdata?.user?.id,
+								userFIO: `${userdata?.user?.surname} ${userdata?.user?.name} ${userdata?.user?.secondname}`,
+								action: editMode ? 'edit' : 'observe'
+						});
+
+						return () => emit('UNHIGHLIGHT_ORG', {
+								orgId: itemId,
+								userId: userdata?.user?.id,
+						});
+				}
+		}, [connected]);
+
+		// подписка на активность оргс, чтобы отслеживать состояния
+		useEffect(() => {
+						if (connected && userdata.user.id) {
+								emit('SUBSCRIBE_ORG_ACTIVITY', userdata?.user?.id);
+								return () => emit('UNSUBSCRIBE_ORG_ACTIVITY', userdata?.user?.id);
+						}
+				}, [connected, userdata?.user?.id]);
+		
+
+		useEffect(() => {
+				if (!itemId) return;
+				emit('HIGHLIGHT_ORG', {
+						orgId: itemId,
+						userId: userdata?.user?.id,
+						userFIO: `${userdata?.user?.surname} ${userdata?.user?.name} ${userdata?.user?.secondname}`,
+						action: editMode ? 'edit' : 'observe'
+				});
+		}, [editMode]);
+
+
+		useEffect(() => {
+			if (editMode){ return; }
+			let coms = socketBusyOrglist.filter((item)=> item.org_id === itemId);
+			if (coms.length === 0){
+				if (lockBySocket){
+					// If was not edit mode
+					refreshPage();
+					setLockBySocket(false);
+				}
+			} else {
+				let edor  = coms.find((item)=> item.action === 'edit');
+				if (edor){
+					if (!lockBySocket){
+						setLockUser(edor);
+						setLockBySocket(true);
+					}
+				} else {
+					if (lockBySocket){
+						setLockUser(null);
+						setLockBySocket(false);
+						refreshPage();
+					}
+				}
+
+				setViewersBySocket(coms.filter((item)=> item.action === 'explore'));
+			}
+		}, [socketBusyOrglist]);
+
+
+		const refreshPage = () => {
+			let lid  = itemId;
+					setItemId(0);
+					setTimeout(() => {
+						setItemId(lid);
+					}, 950);
+					setTimeout(() => {
+						
+						get_main_data_action(lid);
+					}, 350);
+		}
 
 useEffect(() => {
   tempMainDataRef.current = tempMainData;
@@ -757,6 +858,10 @@ useEffect(() => {
 
 	const handleCallBecomeCurator = async () => {
 			// http://192.168.1.16/api/curators/create
+			let luand = window.confirm("Вы точно хотите запросить кураторство для " + baseMainData?.name + "?");
+
+			if (!luand) return;
+
 			try {
 					const format_data = {
 						
@@ -1095,7 +1200,7 @@ useEffect(() => {
           </Affix>
 
 					<div className={'sa-outlet-body'}>
-          <Affix offsetTop={36}>    
+          <Affix offsetTop={36} className={` ${lockBySocket ? 'sa-busy-header' : ''}`}>    
 						<div className={'sa-orgpage-sub-header sa-flex-space'}>
 							<div className={'sa-orgpage-sub-name'}>{baseMainData?.name}</div>
 							<div>
@@ -1115,7 +1220,7 @@ useEffect(() => {
 									</div>
 								)}
 
-								{!editMode && userdata?.user?.id !== baseMainData?.curator?.id && (
+								{!editMode && !lockBySocket && userdata?.user?.id !== baseMainData?.curator?.id && (
 									<Button style={{marginRight: '12px'}}
 										onClick={handleCallBecomeCurator}>
 											Запрос.Кураторство
@@ -1152,15 +1257,23 @@ useEffect(() => {
 										</Button>
 									</div>
 								) : (
+									<div>
+										{lockBySocket ? (
+											<div className='sa-editor-org-name'>
+												Редактирует: {lockUser ? lockUser.username : ''}
+											</div>
+										):(
+										<Button
+										color="primary"
+											variant="outlined"
+											onClick={triggerEditMode}
+											icon={<PencilIcon height={'16px'} />}
+										>
+											Редактировать
+										</Button>
 
-									<Button
-									color="primary"
-										variant="outlined"
-										onClick={triggerEditMode}
-										icon={<PencilIcon height={'16px'} />}
-									>
-										Редактировать
-									</Button>
+										)}
+									</div>
 								)}
 								
 							</div>
