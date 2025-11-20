@@ -51,10 +51,12 @@ import FindSimilarDrawer from "./components/FindSimilarDrawer";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
-import OrgProjectEditorSectionBox
-	from "../ORG_PAGE/components/sections/NotesTabSections/Rows/OrgProjectEditorSectionBox";
+
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
 import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
+
+import OrgProjectEditorSectionBox from "../TORG_PAGE/components/sections/ext/OrgProjectEditorSectionBox.jsx"
+
 import FindSimilar from "./components/FindSimilar";
 const { TextArea } = Input;
 

@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-import { CSRF_TOKEN, PRODMODE } from '../../../../../../config/config';
-import { OM_ORG_FILTERDATA } from '../../../../../ORG_LIST/components/mock/ORGLISTMOCK';
-import OrgPageSectionRow, { OPS_TYPE } from '../../OrgPageSectionRow';
+
 import dayjs from 'dayjs';
-import { ORG_PROJECT_DEFENSES, ORG_PROJECT_STATES } from '../../../../../../components/definitions/SALESDEF';
-import { PROD_AXIOS_INSTANCE } from '../../../../../../config/Api';
-import { ORG_ERECTORS_MOCK, ORG_LINKBID_MOCK } from '../../../mock/ORGPAGEMOCK';
+import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTMOCK';
+import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
+import { ORG_ERECTORS_MOCK, ORG_LINKBID_MOCK } from '../../mock/ORGPAGEMOCK';
+import OrgPageSectionRow from './OrgPageSectionRow';
+import { OPS_TYPE } from './OrgPageSectionRow';
+
+
+
+
+
 
 
 
@@ -330,6 +336,10 @@ const handleChangeData = (changed_data) => {
 
 
     
+    useEffect(() => {
+      console.log("OLX",mountOrgList);
+      console.log("BMX", mountBidList);
+    }, [mountOrgList, mountBidList]);
 
   return (
     <div className={'sk-omt-stack'}
@@ -449,7 +459,7 @@ const handleChangeData = (changed_data) => {
                 type: 'text',
                 value: typeEac,
                 max: 250,
-                required: true,
+                required: false,
                 allowClear: false,
                 placeholder: '',
                 name: 'typepaec',
@@ -585,7 +595,7 @@ const handleChangeData = (changed_data) => {
                 options: mountOrgList,
                   showSearch: true,
                 link: '/orgs/',
-
+                on_change: (ev)=>setErector(ev),
                 on_search: (et)=>{setSearchErector(et)}
                 },
             ]}
