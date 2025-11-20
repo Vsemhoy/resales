@@ -8,7 +8,7 @@ const NameSelect = (props) => {
         id: 0,
         model_id: 0,
         sort: 0,
-    });
+    }); 
 
     useEffect(() => {
         if (props.model && props.model.model_id) {
