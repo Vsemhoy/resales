@@ -34,9 +34,9 @@ import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 import { DEPARTAMENTS_MOCK } from './components/mock/ORGPAGEMOCK';
 import CustomModal from '../../components/helpers/modals/CustomModal';
 import { FlushOrgData, IsSameComparedSomeOrgData, MAIN_ORG_DATA_IGNORE_KEYS } from './components/handlers/OrgPageDataHandler';
-import TabNotesTorg from '../TORG_PAGE/components/tabs/TabNotesTorg';
-import TabProjectsTorg from '../TORG_PAGE/components/tabs/TabProjectsTorg';
-import TabCallsTorg from '../TORG_PAGE/components/tabs/TabCallsTorg';
+import TabNotesTorg from './components/tabs/TabNotesTorg';
+import TabProjectsTorg from './components/tabs/TabProjectsTorg';
+import TabCallsTorg from './components/tabs/TabCallsTorg';
 import TabMainTorg from './components/tabs/TabMainTorg';
 
 
@@ -56,9 +56,9 @@ const tabNames = [
 
 const TorgPage = (props) => {
 	const { userdata } = props;
-	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
+	const { getCurrentParamsString } = useURLParams();
 	const [departList, setDepartList] = useState(null);
-	const [open, setOpen] = useState(false);
+
 	//   const [openResponsive, setOpenResponsive] = useState(false);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
@@ -178,7 +178,7 @@ useEffect(() => {
 
 	const [baseFiltersData, setBaseFilterstData] = useState(null);
 
-	const [refreshMark, setRefreshMark] = useState(null);
+
 
 	const [isOpenCustomModal,  setIsOpenCustomModal]  = useState(false);
 	const [customModalTitle,   setCustomModalTitle]   = useState('Некоторые данные не сохранены. Выйти из режима редактирования и отменить изменения?');
@@ -313,9 +313,6 @@ useEffect(() => {
 			get_org_filters();
 
 			get_main_data_action(item_id);
-			// get_notes_data_action(item_id);
-			// get_org_calls_action(item_id);
-			// get_projects_data_action(item_id);
 
       get_departs();
 		} else {
@@ -333,15 +330,7 @@ useEffect(() => {
 		}
 	}, []);
 
-	// Патч для фиксирования хедера в модалке, ибо модалка рендерится в body
-	useEffect(() => {
-		if (open) {
-			document.body.classList.add('sa-org-page-open');
-		} else {
-			document.body.classList.remove('sa-org-page-open');
-		}
-		document.body.classList.remove('sa-org-modal-open');
-	}, [open]);
+
 
 
 
@@ -476,15 +465,12 @@ useEffect(() => {
 				data: {},
 				_token: CSRF_TOKEN,
 			});
+			
 			if (response.data) {
-				// if (props.changed_user_data){
-				//     props.changed_user_data(response.data);
-				// }
-				// setBaseMainData(FlushOrgData(response.data.content));
 				setBaseMainData(FlushOrgData(response.data.content));
 				setLoading(false);
-				
 			}
+				
 		} catch (e) {
 			console.log(e);
 		} finally {
@@ -800,10 +786,7 @@ useEffect(() => {
 	}
 
 
-	// const handleContactChange = (data)=>{
-	// 	console.log('data', data);
-	// 	// setTempMain_contacts(data.filter((item)=>item.action));
-	// }
+
 
 	// Подготовка Контактов к отправке
 	const handleContactChange = (data)=>{
@@ -1189,15 +1172,8 @@ useEffect(() => {
 							</div>
 						)}
 
-						{/* <div onClick={triggerEditMode}>
-                                <PencilIcon height={'22px'}/> Редактировать
-                            </div> */}
 
 						{activeTab === 'o' && (
-							// <OffersTabPage
-							//     edit_mode={editMode}
-							//     item_id={itemId}
-							// />
 							<OrgListModalOffersTab data={{ id: itemId }} environment={'editor'} />
 						)}
 
@@ -1205,9 +1181,6 @@ useEffect(() => {
 							<OrgListModalBillsTab
 								data={{ id: itemId }}
 								environment={'editor'}
-								// selects_data={selectsData}
-								// org_name={orgName}
-								// on_load={handleChangeName}
 							/>
 						)}
 
@@ -1217,9 +1190,8 @@ useEffect(() => {
 							item_id={itemId}
 							call_to_save={callToSaveAction}
 							base_data={baseMainData}
-							// on_save={handleDataChangeApprove}
 							userdata={userdata}
-              				selects={baseFiltersData}
+              selects={baseFiltersData}
 
 							do_delay={(val)=>{setBlockDelay(val)}}
 							is_loading={loading}
@@ -1260,7 +1232,7 @@ useEffect(() => {
 								active_tab={activeTab === 'p'}
 								edit_mode={editMode}
 								org_id={itemId}
-												userdata={userdata}
+								userdata={userdata}
 								on_change_section={sectionUpdateHandler}
 								on_delete_section={sectionDeleteHandler}
 
@@ -1282,7 +1254,7 @@ useEffect(() => {
 							active_tab={activeTab === 'n'}
 							edit_mode={editMode}
 							org_id={itemId}
-              				userdata={userdata}
+              userdata={userdata}
 							on_change_section={sectionUpdateHandler}
 							on_delete_section={sectionDeleteHandler}
 

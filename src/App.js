@@ -11,7 +11,7 @@ import './assets/sider.css';
 
 import TopMenu from './components/template/topmenu/TopMenu';
 import OrgListPage from './modules/ORG_LIST/OrgListPage';
-import OrgPage from './modules/ORG_PAGE/OrgPage';
+
 import BidListPage from './modules/BID_LIST/BidListPage';
 import BidPage from './modules/BID_PAGE/BidPage';
 import BidPdfCreator from './modules/BID_PAGE/components/print/BidPdfCreator';
@@ -134,9 +134,9 @@ export const App = () => {
 
                                     <Route
                                         path={BASE_ROUTE + '/orgs/:item_id'}
-                                        element={<OrgPage userdata={userdata} />}
+                                        element={<TorgPage userdata={userdata} />}
                                     />
-                                    <Route path="/orgs/:item_id" element={<OrgPage userdata={userdata} />} />
+                                    <Route path="/orgs/:item_id" element={<TorgPage userdata={userdata} />} />
 
                                     {/* NEW VERSION TEST MAX */}
                                     <Route

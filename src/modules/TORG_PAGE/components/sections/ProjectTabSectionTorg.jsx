@@ -19,9 +19,10 @@ import {
 import { after } from 'lodash';
 import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { ORG_ERECTORS_MOCK, ORG_LINKBID_MOCK } from '../../../ORG_PAGE/components/mock/ORGPAGEMOCK';
+
 import { Option } from 'antd/es/mentions';
 import { LockFilled } from '@ant-design/icons';
+import { ORG_ERECTORS_MOCK, ORG_LINKBID_MOCK } from '../mock/ORGPAGEMOCK';
 
 const ProjectTabSectionTorg = (props) => {
 	const [refreshMark, setRefreshMark] = useState(null);
