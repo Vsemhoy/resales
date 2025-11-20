@@ -105,7 +105,7 @@ const EngineerListRow = (props) => {
 								</div>
 							)}
 
-							{(props.activeRole === 2 || props.superUser === 1) && (
+							{((props.activeRole === 2 || props.superUser === 1) && data.status === 4) && (
 								<div style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
 									<Tooltip title={'Создать КП'}>
 										<Button type={'primary'} style={{ width: '32px' }} icon={<ProfileOutlined />}
