@@ -880,11 +880,11 @@ const TabMainTorg = (props) => {
                   Общая информация
                 </div>
                 
-                {itemId && (
+                {/* {itemId && (
                   <div className={'sa-org-row-header-id sa-text-phantom'}>
                     ({itemId})
                   </div>
-                )}
+                )} */}
     
 
               </div>
@@ -952,11 +952,11 @@ const TabMainTorg = (props) => {
                   Информация отдела
                 </div>
                 
-                {itemId && (
+                {/* {itemId && (
                   <div className={'sa-org-row-header-id sa-text-phantom'}>
                     ({itemId})
                   </div>
-                )}
+                )} */}
     
 
               </div>
@@ -1026,11 +1026,11 @@ const TabMainTorg = (props) => {
                   Контактная информация
                 </div>
                 
-                {itemId && (
+                {/* {itemId && (
                   <div className={'sa-org-row-header-id sa-text-phantom'}>
                     ({itemId})
                   </div>
-                )}
+                )} */}
     
 
               </div>
@@ -1362,6 +1362,8 @@ const TabMainTorg = (props) => {
             ANTOLERANCES.length > 0 ||
             BOLICENSES.length > 0) ? (
               <div className='sa-org-contactstack-box'>
+                {(ANLICENSES.length > 0 ||
+            ANTOLERANCES.length > 0 ) ? (
                 <div className={'sa-tolerance-old-v'}>
                   {ANLICENSES.map((item)=>(
                   <AnLicenseMicroSectionTorg
@@ -1392,6 +1394,7 @@ const TabMainTorg = (props) => {
                     />
                 ))}
                 </div>
+            ) : ''}
                 <div>
                 {BOLICENSES.map((item)=>(
                   <BoLicenseMicroSectionTorg
