@@ -20,6 +20,7 @@
 }
 .sa-top-menu-buttons a {
 	text-decoration: none !important;
+    display: flex;
 }
 .sa-top-menu-buttons > *:hover {
 	background-color: rgba(0, 0, 0, 0.285);
