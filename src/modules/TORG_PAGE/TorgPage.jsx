@@ -16,7 +16,7 @@ import {
 	PencilIcon,
 	XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { CloseOutlined, ExclamationOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CloseOutlined, ExclamationOutlined, FlagFilled, FlagOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import './components/style/torgpage.css';
 import '../ORG_LIST/components/style/orgmodal.css';
@@ -1221,10 +1221,22 @@ useEffect(() => {
 								)}
 
 								{!editMode && !lockBySocket && userdata?.user?.id !== baseMainData?.curator?.id && (
-									<Button style={{marginRight: '12px'}}
-										onClick={handleCallBecomeCurator}>
-											Запрос.Кураторство
-										</Button>
+									<Tooltip title={'Запросить кураторство'} placement={'left'}>
+										<Button style={{marginRight: '12px'}}
+										color="cyan" variant="outlined"
+										icon={<FlagOutlined />}
+											onClick={handleCallBecomeCurator}>
+											</Button>
+									</Tooltip>
+								)}
+								{!editMode && userdata?.user?.id === baseMainData?.curator?.id && (
+									<Tooltip title={'Вы куратор этой организации'} placement={'left'}>
+										<Button style={{marginRight: '12px'}}
+										color="default" variant="text"
+										icon={<FlagFilled />}
+										>
+											</Button>
+										</Tooltip>
 								)}
 
 								{editMode ? (
