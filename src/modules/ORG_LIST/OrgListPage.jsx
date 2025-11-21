@@ -792,7 +792,7 @@ const OrgListPage = (props) => {
 								base_orgs={orgList}
 								on_preview_open={handlePreviewOpen}
 								on_set_sort_orders={setOrderBox}
-								// userdata={userdata}
+								userdata={userdata}
 								on_change_filters={handleFilterChange}
 								base_filters={filterBox}
 								base_orders={orderBox}

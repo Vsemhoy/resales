@@ -39,7 +39,8 @@ const OrgListRow = (props) => {
 	const [requisitesMenu, setRequisitesMenu] = useState([]);
 	const [paymersMenu,    setPaymersMenu] = useState([]);
 
-	const { userdata } = props;
+
+	const [userdata, setUserdata] = useState(null);
 
 	const [filterName, setFilterName] = useState(null);
 
@@ -71,6 +72,10 @@ const OrgListRow = (props) => {
 	}, [props.busy]);
 
 
+	useEffect(() => {
+		setUserdata(props.userdata);
+	}, [props.userdata]);
+
 const truncateText = (text, maxLength = 200) => {
   if (!text) return '';
   return text.length > maxLength ? text.slice(0, maxLength) : text;
@@ -89,44 +94,22 @@ const antiTruncateText = (text, maxLength = 200) => {
 		}
 	}, [props.filter_name]);
 
-	const menuItemsd = [
-		{
-			key: '1',
-			icon: <ArrowRightEndOnRectangleIcon height="18px" />,
-			label: 'Запросить кураторство',
-		},
-		{
-			key: '2',
-			icon: <ArrowRightStartOnRectangleIcon height="18px" />,
-			label: 'Передать кураторство',
-		},
-		{
-			key: '3',
-			icon: <NewspaperIcon height="18px" />,
-			label: 'Создать КП',
-		},
-		{
-			key: '4',
-			icon: <DocumentCurrencyDollarIcon height="18px" />,
-			label: 'Создать Счёт',
-		},
-		{
-			key: '5',
-			icon: <ArchiveBoxXMarkIcon height="18px" />,
-			label: 'Удалить',
-		},
-	];
+
+
 
 	const [orgData, setOrgData] = useState(props.data);
 	
 	useEffect(() => {
 		if (orgData){
+			console.log(userdata, orgData);
 			let newArr = [];
 			if (
-				((orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company) &&
+				(
+					(orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company) &&
 			(userdata?.acls?.includes(138) // Разрешено брать кураторство
 		 || userdata?.acls?.includes(137) // Рукотдела продаж
-		) ) &&  userdata?.user?.id !== orgData?.curator_id 
+		) ) 
+		&&  userdata?.user?.id !== orgData?.curator_id 
 		){
 				newArr.push(
 							{
@@ -138,6 +121,8 @@ const antiTruncateText = (text, maxLength = 200) => {
 						},
 				)
 			};
+
+
 
 			if ((userdata?.acls?.includes(89) || userdata?.acls?.includes(92))  && (orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company)){
 				newArr.push(
@@ -160,7 +145,8 @@ const antiTruncateText = (text, maxLength = 200) => {
 				)
 			};
 
-			if (userdata?.acls?.includes(55) && (orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company)){
+			if (userdata?.acls?.includes(55) 
+				&& (orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company)){
 				newArr.push(
 					{
 							key: 'Can_del_item1',
@@ -174,7 +160,7 @@ const antiTruncateText = (text, maxLength = 200) => {
 
 			setMenuItems(newArr);
 		}
-	}, [orgData]);
+	}, [orgData, userdata]);
 	
 	useEffect(() => {
 		if (props.data) {
