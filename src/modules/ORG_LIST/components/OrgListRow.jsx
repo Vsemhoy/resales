@@ -24,7 +24,7 @@ import {
 import { getBidsItems, getCallsItems, getMeetingsItems } from './hooks/AlansOrgHooks';
 import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
 import { useURLParams } from '../../../components/helpers/UriHelpers';
-import { CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../config/config';
+import { BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { values } from 'lodash';
 import HighlightText from '../../../components/helpers/HighlightText';
@@ -51,6 +51,8 @@ const OrgListRow = (props) => {
 	const [busyMode, setBusyMode]   = useState(null); // 1 - explore // 2 - edit
 	const [busyEditor, setBusyEditor]   = useState(null);
 	const [busyExplorers, setBusyExplorers] = useState([]);
+
+	const [deleted, setDeleted] = useState(false);
 
 	useEffect(() => {
 		setBusyModers(props.busy);
@@ -101,7 +103,6 @@ const antiTruncateText = (text, maxLength = 200) => {
 	
 	useEffect(() => {
 		if (orgData){
-			console.log(userdata, orgData);
 			let newArr = [];
 			if (
 				(
@@ -124,7 +125,8 @@ const antiTruncateText = (text, maxLength = 200) => {
 
 
 
-			if ((userdata?.acls?.includes(89) || userdata?.acls?.includes(92))  && (orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company)){
+			if ((userdata?.acls?.includes(89) || userdata?.acls?.includes(92))  
+				&& (orgData.id_company === userdata?.user?.active_company)){
 				newArr.push(
 					{
 							key: 'Can_create_offer',
@@ -299,8 +301,26 @@ const antiTruncateText = (text, maxLength = 200) => {
 			}
 	}
 
-		const handleDeletOrg = () => {
-		console.log('delete of', orgData.id);
+	const handleDeletOrg = async () => {
+		// console.log('delete of', orgData.id);
+		if (PRODMODE){
+			try {
+						
+						let orgdel = await PROD_AXIOS_INSTANCE.delete(
+							"/api/sales/delete/" + orgData.id + "?_token=" + CSRF_TOKEN,
+						);
+						if (orgdel) {
+							setDeleted(true);
+							console.log(orgdel);
+						}
+					} catch (e) {
+						console.log(e);
+						alert(e);
+				}
+		}
+		else {
+			setDeleted(true);
+		}
 	}
 
 	const wrapLink = (text) => {
@@ -355,7 +375,8 @@ const antiTruncateText = (text, maxLength = 200) => {
         );
         if (new_bid_response) {
           window.open(
-            window.location.origin + '/' + HTTP_ROOT + '/bids/' +
+            // window.location.origin + '/' + HTTP_ROOT + '/bids/' +
+            HTTP_ROOT + BASE_ROUTE + '/bids/' +
             new_bid_response.data.bid.id, 
             "_blank"
           );
@@ -374,7 +395,8 @@ const antiTruncateText = (text, maxLength = 200) => {
 
 
 	return (
-		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']} key={`orgrow_${orgData.id}`}>
+		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']} key={`orgrow_${orgData.id}`}
+		>
 			<Tooltip title={
 				busyMode !== null ? (
 					<div>
@@ -402,7 +424,7 @@ const antiTruncateText = (text, maxLength = 200) => {
 				className={`sa-table-box-orgs sa-table-box-row ${active ? 'active' : ''}
 				${busyMode === 1 ? "sa-explore-row" : ""} ${busyMode === 2 ? "sa-busy-row" : ""}
 				`}
-				style={{ color: compColor }}
+				style={{ color: compColor, display: `${deleted ? 'none' : 'grid'}` }}
 				onDoubleClick={handleDoubleClick}
 				id={'orgrow_' + orgData.id}
 			>
