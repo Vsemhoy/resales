@@ -111,3 +111,7 @@
 .sa-org-list-row-name-midname {
 	padding-top: 6px;
 }
+
+.ant-dropdown-open .sa-org-list-row-name-name a {
+	color: white !important;
+}

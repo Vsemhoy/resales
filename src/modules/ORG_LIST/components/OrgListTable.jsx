@@ -5,7 +5,7 @@ import OrgListRow from './OrgListRow';
 import dayjs from 'dayjs';
 
 const OrgListTable = (props) => {
-	const { userdata } = props;
+	const [userdata, setUserdata] = useState(null);
 	const [sortOrders, setSortOrders] = useState([]);
 
 	const [curatorList, setCuratorList] = useState(props.curator_list);
@@ -28,6 +28,7 @@ const OrgListTable = (props) => {
 	const [selectedItem, setSelectedItem] = useState(null);
 
 	const [SKIPPER, setSKIPPER] = useState(2);
+	
 
 	const [socketBusyOrglist, setsocketBusyOrglist] = useState([]);
 
@@ -79,6 +80,10 @@ const OrgListTable = (props) => {
 		// Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
 		return () => clearTimeout(timer);
 	}, [filterTown, filterId, filterName, filterInn, filterComment, filterCurator]);
+
+	useEffect(() => {
+		setUserdata(props.userdata);
+	}, [props.userdata]);
 
 	useEffect(() => {
 		// if (props.curator_list){
