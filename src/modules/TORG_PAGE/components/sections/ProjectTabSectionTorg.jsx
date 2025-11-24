@@ -5,6 +5,7 @@ import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import {
 	ChevronDownIcon,
+	ChevronRightIcon,
 	ChevronUpIcon,
 	QuestionMarkCircleIcon,
 	TrashIcon,
@@ -453,24 +454,24 @@ const ProjectTabSectionTorg = (props) => {
 				<div className={'sa-flex'}>
 					<div className={'sa-pa-6'}>
 						{collapsed ? (
-							<span
-								className={'sa-pa-3 sa-org-trigger-button'}
-								onClick={() => {
-									setCollapsed(!collapsed);
-								}}
-							>
-								<ChevronDownIcon height={TORG_CHEVRON_SIZE} />
-							</span>
-						) : (
-							<span
-								className={'sa-pa-3 sa-org-trigger-button'}
-								onClick={() => {
-									setCollapsed(!collapsed);
-								}}
-							>
-								<ChevronUpIcon height={TORG_CHEVRON_SIZE} />
-							</span>
-						)}
+                <span className={'sa-org-trigger-button'}
+                 onClick={(e) => {
+                    e.stopPropagation();
+                    setCollapsed(!collapsed);
+                  }}
+                >
+                <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
+                </span>
+              ) : (
+                <span className={'sa-org-trigger-button active'}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setCollapsed(!collapsed);
+                  }}
+                >
+                <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
+              )}
 					</div>
 					<div className={'sa-pa-6 sa-org-section-text'}>
 						<div className="sa-org-section-label">{name ? name : 'Без темы '}</div>

@@ -3,7 +3,7 @@ import TorgPageSectionRow from '../TorgPageSectionRow';
 import { Button, Checkbox, DatePicker, Input, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
-import { BellSlashIcon, CameraIcon, ChevronDownIcon, ChevronUpIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { BellSlashIcon, CameraIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, DevicePhoneMobileIcon, EnvelopeIcon, PaperAirplaneIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { getMonthName } from '../../../../components/helpers/TextHelpers';
 import ContactEmailMicroSectionTorg from './microsections/contact/ContactEmailMicroSectionTorg';
@@ -1010,17 +1010,18 @@ const CollectAndSend = (stackName, data) => {
         <div className={'sa-flex'}>
           <div className={'sa-pa-3 sa-lh-chevron'}>
             {collapsed ? (
-              <span className={'sa-pa-3 sa-org-trigger-button'}
+              <span className={'sa-org-trigger-button'}
                 onClick={() => { setCollapsed(!collapsed) }}
               >
-                <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
               </span>
 
             ) : (
-              <span className={'sa-pa-3 sa-org-trigger-button'}
-                onClick={() => { setCollapsed(!collapsed) }}
+              <span className={'sa-org-trigger-button active'}
+              onClick={() => { setCollapsed(!collapsed) }}
               >
-                <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
+                {/* <ChevronDownIcon height={TORG_CHEVRON_SIZE} /> */}
               </span>
             )}
 
