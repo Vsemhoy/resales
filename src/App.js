@@ -35,6 +35,7 @@ import FilesBuhPage from "./modules/FILES_BUH/FilesBuhPage";
 import {ResalesWebSocketProvider} from "./context/ResalesWebSocketContext";
 import AlertCustom from "./components/template/Alert/AlertCustom";
 import dayjs from "dayjs";
+import BidPdfPage from "./modules/BID_PDF_PAGE/BidPdfPage";
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -166,11 +167,11 @@ export const App = () => {
 
                                     <Route
                                         path={BASE_ROUTE + '/bidsPDF/:bidId'}
-                                        element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
+                                        element={<BidPdfPage userdata={userdata} changed_user_data={setUserdata} />}
                                     />
                                     <Route
                                         path="/bidsPDF/:bidId"
-                                        element={<BidPdfCreator userdata={userdata} changed_user_data={setUserdata} />}
+                                        element={<BidPdfPage userdata={userdata} changed_user_data={setUserdata} />}
                                     />
 
 								{/*<Route*/}

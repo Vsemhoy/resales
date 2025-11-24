@@ -1,0 +1,47 @@
+.bid-pdf-page {
+    width: 100%;
+    height: calc(100vh - 44px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.sa-bid-pdf-sider {
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    gap: 10px;
+    background-color: var(--sider-bg-color);
+    border-radius: 6px;
+    position: sticky;
+    top: 2.5%;
+    width: 95%;
+    height: 300px;
+    padding: 0 20px;
+}
+
+.full-height-tabs .ant-tabs-content {
+    height: 100%;
+}
+
+.full-height-tabs .ant-tabs-tabpane {
+    height: 100%;
+}
+
+.full-height-tabs .ant-tabs-tabpane > .ant-card {
+    height: 100%;
+}
+
+.full-height-tabs .ant-card-body {
+    height: calc(100% - 56px); /* 48px = header (title + padding), adjust if needed */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Если внутри Card — Form, тоже растягиваем */
+.full-height-tabs .ant-card-body .ant-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
