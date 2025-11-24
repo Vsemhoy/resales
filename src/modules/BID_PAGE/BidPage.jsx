@@ -2408,6 +2408,7 @@ const BidPage = (props) => {
 														type={'model_count'}
 														onChangeModel={handleChangeModelInfo}
 														error={isErrorInput(bidModel.id)}
+                                                        isOnlyPositive={true}
 													/>
 												</div>
 												<div className={'sa-models-table-cell'}>
