@@ -32,6 +32,7 @@ import AnLicenseMicroSectionTorg from '../sections/microsections/tolerance/AnLic
 import BoLicenseMicroSectionTorg from '../sections/microsections/tolerance/BoLicenseMicroSectionTorg';
 import ContactMainSectionTorg from '../sections/ContactMainSectionTorg';
 import RequisiteMicroSectionTorg from '../sections/microsections/requisites/RequisiteMicroSectionTorg';
+import { ChevronRightIcon } from '@heroicons/react/24/solid';
 
 
 
@@ -862,14 +863,15 @@ const TabMainTorg = (props) => {
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('main_row') }}
                   >
-                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
-
                 ) : (
-                  <span className={'sa-pa-3 sa-org-trigger-button'}
-                    onClick={() => { triggerCollapse('main_row') }}
+                  <span className={'sa-pa-3 sa-org-trigger-button active'}
+                  onClick={() => { triggerCollapse('main_row') }}
                   >
-                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                  <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
+                  {/* <ChevronDownIcon height={TORG_CHEVRON_SIZE} /> */}
+                    
                   </span>
                 )}
 
@@ -934,14 +936,14 @@ const TabMainTorg = (props) => {
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('info_row') }}
                   >
-                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
 
                 ) : (
-                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                  <span className={'sa-pa-3 sa-org-trigger-button active'}
                     onClick={() => { triggerCollapse('info_row') }}
                   >
-                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
                 )}
 
@@ -1008,14 +1010,14 @@ const TabMainTorg = (props) => {
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('contactinfo_row') }}
                   >
-                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
 
                 ) : (
-                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                  <span className={'sa-pa-3 sa-org-trigger-button active'}
                     onClick={() => { triggerCollapse('contactinfo_row') }}
                   >
-                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
                 )}
 
@@ -1296,14 +1298,14 @@ const TabMainTorg = (props) => {
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('licenses_row') }}
                   >
-                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
 
                 ) : (
-                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                  <span className={'sa-pa-3 sa-org-trigger-button active'}
                     onClick={() => { triggerCollapse('licenses_row') }}
                   >
-                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
                 )}
 
@@ -1437,14 +1439,14 @@ const TabMainTorg = (props) => {
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('contacts_row') }}
                   >
-                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
 
                 ) : (
-                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                  <span className={'sa-pa-3 sa-org-trigger-button active'}
                     onClick={() => { triggerCollapse('contacts_row') }}
                   >
-                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
                 )}
 
@@ -1530,14 +1532,14 @@ const TabMainTorg = (props) => {
                   <span className={'sa-pa-3 sa-org-trigger-button'}
                     onClick={() => { triggerCollapse('requisites_row') }}
                   >
-                    <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
 
                 ) : (
-                  <span className={'sa-pa-3 sa-org-trigger-button'}
+                  <span className={'sa-pa-3 sa-org-trigger-button active'}
                     onClick={() => { triggerCollapse('requisites_row') }}
                   >
-                    <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                    <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
                   </span>
                 )}
 

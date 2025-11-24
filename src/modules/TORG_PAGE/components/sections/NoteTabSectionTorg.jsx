@@ -3,7 +3,7 @@ import TorgPageSectionRow from '../TorgPageSectionRow';
 import { Button, DatePicker, Input, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
-import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { FullNameText, getMonthName, ShortName } from '../../../../components/helpers/TextHelpers';
 import { LockFilled } from '@ant-design/icons';
@@ -187,19 +187,25 @@ const NoteTabSectionTorg = (props) => {
       >
         <div className={'sa-flex'}>
           <div className={'sa-pa-6'}>
-            <span
-              className={'sa-pa-3 sa-org-trigger-button'}
-              onClick={(e) => {
-                e.stopPropagation();
-                setCollapsed(!collapsed);
-              }}
-            >
               {collapsed ? (
-                <ChevronDownIcon height={TORG_CHEVRON_SIZE} />
+                <span className={'sa-org-trigger-button'}
+                 onClick={(e) => {
+                    e.stopPropagation();
+                    setCollapsed(!collapsed);
+                  }}
+                >
+                <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
+                </span>
               ) : (
-                <ChevronUpIcon height={TORG_CHEVRON_SIZE} />
+                <span className={'sa-org-trigger-button active'}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setCollapsed(!collapsed);
+                  }}
+                >
+                <ChevronRightIcon height={TORG_CHEVRON_SIZE} />
+                  </span>
               )}
-            </span>
           </div>
           <div className={'sa-pa-6 sa-org-section-text'}>
             <div className="sa-org-section-label">

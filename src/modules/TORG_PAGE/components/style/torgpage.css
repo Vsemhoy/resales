@@ -304,17 +304,26 @@
 	background-color: var(--current-color);
 } */
 .sa-org-trigger-button {
-	/* color: var(--error-color); */
 	cursor: pointer;
 	padding-right: 6px;
 	padding-left: 6px;
 	border-radius: 3px;
+	padding-top: 3px;
+	padding-bottom: 0px;
+	display: block;
 }
+.sa-org-trigger-button svg {
+	transition: all 0.1s;
+}
+
+ 
 .sa-org-trigger-button:hover {
 	background-color: var(--table-hovered-row-color);
 
 }
-
+.sa-org-trigger-button.active svg {
+	    transform: rotate(90deg);
+}
 
 .sa-org-collapse-item.deleted {
 	border-radius: 6px;
@@ -536,4 +545,8 @@
 }
 .sa-org-section-label {
 	font-weight: 500;
+}
+
+.sa-org-main-collapse-item:hover .sa-org-collpase-header {
+	background-color: #ecebeb;;
 }
