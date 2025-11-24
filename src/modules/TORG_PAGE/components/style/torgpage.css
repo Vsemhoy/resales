@@ -527,3 +527,13 @@
 	padding: 3px 12px;
     color: black;
 }
+
+.sa-occupy-namerow {
+	color:var(--org-modal-content-text);
+	margin-left: 6px;
+	margin-right: 6px;
+	font-weight: 400;
+}
+.sa-org-section-label {
+	font-weight: 500;
+}

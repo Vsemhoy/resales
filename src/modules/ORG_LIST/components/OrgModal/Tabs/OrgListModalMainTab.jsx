@@ -91,9 +91,20 @@ const OrgListMainTab = (props) => {
 					return {
 						key: `contitems_0N_1${contact.id}`,
 						label: (
-							<div className="sk-omt-sub-title">
-								{contact.lastname} {contact.name} {contact.middlename} {contact.occupy} {' '}
-								<span style={{ color: 'gray', fontWeight: '100' }}>({contact.id})</span>
+							<div className='sa-org-section-label'>
+								{contact.name || contact.middleName || contact.lastName || contact.occupy ? (
+                <>
+                  {contact.lastName || ''} {contact.name ? contact.name : ''} {contact.middleName ? contact.middleName : ''}
+                  {contact.occupy && <div className='sa-occupy-namerow'>  - {contact.occupy}</div>}
+                </>
+              ) : (
+                "Без имени"
+              )}
+								{contact.id && (
+              <div className={'sa-org-row-header-id sa-text-phantom'}>
+                ({contact.id})
+              </div>
+            )}
 							</div>
 						),
 						children: (
