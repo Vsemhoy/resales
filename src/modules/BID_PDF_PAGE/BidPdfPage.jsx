@@ -99,14 +99,18 @@ const BidPdfPage = () => {
                         {(featureFields, { add, remove }) => (
                             <div>
                                 <Flex justify={'center'} style={{ marginBottom: 5 }}>
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                    <Button type="dashed"
+                                            onClick={() => add()}
+                                            block
+                                            icon={<PlusOutlined />}
+                                    >
                                         Добавить особенность/требование
                                     </Button>
                                 </Flex>
                                 {featureFields.map(({ key, name }, idx) => (
                                     <Flex key={key} align="center" justify="space-between" gap={'middle'}>
                                         <p>{idx + 1}.</p>
-                                        <Form.Item name={[name, 'feature']} style={{ flexGrow: 1 }}>
+                                        <Form.Item name={[name, 'feature']} style={{ flexGrow: 1, margin: 0 }}>
                                             <TextArea onChange={(e) => console.log(e.target.value)}
                                                       style={{ width: '100%', height: 'autosize', resize: 'none' }}
                                             />
@@ -232,6 +236,10 @@ const BidPdfPage = () => {
         }
     };
 
+    const handleFinish = (data) => {
+        console.log(data);
+    };
+
     const handleCurrencyChange = (e) => {
         const selectedValue = e.target.value;
         const selectedOption = currencyOptions.find(opt => opt.value === selectedValue);
@@ -261,6 +269,7 @@ const BidPdfPage = () => {
                         name="bid-pdf"
                         autoComplete="off"
                         initialValues={{ items: [{}] }}
+                        onFinish={handleFinish}
                     >
                         <Tabs
                             onChange={() => console.log('onChangeTab')}
@@ -268,7 +277,7 @@ const BidPdfPage = () => {
                             className="full-height-tabs"
                             style={{ height: '100%', maxHeight: '100%' }}
                             tabBarStyle={{ margin: 0 }}
-                            tabPaneStyle={{ height: '100%' }}
+                            /*tabPaneStyle={{ height: '100%' }}*/
                             items={tabs}
                         />
 
