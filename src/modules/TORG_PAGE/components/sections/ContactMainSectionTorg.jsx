@@ -122,19 +122,20 @@ useEffect(() => {
       setOrgId(props.data.id_orgs);
     }
     if (name !== props.data?.name) {
-      setName(props.data?.name);
+      setName(props.data?.name ?? '');
     }
     if (lastName !== props.data?.lastname) {
-      setLastName(props.data?.lastname);
+      setLastName(props.data?.lastname ?? '');
     }
+
     if (middleName !== props.data?.middlename) {
-      setMiddleName(props.data?.middlename);
+      setMiddleName(props.data?.middlename ?? '');
     }
     if (occupy !== props.data?.occupy) {
-      setOccupy(props.data?.occupy);
+      setOccupy(props.data?.occupy ?? '');
     }
     if (comment !== props.data?.comment) {
-      setComment(props.data?.comment);
+      setComment(props.data?.comment ?? '');
     }
     if (job !== props.data?.job) {
       setJob(props.data?.job);
@@ -176,10 +177,28 @@ useEffect(() => {
       setNewContactmessangers([]);
       setUpdatedNewContactmessangers([]);
     }
+
+    // if (lastName === undefined){
+    //   setLastName('');
+    // }
+    // if (name === undefined){
+    //   setName('');
+    // }
+    // if (comment === undefined){
+    //   setComment('');
+    // }
+    // if (occupy === undefined){
+    //   setOccupy('');
+    // }
+    // if (middleName === undefined){
+    //   setMiddleName('');
+    // }
   }
 }, [props.data]);
 
-
+useEffect(() => {
+  console.log(lastName);
+}, [lastName]);
 
   useEffect(() => {
     setSelects(props.selects)

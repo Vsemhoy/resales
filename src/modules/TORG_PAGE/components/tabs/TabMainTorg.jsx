@@ -288,6 +288,7 @@ const TabMainTorg = (props) => {
 
   const handleUpdateContacts = (e,a,data)=>{
     if (props.on_change_contact){
+      // console.log('CALL TO UPDATE COLLECTOR', data);
       props.on_change_contact(data);
     }
     if (data.command === 'create' && data.deleted){
