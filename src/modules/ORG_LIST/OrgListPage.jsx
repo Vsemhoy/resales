@@ -653,7 +653,6 @@ const OrgListPage = (props) => {
 										<Tooltip title={'Очистить фильтры'} placement={'right'}>
 											<Dropdown menu={{ items: filterSortClearMenu }}>
 												<Button
-													title="Очистить фильтры"
 													color={'danger'}
 													variant={'solid'}
 													icon={filterAwaiter ? <LoadingOutlined /> : <CloseOutlined />}

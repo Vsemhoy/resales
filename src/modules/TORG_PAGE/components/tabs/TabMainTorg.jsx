@@ -305,6 +305,10 @@ const TabMainTorg = (props) => {
 		}
   }
 
+  useEffect(() => {
+    // эффект
+    console.log("CONTACTS", CONTACTS);
+  }, [CONTACTS]);
 
 
   const handleAddContact = () => {
