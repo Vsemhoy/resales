@@ -433,11 +433,11 @@ const OrgListPreviewModal = (props) => {
 								>
 									История
 								</div>
-								<Dropdown menu={{ items: menuItems }} placement="bottomRight">
+								{/* <Dropdown menu={{ items: menuItems }} placement="bottomRight">
 									<div className={'spec-modal-control-button expander'}>
 										<EllipsisOutlined />
 									</div>
-								</Dropdown>
+								</Dropdown> */}
 								<Tooltip title="Перейти в редактор">
 									<div onMouseDown={navigateToEditor}>
 										<div
