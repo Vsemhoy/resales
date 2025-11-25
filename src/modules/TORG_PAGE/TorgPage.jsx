@@ -144,6 +144,8 @@ const [socketBusyOrglist, setsocketBusyOrglist] = useState([
 		/*{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", action: 'edit'},*/
 	]);
 
+const [curatorRequestSent, setCuratorRequestSent] = useState(false);
+
 	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
 		//
 		useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', ({ activeUsers }) => setsocketBusyOrglist(prev => {
@@ -568,6 +570,9 @@ useEffect(() => {
 			});
 			
 			if (response.data) {
+				if (response.data.button_curator_status){
+					setCuratorRequestSent(response.data.button_curator_status);
+				};
 				setBaseMainData(FlushOrgData(response.data.content));
 				setLoading(false);
 			}
@@ -876,6 +881,7 @@ useEffect(() => {
 					);
 					if (new_bid_response) {
 						alert("Заявка на кураторство отправлена");
+						setCuratorRequestSent(true);
 					}
 				} catch (e) {
 					console.log(e);
@@ -1220,24 +1226,38 @@ useEffect(() => {
 									</div>
 								)}
 
-								{!editMode && !lockBySocket && userdata?.user?.id !== baseMainData?.curator?.id && (
-									<Tooltip title={'Запросить кураторство'} placement={'left'}>
-										<Button style={{marginRight: '12px'}}
-										color="cyan" variant="outlined"
-										icon={<FlagOutlined />}
-											onClick={handleCallBecomeCurator}>
-											</Button>
-									</Tooltip>
-								)}
-								{!editMode && userdata?.user?.id === baseMainData?.curator?.id && (
-									<Tooltip title={'Вы куратор этой организации'} placement={'left'}>
-										<Button style={{marginRight: '12px'}}
-										color="default" variant="text"
-										icon={<FlagFilled />}
-										>
-											</Button>
+								{curatorRequestSent ? (
+										<Tooltip title={'Заявка на кураторство подана'} placement={'left'}>
+											<Button style={{marginRight: '12px'}}
+												disabled
+												color="cyan" variant="outlined"
+												icon={<FlagOutlined />}
+												>
+												</Button>
 										</Tooltip>
+								) : (
+									<>
+									{!editMode && !lockBySocket && userdata?.user?.id !== baseMainData?.curator?.id && (
+										<Tooltip title={'Запросить кураторство'} placement={'left'}>
+											<Button style={{marginRight: '12px'}}
+											color="cyan" variant="outlined"
+											icon={<FlagOutlined />}
+												onClick={handleCallBecomeCurator}>
+												</Button>
+										</Tooltip>
+									)}
+									{!editMode && userdata?.user?.id === baseMainData?.curator?.id && (
+										<Tooltip title={'Вы куратор этой организации'} placement={'left'}>
+											<Button style={{marginRight: '12px'}}
+											color="default" variant="text"
+											icon={<FlagFilled />}
+											>
+												</Button>
+											</Tooltip>
+									)}
+									</>
 								)}
+
 
 								{editMode ? (
 									<div>
