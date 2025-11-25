@@ -20,7 +20,7 @@ const BidPdfPage = () => {
 
     const [modelsSelect, setModelsSelect] = useState([]);
     const [bidSubtype, setBidSubtype] = useState(false);
-    const [currency, setCurrency] = useState({ label: '$', value: 1 });
+    const [currency, setCurrency] = useState({ label: '$', value: '1' });
     const [featureFields, setFeatureFields] = useState([
         {
             key: 1,
@@ -32,6 +32,17 @@ const BidPdfPage = () => {
         { label: '€', value: '2' },
         { label: '₽', value: '3' },
     ];
+    const [tabsTrans, setTabsTrans] = useState([
+        { label: 'Особенности системы',   value: '2', checked: false },
+        { label: 'Выбор оборудования',    value: '3', checked: false },
+        { label: 'Рекомендации',          value: '4', checked: false },
+        { label: 'Описание оборудования', value: '5', checked: false },
+    ]);
+    const [tabsProf, setTabsProf] = useState([
+        { label: 'Особенности системы',   value: '2', checked: false },
+        { label: 'Рекомендации',          value: '4', checked: false },
+        { label: 'Описание оборудования', value: '5', checked: false },
+    ]);
     const formStyle = {
         width: '98%',
         height: '95%',
@@ -57,6 +68,13 @@ const BidPdfPage = () => {
         return e?.fileList;
     };
     const blockPlacements = (e) => {
+        console.log('Upload event:', e);
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e?.fileList;
+    };
+    const normFile = (e) => {
         console.log('Upload event:', e);
         if (Array.isArray(e)) {
             return e;
@@ -139,15 +157,23 @@ const BidPdfPage = () => {
                     key={3}
                     style={cardStyle}
                 >
-                    <Form.Item name="selection-of-equipment" label={'Опишите выбор оборудования'}>
-                        <TextArea onChange={(e) => console.log(e.target.value)}
-                                  style={{ width: '100%', height: 'autosize', resize: 'none' }}
-                                  autoSize={{ minRows: 2, maxRows: 5 }}
+                    <Form.Item name="selection-of-equipment" label="Опишите выбор оборудования">
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
                         />
                     </Form.Item>
                     <Form.Item label="Структурная схема проекта">
-                        <Form.Item name="dragger" valuePropName="structuralDiagramsFileList" getValueFromEvent={structuralDiagrams} noStyle>
-                            <Upload.Dragger name="structuralDiagramsFiles" action="/upload.do">
+                        <Form.Item
+                            name="structuralDiagrams"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
@@ -156,9 +182,17 @@ const BidPdfPage = () => {
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
-                    <Form.Item label="Резмещение блоков в шкафах">
-                        <Form.Item name="dragger" valuePropName="blockPlacementsFileList" getValueFromEvent={blockPlacements} noStyle>
-                            <Upload.Dragger name="blockPlacementsFiles" action="/upload.do">
+                    <Form.Item label="Размещение блоков в шкафах">
+                        <Form.Item
+                            name="blockPlacements"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
@@ -273,10 +307,36 @@ const BidPdfPage = () => {
             return [];
         }
     };
+    const setCheckboxChecked = (tab, checked) => {
+        if (bidSubtype) {
+            setTabsProf(prev => checkboxSet(prev, tab, checked));
+        } else {
+            setTabsTrans(prev => checkboxSet(prev, tab, checked));
+        }
+    };
+    const checkboxSet = (prev, tab, checked) => {
+        const itemIndex = prev.findIndex(item => item.value === tab.value);
+        return prev.map((item, idx) => {
+            if (+itemIndex === +idx) {
+                return {
+                    ...item,
+                    checked: checked,
+                }
+            }
+            return item;
+        });
+    };
 
     useEffect(() => {
         fetchBidModels().then();
     }, []);
+
+    const filteredTabs = React.useMemo(() => {
+        const activeTabKeys = (bidSubtype ? tabsProf : tabsTrans)
+            .filter(tab => tab.checked && tab.value !== '5')
+            .map(tab => Number(tab.value));
+        return tabs.filter(tab => tab.key === 1 || activeTabKeys.includes(tab.key));
+    }, [bidSubtype, tabsProf, tabsTrans]);
 
     return (
         <Layout className={'sa-layout sa-w-100'}>
@@ -299,7 +359,7 @@ const BidPdfPage = () => {
                             style={{ height: '100%', maxHeight: '100%' }}
                             tabBarStyle={{ margin: 0 }}
                             /*tabPaneStyle={{ height: '100%' }}*/
-                            items={tabs}
+                            items={filteredTabs}
                         />
 
                         <Flex gap="middle" justify="flex-end" align="center">
@@ -337,26 +397,25 @@ const BidPdfPage = () => {
                         optionType="button"
                         buttonStyle="solid"
                     />
-                    <Checkbox onChange={(e) => console.log(e.target.checked)}
-                              checked={true}
-                    >
-                        Особенности системы
-                    </Checkbox>
-                    <Checkbox onChange={(e) => console.log(e.target.checked)}
-                              checked={true}
-                    >
-                        Выбор оборудования
-                    </Checkbox>
-                    <Checkbox onChange={(e) => console.log(e.target.checked)}
-                              checked={true}
-                    >
-                        Рекомендации
-                    </Checkbox>
-                    <Checkbox onChange={(e) => console.log(e.target.checked)}
-                              checked={true}
-                    >
-                        Описание оборудования
-                    </Checkbox>
+                    {bidSubtype ? tabsProf.map(tab => {
+                        return (
+                            <Checkbox key={`checkbox-prof-${tab.value}`}
+                                      onChange={(e) => setCheckboxChecked(tab, e.target.checked)}
+                                      checked={tab.checked}
+                            >
+                                {tab.label}
+                            </Checkbox>
+                        );
+                    }) : tabsTrans.map(tab => {
+                        return (
+                            <Checkbox key={`checkbox-trans-${tab.value}`}
+                                      onChange={(e) => setCheckboxChecked(tab, e.target.checked)}
+                                      checked={tab.checked}
+                            >
+                                {tab.label}
+                            </Checkbox>
+                        );
+                    })}
                 </div>
             </Sider>
         </Layout>
