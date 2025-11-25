@@ -104,24 +104,24 @@ const antiTruncateText = (text, maxLength = 200) => {
 	useEffect(() => {
 		if (orgData){
 			let newArr = [];
-			if (
-				(
-					(orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company) &&
-			(userdata?.acls?.includes(138) // Разрешено брать кураторство
-		 || userdata?.acls?.includes(137) // Рукотдела продаж
-		) ) 
-		&&  userdata?.user?.id !== orgData?.curator_id 
-		){
-				newArr.push(
-							{
-							key: 'Call_cur_item1',
-							icon: <ArrowRightEndOnRectangleIcon height="18px" />,
-							label: <div
-								onClick={handleCallBecomeCurator}
-							>Запросить кураторство</div>,
-						},
-				)
-			};
+		// 	if (
+		// 		(
+		// 			(orgData.id_company < 2 || orgData.id_company === userdata?.user?.active_company) &&
+		// 	(userdata?.acls?.includes(138) // Разрешено брать кураторство
+		//  || userdata?.acls?.includes(137) // Рукотдела продаж
+		// ) ) 
+		// &&  userdata?.user?.id !== orgData?.curator_id 
+		// ){
+		// 		newArr.push(
+		// 					{
+		// 					key: 'Call_cur_item1',
+		// 					icon: <ArrowRightEndOnRectangleIcon height="18px" />,
+		// 					label: <div
+		// 						onClick={handleCallBecomeCurator}
+		// 					>Запросить кураторство</div>,
+		// 				},
+		// 		)
+		// 	};
 
 
 

@@ -7,6 +7,7 @@ import {
 import { ShieldCheckIcon } from '@heroicons/react/24/solid';
 import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
+import { BASE_ROUTE, HTTP_ROOT } from '../../../../config/config';
 // import { NavLink } from 'react-router-dom';
 
 export const getBidsItems = (bids) => {
@@ -32,7 +33,7 @@ export const getBidsItems = (bids) => {
 								title={`${object && object !== 'null' && object !== ' ' ? object : ''}`}
 								placement="left"
 							>
-								<a href={'/bids/' + key} target="_blank" rel="noopener noreferrer">
+								<a href={HTTP_ROOT + BASE_ROUTE + '/bids/' + + key} target="_blank" rel="noopener noreferrer">
 									<div style={{ fontSize: '12px' }}>{`${formattedDate} | ${key} |  ${type}`}</div>
 								</a>
 							</Tooltip>
