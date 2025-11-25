@@ -303,7 +303,7 @@ const BidPdfPage = () => {
                         />
 
                         <Flex gap="middle" justify="flex-end" align="center">
-                            <Button>
+                            <Button htmlType="submit">
                                 Создать PDF
                             </Button>
                             <Button type="primary" htmlType="submit">
