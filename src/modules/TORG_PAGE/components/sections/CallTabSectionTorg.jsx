@@ -480,7 +480,9 @@ const CallTabSectionTorg = (props) => {
       saveContact,
       nexCallDate,
       nexType,
-      phone
+      phone,
+      post,
+      addPhone
     ]);
 
 

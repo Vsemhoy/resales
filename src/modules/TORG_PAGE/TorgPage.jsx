@@ -559,6 +559,10 @@ useEffect(() => {
 		setSearchParams(searchParams);
 	};
 
+
+
+
+
 	/** ----------------------- FETCHES -------------------- */
 
 	const get_main_data_action = async (id) => {
@@ -632,6 +636,9 @@ useEffect(() => {
 			//setUserAct(USDA);
 		}
 	};
+
+
+
 
 
 	const update_data_action = async () => {
@@ -722,7 +729,7 @@ useEffect(() => {
 								__src : src
 					};
 
-		if (PRODMODE) {
+		if (PRODMODE && itemId) {
 			setSaveProcess(20);
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/logupdateorglist/' + itemId, {
@@ -822,8 +829,8 @@ useEffect(() => {
 	// Очистка данных для сохранения (измененных)
 	const clearTemps = () => {
 		let iid = itemId;
+		setItemId(null);
 		setSaveProcess(80);
-		setItemId(0);
 		get_main_data_action(iid);
 		// get_notes_data_action(iid);
 		// get_org_calls_action(iid);
