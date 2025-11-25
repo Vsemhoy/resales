@@ -312,7 +312,8 @@ const BidPage = (props) => {
 			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
 			const timer = setTimeout(() => {
 				fetchCalcModels().then(() => {
-					setIsNeedCalcMoney(false);
+					//setIsNeedCalcMoney(false);
+                    isNeedCalcModelsTimerSetter(false);
 					setLastUpdModel(null);
 					setIsUpdateAll(false);
 				});
@@ -321,13 +322,13 @@ const BidPage = (props) => {
 			return () => clearTimeout(timer);
 		}
 	}, [isNeedCalcMoney]);
-    useEffect(() => {
+    /*useEffect(() => {
         const timer = setTimeout(() => {
             setIsNeedCalcMoney(true);
         }, 500);
 
         return () => clearTimeout(timer);
-    }, [bidCurrency, bidPriceStatus, bidPercent, bidNds, bidModels]);
+    }, [bidCurrency, bidPriceStatus, bidPercent, bidNds]);*/
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
 			const timer = setTimeout(() => {
@@ -1110,6 +1111,7 @@ const BidPage = (props) => {
             });
         });
 	    //setIsNeedCalcMoney(true);
+        isNeedCalcModelsTimerSetter(true);
 	};
 	const handleChangeModel = (newId, oldId, oldSort) => {
 	  const newModel = modelsSelect.find(model => model.id === newId);
@@ -1149,6 +1151,7 @@ const BidPage = (props) => {
           });
       });
 	  //setIsNeedCalcMoney(true);
+      isNeedCalcModelsTimerSetter(true);
 	  setLastUpdModel(newId);
 	};
 	const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
@@ -1159,12 +1162,14 @@ const BidPage = (props) => {
 			  bidModelsUpd[bidModelIdx].model_count = value;
 			  setBidModels(bidModelsUpd);
 			  //setIsNeedCalcMoney(true);
+              isNeedCalcModelsTimerSetter(true);
 			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
 			  break;
 		  case 'percent':
 			  bidModelsUpd[bidModelIdx].percent = value;
 			  setBidModels(bidModelsUpd);
 			  //setIsNeedCalcMoney(true);
+              isNeedCalcModelsTimerSetter(true);
 			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
 			  break;
 		  case 'presence':
@@ -1216,6 +1221,7 @@ const BidPage = (props) => {
 		]);
 		setAdditionData([]);
 		//setIsNeedCalcMoney(true);
+        isNeedCalcModelsTimerSetter(true);
 		setIsParseModalOpen(false);
 	};
 	const updateDefaultInfo = () => {
@@ -1811,8 +1817,17 @@ const BidPage = (props) => {
                 break;
         }
         //setIsNeedCalcMoney(true);
+        isNeedCalcModelsTimerSetter(true);
         setIsUpdateAll(true);
-    }
+    };
+
+    const isNeedCalcModelsTimerSetter = (bool) => {
+        const timer = setTimeout(() => {
+            setIsNeedCalcMoney(bool);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    };
 
 	return (
 		<div className={'sa-bid-page-container'}>
