@@ -45,3 +45,15 @@
     display: flex;
     flex-direction: column;
 }
+
+.ant-form-item-control {
+    max-width: 100%;
+    flex: 1 1 100%;
+}
+
+.ant-card-body .ant-flex {
+    margin-bottom: 10px;
+}
+.ant-card-body .ant-form-item {
+    margin-bottom: 0;
+}

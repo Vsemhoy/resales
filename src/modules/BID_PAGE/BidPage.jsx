@@ -1694,9 +1694,10 @@ const BidPage = (props) => {
 							value={bidCurrency}
 							options={prepareSelect(bidCurrencySelect)}
 							onChange={(val) => {
-								setBidCurrency(val);
-								setIsNeedCalcMoney(true);
-								setIsUpdateAll(true);
+                                const timerCurrency = setTimeout(() => {
+                                    handleChangeFinanceBlock('bidCurrency', val);
+                                }, 700);
+                                return () => clearTimeout(timerCurrency);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1710,9 +1711,10 @@ const BidPage = (props) => {
 							value={bidPriceStatus}
 							options={prepareSelect(priceSelect)}
 							onChange={(val) => {
-								setBidPriceStatus(val);
-								setIsNeedCalcMoney(true);
-								setIsUpdateAll(true);
+                                const timerPriceStatus = setTimeout(() => {
+                                    handleChangeFinanceBlock('bidPriceStatus', val);
+                                }, 700);
+                                return () => clearTimeout(timerPriceStatus);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1726,9 +1728,10 @@ const BidPage = (props) => {
 							value={bidPercent}
 							type="number"
 							onChange={(e) => {
-								setBidPercent(e.target.value);
-								setIsNeedCalcMoney(true);
-								setIsUpdateAll(true);
+                                const timerPercent = setTimeout(() => {
+                                    handleChangeFinanceBlock('bidPercent', e.target.value);
+                                }, 700);
+                                return () => clearTimeout(timerPercent);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1742,9 +1745,10 @@ const BidPage = (props) => {
 							value={bidNds}
 							options={prepareSelect(ndsSelect)}
 							onChange={(val) => {
-								setBidNds(val);
-								setIsNeedCalcMoney(true);
-								setIsUpdateAll(true);
+                                const timerNds = setTimeout(() => {
+                                    handleChangeFinanceBlock('bidNds', val);
+                                }, 700);
+                                return () => clearTimeout(timerNds);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1783,6 +1787,25 @@ const BidPage = (props) => {
 			}
 		}
 	};
+
+    const handleChangeFinanceBlock = (key, value) => {
+        switch (key) {
+            case 'bidCurrency':
+                setBidCurrency(value);
+                break;
+            case 'bidPriceStatus':
+                setBidPriceStatus(value);
+                break;
+            case 'bidPercent':
+                setBidPercent(value);
+                break;
+            case 'bidNds':
+                setBidNds(value);
+                break;
+        }
+        setIsNeedCalcMoney(true);
+        setIsUpdateAll(true);
+    }
 
 	return (
 		<div className={'sa-bid-page-container'}>
