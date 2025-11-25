@@ -312,7 +312,8 @@ const BidPage = (props) => {
 			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
 			const timer = setTimeout(() => {
 				fetchCalcModels().then(() => {
-					setIsNeedCalcMoney(false);
+					//setIsNeedCalcMoney(false);
+                    isNeedCalcModelsTimerSetter(false);
 					setLastUpdModel(null);
 					setIsUpdateAll(false);
 				});
@@ -321,6 +322,13 @@ const BidPage = (props) => {
 			return () => clearTimeout(timer);
 		}
 	}, [isNeedCalcMoney]);
+    /*useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsNeedCalcMoney(true);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [bidCurrency, bidPriceStatus, bidPercent, bidNds]);*/
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
 			const timer = setTimeout(() => {
@@ -1083,13 +1091,13 @@ const BidPage = (props) => {
 	  });
 	  setBidModels(bidModelsUpd);
 	};
-	const handleDeleteModelFromBid = (bidModelId, bidModelSort, bidModelSeletId) => {
+	const handleDeleteModelFromBid = (bidModelId, bidModelSort, bidModelSelectId) => {
         const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd.splice(bidModelIdx, 1);
         setBidModels(bidModelsUpd);
         setModelsSelect(prev => {
-            const index = prev.findIndex(model => model.id === bidModelSeletId);
+            const index = prev.findIndex(model => model.id === bidModelSelectId);
             if (index === -1) return prev;
             return prev.map((model, idx) => {
                 if (+idx === +index) {
@@ -1102,7 +1110,8 @@ const BidPage = (props) => {
                 }
             });
         });
-	    setIsNeedCalcMoney(true);
+	    //setIsNeedCalcMoney(true);
+        isNeedCalcModelsTimerSetter(true);
 	};
 	const handleChangeModel = (newId, oldId, oldSort) => {
 	  const newModel = modelsSelect.find(model => model.id === newId);
@@ -1141,7 +1150,8 @@ const BidPage = (props) => {
               }
           });
       });
-	  setIsNeedCalcMoney(true);
+	  //setIsNeedCalcMoney(true);
+      isNeedCalcModelsTimerSetter(true);
 	  setLastUpdModel(newId);
 	};
 	const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
@@ -1151,13 +1161,15 @@ const BidPage = (props) => {
 		  case 'model_count':
 			  bidModelsUpd[bidModelIdx].model_count = value;
 			  setBidModels(bidModelsUpd);
-			  setIsNeedCalcMoney(true);
+			  //setIsNeedCalcMoney(true);
+              isNeedCalcModelsTimerSetter(true);
 			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
 			  break;
 		  case 'percent':
 			  bidModelsUpd[bidModelIdx].percent = value;
 			  setBidModels(bidModelsUpd);
-			  setIsNeedCalcMoney(true);
+			  //setIsNeedCalcMoney(true);
+              isNeedCalcModelsTimerSetter(true);
 			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
 			  break;
 		  case 'presence':
@@ -1208,7 +1220,8 @@ const BidPage = (props) => {
 			...arr
 		]);
 		setAdditionData([]);
-		setIsNeedCalcMoney(true);
+		//setIsNeedCalcMoney(true);
+        isNeedCalcModelsTimerSetter(true);
 		setIsParseModalOpen(false);
 	};
 	const updateDefaultInfo = () => {
@@ -1694,10 +1707,10 @@ const BidPage = (props) => {
 							value={bidCurrency}
 							options={prepareSelect(bidCurrencySelect)}
 							onChange={(val) => {
-                                const timerCurrency = setTimeout(() => {
+                                //const timerCurrency = setTimeout(() => {
                                     handleChangeFinanceBlock('bidCurrency', val);
-                                }, 700);
-                                return () => clearTimeout(timerCurrency);
+                                //}, 700);
+                                //return () => clearTimeout(timerCurrency);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1711,10 +1724,10 @@ const BidPage = (props) => {
 							value={bidPriceStatus}
 							options={prepareSelect(priceSelect)}
 							onChange={(val) => {
-                                const timerPriceStatus = setTimeout(() => {
+                                //const timerPriceStatus = setTimeout(() => {
                                     handleChangeFinanceBlock('bidPriceStatus', val);
-                                }, 700);
-                                return () => clearTimeout(timerPriceStatus);
+                                //}, 700);
+                                //return () => clearTimeout(timerPriceStatus);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1728,10 +1741,10 @@ const BidPage = (props) => {
 							value={bidPercent}
 							type="number"
 							onChange={(e) => {
-                                const timerPercent = setTimeout(() => {
+                                //const timerPercent = setTimeout(() => {
                                     handleChangeFinanceBlock('bidPercent', e.target.value);
-                                }, 700);
-                                return () => clearTimeout(timerPercent);
+                                //}, 700);
+                                //return () => clearTimeout(timerPercent);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1745,10 +1758,10 @@ const BidPage = (props) => {
 							value={bidNds}
 							options={prepareSelect(ndsSelect)}
 							onChange={(val) => {
-                                const timerNds = setTimeout(() => {
+                                //const timerNds = setTimeout(() => {
                                     handleChangeFinanceBlock('bidNds', val);
-                                }, 700);
-                                return () => clearTimeout(timerNds);
+                                //}, 700);
+                                //return () => clearTimeout(timerNds);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1803,9 +1816,18 @@ const BidPage = (props) => {
                 setBidNds(value);
                 break;
         }
-        setIsNeedCalcMoney(true);
+        //setIsNeedCalcMoney(true);
+        isNeedCalcModelsTimerSetter(true);
         setIsUpdateAll(true);
-    }
+    };
+
+    const isNeedCalcModelsTimerSetter = (bool) => {
+        const timer = setTimeout(() => {
+            setIsNeedCalcMoney(bool);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    };
 
 	return (
 		<div className={'sa-bid-page-container'}>
