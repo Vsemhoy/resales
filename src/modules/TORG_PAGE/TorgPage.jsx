@@ -835,6 +835,21 @@ useEffect(() => {
 		// get_notes_data_action(iid);
 		// get_org_calls_action(iid);
 		// get_projects_data_action(iid);
+				setTempMainData(null);
+	
+				setTempProjectsData([]);
+				setTempCallsData([]);
+				setTempNotesData([]);
+				setTempMain_an_licenses([]);
+				setTempMain_addresses([]);
+				setTempMain_an_requisites([]);
+				setTempMain_an_tolerances([]);
+				
+				setTempMain_emails([]);
+				setTempMain_bo_licenses([]);
+				setTempMain_legalAddresses([]);
+				setTempMain_phones([]);
+				setTempMain_contacts([]);
 
 			setTimeout(() => {
 				setTempMainData(null);
@@ -908,19 +923,23 @@ useEffect(() => {
 
 	// Подготовка Контактов к отправке
 	const handleContactChange = (data)=>{
+		// console.log('EXTERNAL CALL TO UPDATE CONTACTS', data);
 		if (data.command === 'create' && data.deleted){
 			// Удаление только что добавленного
 			setTempMain_contacts(tempMain_contacts.filter((item) => item.id !== data.id));
+			// console.log('clear');
 		} else {
 			let existed = tempMain_contacts.find((item)=>item.id === data.id);
 			if (!existed){
 				if (data.command){
 					setTempMain_contacts([data, ...tempMain_contacts]);
+					// console.log('append');
 				}
 			} else {
 				setTempMain_contacts(tempMain_contacts.map((item) => (
 					item.id === data.id ? data : item
 				)))
+				// console.log('filter');
 			}
 		}
 	}
