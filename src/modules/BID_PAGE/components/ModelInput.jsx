@@ -71,8 +71,12 @@ const ModelInput = (props) => {
     return (
         <Input style={{width: '100%'}}
                type="number"
+               title={props?.title}
                value={value}
-               onChange={(e) => handleChange(e.target.value)}
+               onChange={(e) => {
+                   handleChange(e.target.value);
+                   props.onChange(e.target.value);
+               }}
                onBlur={(e) => handleBlur(e.target.value)}
                disabled={props?.disabled}
                danger={props?.danger}

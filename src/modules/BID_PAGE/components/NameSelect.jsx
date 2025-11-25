@@ -44,10 +44,14 @@ const NameSelect = (props) => {
                 })}
                 showSearch
                 optionFilterProp="label"
+                placeholder={'Выберете модель'}
                 filterOption={(input, option) =>
                     option.label.toLowerCase().includes(input.toLowerCase())
                 }
-                onChange={(val) => handleChangeModel(val, model.id, model.sort)}
+                onChange={(val) => {
+                    handleChangeModel(val, model.id, model.sort);
+                    props.onChange(val, model.id, model.sort);
+                }}
                 disabled={props?.disabled}
         />
     );
