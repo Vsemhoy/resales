@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {CloseOutlined, InboxOutlined, PlusOutlined} from '@ant-design/icons';
-import {Button, Card, Checkbox, Flex, Form, Input, Layout, Radio, Switch, Tabs, Upload} from 'antd';
+import {Button, Card, Checkbox, Flex, Form, Input, Layout, Radio, Switch, Tabs, Tooltip, Upload} from 'antd';
 import './styles/bidPagePdf.css';
 import {Content} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -10,8 +10,11 @@ import {CSRF_TOKEN, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import MODELS from "../BID_PAGE/mock/mock_models";
 import ModelInput from "../BID_PAGE/components/ModelInput";
+import {useParams} from "react-router-dom";
 
 const BidPdfPage = () => {
+
+    const { bidId } = useParams();
 
     const [form] = Form.useForm();
 
@@ -113,6 +116,8 @@ const BidPdfPage = () => {
                                         <Form.Item name={[name, 'feature']} style={{ flexGrow: 1, margin: 0 }}>
                                             <TextArea onChange={(e) => console.log(e.target.value)}
                                                       style={{ width: '100%', height: 'autosize', resize: 'none' }}
+                                                      autoSize={{ minRows: 1, maxRows: 5 }}
+                                                      placeholder={'Особенность или требование...'}
                                             />
                                         </Form.Item>
                                         <CloseOutlined onClick={() => remove(name)} />
@@ -137,6 +142,7 @@ const BidPdfPage = () => {
                     <Form.Item name="selection-of-equipment" label={'Опишите выбор оборудования'}>
                         <TextArea onChange={(e) => console.log(e.target.value)}
                                   style={{ width: '100%', height: 'autosize', resize: 'none' }}
+                                  autoSize={{ minRows: 2, maxRows: 5 }}
                         />
                     </Form.Item>
                     <Form.Item label="Структурная схема проекта">
@@ -183,8 +189,8 @@ const BidPdfPage = () => {
                                     </Button>
                                 </Flex>
                                 {fields.map(({ key, name }, idx) => (
-                                    <Flex key={key} align="center" justify="space-between" gap={'middle'}>
-                                        <p>{idx + 1}.</p>
+                                    <Flex key={key} align="flex-start" justify="space-between" gap={'middle'}>
+                                        <div style={{ height: 32, padding: '5px 0' }}>{idx + 1}.</div>
                                         <Form.Item name={[name, 'recommendation-model']} style={{ width: '20%' }}>
                                             <NameSelect
                                                 options={prepareSelect(modelsSelect)}
@@ -199,14 +205,18 @@ const BidPdfPage = () => {
                                                 onChangeModel={() => {}}
                                                 error={false}
                                                 isOnlyPositive={true}
+                                                title={'Количество моделей'}
                                             />
                                         </Form.Item>
+
                                         <Form.Item name={[name, 'recommendation-text']} style={{ width: '70%' }}>
                                             <TextArea onChange={(e) => console.log(e.target.value)}
                                                       style={{ width: '100%', height: 'autosize', resize: 'none' }}
+                                                      autoSize={{ minRows: 1, maxRows: 5 }}
+                                                      placeholder={'Примечание...'}
                                             />
                                         </Form.Item>
-                                        <CloseOutlined onClick={() => remove(name)} />
+                                        <CloseOutlined style={{ height: 32 }} onClick={() => remove(name)} />
                                     </Flex>
                                 ))}
                             </div>
@@ -236,8 +246,19 @@ const BidPdfPage = () => {
         }
     };
 
-    const handleFinish = (data) => {
+    const handleFinish = async (data) => {
         console.log(data);
+        if (PRODMODE) {
+            try {
+                let response = await PROD_AXIOS_INSTANCE.post(`api/sales/createPDF/${bidId}`, {
+                    data,
+                    _token: CSRF_TOKEN,
+                });
+                console.log(response);
+            } catch (e) {
+                console.log(e);
+            }
+        }
     };
 
     const handleCurrencyChange = (e) => {
