@@ -300,7 +300,7 @@ const BidPdfPage = () => {
                 formData.append('_token', CSRF_TOKEN);
                 formData.append('data', JSON.stringify(requestData));
 
-                if (data?.structuralDiagrams && data?.structuralDiagrams > 0) {
+                if (data?.structuralDiagrams && data?.structuralDiagrams.length > 0) {
                     data?.structuralDiagrams.forEach((uploadFile) => {
                         if (uploadFile.originFileObj) {
                             formData.append('structuralDiagrams[]', uploadFile.originFileObj);
@@ -308,7 +308,7 @@ const BidPdfPage = () => {
                     });
                 }
 
-                if (data?.blockPlacements && data?.blockPlacements > 0) {
+                if (data?.blockPlacements && data?.blockPlacements.length > 0) {
                     data?.blockPlacements.forEach((uploadFile) => {
                         if (uploadFile.originFileObj) {
                             formData.append('blockPlacements[]', uploadFile.originFileObj);
