@@ -550,3 +550,7 @@
 .sa-org-main-collapse-item:hover .sa-org-collpase-header {
 	background-color: #ecebeb;;
 }
+
+.sa-me-curator svg {
+	color: var(--current-color);
+}
