@@ -174,14 +174,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -193,14 +193,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -238,14 +238,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -260,14 +260,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -292,14 +292,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -324,14 +324,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -346,14 +346,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -388,14 +388,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -410,14 +410,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -442,14 +442,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -464,14 +464,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                multiple
+                                accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
