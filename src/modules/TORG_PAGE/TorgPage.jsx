@@ -1275,6 +1275,7 @@ useEffect(() => {
 									{!editMode && userdata?.user?.id === baseMainData?.curator?.id && (
 										<Tooltip title={'Вы куратор этой организации'} placement={'left'}>
 											<Button style={{marginRight: '12px'}}
+											className={'sa-me-curator'}
 											color="default" variant="text"
 											icon={<FlagFilled />}
 											>
