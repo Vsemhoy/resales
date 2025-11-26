@@ -34,7 +34,7 @@ const NameSelect = (props) => {
     };
 
     return (
-        <Select style={{width: '100%'}}
+        <Select style={{ width: '100%', minWidth: props?.minWidth ?? 100 }}
                 value={modelId}
                 options={options.map(option => {
                     return {
