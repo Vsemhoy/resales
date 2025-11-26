@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {CloseOutlined, InboxOutlined, PlusOutlined} from '@ant-design/icons';
-import {Button, Card, Checkbox, Flex, Form, Input, Layout, Radio, Switch, Tabs, Tooltip, Upload} from 'antd';
+import {Button, Card, Checkbox, Divider, Flex, Form, Input, Layout, Radio, Switch, Tabs, Tooltip, Upload} from 'antd';
 import './styles/bidPagePdf.css';
 import {Content} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -36,13 +36,14 @@ const BidPdfPage = () => {
     const [tabsTrans, setTabsTrans] = useState([
         { label: 'Особенности системы',   value: '2', checked: false },
         { label: 'Выбор оборудования',    value: '3', checked: false },
-        { label: 'Рекомендации',          value: '4', checked: false },
-        { label: 'Описание оборудования', value: '5', checked: false },
+        { label: 'Рекомендации',          value: '5', checked: false },
+        { label: 'Описание оборудования', value: '6', checked: false },
     ]);
     const [tabsProf, setTabsProf] = useState([
         { label: 'Особенности системы',   value: '2', checked: false },
-        { label: 'Рекомендации',          value: '4', checked: false },
-        { label: 'Описание оборудования', value: '5', checked: false },
+        { label: 'Акустический расчет',   value: '4', checked: false },
+        { label: 'Рекомендации',          value: '5', checked: false },
+        { label: 'Описание оборудования', value: '6', checked: false },
     ]);
     const formStyle = {
         width: '98%',
@@ -164,6 +165,7 @@ const BidPdfPage = () => {
                             style={{ width: '100%', resize: 'none' }}
                         />
                     </Form.Item>
+                    <Divider/>
                     <Form.Item label="Структурная схема проекта">
                         <Form.Item
                             name="structuralDiagrams"
@@ -207,6 +209,301 @@ const BidPdfPage = () => {
         },
         {
             key: 4,
+            label: 'Акустический расчет',
+            children: (
+                <Card
+                    size="default"
+                    title="Акустический расчет"
+                    key={4}
+                    style={cardStyle}
+                >
+                    <Form.Item name="acousticCalculation_intro" label="Опишите акустический расчет">
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+
+                    <Divider/>
+
+                    <h4>Размещение акустических систем</h4>
+                    <Form.Item name='placementOfAcousticSystems_placementOfAcousticSystems_name' label={'Расстановка акустических систем'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="placementOfAcousticSystems_placementOfAcousticSystems_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name='placementOfAcousticSystems_lineArrayConfiguration_name' label={'Конфигурация линейного массива'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="placementOfAcousticSystems_lineArrayConfiguration_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name="placementOfAcousticSystems_description" label="Опишите размещение акустических систем">
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+
+                    <Divider/>
+
+                    <h4>Расчет времени реверберации</h4>
+                    <Form.Item name='calculatingReverberationTime_reverberationTime_name' label={'Время реверберации'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="calculatingReverberationTime_reverberationTime_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name="calculatingReverberationTime_description" label="Опишите расчет времени реверберации">
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+
+                    <Divider/>
+
+                    <h4>Расчет DIRECT SPL</h4>
+                    <Form.Item name='calculatingDirectSpl_levelDistributionMap_name' label={'Карта распределения уровня DIRECT SPL'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="calculatingDirectSpl_levelDistributionMap_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name='calculatingDirectSpl_levelDistributionChart_name' label={'График распределения уровня DIRECT SPL'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="calculatingDirectSpl_levelDistributionChart_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name="calculatingDirectSpl_description" label="Опишите расчет DIRECT SPL">
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+
+                    <Divider/>
+
+                    <h4>Расчет TOTAL SPL</h4>
+                    <Form.Item name="calculatingTotalSpl_description" label="Опишите расчет TOTAL SPL">
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+
+                    <Divider/>
+
+                    <h4>Расчет коэффициента STI</h4>
+                    <Form.Item name='calculatingCoefficientSti_levelDistributionMap_name' label={'Карта распределения STI'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="calculatingCoefficientSti_levelDistributionMap_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name='calculatingCoefficientSti_levelDistributionChart_name' label={'График распределения STI'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="calculatingCoefficientSti_levelDistributionChart_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name="calculatingCoefficientSti_description" label="Опишите расчет коэффициента STI">
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+
+                    <Divider/>
+
+                    <h4>Расчет Alcons</h4>
+                    <Form.Item name='calculatingAlcons_levelDistributionMap_name' label={'Карта распределения ALCONS'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="calculatingAlcons_levelDistributionMap_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name='calculatingAlcons_levelDistributionChart_name' label={'График распределения ALCONS'}>
+                        <Input placeholder={'Подпишите изображение...'}/>
+                    </Form.Item>
+                    <Form.Item label={null}>
+                        <Form.Item
+                            name="calculatingAlcons_levelDistributionChart_file"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            noStyle
+                        >
+                            <Upload.Dragger
+                                multiple
+                                beforeUpload={() => false}
+                            >
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная или массовая загрузка.</p>
+                            </Upload.Dragger>
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item name="calculatingAlcons_description" label="Опишите расчет Alcons">
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+
+                    <Divider/>
+
+                    <h4>Выводы</h4>
+                    <Form.Item name='conclusion' label={'Вывод'}>
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+                    <Form.Item name='conclusion_recommendations' label={'Рекомендации'}>
+                        <TextArea
+                            autoSize={{ minRows: 2, maxRows: 5 }}
+                            style={{ width: '100%', resize: 'none' }}
+                        />
+                    </Form.Item>
+
+                    <Divider/>
+                </Card>
+            )
+        },
+        {
+            key: 5,
             label: 'Рекомендации',
             children: (
                 <Card
@@ -286,36 +583,11 @@ const BidPdfPage = () => {
         console.log(data);
         if (PRODMODE) {
             try {
-                const requestData = {
-                    bidSubtype,
-                    currency,
-                    tabs: bidSubtype ? tabsProf : tabsTrans,
-                    tel : data?.tel,
-                    email: data?.email,
-                    features: data?.features,
-                    recommendations: data?.recommendations,
-                    selectionOfEquipment: data?.selectionOfEquipment,
-                };
+                const requestData = collectRequestData(data);
                 const formData = new FormData();
                 formData.append('_token', CSRF_TOKEN);
                 formData.append('data', JSON.stringify(requestData));
-
-                if (data?.structuralDiagrams && data?.structuralDiagrams.length > 0) {
-                    data?.structuralDiagrams.forEach((uploadFile) => {
-                        if (uploadFile.originFileObj) {
-                            formData.append('structuralDiagrams[]', uploadFile.originFileObj);
-                        }
-                    });
-                }
-
-                if (data?.blockPlacements && data?.blockPlacements.length > 0) {
-                    data?.blockPlacements.forEach((uploadFile) => {
-                        if (uploadFile.originFileObj) {
-                            formData.append('blockPlacements[]', uploadFile.originFileObj);
-                        }
-                    });
-                }
-
+                collectFiles(formData, data);
                 let response = await PROD_AXIOS_INSTANCE.post(`api/sales/createPDF/${bidId}`, formData);
                 console.log(response);
             } catch (e) {
@@ -324,6 +596,127 @@ const BidPdfPage = () => {
         }
     };
 
+    const collectRequestData = (data) => {
+        return {
+            bidSubtype,
+            currency,
+            tabs: bidSubtype ? tabsProf : tabsTrans,
+            tel : data?.tel,
+            email: data?.email,
+            features: data?.features,
+            recommendations: data?.recommendations,
+            selectionOfEquipment: !bidSubtype ? data?.selectionOfEquipment : null,
+            acousticCalculation: !bidSubtype ? null : {
+                acousticCalculation_intro: data?.acousticCalculation_intro,
+
+                placementOfAcousticSystems_placementOfAcousticSystems_name: data?.placementOfAcousticSystems_placementOfAcousticSystems_name,
+                placementOfAcousticSystems_lineArrayConfiguration_name: data?.placementOfAcousticSystems_lineArrayConfiguration_name,
+                placementOfAcousticSystems_description: data?.placementOfAcousticSystems_description,
+
+                calculatingReverberationTime_reverberationTime_name: data?.calculatingReverberationTime_reverberationTime_name,
+                calculatingReverberationTime_description: data?.calculatingReverberationTime_description,
+
+                calculatingDirectSpl_levelDistributionMap_name: data?.calculatingDirectSpl_levelDistributionMap_name,
+                calculatingDirectSpl_levelDistributionChart_name: data?.calculatingDirectSpl_levelDistributionChart_name,
+                calculatingDirectSpl_description: data?.calculatingDirectSpl_description,
+
+                calculatingTotalSpl_description: data?.calculatingTotalSpl_description,
+
+                calculatingCoefficientSti_levelDistributionMap_name: data?.calculatingCoefficientSti_levelDistributionMap_name,
+                calculatingCoefficientSti_levelDistributionChart_name: data?.calculatingCoefficientSti_levelDistributionChart_name,
+                calculatingCoefficientSti_description: data?.calculatingCoefficientSti_description,
+
+                calculatingAlcons_levelDistributionMap_name: data?.calculatingAlcons_levelDistributionMap_name,
+                calculatingAlcons_levelDistributionChart_name: data?.calculatingAlcons_levelDistributionChart_name,
+                calculatingAlcons_description: data?.calculatingAlcons_description,
+
+                conclusion: data?.conclusion,
+                conclusion_recommendations: data?.conclusion_recommendations,
+            },
+        };
+    };
+    const collectFiles = (formData, data) => {
+        if (bidSubtype) {
+            if (data?.placementOfAcousticSystems_placementOfAcousticSystems_file && data?.placementOfAcousticSystems_placementOfAcousticSystems_file.length > 0) {
+                data?.placementOfAcousticSystems_placementOfAcousticSystems_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('placementOfAcousticSystems_placementOfAcousticSystems_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.placementOfAcousticSystems_lineArrayConfiguration_file && data?.placementOfAcousticSystems_lineArrayConfiguration_file.length > 0) {
+                data?.placementOfAcousticSystems_lineArrayConfiguration_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('placementOfAcousticSystems_lineArrayConfiguration_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.calculatingReverberationTime_reverberationTime_file && data?.calculatingReverberationTime_reverberationTime_file.length > 0) {
+                data?.calculatingReverberationTime_reverberationTime_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('calculatingReverberationTime_reverberationTime_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.calculatingDirectSpl_levelDistributionMap_file && data?.calculatingDirectSpl_levelDistributionMap_file.length > 0) {
+                data?.calculatingDirectSpl_levelDistributionMap_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('calculatingDirectSpl_levelDistributionMap_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.calculatingDirectSpl_levelDistributionChart_file && data?.calculatingDirectSpl_levelDistributionChart_file.length > 0) {
+                data?.calculatingDirectSpl_levelDistributionChart_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('calculatingDirectSpl_levelDistributionChart_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.calculatingCoefficientSti_levelDistributionMap_file && data?.calculatingCoefficientSti_levelDistributionMap_file.length > 0) {
+                data?.calculatingCoefficientSti_levelDistributionMap_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('calculatingCoefficientSti_levelDistributionMap_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.calculatingCoefficientSti_levelDistributionChart_file && data?.calculatingCoefficientSti_levelDistributionChart_file.length > 0) {
+                data?.calculatingCoefficientSti_levelDistributionChart_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('calculatingCoefficientSti_levelDistributionChart_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.calculatingAlcons_levelDistributionMap_file && data?.calculatingAlcons_levelDistributionMap_file.length > 0) {
+                data?.calculatingAlcons_levelDistributionMap_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('calculatingAlcons_levelDistributionMap_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.calculatingAlcons_levelDistributionChart_file && data?.calculatingAlcons_levelDistributionChart_file.length > 0) {
+                data?.calculatingAlcons_levelDistributionChart_file.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('calculatingAlcons_levelDistributionChart_file[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+        } else {
+            if (data?.structuralDiagrams && data?.structuralDiagrams.length > 0) {
+                data?.structuralDiagrams.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('structuralDiagrams[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+            if (data?.blockPlacements && data?.blockPlacements.length > 0) {
+                data?.blockPlacements.forEach((uploadFile) => {
+                    if (uploadFile.originFileObj) {
+                        formData.append('blockPlacements[]', uploadFile.originFileObj);
+                    }
+                });
+            }
+        }
+    };
     const handleCurrencyChange = (e) => {
         const selectedValue = e.target.value;
         const selectedOption = currencyOptions.find(opt => opt.value === selectedValue);
@@ -362,7 +755,7 @@ const BidPdfPage = () => {
 
     const filteredTabs = React.useMemo(() => {
         const activeTabKeys = (bidSubtype ? tabsProf : tabsTrans)
-            .filter(tab => tab.checked && tab.value !== '5')
+            .filter(tab => tab.checked && tab.value !== '6')
             .map(tab => Number(tab.value));
         return tabs.filter(tab => tab.key === 1 || activeTabKeys.includes(tab.key));
     }, [bidSubtype, tabsProf, tabsTrans]);
