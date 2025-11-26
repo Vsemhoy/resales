@@ -580,20 +580,22 @@ const BidPdfPage = () => {
     };
 
     const handleFinish = async (data) => {
-        console.log(data);
-        if (PRODMODE) {
-            try {
-                const requestData = collectRequestData(data);
-                const formData = new FormData();
-                formData.append('_token', CSRF_TOKEN);
-                formData.append('data', JSON.stringify(requestData));
-                collectFiles(formData, data);
-                let response = await PROD_AXIOS_INSTANCE.post(`api/sales/createPDF/${bidId}`, formData);
-                console.log(response);
-            } catch (e) {
-                console.log(e);
+        setTimeout(async () => {
+            console.log(data);
+            if (PRODMODE) {
+                try {
+                    const requestData = collectRequestData(data);
+                    const formData = new FormData();
+                    formData.append('_token', CSRF_TOKEN);
+                    formData.append('data', JSON.stringify(requestData));
+                    collectFiles(formData, data);
+                    let response = await PROD_AXIOS_INSTANCE.post(`api/sales/${isCreatePdf ? 'createPDF' : 'savePDF'}/${bidId}`, formData);
+                    console.log(response);
+                } catch (e) {
+                    console.log(e);
+                }
             }
-        }
+        }, 0);
     };
 
     const collectRequestData = (data) => {
