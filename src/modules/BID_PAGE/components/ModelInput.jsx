@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Input} from "antd";
 
 const ModelInput = (props) => {
-    const [value, setValue] = useState(0);
+    const [value, setValue] = useState(1);
     const [bidModelId, setBidModelId] = useState(0);
     const [bidModelSort, setBidModelSort] = useState(null);
     const [type, setType] = useState('');
