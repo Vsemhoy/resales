@@ -158,7 +158,7 @@ const BidPdfPage = () => {
                     key={3}
                     style={cardStyle}
                 >
-                    <Form.Item name="selection-of-equipment" label="Опишите выбор оборудования">
+                    <Form.Item name="selectionOfEquipment" label="Опишите выбор оборудования">
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
@@ -286,23 +286,30 @@ const BidPdfPage = () => {
         console.log(data);
         if (PRODMODE) {
             try {
-                data.currency = currency;
-                data.bidSubtype = bidSubtype;
-                data.tabs = bidSubtype ? tabsProf : tabsTrans;
+                const requestData = {
+                    bidSubtype,
+                    currency,
+                    tabs: bidSubtype ? tabsProf : tabsTrans,
+                    tel : data?.tel,
+                    email: data?.email,
+                    features: data?.features,
+                    recommendations: data?.recommendations,
+                    selectionOfEquipment: data?.selectionOfEquipment,
+                };
                 const formData = new FormData();
                 formData.append('_token', CSRF_TOKEN);
-                formData.append('data', JSON.stringify(data));
+                formData.append('data', JSON.stringify(requestData));
 
-                if (data.structuralDiagrams && data.structuralDiagrams > 0) {
-                    data.structuralDiagrams.forEach((uploadFile) => {
+                if (data?.structuralDiagrams && data?.structuralDiagrams > 0) {
+                    data?.structuralDiagrams.forEach((uploadFile) => {
                         if (uploadFile.originFileObj) {
                             formData.append('structuralDiagrams[]', uploadFile.originFileObj);
                         }
                     });
                 }
 
-                if (data.blockPlacements && data.blockPlacements > 0) {
-                    data.blockPlacements.forEach((uploadFile) => {
+                if (data?.blockPlacements && data?.blockPlacements > 0) {
+                    data?.blockPlacements.forEach((uploadFile) => {
                         if (uploadFile.originFileObj) {
                             formData.append('blockPlacements[]', uploadFile.originFileObj);
                         }
