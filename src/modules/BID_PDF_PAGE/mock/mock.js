@@ -1,8 +1,8 @@
 export const PDF = {
     "bidSubtype": false,
     "currency": {
-        "label": "$",
-        "value": "1"
+        "label": "€",
+        "value": "2"
     },
     "tabs": [
         {

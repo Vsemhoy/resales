@@ -601,6 +601,13 @@ const BidPdfPage = () => {
                         '_token': CSRF_TOKEN,
                     });
                     if (response.data) {
+                        setBidSubtype(response.data?.bidSubtype);
+                        setCurrency(response.data?.currency);
+                        if (response.data?.bidSubtype) {
+                            setTabsProf(prev => tabsCheckedSet(prev, response));
+                        } else {
+                            setTabsTrans(prev => tabsCheckedSet(prev, response));
+                        }
                         form.setFieldsValue({ ...response.data });
                     }
                 } catch (e) {
@@ -611,6 +618,13 @@ const BidPdfPage = () => {
             }, 1000);
         } else {
             setTimeout(() => {
+                setBidSubtype(PDF?.bidSubtype);
+                setCurrency(PDF?.currency);
+                if (PDF?.bidSubtype) {
+                    setTabsProf(prev => tabsCheckedSet(prev));
+                } else {
+                    setTabsTrans(prev => tabsCheckedSet(prev));
+                }
                 form.setFieldsValue({ ...PDF });
                 setTimeout(() => setIsLoading(false), 500);
             }, 1000);
@@ -781,34 +795,40 @@ const BidPdfPage = () => {
             return item;
         });
     };
+    const tabsCheckedSet = (prev, response) => {
+        if (PRODMODE) {
+            return prev.map((item) => {
+                const tabIdx = response.data.tabs.findIndex(tab => +tab.value === +item.value);
+                if (tabIdx !== -1) {
+                    return {
+                        ...item,
+                        checked: response.data.tabs[tabIdx].checked,
+                    };
+                }
+                return item;
+            });
+        } else {
+            return prev.map((item) => {
+                const tabIdx = PDF.tabs.findIndex(tab => +tab.value === +item.value);
+                if (tabIdx !== -1) {
+                    return {
+                        ...item,
+                        checked: PDF.tabs[tabIdx].checked,
+                    };
+                }
+                return item;
+            });
+        }
+    };
 
     useEffect(() => {
         fetchBidModels().then();
     }, []);
 
     useEffect(() => {
-        /*setTimeout(() => {
-            form.setFieldsValue({
-                tel: '+7 (123) 456-78-90',
-                email: 'loaded@example.com',
-            });
-        }, 1000);
-        setTimeout(() => {
-            form.setFieldsValue({
-                selectionOfEquipment: 'выбор оборудования',
-                features: [
-                    {
-                        feature: 'sdfkjuhasdkfgahsdgjklsdfhgljksdfgsdf'
-                    },
-                    {
-                        feature: 'sdfasdffdsfasd'
-                    },
-                ]
-            });
-        }, 1000);*/
-        setTimeout(() => {
+        if (form) {
             fetchBidPdfInfo().then();
-        }, 1000);
+        }
     }, [form]);
 
     const filteredTabs = React.useMemo(() => {
@@ -819,9 +839,9 @@ const BidPdfPage = () => {
     }, [bidSubtype, tabsProf, tabsTrans]);
 
     return (
-        <Layout className={'sa-layout sa-w-100'}>
-            <Content>
-                <Spin spinning={isLoading}>
+        <Spin spinning={isLoading}>
+            <Layout className={'sa-layout sa-w-100'}>
+                <Content>
                     <div className={'bid-pdf-page'}>
                         <Form
                             labelCol={{ span: 6 }}
@@ -858,54 +878,55 @@ const BidPdfPage = () => {
                             </Flex>
                         </Form>
                     </div>
-                </Spin>
-            </Content>
-            <Sider width={'250px'}
-                   style={{
-                        backgroundColor: '#ffffff',
-                        overflow: 'hidden',
-                        position: 'sticky',
-                        top: '100px',
-                        zIndex: 1
-                    }}
-            >
-                <div className={'sa-bid-pdf-sider'}>
-                    <h3>Настройки</h3>
-                    <Switch
-                        checkedChildren="Профессиональный звук"
-                        unCheckedChildren="Трансляционный звук"
-                        onChange={(_) => setBidSubtype((prev) => !prev)}
-                    />
-                    <Radio.Group
-                        block
-                        options={currencyOptions}
-                        value={currency.value}
-                        onChange={handleCurrencyChange}
-                        optionType="button"
-                        buttonStyle="solid"
-                    />
-                    {bidSubtype ? tabsProf.map(tab => {
-                        return (
-                            <Checkbox key={`checkbox-prof-${tab.value}`}
-                                      onChange={(e) => setCheckboxChecked(tab, e.target.checked)}
-                                      checked={tab.checked}
-                            >
-                                {tab.label}
-                            </Checkbox>
-                        );
-                    }) : tabsTrans.map(tab => {
-                        return (
-                            <Checkbox key={`checkbox-trans-${tab.value}`}
-                                      onChange={(e) => setCheckboxChecked(tab, e.target.checked)}
-                                      checked={tab.checked}
-                            >
-                                {tab.label}
-                            </Checkbox>
-                        );
-                    })}
-                </div>
-            </Sider>
-        </Layout>
+                </Content>
+                <Sider width={'250px'}
+                       style={{
+                            backgroundColor: '#ffffff',
+                            overflow: 'hidden',
+                            position: 'sticky',
+                            top: '100px',
+                            zIndex: 1
+                        }}
+                >
+                    <div className={'sa-bid-pdf-sider'}>
+                        <h3>Настройки</h3>
+                        <Switch
+                            checkedChildren="Профессиональный звук"
+                            unCheckedChildren="Трансляционный звук"
+                            value={bidSubtype}
+                            onChange={(_) => setBidSubtype((prev) => !prev)}
+                        />
+                        <Radio.Group
+                            block
+                            options={currencyOptions}
+                            value={currency.value}
+                            onChange={handleCurrencyChange}
+                            optionType="button"
+                            buttonStyle="solid"
+                        />
+                        {bidSubtype ? tabsProf.map(tab => {
+                            return (
+                                <Checkbox key={`checkbox-prof-${tab.value}`}
+                                          onChange={(e) => setCheckboxChecked(tab, e.target.checked)}
+                                          checked={tab.checked}
+                                >
+                                    {tab.label}
+                                </Checkbox>
+                            );
+                        }) : tabsTrans.map(tab => {
+                            return (
+                                <Checkbox key={`checkbox-trans-${tab.value}`}
+                                          onChange={(e) => setCheckboxChecked(tab, e.target.checked)}
+                                          checked={tab.checked}
+                                >
+                                    {tab.label}
+                                </Checkbox>
+                            );
+                        })}
+                    </div>
+                </Sider>
+            </Layout>
+        </Spin>
     );
 };
 
