@@ -26,6 +26,7 @@ import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import MODELS from "../BID_PAGE/mock/mock_models";
 import ModelInput from "../BID_PAGE/components/ModelInput";
 import {useParams} from "react-router-dom";
+import {PDF} from "./mock/mock";
 
 const BidPdfPage = () => {
 
@@ -592,24 +593,27 @@ const BidPdfPage = () => {
     };
 
     const fetchBidPdfInfo = async () => {
+        setIsLoading(true);
         if (PRODMODE) {
-            try {
-                setIsLoading(true);
-                let response = await PROD_AXIOS_INSTANCE.post(`api/sales/pdf/show/${bidId}`, {
-                    '_token': CSRF_TOKEN,
-                });
-                if (response.data) {
-                    form.setFieldsValue({ ...response.data });
+            setTimeout(async () => {
+                try {
+                    let response = await PROD_AXIOS_INSTANCE.post(`api/sales/pdf/show/${bidId}`, {
+                        '_token': CSRF_TOKEN,
+                    });
+                    if (response.data) {
+                        form.setFieldsValue({ ...response.data });
+                    }
+                } catch (e) {
+                    console.log(e);
+                } finally {
+                    setIsLoading(false);
                 }
-            } catch (e) {
-                console.log(e);
-            } finally {
-                setIsLoading(false);
-            }
+            }, 1000);
         } else {
-            setIsLoading(true);
-            //form.setFieldsValue({ ...response.data });
-            setTimeout(() => setIsLoading(false), 500);
+            setTimeout(() => {
+                form.setFieldsValue({ ...PDF });
+                setTimeout(() => setIsLoading(false), 500);
+            }, 1000);
         }
     };
 
@@ -758,13 +762,6 @@ const BidPdfPage = () => {
         const selectedOption = currencyOptions.find(opt => opt.value === selectedValue);
         setCurrency(selectedOption || { label: '$', value: 1 });
     };
-    const prepareSelect = (select) => {
-        if (select) {
-            return select.map((item) => ({value: item.id, label: item.name, used: item.used}));
-        } else {
-            return [];
-        }
-    };
     const setCheckboxChecked = (tab, checked) => {
         if (bidSubtype) {
             setTabsProf(prev => checkboxSet(prev, tab, checked));
@@ -809,7 +806,9 @@ const BidPdfPage = () => {
                 ]
             });
         }, 1000);*/
-        fetchBidPdfInfo().then();
+        setTimeout(() => {
+            fetchBidPdfInfo().then();
+        }, 1000);
     }, [form]);
 
     const filteredTabs = React.useMemo(() => {
