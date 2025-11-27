@@ -363,6 +363,7 @@ const OrgListPage = (props) => {
 						email: filterBox.email,
 						site: filterBox.site,
 						comment: filterBox.comment,
+						creator: filterBox.creator,
 						// "created_until"  : filterBox.created_until ,
 						// "created_before" : filterBox.created_before,
 						// "updated_until"  : filterBox.updated_until ,
