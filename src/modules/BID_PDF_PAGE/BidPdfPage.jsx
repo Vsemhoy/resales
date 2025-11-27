@@ -1,6 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {CloseOutlined, InboxOutlined, PlusOutlined} from '@ant-design/icons';
-import {Button, Card, Checkbox, Divider, Flex, Form, Input, Layout, Radio, Switch, Tabs, Tooltip, Upload} from 'antd';
+import {
+    Button,
+    Card,
+    Checkbox,
+    Divider,
+    Flex,
+    Form,
+    Input,
+    Layout,
+    Radio,
+    Spin,
+    Switch,
+    Tabs,
+    Tooltip,
+    Upload
+} from 'antd';
 import './styles/bidPagePdf.css';
 import {Content} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -17,6 +32,8 @@ const BidPdfPage = () => {
     const { bidId } = useParams();
 
     const [form] = Form.useForm();
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const [modelsSelect, setModelsSelect] = useState([]);
     const [bidSubtype, setBidSubtype] = useState(false);
@@ -524,12 +541,7 @@ const BidPdfPage = () => {
                                     <Flex key={key} align="flex-start" justify="space-between" gap={'middle'}>
                                         <div style={{ height: 32, padding: '5px 0' }}>{idx + 1}.</div>
                                         <Form.Item name={[name, 'recommendation-model']}>
-                                            <NameSelect
-                                                options={prepareSelect(modelsSelect)}
-                                                disabled={false}
-                                                onUpdateModelName={() => {}}
-                                                minWidth={225}
-                                            />
+                                            <Input />
                                         </Form.Item>
                                         <Form.Item name={[name, 'recommendation-count']} style={{ width: '10%' }}>
                                             <ModelInput
@@ -579,6 +591,28 @@ const BidPdfPage = () => {
         }
     };
 
+    const fetchBidPdfInfo = async () => {
+        if (PRODMODE) {
+            try {
+                setIsLoading(true);
+                let response = await PROD_AXIOS_INSTANCE.post(`api/sales/pdf/show/${bidId}`, {
+                    '_token': CSRF_TOKEN,
+                });
+                if (response.data) {
+                    form.setFieldsValue({ ...response.data });
+                }
+            } catch (e) {
+                console.log(e);
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            setIsLoading(true);
+            //form.setFieldsValue({ ...response.data });
+            setTimeout(() => setIsLoading(false), 500);
+        }
+    };
+
     const handleFinish = async (data) => {
         setTimeout(async () => {
             console.log(data);
@@ -589,7 +623,7 @@ const BidPdfPage = () => {
                     formData.append('_token', CSRF_TOKEN);
                     formData.append('data', JSON.stringify(requestData));
                     collectFiles(formData, data);
-                    let response = await PROD_AXIOS_INSTANCE.post(`api/sales/${isCreatePdf ? 'createPDF' : 'savePDF'}/${bidId}`, formData);
+                    let response = await PROD_AXIOS_INSTANCE.post(`api/sales/pdf/${isCreatePdf ? 'create' : 'save'}/${bidId}`, formData);
                     console.log(response);
                 } catch (e) {
                     console.log(e);
@@ -755,6 +789,29 @@ const BidPdfPage = () => {
         fetchBidModels().then();
     }, []);
 
+    useEffect(() => {
+        /*setTimeout(() => {
+            form.setFieldsValue({
+                tel: '+7 (123) 456-78-90',
+                email: 'loaded@example.com',
+            });
+        }, 1000);
+        setTimeout(() => {
+            form.setFieldsValue({
+                selectionOfEquipment: 'выбор оборудования',
+                features: [
+                    {
+                        feature: 'sdfkjuhasdkfgahsdgjklsdfhgljksdfgsdf'
+                    },
+                    {
+                        feature: 'sdfasdffdsfasd'
+                    },
+                ]
+            });
+        }, 1000);*/
+        fetchBidPdfInfo().then();
+    }, [form]);
+
     const filteredTabs = React.useMemo(() => {
         const activeTabKeys = (bidSubtype ? tabsProf : tabsTrans)
             .filter(tab => tab.checked && tab.value !== '6')
@@ -765,42 +822,44 @@ const BidPdfPage = () => {
     return (
         <Layout className={'sa-layout sa-w-100'}>
             <Content>
-                <div className={'bid-pdf-page'}>
-                    <Form
-                        labelCol={{ span: 6 }}
-                        wrapperCol={{ span: 18 }}
-                        form={form}
-                        style={formStyle}
-                        name="bid-pdf"
-                        autoComplete="off"
-                        initialValues={{ items: [{}] }}
-                        onFinish={handleFinish}
-                    >
-                        <Tabs
-                            onChange={() => console.log('onChangeTab')}
-                            type="card"
-                            className="full-height-tabs"
-                            style={{ height: '100%', maxHeight: '100%' }}
-                            tabBarStyle={{ margin: 0 }}
-                            /*tabPaneStyle={{ height: '100%' }}*/
-                            items={filteredTabs}
-                        />
+                <Spin spinning={isLoading}>
+                    <div className={'bid-pdf-page'}>
+                        <Form
+                            labelCol={{ span: 6 }}
+                            wrapperCol={{ span: 18 }}
+                            form={form}
+                            style={formStyle}
+                            name="bid-pdf"
+                            autoComplete="off"
+                            initialValues={{ items: [{}] }}
+                            onFinish={handleFinish}
+                        >
+                            <Tabs
+                                onChange={() => console.log('onChangeTab')}
+                                type="card"
+                                className="full-height-tabs"
+                                style={{ height: '100%', maxHeight: '100%' }}
+                                tabBarStyle={{ margin: 0 }}
+                                /*tabPaneStyle={{ height: '100%' }}*/
+                                items={filteredTabs}
+                            />
 
-                        <Flex gap="middle" justify="flex-end" align="center">
-                            <Button htmlType="submit"
-                                    onClick={() => setIsCreatePdf(true)}
-                            >
-                                Создать PDF
-                            </Button>
-                            <Button type="primary"
-                                    htmlType="submit"
-                                    onClick={() => setIsCreatePdf(false)}
-                            >
-                                Сохранить
-                            </Button>
-                        </Flex>
-                    </Form>
-                </div>
+                            <Flex gap="middle" justify="flex-end" align="center">
+                                <Button htmlType="submit"
+                                        onClick={() => setIsCreatePdf(true)}
+                                >
+                                    Создать PDF
+                                </Button>
+                                <Button type="primary"
+                                        htmlType="submit"
+                                        onClick={() => setIsCreatePdf(false)}
+                                >
+                                    Сохранить
+                                </Button>
+                            </Flex>
+                        </Form>
+                    </div>
+                </Spin>
             </Content>
             <Sider width={'250px'}
                    style={{
