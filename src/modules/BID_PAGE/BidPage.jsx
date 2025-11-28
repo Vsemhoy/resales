@@ -322,13 +322,6 @@ const BidPage = (props) => {
 			return () => clearTimeout(timer);
 		}
 	}, [isNeedCalcMoney]);
-    /*useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsNeedCalcMoney(true);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [bidCurrency, bidPriceStatus, bidPercent, bidNds]);*/
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
 			const timer = setTimeout(() => {
