@@ -228,10 +228,12 @@ const BidListPage = (props) => {
     }, [highlightDataRef.current]);
 
     const refreshPage = () => {
+        console.log('REFRESH_PAGE');
         fetchBids().then();
     };
 
     const refreshBidOnPage = ({ bid_id }) => {
+        console.log('REFRESH_BID');
         if (bid_id && bidsRef.current.find(bid => +bid.id === +bid_id)) {
             fetchBids().then();
         }
