@@ -106,6 +106,7 @@ const BidPdfPage = () => {
         {
             key: 1,
             label: 'Титульный лист',
+            forceRender: true,
             children: (
                 <Card
                     size="default"
@@ -129,6 +130,7 @@ const BidPdfPage = () => {
         {
             key: 2,
             label: 'Особенности системы',
+            forceRender: true,
             children: (
                 <Card
                     size="default"
@@ -170,6 +172,7 @@ const BidPdfPage = () => {
         {
             key: 3,
             label: 'Выбор оборудования',
+            forceRender: true,
             children: (
                 <Card
                     size="default"
@@ -228,6 +231,7 @@ const BidPdfPage = () => {
         {
             key: 4,
             label: 'Акустический расчет',
+            forceRender: true,
             children: (
                 <Card
                     size="default"
@@ -523,6 +527,7 @@ const BidPdfPage = () => {
         {
             key: 5,
             label: 'Рекомендации',
+            forceRender: true,
             children: (
                 <Card
                     size="default"
