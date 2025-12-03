@@ -33,6 +33,7 @@ import {
 	FileWordOutlined,
 	HistoryOutlined,
 	InfoCircleOutlined,
+	LayoutOutlined,
 	LoadingOutlined,
 	MinusOutlined,
 	PlusOutlined,
@@ -73,6 +74,8 @@ const BidPage = (props) => {
 
 	const [lastUpdModel, setLastUpdModel] = useState(null);
 	const [isUpdateAll, setIsUpdateAll] = useState(false);
+
+	const [isOpenBaseInfo, setIsOpenBaseInfo] = useState(false);
 
 	const [userData, setUserData] = useState(null);
 
@@ -1428,6 +1431,7 @@ const BidPage = (props) => {
 							options={prepareSelect(orgUsersSelect)}
 							onChange={(val) => setBidOrgUser(val)}
 							disabled={isDisabledInputManager()}
+							defaultValue={(orgUsersSelect && orgUsersSelect.length > 0) ? orgUsersSelect[orgUsersSelect.length - 1].id : null}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1539,6 +1543,7 @@ const BidPage = (props) => {
 							options={prepareSelect(factAddressSelect)}
 							onChange={(val) => setFactAddress(val)}
 							disabled={isDisabledInputManager()}
+							defaultValue={(factAddressSelect && factAddressSelect.length > 0) ? factAddressSelect[factAddressSelect.length - 1].id : null}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1551,6 +1556,7 @@ const BidPage = (props) => {
 							options={prepareSelect(phoneSelect)}
 							onChange={(val) => setPhone(val)}
 							disabled={isDisabledInputManager()}
+							defaultValue={(phoneSelect && phoneSelect.length > 0) ? phoneSelect[phoneSelect.length - 1].id : null}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1563,6 +1569,7 @@ const BidPage = (props) => {
 							options={prepareSelect(emailSelect)}
 							onChange={(val) => setEmail(val)}
 							disabled={isDisabledInputManager()}
+							defaultValue={(emailSelect && emailSelect.length > 0) ? emailSelect[emailSelect.length - 1].id : null}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -2057,7 +2064,7 @@ const BidPage = (props) => {
 							</div>
 						</div>
 					</Affix>
-					<div className={'sa-bid-page-info-container'}>
+					<div className={isOpenBaseInfo ?  'sa-bid-page-info-container' : 'sa-bid-page-info-container-closed'}>
 
 						<div className={'sa-bid-page-btns-wrapper'}>
 							{+bidType === 1 && (
@@ -2109,6 +2116,18 @@ const BidPage = (props) => {
 									</Badge>
 								</Tooltip>
 							)}
+							<Tooltip title={'Основная информация'} placement={'right'}>
+								<Button
+									className={'sa-bid-page-btn'}
+									color="primary"
+									variant={isOpenBaseInfo ? "solid" : "outlined"}
+									icon={<LayoutOutlined className={'sa-bid-page-btn-icon'}/>}
+									onClick={() => {
+										setIsOpenBaseInfo(!isOpenBaseInfo);
+									}}
+								></Button>
+							</Tooltip>
+
 							<Tooltip title={'Сохранить в PDF'} placement={'right'}>
 								<Button
 									className={'sa-bid-page-btn'}
