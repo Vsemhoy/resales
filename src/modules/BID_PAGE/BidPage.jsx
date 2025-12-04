@@ -2067,6 +2067,17 @@ const BidPage = (props) => {
 					<div className={isOpenBaseInfo ?  'sa-bid-page-info-container' : 'sa-bid-page-info-container-closed'}>
 
 						<div className={'sa-bid-page-btns-wrapper'}>
+                            <Tooltip title={'Основная информация'} placement={'right'}>
+                                <Button
+                                    className={'sa-bid-page-btn'}
+                                    color="primary"
+                                    variant={isOpenBaseInfo ? "solid" : "outlined"}
+                                    icon={<LayoutOutlined className={'sa-bid-page-btn-icon'}/>}
+                                    onClick={() => {
+                                        setIsOpenBaseInfo(!isOpenBaseInfo);
+                                    }}
+                                ></Button>
+                            </Tooltip>
 							{+bidType === 1 && (
 								<Tooltip title={'Сохранить в WORD'} placement={'right'}>
 									<Button
@@ -2116,17 +2127,6 @@ const BidPage = (props) => {
 									</Badge>
 								</Tooltip>
 							)}
-							<Tooltip title={'Основная информация'} placement={'right'}>
-								<Button
-									className={'sa-bid-page-btn'}
-									color="primary"
-									variant={isOpenBaseInfo ? "solid" : "outlined"}
-									icon={<LayoutOutlined className={'sa-bid-page-btn-icon'}/>}
-									onClick={() => {
-										setIsOpenBaseInfo(!isOpenBaseInfo);
-									}}
-								></Button>
-							</Tooltip>
 
 							<Tooltip title={'Сохранить в PDF'} placement={'right'}>
 								<Button
