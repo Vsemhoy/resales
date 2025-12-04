@@ -370,9 +370,7 @@ const FindSimilar = (props) => {
                             _token: CSRF_TOKEN,
                             data: {
                                 type: type,
-                                protection_project: proptect
-                                    ? props?.protection_project
-                                    : 0,
+                                protection_project: proptect,
                                 bid_models: similarData,
                                 mondatoryAll,
                                 notMe: notSelf,
@@ -451,7 +449,7 @@ const FindSimilar = (props) => {
                 dataIndex: "count",
                 key: "count",
             },
-            {
+            /*{
                 title: "Точное соответствие наименования",
                 dataIndex: "mandatory_by_model",
                 key: "mandatory_by_model",
@@ -462,7 +460,7 @@ const FindSimilar = (props) => {
                     />
                 ),
                 align: "center",
-            },
+            },*/
             /*{
                 title: "Точное соответствие количества",
                 dataIndex: "mcount",
@@ -477,7 +475,7 @@ const FindSimilar = (props) => {
             },*/
         ];
     };
-    const D = ({ bid, models }) => {
+    const D = ({ bid, stats, models }) => {
         return (
             <div className={'sa-similar__card__subcont__item'}>
                 <div className={'sa-similar__text__title'}>
@@ -515,6 +513,9 @@ const FindSimilar = (props) => {
                     {`${dayjs(bid.date * 1000).format("DD.MM.YYYY")}`}
                 </div>
                 <div>
+                    <b>Из {similarData.length} моделей найдено {stats?.matches_found} </b>
+                </div>
+                <div>
                     <b>Модели: </b>
                     <S models={models}/>
                 </div>
@@ -546,7 +547,7 @@ const FindSimilar = (props) => {
     const similarDOM = similar ? similar.map((el, index) => {
         console.log(el.models)
         return {
-            data: <D bid={el.bid} models={el.models} />,
+            data: <D bid={el.bid} stats={el.stats} models={el.models} />,
             /*value: <S models={el.models} />,*/
         };
     }) : null;
