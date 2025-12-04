@@ -449,7 +449,7 @@ const FindSimilar = (props) => {
                 dataIndex: "count",
                 key: "count",
             },
-            {
+            /*{
                 title: "Точное соответствие наименования",
                 dataIndex: "mandatory_by_model",
                 key: "mandatory_by_model",
@@ -460,7 +460,7 @@ const FindSimilar = (props) => {
                     />
                 ),
                 align: "center",
-            },
+            },*/
             /*{
                 title: "Точное соответствие количества",
                 dataIndex: "mcount",
@@ -513,7 +513,7 @@ const FindSimilar = (props) => {
                     {`${dayjs(bid.date * 1000).format("DD.MM.YYYY")}`}
                 </div>
                 <div>
-                    <b>ИЗ {similarData.length} найдено {stats?.matches_found} </b>
+                    <b>Из {similarData.length} моделей найдено {stats?.matches_found} </b>
                 </div>
                 <div>
                     <b>Модели: </b>
