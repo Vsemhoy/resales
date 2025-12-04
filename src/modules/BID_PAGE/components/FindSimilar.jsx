@@ -475,7 +475,7 @@ const FindSimilar = (props) => {
             },*/
         ];
     };
-    const D = ({ bid, models }) => {
+    const D = ({ bid, stats, models }) => {
         return (
             <div className={'sa-similar__card__subcont__item'}>
                 <div className={'sa-similar__text__title'}>
@@ -513,6 +513,9 @@ const FindSimilar = (props) => {
                     {`${dayjs(bid.date * 1000).format("DD.MM.YYYY")}`}
                 </div>
                 <div>
+                    <b>ИЗ {similarData.length} найдено {stats?.matches_found} </b>
+                </div>
+                <div>
                     <b>Модели: </b>
                     <S models={models}/>
                 </div>
@@ -544,7 +547,7 @@ const FindSimilar = (props) => {
     const similarDOM = similar ? similar.map((el, index) => {
         console.log(el.models)
         return {
-            data: <D bid={el.bid} models={el.models} />,
+            data: <D bid={el.bid} stats={el.stats} models={el.models} />,
             /*value: <S models={el.models} />,*/
         };
     }) : null;
