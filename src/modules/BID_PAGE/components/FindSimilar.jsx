@@ -27,11 +27,12 @@ const FindSimilar = (props) => {
     const { RangePicker } = DatePicker;
 
     const [similarData, setSimilarData] = useState([]);
-    const [type, setType] = useState("КП и СЧЕТ");
+    const [type, setType] = useState(0);
     const [mondatoryAll, setMondatoryAll] = useState(false); //  Только 100% совпадение со спецификацией
-    const [proptect, setProtect] = useState(false); //  Учитывать статус защиты проекта
+    //const [proptect, setProtect] = useState(false); //  OLD Учитывать статус защиты проекта
+    const [proptect, setProtect] = useState(0); //  Учитывать статус защиты проекта
     const [notSelf, setNotSelf] = useState(false); //  Не искать в своих заявках
-    const [searchType, setSearchType] = useState("ВЕЗДЕ"); //  Тип поиска подстроки
+    const [searchType, setSearchType] = useState(1); //  Тип поиска подстроки
     const [dates, setDates] = useState([0, 0]); //  Интервал дат
     const [text, setText] = useState(""); //  Поисковая строка
     const [limit, setLimit] = useState(10); //  Количество заявок в результатах
@@ -61,22 +62,22 @@ const FindSimilar = (props) => {
     const searchStringTypeOptions = [
         {
             label: "везде",
-            value: "ВЕЗДЕ",
+            value: 1,
             key: 91,
         },
         {
             label: "в названии компании",
-            value: "В НАЗВАНИИ КОМПАНИИ",
+            value: 2,
             key: 92,
         },
         {
             label: "в названии объекта",
-            value: "В НАЗВАНИИ ОБЪЕКТА",
+            value: 3,
             key: 93,
         },
         {
             label: "в комментариях",
-            value: "В КОММЕНТАРИЯХ",
+            value: 4,
             key: 94,
         },
     ];
@@ -125,20 +126,42 @@ const FindSimilar = (props) => {
             key: 86,
         },
     ];
+    const documentProtectOptions = [
+        {
+            label: "ЗП и РП",
+            value: 0,
+            key: 111,
+        },
+        {
+            label: "ЗП",
+            value: 1,
+            key: 222,
+        },
+        {
+            label: "РП",
+            value: 2,
+            key: 333,
+        },
+        {
+            label: "Нет",
+            value: 3,
+            key: 444,
+        },
+    ];
     const documentTypeOptions = [
         {
             label: "КП и СЧЕТ",
-            value: "КП и СЧЕТ",
+            value: 0,
             key: 31,
         },
         {
             label: "КП",
-            value: "КП",
+            value: 1,
             key: 32,
         },
         {
             label: "СЧЕТ",
-            value: "СЧЕТ",
+            value: 2,
             key: 33,
         },
     ];
@@ -157,9 +180,16 @@ const FindSimilar = (props) => {
             name: "Учитывать статус защиты проекта",
             key: 2,
             value: (
-                <Checkbox
+                /*<Checkbox                         // OLD
                     checked={proptect}
                     onChange={(v) => setProtect(v.target.checked)}
+                />*/
+                <Select
+                    style={{ width: "160px", textAlign: "left" }}
+                    size={"small"}
+                    options={documentProtectOptions}
+                    value={proptect}
+                    onSelect={(v) => setProtect(v)}
                 />
             ),
         },
@@ -305,7 +335,7 @@ const FindSimilar = (props) => {
     }, [props.bid_models]);
     useEffect(() => {
         const similar_data = async () => {
-            const getType = (text) => {
+            /*const getType = (text) => {
                 switch (text) {
                     case "КП и СЧЕТ":
                         return 0;
@@ -316,7 +346,7 @@ const FindSimilar = (props) => {
                     default:
                         return 0;
                 }
-            };
+            };*/
             const fetchSearchType = (text) => {
                 switch (text) {
                     case "ВЕЗДЕ":
@@ -339,14 +369,14 @@ const FindSimilar = (props) => {
                             bid_id: props?.bid_id,
                             _token: CSRF_TOKEN,
                             data: {
-                                type: getType(type),
+                                type: type,
                                 protection_project: proptect
                                     ? props?.protection_project
                                     : 0,
                                 bid_models: similarData,
                                 mondatoryAll,
                                 notMe: notSelf,
-                                searchType: fetchSearchType(searchType),
+                                searchType: searchType,
                                 dates,
                                 searchText: text,
                                 limit,
