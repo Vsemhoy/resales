@@ -14,6 +14,7 @@ import {Button, Dropdown} from 'antd';
 import { ShortName } from '../../helpers/TextHelpers';
 import {
 	ArrowTopRightOnSquareIcon,
+	BugAntIcon,
 	ClipboardDocumentListIcon,
 	Cog6ToothIcon,
 	ShieldCheckIcon,
@@ -22,6 +23,7 @@ import {
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import NotiBtn from "../../../modules/NOTIFIER/NotiBtn";
 import Notificator from "corp-notificator-library-antd-react-socket";
+import BugModal from '../../../modules/EXT/BUGMODAL/BugModal';
 
 const TopMenu = (props) => {
 		const [userdata, setUserdata] = useState(props.userdata);
@@ -31,6 +33,8 @@ const TopMenu = (props) => {
 	const [topRole, setTopRole] = useState(1);
 	const [showDebugger, setShowDebugger] = useState(false);
 	const debuggerRef = useRef(null);
+
+	const [openBugModal, setopenBugModal] = useState(false);
 
 	useEffect(() => {
 		setUserdata(props.userdata);
@@ -178,6 +182,7 @@ const TopMenu = (props) => {
 		//set_user_role(role_id);
 	};
 
+
 	return (
 		<div className="sa-top-menu" style={{ padding: '0 12px' }}>
 			<div className={'sa-flex-space'}>
@@ -228,6 +233,12 @@ const TopMenu = (props) => {
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
+					<Button
+						type='text'
+						onClick={()=>{setopenBugModal(!openBugModal)}}
+					>
+						<BugAntIcon height={'28px'} style={{color: '#ffbf00'}}/>
+				</Button>
                     <Chat userdata={userdata}
                           httpParams={{
                               HTTP_HOST: HTTP_HOST,
@@ -282,6 +293,12 @@ const TopMenu = (props) => {
 					</Dropdown>
 				</div>
 			</div>
+
+			<BugModal
+				visible={openBugModal}
+				onClose={()=>{setopenBugModal(false)}}
+				/>
+
 		</div>
 	);
 };
