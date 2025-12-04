@@ -370,9 +370,7 @@ const FindSimilar = (props) => {
                             _token: CSRF_TOKEN,
                             data: {
                                 type: type,
-                                protection_project: proptect
-                                    ? props?.protection_project
-                                    : 0,
+                                protection_project: proptect,
                                 bid_models: similarData,
                                 mondatoryAll,
                                 notMe: notSelf,
