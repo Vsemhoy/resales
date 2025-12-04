@@ -27,12 +27,12 @@ const FindSimilar = (props) => {
     const { RangePicker } = DatePicker;
 
     const [similarData, setSimilarData] = useState([]);
-    const [type, setType] = useState("КП и СЧЕТ");
+    const [type, setType] = useState(0);
     const [mondatoryAll, setMondatoryAll] = useState(false); //  Только 100% совпадение со спецификацией
     //const [proptect, setProtect] = useState(false); //  OLD Учитывать статус защиты проекта
     const [proptect, setProtect] = useState(0); //  Учитывать статус защиты проекта
     const [notSelf, setNotSelf] = useState(false); //  Не искать в своих заявках
-    const [searchType, setSearchType] = useState("ВЕЗДЕ"); //  Тип поиска подстроки
+    const [searchType, setSearchType] = useState(1); //  Тип поиска подстроки
     const [dates, setDates] = useState([0, 0]); //  Интервал дат
     const [text, setText] = useState(""); //  Поисковая строка
     const [limit, setLimit] = useState(10); //  Количество заявок в результатах
