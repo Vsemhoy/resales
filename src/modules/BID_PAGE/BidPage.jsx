@@ -264,6 +264,11 @@ const BidPage = (props) => {
 		}
 	}, [props.userdata]);
     useEffect(() => {
+		if (userData && userData.user) {
+            setIsOpenBaseInfo(userData.user.sales_role === 2 || userData.user.sales_role === 3);
+		}
+	}, [userData]);
+    useEffect(() => {
         console.log('CONNECTED bidPage', connected)
         if (connected) {
             const timestamp = +new Date();
