@@ -1,0 +1,56 @@
+.sa-bug-page-container-body {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  min-height: 85vh;
+}
+
+.sa-bug-modal-tabs {
+  height: 100%  !important;
+} 
+
+.sa-bug-modal-tabs  .ant-tabs-tabpane {
+
+  height: 100% !important;
+}
+
+.sa-bug-modal-oda .ant-modal-body .ant-tabs {
+  min-height: calc(100vh - 300px) !important;
+}
+
+.ant-tabs-content-top {
+  min-height: calc(100vh - 300px) !important;
+}
+.ant-tabs-tabpane {
+  height: 100% !important;
+  min-height: 85vh;
+  max-height: 90vh;
+}
+
+.sa-bug-modal-oda .ant-form-item-row,
+.sa-bug-modal-oda .ant-form-item-row div,
+.sa-bug-modal-oda .ant-form-item-row button {
+  height: 100%;
+}
+.sa-bug-modal-oda .sa-gray-form * {
+  
+}
+
+.sa-bug-page-container-body .ant-form-item {
+  margin-bottom: 0px !important;
+}
+
+.sa-bug-page-container-body .ant-table-tbody {
+  overflow: auto;
+  max-height: 900px;
+}
+
+.ant-table-row td {
+  font-size: medium !important;
+  font-weight: 400;
+}
+
+/* .ant-table-content {
+ max-height: calc(100vh - 300px);
+ overflow: auto;
+} */
