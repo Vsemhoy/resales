@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HighlightText = ({ text, highlight }) => {
+const HighlightText = ({ text, highlight, breakLines = false }) => {
   if (!highlight || !text) {
     return <>{text}</>;
   }
@@ -8,11 +8,14 @@ const HighlightText = ({ text, highlight }) => {
   // Экранируем спецсимволы в строке поиска
   const escapedHighlight = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   
-  // Разбиваем текст на части: до, совпадение, после (и так далее)
+  // Разбиваем текст на части: до, совпадение, после
   const parts = text.split(new RegExp(`(${escapedHighlight})`, 'gi'));
 
   return (
-    <>
+    <div style={{ 
+      whiteSpace: breakLines ? 'pre-wrap' : 'pre-line',
+      wordBreak: 'break-word'
+    }}>
       {parts.map((part, index) =>
         part.toLowerCase() === highlight.toLowerCase() ? (
           <span key={index} className={'sa-text-higlighted'}>
@@ -22,7 +25,7 @@ const HighlightText = ({ text, highlight }) => {
           <span key={index}>{part}</span>
         )
       )}
-    </>
+    </div>
   );
 };
 

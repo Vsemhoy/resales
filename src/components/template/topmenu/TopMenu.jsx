@@ -297,6 +297,7 @@ const TopMenu = (props) => {
 			<BugModal
 				visible={openBugModal}
 				onClose={()=>{setopenBugModal(false)}}
+				userdata={userdata}
 				/>
 
 		</div>
