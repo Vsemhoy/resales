@@ -2,7 +2,7 @@
   display: grid;
   grid-template-rows: 1fr auto;
   height: 100%;
-  min-height: 85vh;
+  /* min-height: 85vh; */
 }
 
 .sa-bug-modal-tabs {
@@ -23,8 +23,8 @@
 }
 .ant-tabs-tabpane {
   height: 100% !important;
-  min-height: 85vh;
-  max-height: 90vh;
+  /* min-height: 85vh;
+  max-height: 90vh; */
 }
 
 .sa-bug-modal-oda .ant-form-item-row,
@@ -50,7 +50,66 @@
   font-weight: 400;
 }
 
-/* .ant-table-content {
- max-height: calc(100vh - 300px);
- overflow: auto;
-} */
+.sa-bug-table-body-wrap {
+  max-height: calc(100vh - 258px);
+  overflow-y: auto;
+  border-top: 1px solid  var(--row-divider-color);
+  border-bottom: 1px solid  var(--row-divider-color);
+  border-right: 1px solid var(--column-divider-color);
+  border-radius: 3px;
+}
+.sa-bug-table-body {
+  padding-bottom: calc(100vh - 451px);
+      box-shadow: inset 0px 20px 47px -48px black;
+}
+.sa-bug-table-row {
+  display: grid;
+  grid-template-columns: 100px minmax(100px, 200px) 1fr 120px  100px;
+  border-bottom: 1px solid var(--row-divider-color);
+  transition: all ease 0.2s;
+}
+.sa-bug-table-row:hover > div {
+  background-color: var(--table-hovered-row-color);
+}
+.sa-bug-table-row:nth-child(even) {
+  background-color: var(--table-second-row-color);
+}
+.sa-bug-table-row:last-child {
+}
+.sa-bug-table-cell {
+border-left: 1px solid var(--column-divider-color);
+}
+.sa-bug-table-cell:last-child {
+border-right: 1px solid var(--column-divider-color);
+}
+.sa-bug-table-cell > div{
+  padding: 6px;
+}
+.sa-bug-table-cell:nth-child(1),
+.sa-bug-table-cell:nth-child(4),
+.sa-bug-table-cell:nth-child(5)
+
+{
+  text-align: center;
+}
+.sa-bug-table-footer {
+  padding: 5px;
+  background: #32323200;
+/* background: linear-gradient(0deg, rgba(50, 50, 50, 0.185) 0%, rgba(255, 255, 255, 1) 100%); */
+    box-shadow: 0px -20px 28px -25px #000000;
+    backdrop-filter: blur(12px);
+    position: sticky;
+  bottom: 0px;
+}
+.sa-bug-table-head {
+  box-shadow: inset 0px 20px 25px -25px #00000071;
+  z-index: 999;
+}
+.sa-bug-modal-tabs .ant-form-item-explain-error {
+
+  width: 100% !important;
+}
+
+.sa-bug-page-container-body, .sa-bug-modal-tabs {
+      background: linear-gradient(#00000007, transparent);
+}

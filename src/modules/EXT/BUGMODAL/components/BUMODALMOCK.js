@@ -183,13 +183,13 @@ export function generateRandomString(length = 333, lang = 'en') {
     
     // Конец предложения или продолжение
     if (wordCounter >= sentenceLength) {
-      result += CAPGAPS[randInt(0, CAPGAPS.length - 1)] + "<br>";
+      result += CAPGAPS[randInt(0, CAPGAPS.length - 1)] + "\n";
       paragraphCounter++;
       wordCounter = 0;
       vcPosition = 0;
       
       if (paragraphCounter >= paragraphLength) {
-        result += "<br>";
+        result += "\n";
         paragraphCounter = 0;
         paragraphLength = randInt(3, 13);
       }
@@ -221,18 +221,21 @@ export const BUMMODALMOCK = () => {
 
   for (let i = 0; i < 50; i++) {
     // Генерируем случайные строки
+    const commentLength = Math.floor(Math.random() * 7) + 12; // Длина имени от 5 до 10
     const nameLength = Math.floor(Math.random() * 5) + 5; // Длина имени от 5 до 10
     const contentLength = Math.floor(Math.random() * 50) + 30; // Длина контента от 30 до 80
     
     // Используем вспомогательную функцию для генерации строк (не React хук)
     const name = ucwords(generateRandomString(nameLength));
     const content = generateRandomString(contentLength);
+    const comment = generateRandomString(commentLength);
     
     let ans = {
       id: i + 1,
       username: name,
       user_id: 243,
       content: content,
+      comment: comment,
       created_at: dayjs().format('YYYY-MM-DD'),
       finished_at: "2023-12-13",
       status: Math.floor(Math.random() * 4) + 1 // Статус от 1 до 4
