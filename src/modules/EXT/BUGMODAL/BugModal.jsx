@@ -169,7 +169,7 @@ useEffect(() => {
         created_at: filterCreated,
         finished_at: filterFinish,
         user_ids: filterUserId,
-        status: filterStatus
+        status: filterStatus ? filterStatus : null
       };
 
         const format_data = {
@@ -312,7 +312,7 @@ useEffect(() => {
                 >
                   Сегодня
                 </Button>
-
+                
                 <Button 
                   color="default" 
                   variant={
@@ -329,8 +329,8 @@ useEffect(() => {
                       setFilterCreated([startWeek, endWeek]);
                     } else if (
                       filterCreated[0] && filterCreated[1] && 
-                      dayjs(filterCreated[0]).isSame(startWeek, 'day').add(1,'day') && 
-                      dayjs(filterCreated[1]).isSame(endWeek, 'day').add(1,'day')
+                      dayjs(filterCreated[0]).isSame(startWeek, 'day') && 
+                      dayjs(filterCreated[1]).isSame(endWeek, 'day')
                     ) {
                       setFilterCreated([null, null]);
                     } else {
@@ -360,42 +360,35 @@ useEffect(() => {
                 <div className={'sa-bug-table-row'} >
                   <div className={'sa-bug-table-cell'}>
                     <div>
-                      <Tooltip title={'Дата добавления'} placement={'bottom'}>
                         <DatePicker.RangePicker
                           value={filterCreated}
                           onChange={setFilterCreated}
                           allowClear
                         />
-                      </Tooltip>
                     </div>
                   </div>
                   <div className={'sa-bug-table-cell'}>
                     <div>
-                      <Tooltip title={'Имя'} placement={'bottom'}>
                         <Input 
                           value={filterUserName || ''}
                           onChange={(e) => setFilterUserName(e.target.value || null)}
                           placeholder="Имя пользователя"
                           allowClear
                         />
-                      </Tooltip>
                     </div>
                   </div>
                   <div className={'sa-bug-table-cell'}>
                     <div>
-                      <Tooltip title={'Текст заявки'} placement={'bottom'}>
                         <Input 
                           value={filterText || ''}
                           onChange={(e) => setFilterText(e.target.value || null)}
                           placeholder="Текст заявки"
                           allowClear
                         />
-                      </Tooltip>
                     </div>
                   </div>
                   <div className={'sa-bug-table-cell'}>
                     <div>
-                      <Tooltip title={'Статус'} placement={'bottom'}>
                         <Select 
                           value={filterStatus}
                           onChange={setFilterStatus}
@@ -406,20 +399,16 @@ useEffect(() => {
                             value: index,  // или opt.id если добавите в statusConfig
                             label: opt.text,
                           }))}
-                          allowClear
                         />
-                      </Tooltip>
                     </div>
                   </div>
                   <div className={'sa-bug-table-cell'}>
                     <div>
-                      <Tooltip title={'Дата выполнения/обработки/отклонения'} placement={'bottom'}>
                         <DatePicker.RangePicker
                           value={filterFinish}
                           onChange={setFilterFinish}
                           allowClear
                         />
-                      </Tooltip>
                     </div>
                     </div>
                   </div>
@@ -494,7 +483,7 @@ useEffect(() => {
 											name="content"
 											rules={[
                         // { required: true, message: 'Поле обязательно'},
-                        {  message: 'Минимум 35 знаков в сообщении', min: 35 }
+                        {  message: 'Минимум 12 знаков в сообщении', min: 12 }
                       
                       ]}
 											style={{ width: '100%' }}
@@ -538,7 +527,7 @@ useEffect(() => {
 
                               <Form.Item
                                 name={[name, "content"]}
-                                rules={[{  message: 'Минимум 35 знаков в сообщении', min: 35 }]}
+                                rules={[{  message: 'Минимум 12 знаков в сообщении', min: 12 }]}
                                 style={{ width: '100%' }}
                               >
                                 <TextArea
