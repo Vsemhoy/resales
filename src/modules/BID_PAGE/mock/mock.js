@@ -596,7 +596,7 @@ export const BID_INFO = {
         }
     },
     "bid_models": [
-        {
+        /*{
             "id": 978342,
             "model_id": 10,
             "model_count": 1,
@@ -628,7 +628,7 @@ export const BID_INFO = {
             "presence": -2,
             "percent": 0,
             "sklad": 0
-        }
+        }*/
     ],
     /*"openmode": {
         "status": 1,
@@ -665,7 +665,7 @@ export const BID_INFO = {
 };
 export const CALC_INFO = {
 	models: [
-		{
+		/*{
 			id: 977890,
 			model_id: 33,
 			model_count: 187,
@@ -820,7 +820,7 @@ export const CALC_INFO = {
 			percent: 0,
 			moneyOne: 93600,
 			moneyCount: 93600,
-		},
+		},*/
 	],
 	amounts: {
 		usd: 1671400,
@@ -1499,7 +1499,6 @@ export const PROJECT_INFO = {
 		name: 'Текущий',
 	},
 };
-
 export const SIMILAR_BIDS = {
 	"count_all": 3004,
 	"bids": [
