@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import TextArea from "antd/es/input/TextArea";
-import { Table } from "antd";
+import { Modal, Table } from "antd";
 
-const DataParser = ({ models, additionData, setAdditionData }) => {
+const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
     const [value, setValue] = useState("");
     const [hashModels, setHashModels] = useState({});
-    const [addition, setAddition] = useState(null);
+    const [addition, setAddition] = useState([]);
+
     const replace_alphabet = {
         'а': 'a',
         'в': 'b',
@@ -21,177 +22,159 @@ const DataParser = ({ models, additionData, setAdditionData }) => {
         'х': 'x',
     };
 
+    // Создаем быстрый поиск моделей
     useEffect(() => {
         if (models && models.length > 0) {
+            const map = {};
             models.forEach(model => {
-                setHashModels(prev => {
-                    let modelNameSeo = model.name?.toLowerCase().replace(/\s/g, "");
-                    let obj = prev;
-                    obj[`${modelNameSeo}`] = model.id;
-                    return obj;
-                });
+                const modelNameSeo = model.name?.toLowerCase().replace(/\s/g, "");
+                map[modelNameSeo] = model.id;
             });
+            setHashModels(map);
         }
     }, [models]);
 
-    useEffect(() => {
-        if (additionData) {
-            setAddition(additionData);
-        }
-    }, [additionData]);
-
+    // Поиск модели по названию
     const getModelName = (name) => {
-        // Проверяем, что models существует и не пустой
         if (!models || models.length === 0) return null;
 
-        // Проверка на число
         if (!isNaN(name) && name !== '') {
             return null;
         }
 
-        // Очистка и проверка длины
         name = name.toString().trim();
-        if (name.length <= 1) {
-            return null;
-        }
+        if (name.length <= 1) return null;
 
         let nameLower = name.toLowerCase().replace(/\s/g, "");
         let trname = nameLower;
 
-        // Транслитерация символов
         Object.entries(replace_alphabet).forEach(([cyrillic, latin]) => {
-            trname = trname.replace(new RegExp(cyrillic, 'ig'), latin);
+            trname = trname.replace(new RegExp(cyrillic, "ig"), latin);
         });
 
-        if (hashModels[`${nameLower}`]) {
-            const modelId = hashModels[`${nameLower}`];
-            return models.find((model) => model.id === modelId) ?? null;
-        } else {
-            /*for (let i = 0; i < models.length; i++) {
-                let modelNameSeo = models[i].name?.toLowerCase().replace(/\s/g, "");
-
-                if (!modelNameSeo) continue; // Пропускаем если нет name_seo
-
-                if (modelNameSeo === nameLower || modelNameSeo === trname) {
-                    return models[i];
-                }
-
-                // Дополнительная проверка: если имя содержит часть названия модели
-                if (nameLower.includes(modelNameSeo) || modelNameSeo.includes(nameLower)) {
-                    return models[i];
-                }
-            }*/
-            return null;
+        if (hashModels[nameLower]) {
+            const id = hashModels[nameLower];
+            return models.find(m => m.id === id) ?? null;
         }
+
+        return null;
     };
+
+    // Парсим строку
     const findModel = (line, index) => {
-        const l = line.trim().replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
+        const cleaned = line.trim().replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
 
-        if ( l !== '') {
-            const part = l.split(' ');
-            const mod = {
-                errorname: true,
-                /*errorcount: false,*/
+        if (!cleaned) return null;
 
-                key: 0,
-                num: 0,
-                name: '',
-                count: 1,
-                id: 0,
-                currency: 0,
-            };
+        const parts = cleaned.split(" ");
 
-            part.forEach((value, key) => {
+        const mod = {
+            errorname: true,
+            key: crypto.randomUUID(),     // ← ВСЕГДА уникальный ключ
+            num: index + 1,
+            name: "",
+            count: 1,
+            id: 0,
+            currency: 0,
+        };
 
-                if (key > 0 && !isNaN(parseInt(value)) ) {
-                    mod.count = parseInt(value);
-                    //mod.errorcount = false;
-                }
+        parts.forEach((value, i) => {
 
-                let model = getModelName(value);
+            if (i > 0 && !isNaN(parseInt(value))) {
+                mod.count = parseInt(value);
+            }
 
-                if (model) {
-                    mod.name = model.name;
-                    mod.errorname = false;
-                    mod.id = model.id;
-                    mod.num = index + 1;
-                    mod.key = index;
-                    mod.currency = model.currency;
-                } else if (!mod.name) {
-                    mod.name = value;
-                }
-            });
-            return mod;
-        }
-    }
-    useEffect(() => {
-        if (!value) {
-            setAdditionData([]);
+            const model = getModelName(value);
+
+            if (model) {
+                mod.name = model.name;
+                mod.errorname = false;
+                mod.id = model.id;
+                mod.currency = model.currency;
+            } else if (!mod.name) {
+                mod.name = value;
+            }
+        });
+
+        return mod;
+    };
+
+    // Обработчик ввода
+    const onChange = (e) => {
+        const val = e.target.value;
+        setValue(val);
+
+        if (!val) {
+            setAddition([]);
             return;
         }
 
-        const lines = value.split("\n");
-        const parsedData = lines.map((line, index) => {
-            return findModel(line, index);
-        }).filter(Boolean);
+        const lines = val.split("\n");
 
-        console.log(parsedData);
-        setAdditionData(parsedData);
-    }, [value, models, setAdditionData]);
+        // ВАЖНО: передаем index вручную
+        const parsed = lines
+            .map((line, index) => findModel(line, index))
+            .filter(Boolean);
 
-    // Обработчик изменения текста
-    const onChange = useCallback((e) => {
-        setValue(e.target.value);
-    }, []);
+        setAddition(parsed);
+    };
 
     const columns = [
         {
             title: "№",
             dataIndex: "num",
-            key: "num",
             width: 50,
         },
         {
             title: "Наименование",
             dataIndex: "name",
-            key: "name",
             render: (name, record) =>
                 record.id ? (
-                    <span style={{ padding: "0 4px" }}>{name}</span>
+                    <span>{name}</span>
                 ) : (
                     <span style={{ background: "red", color: "white", padding: "0 4px" }}>
-            {name}
-          </span>
+                        {name}
+                    </span>
                 ),
         },
         {
             title: "Количество",
             dataIndex: "count",
-            key: "count",
             width: 100,
         },
     ];
 
     return (
-        <div className={'dataParser__container'}>
-            <div className={'dataParser__container__text'}>
-                <TextArea
-                    rows={32}
-                    value={value}
-                    onChange={onChange}
-                    placeholder="Вставьте сюда данные из имеющегося документа"
-                />
+        <Modal
+            title="Анализ сырых данных"
+            centered
+            width={800}
+            open={openModal}
+            onOk={() => addParseModels(addition)}
+            onCancel={closeModal}
+            okText="Добавить в спецификацию"
+            cancelText="Отмена"
+        >
+            <div className="dataParser__container">
+                <div className="dataParser__container__text">
+                    <TextArea
+                        rows={32}
+                        value={value}
+                        onChange={onChange}
+                        placeholder="Вставьте сюда данные из имеющегося документа"
+                    />
+                </div>
+                <div className="dataParser__container__table">
+                    <Table
+                        dataSource={addition}
+                        columns={columns}
+                        size="small"
+                        pagination={false}
+                        rowKey="key"
+                    />
+                </div>
             </div>
-            <div className={'dataParser__container__table'}>
-                <Table
-                    dataSource={addition}
-                    columns={columns}
-                    size="small"
-                    pagination={false}
-                    rowKey="key"
-                />
-            </div>
-        </div>
+        </Modal>
     );
 };
 

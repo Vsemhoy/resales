@@ -183,7 +183,6 @@ const BidPage = (props) => {
 	const [isBidFilesDrawerOpen, setIsBidFilesDrawerOpen] = useState(false);
 	const [isParseModalOpen, setIsParseModalOpen] = useState(false);
 	const [isFindSimilarDrawerOpen, setIsFindSimilarDrawerOpen] = useState(false);
-	const [additionData, setAdditionData] = useState([]);
 	const [isOpenCustomModal, setIsOpenCustomModal] = useState(false);
 	const [customModalTitle, setCustomModalTitle] = useState('');
 	const [customModalText, setCustomModalText] = useState('');
@@ -1192,13 +1191,14 @@ const BidPage = (props) => {
 		setModelIdExtra(null);
 		setModelNameExtra('');
 	};
-	const addParseModels = () => {
-		console.log(additionData);
+	const addParseModels = (dataToAdd) => {
+		console.log(dataToAdd);
+        if (!dataToAdd || !(dataToAdd.length)) return;
 		let sort = 0;
 		if (bidModels && bidModels.length > 0) {
 			sort = bidModels.sort((a,b) => a.sort - b.sort)[bidModels.length-1].sort;
 		}
-		const arr = additionData.filter(newModel => modelsSelect.find(model => (!model.used && model.id === newModel.id)))
+		const arr = dataToAdd.filter(newModel => modelsSelect.find(model => (!model.used && model.id === newModel.id)))
             .map((newModel, idx) => {
             const model = modelsSelect.find(model => model.id === newModel.id);
             return {
@@ -1220,8 +1220,6 @@ const BidPage = (props) => {
 			...bidModelsUpd,
 			...arr
 		]);
-		setAdditionData([]);
-		//setIsNeedCalcMoney(true);
         isNeedCalcModelsTimerSetter(true);
 		setIsParseModalOpen(false);
 	};
@@ -2730,22 +2728,11 @@ const BidPage = (props) => {
 					edit_mode={false}
 				/>
 			</Modal>
-			<Modal
-				title="Анализ сырых данных"
-				centered
-				width={800}
-				open={isParseModalOpen}
-				onOk={() => addParseModels()}
-				onCancel={() => setIsParseModalOpen(false)}
-				okText={"Добавить в спецификацию"}
-				cancelText={"Отмена"}
-			>
-				<DataParser
-					additionData={additionData}
-					setAdditionData={setAdditionData}
-					models={modelsSelect}
-				/>
-			</Modal>
+            <DataParser openModal={isParseModalOpen}
+                        closeModal={() => setIsParseModalOpen(false)}
+                        addParseModels={(dataToAdd) => addParseModels(dataToAdd)}
+                        models={modelsSelect}
+            />
             <Modal
                 title={findSimilarTitle}
                 open={isFindSimilarDrawerOpen}
