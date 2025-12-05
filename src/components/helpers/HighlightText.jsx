@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HighlightText = ({ text, highlight, breakLines = false }) => {
+const HighlightText = ({ text, highlight }) => {
   if (!highlight || !text) {
     return <>{text}</>;
   }
@@ -12,10 +12,7 @@ const HighlightText = ({ text, highlight, breakLines = false }) => {
   const parts = text.split(new RegExp(`(${escapedHighlight})`, 'gi'));
 
   return (
-    <div style={{ 
-      whiteSpace: breakLines ? 'pre-wrap' : 'pre-line',
-      wordBreak: 'break-word'
-    }}>
+       <>
       {parts.map((part, index) =>
         part.toLowerCase() === highlight.toLowerCase() ? (
           <span key={index} className={'sa-text-higlighted'}>
@@ -25,7 +22,7 @@ const HighlightText = ({ text, highlight, breakLines = false }) => {
           <span key={index}>{part}</span>
         )
       )}
-    </div>
+    </>
   );
 };
 
