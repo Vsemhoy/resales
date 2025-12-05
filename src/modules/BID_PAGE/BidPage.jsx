@@ -867,7 +867,7 @@ const BidPage = (props) => {
 					data: {
 						bid_id: bidId,
 						new: true,
-						template_id: bidIdCompany - 1,
+						template_id: +bidIdCompany - 1,
 						type: 1
 					},
 					_token: CSRF_TOKEN,
@@ -2057,7 +2057,7 @@ const BidPage = (props) => {
 												icon={<SaveOutlined />}
 												loading={isSavingInfo}
 												onClick={() => setIsSavingInfo(true)}
-												disabled={isDisabledInput() || openMode?.status === 4}
+												disabled={isDisabledInput()} /* || openMode?.status === 4 */
 											>
 												{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
 											</Button>
