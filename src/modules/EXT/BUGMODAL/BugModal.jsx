@@ -51,17 +51,17 @@ const statusConfig = {
       className: "status-created"
     },
     1: {
-      text: "Создано",
+      text: "Новая заявка",
       color: "default", // серый
       className: "status-created"
     },
     2: {
-      text: "В работе",
+      text: "Принята в работу",
       color: "processing", // синий (в Ant Design желтый - 'gold', но processing лучше выглядит)
       className: "status-in-progress"
     },
     3: {
-      text: "Завершено",
+      text: "Решено",
       color: "success", // зеленый
       className: "status-completed"
     },
@@ -273,7 +273,7 @@ useEffect(() => {
                   <Tag
                   size={'small'}
 									style={{
-					
+                    height: '27px',
 										lineHeight: '22px',
 										textAlign: 'center',
 										fontSize: '14px',
@@ -283,30 +283,30 @@ useEffect(() => {
 									Всего найдено: {total ? total : '0'}
 								</Tag>
                 </div>
-                <div style={{gridGap: '6px', display: 'flex'}}>
+                <div style={{gridGap: '6px', display: 'flex',}}>
 
                 <Button 
                   color="default" 
                   variant={
                     filterCreated[0] && filterCreated[1] && 
                     dayjs(filterCreated[0]).isSame(dayjs(), 'day') && 
-                    dayjs(filterCreated[1]).isSame(dayjs(), 'day') 
+                    dayjs(filterCreated[1]).isSame(dayjs().add(1,'day'), 'day') 
                     ? 'solid' : 'filled'
                   }
                   onClick={() => {
                     if (filterCreated[0] === null && filterCreated[1] === null) {
                       // Пусто -> установить сегодня
-                      setFilterCreated([dayjs(), dayjs()]);
+                      setFilterCreated([dayjs(), dayjs().add(1,'day')]);
                     } else if (
                       filterCreated[0] && filterCreated[1] && 
                       dayjs(filterCreated[0]).isSame(dayjs(), 'day') && 
-                      dayjs(filterCreated[1]).isSame(dayjs(), 'day')
+                      dayjs(filterCreated[1]).isSame(dayjs().add(1,'day'), 'day')
                     ) {
                       // Уже сегодня -> очистить
                       setFilterCreated([null, null]);
                     } else {
                       // Другое значение -> установить сегодня
-                      setFilterCreated([dayjs(), dayjs()]);
+                      setFilterCreated([dayjs(), dayjs().add(1,'day')]);
                     }
                   }}
                 >
@@ -317,20 +317,20 @@ useEffect(() => {
                   color="default" 
                   variant={
                     filterCreated[0] && filterCreated[1] && 
-                    dayjs(filterCreated[0]).isSame(dayjs().startOf('week'), 'day') && 
-                    dayjs(filterCreated[1]).isSame(dayjs().endOf('week'), 'day') 
+                    dayjs(filterCreated[0]).isSame(dayjs().startOf('week').add(1,'day'), 'day') && 
+                    dayjs(filterCreated[1]).isSame(dayjs().endOf('week').add(1,'day'), 'day') 
                     ? 'solid' : 'filled'
                   }
                   onClick={() => {
-                    const startWeek = dayjs().startOf('week');
-                    const endWeek = dayjs().endOf('week');
+                    const startWeek = dayjs().startOf('week').add(1,'day');
+                    const endWeek = dayjs().endOf('week').add(1,'day');
                     
                     if (filterCreated[0] === null && filterCreated[1] === null) {
                       setFilterCreated([startWeek, endWeek]);
                     } else if (
                       filterCreated[0] && filterCreated[1] && 
-                      dayjs(filterCreated[0]).isSame(startWeek, 'day') && 
-                      dayjs(filterCreated[1]).isSame(endWeek, 'day')
+                      dayjs(filterCreated[0]).isSame(startWeek, 'day').add(1,'day') && 
+                      dayjs(filterCreated[1]).isSame(endWeek, 'day').add(1,'day')
                     ) {
                       setFilterCreated([null, null]);
                     } else {
@@ -454,7 +454,7 @@ useEffect(() => {
                       <div>
                         <Tooltip title={item.comment}>
 
-                        {StatusBadge(item.status)}
+                        {StatusBadge(item.status_id)}
                         </Tooltip>
                       </div>
                     </div>
