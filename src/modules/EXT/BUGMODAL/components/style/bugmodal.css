@@ -59,7 +59,7 @@
   border-radius: 3px;
 }
 .sa-bug-table-body {
-  padding-bottom: calc(100vh - 451px);
+  padding-bottom: calc(100vh - 322px);
       box-shadow: inset 0px 20px 47px -48px black;
 }
 .sa-bug-table-row {

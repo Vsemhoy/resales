@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './components/style/bugmodal.css';
 import { Modal, Tabs, Table, Select, Button, Form, Input, Space, Tag, Tooltip, DatePicker, Pagination, Empty } from 'antd';
@@ -11,6 +11,7 @@ import { forIn } from 'lodash';
 import { ANTD_PAGINATION_LOCALE } from '../../../config/Localization';
 import dayjs from 'dayjs';
 import HighlightText from '../../../components/helpers/HighlightText';
+import HighlightTextBreaker from '../../../components/helpers/HighlightTextBreaker';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
@@ -147,7 +148,7 @@ useEffect(() => {
     const writeReportAction = async (data) => {
       try {
         const format_data = {
-          content: data,
+          data: {content: data},
           _token: CSRF_TOKEN,
         };
         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/report', format_data);
@@ -172,15 +173,19 @@ useEffect(() => {
       };
 
         const format_data = {
+          data: {
           page: currentPage,
           pagesize: onPage,
           filters: obj,
-          _token: CSRF_TOKEN,
+          },
+          _token: CSRF_TOKEN
+          ,
         };
         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/getreports', format_data);
         if (response) {
-          setBugReports(response.data.conten);
+          setBugReports(response.data.content?.page);
           setTotal(response.data.total);
+          scrollToTop();
         }
       } catch (e) {
         console.log(e);
@@ -199,9 +204,27 @@ useEffect(() => {
 
 
   const onFinishMulti = (ee) => {
-    writeReportAction(ee.bugs);
+    let filtered = [];
+    
+    writeReportAction(ee.bugs.filter((item)=> item.content.trim() !== ""));
     mform.resetFields();
   }
+
+
+  const scrollRef = useRef(null);
+
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
+
 
 	return (
 		<div className="sa-bug-modal">
@@ -401,13 +424,17 @@ useEffect(() => {
                     </div>
                   </div>
               </div>
-              <div className={'sa-bug-table-body-wrap'}>
+              <div className={'sa-bug-table-body-wrap'} ref={scrollRef}>
 							<div className={'sa-bug-table-body'}>
-                {bugReports.map((item)=>(
+                {bugReports?.map((item)=>(
                   <div className={'sa-bug-table-row'} >
                     <div className={'sa-bug-table-cell'}>
                       <div>
-                        {item.created_at}
+                        {item.created_at && (
+                          <div>
+                            <div>{dayjs(item.created_at).format('DD.MM.YYYY')}</div> <div>{dayjs(item.created_at).format('HH:mm')}</div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className={'sa-bug-table-cell'}>
@@ -417,7 +444,7 @@ useEffect(() => {
                     </div>
                     <div className={'sa-bug-table-cell'}>
                       <div>
-                      <HighlightText text={item.content} highlight={filterText} 
+                      <HighlightTextBreaker text={item.content} highlight={filterText} 
                         breakLines={true}
                       /> 
                         
@@ -433,13 +460,17 @@ useEffect(() => {
                     </div>
                     <div className={'sa-bug-table-cell'}>
                       <div>
-                        {item.finished_at}
+                        {item.finished_at && (
+                          <div>
+                            <div>{dayjs(item.finished_at).format('DD.MM.YYYY')}</div> <div>{dayjs(item.finished_at).format('HH:mm')}</div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
                   </div>
                 ))}
-                {bugReports.length === 0 ? (
+                {bugReports?.length === 0 ? (
                   <Empty />
                 ):('')}
               
@@ -507,7 +538,7 @@ useEffect(() => {
 
                               <Form.Item
                                 name={[name, "content"]}
-                                rules={[{ required: true, message: 'Поле обязательно' }]}
+                                rules={[{  message: 'Минимум 35 знаков в сообщении', min: 35 }]}
                                 style={{ width: '100%' }}
                               >
                                 <TextArea
