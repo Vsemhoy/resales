@@ -60,6 +60,20 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         return null;
     };
 
+    function generateUUID() {
+        // Проверяем поддержку
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+
+        // Fallback: кастомная реализация UUID v4 (RFC 4122)
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
     // Парсим строку
     const findModel = (line, index) => {
         const cleaned = line.trim().replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
@@ -70,7 +84,7 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
 
         const mod = {
             errorname: true,
-            key: crypto.randomUUID(),     // ← ВСЕГДА уникальный ключ
+            key: generateUUID(), // вместо crypto.randomUUID()
             num: index + 1,
             name: "",
             count: 1,
