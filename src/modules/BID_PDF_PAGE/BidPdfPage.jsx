@@ -647,8 +647,8 @@ const BidPdfPage = () => {
                     formData.append('data', JSON.stringify(requestData));
                     collectFiles(formData, data);
                     let response = await PROD_AXIOS_INSTANCE.post(`api/sales/pdf/${isCreatePdf ? 'create' : 'save'}/${bidId}`, formData);
-                    if (isCreatePdf && response?.file_link) {
-                        window.open(`${HTTP_HOST}${response?.file_link}`, '_blank');
+                    if (isCreatePdf && response.data?.file_link) {
+                        window.open(`${HTTP_HOST}${response.data?.file_link}`, '_blank');
                     }
                 } catch (e) {
                     console.log(e);
