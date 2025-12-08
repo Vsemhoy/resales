@@ -128,24 +128,28 @@ const FindSimilar = (props) => {
     ];
     const documentProtectOptions = [
         {
-            label: "ЗП и РП",
+            label: "Все",
             value: 0,
-            key: 111,
+            key: 'documentProtectOptions-0',
+        },{
+            label: "ЗП и РП",
+            value: 1,
+            key: 'documentProtectOptions-1',
         },
         {
             label: "ЗП",
-            value: 1,
-            key: 222,
+            value: 2,
+            key: 'documentProtectOptions-2',
         },
         {
             label: "РП",
-            value: 2,
-            key: 333,
+            value: 3,
+            key: 'documentProtectOptions-3',
         },
         {
             label: "Нет",
-            value: 3,
-            key: 444,
+            value: 4,
+            key: 'documentProtectOptions-4',
         },
     ];
     const documentTypeOptions = [
