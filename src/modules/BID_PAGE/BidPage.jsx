@@ -1191,38 +1191,56 @@ const BidPage = (props) => {
 		setModelIdExtra(null);
 		setModelNameExtra('');
 	};
-	const addParseModels = (dataToAdd) => {
-		console.log(dataToAdd);
-        if (!dataToAdd || !(dataToAdd.length)) return;
-		let sort = 0;
-		if (bidModels && bidModels.length > 0) {
-			sort = bidModels.sort((a,b) => a.sort - b.sort)[bidModels.length-1].sort;
-		}
-		const arr = dataToAdd.filter(newModel => modelsSelect.find(model => (!model.used && model.id === newModel.id)))
+    const addParseModels = (dataToAdd) => {
+        console.log(dataToAdd);
+
+        if (!dataToAdd || !dataToAdd.length) return;
+
+        // 🔁 Агрегируем dataToAdd: объединяем модели с одинаковым id, суммируя count
+        const aggregatedData = dataToAdd.reduce((acc, item) => {
+            const existing = acc.find(x => x.id === item.id);
+            if (existing) {
+                existing.count += item.count; // суммируем количество
+            } else {
+                acc.push({ ...item }); // глубокая копия, чтобы не мутировать оригинал
+            }
+            return acc;
+        }, []);
+
+        let sort = 0;
+        if (bidModels && bidModels.length > 0) {
+            // ✅ Безопасная сортировка: не мутировать оригинальный массив!
+            const sorted = [...bidModels].sort((a, b) => a.sort - b.sort);
+            sort = sorted[sorted.length - 1].sort;
+        }
+
+        // ✅ Используем aggregatedData вместо dataToAdd
+        const arr = aggregatedData
+            .filter(newModel =>
+                modelsSelect.some(model => !model.used && model.id === newModel.id)
+            )
             .map((newModel, idx) => {
-            const model = modelsSelect.find(model => model.id === newModel.id);
-            return {
-                "id": 0,
-                "bid_id": bidId,
-                "model_id": model.id,
-                "model_name": model.name,
-                "model_count": newModel.count,
-                "not_available": 0,
-                "percent": 0,
-                "presence": -2,
-                "sort": sort + idx,
-                "type_model": model.type_model,
-                "currency": model.currency,
-            };
-		});
-		const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
-		setBidModels([
-			...bidModelsUpd,
-			...arr
-		]);
+                const model = modelsSelect.find(m => m.id === newModel.id);
+                return {
+                    id: 0,
+                    bid_id: bidId,
+                    model_id: model.id,
+                    model_name: model.name,
+                    model_count: newModel.count, // ← уже суммированное значение
+                    not_available: 0,
+                    percent: 0,
+                    presence: -2,
+                    sort: sort + idx + 1, // ← +1, если sort — последний номер, а не индекс (часто sort начинается с 1)
+                    type_model: model.type_model,
+                    currency: model.currency,
+                };
+            });
+
+        // ✅ Без JSON.parse(JSON.stringify(...)) — используем spread для поверхностной копии (если объекты plain)
+        setBidModels(prev => [...prev, ...arr]);
         isNeedCalcModelsTimerSetter(true);
-		setIsParseModalOpen(false);
-	};
+        setIsParseModalOpen(false);
+    };
 	const updateDefaultInfo = () => {
 		const defaultInfoUpd = JSON.parse(JSON.stringify(defaultInfo));
 		defaultInfoUpd.bid.base_info.orguser = bidOrgUser;
