@@ -292,10 +292,10 @@
 	grid-template-columns: 65px 1fr 1.5fr;
 }
 .sa-bid-page-info-container-closed {
-	padding: 10px 12px;
+	padding: 10px 12px 0 12px;
 	display: grid;
 	grid-gap: 5px 6px;
-	grid-template-columns: 65px 0px 1.5fr;
+	grid-template-columns: 65px 0 1.5fr;
 }
 
 .sa-bid-page-info-wrapper,
