@@ -216,7 +216,7 @@ function ucwords(str) {
 }
 
 
-export const BUMMODALMOCK = () => {
+export const BUGMODALMOCK = () => {
   let result = [];
 
   for (let i = 0; i < 50; i++) {

@@ -6,7 +6,7 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
-import { BUMMODALMOCK } from './components/BUMODALMOCK';
+import { BUGMODALMOCK } from './components/BUGMODALMOCK';
 import { countBy, forIn } from 'lodash';
 import { ANTD_PAGINATION_LOCALE } from '../../../config/Localization';
 import dayjs from 'dayjs';
@@ -38,7 +38,7 @@ function BugModal(props) {
   const [filterFinish,   setFilterFinish] = useState([null, null]);
   const [filterUserName, setFilterUserName] = useState(null);
   const [filterText,     setFilterText] = useState(null);
-  const [filterStatus,   setFilterStatus] = useState(null);
+  const [filterStatus,   setFilterStatus] = useState(1);
   const [filterUserId,   setFilterUserId] = useState([]);
 
   const [bugMultiCounter, setBugMultiCounter] = useState([0,0,0,0]);
@@ -133,7 +133,7 @@ useEffect(() => {
   if (PRODMODE){
     getReportsAction();
   } else {
-    setBugReports(BUMMODALMOCK);
+    setBugReports(BUGMODALMOCK);
   }
 
 }, []);
@@ -192,6 +192,10 @@ useEffect(() => {
         if (response) {
           setBugReports(response.data.content?.page);
           setTotal(response.data.total);
+          if (STARTMARK < 1){
+            setBugMultiCounter([response.data.total, 0,0,0]);
+            setSTARTMARK(STARTMARK + 1);
+          }
           scrollToTop();
         }
       } catch (e) {
@@ -201,28 +205,28 @@ useEffect(() => {
 
 
 
-    useEffect(() => {
-      if (STARTMARK < 2){
-        if (bugReports && bugReports.length > 0){
-          let conter = [0,0,0,0];
-          for (let i = 0; i < bugReports.length; i++) {
-            const element = bugReports[i];
-            if (element.status_id === 1) {
-              conter[0]++;
-            } else if (element.status_id === 2){
-              conter[1]++;
-            } else if (element.status_id === 3){
-              conter[2]++;
-            } else if (element.status_id === 4){
-              conter[3]++;
-            };
-          }
-          setBugMultiCounter(conter);
-        }
+    // useEffect(() => {
+    //   if (STARTMARK < 2){
+    //     if (bugReports && bugReports.length > 0){
+    //       let conter = [0,0,0,0];
+    //       for (let i = 0; i < bugReports.length; i++) {
+    //         const element = bugReports[i];
+    //         if (element.status_id === 1) {
+    //           conter[0]++;
+    //         } else if (element.status_id === 2){
+    //           conter[1]++;
+    //         } else if (element.status_id === 3){
+    //           conter[2]++;
+    //         } else if (element.status_id === 4){
+    //           conter[3]++;
+    //         };
+    //       }
+    //       setBugMultiCounter(conter);
+    //     }
 
-        setSTARTMARK(STARTMARK + 1);
-      }
-    }, [bugReports]);
+    //     setSTARTMARK(STARTMARK + 1);
+    //   }
+    // }, [bugReports]);
 
 
     useEffect(() => {
@@ -430,7 +434,7 @@ useEffect(() => {
                         <Select 
                           value={filterStatus}
                           onChange={setFilterStatus}
-                          allowClear
+                        
                           style={{width: '100%'}}
                           placeholder="Все статусы"
                           options={getStatusConfig().map((opt, index) => ({
