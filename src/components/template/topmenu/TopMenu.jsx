@@ -10,7 +10,7 @@ import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE} from '
 import {CloseCircleOutlined, HomeFilled, NotificationOutlined, WechatWorkOutlined} from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
-import {Button, Dropdown} from 'antd';
+import {Badge, Button, Dropdown} from 'antd';
 import { ShortName } from '../../helpers/TextHelpers';
 import {
 	ArrowTopRightOnSquareIcon,
@@ -25,6 +25,8 @@ import NotiBtn from "../../../modules/NOTIFIER/NotiBtn";
 import Notificator from "corp-notificator-library-antd-react-socket";
 import BugModal from '../../../modules/EXT/BUGMODAL/BugModal';
 
+
+
 const TopMenu = (props) => {
 		const [userdata, setUserdata] = useState(props.userdata);
 	// const { userdata, setUserdata } = useUserData();
@@ -35,6 +37,8 @@ const TopMenu = (props) => {
 	const debuggerRef = useRef(null);
 
 	const [openBugModal, setopenBugModal] = useState(false);
+
+	const [bugMultiCounter, setBugMultiCounter] = useState([0,0,0,0]);
 
 	useEffect(() => {
 		setUserdata(props.userdata);
@@ -233,12 +237,15 @@ const TopMenu = (props) => {
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
+				 <Badge count={+bugMultiCounter[0]}  color="#fa9614da" size='small' offset={[-6, 0]}>
 					<Button
 						type='text'
 						onClick={()=>{setopenBugModal(!openBugModal)}}
-					>
+						>
 						<BugAntIcon height={'28px'} style={{color: '#ffbf00'}}/>
-				</Button>
+					</Button>
+
+				 </Badge>
                     <Chat userdata={userdata}
                           httpParams={{
                               HTTP_HOST: HTTP_HOST,
