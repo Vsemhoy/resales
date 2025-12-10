@@ -21,7 +21,7 @@ import {Content} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import TextArea from "antd/es/input/TextArea";
 import NameSelect from "../BID_PAGE/components/NameSelect";
-import {CSRF_TOKEN, PRODMODE} from "../../config/config";
+import {CSRF_TOKEN, HTTP_HOST, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import MODELS from "../BID_PAGE/mock/mock_models";
 import ModelInput from "../BID_PAGE/components/ModelInput";
@@ -647,7 +647,9 @@ const BidPdfPage = () => {
                     formData.append('data', JSON.stringify(requestData));
                     collectFiles(formData, data);
                     let response = await PROD_AXIOS_INSTANCE.post(`api/sales/pdf/${isCreatePdf ? 'create' : 'save'}/${bidId}`, formData);
-                    console.log(response);
+                    if (isCreatePdf && response.data?.file_link) {
+                        window.open(`${HTTP_HOST}${response.data?.file_link}`, '_blank');
+                    }
                 } catch (e) {
                     console.log(e);
                 }

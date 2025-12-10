@@ -477,14 +477,14 @@ const ProjectTabSectionTorg = (props) => {
 						<div className="sa-org-section-label">{name ? name : 'Без темы '}</div>
 						<span className="sa-date-text">
 							{date !== null
-								? ` - ` +
+								? 
 								  (date ? getMonthName(dayjs(date).month() + 1) : '') +
-								  ' ' +
+								   ` - ` +
 								  date?.format('YYYY')
 								: ''}
 						</span>{' '}
 						<span className="sa-author-text">
-							{authorShortName !== null ? ` - ` + authorShortName + ' ' : ''}
+							{authorShortName !== null ? authorShortName + ' ' : ''}
 							{(userdata?.user?.id !== data?.curator?.id) && (
 								<Tooltip
 									placement={'right'}
