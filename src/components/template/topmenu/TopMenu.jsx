@@ -305,6 +305,7 @@ const TopMenu = (props) => {
 				visible={openBugModal}
 				onClose={()=>{setopenBugModal(false)}}
 				userdata={userdata}
+				on_set_counts={((cnt)=>{setBugMultiCounter(cnt)})}
 				/>
 
 		</div>
