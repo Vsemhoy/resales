@@ -1499,6 +1499,7 @@ export const PROJECT_INFO = {
 		name: 'Текущий',
 	},
 };
+
 export const SIMILAR_BIDS = {
 	"count_all": 3004,
 	"bids": [
