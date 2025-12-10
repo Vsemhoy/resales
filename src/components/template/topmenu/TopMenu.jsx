@@ -237,7 +237,7 @@ const TopMenu = (props) => {
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
-				 <Badge count={+bugMultiCounter[0]}  color="#fa9614da" size='small' offset={[-6, 0]}>
+				 <Badge count={+bugMultiCounter[0]}  color="#fa9614da" size='small' offset={[-6, 6]}>
 					<Button
 						type='text'
 						onClick={()=>{setopenBugModal(!openBugModal)}}
