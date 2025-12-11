@@ -169,14 +169,14 @@ useEffect(() => {
   }
   
   const handleMousedownComment = (ev) => {
-    if (!isAdmin){ return;}
+    if (!isAdmin || !editComment){ return;}
     if (ev.button === 1){
       saveComment();
     }
   }
   
   const handleMousedownResult = (ev) => {
-    if (!isAdmin){ return;}
+    if (!isAdmin || !editResult){ return;}
     if (ev.button === 1){
       saveResult();
     }
