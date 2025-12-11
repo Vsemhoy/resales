@@ -229,6 +229,7 @@ export const BUGMODALMOCK = () => {
     const name = ucwords(generateRandomString(nameLength));
     const content = generateRandomString(contentLength);
     const comment = generateRandomString(commentLength);
+    const res = generateRandomString(commentLength);
     
     let ans = {
       id: i + 1,
@@ -236,6 +237,7 @@ export const BUGMODALMOCK = () => {
       user_id: 243,
       content: content,
       comment: comment,
+      result: res,
       created_at: dayjs().format('YYYY-MM-DD'),
       finished_at: "2023-12-13",
       status: Math.floor(Math.random() * 4) + 1 // Статус от 1 до 4
