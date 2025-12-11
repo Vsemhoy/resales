@@ -82,7 +82,7 @@
 .sa-bug-table-row:hover > div {
   background-color: var(--table-hovered-row-color);
 }
-.sa-bug-table-row:nth-child(even) {
+.sa-bug-table-row:nth-child(even) > div, .sa-bug-table-row-ext:nth-child(even) > div {
   background-color: var(--table-second-row-color);
 }
 .sa-bug-table-row:last-child {

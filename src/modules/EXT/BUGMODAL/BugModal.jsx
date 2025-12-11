@@ -46,6 +46,8 @@ function BugModal(props) {
   const [filterStatus,   setFilterStatus] = useState(1);
   const [filterUserId,   setFilterUserId] = useState([]);
 
+  const [callToUnFocusOthers, setCallToUnFocusOthers] = useState(0);
+
   const [bugMultiCounter, setBugMultiCounter] = useState([0,0,0,0]);
 
 
@@ -541,6 +543,8 @@ useEffect(() => {
                     StatusBadge={StatusBadge}
                     statuses={statusArray}
                     userdata={userdata}
+                    on_focus_field={setCallToUnFocusOthers}
+                    call_to_unfocus={callToUnFocusOthers}
                   />
                 ))}
                 {bugReports?.length === 0 ? (

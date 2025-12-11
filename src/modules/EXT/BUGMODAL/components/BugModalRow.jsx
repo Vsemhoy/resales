@@ -9,7 +9,7 @@ import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
 
 
-const BugModalRow = ({ item, isAdmin, filterUserName, filterText, StatusBadge, statuses, userdata, filterConnment, filterResult }) => {
+const BugModalRow = ({ item, isAdmin, filterUserName, filterText, StatusBadge, statuses, userdata, filterConnment, filterResult, on_focus_field, call_to_unfocus }) => {
   // Если item не передан, рендерим пустой div или ничего
   const [editStatus, setEditStatus] = useState(false);
   const [editComment, setEditComment] = useState(false);
@@ -21,8 +21,10 @@ const BugModalRow = ({ item, isAdmin, filterUserName, filterText, StatusBadge, s
 
   const [rowOnSaveState, setRowOnSaveState] = useState(false);
 
-  
+  const [itemId, setItemId] = useState(null);
+
 useEffect(() => {
+  setItemId(item.id);
   setComment(item.comment || '');
   setResult(item.result || '');     // ← Правильно: состояние для значения
   setStatus(item.status_id);
@@ -47,6 +49,10 @@ useEffect(() => {
         
       }, 1000);
     }
+    if (ev.ctrlKey && (ev.key === "S" || ev.key === "s" || ev.key === "Ы" || ev.key === "ы")){
+      ev.preventDefault();
+      saveResult();
+    }
 
     if (ev.ctrlKey && ev.key === "Enter"){
       let str = "\n" +  dayjs().format('DD.MM.YYYY  HH:MM') + " - " + ShortName( userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname);
@@ -66,6 +72,11 @@ useEffect(() => {
           return;
       }, 100);
     }
+    if (ev.ctrlKey && (ev.key === "S" || ev.key === "s" || ev.key === "Ы" || ev.key === "ы")){
+      ev.preventDefault();
+      saveComment();
+    }
+
     if (ev.ctrlKey && ev.key === "Enter"){
       let str = "\n" +  dayjs().format('DD.MM.YYYY  HH:MM') + " - " + ShortName( userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname);
       setComment((comment.trim() + str).trim() + " :\n");
@@ -90,13 +101,47 @@ useEffect(() => {
   }
 
   const saveResult = () => {
-    sendToServer('result', result);
+    if (result !== item.result){
+      sendToServer('result', result);
+    }
     setEditResult(false);
   }
   const saveComment = () => {
-    sendToServer('comment', comment);
+    if (comment !== item.comment){
+      sendToServer('comment', comment);
+    }
     setEditComment(false)
   }
+  const saveStatus = () => {
+    if (status !== item.status_id){
+      sendToServer('status_id', status);
+    }
+    setEditStatus(false)
+  }
+
+  useEffect(() => {
+    if (call_to_unfocus !== itemId + "_1"){
+      if (editComment){
+        saveComment();
+        setEditComment(false);
+      }
+    }
+    if (call_to_unfocus !== itemId + "_2"){
+      if (editResult){
+        saveResult();
+        setEditResult(false);
+      }
+    }
+    if (call_to_unfocus !== itemId + "_3"){
+      if (editStatus){
+        saveStatus();
+        setEditStatus(false);
+      }
+      setEditStatus(false);
+    }
+  }, [call_to_unfocus]);
+
+
 
 
    const send_to_server_action = async (data) => {
@@ -107,7 +152,7 @@ useEffect(() => {
           data: {content: data},
           _token: CSRF_TOKEN,
         };
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/updatereport', format_data);
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/updatereport/' + itemId, format_data);
         if (response) {
             setRowOnSaveState(false)
         }
@@ -123,6 +168,20 @@ useEffect(() => {
     }
   }
   
+  const handleMousedownComment = (ev) => {
+    if (!isAdmin){ return;}
+    if (ev.button === 1){
+      saveComment();
+    }
+  }
+  
+  const handleMousedownResult = (ev) => {
+    if (!isAdmin){ return;}
+    if (ev.button === 1){
+      saveResult();
+    }
+  }
+
   // const insertTimeIntoResult = () => {
     
   //   // let str = "\n" +  dayjs().format('DD.MM.YYYY  HH:MM') + " - " + userdata?.user?.surname + ' ' + userdata?.user?.name + ":\n";
@@ -161,8 +220,11 @@ useEffect(() => {
         <div className={'sa-bug-table-cell sa-bug-table-cell-left'}>
           <div
             className={`${editComment ? 'edited-data-cell' : ''}`}
-            onDoubleClick={ ()=>{if (isAdmin && !editComment){setEditComment(true);}}}
-            onMouseLeave={()=>{if (isAdmin && editComment){ saveComment()}}}
+            onDoubleClick={ ()=>{if (isAdmin && !editComment){setEditComment(true);
+              on_focus_field(itemId + "_1");
+            }}}
+            onMouseDown={handleMousedownComment}
+            // onMouseLeave={()=>{if (isAdmin && editComment){ saveComment()}}}
           >
            {isAdmin && editComment ? (
             <TextArea 
@@ -183,12 +245,15 @@ useEffect(() => {
       <div className={'sa-bug-table-cell sa-bug-table-cell-left'}>
         <div
           className={`${editResult ? 'edited-data-cell' : ''}`}
-          onDoubleClick={ ()=>{if (isAdmin && !editResult){setEditResult(true);}}}
-          onMouseLeave={()=>{
-            if (isAdmin && editResult){
-              saveResult();
-            }
-          }}
+          onDoubleClick={ ()=>{if (isAdmin && !editResult){setEditResult(true);
+            on_focus_field(itemId + "_2");
+          }}}
+          onMouseDown={handleMousedownResult}
+          // onMouseLeave={()=>{
+          //   if (isAdmin && editResult){
+          //     saveResult();
+          //   }
+          // }}
         >
           {isAdmin && editResult ? (
             <TextArea 
@@ -208,8 +273,10 @@ useEffect(() => {
       </div>
       <div className={'sa-bug-table-cell'}>
         <div 
-          onMouseLeave={()=>{if (isAdmin && editStatus) {setEditStatus(false);}}}
-          onDoubleClick={ ()=>{if (isAdmin && !editStatus){setEditStatus(true);}}}>
+          // onMouseLeave={()=>{if (isAdmin && editStatus) {setEditStatus(false);}}}
+          onDoubleClick={ ()=>{if (isAdmin && !editStatus){setEditStatus(true);
+            on_focus_field(itemId + "_3");
+          }}}>
         {isAdmin && editStatus ? (
           <Select 
             value={status}
