@@ -182,11 +182,7 @@ useEffect(() => {
     }
   }
 
-  // const insertTimeIntoResult = () => {
-    
-  //   // let str = "\n" +  dayjs().format('DD.MM.YYYY  HH:MM') + " - " + userdata?.user?.surname + ' ' + userdata?.user?.name + ":\n";
-  //   // setResult(result + str);
-  // }
+
 
   if (!item) return null;
 
