@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import {
@@ -443,34 +443,54 @@ useEffect(() => {
 		}
 	}, [userdata]);
 
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      // Ctrl + S
-      if (event.ctrlKey && event.key === 's') {
-        event.preventDefault(); // Блокируем стандартное сохранение браузера
-        if (editMode){
-          handleSaveData();
-        } else {
-          setEditMode(true);
-        }
-      }
-      
-      // Ctrl + X
-      if (event.ctrlKey && event.key === 'x') {
-        event.preventDefault();
-        handleDiscard();
-		setTempMainData(null);
-      }
 
-    };
 
-    document.addEventListener('keydown', handleKeyDown);
-    
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
 
+  // useEffect(() => {
+  //   const handleKeyDown = (event) => {
+  //     // Ctrl + S
+	// 		console.log(event.key);
+  //     if (event.ctrlKey && event.key === 's') {
+  //       event.preventDefault(); // Блокируем стандартное сохранение браузера
+  //       if (editMode){
+	// 				handleSaveData();
+	// 				alert('YOu pressed save')
+  //       } else {
+	// 				setEditMode(true);
+	// 				alert('YOu pressed make edit 2 ' + editMode)
+  //       }
+  //     }
+
+  //   };
+
+	// 	document.addEventListener('keydown', handleKeyDown);
+	// 	console.log('✅ Listener ДОБАВЛЕН');
+		
+	// 	return () => {
+	// 		document.removeEventListener('keydown', handleKeyDown);
+	// 		console.log('🧹 Listener УДАЛЕН');
+	// 	};
+  // }, [editMode]);
+
+
+
+
+// const handleKeyDown = useCallback((event) => {
+//   if (event.ctrlKey && event.key === 's') {
+//     event.preventDefault();
+//     if (editMode) {
+// 			alert('YOu pressed save')
+//       handleSaveData();
+//     } else {
+//       // setEditMode(true);
+//     }
+//   }
+// }, [editMode]);
+
+// useEffect(() => {
+//   document.addEventListener('keydown', handleKeyDown);
+//   return () => document.removeEventListener('keydown', handleKeyDown);
+// }, [handleKeyDown]);
 
 
 	const handleDiscard = () => {
@@ -814,6 +834,41 @@ useEffect(() => {
 
 
 
+useEffect(() => {
+  // console.log('🔥 useEffect keydown ЗАПУЩЕН', editMode);
+  
+  const handleKeyDown = (event) => {
+    if (event.ctrlKey && (event.key === 's' || event.key === 'S' || event.key === 'ы' || event.key === 'Ы')) {
+			if (editMode){
+				event.preventDefault();
+				// console.log('✅ Ctrl+S пойман!');
+				handleSaveData();
+			}
+      
+    }
+  };
+
+  document.addEventListener('keydown', handleKeyDown);
+  
+  return () => {
+    document.removeEventListener('keydown', handleKeyDown);
+  };
+}, [editMode, 
+		tempMain_contacts, 
+		tempMain_addresses,
+		tempMain_emails,
+		tempMain_legalAddresses,
+		tempMain_phones,
+		tempMain_an_licenses,
+		tempMain_an_requisites,
+		tempMain_bo_licenses,
+		tempMain_an_tolerances,
+		tempMainData,
+		tempProjectsData,
+		tempCallsData,
+		tempNotesData
+]);
+	
 
 
 
