@@ -7,23 +7,29 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
     const [hashModels, setHashModels] = useState({});
     const [addition, setAddition] = useState([]);
 
-    const replace_alphabet = {
-        'а': 'a',
-        'в': 'b',
-        'с': 'c',
-        'д': 'd',
-        'е': 'e',
-        'н': 'h',
-        'к': 'k',
-        'м': 'm',
-        'о': 'o',
-        'р': 'p',
-        'т': 't',
-        'х': 'x',
+    const translitHomoglyphs = (str) => {
+        const replace_alphabet = {
+            'а': 'a', 'А': 'A',
+            'в': 'b', 'В': 'B',
+            'с': 'c', 'С': 'C',
+            'д': 'd', 'Д': 'D',
+            'е': 'e', 'Е': 'E',
+            'н': 'h', 'Н': 'H',
+            'к': 'k', 'К': 'K',
+            'м': 'm', 'М': 'M',
+            'о': 'o', 'О': 'O',
+            'р': 'p', 'Р': 'P',
+            'т': 't', 'Т': 'T',
+            'х': 'x', 'Х': 'X',
+            'у': 'y', 'У': 'Y',
+            'ё': 'e', 'Ё': 'E',
+        };
+
+        return str.replace(/[авсдеhкмопртхуёАВСДЕHКМОПРТХУЁ]/g, char => replace_alphabet[char] || char);
     };
 
     // Создаем быстрый поиск моделей
-    useEffect(() => {
+    /*useEffect(() => {
         if (models && models.length > 0) {
             const map = {};
             models.forEach(model => {
@@ -32,10 +38,23 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
             });
             setHashModels(map);
         }
+    }, [models]);*/
+    useEffect(() => {
+        if (models && models.length > 0) {
+            const map = {};
+            models.forEach(model => {
+                if (!model.name) return;
+                // 1. удаляем пробелы → 2. lowercase → 3. транслит омографов
+                const cleanName = model.name.replace(/\s+/g, '').toLowerCase();
+                const seoName = translitHomoglyphs(cleanName);
+                map[seoName] = model.id;
+            });
+            setHashModels(map);
+        }
     }, [models]);
 
     // Поиск модели по названию
-    const getModelName = (name) => {
+    /*const getModelName = (name) => {
         if (!models || models.length === 0) return null;
 
         if (!isNaN(name) && name !== '') {
@@ -54,6 +73,31 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
 
         if (hashModels[nameLower]) {
             const id = hashModels[nameLower];
+            return models.find(m => m.id === id) ?? null;
+        }
+
+        return null;
+    };*/
+    const getModelName = (name) => {
+        if (!models || models.length === 0) return null;
+
+        if (!isNaN(name) && name !== '') {
+            return null;
+        }
+
+        name = name.toString().trim();
+        if (name.length <= 1) return null;
+
+        let cleanName = name.toLowerCase().replace(/\s+/g, '');
+        let trname = translitHomoglyphs(cleanName);
+
+        if (hashModels[trname]) {
+            const id = hashModels[trname];
+            return models.find(m => m.id === id) ?? null;
+        }
+
+        if (hashModels[cleanName]) {
+            const id = hashModels[cleanName];
             return models.find(m => m.id === id) ?? null;
         }
 
