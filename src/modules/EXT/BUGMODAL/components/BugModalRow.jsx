@@ -161,10 +161,10 @@ useEffect(() => {
         <div className={'sa-bug-table-cell sa-bug-table-cell-left'}>
           <div
             className={`${editComment ? 'edited-data-cell' : ''}`}
-            onDoubleClick={ ()=>{if (!editComment){setEditComment(true);}}}
-            onMouseLeave={()=>{if (editComment){ saveComment()}}}
+            onDoubleClick={ ()=>{if (isAdmin && !editComment){setEditComment(true);}}}
+            onMouseLeave={()=>{if (isAdmin && editComment){ saveComment()}}}
           >
-           {editComment ? (
+           {isAdmin && editComment ? (
             <TextArea 
               value={comment}
               onChange={mouseDoownComment}
@@ -183,14 +183,14 @@ useEffect(() => {
       <div className={'sa-bug-table-cell sa-bug-table-cell-left'}>
         <div
           className={`${editResult ? 'edited-data-cell' : ''}`}
-          onDoubleClick={ ()=>{if (!editResult){setEditResult(true);}}}
+          onDoubleClick={ ()=>{if (isAdmin && !editResult){setEditResult(true);}}}
           onMouseLeave={()=>{
-            if (editResult){
+            if (isAdmin && editResult){
               saveResult();
             }
           }}
         >
-          {editResult ? (
+          {isAdmin && editResult ? (
             <TextArea 
               value={result}
               onChange={mouseDoownResult}
@@ -208,9 +208,9 @@ useEffect(() => {
       </div>
       <div className={'sa-bug-table-cell'}>
         <div 
-          onMouseLeave={()=>{setEditStatus(false)}}
-        onDoubleClick={ ()=>{if (!editStatus){setEditStatus(true);}}}>
-        {editStatus ? (
+          onMouseLeave={()=>{if (isAdmin && editStatus) {setEditStatus(false);}}}
+          onDoubleClick={ ()=>{if (isAdmin && !editStatus){setEditStatus(true);}}}>
+        {isAdmin && editStatus ? (
           <Select 
             value={status}
             onChange={(ev)=>{onChangeStatus(ev)}}
