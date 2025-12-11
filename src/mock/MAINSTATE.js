@@ -154,6 +154,7 @@ export const MS_USER = {
 		id_role: 1,
 		email: null,
 		sales_role: 1,
+    is_admin: true,
 		password2: '$2y$12$vwqewb1to3XkD3FUvSrgoeydtcmsswjQSp6DWvJfxZanevLwAq6BS',
 		active_company: 2,
 		id_departament: 11,

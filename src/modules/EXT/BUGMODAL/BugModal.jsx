@@ -11,7 +11,7 @@ import { countBy, forIn } from 'lodash';
 import { ANTD_PAGINATION_LOCALE } from '../../../config/Localization';
 import dayjs from 'dayjs';
 import HighlightText from '../../../components/helpers/HighlightText';
-import HighlightTextBreaker from '../../../components/helpers/HighlightTextBreaker';
+import HighlightTextBreaker from '../../../components/helpers/HighlightTextBreaker.js';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
@@ -29,6 +29,8 @@ function BugModal(props) {
 	const [filterName, setFilterName] = useState(null); // filter value for the username column
 	const formRef = React.useRef();
 
+  const [isAdmin, setIsAdmin] = useState(false);
+
 	const [form] = Form.useForm();
 	const [mform] = Form.useForm();
 
@@ -45,6 +47,9 @@ function BugModal(props) {
 
   useEffect(() => {
     setUserdata(props.userdata);
+    if (props.userdata?.user.is_admin){
+      setIsAdmin(true);
+    }
   }, [props.userdata]);
 
 const statusConfig = {

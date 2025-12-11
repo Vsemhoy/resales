@@ -35,6 +35,7 @@ const TopMenu = (props) => {
 	const [topRole, setTopRole] = useState(1);
 	const [showDebugger, setShowDebugger] = useState(false);
 	const debuggerRef = useRef(null);
+	const [isAdmin, setIsAdmin] = useState(false);
 
 	const [openBugModal, setopenBugModal] = useState(false);
 
@@ -42,6 +43,9 @@ const TopMenu = (props) => {
 
 	useEffect(() => {
 		setUserdata(props.userdata);
+		if (props.userdata?.user.is_admin){
+			setIsAdmin(true);
+		}
 	}, [props.userdata]);
 
 	// Закрытие debugger при клике вне компонента
