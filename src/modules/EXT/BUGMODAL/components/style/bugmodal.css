@@ -64,14 +64,25 @@
 }
 .sa-bug-table-row {
   display: grid;
-  grid-template-columns: 100px minmax(100px, 200px) 1fr 120px  100px;
+  grid-template-columns: 100px minmax(100px, 200px) 1fr 1fr 120px  100px;
   border-bottom: 1px solid var(--row-divider-color);
-  transition: all ease 0.2s;
+  transition: all ease 0.7s;
 }
+.sa-bug-table-row-ext {
+  display: grid;
+  grid-template-columns: 100px minmax(100px, 200px) 1fr 1fr 1fr 120px  100px;
+  border-bottom: 1px solid var(--row-divider-color);
+  transition: all ease 0.7s;
+}
+
+.sa-bug-table-row-ext:hover, .sa-bug-table-row:hover {
+  background-color: var(--table-hovered-row-color)
+}
+
 .sa-bug-table-row:hover > div {
   background-color: var(--table-hovered-row-color);
 }
-.sa-bug-table-row:nth-child(even) {
+.sa-bug-table-row:nth-child(even) > div, .sa-bug-table-row-ext:nth-child(even) > div {
   background-color: var(--table-second-row-color);
 }
 .sa-bug-table-row:last-child {
@@ -87,7 +98,9 @@ border-right: 1px solid var(--column-divider-color);
 }
 .sa-bug-table-cell:nth-child(1),
 .sa-bug-table-cell:nth-child(4),
-.sa-bug-table-cell:nth-child(5)
+.sa-bug-table-cell:nth-child(5),
+.sa-bug-table-cell:nth-child(6),
+.sa-bug-table-cell:nth-child(7)
 
 {
   text-align: center;
@@ -112,4 +125,49 @@ border-right: 1px solid var(--column-divider-color);
 
 .sa-bug-page-container-body, .sa-bug-modal-tabs {
       background: linear-gradient(#00000007, transparent);
+}
+.sa-bug-table-cell-left * {
+  text-align: left;
+}
+
+.sa-bug-table-head {
+  padding-right: 16px;
+}
+
+.edited-data-cell {
+  /* outline: 1px solid blue; */
+  padding: 0px !important;
+}
+.sa-bug-table-cell > div {
+  height: 100%;
+}
+.edited-data-cell * {
+  width: 100%;
+  height: 100%;
+  /* font-size: larger; */
+}
+
+/* .sa-bug-table-cell.sa-bug-table-cell-left {
+  display: flex;
+} */
+
+.sa-bug-table-cell.sa-bug-table-cell-left > div {
+  flex: 1;
+  display: flex;
+}
+
+.sa-bug-textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  resize: none; /* если не нужна ручная растяжка */
+}
+
+.sa-bug-table-row-ext > div {
+  transition: all 3s;
+}
+.sa-bug-table-row-on-save > div {
+  background-color: var(--row-self-accent-faded-color-2);
+  /* background-color: var(--row-self-busy-color); */
 }

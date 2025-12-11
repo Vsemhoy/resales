@@ -12,6 +12,7 @@ import { ANTD_PAGINATION_LOCALE } from '../../../config/Localization';
 import dayjs from 'dayjs';
 import HighlightText from '../../../components/helpers/HighlightText';
 import HighlightTextBreaker from '../../../components/helpers/HighlightTextBreaker.js';
+import BugModalRow from './components/BugModalRow.jsx';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
@@ -40,10 +41,17 @@ function BugModal(props) {
   const [filterFinish,   setFilterFinish] = useState([null, null]);
   const [filterUserName, setFilterUserName] = useState(null);
   const [filterText,     setFilterText] = useState(null);
+  const [filterComment,  setFilterComment] = useState(null);
+  const [filterResult,   setFilterResult] = useState(null);
   const [filterStatus,   setFilterStatus] = useState(1);
   const [filterUserId,   setFilterUserId] = useState([]);
 
+  const [callToUnFocusOthers, setCallToUnFocusOthers] = useState(0);
+
   const [bugMultiCounter, setBugMultiCounter] = useState([0,0,0,0]);
+
+
+  const [statusArray, setStatusArray] = useState([]);
 
   useEffect(() => {
     setUserdata(props.userdata);
@@ -54,26 +62,31 @@ function BugModal(props) {
 
 const statusConfig = {
     0: {
+      id: 0,
       text: "Все",
       color: "default", // серый
       className: "status-created"
     },
     1: {
+      id: 1,
       text: "Новая заявка",
       color: "default", // серый
       className: "status-created"
     },
     2: {
+      id: 2,
       text: "Принята в работу",
       color: "processing", // синий (в Ant Design желтый - 'gold', но processing лучше выглядит)
       className: "status-in-progress"
     },
     3: {
+      id: 3,
       text: "Решено",
       color: "success", // зеленый
       className: "status-completed"
     },
     4: {
+      id: 4,
       text: "Отклонено",
       color: "error", // красный
       className: "status-rejected"
@@ -81,8 +94,14 @@ const statusConfig = {
   };
 
 const getStatusConfig = () => {
-  return Object.values(statusConfig);
+  let arr =  Object.values(statusConfig);
+  return arr;
 };
+
+useEffect(() => {
+    let arr =  Object.values(statusConfig);
+  setStatusArray(arr.filter((item)=> item.id !== 0));
+  }, []);
 
 // Компонент для отображения статуса с бейджем
   const StatusBadge = ( status ) => {
@@ -120,6 +139,8 @@ const getStatusConfig = () => {
     filterFinish,  
     filterUserName,
     filterText,    
+    filterComment,
+    filterResult,
     filterStatus,  
     filterUserId, 
     onPage,
@@ -177,6 +198,8 @@ useEffect(() => {
       try {
 			const obj = {
         content: filterText,
+        comment: filterComment,
+        result: filterResult,
         username: filterUserName,
         created_at: filterCreated,
         finished_at: filterFinish,
@@ -273,6 +296,29 @@ useEffect(() => {
   };
 
 
+
+
+//  ADMIN SECTION//  ADMIN SECTION
+//  ADMIN SECTION//  ADMIN SECTION//  ADMIN SECTION//  ADMIN SECTION//  ADMIN SECTION/
+
+  const onChangeStatus = (id, newstatus) => {
+
+  }
+
+    const onChangeComment = (id, newstext) => {
+    
+  }
+
+  const onChangeResult = (id, newsresult) => {
+    
+  }
+
+//  ADMIN SECTION//  ADMIN SECTION//  ADMIN SECTION//  ADMIN SECTION//  ADMIN SECTION
+//  ADMIN SECTION//  ADMIN SECTION
+
+
+
+
 	return (
 		<div className="sa-bug-modal">
 			<Modal
@@ -282,7 +328,7 @@ useEffect(() => {
               ...modal.props.style, 
               padding: 0 ,
               height: 'calc(100vh - 100px)',
-              maxWidth: '1300px',
+              maxWidth: '1600px',
               marginLeft: 'auto',
               marginRight: 'auto'
             }
@@ -404,7 +450,7 @@ useEffect(() => {
                 </div>
               </div>
               <div className={'sa-bug-table-head'}>
-                <div className={'sa-bug-table-row'} >
+                <div className={`${isAdmin ? 'sa-bug-table-row-ext' : 'sa-bug-table-row'}`}>
                   <div className={'sa-bug-table-cell'}>
                     <div>
                         <DatePicker.RangePicker
@@ -434,6 +480,29 @@ useEffect(() => {
                         />
                     </div>
                   </div>
+                  {isAdmin && (
+                    <div className={'sa-bug-table-cell'}>
+                      <div>
+                          <Input 
+                            value={filterComment || ''}
+                            onChange={(e) => setFilterComment(e.target.value || null)}
+                            placeholder="Коммент своим"
+                            allowClear
+                          />
+                      </div>
+                    </div>
+                  )}
+                  <div className={'sa-bug-table-cell'}>
+                    <div>
+                        <Input 
+                          value={filterResult || ''}
+                          onChange={(e) => setFilterResult(e.target.value || null)}
+                          placeholder="Текст ответа"
+                          allowClear
+                        />
+                    </div>
+                  </div>
+                  
                   <div className={'sa-bug-table-cell'}>
                     <div>
                         <Select 
@@ -462,49 +531,21 @@ useEffect(() => {
               </div>
               <div className={'sa-bug-table-body-wrap'} ref={scrollRef}>
 							<div className={'sa-bug-table-body'}>
-                {bugReports?.map((item)=>(
-                  <div className={'sa-bug-table-row'} >
-                    <div className={'sa-bug-table-cell'}>
-                      <div>
-                        {item.created_at && (
-                          <div>
-                            <div>{dayjs(item.created_at).format('DD.MM.YYYY')}</div> <div>{dayjs(item.created_at).format('HH:mm')}</div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className={'sa-bug-table-cell'}>
-                      <div>
-                        <HighlightText text={item.username} highlight={filterUserName} /> 
-                      </div>
-                    </div>
-                    <div className={'sa-bug-table-cell'}>
-                      <div>
-                      <HighlightTextBreaker text={item.content} highlight={filterText} 
-                        breakLines={true}
-                      /> 
-                        
-                      </div>
-                    </div>
-                    <div className={'sa-bug-table-cell'}>
-                      <div>
-                        <Tooltip title={item.comment}>
-
-                        {StatusBadge(item.status_id)}
-                        </Tooltip>
-                      </div>
-                    </div>
-                    <div className={'sa-bug-table-cell'}>
-                      <div>
-                        {item.finished_at && (
-                          <div>
-                            <div>{dayjs(item.finished_at).format('DD.MM.YYYY')}</div> <div>{dayjs(item.finished_at).format('HH:mm')}</div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                  </div>
+                {bugReports?.map((item) => (
+                  <BugModalRow
+                    key={'bima_tem_' + item.id}                // добавьте уникальный ключ
+                    item={item}
+                    isAdmin={isAdmin}
+                    filterUserName={filterUserName}
+                    filterText={filterText}
+                    filterConnment={filterComment}
+                    filterResult={filterResult}
+                    StatusBadge={StatusBadge}
+                    statuses={statusArray}
+                    userdata={userdata}
+                    on_focus_field={setCallToUnFocusOthers}
+                    call_to_unfocus={callToUnFocusOthers}
+                  />
                 ))}
                 {bugReports?.length === 0 ? (
                   <Empty />

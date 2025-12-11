@@ -240,7 +240,7 @@ export const BUGMODALMOCK = () => {
       result: res,
       created_at: dayjs().format('YYYY-MM-DD'),
       finished_at: "2023-12-13",
-      status: Math.floor(Math.random() * 4) + 1 // Статус от 1 до 4
+      status_id: Math.floor(Math.random() * 4) + 1 // Статус от 1 до 4
     };
     result.push(ans);
   }
