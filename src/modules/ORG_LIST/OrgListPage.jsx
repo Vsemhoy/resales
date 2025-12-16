@@ -312,6 +312,10 @@ const OrgListPage = (props) => {
 		}
 	}, [filterBox, orderBox, currentPage, onPage]);
 
+	useEffect(() => {
+		console.log('currentPage',currentPage);
+	}, [currentPage]);
+
 	/** ------------------ FETCHES ---------------- */
 
 	// const get_orglist = () => {

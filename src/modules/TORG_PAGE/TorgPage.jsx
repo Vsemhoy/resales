@@ -146,6 +146,8 @@ const [socketBusyOrglist, setsocketBusyOrglist] = useState([
 
 const [curatorRequestSent, setCuratorRequestSent] = useState(false);
 
+const [orgName, setOrgName] = useState('');
+
 	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
 		//
 		useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', ({ activeUsers }) => setsocketBusyOrglist(prev => {
@@ -598,6 +600,7 @@ useEffect(() => {
 					setCuratorRequestSent(response.data.button_curator_status);
 				};
 				setBaseMainData(FlushOrgData(response.data.content));
+				setOrgName(response.data.content.name)
 				setLoading(false);
 			}
 				
@@ -938,6 +941,7 @@ useEffect(() => {
 	}
 
 
+
 	const handleCallBecomeCurator = async () => {
 			// http://192.168.1.16/api/curators/create
 			let luand = window.confirm("Вы точно хотите запросить кураторство для " + baseMainData?.name + "?");
@@ -952,17 +956,39 @@ useEffect(() => {
 							id_org: itemId,
 						},
 					};
-					let new_bid_response = await PROD_AXIOS_INSTANCE.post(
+					let response = await PROD_AXIOS_INSTANCE.post(
 						"/api/curators/create",
 						format_data,
 					);
-					if (new_bid_response) {
-						alert("Заявка на кураторство отправлена");
+					if (response) {
+						// alert("Заявка на кураторство отправлена");
 						setCuratorRequestSent(true);
+
+							if (response.status === 200 || response.data.status === 2){
+								// При успешной записи - очищаем все временные списки и загружаем данные заново
+								clearTemps();
+								setIsAlertVisible(true);
+								setAlertMessage(`Успех!`);
+								setAlertDescription(response.data.message || 'Заявка на кураторство отправлена');
+								setAlertType('success');
+								setSaveProcess(60);
+							} else {
+								setIsAlertVisible(true);
+								setAlertMessage(`Произошла ошибка!`);
+								setAlertDescription(response.data?.message || 'Неизвестная ошибка сервера');
+								setAlertType('error');
+								setBlockSave(false);
+								setBlockOnSave(false);
+							}
 					}
 				} catch (e) {
 					console.log(e);
-					
+					setIsAlertVisible(true);
+					setAlertMessage(`Ошибка на стороне сервера`);
+					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+					setAlertType('error');
+					setBlockSave(false);
+					setBlockOnSave(false);
 			}
 	}
 
@@ -974,6 +1000,9 @@ useEffect(() => {
 	}
 
 
+	useEffect(() => {
+		console.log('baseMainData', baseMainData);
+	}, [baseMainData]);
 
 
 	// Подготовка Контактов к отправке
@@ -1318,7 +1347,9 @@ useEffect(() => {
 										</Tooltip>
 								) : (
 									<>
-									{!editMode && !lockBySocket && userdata?.user?.id !== baseMainData?.curator?.id && (
+									{userdata && userdata.acls && (userdata.acls.includes(137) || userdata.acls.includes(138) || userdata.acls.includes(139))
+									&&
+									!editMode && !lockBySocket && userdata?.user?.id !== baseMainData?.curator?.id && (
 										<Tooltip title={'Запросить кураторство'} placement={'left'}>
 											<Button style={{marginRight: '12px'}}
 											color="cyan" variant="outlined"
@@ -1401,13 +1432,18 @@ useEffect(() => {
 
 
 						{activeTab === 'o' && (
-							<OrgListModalOffersTab data={{ id: itemId }} environment={'editor'} />
+							<OrgListModalOffersTab
+							data={{ id: itemId }}
+							environment={'editor'} 
+							org_name={orgName}
+							/>
 						)}
 
 						{activeTab === 'b' && (
 							<OrgListModalBillsTab
 								data={{ id: itemId }}
 								environment={'editor'}
+								org_name={orgName}
 							/>
 						)}
 
@@ -1419,6 +1455,8 @@ useEffect(() => {
 							base_data={baseMainData}
 							userdata={userdata}
               selects={baseFiltersData}
+
+							// on_change_name={(orNamen)=>{setOrgName(orNamen)}}
 
 							do_delay={(val)=>{setBlockDelay(val)}}
 							is_loading={loading}
