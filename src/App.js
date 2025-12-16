@@ -36,6 +36,7 @@ import {ResalesWebSocketProvider} from "./context/ResalesWebSocketContext";
 import AlertCustom from "./components/template/Alert/AlertCustom";
 import dayjs from "dayjs";
 import BidPdfPage from "./modules/BID_PDF_PAGE/BidPdfPage";
+import OrgPage from './modules/ORG_PAGE/OrgPage';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -138,6 +139,13 @@ export const App = () => {
                                         element={<TorgPage userdata={userdata} />}
                                     />
                                     <Route path="/orgs/:item_id" element={<TorgPage userdata={userdata} />} />
+
+
+                                    <Route
+                                        path={BASE_ROUTE + '/torgs/:item_id'}
+                                        element={<OrgPage userdata={userdata} />}
+                                    />
+
 
                                     {/* NEW VERSION TEST MAX */}
                                     <Route
