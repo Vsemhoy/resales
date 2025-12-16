@@ -322,6 +322,7 @@ useEffect(() => {
 	return (
 		<div className="sa-bug-modal">
 			<Modal
+        keyboard={false}
         modalRender={(modal) => (
           React.cloneElement(modal, {
             style: { 
