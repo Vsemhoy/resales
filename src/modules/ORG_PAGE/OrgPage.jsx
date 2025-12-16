@@ -35,6 +35,7 @@ import OrgListModalOffersTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListM
 import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalHistoryTab';
 
 import './components/style/orgpage.css';
+import { useURLParams } from '../../components/helpers/UriHelpers';
 
 const TAB_CONFIG = [
   { key: 'm', label: 'Основная информация' },
@@ -50,6 +51,9 @@ const OrgPage = ({ userdata }) => {
   const { item_id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const { getCurrentParamsString } = useURLParams();
+    const [backeReturnPath, setBackeReturnPath] = useState(null);
 
   // ===================== ФОРМЫ =====================
   // Каждая вкладка имеет свой инстанс формы
@@ -72,6 +76,9 @@ const OrgPage = ({ userdata }) => {
   const [lockBySocket, setLockBySocket] = useState(false);
   const [lockUser, setLockUser] = useState(null);
   const { connected, emit } = useWebSocket();
+
+  const [baseMainData, setBaseMainData] = useState(null);
+
 
   // ===================== ПРОВЕРКА ИЗМЕНЕНИЙ =====================
   /**
@@ -102,6 +109,7 @@ const OrgPage = ({ userdata }) => {
         // Устанавливаем данные в форму
         // Формат данных НЕ МЕНЯЕТСЯ - просто передаём как есть
         mainForm.setFieldsValue(transformServerToForm(response.data.content));
+        setBaseMainData(response.data.content);
       }
     } catch (e) {
       console.error('Ошибка загрузки:', e);
@@ -244,36 +252,122 @@ const OrgPage = ({ userdata }) => {
   }, [editMode, hasUnsavedChanges]);
 
   // ===================== РЕНДЕР =====================
+
+
+
+
+
+  useEffect(() => {
+    setLoading(true);
+    let rp = getCurrentParamsString();
+
+    if (rp.includes('frompage=orgs')) {
+      rp = rp.replace('frompage=orgs&', '');
+      rp = rp.replace('frompage=orgs', '');
+      rp = '/orgs?' + rp;
+      setBackeReturnPath(rp);
+    }
+    if (rp.includes('frompage=bids')) {
+      rp = rp.replace('frompage=bids&', '');
+      rp = rp.replace('frompage=bids', '');
+      console.log('rp', rp);
+      rp = '/bids?' + rp;
+      setBackeReturnPath(rp);
+    }
+    let t = searchParams.get('tab');
+    if (t && ['m', 'b', 'o', 'p', 'c', 'n', 'h'].includes(t)) {
+      setSearchParams({ tab: t });
+      setActiveTab(t);
+    } else {
+      //   searchParams.set('tab', "m");
+      setSearchParams({ tab: 'm' });
+      setActiveTab('m');
+    }
+
+    if (PRODMODE) {
+      // get_org_filters();
+
+      // get_main_data_action(item_id);
+
+      // get_departs();
+    } else {
+      // setBaseFilterstData(OM_ORG_FILTERDATA);
+
+      // setBaseMainData(FlushOrgData(ORGLIST_MODAL_MOCK_MAINTAB));
+      // setBaseNotesData(MODAL_NOTES_LIST);
+      // // setBaseProjectsData(MODAL_PROJECTS_LIST);
+      // setBaseCallsData(MODAL_CALLS_LIST);
+
+      // setDepartList(DEPARTAMENTS_MOCK);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+  }, []);
+
+
+
+	const goBack = () => {
+		// const returnPath = location.state?.from;
+		const referrer = document.referrer;
+		if (backeReturnPath) {
+
+			navigate(backeReturnPath);
+		} else {
+			// navigate('/orgs');
+			window.close();
+		}
+	};
+
+
+
+
+
   return (
     <div className="app-page">
-      <div className="org-page-body">
+      <div className="sa-orgpage-body sa-mw-1400">
         
         {/* Шапка с табами */}
         <Affix offsetTop={0}>
-          <div className="org-page-header">
-            <div className="org-page-title">
-              Паспорт организации ({item_id}) / {TAB_CONFIG.find(t => t.key === activeTab)?.label}
-            </div>
-            
-            <div className="org-page-tabs">
-              {TAB_CONFIG.map(tab => (
-                <div
-                  key={tab.key}
-                  className={`org-tab ${activeTab === tab.key ? 'active' : ''}`}
-                  onClick={() => {
-                    setActiveTab(tab.key);
-                    setSearchParams({ tab: tab.key });
-                  }}
-                >
-                  {tab.label}
+          <div className="sa-orgpage-header" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
+
+						<div className={'sa-flex-space'}>
+							<div className={'sa-flex-space'}>
+
+                {backeReturnPath && (
+                  <div className={'sa-orgpage-header-button'} onClick={goBack}>
+                    <ArrowSmallLeftIcon height={'30px'} />
+                  </div>
+                )}
+                <div className={'sa-orgpage-header-title'} style={{ paddingLeft: '12px' }}>
+                  Паспорт организации ({item_id}) / {TAB_CONFIG.find(t => t.key === activeTab)?.label}
                 </div>
-              ))}
-            </div>
-          </div>
+
+              </div>
+							<div></div>
+							<div className={'sa-orp-menu'}>
+                
+            
+                  {TAB_CONFIG.map(tab => (
+                    <div
+                      key={tab.key}
+                      className={`org-tab ${activeTab === tab.key ? 'active' : ''}`}
+                      onClick={() => {
+                        setActiveTab(tab.key);
+                        setSearchParams({ tab: tab.key });
+                      }}
+                    >
+                      {tab.label}
+                    </div>
+                  ))}
+               
+              </div>
+          	</div>
+					</div>
         </Affix>
 
         {/* Подшапка с кнопками */}
-        <Affix offsetTop={40}>
+        {/* <Affix offsetTop={36}>
           <div className="org-page-subheader">
             <div className="org-name">{baseData?.name}</div>
             
@@ -315,7 +409,120 @@ const OrgPage = ({ userdata }) => {
               )}
             </div>
           </div>
-        </Affix>
+        </Affix> */}
+
+
+          <Affix offsetTop={36} className={` ${lockBySocket ? 'sa-busy-header' : ''}`}>    
+            <div className={'sa-orgpage-sub-header sa-flex-space'}>
+              <div className={'sa-orgpage-sub-name'}>{baseMainData?.name}</div>
+              <div>
+                
+              </div>
+              <div className={'sa-flex sa-orgpage-sub-control'} style={{ padding: '6px' }}>
+                {/* {editMode && (
+                            <div onClick={triggerEditMode}>
+                                <XMarkIcon height={'22px'}/> Просмотр
+                            </div>
+                        )} */}
+                {editMode && true && (
+                  <div style={{display: 'flex', alignItems: 'flex-end', paddingRight: '12px'}}>
+                    <Tooltip title={'Не забудьте сохранить'}>
+                      <Tag color='red-inverse'>Есть несохраненные данные</Tag>
+                    </Tooltip>
+                  </div>
+                )}
+
+                {true ? (
+                    <Tooltip title={'Заявка на кураторство подана'} placement={'left'}>
+                      <Button style={{marginRight: '12px'}}
+                        disabled
+                        color="cyan" variant="outlined"
+                        icon={<FlagOutlined />}
+                        >
+                        </Button>
+                    </Tooltip>
+                ) : (
+                  <>
+                  {userdata && userdata.acls && (userdata.acls.includes(137) || userdata.acls.includes(138) || userdata.acls.includes(139))
+                  &&
+                  !editMode && !lockBySocket && userdata?.user?.id !== baseMainData?.curator?.id && (
+                    <Tooltip title={'Запросить кураторство'} placement={'left'}>
+                      <Button style={{marginRight: '12px'}}
+                      color="cyan" variant="outlined"
+                      icon={<FlagOutlined />}
+                        // onClick={handleCallBecomeCurator}
+                        >
+                        </Button>
+                    </Tooltip>
+                  )}
+                  {!editMode && userdata?.user?.id === baseMainData?.curator?.id && (
+                    <Tooltip title={'Вы куратор этой организации'} placement={'left'}>
+                      <Button style={{marginRight: '12px'}}
+                      className={'sa-me-curator'}
+                      color="default" variant="text"
+                      icon={<FlagFilled />}
+                      >
+                        </Button>
+                      </Tooltip>
+                  )}
+                  </>
+                )}
+
+
+                {editMode ? (
+                  <div>
+                    {false ? (
+                      <Button icon={<LoadingOutlined />} color="primary" variant="solid">
+                        Сохраняю...
+                      </Button>
+                    ) : (
+                      <Button
+                        icon={<ClipboardDocumentCheckIcon height={'16px'} />}
+                        // disabled={blockOnSave || BLOCK_SAVE}
+                        // onClick={handleSaveData}
+                        color="primary"
+                        variant="solid"
+                        // disabled={!isSmthChanged}
+                        // title={`${isSmthChanged ? '' : 'Нет данных для сохранения'}`}
+                      >
+                        Сохранить
+                      </Button>
+                    )}
+
+                    <Button
+                      color="primary"
+                      variant="outlined"
+                      // onClick={()=>{isSmthChanged ? setIsOpenCustomModal(true) : setEditMode(false)}}
+                      onClick={handleExitEditMode}
+                      icon={<XMarkIcon height={'16px'} />}
+                    >
+                      Закрыть редактирование
+                    </Button>
+                  </div>
+                ) : (
+                  <div>
+                    {lockBySocket ? (
+                      <div className='sa-editor-org-name'>
+                        Редактирует: {lockUser ? lockUser.username : ''}
+                      </div>
+                    ):(
+                    <Button
+                    color="primary"
+                      variant="outlined"
+                      onClick={() => setEditMode(true)}
+                      icon={<PencilIcon height={'16px'} />}
+                    >
+                      Редактировать
+                    </Button>
+
+                    )}
+                  </div>
+                )}
+                
+              </div>
+            </div>
+            </Affix>  
+
 
         {/* Контент вкладок */}
         <Spin spinning={loading}>

@@ -305,16 +305,48 @@ const MainTabForm = ({ form, editMode, initialData, selects, orgId }) => {
           color="#87c16c"
           extraButton={
             editMode && (
-              <Button
-                size="small"
-                icon={<PlusCircleOutlined />}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAdd('phones', { number: '', ext: '', comment: '' });
-                }}
-              >
-                Добавить телефон
-              </Button>
+              <div className={'sa-flex-space'}>
+                <Button
+                  size="small"
+                  icon={<PlusCircleOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAdd('phones', { number: '', ext: '', comment: '' });
+                  }}
+                >
+                  Добавить телефон
+                </Button>
+                <Button
+                  size="small"
+                  icon={<PlusCircleOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAdd('emails', { number: '', ext: '', comment: '' });
+                  }}
+                >
+                  Добавить адрес
+                </Button>
+                              <Button
+                  size="small"
+                  icon={<PlusCircleOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAdd('addresses', { number: '', ext: '', comment: '' });
+                  }}
+                >
+                  Добавить email
+                </Button>
+                              <Button
+                  size="small"
+                  icon={<PlusCircleOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAdd('legaladdresses', { number: '', ext: '', comment: '' });
+                  }}
+                >
+                  Добавить юр.адрес
+                </Button>
+              </div>
             )
           }
         >
@@ -335,6 +367,62 @@ const MainTabForm = ({ form, editMode, initialData, selects, orgId }) => {
 
             {/* Телефоны */}
             <div className="sa-org-contactstack-box">
+              <Form.List name="addresses">
+                {(fields) => (
+                  <>
+                    {fields.length === 0 ? (
+                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Нет телефонов" />
+                    ) : (
+                      fields.map(({ key, name }) => {
+                        const phone = form.getFieldValue(['addresses', name]);
+                        if (phone?.deleted === 1) return null;
+
+                        return (
+                          <PhoneRow
+                            key={key}
+                            name={name}
+                            editMode={editMode}
+                            form={form}
+                            onRemove={() => handleRemove(['addresses'], name)}
+                            onModify={() => markAsModified(['addresses'], name)}
+                          />
+                        );
+                      })
+                    )}
+                  </>
+                )}
+              </Form.List>
+            </div>
+
+            <div className="sa-org-contactstack-box">
+              <Form.List name="legaladdresses">
+                {(fields) => (
+                  <>
+                    {fields.length === 0 ? (
+                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Нет телефонов" />
+                    ) : (
+                      fields.map(({ key, name }) => {
+                        const phone = form.getFieldValue(['legaladdresses', name]);
+                        if (phone?.deleted === 1) return null;
+
+                        return (
+                          <PhoneRow
+                            key={key}
+                            name={name}
+                            editMode={editMode}
+                            form={form}
+                            onRemove={() => handleRemove(['legaladdresses'], name)}
+                            onModify={() => markAsModified(['legaladdresses'], name)}
+                          />
+                        );
+                      })
+                    )}
+                  </>
+                )}
+              </Form.List>
+            </div>
+
+            <div className="sa-org-contactstack-box">
               <Form.List name="phones">
                 {(fields) => (
                   <>
@@ -353,6 +441,34 @@ const MainTabForm = ({ form, editMode, initialData, selects, orgId }) => {
                             form={form}
                             onRemove={() => handleRemove(['phones'], name)}
                             onModify={() => markAsModified(['phones'], name)}
+                          />
+                        );
+                      })
+                    )}
+                  </>
+                )}
+              </Form.List>
+            </div>
+
+            <div className="sa-org-contactstack-box">
+              <Form.List name="emails">
+                {(fields) => (
+                  <>
+                    {fields.length === 0 ? (
+                      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Нет телефонов" />
+                    ) : (
+                      fields.map(({ key, name }) => {
+                        const phone = form.getFieldValue(['emails', name]);
+                        if (phone?.deleted === 1) return null;
+
+                        return (
+                          <PhoneRow
+                            key={key}
+                            name={name}
+                            editMode={editMode}
+                            form={form}
+                            onRemove={() => handleRemove(['emails'], name)}
+                            onModify={() => markAsModified(['emails'], name)}
                           />
                         );
                       })

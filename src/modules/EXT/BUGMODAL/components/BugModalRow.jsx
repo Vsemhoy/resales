@@ -48,11 +48,14 @@ useEffect(() => {
           return;
         
       }, 1000);
+      saveResult();
     }
     if (ev.ctrlKey && (ev.key === "S" || ev.key === "s" || ev.key === "Ы" || ev.key === "ы")){
       ev.preventDefault();
       saveResult();
     }
+
+
 
     if (ev.ctrlKey && ev.key === "Enter"){
       let str = "\n" +  dayjs().format('DD.MM.YYYY  HH:MM') + " - " + ShortName( userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname);
@@ -71,6 +74,7 @@ useEffect(() => {
           setEditComment(false);
           return;
       }, 100);
+      saveComment();
     }
     if (ev.ctrlKey && (ev.key === "S" || ev.key === "s" || ev.key === "Ы" || ev.key === "ы")){
       ev.preventDefault();

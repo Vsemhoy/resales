@@ -1268,7 +1268,7 @@ useEffect(() => {
 		<>
 			<div className="app-page">
 				<div className="sa-orgpage-body sa-mw-1400">
-        <Affix offsetTop={0}>
+        		<Affix offsetTop={0}>
 					<div className="sa-orgpage-header" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
 						<div className={'sa-flex-space'}>
 							<div className={'sa-flex-space'}>
@@ -1423,7 +1423,7 @@ useEffect(() => {
 								
 							</div>
 						</div>
-            </Affix>  
+            		</Affix>  
 						{blockOnSave && (
 							<div className={'sa-orgpage-loader'}>
 								<div className="sa-orgpage-loader-chunk" style={{ width: saveProcess + '%' }}></div>
