@@ -17,6 +17,7 @@ import {
 	BugAntIcon,
 	ClipboardDocumentListIcon,
 	Cog6ToothIcon,
+	RectangleStackIcon,
 	ShieldCheckIcon,
 	UserCircleIcon,
 } from '@heroicons/react/24/outline';
@@ -152,8 +153,8 @@ const TopMenu = (props) => {
 	const userMenu = [
 		{
 			key: 'rwterw2',
-			label: <div>Настройки</div>,
-			icon: <Cog6ToothIcon height={'18px'} />,
+			label: <NavLink to="/loclog"><div>Локальные логи</div></NavLink>,
+			icon: <RectangleStackIcon height={'18px'} />,
 		},
 		{
 			key: '3fgsd',

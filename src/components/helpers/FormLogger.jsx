@@ -1,31 +1,6 @@
 /**
  * FormLogger.js - Сервис логирования действий пользователя в IndexedDB
- * 
- * ВОЗМОЖНОСТИ:
- * - Хранение логов до 90 дней (настраивается)
- * - Автоочистка старых записей
- * - Поиск по orgId, сессии, времени
- * - Экспорт в JSON файл
- * - Сжатие больших данных
- * 
- * ИСПОЛЬЗОВАНИЕ:
- * 
- * import { formLogger, LOG_ACTIONS } from './FormLogger';
- * 
- * // Логирование
- * formLogger.log('CONTACT_UPDATE', { id: 123, name: 'Иванов' }, { orgId: 456 });
- * 
- * // Снимок формы перед сохранением
- * formLogger.logBeforeSave(payload, { orgId: 456 });
- * 
- * // Экспорт
- * formLogger.exportToFile();
- * formLogger.exportToFile('logs_org_456.json', { orgId: 456 });
- * 
- * // В консоли браузера
- * formLogger.getLogs()
- * formLogger.getLogsByOrg(13675)
- * formLogger.getStats()
+ * v2.1 - Исправлена фильтрация по типам
  */
 
 const DB_NAME = 'torg_form_logs_db';
@@ -39,8 +14,16 @@ class FormLoggerService {
     this.maxAgeDays = DEFAULT_MAX_AGE_DAYS;
     this.sessionId = this._generateSessionId();
     this.userId = null;
+    this.user_role = null;
     this.userName = null;
     this._dbReady = this._initDB();
+    
+    this.com_id = null;
+    this.com_curator = null;
+    this.com_editor = null;
+    this.com_state = null;
+    this.com_idcom = null;
+    this.com_name = null;
     
     // Запускаем очистку при старте
     this._dbReady.then(() => this._cleanupOldLogs());
@@ -48,9 +31,6 @@ class FormLoggerService {
 
   // ===================== ИНИЦИАЛИЗАЦИЯ =====================
 
-  /**
-   * Инициализация базы данных
-   */
   async _initDB() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -69,32 +49,26 @@ class FormLoggerService {
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
         
-        // Удаляем старое хранилище если есть (для миграции)
         if (db.objectStoreNames.contains(STORE_NAME)) {
           db.deleteObjectStore(STORE_NAME);
         }
         
-        // Создаём хранилище с индексами
         const store = db.createObjectStore(STORE_NAME, { 
           keyPath: 'id',
           autoIncrement: false 
         });
         
-        // Индексы для быстрого поиска
         store.createIndex('timestampMs', 'timestampMs', { unique: false });
         store.createIndex('orgId', 'meta.orgId', { unique: false });
         store.createIndex('sessionId', 'sessionId', { unique: false });
         store.createIndex('action', 'action', { unique: false });
-        store.createIndex('date', 'date', { unique: false }); // YYYY-MM-DD для группировки
+        store.createIndex('date', 'date', { unique: false });
         
         console.log('[FormLogger] БД создана/обновлена');
       };
     });
   }
 
-  /**
-   * Ожидание готовности БД
-   */
   async _ensureDB() {
     await this._dbReady;
     if (!this.db) {
@@ -106,34 +80,26 @@ class FormLoggerService {
 
   // ===================== КОНФИГУРАЦИЯ =====================
 
-  /**
-   * Установить максимальный возраст логов в днях
-   * @param {number} days - Количество дней (по умолчанию 90)
-   */
   setMaxAgeDays(days) {
     this.maxAgeDays = days;
     this._cleanupOldLogs();
   }
 
-  /**
-   * Установить данные текущего пользователя
-   * @param {number} userId 
-   * @param {string} userName 
-   */
-  setUser(userId, userName) {
+  setUser(userId, userName, role) {
     this.userId = userId;
     this.userName = userName;
+    this.user_role = role;
   }
+
+  setComCurator(curator_id) { this.com_curator = curator_id; }
+  setComEditor(editor_id) { this.com_editor = editor_id; }
+  setComState(state_code) { this.com_state = state_code; }
+  setComId(com_id) { this.com_id = com_id; }
+  setComIdCompany(com_id) { this.com_idcom = com_id; }
+  setComName(com) { this.com_name = com; }
 
   // ===================== ЛОГИРОВАНИЕ =====================
 
-  /**
-   * Записать лог
-   * @param {string} action - Тип действия (см. LOG_ACTIONS)
-   * @param {any} data - Данные для логирования
-   * @param {Object} meta - Метаданные { orgId, orgName, ... }
-   * @returns {Promise<string|null>} - ID записи или null при ошибке
-   */
   async log(action, data, meta = {}) {
     try {
       const db = await this._ensureDB();
@@ -143,10 +109,19 @@ class FormLoggerService {
         id: this._generateId(),
         timestamp: now.toISOString(),
         timestampMs: now.getTime(),
-        date: now.toISOString().slice(0, 10), // YYYY-MM-DD
+        date: now.toISOString().slice(0, 10),
         sessionId: this.sessionId,
         userId: this.userId,
         userName: this.userName,
+        userRole: this.user_role,
+        comState: {
+          id: this.com_id,
+          editor_id: this.com_editor,
+          state: this.com_state,
+          curator_id: this.com_curator,
+          id_company: this.com_idcom,
+          name: this.com_name
+        },
         action,
         data: this._sanitizeData(data),
         meta: {
@@ -161,10 +136,7 @@ class FormLoggerService {
         const store = tx.objectStore(STORE_NAME);
         const request = store.add(logEntry);
         
-        request.onsuccess = () => {
-          // console.log(`[FormLogger] ${action}`, logEntry.id);
-          resolve(logEntry.id);
-        };
+        request.onsuccess = () => resolve(logEntry.id);
         request.onerror = () => {
           console.error('[FormLogger] Ошибка записи:', request.error);
           reject(request.error);
@@ -176,37 +148,19 @@ class FormLoggerService {
     }
   }
 
-  /**
-   * Логирование снимка формы (фильтрует только изменённые данные)
-   * @param {string} action - Тип действия
-   * @param {Object} formValues - Значения формы
-   * @param {Object} meta - Метаданные
-   */
   async logFormState(action, formValues, meta = {}) {
     const compactData = this._compactFormData(formValues);
     return this.log(action, compactData, { ...meta, isFormSnapshot: true });
   }
 
-  /**
-   * Логирование ПОЛНОГО снимка формы (без фильтрации)
-   * Используй для критических моментов (перед сохранением, при ошибках)
-   */
   async logFullFormState(action, formValues, meta = {}) {
     return this.log(action, formValues, { ...meta, isFullSnapshot: true });
   }
 
-  /**
-   * Логирование перед отправкой на сервер
-   * @param {Object} payload - Данные, отправляемые на сервер
-   * @param {Object} meta - Метаданные
-   */
   async logBeforeSave(payload, meta = {}) {
     return this.log('BEFORE_SAVE', payload, { ...meta, isSaveAttempt: true });
   }
 
-  /**
-   * Логирование успешного сохранения
-   */
   async logSaveSuccess(response, meta = {}) {
     return this.log('SAVE_SUCCESS', {
       status: response?.status,
@@ -214,12 +168,6 @@ class FormLoggerService {
     }, meta);
   }
 
-  /**
-   * Логирование ошибки
-   * @param {string} errorType - Тип ошибки
-   * @param {Error|string} error - Ошибка
-   * @param {Object} context - Контекст (payload, orgId и т.д.)
-   */
   async logError(errorType, error, context = {}) {
     return this.log('ERROR', {
       errorType,
@@ -234,45 +182,151 @@ class FormLoggerService {
   // ===================== ПОЛУЧЕНИЕ ЛОГОВ =====================
 
   /**
-   * Получить все логи (отсортированные по времени)
-   * @param {number} limit - Максимальное количество (0 = все)
-   * @returns {Promise<Array>}
+   * Применение фильтров к массиву логов
+   * ИСПРАВЛЕНО: правильная обработка массива action
    */
-  async getLogs(limit = 0) {
-    try {
-      const db = await this._ensureDB();
-      
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const index = store.index('timestampMs');
-        const request = index.openCursor(null, 'prev'); // От новых к старым
-        
-        const logs = [];
-        
-        request.onsuccess = (event) => {
-          const cursor = event.target.result;
-          if (cursor && (limit === 0 || logs.length < limit)) {
-            logs.push(cursor.value);
-            cursor.continue();
-          } else {
-            resolve(logs.reverse()); // Возвращаем в хронологическом порядке
+  _applyFilters(logs, { name, comState, action, date, fromDate, toDate }) {
+    return logs.filter(log => {
+      // Фильтр по названию компании
+      if (name) {
+        const logName = log.data?.main?.name || log.comState?.name || '';
+        if (!logName.toLowerCase().includes(name.toLowerCase())) {
+          return false;
+        }
+      }
+
+      // Фильтр по comState
+      if (comState && Object.keys(comState).length > 0) {
+        for (const [key, value] of Object.entries(comState)) {
+          if (value === undefined || value === null || value === '') continue;
+          if (String(log.comState?.[key]) !== String(value)) {
+            return false;
           }
-        };
-        
-        request.onerror = () => reject(request.error);
-      });
+        }
+      }
+
+      // Фильтр по action (массив или строка)
+      if (action) {
+        if (Array.isArray(action) && action.length > 0) {
+          if (!action.includes(log.action)) {
+            return false;
+          }
+        } else if (typeof action === 'string' && action !== '') {
+          if (log.action !== action) {
+            return false;
+          }
+        }
+      }
+
+      // Фильтр по конкретной дате
+      if (date && log.date !== date) {
+        return false;
+      }
+
+      // Фильтр по диапазону дат
+      if (fromDate) {
+        const from = new Date(fromDate).getTime();
+        if (log.timestampMs < from) return false;
+      }
+      if (toDate) {
+        const to = new Date(toDate).getTime() + 24 * 60 * 60 * 1000;
+        if (log.timestampMs > to) return false;
+      }
+
+      return true;
+    });
+  }
+
+  /**
+   * Получить количество логов с фильтрами
+   */
+  async getLogsCount(filters = {}) {
+    const allLogs = await this._getAllLogsFromIDB();
+    return this._applyFilters(allLogs, filters).length;
+  }
+
+  /**
+   * Получить логи с фильтрацией и пагинацией
+   */
+  async getLogs({
+    name = null,
+    comState = null,
+    date = null,
+    action = null,
+    fromDate = null,
+    toDate = null,
+    page = 1,
+    limit = 0
+  } = {}) {
+    try {
+      const allLogs = await this._getAllLogsFromIDB();
+      let filtered = this._applyFilters(allLogs, { name, comState, action, date, fromDate, toDate });
+
+      // Сортировка от новых к старым
+      filtered.sort((a, b) => b.timestampMs - a.timestampMs);
+
+      // Пагинация
+      if (limit > 0) {
+        const start = (page - 1) * limit;
+        filtered = filtered.slice(start, start + limit);
+      }
+
+      return filtered;
     } catch (e) {
-      console.error('[FormLogger] Ошибка чтения логов:', e);
+      console.error('[FormLogger] Ошибка фильтрации логов:', e);
       return [];
     }
   }
 
+  async _getAllLogsFromIDB() {
+    const db = await this._ensureDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   /**
-   * Получить логи по orgId
-   * @param {number|string} orgId 
-   * @returns {Promise<Array>}
+   * Получить статистику по дням для heatmap
+   * @param {number} days - Количество дней назад
+   * @returns {Promise<Object>} - { 'YYYY-MM-DD': count }
    */
+  async getHeatmapData(days = 90) {
+    const allLogs = await this._getAllLogsFromIDB();
+    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+    
+    const heatmap = {};
+    
+    allLogs.forEach(log => {
+      if (log.timestampMs >= cutoff && log.date) {
+        heatmap[log.date] = (heatmap[log.date] || 0) + 1;
+      }
+    });
+    
+    return heatmap;
+  }
+
+  /**
+   * Получить статистику по типам действий для выбранной даты
+   */
+  async getDateStats(date) {
+    const logs = await this.getLogs({ date });
+    const byAction = {};
+    
+    logs.forEach(log => {
+      byAction[log.action] = (byAction[log.action] || 0) + 1;
+    });
+    
+    return {
+      total: logs.length,
+      byAction,
+    };
+  }
+
   async getLogsByOrg(orgId) {
     try {
       const db = await this._ensureDB();
@@ -283,26 +337,22 @@ class FormLoggerService {
         const store = tx.objectStore(STORE_NAME);
         const index = store.index('orgId');
         
-        // Пробуем оба варианта (число и строка)
         const results = [];
         let completed = 0;
         
         const processResults = () => {
           completed++;
           if (completed === 2) {
-            // Убираем дубликаты и сортируем
             const unique = [...new Map(results.map(r => [r.id, r])).values()];
-            unique.sort((a, b) => a.timestampMs - b.timestampMs);
+            unique.sort((a, b) => b.timestampMs - a.timestampMs);
             resolve(unique);
           }
         };
         
-        // Поиск по числу
         const req1 = index.getAll(IDBKeyRange.only(numOrgId));
         req1.onsuccess = () => { results.push(...req1.result); processResults(); };
         req1.onerror = () => processResults();
         
-        // Поиск по строке
         const req2 = index.getAll(IDBKeyRange.only(String(orgId)));
         req2.onsuccess = () => { results.push(...req2.result); processResults(); };
         req2.onerror = () => processResults();
@@ -313,10 +363,6 @@ class FormLoggerService {
     }
   }
 
-  /**
-   * Получить логи текущей сессии
-   * @returns {Promise<Array>}
-   */
   async getSessionLogs() {
     try {
       const db = await this._ensureDB();
@@ -328,7 +374,7 @@ class FormLoggerService {
         const request = index.getAll(IDBKeyRange.only(this.sessionId));
         
         request.onsuccess = () => {
-          const logs = request.result.sort((a, b) => a.timestampMs - b.timestampMs);
+          const logs = request.result.sort((a, b) => b.timestampMs - a.timestampMs);
           resolve(logs);
         };
         request.onerror = () => reject(request.error);
@@ -338,11 +384,6 @@ class FormLoggerService {
     }
   }
 
-  /**
-   * Получить логи за последние N минут
-   * @param {number} minutes 
-   * @returns {Promise<Array>}
-   */
   async getRecentLogs(minutes = 60) {
     try {
       const db = await this._ensureDB();
@@ -356,7 +397,7 @@ class FormLoggerService {
         const request = index.getAll(range);
         
         request.onsuccess = () => {
-          const logs = request.result.sort((a, b) => a.timestampMs - b.timestampMs);
+          const logs = request.result.sort((a, b) => b.timestampMs - a.timestampMs);
           resolve(logs);
         };
         request.onerror = () => reject(request.error);
@@ -366,139 +407,30 @@ class FormLoggerService {
     }
   }
 
-  /**
-   * Получить логи за определённую дату
-   * @param {string} date - Дата в формате YYYY-MM-DD
-   * @returns {Promise<Array>}
-   */
-  async getLogsByDate(date) {
-    try {
-      const db = await this._ensureDB();
-      
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const index = store.index('date');
-        const request = index.getAll(IDBKeyRange.only(date));
-        
-        request.onsuccess = () => {
-          const logs = request.result.sort((a, b) => a.timestampMs - b.timestampMs);
-          resolve(logs);
-        };
-        request.onerror = () => reject(request.error);
-      });
-    } catch (e) {
-      return [];
-    }
-  }
-
-  /**
-   * Получить логи за период
-   * @param {Date|string} fromDate 
-   * @param {Date|string} toDate 
-   * @returns {Promise<Array>}
-   */
-  async getLogsByDateRange(fromDate, toDate) {
-    try {
-      const db = await this._ensureDB();
-      const from = new Date(fromDate).getTime();
-      const to = new Date(toDate).getTime() + 24 * 60 * 60 * 1000; // До конца дня
-      
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const index = store.index('timestampMs');
-        const range = IDBKeyRange.bound(from, to);
-        const request = index.getAll(range);
-        
-        request.onsuccess = () => {
-          const logs = request.result.sort((a, b) => a.timestampMs - b.timestampMs);
-          resolve(logs);
-        };
-        request.onerror = () => reject(request.error);
-      });
-    } catch (e) {
-      return [];
-    }
-  }
-
-  /**
-   * Поиск логов с фильтрами
-   * @param {Object} filters - { orgId, action, fromDate, toDate, sessionId }
-   * @returns {Promise<Array>}
-   */
-  async searchLogs(filters = {}) {
-    let logs = await this.getLogs();
-    
-    if (filters.orgId) {
-      const orgId = parseInt(filters.orgId);
-      logs = logs.filter(l => 
-        l.meta?.orgId === orgId || l.meta?.orgId === String(filters.orgId)
-      );
-    }
-    
-    if (filters.action) {
-      logs = logs.filter(l => l.action === filters.action);
-    }
-    
-    if (filters.actions && filters.actions.length > 0) {
-      logs = logs.filter(l => filters.actions.includes(l.action));
-    }
-    
-    if (filters.fromDate) {
-      const from = new Date(filters.fromDate).getTime();
-      logs = logs.filter(l => l.timestampMs >= from);
-    }
-    
-    if (filters.toDate) {
-      const to = new Date(filters.toDate).getTime() + 24 * 60 * 60 * 1000;
-      logs = logs.filter(l => l.timestampMs <= to);
-    }
-    
-    if (filters.sessionId) {
-      logs = logs.filter(l => l.sessionId === filters.sessionId);
-    }
-    
-    if (filters.userId) {
-      logs = logs.filter(l => l.userId === filters.userId);
-    }
-    
-    return logs;
-  }
-
-  /**
-   * Получить статистику логов
-   * @returns {Promise<Object>}
-   */
   async getStats() {
-    const logs = await this.getLogs();
+    const logs = await this._getAllLogsFromIDB();
     const byAction = {};
     const byOrg = {};
     const byDate = {};
     const byUser = {};
     
     logs.forEach(log => {
-      // По действиям
       byAction[log.action] = (byAction[log.action] || 0) + 1;
       
-      // По организациям
-      if (log.meta?.orgId) {
-        const key = `${log.meta.orgId}`;
+      if (log.comState?.id) {
+        const key = `${log.comState.id}`;
         byOrg[key] = (byOrg[key] || 0) + 1;
       }
       
-      // По датам
       if (log.date) {
         byDate[log.date] = (byDate[log.date] || 0) + 1;
       }
       
-      // По пользователям
       if (log.userId) {
         byUser[log.userId] = (byUser[log.userId] || 0) + 1;
       }
     });
 
-    // Размер БД
     const dbSize = await this._getDBSize();
 
     return {
@@ -508,8 +440,8 @@ class FormLoggerService {
       byOrg,
       byDate,
       byUser,
-      oldestLog: logs[0]?.timestamp,
-      newestLog: logs[logs.length - 1]?.timestamp,
+      oldestLog: logs.length > 0 ? logs.reduce((a, b) => a.timestampMs < b.timestampMs ? a : b).timestamp : null,
+      newestLog: logs.length > 0 ? logs.reduce((a, b) => a.timestampMs > b.timestampMs ? a : b).timestamp : null,
       currentSession: this.sessionId,
       maxAgeDays: this.maxAgeDays,
     };
@@ -517,14 +449,8 @@ class FormLoggerService {
 
   // ===================== ЭКСПОРТ =====================
 
-  /**
-   * Экспорт логов в JSON файл
-   * @param {string} filename - Имя файла (опционально)
-   * @param {Object} filter - Фильтр { orgId, fromDate, toDate, actions }
-   * @returns {Promise<Object>} - Экспортированные данные
-   */
   async exportToFile(filename = null, filter = {}) {
-    const logs = await this.searchLogs(filter);
+    const logs = await this.getLogs(filter);
 
     const exportData = {
       exportedAt: new Date().toISOString(),
@@ -546,11 +472,9 @@ class FormLoggerService {
     const a = document.createElement('a');
     a.href = url;
     
-    // Генерируем имя файла
     if (!filename) {
       const dateStr = new Date().toISOString().slice(0, 10);
-      const orgSuffix = filter.orgId ? `_org${filter.orgId}` : '';
-      filename = `form_logs${orgSuffix}_${dateStr}.json`;
+      filename = `form_logs_${dateStr}.json`;
     }
     
     a.download = filename;
@@ -563,20 +487,11 @@ class FormLoggerService {
     return exportData;
   }
 
-  /**
-   * Получить логи как строку JSON
-   * @param {Object} filter - Фильтр
-   * @returns {Promise<string>}
-   */
   async exportToString(filter = {}) {
-    const logs = await this.searchLogs(filter);
+    const logs = await this.getLogs(filter);
     return JSON.stringify(logs, null, 2);
   }
 
-  /**
-   * Копировать логи в буфер обмена
-   * @param {Object} filter - Фильтр
-   */
   async copyToClipboard(filter = {}) {
     const str = await this.exportToString(filter);
     await navigator.clipboard.writeText(str);
@@ -585,9 +500,6 @@ class FormLoggerService {
 
   // ===================== ОЧИСТКА =====================
 
-  /**
-   * Очистить все логи
-   */
   async clearAll() {
     try {
       const db = await this._ensureDB();
@@ -608,11 +520,6 @@ class FormLoggerService {
     }
   }
 
-  /**
-   * Очистить логи старше N дней
-   * @param {number} days 
-   * @returns {Promise<number>} - Количество удалённых записей
-   */
   async clearOlderThan(days) {
     try {
       const db = await this._ensureDB();
@@ -649,14 +556,10 @@ class FormLoggerService {
     }
   }
 
-  /**
-   * Очистить логи по orgId
-   * @param {number|string} orgId 
-   */
   async clearByOrg(orgId) {
     try {
-      const db = await this._ensureDB();
       const logs = await this.getLogsByOrg(orgId);
+      const db = await this._ensureDB();
       
       return new Promise((resolve, reject) => {
         const tx = db.transaction(STORE_NAME, 'readwrite');
@@ -688,7 +591,6 @@ class FormLoggerService {
   _sanitizeData(data) {
     try {
       const str = JSON.stringify(data);
-      // Лимит 500KB на одну запись
       if (str.length > 500000) {
         return {
           _truncated: true,
@@ -715,7 +617,6 @@ class FormLoggerService {
     
     for (const [key, value] of Object.entries(formValues)) {
       if (Array.isArray(value)) {
-        // Для массивов сохраняем только изменённые элементы
         const modifiedItems = value.filter(item => 
           item?._modified === true || 
           item?.command || 
@@ -757,9 +658,7 @@ class FormLoggerService {
           percent: ((estimate.usage / estimate.quota) * 100).toFixed(2),
         };
       }
-    } catch (e) {
-      // Ignore
-    }
+    } catch (e) {}
     return null;
   }
 }
@@ -770,7 +669,6 @@ class FormLoggerService {
 
 export const formLogger = new FormLoggerService();
 
-// Для консоли браузера
 if (typeof window !== 'undefined') {
   window.formLogger = formLogger;
 }
@@ -783,39 +681,56 @@ export default formLogger;
 // =============================================================================
 
 export const LOG_ACTIONS = {
-  // Навигация
   PAGE_OPEN: 'PAGE_OPEN',
   PAGE_CLOSE: 'PAGE_CLOSE',
   TAB_CHANGE: 'TAB_CHANGE',
-  
-  // Режим редактирования
   EDIT_MODE_ENTER: 'EDIT_MODE_ENTER',
   EDIT_MODE_EXIT: 'EDIT_MODE_EXIT',
-  
-  // Изменения полей
   FIELD_CHANGE: 'FIELD_CHANGE',
   FIELD_BLUR: 'FIELD_BLUR',
-  
-  // Списки (контакты, телефоны и т.д.)
   ITEM_ADD: 'ITEM_ADD',
   ITEM_DELETE: 'ITEM_DELETE',
   ITEM_UPDATE: 'ITEM_UPDATE',
-  
-  // Сохранение
   BEFORE_SAVE: 'BEFORE_SAVE',
   SAVE_SUCCESS: 'SAVE_SUCCESS',
   SAVE_ERROR: 'SAVE_ERROR',
-  
-  // Снимки формы
   FORM_SNAPSHOT: 'FORM_SNAPSHOT',
   AUTO_SNAPSHOT: 'AUTO_SNAPSHOT',
   EMERGENCY_SNAPSHOT: 'EMERGENCY_SNAPSHOT',
   FORM_RESET: 'FORM_RESET',
-  
-  // Ошибки
   ERROR: 'ERROR',
   VALIDATION_ERROR: 'VALIDATION_ERROR',
   NETWORK_ERROR: 'NETWORK_ERROR',
+  CURATOR_REQUEST: 'CURATOR_REQUEST',
+  CURATOR_REQUEST_RESULT: 'CURATOR_REQUEST_RESULT',
+  CURATOR_REQUEST_FAILED: 'CURATOR_REQUEST_FAILED',
+};
+
+
+// =============================================================================
+// КОНФИГУРАЦИЯ ТИПОВ ДЛЯ UI
+// =============================================================================
+
+export const LOG_TYPE_CONFIG = {
+  PAGE_OPEN: { label: 'Открытие страницы', color: '#52c41a', icon: '📂' },
+  PAGE_CLOSE: { label: 'Закрытие страницы', color: '#8c8c8c', icon: '📁' },
+  TAB_CHANGE: { label: 'Смена вкладки', color: '#1890ff', icon: '📑' },
+  EDIT_MODE_ENTER: { label: 'Начало редактирования', color: '#faad14', icon: '✏️' },
+  EDIT_MODE_EXIT: { label: 'Конец редактирования', color: '#d9d9d9', icon: '✅' },
+  FIELD_CHANGE: { label: 'Изменение поля', color: '#91d5ff', icon: '📝' },
+  FORM_SNAPSHOT: { label: 'Снимок формы', color: '#b37feb', icon: '📸' },
+  AUTO_SNAPSHOT: { label: 'Автоснимок', color: '#d3adf7', icon: '⏱️' },
+  EMERGENCY_SNAPSHOT: { label: 'Экстренный снимок', color: '#ff7875', icon: '🆘' },
+  BEFORE_SAVE: { label: 'Перед сохранением', color: '#ffc53d', icon: '💾' },
+  SAVE_SUCCESS: { label: 'Сохранено успешно', color: '#73d13d', icon: '✅' },
+  SAVE_ERROR: { label: 'Ошибка сохранения', color: '#ff4d4f', icon: '❌' },
+  ERROR: { label: 'Ошибка', color: '#ff4d4f', icon: '⚠️' },
+  ITEM_ADD: { label: 'Добавление элемента', color: '#95de64', icon: '➕' },
+  ITEM_DELETE: { label: 'Удаление элемента', color: '#ff7875', icon: '➖' },
+  ITEM_UPDATE: { label: 'Обновление элемента', color: '#69c0ff', icon: '🔄' },
+  CURATOR_REQUEST: { label: 'Запрос кураторства', color: '#597ef7', icon: '👤' },
+  CURATOR_REQUEST_RESULT: { label: 'Результат кураторства', color: '#85a5ff', icon: '👥' },
+  CURATOR_REQUEST_FAILED: { label: 'Ошибка кураторства', color: '#ff7875', icon: '👤❌' },
 };
 
 
@@ -823,11 +738,6 @@ export const LOG_ACTIONS = {
 // REACT ХУКИ
 // =============================================================================
 
-/**
- * Хук для логирования в компоненте
- * 
- * const { log, logChange, logSnapshot } = useFormLogger(orgId);
- */
 export const useFormLogger = (orgId, orgName = null) => {
   const log = (action, data = {}) => {
     return formLogger.log(action, data, { orgId, orgName });
