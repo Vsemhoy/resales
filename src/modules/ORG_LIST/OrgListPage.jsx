@@ -349,7 +349,7 @@ const OrgListPage = (props) => {
 			let route = '/api/sales/orglist';
 			if (userdata?.user?.id === 558 || userdata?.user?.id === 46){
 				route = '/api/sales/v2/orglist'
-			};
+			}
 
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(route, {
