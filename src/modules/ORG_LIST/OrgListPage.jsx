@@ -346,8 +346,13 @@ const OrgListPage = (props) => {
 
 			// let sortBox = [];
 
+			let route = '/api/sales/orglist';
+			if (userdata?.user?.id === 558 || userdata?.user?.id === 46){
+				route = '/api/sales/v2/orglist'
+			};
+
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/orglist', {
+				let response = await PROD_AXIOS_INSTANCE.post(route, {
 					data: {
 						sort_orders: sortBox,
 						profiles: filterBox.profiles,
@@ -755,7 +760,7 @@ const OrgListPage = (props) => {
 								</div>
 								<div></div>
 								<div className={'sa-flex-gap'}>
-									<Tooltip title="Я временный куратор">
+									<Tooltip title="Компании без кураторства">
 										<Button
 											color={'default'}
 											size={openedFilters ? 'small' : 'middle'}
