@@ -8,6 +8,7 @@ import {
 	useSearchParams,
 } from 'react-router-dom';
 import { Affix, Alert, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
+import { formLogger, LOG_ACTIONS } from '../../components/helpers/FormLogger';
 
 import {  CircleStackIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import {
@@ -41,6 +42,7 @@ import TabMainTorg from './components/tabs/TabMainTorg';
 
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
 import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
+import dayjs from 'dayjs';
 
 const tabNames = [
 	{
@@ -56,7 +58,12 @@ const tabNames = [
 ];
 
 const TorgPage = (props) => {
+
+	
 	const { userdata } = props;
+		// 1. Настройка глубины (по умолчанию 7 дней)
+	formLogger.setMaxAgeDays(90);
+	formLogger.setUser(userdata.user.id, `${userdata.user.surname} ${userdata.user.name}`);
 	const { getCurrentParamsString } = useURLParams();
 	const [departList, setDepartList] = useState(null);
 
@@ -79,6 +86,7 @@ const TorgPage = (props) => {
 	// n - notes
 	// h - history
 	const [activeTab, setActiveTab] = useState('m');
+	const [prevTab, setPrevTab]     = useState('m');
 
 	const [pageProject, setPageProject] = useState(1);
 	const [pageNotes, setPageNotes] = useState(1);
@@ -160,6 +168,11 @@ const [orgName, setOrgName] = useState('');
 						}
 				});
 		}));
+
+
+		useEffect(() => {
+			formLogger.log('PAGE_OPEN', { id: item_id }, { item_id });
+		}, []);
 
 		// Подписываюсь на открытие орпейджа
 		useEffect(() => {
@@ -1262,6 +1275,16 @@ useEffect(() => {
     return value === null;
   });
 }
+
+
+
+
+	useEffect(() => {
+		if (prevTab !== activeTab){
+			formLogger.log('TAB_CHANGE', { from: prevTab, to: activeTab, org_id: item_id, time: dayjs() })
+		}
+	}, [activeTab]);
+
 
 
 	return (

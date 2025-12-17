@@ -36,7 +36,7 @@ import {ResalesWebSocketProvider} from "./context/ResalesWebSocketContext";
 import AlertCustom from "./components/template/Alert/AlertCustom";
 import dayjs from "dayjs";
 import BidPdfPage from "./modules/BID_PDF_PAGE/BidPdfPage";
-import OrgPage from './modules/ORG_PAGE/OrgPage';
+import OrgPage from './modules/ORG_PAGE/OrgPage___';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});

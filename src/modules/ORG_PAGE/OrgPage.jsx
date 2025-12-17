@@ -24,7 +24,7 @@ import { useWebSocket } from '../../context/ResalesWebSocketContext';
 import { useWebSocketSubscription } from '../../hooks/websockets/useWebSocketSubscription';
 
 // Формы вкладок
-import MainTabForm from './components/tabs/MainTabForm';
+import MainTabForm from './components/tabs/_MainTabForm';
 // import ProjectsTabForm from './components/tabs/ProjectsTabForm';
 // import NotesTabForm from './components/tabs/NotesTabForm';
 // import CallsTabForm from './components/tabs/CallsTabForm';
