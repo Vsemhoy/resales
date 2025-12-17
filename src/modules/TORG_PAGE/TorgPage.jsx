@@ -61,9 +61,11 @@ const TorgPage = (props) => {
 
 	
 	const { userdata } = props;
-		// 1. Настройка глубины (по умолчанию 7 дней)
-	formLogger.setMaxAgeDays(90);
-	formLogger.setUser(userdata.user.id, `${userdata.user.surname} ${userdata.user.name}`);
+		// 1. Настройка глубины (по умолчанию 30 дней)
+	formLogger.setMaxAgeDays(30);
+	formLogger.setUser(userdata.user.id, `${userdata.user.surname} ${userdata.user.name}`, userdata.user.active_role);
+
+
 	const { getCurrentParamsString } = useURLParams();
 	const [departList, setDepartList] = useState(null);
 
@@ -171,7 +173,7 @@ const [orgName, setOrgName] = useState('');
 
 
 		useEffect(() => {
-			formLogger.log('PAGE_OPEN', { id: item_id }, { item_id });
+			formLogger.log('PAGE_OPEN', { id: item_id });
 		}, []);
 
 		// Подписываюсь на открытие орпейджа
@@ -615,6 +617,9 @@ useEffect(() => {
 				setBaseMainData(FlushOrgData(response.data.content));
 				setOrgName(response.data.content.name)
 				setLoading(false);
+
+				formLogger.setComCurator(response.data.content?.id8staff_list);
+				formLogger.setComIdCompany(response.data.content?.id_company);
 			}
 				
 		} catch (e) {
@@ -627,6 +632,37 @@ useEffect(() => {
 			}, 1000);
 	};
 
+	useEffect(() => {
+		if (lockBySocket){
+				formLogger.setComState(3);
+				formLogger.setComEditor(lockUser ? lockUser.username : '?');
+		} else {
+			if (editMode){
+				formLogger.setComState(2);
+				formLogger.setComEditor(userdata?.user?.id);
+			} else {
+				formLogger.setComState(1);
+				formLogger.setComEditor(null);
+			}
+		}
+
+		if (editMode){
+			formLogger.log(LOG_ACTIONS.EDIT_MODE_ENTER, {
+						currentTab: activeTab,
+			}, { orgId: item_id, orgName: baseMainData?.name });
+		} else {
+			if (COLLECTOR && Object.keys(COLLECTOR).length > 0) {
+				formLogger.log(LOG_ACTIONS.EDIT_MODE_EXIT, {
+					currentTab: activeTab,
+				}, { orgId: item_id, orgName: baseMainData?.name });
+			}
+		}
+	}, [lockBySocket, editMode]);
+
+
+	useEffect(() => {
+		formLogger.setComId(item_id);
+	}, [item_id]);
 
 	/**
 	 * Получение списка select data
@@ -698,6 +734,14 @@ useEffect(() => {
 								notes : tempNotesDataRef.current, //.filter((item)=> item.command !== undefined  ),
 					};
 
+							const payload = data;
+					
+							// КРИТИЧНО: Логируем payload ПЕРЕД отправкой
+							await formLogger.logBeforeSave(payload, { 
+								orgId: item_id, 
+								orgName: baseMainData?.name 
+							});
+
 		if (PRODMODE) {
 			setSaveProcess(20);
 			try {
@@ -713,6 +757,7 @@ useEffect(() => {
 					setAlertDescription(response.message || 'Данные успешно обновлены');
 					setAlertType('success');
 					setSaveProcess(60);
+					formLogger.logSaveSuccess(response, { orgId: item_id });
         } else {
 					setIsAlertVisible(true);
 					setAlertMessage(`Произошла ошибка!`);
@@ -720,6 +765,11 @@ useEffect(() => {
 					setAlertType('error');
 					setBlockSave(false);
 					setBlockOnSave(false);
+					formLogger.logError('SAVE_FAILED', { 
+									payload, // Сохраняем данные которые пытались отправить
+									orgId: item_id,
+									orgName: baseMainData?.name,
+								});
 				}
 			} catch (e) {
 				console.log(e);
@@ -729,6 +779,11 @@ useEffect(() => {
 					setAlertType('error');
 					setBlockSave(false);
 					setBlockOnSave(false);
+					formLogger.logError('SAVE_FAILED', e, { 
+									payload, // Сохраняем данные которые пытались отправить
+									orgId: item_id,
+									orgName: baseMainData?.name,
+								});
 			} finally {
 				// setLoadingOrgs(false)
 
@@ -743,6 +798,8 @@ useEffect(() => {
 		}
 
 	};
+
+
 
 
 	const  log_save_action = async (src = null) => {
@@ -765,6 +822,7 @@ useEffect(() => {
 								__src : src
 					};
 
+					formLogger.log('FORM_SNAPSHOT', data);
 		if (PRODMODE && itemId) {
 			setSaveProcess(20);
 			try {
@@ -969,6 +1027,9 @@ useEffect(() => {
 							id_org: itemId,
 						},
 					};
+
+					formLogger.log('CURATOR_REQUEST', { id: item_id, current_curator: baseMainData.id8staff_list, target_curator: userdata?.user?.id });
+
 					let response = await PROD_AXIOS_INSTANCE.post(
 						"/api/curators/create",
 						format_data,
@@ -985,6 +1046,7 @@ useEffect(() => {
 								setAlertDescription(response.data.message || 'Заявка на кураторство отправлена');
 								setAlertType('success');
 								setSaveProcess(60);
+								formLogger.log('CURATOR_REQUEST', { id: item_id, current_curator: baseMainData.id8staff_list, target_curator: userdata?.user?.id, status: 'ok', message: 'success' });
 							} else {
 								setIsAlertVisible(true);
 								setAlertMessage(`Произошла ошибка!`);
@@ -992,6 +1054,7 @@ useEffect(() => {
 								setAlertType('error');
 								setBlockSave(false);
 								setBlockOnSave(false);
+								formLogger.log('CURATOR_REQUEST_FAILED', { id: item_id, current_curator: baseMainData.id8staff_list, target_curator: userdata?.user?.id, status: 'fail', message: response.data?.message || 'Неизвестная ошибка сервера' });
 							}
 					}
 				} catch (e) {
@@ -1002,6 +1065,7 @@ useEffect(() => {
 					setAlertType('error');
 					setBlockSave(false);
 					setBlockOnSave(false);
+				  formLogger.log('CURATOR_REQUEST_FAILED', { id: item_id, current_curator: baseMainData.id8staff_list, target_curator: userdata?.user?.id, status: 'fail', message: e.response?.data?.message || e.message || 'Неизвестная ошибка' });
 			}
 	}
 
@@ -1321,9 +1385,9 @@ useEffect(() => {
 										tempMain_an_requisites?.length ||
 										tempMain_bo_licenses?.length ||
 										tempMain_an_tolerances?.length) ?    'sa-mite-has-some' : ''}
-										${'n' === tab.link && tempNotesData?.length ?    'sa-mite-has-some' : ''}
+										${'n' === tab.link && tempNotesData?.length    ? 'sa-mite-has-some' : ''}
 										${'p' === tab.link && tempProjectsData?.length ? 'sa-mite-has-some' : ''}
-										${'c' === tab.link && tempCallsData?.length ?    'sa-mite-has-some' : ''}
+										${'c' === tab.link && tempCallsData?.length    ? 'sa-mite-has-some' : ''}
 										`}
 										onClick={() => {
 											handleChangeTab(tab.link);

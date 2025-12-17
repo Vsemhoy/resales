@@ -36,7 +36,8 @@ import {ResalesWebSocketProvider} from "./context/ResalesWebSocketContext";
 import AlertCustom from "./components/template/Alert/AlertCustom";
 import dayjs from "dayjs";
 import BidPdfPage from "./modules/BID_PDF_PAGE/BidPdfPage";
-import OrgPage from './modules/ORG_PAGE/OrgPage___';
+import OrgPage from './modules/ORG_PAGE/OrgPage';
+import LocalLogger from './modules/EXT/LOCAL_LOGGER/LocalLoggerPage';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -186,6 +187,12 @@ export const App = () => {
 								{/*	path={BASE_ROUTE + '/files_buh'}*/}
 								{/*	element={<FilesBuhPage userdata={userdata} changed_user_data={setUserdata} />}*/}
 								{/*/>*/}
+
+                                    <Route path={BASE_ROUTE + '/loclog'} element={<LocalLogger userdata={userdata} />} />
+                                    <Route path="/loclog" element={<LocalLogger userdata={userdata} />} />
+
+
+
 
                                     <Route path={BASE_ROUTE + '/price'} element={<Price userdata={userdata} />} />
                                     <Route path="/price" element={<Price userdata={userdata} />} />
