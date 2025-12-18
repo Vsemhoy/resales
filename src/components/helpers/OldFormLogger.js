@@ -130,146 +130,67 @@ class FormLoggerService {
 
   // ===================== ИНИЦИАЛИЗАЦИЯ =====================
 
-//   async _initDB() {
-   
-//     if (this._isInitializing) return this._initPromise;
+  async _initDB() {
+    if (this._isInitializing) return this._initPromise;
     
-//     this._isInitializing = true;
+    this._isInitializing = true;
 
-//     return new Promise((resolve, reject) => {
-//       try {
-//         const request = indexedDB.open(DB_NAME, DB_VERSION);
+    return new Promise((resolve, reject) => {
+      try {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-//  console.log('INIT DB', request);
+        request.onerror = () => {
+          logError('DB open error:', request.error);
+          this._isInitializing = false;
+          reject(request.error);
+        };
 
-//         request.onerror = () => {
-//           logError('DB open error:', request.error);
-//           this._isInitializing = false;
-//           reject(request.error);
-//         };
-
-//         request.onsuccess = () => {
-//           this.db = request.result;
-//           this._isInitializing = false;
+        request.onsuccess = () => {
+          this.db = request.result;
+          this._isInitializing = false;
           
-//           this.db.onerror = (e) => logError('DB error:', e.target.error);
-//           this.db.onclose = () => { this.db = null; };
+          this.db.onerror = (e) => logError('DB error:', e.target.error);
+          this.db.onclose = () => { this.db = null; };
           
-//           resolve(this.db);
-//         };
+          resolve(this.db);
+        };
 
-//         request.onupgradeneeded = (event) => {
-//           const db = event.target.result;
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
           
-//           if (db.objectStoreNames.contains(STORE_NAME)) {
-//             db.deleteObjectStore(STORE_NAME);
-//           }
+          if (db.objectStoreNames.contains(STORE_NAME)) {
+            db.deleteObjectStore(STORE_NAME);
+          }
           
-//           const store = db.createObjectStore(STORE_NAME, { 
-//             keyPath: 'id',
-//             autoIncrement: false 
-//           });
+          const store = db.createObjectStore(STORE_NAME, { 
+            keyPath: 'id',
+            autoIncrement: false 
+          });
           
-//           store.createIndex('timestampMs', 'timestampMs', { unique: false });
-//           store.createIndex('sessionId', 'sessionId', { unique: false });
-//           store.createIndex('action', 'action', { unique: false });
-//           store.createIndex('date', 'date', { unique: false });
-//           store.createIndex('comId', 'comState.id', { unique: false });
-//         };
+          store.createIndex('timestampMs', 'timestampMs', { unique: false });
+          store.createIndex('sessionId', 'sessionId', { unique: false });
+          store.createIndex('action', 'action', { unique: false });
+          store.createIndex('date', 'date', { unique: false });
+          store.createIndex('comId', 'comState.id', { unique: false });
+        };
 
-//         request.onblocked = () => logError('DB blocked!');
+        request.onblocked = () => logError('DB blocked!');
 
-//       } catch (e) {
-//         this._isInitializing = false;
-//         reject(e);
-//       }
-//     });
-//   }
-
-async _initDB() {
-  // indexedDB.deleteDatabase('torg_form_logs_db');
-  if (this._isInitializing) return this._initPromise;
-
-  this._isInitializing = true;
-
-  this._initPromise = new Promise((resolve, reject) => {
-    console.log('[IDB] Открываем базу...', DB_NAME, DB_VERSION);
-    
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-
-    // request.onupgradeneeded = (event) => {
-    //   console.log('[IDB] onupgradeneeded сработал');
-    //   const db = event.target.result;
-    //   if (!db.objectStoreNames.contains('logs')) {
-    //     console.log('[IDB] Создаём хранилище "logs"');
-    //     const store = db.createObjectStore('logs', { keyPath: 'id' });
-    //     store.createIndex('timestampMs', 'timestampMs', { unique: false });
-    //     store.createIndex('date', 'date', { unique: false });
-    //     store.createIndex('comState.id', 'comState.id', { unique: false });
-    //   }
-    // };
-
-    request.onupgradeneeded = (event) => {
-    try {
-      console.log('[IDB] onupgradeneeded запущен');
-      const db = event.target.result;
-      const oldVersion = event.oldVersion; // может быть 0
-
-      if (!db.objectStoreNames.contains('logs')) {
-        console.log('[IDB] Создаём хранилище logs');
-        const store = db.createObjectStore('logs', { keyPath: 'id' });
-        store.createIndex('timestampMs', 'timestampMs', { unique: false });
-        store.createIndex('date', 'date', { unique: false });
-        store.createIndex('comState.id', 'comState.id', { unique: false });
-      } else {
-        // Если хранилище уже есть, но нужно обновить — делай аккуратно!
-        // Например, проверь, есть ли уже нужный индекс:
-        const store = event.target.transaction.objectStore('logs');
-        if (!store.indexNames.contains('comState.id')) {
-          store.createIndex('comState.id', 'comState.id', { unique: false });
-        }
+      } catch (e) {
+        this._isInitializing = false;
+        reject(e);
       }
-    } catch (err) {
-      console.error('[IDB] Ошибка в onupgradeneeded:', err);
-      // Без этого ошибка "утонет"
-    }
-  };
-
-    request.onsuccess = (event) => {
-      console.log('[IDB] База успешно открыта');
-      const db = event.target.result;
-      // Важно: слушаем закрытие!
-      db.onclose = () => console.warn('[IDB] База закрыта (возможно, ошибка или память)');
-      resolve(db);
-    };
-
-    request.onerror = (event) => {
-      console.error('[IDB] Ошибка открытия базы:', event.target.error);
-      reject(event.target.error);
-    };
-  });
-
-  return this._initPromise;
-}
-
-  // async _ensureDB() {
-  //   if (this.db) return this.db;
-  //   if (this._initPromise) {
-  //     await this._initPromise;
-  //     return this.db;
-  //   }
-  //   this._initPromise = this._initDB();
-  //   return this._initPromise;
-  // }
+    });
+  }
 
   async _ensureDB() {
-    try {
-      return await this._initDB();
-    } catch (e) {
-      console.error(e);
-      return null; // ← вот отсюда null!
+    if (this.db) return this.db;
+    if (this._initPromise) {
+      await this._initPromise;
+      return this.db;
     }
+    this._initPromise = this._initDB();
+    return this._initPromise;
   }
 
   // ===================== ОБСЛУЖИВАНИЕ БД =====================
@@ -423,82 +344,48 @@ async _initDB() {
   //   }
   // }
 
-    async log(action, data, meta = {}) {
-      console.log(this._settings);
-      if (action === 'FORM_SNAPSHOT' && this._settings.saveSnapshots === false) {
-        return null;
-      }
-      if (!this._canLog(action)) return null;
-
-    try {
-      const db = await this._ensureDB();
-      const now = new Date();
-      
-      const logEntry = {
-        id: this._generateId(),
-        timestamp: now.toISOString(),
-        timestampMs: now.getTime(),
-        date: now.toISOString().slice(0, 10),
-        sessionId: this.sessionId,
-        userId: this.userId,
-        userName: this.userName,
-        userRole: this.user_role,
-        comState: {
-          id: this.com_id,
-          editor_id: this.com_editor,
-          state: this.com_state,
-          curator_id: this.com_curator,
-          id_company: this.com_idcom,
-          name: this.com_name
-        },
-        action,
-        data: this._sanitizeData(data),
-        meta: {
-          ...meta,
-          url: window.location.href,
-          pathname: window.location.pathname,
-        },
-      };
-
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
-        const request = store.add(logEntry);
-        
-        request.onsuccess = () => resolve(logEntry.id);
-        request.onerror = () => {
-          console.error('[FormLogger] Ошибка записи:', request.error);
-          reject(request.error);
-        };
-      });
-    } catch (e) {
-      console.error('[FormLogger] Ошибка записи лога:', e);
-      return null;
-    }
-  }
-
-  async testWrite() {
+  async log(action, data, meta = {}) {
   try {
-    const db = await this._initDB();
-    const entry = { test: true, timestamp: Date.now() };
-    
-    const tx = db.transaction('logs', 'readwrite');
-    const store = tx.objectStore('logs');
-    
-    const req = store.add(entry);
-    
+    const db = await this._ensureDB(); // Убедись, что база создана
+    const now = new Date();
+
+    const logEntry = {
+      id: this._generateId(),
+      timestamp: now.toISOString(),
+      timestampMs: now.getTime(),
+      date: now.toISOString().slice(0, 10),
+      sessionId: this.sessionId,
+      userId: this.userId,
+      userName: this.userName,
+      userRole: this.user_role,
+      comState: {
+        id: this.com_id,
+        editor_id: this.com_editor,
+        state: this.com_state,
+        curator_id: this.com_curator,
+        id_company: this.com_idcom,
+        name: this.com_name
+      },
+      action,
+      data: this._sanitizeData(data),
+      meta: {
+        ...meta,
+        url: window.location.href,
+        pathname: window.location.pathname,
+      },
+    };
+
     return new Promise((resolve, reject) => {
-      req.onsuccess = () => {
-        console.log('[IDB] Тестовая запись УСПЕШНА!');
-        resolve();
-      };
-      req.onerror = (e) => {
-        console.error('[IDB] Ошибка записи:', e.target.error);
-        reject(e.target.error);
-      };
+      const tx = db.transaction('logs', 'readwrite'); // убедись, что STORE_NAME = 'logs'
+      const store = tx.objectStore('logs');
+      const request = store.add(logEntry);
+
+      request.onsuccess = () => resolve(logEntry.id);
+      request.onerror = () => reject(request.error);
     });
-  } catch (err) {
-    console.error('[IDB] Ошибка инициализации:', err);
+  } catch (e) {
+    console.error('[FormLogger] Ошибка записи в IndexedDB:', e);
+    return null;
   }
 }
 
@@ -548,32 +435,6 @@ async _initDB() {
       return 0;
     }
   }
-
-  // async getLogs({ name = null, comState = null, date = null, action = null, fromDate = null, toDate = null, page = 1, limit = 50 } = {}) {
-  //   try {
-  //     const db = await this._ensureDB();
-  //     if (!db) return [];
-      
-  //     return new Promise((resolve, reject) => {
-  //       const tx = db.transaction(STORE_NAME, 'readonly');
-  //       const store = tx.objectStore(STORE_NAME);
-  //       const request = store.getAll();
-        
-  //       request.onsuccess = () => {
-  //         let logs = request.result || [];
-  //         logs.sort((a, b) => b.timestampMs - a.timestampMs);
-  //         logs = this._filterLogs(logs, { name, comState, date, action, fromDate, toDate });
-          
-  //         const start = (page - 1) * limit;
-  //         resolve(logs.slice(start, start + limit));
-  //       };
-        
-  //       request.onerror = () => reject(request.error);
-  //     });
-  //   } catch (e) {
-  //     return [];
-  //   }
-  // }
 
   async getLogs({ name = null, comState = null, date = null, action = null, fromDate = null, toDate = null, page = 1, limit = 50 } = {}) {
     try {
@@ -885,7 +746,7 @@ export const formLogger = new FormLoggerService();
 if (typeof window !== 'undefined') window.formLogger = formLogger;
 export default formLogger;
 
-// =============================================================================
+// 
 // ТИПЫ
 // =============================================================================
 
@@ -910,7 +771,7 @@ export const LOG_TYPE_CONFIG = {
   FORM_SNAPSHOT: { label: 'Снимок формы', color: '#b37feb', icon: '📸' },
   AUTO_SNAPSHOT: { label: 'Автоснимок', color: '#d3adf7', icon: '⏱️' },
   EMERGENCY_SNAPSHOT: { label: 'Экстренный снимок', color: '#ff7875', icon: '🆘' },
-  BEFORE_SAVE: { label: 'Перед сохранением', color: '#ff843dff', icon: '💾' },
+  BEFORE_SAVE: { label: 'Перед сохранением', color: '#ffc53d', icon: '💾' },
   SAVE_SUCCESS: { label: 'Сохранено успешно', color: '#73d13d', icon: '✅' },
   SAVE_ERROR: { label: 'Ошибка сохранения', color: '#ff4d4f', icon: '❌' },
   ERROR: { label: 'Ошибка', color: '#ff4d4f', icon: '⚠️' },

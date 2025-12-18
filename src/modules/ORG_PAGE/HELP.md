@@ -167,7 +167,7 @@ const orgName = Form.useWatch('name', form);
 </Form.Item>
 ```
 
-## Чеклист перед сохранением
+## ЧеклистЗапрос на сохранение
 
 1. ✅ Все новые элементы имеют `command: 'create'`
 2. ✅ Изменённые элементы имеют `command: 'update'`

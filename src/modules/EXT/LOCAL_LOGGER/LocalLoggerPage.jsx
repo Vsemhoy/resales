@@ -4,12 +4,14 @@ import { ANTD_PAGINATION_LOCALE } from '../../../config/Localization';
 import { 
   Button, DatePicker, Input, Pagination, Select, Space, Tag, 
   Tooltip, Modal, Collapse, Empty, Spin, Popconfirm, message, 
-  Checkbox
+  Checkbox, Progress,
+  Affix
 } from 'antd';
 import { 
   CaretLeftOutlined, CaretRightOutlined, DownloadOutlined,
   DeleteOutlined, ReloadOutlined, CopyOutlined,
-  ExclamationCircleOutlined, CheckCircleOutlined
+  ExclamationCircleOutlined, CheckCircleOutlined,
+  SettingOutlined, DatabaseOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import "./components/style/locallogger.css";
@@ -18,28 +20,27 @@ import "./components/style/locallogger.css";
 const typeSelects = [
   { value: "PAGE_OPEN", label: "📂 Открытие страницы" },
   { value: "PAGE_CLOSE", label: "📁 Закрытие страницы" },
-  { value: "TAB_CHANGE", label: "📑 Смена таба" },
+  // { value: "TAB_CHANGE", label: "📑 Смена таба" },
   { value: "EDIT_MODE_ENTER", label: "✏️ Начало редактирования" },
   { value: "EDIT_MODE_EXIT", label: "✅ Конец редактирования" },
   { value: "FORM_SNAPSHOT", label: "📸 Снимок формы" },
-  { value: "AUTO_SNAPSHOT", label: "⏱️ Автоснимок" },
-  { value: "EMERGENCY_SNAPSHOT", label: "🆘 Экстренный снимок" },
-  { value: "BEFORE_SAVE", label: "💾 Перед сохранением" },
+  // { value: "AUTO_SNAPSHOT", label: "⏱️ Автоснимок" },
+  // { value: "EMERGENCY_SNAPSHOT", label: "🆘 Экстренный снимок" },
+  { value: "BEFORE_SAVE", label: "💾Запрос на сохранение" },
   { value: "SAVE_SUCCESS", label: "✅ Сохранено успешно" },
   { value: "SAVE_ERROR", label: "❌ Ошибка сохранения" },
-  { value: "ERROR", label: "⚠️ Ошибка" },
-  { value: "ITEM_ADD", label: "➕ Добавление" },
-  { value: "ITEM_DELETE", label: "➖ Удаление" },
-  { value: "ITEM_UPDATE", label: "🔄 Обновление" },
+  // { value: "ERROR", label: "⚠️ Ошибка" },
+  // { value: "ITEM_ADD", label: "➕ Добавление" },
+  // { value: "ITEM_DELETE", label: "➖ Удаление" },
+  // { value: "ITEM_UPDATE", label: "🔄 Обновление" },
   { value: "CURATOR_REQUEST", label: "👤 Запрос кураторства" },
   { value: "CURATOR_REQUEST_RESULT", label: "👥 Результат кураторства" },
   { value: "CURATOR_REQUEST_FAILED", label: "👤❌ Ошибка кураторства" },
 ];
 
 const LocalLogger = ({ userdata }) => {
-  // Инициализация
+  // Инициализация пользователя
   useEffect(() => {
-    formLogger.setMaxAgeDays(90);
     formLogger.setUser(
       userdata?.user?.id,
       `${userdata?.user?.surname} ${userdata?.user?.name}`,
@@ -61,55 +62,62 @@ const LocalLogger = ({ userdata }) => {
   const [loading, setLoading] = useState(false);
   const [heatmapData, setHeatmapData] = useState({});
   const [stats, setStats] = useState(null);
+  const [health, setHealth] = useState(null);
   const [clearModalOpen, setClearModalOpen] = useState(false);
   const [captchaValue, setCaptchaValue] = useState('');
   const [captchaAnswer, setCaptchaAnswer] = useState(null);
+  const [captchaQuestion, setCaptchaQuestion] = useState('');
 
-  // Загрузка heatmap и статистики
-  useEffect(() => {
-    const loadMeta = async () => {
-      const [heatmap, statsData] = await Promise.all([
+  // Настройки логгера (из FormLogger)
+  const [settings, setSettings] = useState(() => formLogger.getSettings());
+
+  // Загрузка данных
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const filterParams = {
+        name: filters.name || undefined,
+        comState: filters.comId ? { id: String(filters.comId) } : undefined,
+        action: filters.types.length > 0 ? filters.types : undefined,
+        date: filters.date ? filters.date.format('YYYY-MM-DD') : undefined,
+        page: currentPage,
+        limit: onPage,
+      };
+
+      const [result, totalCount, heatmap, statsData, healthData] = await Promise.all([
+        formLogger.getLogs(filterParams),
+        formLogger.getLogsCount(filterParams),
         formLogger.getHeatmapData(90),
-        formLogger.getStats()
+        formLogger.getStats(),
+        formLogger.getHealth()
       ]);
+
+      setLogs(result);
+      setTotal(totalCount);
       setHeatmapData(heatmap);
       setStats(statsData);
-    };
-    loadMeta();
-  }, [logs]); // Обновляем после изменения логов
-
-  // Загрузка логов
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        const filterParams = {
-          name: filters.name || undefined,
-          comState: filters.comId ? { id: String(filters.comId) } : undefined,
-          action: filters.types.length > 0 ? filters.types : undefined,
-          date: filters.date ? filters.date.format('YYYY-MM-DD') : undefined,
-          page: currentPage,
-          limit: onPage,
-        };
-
-        const [result, totalCount] = await Promise.all([
-          formLogger.getLogs(filterParams),
-          formLogger.getLogsCount(filterParams)
-        ]);
-
-        setLogs(result);
-        setTotal(totalCount);
-      } catch (e) {
-        console.error('Ошибка загрузки логов:', e);
-        setLogs([]);
-        setTotal(0);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    load();
+      setHealth(healthData);
+    } catch (e) {
+      console.error('Ошибка загрузки логов:', e);
+      setLogs([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
+    }
   }, [filters, currentPage, onPage]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Обработчики настроек
+  const handleSettingChange = useCallback((key, value) => {
+    const newSettings = formLogger.updateSettings({ [key]: value });
+    setSettings(newSettings);
+    message.success('Настройки сохранены');
+    // Обновляем health после изменения настроек
+    formLogger.getHealth().then(setHealth);
+  }, []);
 
   // Обработчики фильтров
   const handleFilterChange = (key, value) => {
@@ -137,8 +145,6 @@ const LocalLogger = ({ userdata }) => {
     return `${a} + ${b} = ?`;
   };
 
-  const [captchaQuestion, setCaptchaQuestion] = useState('');
-
   const openClearModal = () => {
     setCaptchaQuestion(generateCaptcha());
     setClearModalOpen(true);
@@ -153,15 +159,13 @@ const LocalLogger = ({ userdata }) => {
     await formLogger.clearAll();
     message.success('Все логи очищены');
     setClearModalOpen(false);
-    setLogs([]);
-    setTotal(0);
+    loadData();
   };
 
   const handleClearOld = async (days) => {
     const count = await formLogger.clearOlderThan(days);
     message.success(`Удалено ${count} логов старше ${days} дней`);
-    // Перезагрузка
-    setCurrentPage(1);
+    loadData();
   };
 
   // Экспорт
@@ -173,6 +177,7 @@ const LocalLogger = ({ userdata }) => {
       date: filters.date ? filters.date.format('YYYY-MM-DD') : undefined,
     };
     await formLogger.exportToFile(null, filterParams);
+    message.success('Файл скачан');
   };
 
   const handleRefresh = () => {
@@ -188,14 +193,22 @@ const LocalLogger = ({ userdata }) => {
           <span className="sa-loclog-name">📊 Star-Logger</span>
           {stats && (
             <span className="sa-loclog-stats">
-              Всего: {stats.totalLogs} записей | 
-              Размер: {stats.dbSize?.usedMB || '?'} MB
+              Записей: {stats.totalLogs} | 
+              Размер: {stats.dbSize?.usedMB || '0'} MB / {settings.maxSizeMB} MB
             </span>
+          )}
+          {health && (
+            <Tag color={
+              health.status === 'ok' ? 'green' : 
+              health.status === 'warning' ? 'orange' : 'red'
+            }>
+              {health.message}
+            </Tag>
           )}
         </div>
         <Space>
-          <Button icon={<ReloadOutlined />} onClick={handleRefresh}>
-            Сбросить
+          <Button icon={<ReloadOutlined />} onClick={() => loadData()}>
+            Обновить
           </Button>
           <Button icon={<DownloadOutlined />} onClick={handleExport}>
             Экспорт
@@ -214,14 +227,25 @@ const LocalLogger = ({ userdata }) => {
         </Space>
       </div>
 
-      {/* Heatmap */}
-      <HeatmapCalendar 
-        data={heatmapData} 
-        onDateClick={handleHeatmapClick}
-        selectedDate={filters.date?.format('YYYY-MM-DD')}
-      />
+      {/* Heatmap + Настройки */}
+      <div className="sa-loclog-heatmap">
+        {/* Heatmap Calendar */}
+        <HeatmapCalendar 
+          data={heatmapData} 
+          onDateClick={handleHeatmapClick}
+          selectedDate={filters.date?.format('YYYY-MM-DD')}
+        />
+
+        {/* Панель настроек */}
+        <SettingsPanel 
+          settings={settings}
+          health={health}
+          onSettingChange={handleSettingChange}
+        />
+      </div>
 
       {/* Фильтры */}
+      <Affix offsetTop={1} >
       <div className="sa-loclog-toolbar">
         <Space size="middle" wrap>
           <Input
@@ -261,7 +285,10 @@ const LocalLogger = ({ userdata }) => {
           </Space.Compact>
         </Space>
       </div>
+      </Affix>
 
+<div style={{ position: 'static', transform: 'none' }}>
+  <Affix offsetTop={60}>
       {/* Пагинация */}
       <div className="sa-loclog-paginate">
         <Pagination
@@ -279,6 +306,9 @@ const LocalLogger = ({ userdata }) => {
           }}
           disabled={loading}
         />
+      </div>
+
+      </Affix>
       </div>
 
       {/* Контент */}
@@ -322,6 +352,128 @@ const LocalLogger = ({ userdata }) => {
 
 
 // =============================================================================
+// ПАНЕЛЬ НАСТРОЕК
+// =============================================================================
+
+const SettingsPanel = ({ settings, health, onSettingChange }) => {
+  // Опции для селекта дней хранения
+  const daysOptions = useMemo(() => {
+    const options = [];
+    for (let i = 5; i <= 90; i += 5) {
+      options.push({ value: i, label: `${i} дней` });
+    }
+    return options;
+  }, []);
+
+  // Опции для размера БД (5-100 MB)
+  const sizeOptions = useMemo(() => {
+    const options = [];
+    for (let i = 5; i <= 100; i += 5) {
+      options.push({ value: i, label: `${i} MB` });
+    }
+    return options;
+  }, []);
+
+  const sizePercent = health?.size?.percent ? parseFloat(health.size.percent) : 0;
+  const currentSize = health?.size?.current || '0';
+
+  return (
+    <div className="sa-log-cog-panel">
+      <div className="sa-log-cog-panel-header">
+        <SettingOutlined /> Настройки логгера
+      </div>
+
+      <div className='sa-log-cog-panel-item-columns'>
+        <div>
+      {/* Включить/выключить логирование */}
+            <div className="sa-log-cog-panel-item">
+              <Checkbox
+                checked={settings.enabled}
+                onChange={(e) => onSettingChange('enabled', e.target.checked)}
+                className="sa-log-cog-panel-label"
+              >
+                Включить локальное логгирование
+              </Checkbox>
+            </div>
+
+            {/* Сохранять снимки форм */}
+            {settings.enabled && (
+            <div className="sa-log-cog-panel-item">
+              <Checkbox
+                checked={settings.saveSnapshots}
+                disabled={!settings.enabled}
+                onChange={(e) => onSettingChange('saveSnapshots', e.target.checked)}
+                className="sa-log-cog-panel-label"
+              >
+                Сохранять снимки форм
+              </Checkbox>
+              <div className="sa-log-cog-panel-hint">
+                Снимки занимают много места, но помогают восстановить данные
+              </div>
+            </div>
+            )}
+
+
+                {/* Предупреждение если отключено */}
+            {!settings.enabled && (
+              <div className="sa-log-cog-panel-warning">
+                ⚠️ Логирование отключено. Данные не сохраняются.
+              </div>
+            )}
+
+        </div>
+        <div>
+          {/* Время хранения логов */}
+          <div className="sa-log-cog-panel-item">
+            <div className="sa-log-cog-panel-label">
+              Время хранения логов:
+            </div>
+            <Select
+              value={settings.maxAgeDays}
+              disabled={!settings.enabled}
+              onChange={(value) => onSettingChange('maxAgeDays', value)}
+              options={daysOptions}
+              style={{ width: '100%' }}
+            />
+          </div>
+
+          {/* Максимальный размер БД */}
+          <div className="sa-log-cog-panel-item">
+            <div className="sa-log-cog-panel-label">
+              <DatabaseOutlined /> Макс. размер БД:
+            </div>
+            <Select
+              value={settings.maxSizeMB}
+              disabled={!settings.enabled}
+              onChange={(value) => onSettingChange('maxSizeMB', value)}
+              options={sizeOptions}
+              style={{ width: '100%' }}
+            />
+
+          </div>
+        </div>
+      </div>
+     
+            <div className="sa-log-cog-panel-progress">
+              <Progress 
+                percent={Math.min(100, sizePercent)} 
+                size="small"
+                status={
+                  sizePercent > 90 ? 'exception' : 
+                  sizePercent > 70 ? 'active' : 'normal'
+                }
+                format={() => `${currentSize} / ${settings.maxSizeMB} MB`}
+              />
+            </div>
+
+
+
+    </div>
+  );
+};
+
+
+// =============================================================================
 // КОМПОНЕНТ HEATMAP КАЛЕНДАРЯ
 // =============================================================================
 
@@ -329,11 +481,6 @@ const HeatmapCalendar = ({ data, onDateClick, selectedDate }) => {
   const days = useMemo(() => {
     const result = [];
     const today = dayjs();
-
-    // const [enableLocLog, setEnableLocLog] = useState(true);
-    // const [durationLocLog, setDurationLocLog] = useState(true);
-    // const [enableLocLogShapshots, setEnableLocLogShapshots] = useState(true);
-
     
     for (let i = 89; i >= 0; i--) {
       const date = today.subtract(i, 'day');
@@ -353,7 +500,6 @@ const HeatmapCalendar = ({ data, onDateClick, selectedDate }) => {
     return result;
   }, [data]);
 
-  // Группируем по неделям
   const weeks = useMemo(() => {
     const result = [];
     let currentWeek = [];
@@ -369,78 +515,36 @@ const HeatmapCalendar = ({ data, onDateClick, selectedDate }) => {
     return result;
   }, [days]);
 
-
-  const countOfStoreDays = () => {
-    const min = 5;
-    const max = 90;
-    let arr = [];
-    for (let i = min; i <= max; i++) {
-      arr.push(
-        {
-          key: 'storedays_' + i,
-          value: i + 1,
-          label: i + " Days"
-        }
-      )
-      
-    }
-    return arr;
-  }
-
   return (
-    <div className="sa-loclog-heatmap sa-flex-space">
-      <div>
-        <div className="sa-loclog-heatmap-label">Активность за 90 дней:</div>
-        <div className="sa-loclog-heatmap-grid">
-          {weeks.map((week, weekIndex) => (
-            <div key={weekIndex} className="sa-loclog-heatmap-week">
-              {week.map((day) => (
-                <Tooltip 
-                  key={day.date} 
-                  title={`${day.date}: ${day.count} записей`}
-                >
-                  <div
-                    className={`sa-loclog-heatmap-day level-${day.level} ${selectedDate === day.date ? 'selected' : ''}`}
-                    onClick={() => onDateClick(day.date)}
-                  />
-                </Tooltip>
-              ))}
-            </div>
-          ))}
-        </div>
-        <div className="sa-loclog-heatmap-legend">
-          <span>Меньше</span>
-          <div className="sa-loclog-heatmap-day level-0" />
-          <div className="sa-loclog-heatmap-day level-1" />
-          <div className="sa-loclog-heatmap-day level-2" />
-          <div className="sa-loclog-heatmap-day level-3" />
-          <div className="sa-loclog-heatmap-day level-4" />
-          <span>Больше</span>
-        </div>
-      </div>
-      <div className='sa-log-cog-panel'>
-        <div className='sa-log-cog-panel-label'>
-          <Checkbox >Включить локальное логгирование</Checkbox>
-        </div>
-        <div className='sa-log-cog-panel-label'>
-          <Checkbox 
-            // disabled={!enableLocLog}
-          >Сохранять снимки форм</Checkbox>
-        </div>
-        
-        <div>
-          <div className='sa-log-cog-panel-label'>
-          Время хранения логов:
-
+    <div className="sa-loclog-heatmap-container">
+      <div className="sa-loclog-heatmap-label">Активность за 90 дней:</div>
+      <div className="sa-loclog-heatmap-grid">
+        {weeks.map((week, weekIndex) => (
+          <div key={weekIndex} className="sa-loclog-heatmap-week">
+            {week.map((day) => (
+              <Tooltip 
+                key={day.date} 
+                title={`${day.date}: ${day.count} записей`}
+              >
+                <div
+                  className={`sa-loclog-heatmap-day level-${day.level} ${selectedDate === day.date ? 'selected' : ''}`}
+                  onClick={() => onDateClick(day.date)}
+                />
+              </Tooltip>
+            ))}
           </div>
-          <Select 
-          // disabled={!enableLocLog}
-            style={{width: '100%'}}
-            options={countOfStoreDays()}
-          />
-        </div>
+        ))}
       </div>
-        </div>  
+      <div className="sa-loclog-heatmap-legend">
+        <span>Меньше</span>
+        <div className="sa-loclog-heatmap-day level-0" />
+        <div className="sa-loclog-heatmap-day level-1" />
+        <div className="sa-loclog-heatmap-day level-2" />
+        <div className="sa-loclog-heatmap-day level-3" />
+        <div className="sa-loclog-heatmap-day level-4" />
+        <span>Больше</span>
+      </div>
+    </div>
   );
 };
 
@@ -472,7 +576,8 @@ const LogItem = ({ log }) => {
   const companyName = log.comState?.name || log.data?.main?.name || '...';
   const companyId = log.comState?.id || '—';
 
-  const handleCopyJson = () => {
+  const handleCopyJson = (e) => {
+    e.stopPropagation();
     navigator.clipboard.writeText(JSON.stringify(log, null, 2));
     message.success('JSON скопирован');
   };
@@ -482,21 +587,18 @@ const LogItem = ({ log }) => {
       {/* Заголовок */}
       <div className="sa-loclog-item-header" onClick={() => setExpanded(!expanded)}>
         <div className="sa-loclog-item-left">
-          <div className={'sa-flex'}>
-            <span className={'sa-loc-comid'}>
-              {companyId}
-            </span>
-          <Tag color={config.color} className="sa-loclog-type-tag">
-            {config.icon} {config.label}
-          </Tag>
+          <div className="sa-flex">
+            <span className="sa-loc-comid">{companyId}</span>
+            <Tag color={config.color} className="sa-loclog-type-tag">
+              {config.icon} {config.label}
+            </Tag>
           </div>
           <span className="sa-loclog-item-company">
             <strong>{companyName}</strong>
-            {/* <span className="sa-loclog-item-id">#{companyId}</span> */}
           </span>
         </div>
         <div className="sa-loclog-item-right">
-          <span className="sa-loclog-item-user">{log.userName || '—'}</span>
+          {/* <span className="sa-loclog-item-user">{log.userName || '—'}</span> */}
           <span className="sa-loclog-item-datetime">
             <span className="sa-loclog-item-date">{date}</span>
             <span className="sa-loclog-item-time">{time}</span>
@@ -520,7 +622,6 @@ const LogItem = ({ log }) => {
             </Button>
           </div>
 
-          {/* Специфичный рендер в зависимости от типа */}
           <LogDataRenderer log={log} />
         </div>
       )}
@@ -534,7 +635,7 @@ const LogItem = ({ log }) => {
 // =============================================================================
 
 const LogDataRenderer = ({ log }) => {
-  const { action, data, comState } = log;
+  const { action, data } = log;
 
   switch (action) {
     case 'PAGE_OPEN':
@@ -550,7 +651,7 @@ const LogDataRenderer = ({ log }) => {
       return (
         <div className="sa-loclog-data-simple">
           <Tag>Было: {data?.from || '—'}</Tag>
-          <span>→</span>
+          <span style={{ margin: '0 8px' }}>→</span>
           <Tag color="blue">Стало: {data?.to || '—'}</Tag>
         </div>
       );
@@ -590,6 +691,7 @@ const LogDataRenderer = ({ log }) => {
 // =============================================================================
 
 const FormSnapshotRenderer = ({ data }) => {
+  // console.log(data);
   if (!data || typeof data !== 'object') {
     return <div className="sa-loclog-data-empty">Нет данных</div>;
   }
@@ -634,7 +736,7 @@ const FormSnapshotRenderer = ({ data }) => {
 
 
 // =============================================================================
-// РЕНДЕРЕР МАССИВОВ (контакты, телефоны и т.д.)
+// РЕНДЕРЕР МАССИВОВ
 // =============================================================================
 
 const ArrayRenderer = ({ items }) => {
@@ -663,7 +765,6 @@ const ArrayRenderer = ({ items }) => {
           tagText = 'Изменён';
         }
 
-        // Пытаемся показать понятное название
         const displayName = item.name || item.lastname || item.number || item.email || `#${item.id}`;
 
         return (
@@ -739,7 +840,6 @@ const JsonTreeViewer = ({ data, title }) => {
     return <span className="sa-loclog-scalar">{String(data)}</span>;
   }
 
-  const entries = Object.entries(data);
   const preview = JSON.stringify(data).slice(0, 100);
 
   return (

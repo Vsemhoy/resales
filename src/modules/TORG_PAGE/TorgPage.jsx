@@ -1346,11 +1346,11 @@ useEffect(() => {
 
 
 
-	useEffect(() => {
-		if (prevTab !== activeTab){
-			formLogger.log('TAB_CHANGE', { from: prevTab, to: activeTab, org_id: item_id, time: dayjs() })
-		}
-	}, [activeTab]);
+	// useEffect(() => {
+	// 	if (prevTab !== activeTab){
+	// 		formLogger.log('TAB_CHANGE', { from: prevTab, to: activeTab, org_id: item_id, time: dayjs() })
+	// 	}
+	// }, [activeTab]);
 
 
 

@@ -643,7 +643,7 @@ const antiTruncateText = (text, maxLength = 200) => {
 									}
 								>
 									<InboxStackIcon height={'18px'} />
-									<Tag color={'geekblue'}>{orgData.bids.length}</Tag>
+									<Tag color={'geekblue'}>{orgData?.bids_count > 999 ? "999+" : orgData?.bids_count}</Tag>
 								</div>
 							</Dropdown>
 						)}
