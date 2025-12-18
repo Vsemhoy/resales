@@ -139,7 +139,7 @@
 
 /* Toolbar */
 .sa-loclog-toolbar {
-  background: white;
+  background: #32689e;
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 12px;
@@ -471,4 +471,26 @@
 /* Dark mode support (если нужно) */
 @media (prefers-color-scheme: dark) {
   /* Можно добавить тёмную тему */
+}
+
+
+.sa-loc-comid {
+  min-width: 40px;
+  font-size: large;
+  font-weight: bold;
+}
+
+.sa-log-cog-panel {
+  display: block;
+  min-width: 300px;
+}
+.sa-log-cog-panel-label, .sa-log-cog-panel-label .ant-checkbox-label {
+  font-size: large;
+}
+.sa-log-cog-panel-label input[type="checkbox"] , .sa-log-cog-panel-label .ant-checkbox-inner {
+  height: 24px !important;
+  width: 24px !important;
+}
+.sa-log-cog-panel > div {
+  padding-bottom: 12px;
 }

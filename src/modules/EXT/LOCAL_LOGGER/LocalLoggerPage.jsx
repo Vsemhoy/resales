@@ -3,7 +3,8 @@ import { formLogger, LOG_TYPE_CONFIG } from '../../../components/helpers/FormLog
 import { ANTD_PAGINATION_LOCALE } from '../../../config/Localization';
 import { 
   Button, DatePicker, Input, Pagination, Select, Space, Tag, 
-  Tooltip, Modal, Collapse, Empty, Spin, Popconfirm, message 
+  Tooltip, Modal, Collapse, Empty, Spin, Popconfirm, message, 
+  Checkbox
 } from 'antd';
 import { 
   CaretLeftOutlined, CaretRightOutlined, DownloadOutlined,
@@ -328,6 +329,11 @@ const HeatmapCalendar = ({ data, onDateClick, selectedDate }) => {
   const days = useMemo(() => {
     const result = [];
     const today = dayjs();
+
+    // const [enableLocLog, setEnableLocLog] = useState(true);
+    // const [durationLocLog, setDurationLocLog] = useState(true);
+    // const [enableLocLogShapshots, setEnableLocLogShapshots] = useState(true);
+
     
     for (let i = 89; i >= 0; i--) {
       const date = today.subtract(i, 'day');
@@ -363,36 +369,78 @@ const HeatmapCalendar = ({ data, onDateClick, selectedDate }) => {
     return result;
   }, [days]);
 
+
+  const countOfStoreDays = () => {
+    const min = 5;
+    const max = 90;
+    let arr = [];
+    for (let i = min; i <= max; i++) {
+      arr.push(
+        {
+          key: 'storedays_' + i,
+          value: i + 1,
+          label: i + " Days"
+        }
+      )
+      
+    }
+    return arr;
+  }
+
   return (
-    <div className="sa-loclog-heatmap">
-      <div className="sa-loclog-heatmap-label">Активность за 90 дней:</div>
-      <div className="sa-loclog-heatmap-grid">
-        {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="sa-loclog-heatmap-week">
-            {week.map((day) => (
-              <Tooltip 
-                key={day.date} 
-                title={`${day.date}: ${day.count} записей`}
-              >
-                <div
-                  className={`sa-loclog-heatmap-day level-${day.level} ${selectedDate === day.date ? 'selected' : ''}`}
-                  onClick={() => onDateClick(day.date)}
-                />
-              </Tooltip>
-            ))}
+    <div className="sa-loclog-heatmap sa-flex-space">
+      <div>
+        <div className="sa-loclog-heatmap-label">Активность за 90 дней:</div>
+        <div className="sa-loclog-heatmap-grid">
+          {weeks.map((week, weekIndex) => (
+            <div key={weekIndex} className="sa-loclog-heatmap-week">
+              {week.map((day) => (
+                <Tooltip 
+                  key={day.date} 
+                  title={`${day.date}: ${day.count} записей`}
+                >
+                  <div
+                    className={`sa-loclog-heatmap-day level-${day.level} ${selectedDate === day.date ? 'selected' : ''}`}
+                    onClick={() => onDateClick(day.date)}
+                  />
+                </Tooltip>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="sa-loclog-heatmap-legend">
+          <span>Меньше</span>
+          <div className="sa-loclog-heatmap-day level-0" />
+          <div className="sa-loclog-heatmap-day level-1" />
+          <div className="sa-loclog-heatmap-day level-2" />
+          <div className="sa-loclog-heatmap-day level-3" />
+          <div className="sa-loclog-heatmap-day level-4" />
+          <span>Больше</span>
+        </div>
+      </div>
+      <div className='sa-log-cog-panel'>
+        <div className='sa-log-cog-panel-label'>
+          <Checkbox >Включить локальное логгирование</Checkbox>
+        </div>
+        <div className='sa-log-cog-panel-label'>
+          <Checkbox 
+            // disabled={!enableLocLog}
+          >Сохранять снимки форм</Checkbox>
+        </div>
+        
+        <div>
+          <div className='sa-log-cog-panel-label'>
+          Время хранения логов:
+
           </div>
-        ))}
+          <Select 
+          // disabled={!enableLocLog}
+            style={{width: '100%'}}
+            options={countOfStoreDays()}
+          />
+        </div>
       </div>
-      <div className="sa-loclog-heatmap-legend">
-        <span>Меньше</span>
-        <div className="sa-loclog-heatmap-day level-0" />
-        <div className="sa-loclog-heatmap-day level-1" />
-        <div className="sa-loclog-heatmap-day level-2" />
-        <div className="sa-loclog-heatmap-day level-3" />
-        <div className="sa-loclog-heatmap-day level-4" />
-        <span>Больше</span>
-      </div>
-    </div>
+        </div>  
   );
 };
 
@@ -421,7 +469,7 @@ const LogItem = ({ log }) => {
   const time = dayjs(log.timestamp).format('HH:mm:ss');
   const date = dayjs(log.timestamp).format('DD.MM.YYYY');
 
-  const companyName = log.comState?.name || log.data?.main?.name || '—';
+  const companyName = log.comState?.name || log.data?.main?.name || '...';
   const companyId = log.comState?.id || '—';
 
   const handleCopyJson = () => {
@@ -434,12 +482,17 @@ const LogItem = ({ log }) => {
       {/* Заголовок */}
       <div className="sa-loclog-item-header" onClick={() => setExpanded(!expanded)}>
         <div className="sa-loclog-item-left">
+          <div className={'sa-flex'}>
+            <span className={'sa-loc-comid'}>
+              {companyId}
+            </span>
           <Tag color={config.color} className="sa-loclog-type-tag">
             {config.icon} {config.label}
           </Tag>
+          </div>
           <span className="sa-loclog-item-company">
             <strong>{companyName}</strong>
-            <span className="sa-loclog-item-id">#{companyId}</span>
+            {/* <span className="sa-loclog-item-id">#{companyId}</span> */}
           </span>
         </div>
         <div className="sa-loclog-item-right">
