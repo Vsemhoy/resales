@@ -173,6 +173,7 @@ const [orgName, setOrgName] = useState('');
 
 
 		useEffect(() => {
+			formLogger.setComId(item_id);
 			formLogger.log('PAGE_OPEN', { id: item_id });
 		}, []);
 
@@ -620,6 +621,7 @@ useEffect(() => {
 
 				formLogger.setComCurator(response.data.content?.id8staff_list);
 				formLogger.setComIdCompany(response.data.content?.id_company);
+				formLogger.setComName(baseMainData?.name);
 			}
 				
 		} catch (e) {
@@ -633,6 +635,7 @@ useEffect(() => {
 	};
 
 	useEffect(() => {
+		formLogger.setComName(baseMainData?.name);
 		if (lockBySocket){
 				formLogger.setComState(3);
 				formLogger.setComEditor(lockUser ? lockUser.username : '?');
@@ -1343,11 +1346,11 @@ useEffect(() => {
 
 
 
-	useEffect(() => {
-		if (prevTab !== activeTab){
-			formLogger.log('TAB_CHANGE', { from: prevTab, to: activeTab, org_id: item_id, time: dayjs() })
-		}
-	}, [activeTab]);
+	// useEffect(() => {
+	// 	if (prevTab !== activeTab){
+	// 		formLogger.log('TAB_CHANGE', { from: prevTab, to: activeTab, org_id: item_id, time: dayjs() })
+	// 	}
+	// }, [activeTab]);
 
 
 

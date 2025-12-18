@@ -303,7 +303,7 @@ const OrgListPage = (props) => {
 		if (SKIPPER === 0) {
 			const timer = setTimeout(() => {
 				get_orglist_async();
-			}, 250);
+			}, 1200);
 
 			// Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
 			return () => clearTimeout(timer);
@@ -349,7 +349,8 @@ const OrgListPage = (props) => {
 			let route = '/api/sales/orglist';
 			if (userdata?.user?.id === 558 || userdata?.user?.id === 46){
 				route = '/api/sales/v2/orglist'
-			};
+			}
+			route = '/api/sales/v2/orglist'
 
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(route, {

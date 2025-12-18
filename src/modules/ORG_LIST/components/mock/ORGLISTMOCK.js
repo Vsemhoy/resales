@@ -60,6 +60,7 @@ export const OM_COMP_LIST = [
 		rating_value: null,
 		rating_comment: null,
 		rating_name: null,
+    bids_count: 123,
     subcompanies: [
       {
           "id": 12,
@@ -4240,6 +4241,7 @@ export const OM_COMP_LIST = [
 		source: 'Русский бизнес. Север-2007',
 		region_id: 1,
 		town_id: 332,
+    bids_count: 1223,
 		address_comment: '',
 		creator_id: 0,
 		deleted: 0,

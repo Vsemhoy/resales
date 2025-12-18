@@ -1,40 +1,13 @@
-/* .sa-loclog-page {
-  background-color: white;
-  padding: 12px;
-  min-height: 100vh;
-}
-
-.sa-loclog-toolbar {
-    box-shadow: 1px 6px 12px #00000052;
-  border-radius: 12px;
-  padding: 6px;
-  margin-bottom: 12px;
-      align-items: center;
-}
-
-.sa-loclog-toolbar button {
-  min-width: 34px;
-}
-.sa-loclog-paginate {
-   padding: 6px;
-  margin-bottom: 12px; 
-}
-
-.sa-loclog-name {
-  font-size: x-large;
-  color: rgb(44, 114, 155);
-  font-weight: bold;
-} */
-
 /* =============================================================================
    LocalLogger Styles
    ============================================================================= */
 
 .sa-loclog-page {
   padding: 16px;
-  background-color: #f5f5f5;
+  background: #f5f5f5;
   min-height: 100vh;
   text-align: left;
+  padding-bottom: 50vh;
 }
 
 /* Header */
@@ -44,7 +17,7 @@
   align-items: center;
   margin-bottom: 16px;
   padding: 12px 16px;
-  background: white;
+  background: #fff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -53,39 +26,74 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .sa-loclog-name {
   font-size: 20px;
   font-weight: 600;
-  color: #1890ff;
 }
 
 .sa-loclog-stats {
-  font-size: 13px;
-  color: #8c8c8c;
+  color: #666;
+  font-size: 14px;
 }
 
-/* Heatmap Calendar */
-.sa-loclog-heatmap {
-  background: white;
+/* Toolbar & Filters */
+.sa-loclog-toolbar {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background: var(--app-top-menu);
   border-radius: 8px;
-  padding: 16px;
+}
+
+.sa-loclog-paginate {
+  margin-bottom: 12px;
+  padding: 8px 16px;
+  background: #fff;
+  border-radius: 8px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.164);
+}
+
+/* Content */
+.sa-loclog-content {
+  background: #fff;
+  border-radius: 8px;
+  min-height: 300px;
+}
+
+/* =============================================================================
+   Heatmap Section (contains heatmap + settings panel)
+   ============================================================================= */
+
+.sa-loclog-heatmap {
+  justify-content: space-between;
+  gap: 24px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto 1fr;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.164);
+}
+
+.sa-loclog-heatmap-container {
+  flex: 1;
+  min-width: 300px;
 }
 
 .sa-loclog-heatmap-label {
-  font-size: 13px;
-  color: #8c8c8c;
+  font-size: 14px;
+  color: #666;
   margin-bottom: 8px;
 }
 
 .sa-loclog-heatmap-grid {
   display: flex;
   gap: 3px;
-  overflow-x: auto;
-  padding: 4px 0;
+  flex-wrap: wrap;
 }
 
 .sa-loclog-heatmap-week {
@@ -99,34 +107,33 @@
   height: 12px;
   border-radius: 2px;
   cursor: pointer;
-  transition: all 0.15s;
-  border: 1px solid transparent;
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
 .sa-loclog-heatmap-day:hover {
   transform: scale(1.3);
-  border-color: #1890ff;
+  box-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
 
 .sa-loclog-heatmap-day.selected {
-  border: 2px solid #1890ff;
-  transform: scale(1.2);
+  outline: 2px solid #1890ff;
+  outline-offset: 1px;
 }
 
-/* Heat levels */
-.sa-loclog-heatmap-day.level-0 { background-color: #ebedf0; }
-.sa-loclog-heatmap-day.level-1 { background-color: #9be9a8; }
-.sa-loclog-heatmap-day.level-2 { background-color: #40c463; }
-.sa-loclog-heatmap-day.level-3 { background-color: #30a14e; }
-.sa-loclog-heatmap-day.level-4 { background-color: #216e39; }
+/* GitHub-style colors */
+.sa-loclog-heatmap-day.level-0 { background: #ebedf0; }
+.sa-loclog-heatmap-day.level-1 { background: #9be9a8; }
+.sa-loclog-heatmap-day.level-2 { background: #40c463; }
+.sa-loclog-heatmap-day.level-3 { background: #30a14e; }
+.sa-loclog-heatmap-day.level-4 { background: #216e39; }
 
 .sa-loclog-heatmap-legend {
   display: flex;
   align-items: center;
   gap: 4px;
   margin-top: 8px;
-  font-size: 11px;
-  color: #8c8c8c;
+  font-size: 12px;
+  color: #666;
 }
 
 .sa-loclog-heatmap-legend .sa-loclog-heatmap-day {
@@ -135,61 +142,111 @@
 
 .sa-loclog-heatmap-legend .sa-loclog-heatmap-day:hover {
   transform: none;
+  box-shadow: none;
 }
 
-/* Toolbar */
-.sa-loclog-toolbar {
-  background: white;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+/* =============================================================================
+   Settings Panel
+   ============================================================================= */
+
+.sa-log-cog-panel {
+    display: block;
+    min-width: 300px;
+    width: 100%;
+    background: #fafafa;
+    border-radius: 0px;
+    outline: 12px solid #fafafa;
+    box-shadow: 0px 0px 1px 12px #000000e0;
 }
 
-/* Pagination */
-.sa-loclog-paginate {
-  background: white;
-  border-radius: 8px;
-  padding: 8px 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+.sa-log-cog-panel-header {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e8e8;
+  color: #333;
 }
 
-/* Content */
-.sa-loclog-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.sa-log-cog-panel-header .anticon {
+  margin-right: 8px;
 }
 
-/* Log Item */
+.sa-log-cog-panel-item {
+  padding-bottom: 16px;
+}
+
+.sa-log-cog-panel-item:last-child {
+  padding-bottom: 0;
+}
+
+.sa-log-cog-panel-label,
+.sa-log-cog-panel-label .ant-checkbox + span {
+  font-size: 15px !important;
+  color: #333;
+}
+
+/* Увеличенные чекбоксы */
+.sa-log-cog-panel-label .ant-checkbox-inner {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.sa-log-cog-panel-label .ant-checkbox-inner::after {
+  width: 6px;
+  height: 10px;
+  left: 25%;
+}
+
+.sa-log-cog-panel-hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+  margin-left: 28px;
+}
+
+.sa-log-cog-panel-progress {
+  margin-top: 8px;
+}
+
+.sa-log-cog-panel-progress .ant-progress-text {
+  font-size: 12px !important;
+}
+
+.sa-log-cog-panel-warning {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 4px;
+  color: #d46b08;
+  font-size: 13px;
+}
+
+/* =============================================================================
+   Log Item
+   ============================================================================= */
+
 .sa-loclog-item {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  overflow: hidden;
-  transition: all 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
 }
 
 .sa-loclog-item:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  background: #fafafa;
 }
 
 .sa-loclog-item.expanded {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #f5f5f5;
 }
 
 .sa-loclog-item-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 6px 12px;
   cursor: pointer;
-  transition: background 0.15s;
-}
-
-.sa-loclog-item-header:hover {
-  background-color: #fafafa;
+  gap: 16px;
 }
 
 .sa-loclog-item-left {
@@ -207,32 +264,32 @@
   flex-shrink: 0;
 }
 
+.sa-loc-comid {
+  min-width: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1890ff;
+  text-align: center;
+}
+
+.sa-flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .sa-loclog-type-tag {
-  font-size: 12px;
   white-space: nowrap;
 }
 
 .sa-loclog-item-company {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.sa-loclog-item-company strong {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.sa-loclog-item-id {
-  color: #8c8c8c;
-  font-size: 12px;
-}
-
 .sa-loclog-item-user {
-  color: #595959;
+  color: #666;
   font-size: 13px;
 }
 
@@ -240,45 +297,44 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  font-size: 12px;
+  font-size: 15px;
+  min-width: 80px;
 }
 
 .sa-loclog-item-date {
-  color: #8c8c8c;
+  color: #999;
 }
 
 .sa-loclog-item-time {
-  color: #1890ff;
+  color: #333;
   font-weight: 500;
-  font-family: monospace;
 }
 
-/* Item Body */
+/* Log Item Body */
 .sa-loclog-item-body {
-  border-top: 1px solid #f0f0f0;
-  padding: 16px;
-  background: #fafafa;
+  padding: 0 16px 16px 16px;
+  border-top: 1px solid #e8e8e8;
+  margin-top: 0;
 }
 
 .sa-loclog-item-meta {
   display: flex;
-  flex-wrap: wrap;
   gap: 16px;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f0f0f0;
+  flex-wrap: wrap;
+  padding: 12px 0;
   font-size: 12px;
-  color: #8c8c8c;
+  color: #999;
+  border-bottom: 1px dashed #e8e8e8;
+  margin-bottom: 12px;
 }
 
-/* Data renderers */
+/* =============================================================================
+   Data Renderers
+   ============================================================================= */
+
 .sa-loclog-data-simple {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background: white;
-  border-radius: 4px;
+  padding: 8px 0;
+  color: #666;
 }
 
 .sa-loclog-data-success {
@@ -287,25 +343,19 @@
   gap: 12px;
   padding: 12px;
   background: #f6ffed;
-  border: 1px solid #b7eb8f;
   border-radius: 4px;
+  color: #52c41a;
 }
 
 .sa-loclog-data-empty {
-  color: #8c8c8c;
+  color: #999;
   font-style: italic;
-  padding: 8px;
+  padding: 8px 0;
 }
 
 /* Form Snapshot */
 .sa-loclog-form-snapshot {
-  background: white;
-  border-radius: 4px;
-  padding: 8px;
-}
-
-.sa-loclog-form-snapshot .ant-collapse-header {
-  padding: 8px 12px !important;
+  margin-top: 8px;
 }
 
 /* Array Renderer */
@@ -316,9 +366,9 @@
 }
 
 .sa-loclog-array-item {
+  padding: 8px 12px;
   background: #fafafa;
   border-radius: 4px;
-  padding: 8px 12px;
   border-left: 3px solid #d9d9d9;
 }
 
@@ -346,10 +396,10 @@
 
 /* Error Renderer */
 .sa-loclog-error {
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
-  border-radius: 4px;
   padding: 12px;
+  background: #fff2f0;
+  border-radius: 4px;
+  border: 1px solid #ffccc7;
 }
 
 .sa-loclog-error-header {
@@ -360,115 +410,125 @@
 
 .sa-loclog-error-type {
   font-weight: 600;
-  color: #cf1322;
+  color: #ff4d4f;
 }
 
 .sa-loclog-error-message {
-  color: #595959;
+  color: #666;
   margin-top: 4px;
 }
 
 .sa-loclog-stack {
+  font-family: monospace;
   font-size: 11px;
-  background: #262626;
-  color: #ff7875;
-  padding: 12px;
+  background: #f5f5f5;
+  padding: 8px;
   border-radius: 4px;
   overflow-x: auto;
-  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
-/* JSON Tree Viewer */
+/* JSON Viewer */
 .sa-loclog-json-tree {
-  font-family: monospace;
-  font-size: 12px;
+  margin-top: 8px;
 }
 
 .sa-loclog-json-title {
-  font-weight: 500;
+  font-size: 12px;
+  color: #999;
   margin-bottom: 4px;
-  color: #595959;
 }
 
 .sa-loclog-json-preview {
+  font-family: monospace;
+  font-size: 12px;
+  color: #666;
   background: #f5f5f5;
-  padding: 8px 12px;
+  padding: 8px;
   border-radius: 4px;
   cursor: pointer;
-  color: #595959;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
 .sa-loclog-json-preview:hover {
-  background: #e6f7ff;
+  background: #e8e8e8;
 }
 
 .sa-loclog-json-expanded {
-  background: white;
-  border: 1px solid #d9d9d9;
+  background: #f5f5f5;
   border-radius: 4px;
+  padding: 8px;
 }
 
 .sa-loclog-json-code {
-  margin: 0;
-  padding: 12px;
+  font-family: monospace;
   font-size: 11px;
-  background: #fafafa;
-  overflow-x: auto;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
   max-height: 400px;
-  overflow-y: auto;
+  overflow: auto;
 }
 
 .sa-loclog-null {
-  color: #8c8c8c;
+  color: #999;
   font-style: italic;
 }
 
 .sa-loclog-scalar {
-  color: #1890ff;
+  font-family: monospace;
+  color: #333;
 }
 
 .sa-loclog-scalar-value {
-  padding: 8px;
-  background: white;
-  border-radius: 4px;
   font-family: monospace;
+  padding: 4px 0;
 }
 
-/* Empty state */
-.sa-loclog-empty {
-  text-align: center;
-  padding: 48px;
-  color: #8c8c8c;
-}
+/* =============================================================================
+   Responsive
+   ============================================================================= */
 
-/* Responsive */
 @media (max-width: 768px) {
   .sa-loclog-header {
     flex-direction: column;
     gap: 12px;
-    align-items: flex-start;
   }
-
+  
+  .sa-loclog-heatmap {
+    flex-direction: column;
+  }
+  
+  .sa-log-cog-panel {
+    max-width: 100%;
+    width: 100%;
+  }
+  
   .sa-loclog-item-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-
+  
   .sa-loclog-item-right {
     width: 100%;
     justify-content: space-between;
   }
-
-  .sa-loclog-heatmap-grid {
-    justify-content: flex-start;
-  }
 }
 
-/* Dark mode support (если нужно) */
-@media (prefers-color-scheme: dark) {
-  /* Можно добавить тёмную тему */
+/* Utility */
+.sa-flex-space {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.sa-log-cog-panel-item-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 12px;
 }
