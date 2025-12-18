@@ -220,9 +220,9 @@ const MianBigSectionOrg = (props) => {
                       disabled={!editMode}
                       variant="borderless"
                       maxLength={66}
-                      required={true}
+              
                     />,
-                    required: true,
+                    required: false,
                     value: inn
                 },
               ]}

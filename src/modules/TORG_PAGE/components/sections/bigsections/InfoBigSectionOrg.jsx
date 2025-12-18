@@ -275,7 +275,6 @@ const InfoBigSectionOrg = (props) => {
                       // disabled={!editMode}
                       variant="borderless"
                       maxLength={2500}
-                      required={true}
                       size={'small'}
                       options={selects?.rate_lists?.map((item)=>({
                         key: "fssebli_" + item.id,
@@ -284,7 +283,7 @@ const InfoBigSectionOrg = (props) => {
                       }))}
                       disabled={!editMode}
                     />,
-                    required: true,
+                    required: false,
                     value: typeList
                 },
                 {
