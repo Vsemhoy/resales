@@ -187,7 +187,8 @@ class FormLoggerService {
 //   }
 
 async _initDB() {
-  // indexedDB.deleteDatabase('torg_form_logs_db');
+  // console.log('TRY TO INIT');
+  // indexedDB.deleteDatabase(this.DB_NAME);
   if (this._isInitializing) return this._initPromise;
 
   this._isInitializing = true;

@@ -369,39 +369,39 @@ const OrgListTable = (props) => {
 
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
+								{/* <TableHeadNameWithSort
 									sort_key={'bids'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
 								>
 									Заявки
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}></div>
+								</TableHeadNameWithSort> */}
+								<div className={'sa-pa-3'}>Заявки</div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
+								{/* <TableHeadNameWithSort
 									sort_key={'meetings'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
 								>
 									Встречи
-								</TableHeadNameWithSort>
+								</TableHeadNameWithSort> */}
 
-								<div className={'sa-pa-3'}></div>
+								<div className={'sa-pa-3'}>Встречи</div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
+								{/* <TableHeadNameWithSort
 									sort_key={'calls'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
 								>
 									Звонки
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}></div>
+								</TableHeadNameWithSort> */}
+								<div className={'sa-pa-3'}>Звонки</div>
 							</div>
 						</div>
 					</div>
