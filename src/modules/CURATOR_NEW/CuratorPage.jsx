@@ -14,7 +14,7 @@ import { CONFIRM_LIST } from './mock/mock';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/curatorlistpage.css';
 
-const CuratorPageNEW = (props) => {
+const CuratorPage = (props) => {
 	const [openedFilters, setOpenedFilters] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
@@ -51,7 +51,7 @@ const CuratorPageNEW = (props) => {
 
 	const fetchNeedCuratorsApproved = async () => {
 		if (PRODMODE) {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/v2/curators', {
+			let response = await PROD_AXIOS_INSTANCE.post('/api/curators/show', {
 				_token: CSRF_TOKEN,
 			});
 			setCompanies(response.data.orders);
@@ -126,4 +126,4 @@ const CuratorPageNEW = (props) => {
 	);
 };
 
-export default CuratorPageNEW;
+export default CuratorPage;
