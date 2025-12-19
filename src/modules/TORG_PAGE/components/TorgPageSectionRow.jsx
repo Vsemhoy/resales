@@ -9,23 +9,10 @@ const TorgPageSectionRow = (props) => {
   const [expanderText, setExpanderText] = useState("комм");
   const [actionBlock, setActionBlock] = useState(null);
 
-  // useEffect(() => {
-  //   if (props.inputs){
-  //     setInputs(props.inputs);
-  //   } else {
-  //     setInputs([]);
-  //   }
-  // }, [props.inputs]);
   
   useEffect(() => {
     setEditMode(props.edit_mode);
-    // if (!props.editMode){
-    //   setActionBlock(null);
-    // } else {
-    //   if (props.action){
-    //     setActionBlock(props.action);
-    //   }
-    // }
+
   }, [props.edit_mode]);
 
   useEffect(() => {
