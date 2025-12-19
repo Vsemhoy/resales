@@ -208,7 +208,7 @@ useEffect(() => {
         </div>
       </div>
       <div className={'sa-bug-table-cell sa-bug-table-cell-left'}>
-        <div>
+        <div className='sa-break-all-next'>
           <HighlightTextBreaker
             text={item.content}
             highlight={filterText}
@@ -219,7 +219,7 @@ useEffect(() => {
       {isAdmin && (
         <div className={'sa-bug-table-cell sa-bug-table-cell-left'}>
           <div
-            className={`${editComment ? 'edited-data-cell' : ''}`}
+            className={`${editComment ? 'edited-data-cell ' : 'sa-break-all-next'}`}
             onDoubleClick={ ()=>{if (isAdmin && !editComment){setEditComment(true);
               on_focus_field(itemId + "_1");
             }}}
@@ -244,7 +244,7 @@ useEffect(() => {
       )}
       <div className={'sa-bug-table-cell sa-bug-table-cell-left'}>
         <div
-          className={`${editResult ? 'edited-data-cell' : ''}`}
+          className={`${editResult ? 'edited-data-cell' : 'sa-break-all-next'}`}
           onDoubleClick={ ()=>{if (isAdmin && !editResult){setEditResult(true);
             on_focus_field(itemId + "_2");
           }}}
