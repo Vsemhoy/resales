@@ -620,5 +620,7 @@ td:first-child {
 }
 
 .sa-break-all-next * {
-	word-break: break-all;
+	word-break: break-word;
+	text-align: justify;
+	overflow-x: auto;
 }
