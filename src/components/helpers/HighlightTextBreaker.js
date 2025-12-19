@@ -33,7 +33,7 @@ const HighlightTextBreaker = ({ text, highlight, breakLines = false }) => {
         whiteSpace: breakLines ? 'pre-wrap' : 'nowrap',
         overflow: breakLines ? 'visible' : 'hidden',
         textOverflow: breakLines ? 'clip' : 'ellipsis',
-        wordBreak: breakLines ? 'break-word' : 'normal'
+        wordBreak: breakLines ? 'break-word' : 'normal',
       }}>
         {parts.map((part, index) => {
           // Проверяем, является ли часть совпадением (регистронезависимо)

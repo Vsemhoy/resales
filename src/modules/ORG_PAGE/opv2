@@ -1,35 +1,39 @@
 /**
  * OrgPage.jsx - Пример интеграции NotesTabForm
  * 
- * Показываю только релевантные части для интеграции вкладки заметок
+ * Показываю только релевантные части для интеграции вкладки заметок.
+ * Пути к файлам:
+ *   - NotesTabForm: ./components/forms/NotesTabForm
+ *   - Стили: ./components/style/orgpage-forms.css
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { Form, Button, message, Modal, Affix, Tag, Tooltip, Alert, Spin } from 'antd';
+import { Form, Button, message, Modal, Affix, Tag, Tooltip } from 'antd';
 import { 
   PencilIcon, 
   XMarkIcon, 
-  ArrowSmallLeftIcon,
   ClipboardDocumentCheckIcon 
 } from '@heroicons/react/24/outline';
-import { LoadingOutlined, FlagOutlined, FlagFilled } from '@ant-design/icons';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { CSRF_TOKEN, PRODMODE } from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 
-// Формы вкладок
+// ===================== ФОРМЫ ВКЛАДОК =====================
+// Новые компоненты на antd Form
 import NotesTabForm, { collectNotesForSave } from './components/forms/NotesTabForm';
-// import MainTabForm from './components/tabs/MainTabForm';
-// import ProjectsTabForm from './components/tabs/ProjectsTabForm';
-// import CallsTabForm from './components/tabs/CallsTabForm';
+import ProjectsTabForm, { collectProjectsForSave } from './components/forms/ProjectsTabForm';
+// import CallsTabForm, { collectCallsForSave } from './components/forms/CallsTabForm';
+// import MainTabForm from './components/forms/MainTabForm';
 
-// Старые компоненты для вкладок, которые пока не переписаны
+// Старые компоненты (пока не переписаны)
 import OrgListModalBillsTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalBillsTab';
 import OrgListModalOffersTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalOffersTab';
 import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalHistoryTab';
 
-import './components/style/orgpage.css';
+// Стили
+import './components/style/orgpage-forms.css';
 
 const TAB_CONFIG = [
   { key: 'm', label: 'Основная информация' },
@@ -44,129 +48,94 @@ const TAB_CONFIG = [
 const OrgPage = ({ userdata }) => {
   const { item_id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
 
-  // ===================== ФОРМЫ =====================
-  // Каждая вкладка имеет свой инстанс формы
+  // ===================== ФОРМЫ (по одной на вкладку) =====================
   const [mainForm] = Form.useForm();
   const [projectsForm] = Form.useForm();
   const [notesForm] = Form.useForm();
   const [callsForm] = Form.useForm();
 
   // ===================== СОСТОЯНИЯ =====================
-  const [orgId, setOrgId] = useState(item_id ? parseInt(item_id) : null);
+  const [orgId] = useState(item_id ? parseInt(item_id) : null);
   const [activeTab, setActiveTab] = useState('m');
   const [editMode, setEditMode] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [orgName, setOrgName] = useState('');
+  const [selects, setSelects] = useState(null);      // Данные для селектов
+  const [orgContacts, setOrgContacts] = useState([]); // Контакты организации
   
   // Индикаторы изменений по вкладкам
   const [changedTabs, setChangedTabs] = useState({
-    m: false, // main
-    p: false, // projects
-    c: false, // calls
-    n: false, // notes
+    m: false, p: false, c: false, n: false,
   });
 
-  // Данные организации
-  const [orgData, setOrgData] = useState(null);
-  const [orgName, setOrgName] = useState('');
-
-  // Оригинальные данные для сравнения (для определения изменений)
+  // Оригинальные данные (для сравнения при сохранении)
   const originalDataRef = useRef({
     notes: [],
     projects: [],
     calls: [],
   });
 
-  // ===================== COMPUTED =====================
   const hasChanges = Object.values(changedTabs).some(Boolean);
 
-  // ===================== ОБРАБОТЧИКИ ИЗМЕНЕНИЙ =====================
-  
-  /**
-   * Callback от дочерних форм при изменении данных
-   */
+  // ===================== CALLBACK ОТ ДОЧЕРНИХ ФОРМ =====================
   const handleDataChange = useCallback((tabKey, hasChanges) => {
-    setChangedTabs(prev => ({
-      ...prev,
-      [tabKey]: hasChanges
-    }));
+    setChangedTabs(prev => ({ ...prev, [tabKey]: hasChanges }));
   }, []);
 
   // ===================== СОХРАНЕНИЕ =====================
-  
-  /**
-   * Собирает данные со всех форм и отправляет на сервер
-   */
   const handleSave = async () => {
     setSaving(true);
     
     try {
-      // Валидация активных форм
-      // await mainForm.validateFields();
-      // await notesForm.validateFields(); // если нужна валидация
-      
       // Собираем данные со всех форм
       const payload = {
-        // main: mainForm.getFieldsValue(),
         notes: collectNotesForSave(notesForm, originalDataRef.current.notes),
-        // projects: collectProjectsForSave(projectsForm, originalDataRef.current.projects),
+        projects: collectProjectsForSave(projectsForm, originalDataRef.current.projects),
         // calls: collectCallsForSave(callsForm, originalDataRef.current.calls),
+        // main: mainForm.getFieldsValue(),
       };
       
-      console.log('📤 Payload для сохранения:', payload);
+      console.log('📤 Payload:', payload);
       
       if (PRODMODE) {
         const response = await PROD_AXIOS_INSTANCE.put(
           `/api/sales/v2/updateorglist/${orgId}`,
-          {
-            data: payload,
-            _token: CSRF_TOKEN,
-          }
+          { data: payload, _token: CSRF_TOKEN }
         );
         
         if (response.status === 200) {
-          message.success('Данные успешно сохранены');
-          
-          // Сбрасываем индикаторы изменений
+          message.success('Данные сохранены');
           setChangedTabs({ m: false, p: false, c: false, n: false });
-          
-          // Перезагружаем данные (можно оптимизировать)
-          // loadOrgData();
         } else {
           message.error(response.data?.message || 'Ошибка сохранения');
         }
       } else {
         // DEV MODE
-        console.log('🧪 DEV: Сохранение (симуляция)', payload);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        message.success('DEV: Данные "сохранены"');
+        console.log('🧪 DEV: Payload', payload);
+        await new Promise(r => setTimeout(r, 1000));
+        message.success('DEV: Сохранено');
         setChangedTabs({ m: false, p: false, c: false, n: false });
       }
     } catch (error) {
-      console.error('Ошибка сохранения:', error);
+      console.error('Ошибка:', error);
       message.error(error.message || 'Ошибка сохранения');
     } finally {
       setSaving(false);
     }
   };
 
-  // ===================== ОТМЕНА ИЗМЕНЕНИЙ =====================
-  
+  // ===================== ОТМЕНА =====================
   const handleDiscard = () => {
-    // Сбрасываем формы к исходным данным
     notesForm.resetFields();
-    // mainForm.resetFields();
-    // projectsForm.resetFields();
+    projectsForm.resetFields();
     // callsForm.resetFields();
-    
+    // mainForm.resetFields();
     setChangedTabs({ m: false, p: false, c: false, n: false });
     setEditMode(false);
   };
 
-  // ===================== ПЕРЕКЛЮЧЕНИЕ ТАБОВ =====================
-  
+  // ===================== ТАБЫ =====================
   const handleTabChange = (tabKey) => {
     setActiveTab(tabKey);
     searchParams.set('tab', tabKey);
@@ -174,19 +143,17 @@ const OrgPage = ({ userdata }) => {
   };
 
   // ===================== РЕНДЕР =====================
-  
   return (
     <div className="app-page">
       <div className="sa-orgpage-body sa-mw-1400">
         
-        {/* Header с табами */}
+        {/* Header */}
         <Affix offsetTop={0}>
           <div className="sa-orgpage-header">
             <div className="sa-flex-space">
               <div className="sa-orgpage-header-title">
                 Паспорт организации ({orgId}) / {TAB_CONFIG.find(t => t.key === activeTab)?.label}
               </div>
-              
               <div className="sa-orp-menu">
                 {TAB_CONFIG.map(tab => (
                   <div
@@ -205,15 +172,14 @@ const OrgPage = ({ userdata }) => {
           </div>
         </Affix>
 
-        {/* Sub-header с кнопками */}
+        {/* Sub-header */}
         <Affix offsetTop={36}>
           <div className="sa-orgpage-sub-header sa-flex-space">
             <div className="sa-orgpage-sub-name">{orgName || '...'}</div>
-            
             <div className="sa-flex sa-orgpage-sub-control">
               {editMode && hasChanges && (
                 <Tooltip title="Не забудьте сохранить">
-                  <Tag color="red-inverse">Есть несохраненные данные</Tag>
+                  <Tag color="red-inverse">Несохранённые данные</Tag>
                 </Tooltip>
               )}
               
@@ -228,23 +194,21 @@ const OrgPage = ({ userdata }) => {
                   >
                     {saving ? 'Сохраняю...' : 'Сохранить'}
                   </Button>
-                  
                   <Button
                     icon={<XMarkIcon height={16} />}
-                    onClick={() => hasChanges ? Modal.confirm({
-                      title: 'Отменить изменения?',
-                      content: 'Несохранённые данные будут потеряны',
-                      onOk: handleDiscard,
-                    }) : setEditMode(false)}
+                    onClick={() => hasChanges 
+                      ? Modal.confirm({
+                          title: 'Отменить изменения?',
+                          onOk: handleDiscard,
+                        }) 
+                      : setEditMode(false)
+                    }
                   >
-                    Закрыть редактирование
+                    Закрыть
                   </Button>
                 </>
               ) : (
-                <Button
-                  icon={<PencilIcon height={16} />}
-                  onClick={() => setEditMode(true)}
-                >
+                <Button icon={<PencilIcon height={16} />} onClick={() => setEditMode(true)}>
                   Редактировать
                 </Button>
               )}
@@ -252,43 +216,28 @@ const OrgPage = ({ userdata }) => {
           </div>
         </Affix>
 
-        {/* Контент вкладок */}
+        {/* Контент */}
         <div className="sa-outlet-body">
           
-          {/* Счета - старый компонент */}
-          {activeTab === 'b' && (
-            <OrgListModalBillsTab
-              data={{ id: orgId }}
-              environment="editor"
-              org_name={orgName}
-            />
-          )}
-
-          {/* КП - старый компонент */}
-          {activeTab === 'o' && (
-            <OrgListModalOffersTab
-              data={{ id: orgId }}
-              environment="editor"
-              org_name={orgName}
-            />
-          )}
-
-          {/* Основная информация - TODO: MainTabForm */}
-          {activeTab === 'm' && (
-            <div>TODO: MainTabForm</div>
-          )}
-
-          {/* Проекты - TODO: ProjectsTabForm */}
-          {activeTab === 'p' && (
-            <div>TODO: ProjectsTabForm</div>
-          )}
-
-          {/* Звонки - TODO: CallsTabForm */}
-          {activeTab === 'c' && (
-            <div>TODO: CallsTabForm</div>
-          )}
-
-          {/* ✅ ЗАМЕТКИ - новый компонент на antd Form */}
+          {activeTab === 'b' && <OrgListModalBillsTab data={{ id: orgId }} environment="editor" org_name={orgName} />}
+          {activeTab === 'o' && <OrgListModalOffersTab data={{ id: orgId }} environment="editor" org_name={orgName} />}
+          {activeTab === 'm' && <div>TODO: MainTabForm</div>}
+          
+          {/* ✅ ПРОЕКТЫ */}
+          <ProjectsTabForm
+            form={projectsForm}
+            orgId={orgId}
+            editMode={editMode}
+            isActive={activeTab === 'p'}
+            userdata={userdata}
+            selects={selects}
+            orgContacts={orgContacts}
+            onDataChange={handleDataChange}
+          />
+          
+          {activeTab === 'c' && <div>TODO: CallsTabForm</div>}
+          
+          {/* ✅ ЗАМЕТКИ */}
           <NotesTabForm
             form={notesForm}
             orgId={orgId}
@@ -297,14 +246,8 @@ const OrgPage = ({ userdata }) => {
             userdata={userdata}
             onDataChange={handleDataChange}
           />
-
-          {/* История - старый компонент */}
-          {activeTab === 'h' && (
-            <OrgListModalHistoryTab
-              data={{ id: orgId }}
-              environment="editor"
-            />
-          )}
+          
+          {activeTab === 'h' && <OrgListModalHistoryTab data={{ id: orgId }} environment="editor" />}
         </div>
       </div>
     </div>
@@ -312,5 +255,3 @@ const OrgPage = ({ userdata }) => {
 };
 
 export default OrgPage;
-
-// https://claude.ai/share/3bd89980-0d5a-466b-8ba5-0006ceb4d5ef
