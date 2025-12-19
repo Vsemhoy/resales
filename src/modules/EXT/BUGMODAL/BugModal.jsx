@@ -13,8 +13,16 @@ import dayjs from 'dayjs';
 import HighlightText from '../../../components/helpers/HighlightText';
 import HighlightTextBreaker from '../../../components/helpers/HighlightTextBreaker.js';
 import BugModalRow from './components/BugModalRow.jsx';
+import { 
+  CaretLeftOutlined, CaretRightOutlined, DownloadOutlined,
+  DeleteOutlined, ReloadOutlined, CopyOutlined,
+  ExclamationCircleOutlined, CheckCircleOutlined,
+  SettingOutlined, DatabaseOutlined
+} from '@ant-design/icons';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
+
+
 
 function BugModal(props) {
 
@@ -90,7 +98,19 @@ const statusConfig = {
       text: "Отклонено",
       color: "error", // красный
       className: "status-rejected"
-    }
+    },
+    5: {
+      id: 5,
+      text: "В следующий пакет обновлений",
+      color: "magenta",
+      className: "status-nextpack"
+    },
+    6: {
+      id: 6,
+      text: "На согласовании",
+      color: "orange",
+      className: "status-discuss"
+    },
   };
 
 const getStatusConfig = () => {
@@ -100,7 +120,10 @@ const getStatusConfig = () => {
 
 useEffect(() => {
     let arr =  Object.values(statusConfig);
-  setStatusArray(arr.filter((item)=> item.id !== 0));
+    setStatusArray(arr.filter((item)=> item.id !== 0));
+
+    getStatusesAction();
+
   }, []);
 
 // Компонент для отображения статуса с бейджем
@@ -113,13 +136,19 @@ useEffect(() => {
     <Tag
       color={config.color}
       className={`status-badge ${config.className}`}
-      style={{
-        margin: 0,
-        borderRadius: '12px',
-        padding: '2px 8px',
-        fontSize: '12px',
-        fontWeight: 500
-      }}
+style={{
+      margin: 0,
+      borderRadius: '12px',
+      padding: '2px 8px',
+      fontSize: '12px',
+      fontWeight: 500,
+      // Делаем блочным и разрешаем перенос
+      display: 'inline-block',
+      whiteSpace: 'normal',
+      wordBreak: 'break-word',
+      maxWidth: '100%', // важно, чтобы уважал ширину колонки
+      textAlign: 'center'
+    }}
     >
       {config.text}
     </Tag>
@@ -194,6 +223,8 @@ useEffect(() => {
     };
 
 
+
+
   const getReportsAction = async () => {
       try {
 			const obj = {
@@ -231,7 +262,29 @@ useEffect(() => {
       }
     };
 
-
+  const getStatusesAction = async () => {
+      try {
+			
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/getselects', );
+        if (response) {
+          let narr = response.data.selects?.statuses;
+     
+          if (narr){
+            narr.unshift(
+                  {
+                  id: 0,
+                  text: "Все",
+                  color: "default", // серый
+                  className: "status-created"
+                }
+            )
+            setStatusArray(narr);
+          }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
 
     // useEffect(() => {
     //   if (STARTMARK < 2){
@@ -378,6 +431,13 @@ useEffect(() => {
 								</Tag>
                 </div>
                 <div style={{gridGap: '6px', display: 'flex',}}>
+
+                <Button
+                icon={<ReloadOutlined />}
+                  onClick={getReportsAction}
+                >
+                  Обновить
+                </Button>
 
                 <Button 
                   color="default" 
