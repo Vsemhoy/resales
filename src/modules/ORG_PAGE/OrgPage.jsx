@@ -180,7 +180,7 @@ const OrgPage = ({ userdata }) => {
     // Сбрасываем формы к исходным данным
     notesForm.resetFields();
     // mainForm.resetFields();
-    // projectsForm.resetFields();
+    projectsForm.resetFields();
     // callsForm.resetFields();
     
     setChangedTabs({ m: false, p: false, c: false, n: false });
