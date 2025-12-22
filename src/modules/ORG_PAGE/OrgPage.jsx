@@ -7,6 +7,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Form, Button, message, Modal, Affix, Tag, Tooltip, Alert, Spin } from 'antd';
+import _ from 'lodash';
+
 import { 
   PencilIcon, 
   XMarkIcon, 
@@ -30,6 +32,8 @@ import OrgListModalOffersTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListM
 import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgListModalHistoryTab';
 
 import './components/style/orgpage.css';
+import OrgComparatorModal from './components/modals/OrgComparatorModal';
+import ProjectsTabForm from './components/forms/ProjectsTabForm';
 
 const TAB_CONFIG = [
   { key: 'm', label: 'Основная информация' },
@@ -53,12 +57,19 @@ const OrgPage = ({ userdata }) => {
   const [notesForm] = Form.useForm();
   const [callsForm] = Form.useForm();
 
+
+  const [notesCompat,    setNotesCompat]    = useState(null);
+  const [projectsCompat, setprojectsCompat] = useState(null);
+  const [callsCompat,    setCallsCompat]    = useState(null);
+
   // ===================== СОСТОЯНИЯ =====================
   const [orgId, setOrgId] = useState(item_id ? parseInt(item_id) : null);
   const [activeTab, setActiveTab] = useState('m');
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const [showComparator, setShowComparator] = useState(false);
   
   // Индикаторы изменений по вкладкам
   const [changedTabs, setChangedTabs] = useState({
@@ -79,6 +90,8 @@ const OrgPage = ({ userdata }) => {
     calls: [],
   });
 
+
+
   // ===================== COMPUTED =====================
   const hasChanges = Object.values(changedTabs).some(Boolean);
 
@@ -87,8 +100,16 @@ const OrgPage = ({ userdata }) => {
   /**
    * Callback от дочерних форм при изменении данных
    */
-  const handleDataChange = useCallback((tabKey, hasChanges) => {
+  const handleDataChange = useCallback((tabKey, hasChanges, compat) => {
     console.log(tabKey, hasChanges);
+    if (tabKey === 'n'){
+      setNotesCompat(compat);
+    } else if (tabKey === 'p'){
+      setprojectsCompat(compat);
+    } else if (tabKey === 'c'){
+      setCallsCompat(compat);
+    };
+
     setChangedTabs(prev => ({
       ...prev,
       [tabKey]: hasChanges
@@ -175,6 +196,11 @@ const OrgPage = ({ userdata }) => {
   };
 
   // ===================== РЕНДЕР =====================
+
+  const openComparatorModal = () => {
+    setShowComparator(true);
+  }
+
   
   return (
     <div className="app-page">
@@ -214,7 +240,9 @@ const OrgPage = ({ userdata }) => {
             <div className="sa-flex sa-orgpage-sub-control">
               {editMode && hasChanges && (
                 <Tooltip title="Не забудьте сохранить">
-                  <Tag color="red-inverse">Есть несохраненные данные</Tag>
+                  <Tag 
+                    onClick={openComparatorModal}
+                  color="red-inverse">Есть несохраненные данные</Tag>
                 </Tooltip>
               )}
               
@@ -281,7 +309,14 @@ const OrgPage = ({ userdata }) => {
 
           {/* Проекты - TODO: ProjectsTabForm */}
           {activeTab === 'p' && (
-            <div>TODO: ProjectsTabForm</div>
+            <ProjectsTabForm
+              form={projectsForm}
+              orgId={orgId}
+              editMode={editMode}
+              isActive={activeTab === 'p'}
+              userdata={userdata}
+              onDataChange={handleDataChange}
+            />
           )}
 
           {/* Звонки - TODO: CallsTabForm */}
@@ -297,6 +332,7 @@ const OrgPage = ({ userdata }) => {
             isActive={activeTab === 'n'}
             userdata={userdata}
             onDataChange={handleDataChange}
+            // getPack={}
           />
 
           {/* История - старый компонент */}
@@ -308,6 +344,19 @@ const OrgPage = ({ userdata }) => {
           )}
         </div>
       </div>
+
+      {/* Модальное окно, отображающее различия в данных форм */}
+      <OrgComparatorModal
+        open={showComparator}
+        data={{
+          notes: notesCompat,
+          projects: projectsCompat,
+          calls: callsCompat
+        }}
+        onCancel={()=>{setShowComparator(false)}}
+        />
+
+
     </div>
   );
 };

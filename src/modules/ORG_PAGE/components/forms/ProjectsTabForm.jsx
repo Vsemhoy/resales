@@ -385,9 +385,26 @@ const ProjectsTabForm = ({
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // =============================================================================
 // КОМПОНЕНТ КАРТОЧКИ ПРОЕКТА
 // =============================================================================
+
+
 
 const ProjectCard = ({
   fieldName,
@@ -405,9 +422,33 @@ const ProjectCard = ({
   getCuratorShortName,
   formatProjectDate,
 }) => {
+  console.log('project', project)
   const name = project?.name || '';
-  const date = project?.date ? dayjs(project.date) : null;
-  const dateEnd = project?.date_end ? dayjs(project.date_end) : null;
+  // const date = project?.date ? dayjs(project.date) : null;
+  // const dateEnd = project?.date_end ? dayjs(project.date_end) : null;
+
+// if (project.date) {
+//   result.push({
+//     ...project,
+//     command: project.deleted ? 'delete' : 'update',
+//     date: dayjs(project.date).format('DD.MM.YYYY HH:mm:ss'),
+//     date_end: project.date_end ? dayjs(project.date_end).format('DD.MM.YYYY HH:mm:ss') : null,
+//   });
+// }
+
+// if (project.date_end) {
+//   result.push({
+//     ...project,
+//     command: project.deleted ? 'delete' : 'update',
+//     date: dayjs(project.date).format('DD.MM.YYYY HH:mm:ss'),
+//     date_end: dayjs(project.date_end).format('DD.MM.YYYY HH:mm:ss'),
+//   });
+// }
+  
+  const date = project?.date && dayjs(project.date).isValid() ? 
+             dayjs(project.date) : null;
+  const dateEnd = project?.date_end && dayjs(project.date_end).isValid() ? 
+                 dayjs(project.date_end) : null;
   
   // Состояние для автокомплита монтажника
   const [erectorOptions, setErectorOptions] = useState([]);
@@ -694,6 +735,7 @@ const ProjectCard = ({
                           format="DD-MM-YYYY"
                           style={{ width: '100%' }}
                           placeholder={canEdit ? 'Выберите дату' : ''}
+                          allowClear
                         />
                       </Form.Item>
                     </div>
@@ -710,6 +752,7 @@ const ProjectCard = ({
                           format="DD-MM-YYYY"
                           style={{ width: '100%' }}
                           placeholder={canEdit ? 'Выберите дату' : ''}
+                          allowClear
                         />
                       </Form.Item>
                     </div>
@@ -960,3 +1003,5 @@ export const collectProjectsForSave = (form, originalData = []) => {
 
 
 export default ProjectsTabForm;
+
+
