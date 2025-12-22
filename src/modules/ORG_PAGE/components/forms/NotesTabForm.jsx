@@ -37,6 +37,7 @@ const TEXTAREA_MIN_ROWS = 3;
 const TEXTAREA_MAX_ROWS = 10;
 const CHEVRON_SIZE = 16;
 
+
 const NotesTabForm = ({ 
   form,           // Form instance от родителя
   orgId,          // ID организации
@@ -456,7 +457,8 @@ const NoteCard = ({
                           placeholder={canEdit ? 'Введите тему' : ''}
                           maxLength={200}
                           readOnly={!canEdit}
-                          variant={canEdit ? 'outlined' : 'borderless'}
+                          variant={canEdit ? 'underlined' : 'borderless'}
+                          className={canEdit ? 'sat-canedit' : 'sat-notedit'}
                         />
                       </Form.Item>
                     </div>
@@ -479,6 +481,7 @@ const NoteCard = ({
                         readOnly
                         disabled
                         variant="borderless"
+                        className={'sat-notedit'}
                       />
                     </div>
                   </div>
@@ -493,6 +496,7 @@ const NoteCard = ({
                         variant="borderless"
                         format="DD-MM-YYYY"
                         style={{ width: '100%' }}
+                        className={'sat-notedit'}
                       />
                     </div>
                   </div>
@@ -517,8 +521,9 @@ const NoteCard = ({
                           placeholder={canEdit ? 'Текст заметки...' : ''}
                           maxLength={5000}
                           readOnly={!canEdit}
-                          variant={canEdit ? 'outlined' : 'borderless'}
+                          variant={canEdit ? 'underlined' : 'borderless'}
                           autoSize={{ minRows: TEXTAREA_MIN_ROWS, maxRows: TEXTAREA_MAX_ROWS }}
+                          className={canEdit ? 'sat-canedit' : 'sat-notedit'}
                         />
                       </Form.Item>
                     </div>

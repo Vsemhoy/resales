@@ -150,6 +150,7 @@
   gap: 6px;
   min-width: 0;
   flex: 1;
+    font-size: 1rem;
 }
 
 .sat-collapse-header-right {
@@ -254,6 +255,7 @@
 .sat-row-wrapper {
   display: grid;
   grid-template-columns: 1fr auto;
+  border-top: 1px solid white;
 }
 
 .sat-row {
@@ -289,10 +291,12 @@
   justify-content: flex-end;
   align-items: center;
   padding: 2px 8px 0;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--sat-text-secondary);
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 0.3px;
+  background-color: var(--org-modal-legend);
+  color: rgb(78, 78, 78);
 }
 
 /* Контент */
@@ -340,7 +344,7 @@
 .sat-content .ant-picker-disabled,
 .sat-content .ant-picker-disabled input,
 .sat-content .ant-select-disabled .ant-select-selection-item {
-  color: var(--sat-text-primary) !important;
+  /* color: var(--sat-text-primary) !important; */
   cursor: default;
 }
 
@@ -363,7 +367,7 @@
    ============================================================================= */
 
 .sat-row > div.sat-required {
-  border-bottom: 2px solid var(--sat-border-deleted);
+  border-bottom: 1px solid var(--sat-border-deleted);
 }
 
 .sat-row > div.sat-required .sat-legend {
@@ -441,4 +445,30 @@
     align-items: flex-start;
     gap: 2px;
   }
+}
+
+
+.sa-orgpage-body textarea, .sa-orgpage-body input {
+  border-radius: 0px !important;
+  
+}
+
+.sat-row > div {
+  display: grid;
+  grid-template-columns: 200px auto;
+}
+.sat-collapse-content {
+  padding: 3px;
+      /* background-color: var(--org-modal-legend); */
+}
+
+.sat-notedit {
+  color: var(--org-modal-content-text) !important;
+}
+.sat-canedit {
+  border-bottom: 1px solid var(--row-selected-color_2);
+}
+
+.sat-row > div.sat-required .sat-canedit {
+  border-bottom: 1px solid transparent;
 }

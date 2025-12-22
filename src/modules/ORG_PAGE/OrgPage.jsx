@@ -88,6 +88,7 @@ const OrgPage = ({ userdata }) => {
    * Callback от дочерних форм при изменении данных
    */
   const handleDataChange = useCallback((tabKey, hasChanges) => {
+    console.log(tabKey, hasChanges);
     setChangedTabs(prev => ({
       ...prev,
       [tabKey]: hasChanges
