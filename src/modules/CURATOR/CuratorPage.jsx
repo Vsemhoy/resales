@@ -396,6 +396,7 @@ const CuratorPageNEW = (props) => {
 		fetchCuratorOrders().then();
 	};
 
+	
 	const handleStatusChange = async (order_id, status) => {
 		if (PRODMODE) {
 			const path = `/api/v2/curators/approved` + order_id;
