@@ -297,6 +297,7 @@
   letter-spacing: 0.3px;
   background-color: var(--org-modal-legend);
   color: rgb(78, 78, 78);
+      font-weight: 500;
 }
 
 /* Контент */
@@ -471,4 +472,9 @@
 
 .sat-row > div.sat-required .sat-canedit {
   border-bottom: 1px solid transparent;
+}
+
+
+.sa-orgpage-body {
+  text-align: left;
 }

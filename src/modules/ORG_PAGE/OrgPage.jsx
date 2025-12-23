@@ -33,7 +33,12 @@ import OrgListModalHistoryTab from '../ORG_LIST/components/OrgModal/Tabs/OrgList
 
 import './components/style/orgpage.css';
 import OrgComparatorModal from './components/modals/OrgComparatorModal';
-import ProjectsTabForm from './components/forms/ProjectsTabForm';
+import ProjectsTabForm, { collectProjectsForSave } from './components/forms/ProjectsTabForm';
+import CallsTabForm, { collectCallsForSave } from './components/forms/CallsTabForm';
+import MainTabForm, { collectMainForSave } from './components/forms/MainTabForm';
+import { useURLParams } from '../../components/helpers/UriHelpers';
+import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
+import { DEPARTAMENTS_MOCK } from '../TORG_PAGE/components/mock/ORGPAGEMOCK';
 
 const TAB_CONFIG = [
   { key: 'm', label: 'Основная информация' },
@@ -71,6 +76,18 @@ const OrgPage = ({ userdata }) => {
 
   const [showComparator, setShowComparator] = useState(false);
   
+
+  const [selects, setSelects] = useState({});
+
+  const { getCurrentParamsString } = useURLParams();
+
+  const [departList, setDepartList] = useState(null);
+  const [baseCompanies, setBaseCompanies] = useState([]);
+
+  const [backeReturnPath, setBackeReturnPath] = useState(null);
+  // const [baseFiltersData, setBaseFilterstData] = useState(null);
+
+
   // Индикаторы изменений по вкладкам
   const [changedTabs, setChangedTabs] = useState({
     m: false, // main
@@ -78,6 +95,8 @@ const OrgPage = ({ userdata }) => {
     c: false, // calls
     n: false, // notes
   });
+
+  
 
   // Данные организации
   const [orgData, setOrgData] = useState(null);
@@ -116,6 +135,71 @@ const OrgPage = ({ userdata }) => {
     }));
   }, []);
 
+  useEffect(() => {
+    // эффект
+  }, []);
+
+
+// Устанавливаем базовые компании из объекта пользователя до получения списка компаниий из фильтров
+  useEffect(() => {
+    if (userdata !== null && userdata.companies && userdata.companies.lenght > 0) {
+      setBaseCompanies(userdata.companies);
+    }
+  }, [userdata]);
+
+
+  useEffect(() => {
+    setLoading(true);
+    let rp = getCurrentParamsString();
+
+    if (rp.includes('frompage=orgs')) {
+      rp = rp.replace('frompage=orgs&', '');
+      rp = rp.replace('frompage=orgs', '');
+      rp = '/orgs?' + rp;
+      setBackeReturnPath(rp);
+    }
+    if (rp.includes('frompage=bids')) {
+      rp = rp.replace('frompage=bids&', '');
+      rp = rp.replace('frompage=bids', '');
+      console.log('rp', rp);
+      rp = '/bids?' + rp;
+      setBackeReturnPath(rp);
+    }
+    let t = searchParams.get('tab');
+    if (t && ['m', 'b', 'o', 'p', 'c', 'n', 'h'].includes(t)) {
+      setSearchParams({ tab: t });
+      setActiveTab(t);
+    } else {
+      //   searchParams.set('tab', "m");
+      setSearchParams({ tab: 'm' });
+      setActiveTab('m');
+    }
+
+    if (PRODMODE) {
+      get_org_filters();
+
+      // get_main_data_action(item_id);
+
+      get_departs();
+    } else {
+      console.log(OM_ORG_FILTERDATA);
+      setSelects(OM_ORG_FILTERDATA);
+      setBaseCompanies(OM_ORG_FILTERDATA.companies);
+
+      // setBaseMainData(FlushOrgData(ORGLIST_MODAL_MOCK_MAINTAB));
+      // setBaseNotesData(MODAL_NOTES_LIST);
+      // // setBaseProjectsData(MODAL_PROJECTS_LIST);
+      // setBaseCallsData(MODAL_CALLS_LIST);
+
+      setDepartList(DEPARTAMENTS_MOCK);
+      setTimeout(() => {
+        setLoading(false);
+        
+      }, 1000);
+    }
+  }, []);
+
+
   // ===================== СОХРАНЕНИЕ =====================
   
   /**
@@ -133,8 +217,9 @@ const OrgPage = ({ userdata }) => {
       const payload = {
         // main: mainForm.getFieldsValue(),
         notes: collectNotesForSave(notesForm, originalDataRef.current.notes),
-        // projects: collectProjectsForSave(projectsForm, originalDataRef.current.projects),
-        // calls: collectCallsForSave(callsForm, originalDataRef.current.calls),
+        projects: collectProjectsForSave(projectsForm, originalDataRef.current.projects),
+        calls: collectCallsForSave(callsForm, originalDataRef.current.calls),
+        main: collectMainForSave(mainForm, originalDataRef.current.main)
       };
       
       console.log('📤 Payload для сохранения:', payload);
@@ -173,6 +258,55 @@ const OrgPage = ({ userdata }) => {
       setSaving(false);
     }
   };
+
+
+  /**
+   * Получение списка select data
+   * @param {*} req
+   * @param {*} res
+   */
+  const get_org_filters = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+          data: {},
+          _token: CSRF_TOKEN,
+        });
+        setSelects(response.data.filters);
+        setBaseCompanies(response.data.filters?.companies);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        // setLoadingOrgs(false)
+      }
+    } else {
+      //setUserAct(USDA);
+    }
+  };
+
+
+    const get_departs = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/timeskud/claims/getdepartments', {
+          data: {},
+          _token: CSRF_TOKEN,
+        });
+        if (response){
+          setDepartList(response.data.content);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        // setLoadingOrgs(false)
+      }
+    } else {
+      //setUserAct(USDA);
+    }
+  };
+
+
+
 
   // ===================== ОТМЕНА ИЗМЕНЕНИЙ =====================
   
@@ -304,7 +438,15 @@ const OrgPage = ({ userdata }) => {
 
           {/* Основная информация - TODO: MainTabForm */}
           {activeTab === 'm' && (
-            <div>TODO: MainTabForm</div>
+            <MainTabForm
+              form={mainForm}
+              orgId={orgId}
+              editMode={editMode}
+              isActive={activeTab === 'm'}
+              userdata={userdata}
+              selects={selects}   // Объект со справочниками
+              onDataChange={handleDataChange}
+            />
           )}
 
           {/* Проекты - TODO: ProjectsTabForm */}
@@ -316,12 +458,22 @@ const OrgPage = ({ userdata }) => {
               isActive={activeTab === 'p'}
               userdata={userdata}
               onDataChange={handleDataChange}
+              selects={selects}
             />
           )}
 
           {/* Звонки - TODO: CallsTabForm */}
           {activeTab === 'c' && (
-            <div>TODO: CallsTabForm</div>
+            <CallsTabForm
+              form={callsForm}
+              orgId={orgId}
+              editMode={editMode}
+              isActive={activeTab === 'c'}
+              userdata={userdata}
+              onDataChange={handleDataChange}
+              _selects={selects}
+              _departs={departList}
+            />
           )}
 
           {/* ✅ ЗАМЕТКИ - новый компонент на antd Form */}
@@ -332,6 +484,7 @@ const OrgPage = ({ userdata }) => {
             isActive={activeTab === 'n'}
             userdata={userdata}
             onDataChange={handleDataChange}
+            selects={selects}
             // getPack={}
           />
 
