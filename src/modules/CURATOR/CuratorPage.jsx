@@ -38,6 +38,7 @@ const CuratorPageNEW = (props) => {
 	const [filterUsersSelect, setFilterUsersSelect] = useState([]);
 
 	const [supervisor, setSupervisor] = useState(false);
+	const [orderBox, setOrderBox] = useState([]);
 
 
 
@@ -131,6 +132,10 @@ const CuratorPageNEW = (props) => {
 	const handleClearAllBoxes = () => {
 		handleClearAllFilterBox();
 	};
+
+	useEffect(() => {
+		makeFilterMenu();
+	}, [filterBox, orderBox]);
 
 	useEffect(() => {
 		fetchInfo().then();
@@ -286,6 +291,102 @@ const CuratorPageNEW = (props) => {
 		if (!areObjectsEqual(filterBox, filterBoxUpd)) {
 			setFilterBox(filterBoxUpd);
 		}
+	};
+
+	const makeFilterMenu = () => {
+		let clearItems = [];
+		let hasFilter = false;
+		let hasSorter = false;
+
+		for (const key in filterBox) {
+			const fib = filterBox[key];
+			if (fib !== null) {
+				if (key === 'updated_date' && fib[0] !== null) {
+					hasFilter = true;
+				} else if (key === 'created_date' && fib[0] !== null) {
+					hasFilter = true;
+				} else if (
+					key !== 'updated_date' &&
+					key !== 'created_date' &&
+					key !== 'page' &&
+					key !== 'onpage' &&
+					key !== 'limit'
+				)
+					hasFilter = true;
+			}
+		}
+		for (const key in orderBox) {
+			const fib = orderBox[key];
+			if (fib !== null) {
+				hasSorter = true;
+			}
+		}
+
+		if (hasFilter) {
+			clearItems.push({
+				key: 'clarboxofilta',
+				value: 'clear_filters',
+				label: <div onClick={handleClearAllFilterBox}>Очистить фильтры</div>,
+			});
+		}
+
+		if (hasSorter) {
+			clearItems.push({
+				key: 'clarboxsorta',
+				value: 'clear_filters',
+				label: <div onClick={handleClearOrderBox}>Очистить cортировки</div>,
+			});
+		}
+		setFilterSortClearMenu(clearItems);
+	};
+
+	const handleSearchParamsSortChange = (sortBoxArray) => {
+		setSearchParams((prevParams) => {
+			const newParams = new URLSearchParams(prevParams);
+			if (sortBoxArray && sortBoxArray.length > 0) {
+				let sortUpd = '';
+				sortBoxArray.forEach((sort) => {
+					console.log(sort.order);
+					sortUpd += `${sort.key}-${sort.order}` + ` `;
+				});
+				newParams.set('sort', sortUpd);
+				console.log(sortUpd);
+			} else {
+				newParams.delete('sort');
+			}
+			return newParams;
+		});
+	};
+
+	const arraysEqualIgnore = (arr1, arr2) => {
+		if (arr1.length !== arr2.length) {
+			return false;
+		}
+
+		// Создаем копии и сортируем по key для consistent comparison
+		const sorted1 = [...arr1].sort((a, b) => a.key - b.key);
+		const sorted2 = [...arr2].sort((a, b) => a.key - b.key);
+
+		// Сравниваем каждый объект
+		for (let i = 0; i < sorted1.length; i++) {
+			if (sorted1[i].key !== sorted2[i].key || sorted1[i].order !== sorted2[i].order) {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	const handleUpdateOrderBox = (newOrderBox) => {
+		if (!arraysEqualIgnore(orderBox, newOrderBox)) {
+			setOrderBox(newOrderBox);
+			handleSearchParamsSortChange(newOrderBox);
+		}
+	};
+
+	const handleClearOrderBox = () => {
+		setOrderBox([]);
+		handleSearchParamsSortChange([]);
 	};
 
 	const fetchFilterSelects = async () => {
@@ -456,21 +557,21 @@ const CuratorPageNEW = (props) => {
 							<div className={'sa-header-label-container-small'}>
 								<div className={'sa-vertical-flex'}>
 									<Space.Compact>
-										<Button
-											onClick={() => {
-												setIsOpenedFilters(!isOpenedFilters);
-											}}
-											className={`${
-												isOpenedFilters
-													? 'sa-default-solid-btn-color'
-													: 'sa-default-outlined-btn-color'
-											}`}
-											color={'default'}
-											variant={isOpenedFilters ? 'solid' : 'outlined'}
-											icon={<FilterOutlined />}
-										>
-											Доп Фильтры
-										</Button>
+										{/*<Button*/}
+										{/*	onClick={() => {*/}
+										{/*		setIsOpenedFilters(!isOpenedFilters);*/}
+										{/*	}}*/}
+										{/*	className={`${*/}
+										{/*		isOpenedFilters*/}
+										{/*			? 'sa-default-solid-btn-color'*/}
+										{/*			: 'sa-default-outlined-btn-color'*/}
+										{/*	}`}*/}
+										{/*	color={'default'}*/}
+										{/*	variant={isOpenedFilters ? 'solid' : 'outlined'}*/}
+										{/*	icon={<FilterOutlined />}*/}
+										{/*>*/}
+										{/*	Доп Фильтры*/}
+										{/*</Button>*/}
 										{filterSortClearMenu.length > 0 && (
 											<Tooltip title={'Очистить фильтры'} placement={'right'}>
 												<Dropdown menu={{ items: filterSortClearMenu }}>
@@ -642,6 +743,7 @@ const CuratorPageNEW = (props) => {
 								supervisor={supervisor}
 
 								handleStatusChange={handleStatusChange}
+								on_set_sort_orders={handleUpdateOrderBox}
 
 								userdata={userdata}
 								rerenderPage={handleRerenderPage}
