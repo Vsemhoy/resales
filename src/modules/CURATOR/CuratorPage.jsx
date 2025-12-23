@@ -402,7 +402,7 @@ const CuratorPageNEW = (props) => {
 			const path = `/api/v2/curators/approved/` + order_id;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put(path, {
-					status,
+					data: {status},
 					_token: CSRF_TOKEN,
 				});
 
