@@ -38,6 +38,7 @@ import dayjs from "dayjs";
 import BidPdfPage from "./modules/BID_PDF_PAGE/BidPdfPage";
 import OrgPage from './modules/ORG_PAGE/OrgPage';
 import LocalLogger from './modules/EXT/LOCAL_LOGGER/LocalLoggerPage';
+import CuratorPageNEW from "./modules/CURATOR/CuratorPage";
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -202,6 +203,8 @@ export const App = () => {
                                         element={<CuratorPage userdata={userdata} />}
                                     />
                                     <Route path="/curator" element={<CuratorPage userdata={userdata} />} />
+
+                                    <Route path="/curator_new" element={<CuratorPageNEW userdata={userdata} />} />
 
                                     <Route path={BASE_ROUTE + '/regtown'} element={<Regtown userdata={userdata} />} />
                                     <Route path="/regtown" element={<Regtown userdata={userdata} />} />

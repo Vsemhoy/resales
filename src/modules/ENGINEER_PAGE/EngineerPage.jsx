@@ -672,7 +672,7 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
-                                disabled={editMode && +bidPlace === 4}
+                                disabled={+bidPlace !== 4}
                                 onClick={() => {
                                   setOpenAddIntoBidSpecification(true);
                                   setCopyType(3);
@@ -684,7 +684,8 @@ const EngineerPage = (props) => {
                         <Button className={'sa-engineer-page-btn'}
                                 color="primary"
                                 variant="outlined"
-                                disabled={editMode  && +bidPlace === 4}
+                                // disabled={editMode  && }
+                                disabled={+bidPlace !== 4}
                                 onClick={() => {
                                   setOpenAddIntoBidSpecification(true);
                                   setCopyType(2);
