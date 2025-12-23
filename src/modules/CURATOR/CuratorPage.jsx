@@ -72,7 +72,7 @@ const CuratorPageNEW = (props) => {
 
 	const initialFilterBox = {
 		/* header */
-		bid_id: null,
+		order_id: null,
 		company_name: null,
 		user_name: null,
 		// protect_status: null,
@@ -232,46 +232,54 @@ const CuratorPageNEW = (props) => {
 	const handleUpdateFilterBoxHeader = (newFilterBox) => {
 		const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
 
-		if (filterBox.bid_id !== newFilterBox.bid_id) {
-			filterBoxUpd.bid_id = newFilterBox.bid_id;
-			handleSearchParamsChange('bid_id', newFilterBox.bid_id);
+		if (filterBox.order_id !== newFilterBox.order_id) {
+			filterBoxUpd.order_id = newFilterBox.order_id;
+			handleSearchParamsChange('order_id', newFilterBox.order_id);
 		}
 		if (filterBox.company_name !== newFilterBox.company_name) {
 			filterBoxUpd.company_name = newFilterBox.company_name;
 			handleSearchParamsChange('company_name', newFilterBox.company_name);
 		}
-		if (filterBox.type !== newFilterBox.type) {
-			filterBoxUpd.type = newFilterBox.type;
-			handleSearchParamsChange('type', newFilterBox.type);
-		}
-		if (filterBox.protect_status !== newFilterBox.protect_status) {
-			filterBoxUpd.protect_status = newFilterBox.protect_status;
-			handleSearchParamsChange('protect_status', newFilterBox.protect_status);
-		}
-		if (filterBox.stage_status !== newFilterBox.stage_status) {
-			filterBoxUpd.stage_status = newFilterBox.stage_status;
-			handleSearchParamsChange('stage_status', newFilterBox.stage_status);
-		}
 		if (filterBox.dates !== newFilterBox.dates) {
 			filterBoxUpd.dates = newFilterBox.dates;
 			handleSearchParamsChange('dates', newFilterBox.dates);
 		}
-		if (filterBox.manager !== newFilterBox.manager) {
-			filterBoxUpd.manager = newFilterBox.manager;
-			handleSearchParamsChange('manager', newFilterBox.manager);
+
+		if (filterBox.user_name !== newFilterBox.user_name) {
+			filterBoxUpd.user_name = newFilterBox.user_name;
+			handleSearchParamsChange('user_name', newFilterBox.user_name);
 		}
-		if (filterBox.bill_number !== newFilterBox.bill_number) {
-			filterBoxUpd.bill_number = newFilterBox.bill_number;
-			handleSearchParamsChange('bill_number', newFilterBox.bill_number);
-		}
-		if (filterBox.comment !== newFilterBox.comment) {
-			filterBoxUpd.comment = newFilterBox.comment;
-			handleSearchParamsChange('comment', newFilterBox.comment);
-		}
-		if (filterBox.object_name !== newFilterBox.object_name) {
-			filterBoxUpd.object_name = newFilterBox.object_name;
-			handleSearchParamsChange('object_name', newFilterBox.object_name);
-		}
+
+
+		// if (filterBox.type !== newFilterBox.type) {
+		// 	filterBoxUpd.type = newFilterBox.type;
+		// 	handleSearchParamsChange('type', newFilterBox.type);
+		// }
+		// if (filterBox.protect_status !== newFilterBox.protect_status) {
+		// 	filterBoxUpd.protect_status = newFilterBox.protect_status;
+		// 	handleSearchParamsChange('protect_status', newFilterBox.protect_status);
+		// }
+		// if (filterBox.stage_status !== newFilterBox.stage_status) {
+		// 	filterBoxUpd.stage_status = newFilterBox.stage_status;
+		// 	handleSearchParamsChange('stage_status', newFilterBox.stage_status);
+		// }
+		//
+		// if (filterBox.manager !== newFilterBox.manager) {
+		// 	filterBoxUpd.manager = newFilterBox.manager;
+		// 	handleSearchParamsChange('manager', newFilterBox.manager);
+		// }
+		// if (filterBox.bill_number !== newFilterBox.bill_number) {
+		// 	filterBoxUpd.bill_number = newFilterBox.bill_number;
+		// 	handleSearchParamsChange('bill_number', newFilterBox.bill_number);
+		// }
+		// if (filterBox.comment !== newFilterBox.comment) {
+		// 	filterBoxUpd.comment = newFilterBox.comment;
+		// 	handleSearchParamsChange('comment', newFilterBox.comment);
+		// }
+		// if (filterBox.object_name !== newFilterBox.object_name) {
+		// 	filterBoxUpd.object_name = newFilterBox.object_name;
+		// 	handleSearchParamsChange('object_name', newFilterBox.object_name);
+		// }
 		console.log(areObjectsEqual(filterBox, filterBoxUpd));
 		console.log(searchParams);
 		if (!areObjectsEqual(filterBox, filterBoxUpd)) {
