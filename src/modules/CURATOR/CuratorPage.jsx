@@ -54,7 +54,7 @@ const CuratorPageNEW = (props) => {
 		// type: parseInt(searchParams.get('type')) || null,
 		// protect_status: parseInt(searchParams.get('protect_status')) || null,
 		// stage_status: parseInt(searchParams.get('stage_status')) || null,
-		// dates: searchParams.get('dates') || null,
+		dates: searchParams.get('dates') || null,
 		// manager: parseInt(searchParams.get('manager')) || null,
 		// bill_number: searchParams.get('bill_number') || null,
 		// comment: searchParams.get('comment') || null,
