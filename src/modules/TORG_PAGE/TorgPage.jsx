@@ -772,13 +772,14 @@ useEffect(() => {
 									payload, // Сохраняем данные которые пытались отправить
 									orgId: item_id,
 									orgName: baseMainData?.name,
+									response: response?.data?.message || response.message || 'Неизвестная ошибка сервера'
 								});
 				}
 			} catch (e) {
 				console.log(e);
 					setIsAlertVisible(true);
 					setAlertMessage(`Ошибка на стороне сервера`);
-					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка сервера');
 					setAlertType('error');
 					setBlockSave(false);
 					setBlockOnSave(false);
@@ -786,6 +787,7 @@ useEffect(() => {
 									payload, // Сохраняем данные которые пытались отправить
 									orgId: item_id,
 									orgName: baseMainData?.name,
+									response: e.response?.data?.message || e.message || 'Неизвестная ошибка'
 								});
 			} finally {
 				// setLoadingOrgs(false)

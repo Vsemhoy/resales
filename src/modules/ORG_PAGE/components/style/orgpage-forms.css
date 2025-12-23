@@ -1,0 +1,444 @@
+/**
+ * orgpage-forms.css - Стили для форм OrgPage
+ * 
+ * Префикс: sat- (sa-torg)
+ * Используется в: NotesTabForm, ProjectsTabForm, CallsTabForm, MainTabForm
+ */
+
+/* =============================================================================
+   ПЕРЕМЕННЫЕ (используем существующие CSS переменные проекта)
+   ============================================================================= */
+
+:root {
+  --sat-border-color: #e0e0e0;
+  --sat-border-hover: #d0d0d0;
+  --sat-bg-primary: #ffffff;
+  --sat-bg-secondary: #f5f5f5;
+  --sat-bg-hover: rgba(0, 0, 0, 0.016);
+  --sat-bg-deleted: #fff2f0;
+  --sat-bg-new-stack: #fff7e6;
+  --sat-border-new-stack: #ffd591;
+  --sat-border-deleted: #ff4d4f;
+  --sat-text-primary: #262626;
+  --sat-text-secondary: #8c8c8c;
+  --sat-text-phantom: #bfbfbf;
+  --sat-accent-color: var(--current-color, #1890ff);
+}
+
+/* =============================================================================
+   КОНТЕЙНЕРЫ
+   ============================================================================= */
+
+.sat-tab-container {
+  padding-bottom: 30vh;
+}
+
+.sat-tab-hidden {
+  display: none;
+}
+
+.sat-tab-toolbar {
+  padding: 9px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sat-tab-content {
+  padding: 0 6px;
+}
+
+/* =============================================================================
+   STACK КОНТЕЙНЕРЫ (для группировки записей)
+   ============================================================================= */
+
+/* Новые записи */
+.sat-stack-new {
+  border: 2px solid var(--sat-border-new-stack);
+  background: var(--sat-bg-new-stack);
+  margin-bottom: 10px;
+}
+
+.sat-stack-new-header {
+  background: var(--sat-border-new-stack);
+  color: #874d00;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+.sat-stack-new > .sat-collapse-item {
+  margin: 7px;
+}
+
+/* Существующие записи */
+.sat-stack-existing {
+  /* Обычный контейнер без особых стилей */
+}
+
+/* =============================================================================
+   COLLAPSE ITEM (карточка записи)
+   ============================================================================= */
+
+.sat-collapse-item {
+  border: 1px solid var(--sat-border-color);
+  margin-bottom: 3px;
+  background: var(--sat-bg-secondary);
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.sat-collapse-item:hover {
+  border-color: var(--sat-border-hover);
+}
+
+/* Свёрнутое состояние */
+.sat-collapse-item.sat-collapsed .sat-collapse-body {
+  display: none;
+}
+
+/* Развёрнутое состояние */
+.sat-collapse-item.sat-expanded {
+  border-color: var(--sat-accent-color);
+}
+
+.sat-collapse-item.sat-expanded .sat-collapse-header {
+  border-bottom: 1px solid var(--sat-border-color);
+}
+
+/* Удалённая запись */
+.sat-collapse-item.sat-deleted {
+  border: 2px solid var(--sat-border-deleted);
+  border-radius: 6px;
+  background: var(--sat-bg-deleted);
+}
+
+.sat-collapse-item.sat-deleted .sat-collapse-header {
+  color: var(--sat-border-deleted);
+}
+
+/* Только просмотр (чужая запись) */
+.sat-collapse-item.sat-readonly {
+  background: var(--sat-bg-secondary);
+}
+
+/* =============================================================================
+   COLLAPSE HEADER (заголовок карточки)
+   ============================================================================= */
+
+.sat-collapse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 4px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--sat-bg-primary);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.57;
+  transition: background 0.2s;
+}
+
+.sat-collapse-header:hover {
+  background: var(--sat-bg-hover);
+}
+
+.sat-collapse-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.sat-collapse-header-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Кнопка разворачивания */
+.sat-trigger-btn {
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.sat-trigger-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.sat-trigger-btn svg {
+  transition: transform 0.15s ease;
+}
+
+.sat-trigger-btn.sat-expanded svg {
+  transform: rotate(90deg);
+}
+
+/* Текст в заголовке */
+.sat-header-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.sat-header-title {
+  font-weight: 500;
+  color: var(--sat-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sat-header-date {
+  color: var(--sat-text-secondary);
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.sat-header-author {
+  color: var(--sat-text-secondary);
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.sat-header-id {
+  color: var(--sat-text-phantom);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.sat-header-badge {
+  color: var(--sat-accent-color);
+  font-weight: 500;
+  font-size: 12px;
+  padding: 1px 6px;
+  background: rgba(24, 144, 255, 0.1);
+  border-radius: 3px;
+}
+
+/* Кнопка удаления */
+.sat-delete-btn {
+  padding: 0 12px;
+  margin-right: 3px;
+}
+
+/* =============================================================================
+   COLLAPSE BODY (содержимое карточки)
+   ============================================================================= */
+
+.sat-collapse-body {
+  background: var(--sat-bg-primary);
+}
+
+.sat-collapse-content {
+  padding: 6px 0;
+}
+
+/* =============================================================================
+   FORM ROW (строка формы)
+   ============================================================================= */
+
+.sat-section {
+  box-shadow: 1px 0px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sat-row-wrapper {
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+.sat-row {
+  display: grid;
+  border-bottom: 1px solid var(--sat-border-color);
+}
+
+/* Варианты колонок */
+.sat-row.sat-1-col {
+  grid-template-columns: 1fr;
+}
+
+.sat-row.sat-2-col {
+  grid-template-columns: 60fr 40fr;
+}
+
+.sat-row.sat-3-col {
+  grid-template-columns: 40fr 26fr 34fr;
+}
+
+/* Ячейка */
+.sat-row > div {
+  border-right: 1px solid var(--sat-border-color);
+}
+
+.sat-row > div:last-child {
+  border-right: none;
+}
+
+/* Лейбл */
+.sat-legend {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 2px 8px 0;
+  font-size: 12px;
+  color: var(--sat-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Контент */
+.sat-content {
+  padding: 0;
+}
+
+.sat-content-inner {
+  width: 100%;
+}
+
+/* Hover эффект на строке */
+.sat-row > div:hover .sat-content {
+  background: var(--sat-bg-hover);
+}
+
+/* =============================================================================
+   FORM INPUTS (стили для полей ввода)
+   ============================================================================= */
+
+.sat-content .ant-input,
+.sat-content .ant-input-affix-wrapper,
+.sat-content textarea.ant-input,
+.sat-content .ant-select,
+.sat-content .ant-picker {
+  background: transparent !important;
+  padding: 1px 11px;
+  width: 100%;
+}
+
+.sat-content .ant-select-selector {
+  background: transparent !important;
+}
+
+/* Borderless стиль для readonly */
+.sat-content .ant-input-borderless,
+.sat-content .ant-picker-borderless,
+.sat-content .ant-select-borderless .ant-select-selector {
+  padding-left: 11px;
+}
+
+/* Disabled состояние — текст остаётся читаемым */
+.sat-content .ant-input-disabled,
+.sat-content .ant-input[disabled],
+.sat-content .ant-picker-disabled,
+.sat-content .ant-picker-disabled input,
+.sat-content .ant-select-disabled .ant-select-selection-item {
+  color: var(--sat-text-primary) !important;
+  cursor: default;
+}
+
+/* Убираем стрелку у disabled select */
+.sat-content .ant-select-disabled .ant-select-arrow {
+  display: none;
+}
+
+/* Form.Item без лишних отступов */
+.sat-content .ant-form-item {
+  margin-bottom: 0;
+}
+
+.sat-content .ant-form-item-control-input {
+  min-height: auto;
+}
+
+/* =============================================================================
+   REQUIRED FIELD (обязательное поле)
+   ============================================================================= */
+
+.sat-row > div.sat-required {
+  border-bottom: 2px solid var(--sat-border-deleted);
+}
+
+.sat-row > div.sat-required .sat-legend {
+  color: var(--sat-border-deleted);
+}
+
+/* =============================================================================
+   ACTION BLOCK (кнопки действий справа)
+   ============================================================================= */
+
+.sat-action-block {
+  width: max-content;
+  min-width: 60px;
+  background: #f9f9f9;
+  border-bottom: 1px solid var(--sat-border-color);
+  border-left: 1px solid var(--sat-border-color);
+  padding: 2px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* =============================================================================
+   UTILITIES
+   ============================================================================= */
+
+.sat-flex {
+  display: flex;
+  align-items: center;
+}
+
+.sat-flex-space {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sat-pa-3 {
+  padding: 3px;
+}
+
+.sat-pa-6 {
+  padding: 6px;
+}
+
+.sat-text-muted {
+  color: var(--sat-text-secondary);
+}
+
+.sat-text-phantom {
+  color: var(--sat-text-phantom);
+}
+
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  .sat-row.sat-2-col,
+  .sat-row.sat-3-col {
+    grid-template-columns: 1fr;
+  }
+  
+  .sat-row > div {
+    border-right: none;
+    border-bottom: 1px solid var(--sat-border-color);
+  }
+  
+  .sat-row > div:last-child {
+    border-bottom: none;
+  }
+  
+  .sat-header-text {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}

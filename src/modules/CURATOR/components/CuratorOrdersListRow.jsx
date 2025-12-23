@@ -131,10 +131,11 @@ const { getCurrentParamsString } = useURLParams();
 			});
 		return arr;
 	};
+
 	const handleDoubleClick = () => {
 		if (props.on_double_click) {
 			props.on_double_click(data);
-			window.open(`${BASE_ROUTE}/bids/${data.id}`, '_blank');
+			window.open(`${BASE_ROUTE}/orgs/${data.id}`, '_blank');
 		}
 	};
 
