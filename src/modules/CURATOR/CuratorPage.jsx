@@ -17,6 +17,7 @@ import CuratorOrdersListSiderFilters from "./components/CuratorOrdersListSiderFi
 import OrderListSider from "../ENGINEER_LIST/components/OrderListSider";
 import CuratorOrdersListTable from "./components/CuratorOrdersListTable";
 import Helper from "../../components/helpers/Helper";
+import {toInteger} from "lodash";
 
 const CuratorPageNEW = (props) => {
 	const { userdata } = props;
@@ -174,7 +175,7 @@ const CuratorPageNEW = (props) => {
 				/* header */
 				company_name: filterBox.company_name,
 				user_name: filterBox.user_name,
-				order_id: filterBox.order_id,
+				order_id: toInteger(filterBox.order_id),
 				// type: filterBox.type,
 				// protect_status: filterBox.protect_status,
 				// stage_status: filterBox.stage_status,
