@@ -186,8 +186,8 @@ const { getCurrentParamsString } = useURLParams();
 					<div className={'sa-table-box-cell'}>
 						{props.supervisor ? (
 							<div className={'text-align-center'}>
-								<Button type="primary" children="Принять" onClick={() => {props.handleStatusChange(data.id, 1)}}/>
-								<Button type="primary" danger children="Отклонить" onClick={() => {props.handleStatusChange(data.id, 2)}} style={{ marginLeft: '20px' }} />
+								<Button type="primary" children="Принять" onClick={() => {props.handleStatusChange(data.id, 2)}}/>
+								<Button type="primary" danger children="Отклонить" onClick={() => {props.handleStatusChange(data.id, 3)}} style={{ marginLeft: '20px' }} />
 							</div>
 						) : (
 							<div>
