@@ -13,7 +13,8 @@
  * 
  * СТИЛИ: используем префикс sat- (orgpage-forms.css)
  */
-
+import _ from 'lodash';
+import debounce from 'lodash/debounce';
 import React, { useEffect, useState, useCallback } from 'react';
 import { 
   Form, Button, Input, DatePicker, Pagination, 
@@ -36,6 +37,7 @@ const { TextArea } = Input;
 const TEXTAREA_MIN_ROWS = 3;
 const TEXTAREA_MAX_ROWS = 10;
 const CHEVRON_SIZE = 16;
+
 
 const NotesTabForm = ({ 
   form,           // Form instance от родителя
@@ -210,9 +212,22 @@ const NotesTabForm = ({
     );
   };
 
-  const handleFieldChange = useCallback(() => {
-    onDataChange?.('n', true);
-  }, [onDataChange]);
+  // const handleFieldChange = useCallback(() => {
+  //   console.log(collectNotesForSave(form, originalData));
+  //   onDataChange?.('n', true);
+  // }, [onDataChange]);
+
+
+
+
+  const handleFieldChange = useCallback(
+    debounce(() => {
+      const nfs = collectNotesForSave(form, originalData);
+      console.log(nfs);
+      onDataChange?.('n', true, {orig: originalData, chan: nfs});
+    }, 500), // Здесь указывается время в миллисекундах (500мс = 1/2 секунды)
+    [onDataChange],
+  );
 
   // ===================== РЕНДЕР =====================
   
@@ -456,7 +471,8 @@ const NoteCard = ({
                           placeholder={canEdit ? 'Введите тему' : ''}
                           maxLength={200}
                           readOnly={!canEdit}
-                          variant={canEdit ? 'outlined' : 'borderless'}
+                          variant={canEdit ? 'underlined' : 'borderless'}
+                          className={canEdit ? 'sat-canedit' : 'sat-notedit'}
                         />
                       </Form.Item>
                     </div>
@@ -479,6 +495,7 @@ const NoteCard = ({
                         readOnly
                         disabled
                         variant="borderless"
+                        className={'sat-notedit'}
                       />
                     </div>
                   </div>
@@ -491,8 +508,9 @@ const NoteCard = ({
                         value={date}
                         disabled
                         variant="borderless"
-                        format="DD-MM-YYYY"
                         style={{ width: '100%' }}
+                        className={'sat-notedit'}
+                        format="DD.MM.YYYY"
                       />
                     </div>
                   </div>
@@ -517,8 +535,9 @@ const NoteCard = ({
                           placeholder={canEdit ? 'Текст заметки...' : ''}
                           maxLength={5000}
                           readOnly={!canEdit}
-                          variant={canEdit ? 'outlined' : 'borderless'}
+                          variant={canEdit ? 'underlined' : 'borderless'}
                           autoSize={{ minRows: TEXTAREA_MIN_ROWS, maxRows: TEXTAREA_MAX_ROWS }}
+                          className={canEdit ? 'sat-canedit' : 'sat-notedit'}
                         />
                       </Form.Item>
                     </div>

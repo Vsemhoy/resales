@@ -77,26 +77,52 @@ const ProjectsTabForm = ({
           }
         );
         
-        if (response.data?.content?.projects) {
-          const projects = response.data.content.projects;
-          setOriginalData(JSON.parse(JSON.stringify(projects)));
-          setTotal(response.data.total || projects.length);
+        // if (response.data?.content?.projects) {
+        //   const projects = response.data.content.projects;
+        //   setOriginalData(JSON.parse(JSON.stringify(projects)));
+        //   setTotal(response.data.total || projects.length);
           
-          form.setFieldsValue({ 
-            existingProjects: projects,
-            newProjects: [] 
-          });
+        //   form.setFieldsValue({ 
+        //     existingProjects: projects,
+        //     newProjects: [] 
+        //   });
+        // }
+        if(response.data?.content?.projects)  {
+            const projects = response.data.content.projects;
+            
+            // Преобразуем даты в объект dayjs
+            const projectsWithDayjsDates = projects.map((project) => ({
+                ...project,
+                date: project.date ? dayjs(project.date) : null,  // Преобразуем дату в объект Day.js или устанавливаем значение null, если дата не определена
+                date_end: project.date_end ? dayjs(project.date_end) : null,
+            }));
+            
+            setOriginalData(JSON.parse(JSON.stringify(projectsWithDayjsDates)));
+            setTotal(response.data.total || projects.length);
+            form.setFieldsValue({ 
+                existingProjects: projectsWithDayjsDates,
+                newProjects: [] 
+            });
         }
       } else {
         // DEV MODE - используем мок
         const projects = MODAL_PROJECTS_LIST.projects;
-        setOriginalData(JSON.parse(JSON.stringify(projects)));
-        setTotal(projects.length);
+
+        const projectsWithDayjsDates = projects.map((project) => ({
+            ...project,
+            date: project.date ? dayjs(project.date) : null,
+            date_end: project.date_end ? dayjs(project.date_end) : null,
+        }));
+
+        setOriginalData(JSON.parse(JSON.stringify(projectsWithDayjsDates)));
+        setTotal(projectsWithDayjsDates.length);
         
         form.setFieldsValue({ 
-          existingProjects: projects,
+          existingProjects: projectsWithDayjsDates,
           newProjects: [] 
         });
+
+        console.log('projects', projects)
       }
     } catch (error) {
       console.error('Ошибка загрузки проектов:', error);
@@ -143,7 +169,7 @@ const ProjectsTabForm = ({
         id: `new_${dayjs().unix()}${dayjs().millisecond()}`,
         id_orgs: orgId,
         id8staff_list: userdata.user.id,
-        date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        date: dayjs(),
         id8an_projecttype: 0,
         name: '',
         equipment: '',
@@ -385,9 +411,26 @@ const ProjectsTabForm = ({
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // =============================================================================
 // КОМПОНЕНТ КАРТОЧКИ ПРОЕКТА
 // =============================================================================
+
+
 
 const ProjectCard = ({
   fieldName,
@@ -405,9 +448,33 @@ const ProjectCard = ({
   getCuratorShortName,
   formatProjectDate,
 }) => {
+  console.log('project', project)
   const name = project?.name || '';
-  const date = project?.date ? dayjs(project.date) : null;
-  const dateEnd = project?.date_end ? dayjs(project.date_end) : null;
+  // const date = project?.date ? dayjs(project.date) : null;
+  // const dateEnd = project?.date_end ? dayjs(project.date_end) : null;
+
+// if (project.date) {
+//   result.push({
+//     ...project,
+//     command: project.deleted ? 'delete' : 'update',
+//     date: dayjs(project.date).format('DD.MM.YYYY HH:mm:ss'),
+//     date_end: project.date_end ? dayjs(project.date_end).format('DD.MM.YYYY HH:mm:ss') : null,
+//   });
+// }
+
+// if (project.date_end) {
+//   result.push({
+//     ...project,
+//     command: project.deleted ? 'delete' : 'update',
+//     date: dayjs(project.date).format('DD.MM.YYYY HH:mm:ss'),
+//     date_end: dayjs(project.date_end).format('DD.MM.YYYY HH:mm:ss'),
+//   });
+// }
+  
+  const date = project?.date && dayjs(project.date).isValid() ? 
+             dayjs(project.date) : null;
+  const dateEnd = project?.date_end && dayjs(project.date_end).isValid() ? 
+                 dayjs(project.date_end) : null;
   
   // Состояние для автокомплита монтажника
   const [erectorOptions, setErectorOptions] = useState([]);
@@ -694,6 +761,7 @@ const ProjectCard = ({
                           format="DD-MM-YYYY"
                           style={{ width: '100%' }}
                           placeholder={canEdit ? 'Выберите дату' : ''}
+                          allowClear
                         />
                       </Form.Item>
                     </div>
@@ -710,6 +778,7 @@ const ProjectCard = ({
                           format="DD-MM-YYYY"
                           style={{ width: '100%' }}
                           placeholder={canEdit ? 'Выберите дату' : ''}
+                          allowClear
                         />
                       </Form.Item>
                     </div>
@@ -960,3 +1029,5 @@ export const collectProjectsForSave = (form, originalData = []) => {
 
 
 export default ProjectsTabForm;
+
+
