@@ -67,6 +67,13 @@ const CuratorOrdersListTable = (props) => {
 	}, [props.filter_box]);
 
 	useEffect(() => {
+		console.log('sortOrders', sortOrders);
+		if (props.on_set_sort_orders) {
+			props.on_set_sort_orders(sortOrders);
+		}
+	}, [sortOrders]);
+
+	useEffect(() => {
 		const timer = setTimeout((filterBox) => {
 			const newFilterBox = {
 				order_id: orderId ?? null,

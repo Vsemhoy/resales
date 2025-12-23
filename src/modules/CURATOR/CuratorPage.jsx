@@ -17,6 +17,7 @@ import CuratorOrdersListSiderFilters from "./components/CuratorOrdersListSiderFi
 import OrderListSider from "../ENGINEER_LIST/components/OrderListSider";
 import CuratorOrdersListTable from "./components/CuratorOrdersListTable";
 import Helper from "../../components/helpers/Helper";
+import {toInteger} from "lodash";
 
 const CuratorPageNEW = (props) => {
 	const { userdata } = props;
@@ -37,6 +38,7 @@ const CuratorPageNEW = (props) => {
 	const [filterUsersSelect, setFilterUsersSelect] = useState([]);
 
 	const [supervisor, setSupervisor] = useState(false);
+	const [orderBox, setOrderBox] = useState([]);
 
 
 
@@ -72,7 +74,7 @@ const CuratorPageNEW = (props) => {
 
 	const initialFilterBox = {
 		/* header */
-		bid_id: null,
+		order_id: null,
 		company_name: null,
 		user_name: null,
 		// protect_status: null,
@@ -132,6 +134,10 @@ const CuratorPageNEW = (props) => {
 	};
 
 	useEffect(() => {
+		makeFilterMenu();
+	}, [filterBox, orderBox]);
+
+	useEffect(() => {
 		fetchInfo().then();
 		// if (showGetItem !== null) {
 		// 	handlePreviewOpen(showGetItem);
@@ -174,7 +180,7 @@ const CuratorPageNEW = (props) => {
 				/* header */
 				company_name: filterBox.company_name,
 				user_name: filterBox.user_name,
-				order_id: filterBox.order_id,
+				order_id: toInteger(filterBox.order_id),
 				// type: filterBox.type,
 				// protect_status: filterBox.protect_status,
 				// stage_status: filterBox.stage_status,
@@ -232,51 +238,155 @@ const CuratorPageNEW = (props) => {
 	const handleUpdateFilterBoxHeader = (newFilterBox) => {
 		const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
 
-		if (filterBox.bid_id !== newFilterBox.bid_id) {
-			filterBoxUpd.bid_id = newFilterBox.bid_id;
-			handleSearchParamsChange('bid_id', newFilterBox.bid_id);
+		if (filterBox.order_id !== newFilterBox.order_id) {
+			filterBoxUpd.order_id = newFilterBox.order_id;
+			handleSearchParamsChange('order_id', newFilterBox.order_id);
 		}
 		if (filterBox.company_name !== newFilterBox.company_name) {
 			filterBoxUpd.company_name = newFilterBox.company_name;
 			handleSearchParamsChange('company_name', newFilterBox.company_name);
 		}
-		if (filterBox.type !== newFilterBox.type) {
-			filterBoxUpd.type = newFilterBox.type;
-			handleSearchParamsChange('type', newFilterBox.type);
-		}
-		if (filterBox.protect_status !== newFilterBox.protect_status) {
-			filterBoxUpd.protect_status = newFilterBox.protect_status;
-			handleSearchParamsChange('protect_status', newFilterBox.protect_status);
-		}
-		if (filterBox.stage_status !== newFilterBox.stage_status) {
-			filterBoxUpd.stage_status = newFilterBox.stage_status;
-			handleSearchParamsChange('stage_status', newFilterBox.stage_status);
-		}
 		if (filterBox.dates !== newFilterBox.dates) {
 			filterBoxUpd.dates = newFilterBox.dates;
 			handleSearchParamsChange('dates', newFilterBox.dates);
 		}
-		if (filterBox.manager !== newFilterBox.manager) {
-			filterBoxUpd.manager = newFilterBox.manager;
-			handleSearchParamsChange('manager', newFilterBox.manager);
+
+		if (filterBox.user_name !== newFilterBox.user_name) {
+			filterBoxUpd.user_name = newFilterBox.user_name;
+			handleSearchParamsChange('user_name', newFilterBox.user_name);
 		}
-		if (filterBox.bill_number !== newFilterBox.bill_number) {
-			filterBoxUpd.bill_number = newFilterBox.bill_number;
-			handleSearchParamsChange('bill_number', newFilterBox.bill_number);
-		}
-		if (filterBox.comment !== newFilterBox.comment) {
-			filterBoxUpd.comment = newFilterBox.comment;
-			handleSearchParamsChange('comment', newFilterBox.comment);
-		}
-		if (filterBox.object_name !== newFilterBox.object_name) {
-			filterBoxUpd.object_name = newFilterBox.object_name;
-			handleSearchParamsChange('object_name', newFilterBox.object_name);
-		}
+
+
+		// if (filterBox.type !== newFilterBox.type) {
+		// 	filterBoxUpd.type = newFilterBox.type;
+		// 	handleSearchParamsChange('type', newFilterBox.type);
+		// }
+		// if (filterBox.protect_status !== newFilterBox.protect_status) {
+		// 	filterBoxUpd.protect_status = newFilterBox.protect_status;
+		// 	handleSearchParamsChange('protect_status', newFilterBox.protect_status);
+		// }
+		// if (filterBox.stage_status !== newFilterBox.stage_status) {
+		// 	filterBoxUpd.stage_status = newFilterBox.stage_status;
+		// 	handleSearchParamsChange('stage_status', newFilterBox.stage_status);
+		// }
+		//
+		// if (filterBox.manager !== newFilterBox.manager) {
+		// 	filterBoxUpd.manager = newFilterBox.manager;
+		// 	handleSearchParamsChange('manager', newFilterBox.manager);
+		// }
+		// if (filterBox.bill_number !== newFilterBox.bill_number) {
+		// 	filterBoxUpd.bill_number = newFilterBox.bill_number;
+		// 	handleSearchParamsChange('bill_number', newFilterBox.bill_number);
+		// }
+		// if (filterBox.comment !== newFilterBox.comment) {
+		// 	filterBoxUpd.comment = newFilterBox.comment;
+		// 	handleSearchParamsChange('comment', newFilterBox.comment);
+		// }
+		// if (filterBox.object_name !== newFilterBox.object_name) {
+		// 	filterBoxUpd.object_name = newFilterBox.object_name;
+		// 	handleSearchParamsChange('object_name', newFilterBox.object_name);
+		// }
 		console.log(areObjectsEqual(filterBox, filterBoxUpd));
 		console.log(searchParams);
 		if (!areObjectsEqual(filterBox, filterBoxUpd)) {
 			setFilterBox(filterBoxUpd);
 		}
+	};
+
+	const makeFilterMenu = () => {
+		let clearItems = [];
+		let hasFilter = false;
+		let hasSorter = false;
+
+		for (const key in filterBox) {
+			const fib = filterBox[key];
+			if (fib !== null) {
+				if (key === 'updated_date' && fib[0] !== null) {
+					hasFilter = true;
+				} else if (key === 'created_date' && fib[0] !== null) {
+					hasFilter = true;
+				} else if (
+					key !== 'updated_date' &&
+					key !== 'created_date' &&
+					key !== 'page' &&
+					key !== 'onpage' &&
+					key !== 'limit'
+				)
+					hasFilter = true;
+			}
+		}
+		for (const key in orderBox) {
+			const fib = orderBox[key];
+			if (fib !== null) {
+				hasSorter = true;
+			}
+		}
+
+		if (hasFilter) {
+			clearItems.push({
+				key: 'clarboxofilta',
+				value: 'clear_filters',
+				label: <div onClick={handleClearAllFilterBox}>Очистить фильтры</div>,
+			});
+		}
+
+		if (hasSorter) {
+			clearItems.push({
+				key: 'clarboxsorta',
+				value: 'clear_filters',
+				label: <div onClick={handleClearOrderBox}>Очистить cортировки</div>,
+			});
+		}
+		setFilterSortClearMenu(clearItems);
+	};
+
+	const handleSearchParamsSortChange = (sortBoxArray) => {
+		setSearchParams((prevParams) => {
+			const newParams = new URLSearchParams(prevParams);
+			if (sortBoxArray && sortBoxArray.length > 0) {
+				let sortUpd = '';
+				sortBoxArray.forEach((sort) => {
+					console.log(sort.order);
+					sortUpd += `${sort.key}-${sort.order}` + ` `;
+				});
+				newParams.set('sort', sortUpd);
+				console.log(sortUpd);
+			} else {
+				newParams.delete('sort');
+			}
+			return newParams;
+		});
+	};
+
+	const arraysEqualIgnore = (arr1, arr2) => {
+		if (arr1.length !== arr2.length) {
+			return false;
+		}
+
+		// Создаем копии и сортируем по key для consistent comparison
+		const sorted1 = [...arr1].sort((a, b) => a.key - b.key);
+		const sorted2 = [...arr2].sort((a, b) => a.key - b.key);
+
+		// Сравниваем каждый объект
+		for (let i = 0; i < sorted1.length; i++) {
+			if (sorted1[i].key !== sorted2[i].key || sorted1[i].order !== sorted2[i].order) {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	const handleUpdateOrderBox = (newOrderBox) => {
+		if (!arraysEqualIgnore(orderBox, newOrderBox)) {
+			setOrderBox(newOrderBox);
+			handleSearchParamsSortChange(newOrderBox);
+		}
+	};
+
+	const handleClearOrderBox = () => {
+		setOrderBox([]);
+		handleSearchParamsSortChange([]);
 	};
 
 	const fetchFilterSelects = async () => {
@@ -447,21 +557,21 @@ const CuratorPageNEW = (props) => {
 							<div className={'sa-header-label-container-small'}>
 								<div className={'sa-vertical-flex'}>
 									<Space.Compact>
-										<Button
-											onClick={() => {
-												setIsOpenedFilters(!isOpenedFilters);
-											}}
-											className={`${
-												isOpenedFilters
-													? 'sa-default-solid-btn-color'
-													: 'sa-default-outlined-btn-color'
-											}`}
-											color={'default'}
-											variant={isOpenedFilters ? 'solid' : 'outlined'}
-											icon={<FilterOutlined />}
-										>
-											Доп Фильтры
-										</Button>
+										{/*<Button*/}
+										{/*	onClick={() => {*/}
+										{/*		setIsOpenedFilters(!isOpenedFilters);*/}
+										{/*	}}*/}
+										{/*	className={`${*/}
+										{/*		isOpenedFilters*/}
+										{/*			? 'sa-default-solid-btn-color'*/}
+										{/*			: 'sa-default-outlined-btn-color'*/}
+										{/*	}`}*/}
+										{/*	color={'default'}*/}
+										{/*	variant={isOpenedFilters ? 'solid' : 'outlined'}*/}
+										{/*	icon={<FilterOutlined />}*/}
+										{/*>*/}
+										{/*	Доп Фильтры*/}
+										{/*</Button>*/}
 										{filterSortClearMenu.length > 0 && (
 											<Tooltip title={'Очистить фильтры'} placement={'right'}>
 												<Dropdown menu={{ items: filterSortClearMenu }}>
@@ -633,6 +743,7 @@ const CuratorPageNEW = (props) => {
 								supervisor={supervisor}
 
 								handleStatusChange={handleStatusChange}
+								on_set_sort_orders={handleUpdateOrderBox}
 
 								userdata={userdata}
 								rerenderPage={handleRerenderPage}
