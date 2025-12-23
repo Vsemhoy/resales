@@ -399,7 +399,7 @@ const CuratorPageNEW = (props) => {
 	
 	const handleStatusChange = async (order_id, status) => {
 		if (PRODMODE) {
-			const path = `/api/v2/curators/approved` + order_id;
+			const path = `/api/v2/curators/approved/` + order_id;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					status,
