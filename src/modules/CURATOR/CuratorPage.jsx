@@ -197,7 +197,7 @@ const CuratorPageNEW = (props) => {
 				limit: onPage,
 			};
 			console.log(data);
-			const path = `/api/v2/curators/`;
+			const path = `/api/v2/curators`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data,
