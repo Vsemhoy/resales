@@ -71,7 +71,7 @@ const BidListSiderFilters = (props) => {
 		<Affix offsetTop={115}>
 			<div className="sider-body sider-body-filters">
 				<div className={'sider-unit'}>
-					<div className="sider-unit-title">Компания</div>
+					<div className="sider-unit-title">Статус</div>
 					<div className="sider-unit-control">
 						<Select
 							placeholder=""
