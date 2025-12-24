@@ -3,7 +3,7 @@ import { Affix, Button, Input, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 const BidListSiderFilters = (props) => {
-	const [targetCompany, setTargetCompany] = useState(null);
+	const [targetStatus, setTargetStatus] = useState(null);
 	const [user, setUser] = useState(null);
 	const [adminAccept, setAdminAccept] = useState(null);
 	const [packageStatus, setPackageStatus] = useState(null);
@@ -13,8 +13,8 @@ const BidListSiderFilters = (props) => {
 	const [completeStatus, setCompleteStatus] = useState(null);
 
 	useEffect(() => {
-		if (props.filter_box.target_company !== targetCompany) {
-			setTargetCompany(props.filter_box.target_company);
+		if (props.filter_box.target_status !== targetStatus) {
+			setTargetStatus(props.filter_box.target_status);
 		}
 		if (props.filter_box.user !== user) {
 			setUser(props.filter_box.user);
@@ -42,7 +42,7 @@ const BidListSiderFilters = (props) => {
 	useEffect(() => {
 		const timer = setTimeout((filterBox) => {
 			const newFilterBox = {
-				target_company: targetCompany ?? null,
+				target_status: targetStatus ?? null,
 				user: user ?? null,
 				// pay_status: payStatus ?? null,
 				// admin_accept: adminAccept ?? null,
@@ -56,7 +56,7 @@ const BidListSiderFilters = (props) => {
 		}, 700); // ⏱️ 1 секунда задержки
 		return () => clearTimeout(timer);
 	}, [
-		targetCompany,
+		targetStatus,
 		user
 		// payStatus,
 		// adminAccept,
@@ -76,31 +76,27 @@ const BidListSiderFilters = (props) => {
 						<Select
 							placeholder=""
 							style={{ width: '100%' }}
-							value={targetCompany}
-							options={
-								props.filter_companies_select
-									? props.filter_companies_select.filter((comp) => comp.value !== 1)
-									: null
-							}
-							onChange={(val) => setTargetCompany(val)}
+							value={targetStatus}
+							options={props.filter_statuses_select}
+							onChange={(val) => setTargetStatus(val)}
 							allowClear
 						/>
 					</div>
 				</div>
 
-				<div className={'sider-unit'}>
-					<div className="sider-unit-title">Инициатор</div>
-					<div className="sider-unit-control">
-						<Select
-							placeholder=""
-							style={{ width: '100%' }}
-							value={user}
-							options={props.filter_users_select}
-							onChange={(val) => setUser(val)}
-							allowClear
-						/>
-					</div>
-				</div>
+				{/*<div className={'sider-unit'}>*/}
+				{/*	<div className="sider-unit-title">Инициатор</div>*/}
+				{/*	<div className="sider-unit-control">*/}
+				{/*		<Select*/}
+				{/*			placeholder=""*/}
+				{/*			style={{ width: '100%' }}*/}
+				{/*			value={user}*/}
+				{/*			options={props.filter_users_select}*/}
+				{/*			onChange={(val) => setUser(val)}*/}
+				{/*			allowClear*/}
+				{/*		/>*/}
+				{/*	</div>*/}
+				{/*</div>*/}
 
 				{/*<div className={'sider-unit'}>*/}
 				{/*	<div className="sider-unit-title">Подтверждение Администратора</div>*/}

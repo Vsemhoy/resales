@@ -36,6 +36,7 @@ const CuratorPageNEW = (props) => {
 
 	const [filterCompaniesSelect, setFilterCompaniesSelect] = useState([]);
 	const [filterUsersSelect, setFilterUsersSelect] = useState([]);
+	const [statusCurators, setStatusCurators] = useState([]);
 
 	const [supervisor, setSupervisor] = useState(false);
 	const [orderBox, setOrderBox] = useState([]);
@@ -57,12 +58,13 @@ const CuratorPageNEW = (props) => {
 		// protect_status: parseInt(searchParams.get('protect_status')) || null,
 		// stage_status: parseInt(searchParams.get('stage_status')) || null,
 		dates: searchParams.get('dates') || null,
+		status: parseInt(searchParams.get('status')) || null,
 		// manager: parseInt(searchParams.get('manager')) || null,
 		// bill_number: searchParams.get('bill_number') || null,
 		// comment: searchParams.get('comment') || null,
 		// object_name: searchParams.get('object_name') || null,
 		// /* sider */
-		// target_company: parseInt(searchParams.get('target_company')) || null,
+		target_status: parseInt(searchParams.get('target_status')) || null,
 		// pay_status: parseInt(searchParams.get('pay_status')) || null,
 		// admin_accept: parseInt(searchParams.get('admin_accept')) || null,
 		// package: parseInt(searchParams.get('package')) || null,
@@ -77,15 +79,16 @@ const CuratorPageNEW = (props) => {
 		order_id: null,
 		company_name: null,
 		user_name: null,
+		status: null,
 		// protect_status: null,
 		// stage_status: null,
-		// dates: null,
+		dates: null,
 		// manager: null,
 		// bill_number: null,
 		// comment: null,
 		// object_name: null,
 		// /* sider */
-		// target_company: null,
+		target_status: null,
 		// pay_status: null,
 		// admin_accept: null,
 		// package: null,
@@ -180,7 +183,8 @@ const CuratorPageNEW = (props) => {
 				/* header */
 				company_name: filterBox.company_name,
 				user_name: filterBox.user_name,
-				order_id: toInteger(filterBox.order_id),
+				order_id: parseInt(filterBox.order_id),
+				status: filterBox.status,
 				// type: filterBox.type,
 				// protect_status: filterBox.protect_status,
 				// stage_status: filterBox.stage_status,
@@ -190,7 +194,7 @@ const CuratorPageNEW = (props) => {
 				// comment: filterBox.comment,
 				// object_name: filterBox.object_name,
 				// /* sider */
-				// target_company: filterBox.target_company,
+				target_status: filterBox.target_status,
 				// pay_status: filterBox.pay_status,
 				// admin_accept: filterBox.admin_accept,
 				// package: filterBox.package,
@@ -409,7 +413,8 @@ const CuratorPageNEW = (props) => {
 					// setFilterNdsSelect(filters.nds_select);
 					// setFilterCompleteSelect(filters.complete_select);
 					// setFilterManagersSelect(filters.managers);
-					setFilterCompaniesSelect(filters.companies);
+					// setFilterCompaniesSelect(filters.companies);
+					setStatusCurators(filters.statuses);
 					setFilterUsersSelect(filters.users);
 				}
 			} catch (e) {
@@ -431,8 +436,9 @@ const CuratorPageNEW = (props) => {
 			// setFilterNdsSelect(FILTERS.nds_select);
 			// setFilterCompleteSelect(FILTERS.complete_select);
 			// setFilterManagersSelect(FILTERS.managers_select);
-			setFilterCompaniesSelect(FILTERS.companies);
+			// setFilterCompaniesSelect(FILTERS.companies);
 			setFilterUsersSelect(FILTERS.users);
+			setStatusCurators(FILTERS.status)
 		}
 	};
 
@@ -465,38 +471,38 @@ const CuratorPageNEW = (props) => {
 	const handleUpdateFilterBoxSider = (newFilterBox) => {
 		const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
 
-		if (filterBox.target_company !== newFilterBox.target_company) {
-			filterBoxUpd.target_company = newFilterBox.target_company;
-			handleSearchParamsChange('target_company', newFilterBox.target_company);
+		if (filterBox.target_status !== newFilterBox.target_status) {
+			filterBoxUpd.target_status = newFilterBox.target_status;
+			handleSearchParamsChange('target_status', newFilterBox.target_status);
 		}
-		if (filterBox.pay_status !== newFilterBox.pay_status) {
-			filterBoxUpd.pay_status = newFilterBox.pay_status;
-			handleSearchParamsChange('pay_status', newFilterBox.pay_status);
-		}
-		if (filterBox.admin_accept !== newFilterBox.admin_accept) {
-			filterBoxUpd.admin_accept = newFilterBox.admin_accept;
-			handleSearchParamsChange('admin_accept', newFilterBox.admin_accept);
-		}
-		if (filterBox.package !== newFilterBox.package) {
-			filterBoxUpd.package = newFilterBox.package;
-			handleSearchParamsChange('package', newFilterBox.package);
-		}
-		if (filterBox.price !== newFilterBox.price) {
-			filterBoxUpd.price = newFilterBox.price;
-			handleSearchParamsChange('price', newFilterBox.price);
-		}
-		if (filterBox.bid_currency !== newFilterBox.bid_currency) {
-			filterBoxUpd.bid_currency = newFilterBox.bid_currency;
-			handleSearchParamsChange('bid_currency', newFilterBox.bid_currency);
-		}
-		if (filterBox.nds !== newFilterBox.nds) {
-			filterBoxUpd.nds = newFilterBox.nds;
-			handleSearchParamsChange('nds', newFilterBox.nds);
-		}
-		if (filterBox.complete !== newFilterBox.complete) {
-			filterBoxUpd.complete = newFilterBox.complete;
-			handleSearchParamsChange('complete', newFilterBox.complete);
-		}
+		// if (filterBox.pay_status !== newFilterBox.pay_status) {
+		// 	filterBoxUpd.pay_status = newFilterBox.pay_status;
+		// 	handleSearchParamsChange('pay_status', newFilterBox.pay_status);
+		// }
+		// if (filterBox.admin_accept !== newFilterBox.admin_accept) {
+		// 	filterBoxUpd.admin_accept = newFilterBox.admin_accept;
+		// 	handleSearchParamsChange('admin_accept', newFilterBox.admin_accept);
+		// }
+		// if (filterBox.package !== newFilterBox.package) {
+		// 	filterBoxUpd.package = newFilterBox.package;
+		// 	handleSearchParamsChange('package', newFilterBox.package);
+		// }
+		// if (filterBox.price !== newFilterBox.price) {
+		// 	filterBoxUpd.price = newFilterBox.price;
+		// 	handleSearchParamsChange('price', newFilterBox.price);
+		// }
+		// if (filterBox.bid_currency !== newFilterBox.bid_currency) {
+		// 	filterBoxUpd.bid_currency = newFilterBox.bid_currency;
+		// 	handleSearchParamsChange('bid_currency', newFilterBox.bid_currency);
+		// }
+		// if (filterBox.nds !== newFilterBox.nds) {
+		// 	filterBoxUpd.nds = newFilterBox.nds;
+		// 	handleSearchParamsChange('nds', newFilterBox.nds);
+		// }
+		// if (filterBox.complete !== newFilterBox.complete) {
+		// 	filterBoxUpd.complete = newFilterBox.complete;
+		// 	handleSearchParamsChange('complete', newFilterBox.complete);
+		// }
 		console.log(areObjectsEqual(filterBox, filterBoxUpd));
 		if (!areObjectsEqual(filterBox, filterBoxUpd)) {
 			setFilterBox(filterBoxUpd);
@@ -557,21 +563,21 @@ const CuratorPageNEW = (props) => {
 							<div className={'sa-header-label-container-small'}>
 								<div className={'sa-vertical-flex'}>
 									<Space.Compact>
-										{/*<Button*/}
-										{/*	onClick={() => {*/}
-										{/*		setIsOpenedFilters(!isOpenedFilters);*/}
-										{/*	}}*/}
-										{/*	className={`${*/}
-										{/*		isOpenedFilters*/}
-										{/*			? 'sa-default-solid-btn-color'*/}
-										{/*			: 'sa-default-outlined-btn-color'*/}
-										{/*	}`}*/}
-										{/*	color={'default'}*/}
-										{/*	variant={isOpenedFilters ? 'solid' : 'outlined'}*/}
-										{/*	icon={<FilterOutlined />}*/}
-										{/*>*/}
-										{/*	Доп Фильтры*/}
-										{/*</Button>*/}
+										<Button
+											onClick={() => {
+												setIsOpenedFilters(!isOpenedFilters);
+											}}
+											className={`${
+												isOpenedFilters
+													? 'sa-default-solid-btn-color'
+													: 'sa-default-outlined-btn-color'
+											}`}
+											color={'default'}
+											variant={isOpenedFilters ? 'solid' : 'outlined'}
+											icon={<FilterOutlined />}
+										>
+											Доп Фильтры
+										</Button>
 										{filterSortClearMenu.length > 0 && (
 											<Tooltip title={'Очистить фильтры'} placement={'right'}>
 												<Dropdown menu={{ items: filterSortClearMenu }}>
@@ -658,7 +664,7 @@ const CuratorPageNEW = (props) => {
 					<div className={'sa-sider'}>
 						{isOpenedFilters && (
 							<CuratorOrdersListSiderFilters
-								// filter_pay_select={prepareSelectOptions(filterPaySelect)}
+								filter_statuses_select={Helper.prepareSelectOptions(statusCurators)}
 								// filter_admin_accept_select={prepareSelectOptions(filterAdminAcceptSelect)}
 								// filter_package_select={prepareSelectOptions(filterPackageSelect)}
 								// filter_price_select={prepareSelectOptions(filterPriceSelect)}
@@ -666,7 +672,7 @@ const CuratorPageNEW = (props) => {
 								// filter_nds_select={prepareSelectOptions(filterNdsSelect)}
 								// filter_complete_select={prepareSelectOptions(filterCompleteSelect)}
 								filter_users_select={Helper.prepareSelectOptions(filterUsersSelect)}
-								filter_companies_select={Helper.prepareSelectOptions(filterCompaniesSelect)}
+								// filter_companies_select={Helper.prepareSelectOptions(filterCompaniesSelect)}
 								filter_box={filterBox}
 								on_change_filter_box={handleUpdateFilterBoxSider}
 							/>
