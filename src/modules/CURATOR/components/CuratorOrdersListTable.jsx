@@ -25,7 +25,7 @@ const CuratorOrdersListTable = (props) => {
 	// const [type, setType] = useState(null);
 	// const [protectStatus, setProtectStatus] = useState(null);
 	// const [stageStatus, setStageStatus] = useState(null);
-	// const [dates, setDates] = useState(null);
+	const [dates, setDates] = useState(null);
 	// const [manager, setManager] = useState(null);
 	// const [billNumber, setBillNumber] = useState(null);
 	// const [comment, setComment] = useState(null);
@@ -48,9 +48,9 @@ const CuratorOrdersListTable = (props) => {
 		// if (props.filter_box.stage_status !== stageStatus) {
 		// 	setStageStatus(props.filter_box.stage_status);
 		// }
-		// if (props.filter_box.dates !== dates) {
-		// 	setDates(props.filter_box.dates);
-		// }
+		if (props.filter_box.dates !== dates) {
+			setDates(props.filter_box.dates);
+		}
 		// if (props.filter_box.manager !== manager) {
 		// 	setManager(props.filter_box.manager);
 		// }
@@ -82,7 +82,7 @@ const CuratorOrdersListTable = (props) => {
 				// type: type ?? null,
 				// protect_status: protectStatus ?? null,
 				// stage_status: stageStatus ?? null,
-				// dates: dates ?? null,
+				dates: dates ?? null,
 				// manager: manager ?? null,
 				// bill_number: billNumber ?? null,
 				// comment: comment ?? null,
@@ -99,7 +99,7 @@ const CuratorOrdersListTable = (props) => {
 		userName,
 		// protectStatus,
 		// stageStatus,
-		// dates,
+		dates,
 		// manager,
 		// billNumber,
 		// comment,
@@ -237,7 +237,7 @@ const CuratorOrdersListTable = (props) => {
 										onChange={(date, dateString) => {
 											console.log(date);
 											console.log(dateString);
-											// setDates(date ? date.unix() : null);
+											setDates(date ? date.unix() : null);
 										}}
 										format="DD.MM.YYYY"
 									/>
@@ -296,7 +296,7 @@ const CuratorOrdersListTable = (props) => {
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
-								Действия
+								{props.supervisor ? ("Действия") : ("Статус")}
 							</div>
 						</div>
 						{/*<div className={'sa-table-box-cell'}>*/}

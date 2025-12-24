@@ -191,7 +191,9 @@ const { getCurrentParamsString } = useURLParams();
 							</div>
 						) : (
 							<div>
-								{data.status}
+								<Tag color={data.color}>
+									{data.status}
+								</Tag>
 							</div>
 						)}
 					</div>

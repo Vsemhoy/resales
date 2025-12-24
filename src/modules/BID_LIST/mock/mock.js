@@ -1098,14 +1098,14 @@ export const FILTERS = {
 			name: 'Не  реализовано',
 		},
 	],
-	managers_select: [
+	status: [
 		{
 			id: 1,
-			name: 'Ковальчук В.Д.',
+			name: 'Принято',
 		},
 		{
 			id: 2,
-			name: 'Кальчук В.Д.',
+			name: 'Отказано',
 		},
 	],
 	companies: [
