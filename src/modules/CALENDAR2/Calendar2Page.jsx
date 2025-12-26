@@ -1,5 +1,6 @@
-import { DatePicker } from 'antd';
+import { Affix, DatePicker } from 'antd';
 import React, { useEffect, useState } from 'react';
+import './components/style/calendarpage.css';
 
 const Calendar2Page = (props) => {
 
@@ -55,11 +56,44 @@ const eventTypes = [
 ]
 
   return (
-    <div>
-      <h1>Hello Wolf from Calendar2Page</h1>
-      <div>
-        <DatePicker.RangePicker picker='week' />
+    	<div className="app-page">
+				<div className="sa-calendar-body sa-mw-1900">
+        		<Affix offsetTop={0}>
+					<div className="sa-orgpage-header" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
+						<div className={'sa-flex-space'}>
+							<div className={'sa-flex-space'}>
+							asdfa
+							</div>
+							<div></div>
+							<div className={'sa-orp-menu'}>
+							fasdfas
+
+							</div>
+							fasdf
+						</div>
+					</div>
+          </Affix>
+
+      <div className={'sa-calendar-page-columns'}>
+        <div className={'sa-calendar-sider'}>
+            <div>
+              
+            </div>
+        </div>
+        <div className={'sa-calendar-contenter'}>
+          gsdkajfkls
+
+        </div>
+
+
       </div>
+
+
+      </div>
+
+
+
+
     </div>
 
   );

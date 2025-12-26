@@ -1,0 +1,15 @@
+.sa-calendar-body {
+  width: 100%;
+}
+.sa-calendar-sider {
+  background-color: white;
+}
+.sa-calendar-contenter {
+  background-color: white;
+  
+}
+.sa-calendar-page-columns {
+  display: grid;
+  grid-template-columns: 2fr 7fr;
+  grid-gap: 12px;
+}
