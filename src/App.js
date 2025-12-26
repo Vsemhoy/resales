@@ -39,6 +39,8 @@ import BidPdfPage from "./modules/BID_PDF_PAGE/BidPdfPage";
 import OrgPage from './modules/ORG_PAGE/OrgPage';
 import LocalLogger from './modules/EXT/LOCAL_LOGGER/LocalLoggerPage';
 import CuratorPageNEW from "./modules/CURATOR/CuratorPage";
+import Calendar2Page from './modules/CALENDAR2/Calendar2Page';
+import ReporterPage from './modules/REPORTER/ReporterPage';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -238,6 +240,19 @@ export const App = () => {
                                         element={<CustomIconPage userdata={0} />}
                                     />
                                     <Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
+
+
+                                      <Route
+                                        path={BASE_ROUTE + '/calendar'}
+                                        element={<Calendar2Page userdata={userdata} />}
+                                    />
+                                    <Route path="/calendar" element={<Calendar2Page userdata={userdata} />} />
+
+                                    <Route
+                                        path={BASE_ROUTE + '/reporter'}
+                                        element={<ReporterPage userdata={userdata} />}
+                                    />
+                                    <Route path="/reporter" element={<ReporterPage userdata={userdata} />} />
                                 </Routes>
                                 {!PRODMODE && (
                                     <Dropdown menu={{ items: devMenu }}>
