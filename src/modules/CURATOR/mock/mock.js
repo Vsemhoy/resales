@@ -244,4 +244,4 @@ export const CONFIRM_LIST = [
 
 export const COUNT = 67;
 
-export const SUPERVISOR = true;
+export const SUPERVISOR = false;
