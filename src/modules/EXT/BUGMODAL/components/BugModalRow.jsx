@@ -193,7 +193,12 @@ useEffect(() => {
   return (
     <div className={`${isAdmin ? 'sa-bug-table-row-ext' : 'sa-bug-table-row'} ${rowOnSaveState ? 'sa-bug-table-row-on-save' : ''}`}>
       <div className={'sa-bug-table-cell'}>
-        <div>
+        <div style={{fontSize: '16px', fontWeight: '600'}}>
+          {item.id}
+        </div>
+      </div>
+      <div className={'sa-bug-table-cell'}>
+        <div className='sa-ta-center'>
           {item.created_at && (
             <div>
               <div>{dayjs(item.created_at).format('DD.MM.YYYY')}</div>
@@ -203,7 +208,7 @@ useEffect(() => {
         </div>
       </div>
       <div className={'sa-bug-table-cell'}>
-        <div>
+        <div className='sa-ta-center'>
           <HighlightText text={item.username} highlight={filterUserName} />
         </div>
       </div>
@@ -273,6 +278,7 @@ useEffect(() => {
       </div>
       <div className={'sa-bug-table-cell'}>
         <div 
+          className='sa-ta-center'
           // onMouseLeave={()=>{if (isAdmin && editStatus) {setEditStatus(false);}}}
           onDoubleClick={ ()=>{if (isAdmin && !editStatus){setEditStatus(true);
             on_focus_field(itemId + "_3");
@@ -298,8 +304,8 @@ useEffect(() => {
       </div>
       <div className={'sa-bug-table-cell'}>
         <div>
-          {item.finished_at && (
-            <div>
+          {item.finished_at && (status === 3 || status === 4) && (
+            <div className='sa-ta-center'>
               <div>{dayjs(item.finished_at).format('DD.MM.YYYY')}</div>
               <div>{dayjs(item.finished_at).format('HH:mm')}</div>
             </div>
