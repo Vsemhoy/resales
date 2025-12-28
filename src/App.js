@@ -39,8 +39,10 @@ import BidPdfPage from "./modules/BID_PDF_PAGE/BidPdfPage";
 import OrgPage from './modules/ORG_PAGE/OrgPage';
 import LocalLogger from './modules/EXT/LOCAL_LOGGER/LocalLoggerPage';
 import CuratorPageNEW from "./modules/CURATOR/CuratorPage";
-import Calendar2Page from './modules/CALENDAR2/Calendar2Page';
-import ReporterPage from './modules/REPORTER/ReporterPage';
+
+
+import CalendarPage from './modules/CALENDAR2/CalendarPage';
+import ReportsPage from './modules/REPORTS2/ReportsPage';
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -244,15 +246,15 @@ export const App = () => {
 
                                       <Route
                                         path={BASE_ROUTE + '/calendar'}
-                                        element={<Calendar2Page userdata={userdata} />}
+                                        element={<CalendarPage userdata={userdata} />}
                                     />
-                                    <Route path="/calendar" element={<Calendar2Page userdata={userdata} />} />
+                                    <Route path="/calendar" element={<CalendarPage userdata={userdata} />} />
 
                                     <Route
-                                        path={BASE_ROUTE + '/reporter'}
-                                        element={<ReporterPage userdata={userdata} />}
+                                        path={BASE_ROUTE + '/reports'}
+                                        element={<ReportsPage userdata={userdata} />}
                                     />
-                                    <Route path="/reporter" element={<ReporterPage userdata={userdata} />} />
+                                    <Route path="/reports" element={<ReportsPage userdata={userdata} />} />
                                 </Routes>
                                 {!PRODMODE && (
                                     <Dropdown menu={{ items: devMenu }}>
