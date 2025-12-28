@@ -978,7 +978,7 @@
    ============================================================================= */
 
 .event-create-modal .ant-modal-body {
-  padding: 16px 24px;
+  padding: none;
 }
 
 .event-type-selector {
