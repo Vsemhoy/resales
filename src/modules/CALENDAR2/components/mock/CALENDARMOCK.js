@@ -713,6 +713,17 @@ export const MOCK_EVENT_COMMENTS = [
     updated_at: null,
     deleted_at: null,
   },
+    {
+    id: 4,
+    event_id: 1,
+    user_id: 46,
+    user_name: 'Крудо А.С.',
+    id_company: 2,
+    content: 'Data visualization color palette is based on the basic color palette and neutral color palette, and based on the principle that AntVs "effective, clear, accurate and beautiful". View Palette',
+    created_at: '2025-12-20T11:30:00',
+    updated_at: null,
+    deleted_at: null,
+  },
 ];
 
 // =============================================================================
