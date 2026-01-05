@@ -1,0 +1,65 @@
+import React, { useEffect, useState } from 'react';
+import { Form, Input, DatePicker } from 'antd';
+import dayjs from 'dayjs';
+
+
+
+// Конфиг
+const TEXTAREA_MIN_ROWS = 3;
+const TEXTAREA_MAX_ROWS = 10;
+const CHEVRON_SIZE = 16;
+
+
+
+const CalendarModalFormNote = (props) => {
+  const { TextArea } = Input;
+
+  const [formDate, setFormDate] = useState(props?.date);
+  const [formTheme, setFormTheme] = useState("");
+  const [formNotes, setFormNotes] = useState("");
+
+
+  const [dateDisabled, setDateDisabled] = useState(true);
+
+  useEffect(() => {
+    console.log('props.date', props.date)
+    setFormDate(props?.date);
+  }, [props?.date]);
+
+
+  return (
+    <div className='rsa-calendar-form-item'>
+      <div className='rda-note-form-item'>
+         <Form
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}
+          layout="vertical"
+        >
+   
+            <p></p>
+            <span>Тема</span>
+            <Input value={formTheme}
+              onChange={(ev)=>{setFormTheme(ev.target.value)}}
+              />
+
+            <p></p>
+            <span>Заметка</span>
+            <TextArea rows={4}
+              value={formNotes}
+              onChange={(ev)=>{setFormNotes(ev.target.value)}}
+              autoSize={{ minRows: TEXTAREA_MIN_ROWS, maxRows: TEXTAREA_MAX_ROWS }}
+            />
+            <p></p>
+      
+            <span>Дата</span>
+            <DatePicker value={formDate} 
+              onDoubleClick={()=>{setDateDisabled(!dateDisabled)}}
+              disabled={dateDisabled} style={{ width: '100%' }} />
+      
+      </Form>
+      </div>
+    </div>
+  );
+};
+
+export default CalendarModalFormNote;

@@ -31,6 +31,7 @@ import {
   CREATABLE_EVENT_TYPES,
   MOCK_ORGANIZATIONS,
 } from './mock/CALENDARMOCK';
+import CalendarModalFormNote from './ModalForms/CalendarModalFormNote';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -44,6 +45,8 @@ const TYPE_ICONS = {
   14: <LockOutlined />,
   15: <GlobalOutlined />,
 };
+
+
 
 const EventCreateModal = ({
   visible,
@@ -73,6 +76,14 @@ const EventCreateModal = ({
     }
   }, [visible, date, form]);
 
+  useEffect(() => {
+      console.log('selectedType', selectedType)
+  }, [selectedType]);
+
+  useEffect(() => {
+    console.log('date', date)
+  }, [date]);
+
   // Доступные типы для создания
   const creatableTypes = useMemo(() => {
     return EVENT_TYPES.filter(t => CREATABLE_EVENT_TYPES.includes(t.id));
@@ -88,6 +99,8 @@ const EventCreateModal = ({
     setSelectedType(typeId);
     form.setFieldsValue({ type: typeId });
   };
+
+
 
   // Отправка формы
   const handleSubmit = async () => {
@@ -120,7 +133,7 @@ const EventCreateModal = ({
     }
   };
 
-  return (
+  return ( 
     <Modal
       open={visible}
       title="Создать событие"
@@ -162,6 +175,7 @@ const EventCreateModal = ({
           </div>
         ) : (
           <div className="event-form-container">
+
             {/* Кнопка назад к выбору типа */}
             <div className="event-form-back">
               <Button 
@@ -184,138 +198,151 @@ const EventCreateModal = ({
             <Divider style={{ margin: '12px 0' }} />
 
             {/* Форма */}
-            <Form
-              form={form}
-              layout="vertical"
-              requiredMark={false}
-            >
-              <Form.Item name="type" hidden>
-                <Input />
-              </Form.Item>
 
-              {/* Дата и время */}
-              <Space style={{ width: '100%' }} size="middle">
-                <Form.Item
-                  name="event_date"
-                  label="Дата"
-                  rules={[{ required: true, message: 'Укажите дату' }]}
-                  style={{ flex: 1 }}
-                >
-                  <DatePicker 
-                    style={{ width: '100%' }}
-                    format="DD.MM.YYYY"
-                    placeholder="Выберите дату"
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  name="event_time"
-                  label="Время"
-                  style={{ flex: 1 }}
-                >
-                  <TimePicker 
-                    style={{ width: '100%' }}
-                    format="HH:mm"
-                    minuteStep={15}
-                    placeholder="Выберите время"
-                  />
-                </Form.Item>
-              </Space>
-
-              {/* Организация (если нужна) */}
-              {needsOrganization && (
-                <Form.Item
-                  name="org_id"
-                  label="Организация"
-                  rules={[{ required: true, message: 'Выберите организацию' }]}
-                >
-                  <Select
-                    showSearch
-                    placeholder="Начните вводить название..."
-                    filterOption={(input, option) =>
-                      option.children.toLowerCase().includes(input.toLowerCase())
-                    }
-                  >
-                    {organizations.map(org => (
-                      <Option key={org.id} value={org.id}>
-                        {org.name}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              )}
-
-              {/* Тема/Название */}
-              <Form.Item
-                name="theme"
-                label={selectedType === 13 ? 'Название проекта' : 'Тема'}
-                rules={[{ required: true, message: 'Укажите тему' }]}
-              >
-                <Input 
-                  placeholder={
-                    selectedType === 7 ? 'Тема звонка...' :
-                    selectedType === 6 ? 'Тема встречи...' :
-                    selectedType === 13 ? 'Название проекта...' :
-                    'Тема заметки...'
-                  }
-                  maxLength={200}
+            
+            {selectedType === 10 && (
+              <CalendarModalFormNote
+                  date={date}
                 />
-              </Form.Item>
+            )}
 
-              {/* Контактное лицо (для звонков и встреч) */}
-              {[6, 7].includes(selectedType) && (
+            {selectedType === 100 && (
+               <Form
+                form={form}
+                layout="vertical"
+                requiredMark={false}
+              >
+                <Form.Item name="type" hidden>
+                  <Input />
+                </Form.Item>
+
+                {/* Дата и время */}
                 <Space style={{ width: '100%' }} size="middle">
                   <Form.Item
-                    name="subscriber"
-                    label="Контактное лицо"
-                    style={{ flex: 2 }}
-                  >
-                    <Input placeholder="ФИО" maxLength={100} />
-                  </Form.Item>
-                  
-                  <Form.Item
-                    name="phone"
-                    label="Телефон"
+                    name="event_date"
+                    label="Дата"
+                    rules={[{ required: true, message: 'Укажите дату' }]}
                     style={{ flex: 1 }}
                   >
-                    <Input placeholder="+7..." maxLength={20} />
+                    <DatePicker 
+                      style={{ width: '100%' }}
+                      format="DD.MM.YYYY"
+                      placeholder="Выберите дату"
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="event_time"
+                    label="Время"
+                    style={{ flex: 1 }}
+                  >
+                    <TimePicker 
+                      style={{ width: '100%' }}
+                      format="HH:mm"
+                      minuteStep={15}
+                      placeholder="Выберите время"
+                    />
                   </Form.Item>
                 </Space>
-              )}
 
-              {/* Описание/Заметка */}
-              <Form.Item
-                name="content"
-                label={selectedType === 7 ? 'Результат звонка' : 'Описание'}
-              >
-                <TextArea
-                  placeholder={
-                    selectedType === 7 ? 'Результат разговора...' :
-                    selectedType === 6 ? 'Итоги встречи...' :
-                    'Текст заметки...'
-                  }
-                  autoSize={{ minRows: 3, maxRows: 6 }}
-                  maxLength={2000}
-                  showCount
-                />
-              </Form.Item>
-
-              {/* Кнопки */}
-              <Form.Item style={{ marginBottom: 0, marginTop: 16 }}>
-                <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
-                  <Button onClick={onCancel}>
-                    Отмена
-                  </Button>
-                  <Button 
-                    type="primary" 
-                    onClick={handleSubmit}
-                    loading={submitting}
+                {/* Организация (если нужна) */}
+                {needsOrganization && (
+                  <Form.Item
+                    name="org_id"
+                    label="Организация"
+                    rules={[{ required: true, message: 'Выберите организацию' }]}
                   >
-                    Создать
-                  </Button>
-                </Space>
-              </Form.Item>
-            </Form>
+                    <Select
+                      showSearch
+                      placeholder="Начните вводить название..."
+                      filterOption={(input, option) =>
+                        option.children.toLowerCase().includes(input.toLowerCase())
+                      }
+                    >
+                      {organizations.map(org => (
+                        <Option key={org.id} value={org.id}>
+                          {org.name}
+                        </Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
+
+                {/* Тема/Название */}
+                <Form.Item
+                  name="theme"
+                  label={selectedType === 13 ? 'Название проекта' : 'Тема'}
+                  rules={[{ required: true, message: 'Укажите тему' }]}
+                >
+                  <Input 
+                    placeholder={
+                      selectedType === 7 ? 'Тема звонка...' :
+                      selectedType === 6 ? 'Тема встречи...' :
+                      selectedType === 13 ? 'Название проекта...' :
+                      'Тема заметки...'
+                    }
+                    maxLength={200}
+                  />
+                </Form.Item>
+
+                {/* Контактное лицо (для звонков и встреч) */}
+                {[6, 7].includes(selectedType) && (
+                  <Space style={{ width: '100%' }} size="middle">
+                    <Form.Item
+                      name="subscriber"
+                      label="Контактное лицо"
+                      style={{ flex: 2 }}
+                    >
+                      <Input placeholder="ФИО" maxLength={100} />
+                    </Form.Item>
+                    
+                    <Form.Item
+                      name="phone"
+                      label="Телефон"
+                      style={{ flex: 1 }}
+                    >
+                      <Input placeholder="+7..." maxLength={20} />
+                    </Form.Item>
+                  </Space>
+                )}
+
+                {/* Описание/Заметка */}
+                <Form.Item
+                  name="content"
+                  label={selectedType === 7 ? 'Результат звонка' : 'Описание'}
+                >
+                  <TextArea
+                    placeholder={
+                      selectedType === 7 ? 'Результат разговора...' :
+                      selectedType === 6 ? 'Итоги встречи...' :
+                      'Текст заметки...'
+                    }
+                    autoSize={{ minRows: 3, maxRows: 6 }}
+                    maxLength={2000}
+                    showCount
+                  />
+                </Form.Item>
+
+                {/* Кнопки */}
+                <Form.Item style={{ marginBottom: 0, marginTop: 16 }}>
+                  <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+                    <Button onClick={onCancel}>
+                      Отмена
+                    </Button>
+                    <Button 
+                      type="primary" 
+                      onClick={handleSubmit}
+                      loading={submitting}
+                    >
+                      Создать
+                    </Button>
+                  </Space>
+                </Form.Item>
+              </Form>
+            )}
+           
+
+
           </div>
         )}
       </div>
