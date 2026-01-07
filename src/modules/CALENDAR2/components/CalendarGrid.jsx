@@ -16,6 +16,7 @@ import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { VIEW_MODES } from './hooks/UseCalendarFilters';
 import { getEventTypeColor, getEventTypeName } from './mock/CALENDARMOCK';
+import { DocumentCurrencyDollarIcon, MoonIcon, NewspaperIcon, PencilSquareIcon, PhoneArrowUpRightIcon, RocketLaunchIcon, ShieldCheckIcon, ShoppingCartIcon, StarIcon, TableCellsIcon, UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 
 dayjs.extend(isoWeek);
 
@@ -158,7 +159,8 @@ const WeekView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick,
             <div 
               key={day.format('YYYY-MM-DD')}
               className={`calendar-week-day-header ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}`}
-              onClick={() => onDateSelect(day.format('YYYY-MM-DD'))}
+              // onClick={() => onDateSelect(day.format('YYYY-MM-DD'))}
+              onDoubleClick={() => onDateDoubleClick(day.dateStr)}
             >
               <span className="calendar-week-day-name">{WEEK_DAYS_SHORT[index]}</span>
               <span className={`calendar-week-day-number ${isToday ? 'today-number' : ''}`}>
@@ -190,7 +192,7 @@ const WeekView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick,
               return (
                 <div
                   key={dateStr}
-                  className={`calendar-week-cell ${isWeekend ? 'weekend' : ''}`}
+                  className={`calendar-week-cell ${isWeekend ? 'weekend' : ''} ${day.isSame(today, 'day') ? 'today' : ''}`}
                   onDoubleClick={() => onDateDoubleClick(dateStr)}
                 >
                   {hourEvents.map(event => (
@@ -288,7 +290,7 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                     day.isWeekend ? 'weekend' : ''
                   }`}
                   onDoubleClick={() => onDateDoubleClick(day.dateStr)}
-                  onClick={() => onDateSelect(day.dateStr)}
+                  // onClick={() => onDateSelect(day.dateStr)}
                 >
                   <div className={`calendar-month-day-number ${day.isToday ? 'today-number' : ''}`}>
                     {day.date.format('D')}
@@ -463,7 +465,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
       <div
         className={`event-badge ${compact ? 'compact' : ''}`}
         style={{ 
-          backgroundColor: color,
+          backgroundColor: color + "bb",
           borderColor: color,
         }}
         onClick={(e) => {
@@ -471,8 +473,140 @@ const EventBadge = ({ event, onClick, compact = false }) => {
           onClick();
         }}
       >
+        
         {compact ? (
-          <span className="event-badge-dot" />
+          <div className="event-badge-dot" >
+            <div 
+              className='event-badge-body'
+            >
+            {event.type === 1 && (
+              <div>
+              <ShoppingCartIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 2 && (
+              <div>
+              <DocumentCurrencyDollarIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 3 && (
+              <div>
+              <DocumentCurrencyDollarIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 4 && (
+              <div>
+              <DocumentCurrencyDollarIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 5 && (
+              <div>
+              <ShieldCheckIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 6 && (
+              <div>
+              <RocketLaunchIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 7 && (
+              <div>
+              <PhoneArrowUpRightIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 8 && (
+              <div>
+              <DocumentCurrencyDollarIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 9 && (
+              <div>
+              <StarIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 10 && (
+              <div>
+              <NewspaperIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 11 && (
+              <div>
+              <UserPlusIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 12 && (
+              <div>
+              <UserIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 13 && (
+              <div>
+             <TableCellsIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 14 && (
+              <div>
+             <PencilSquareIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            {event.type === 15 && (
+              <div>
+             <MoonIcon height={'15px'} />
+                <span className='event-badge-dot-typename'>
+                  {typeName}
+                </span>
+              </div>
+            )}
+            <div>
+              {event.org_name && (
+                <div className="event-tooltip-org">{event.org_name}</div>
+              )}
+            </div>
+            </div>
+
+          </div>
         ) : (
           <>
             <span className="event-badge-type">{typeName}</span>

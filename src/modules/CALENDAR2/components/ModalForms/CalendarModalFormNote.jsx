@@ -14,18 +14,29 @@ const CHEVRON_SIZE = 16;
 const CalendarModalFormNote = (props) => {
   const { TextArea } = Input;
 
-  const [formDate, setFormDate] = useState(props?.date);
+
   const [formTheme, setFormTheme] = useState("");
   const [formNotes, setFormNotes] = useState("");
 
 
   const [dateDisabled, setDateDisabled] = useState(true);
 
-  useEffect(() => {
-    console.log('props.date', props.date)
-    setFormDate(props?.date);
-  }, [props?.date]);
 
+
+
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+      if (props.on_change){
+        props.on_change({
+          theme: formTheme,
+          notes: formNotes,
+        });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [formTheme, formNotes]);
 
   return (
     <div className='rsa-calendar-form-item'>
@@ -51,10 +62,7 @@ const CalendarModalFormNote = (props) => {
             />
             <p></p>
       
-            <span>Дата</span>
-            <DatePicker value={formDate} 
-              onDoubleClick={()=>{setDateDisabled(!dateDisabled)}}
-              disabled={dateDisabled} style={{ width: '100%' }} />
+           
       
       </Form>
       </div>

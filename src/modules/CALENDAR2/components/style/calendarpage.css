@@ -418,7 +418,7 @@
 
 .calendar-week-header {
   display: flex;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #c1c1c1;
 }
 
 .calendar-week-time-header {
@@ -430,7 +430,7 @@
   flex: 1;
   padding: 8px 4px;
   text-align: center;
-  border-left: 1px solid #f0f0f0;
+  border-left: 1px solid #dadada;
   cursor: pointer;
 }
 
@@ -469,36 +469,48 @@
   margin: 2px auto 0;
 }
 
+.calendar-week-hour-row:nth-child(odd) > div {
+  background-color: #0000000c;
+}
+
 .calendar-week-body {
   flex: 1;
   overflow-y: auto;
 }
 
 .calendar-week-hour-row {
-  display: flex;
+  display: grid;
   min-height: 50px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #dbdbdb;
+  grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 .calendar-week-time-label {
-  width: 60px;
+
   padding: 4px 8px;
   font-size: 11px;
   color: #999;
   text-align: right;
   flex-shrink: 0;
-  border-right: 1px solid #f0f0f0;
+  border-right: 1px solid #c1c1c1;
 }
 
 .calendar-week-cell {
-  flex: 1;
   padding: 2px;
-  border-left: 1px solid #f0f0f0;
+  padding-bottom:12px;
+  border-left: 1px solid #c1c1c1;
   display: flex;
   flex-wrap: wrap;
   gap: 2px;
   align-content: flex-start;
   cursor: pointer;
+}
+
+.calendar-week-cell.today {
+      background: #e6f7ff;
+}
+.calendar-week-cell.today:hover {
+      background: #dbf4ff;
 }
 
 .calendar-week-cell:hover {
@@ -525,6 +537,7 @@
   font-size: 12px;
   font-weight: 500;
   color: #666;
+  background-color: #c1c1c186;
 }
 
 .calendar-month-weekday.weekend {
@@ -546,13 +559,21 @@
 .calendar-month-cell {
   flex: 1;
   padding: 4px;
-  border-right: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
+  border-right: 1px solid #c1c1c1;
+  border-bottom: 1px solid #c1c1c1;
   cursor: pointer;
   overflow: hidden;
   transition: background 0.2s;
 }
-
+.event-badge-body {
+  background-color: #ffffff99;
+  border-radius: 3px;
+      display: flex;
+    flex-direction: column;
+    align-content: stretch;
+    text-align: left;
+    padding: 3px;
+}
 .calendar-month-cell:last-child {
   border-right: none;
 }
@@ -572,6 +593,7 @@
 
 .calendar-month-cell.today {
   background: #e6f7ff;
+  outline: 2px solid #1890ff;
 }
 
 .calendar-month-day-number {
@@ -720,12 +742,16 @@
   cursor: pointer;
   transition: all 0.15s;
   overflow: hidden;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   text-overflow: ellipsis;
   border-left: 3px solid;
-      width: 100%;
+      width: calc(100% - 8px);
 }
-
+.event-badge-dot-typename {
+  font-size: larger;
+  opacity: 0.7;
+  margin-left: 3px;
+}
 .event-badge:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
@@ -738,10 +764,11 @@
 }
 
 .event-badge-dot {
-  width: 6px;
+  /* width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: currentColor;
+  background: currentColor; */
+  width: 100%;
 }
 
 .event-badge-type {
@@ -774,6 +801,7 @@
   font-size: 11px;
   color: #1890ff;
   margin-bottom: 2px;
+  word-break: break-word;
 }
 
 .event-tooltip-time {

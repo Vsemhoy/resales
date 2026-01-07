@@ -32,6 +32,12 @@ import {
   MOCK_ORGANIZATIONS,
 } from './mock/CALENDARMOCK';
 import CalendarModalFormNote from './ModalForms/CalendarModalFormNote';
+import CalendarModalFormCall from './ModalForms/CalendarModalFormCall';
+import CalendarModalFormProject from './ModalForms/CalendarModalFormProject';
+import CalendarModalFormMyNotes from './ModalForms/CalendarModalFormMyNotes';
+import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
+import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
+import { ORG_ERECTORS_MOCK } from '../../TORG_PAGE/components/mock/ORGPAGEMOCK';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -59,6 +65,14 @@ const EventCreateModal = ({
   const [form] = Form.useForm();
   const [selectedType, setSelectedType] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const [mountOrgList, setMountOrgList] = useState([]);
+  const [erector, setErector] = useState('');
+  const [searchErector, setSearchErector] = useState(null);
+
+  const [formData, setFormData] = useState({});
+  const [formDate, setFromDate] = useState(dayjs());
+  const [dateDisabled, setDateDisabled] = useState(true);
 
   // Сброс формы при открытии
   useEffect(() => {
@@ -101,6 +115,31 @@ const EventCreateModal = ({
   };
 
 
+  const get_orgautofill_action = async (id) => {
+    if (!searchErector){ return; }
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
+          data: {
+            erector: searchErector,
+          },
+          _token: CSRF_TOKEN,
+        });
+        if (response.data) {
+          setMountOrgList(response.data.selects.erector);
+          // if (props.changed_user_data){
+          //     props.changed_user_data(response.data);
+          // }
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+      }
+    } else {
+      setMountOrgList(ORG_ERECTORS_MOCK);
+    }
+  };
+
 
   // Отправка формы
   const handleSubmit = async () => {
@@ -132,6 +171,14 @@ const EventCreateModal = ({
       setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    console.log('formData', formData)
+  }, [formData]);
+
+  useEffect(() => {
+    setFromDate(date);
+  }, [date]);
 
   return ( 
     <Modal
@@ -199,12 +246,85 @@ const EventCreateModal = ({
 
             {/* Форма */}
 
+            <div className='event-form-toolbar'>
+                <p></p>
+                <span>Целевая компания</span>
+                <Select
+                  // size="small"
+                  // variant="borderless"
+                  allowClear={true}
+                  showSearch={true}
+                  optionFilterProp="children"
+                  onSearch={(et) => {
+                    setSearchErector(et);
+                  }}
+                  required={false}
+                  value={erector}
+                  placeholder={'Название организации'}
+                  onChange={(ev) => {
+                    setErector(ev);
+                  }}
+                  style={{width: '100%'}}
+                >
+                  {mountOrgList &&
+                    mountOrgList?.map((opt) => (
+                      <Select.Option key={'olokm' + opt.value} value={opt.value}>
+                        {opt.label}
+                      </Select.Option>
+                    ))}
+                </Select>
+            </div>
             
             {selectedType === 10 && (
               <CalendarModalFormNote
                   date={date}
+                  on_change={setFormData}
                 />
             )}
+            {selectedType === 6 && (
+              <CalendarModalFormCall
+                  type={"meeting"}
+                  date={date}
+                  on_change={setFormData}
+                />
+            )}
+            {selectedType === 7 && (
+              <CalendarModalFormCall
+                  type={"call"}
+                  date={date}
+                  on_change={setFormData}
+                />
+            )}
+            {selectedType === 13 && (
+              <CalendarModalFormProject
+                  date={date}
+                  on_change={setFormData}
+                />
+            )}
+            {selectedType === 14 && (
+              <CalendarModalFormMyNotes
+                  date={date}
+                  on_change={setFormData}
+                />
+            )}
+            {selectedType === 15 && (
+              <CalendarModalFormMyNotes
+                  date={date}
+                  on_change={setFormData}
+                />
+            )}
+
+            <div>
+               <span>Дата</span>
+                          <DatePicker value={formDate} 
+                            onDoubleClick={()=>{setDateDisabled(!dateDisabled)}}
+                            disabled={dateDisabled} style={{ width: '100%' }} />
+              <p></p>
+              <div className='sa-flex-space'>
+                <div></div>
+                <Button >Сохранить</Button>
+              </div>
+            </div>
 
             {selectedType === 100 && (
                <Form
