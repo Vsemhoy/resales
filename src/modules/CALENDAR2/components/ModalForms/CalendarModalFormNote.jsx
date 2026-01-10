@@ -51,6 +51,7 @@ const CalendarModalFormNote = (props) => {
             <span>Тема</span>
             <Input value={formTheme}
               onChange={(ev)=>{setFormTheme(ev.target.value)}}
+              variant={'underlined'}
               />
 
             <p></p>
@@ -59,6 +60,7 @@ const CalendarModalFormNote = (props) => {
               value={formNotes}
               onChange={(ev)=>{setFormNotes(ev.target.value)}}
               autoSize={{ minRows: TEXTAREA_MIN_ROWS, maxRows: TEXTAREA_MAX_ROWS }}
+              variant={'underlined'}
             />
             <p></p>
       

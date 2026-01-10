@@ -538,7 +538,7 @@ const ProjectTabSectionTorg = (props) => {
 			<div className={'sa-org-collapse-body'}>
 				<div className={'sa-org-collapse-content'}>
 					<TorgPageSectionRow
-            trans_key={`trans_projaaha_${itemId}`}
+            			trans_key={`trans_projaaha_${itemId}`}
 						key={`projaaha_${itemId}`}
 						edit_mode={editMode}
 						inputs={[
@@ -893,8 +893,9 @@ const ProjectTabSectionTorg = (props) => {
 								label: 'Состояния',
 								input: (
 									<Select
+										allowClear
 										key={'texpard_14_' + data?.id}
-										value={projType}
+										value={projType ? projType : null}
 										size="small"
 										onChange={(e) => {
 											setProjType(e);

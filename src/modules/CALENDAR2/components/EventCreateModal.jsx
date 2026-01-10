@@ -15,7 +15,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Modal, Form, Select, Input, DatePicker, 
-  TimePicker, Button, Space, Divider, Radio
+  TimePicker, Button, Space, Divider, Radio,
+  Tooltip
 } from 'antd';
 import {
   PhoneOutlined,
@@ -24,6 +25,7 @@ import {
   ProjectOutlined,
   LockOutlined,
   GlobalOutlined,
+  EditOutlined 
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { 
@@ -61,6 +63,8 @@ const EventCreateModal = ({
   onCreate,
   organizations,
   userdata,
+  companies,
+  selects
 }) => {
   const [form] = Form.useForm();
   const [selectedType, setSelectedType] = useState(null);
@@ -71,8 +75,10 @@ const EventCreateModal = ({
   const [searchErector, setSearchErector] = useState(null);
 
   const [formData, setFormData] = useState({});
-  const [formDate, setFromDate] = useState(dayjs());
+  const [formDate, setFormDate] = useState(dayjs());
   const [dateDisabled, setDateDisabled] = useState(true);
+  
+
 
   // Сброс формы при открытии
   useEffect(() => {
@@ -177,8 +183,16 @@ const EventCreateModal = ({
   }, [formData]);
 
   useEffect(() => {
-    setFromDate(date);
+    setFormDate(date);
   }, [date]);
+
+  useEffect(() => {
+    if (!formDate) return;
+    if (formDate.unix() < dayjs().subtract(2, "D").unix()){
+      // alert("Нельзя установить дату меньше вчерашней");
+      setFormDate(dayjs());
+    }
+  }, [formDate]);
 
   return ( 
     <Modal
@@ -199,6 +213,7 @@ const EventCreateModal = ({
             </div>
             <div className="event-type-grid">
               {creatableTypes.map(type => (
+                
                 <div
                   key={type.id}
                   className="event-type-card"
@@ -211,12 +226,14 @@ const EventCreateModal = ({
                   <div 
                     className="event-type-card-icon"
                     style={{ color: type.color }}
+                    
                   >
                     {TYPE_ICONS[type.id]}
                   </div>
                   <div className="event-type-card-name">{type.name}</div>
                   <div className="event-type-card-hint">{type.title}</div>
                 </div>
+                  
               ))}
             </div>
           </div>
@@ -231,6 +248,10 @@ const EventCreateModal = ({
               >
                 ← Выбрать другой тип
               </Button>
+              <Tooltip
+                title={(selectedType === 15 && "Публичные заметки могут видеть все пользователи модуля")
+                  || (selectedType === 14 && "Персональные заметки видны только вам")
+                }>
               <div 
                 className="event-form-type-badge"
                 style={{ 
@@ -240,6 +261,7 @@ const EventCreateModal = ({
                 {TYPE_ICONS[selectedType]}
                 {EVENT_TYPES.find(t => t.id === selectedType)?.name}
               </div>
+              </Tooltip>
             </div>
 
             <Divider style={{ margin: '12px 0' }} />
@@ -265,6 +287,7 @@ const EventCreateModal = ({
                     setErector(ev);
                   }}
                   style={{width: '100%'}}
+                  variant={'underlined'}
                 >
                   {mountOrgList &&
                     mountOrgList?.map((opt) => (
@@ -272,6 +295,7 @@ const EventCreateModal = ({
                         {opt.label}
                       </Select.Option>
                     ))}
+                    
                 </Select>
             </div>
             
@@ -279,6 +303,8 @@ const EventCreateModal = ({
               <CalendarModalFormNote
                   date={date}
                   on_change={setFormData}
+                  companies={companies}
+                  selects={selects}
                 />
             )}
             {selectedType === 6 && (
@@ -286,6 +312,8 @@ const EventCreateModal = ({
                   type={"meeting"}
                   date={date}
                   on_change={setFormData}
+                  companies={companies}
+                  selects={selects}
                 />
             )}
             {selectedType === 7 && (
@@ -293,31 +321,43 @@ const EventCreateModal = ({
                   type={"call"}
                   date={date}
                   on_change={setFormData}
+                  companies={companies}
+                  selects={selects}
                 />
             )}
             {selectedType === 13 && (
               <CalendarModalFormProject
                   date={date}
                   on_change={setFormData}
+                  companies={companies}
+                  selects={selects}
                 />
             )}
             {selectedType === 14 && (
               <CalendarModalFormMyNotes
                   date={date}
                   on_change={setFormData}
+                  is_private={false}
+                  companies={companies}
+                  selects={selects}
                 />
             )}
             {selectedType === 15 && (
               <CalendarModalFormMyNotes
                   date={date}
                   on_change={setFormData}
+                  is_private={true}
+                  companies={companies}
+                  selects={selects}
                 />
             )}
 
-            <div>
-               <span>Дата</span>
+            <div >
+               <span>Дата</span> <span onClick={()=>{setDateDisabled(!dateDisabled)}}><EditOutlined  /></span>
                           <DatePicker value={formDate} 
-                            onDoubleClick={()=>{setDateDisabled(!dateDisabled)}}
+                            showTime
+                            onChange={setFormDate}
+                            variant={'underlined'}
                             disabled={dateDisabled} style={{ width: '100%' }} />
               <p></p>
               <div className='sa-flex-space'>

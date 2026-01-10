@@ -9,15 +9,13 @@ const TEXTAREA_MIN_ROWS = 3;
 const TEXTAREA_MAX_ROWS = 10;
 const CHEVRON_SIZE = 16;
 
-const CalendarModalFormMyNotes = (props) => {
+const CalendarModalFormMyNotes = ({is_private, on_change, date}) => {
  const { TextArea } = Input;
 
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
 
-  const [formTheme, setFormTheme] = useState("");
-  const [formNotes, setFormNotes] = useState("");
 
-
-  const [dateDisabled, setDateDisabled] = useState(true);
 
 
 
@@ -25,20 +23,22 @@ const CalendarModalFormMyNotes = (props) => {
   useEffect(() => {
 
     const timer = setTimeout(() => {
-      if (props.on_change){
-        props.on_change({
-          theme: formTheme,
-          notes: formNotes,
+      if (on_change){
+        on_change({
+          title: title,
+          content: content,
+          is_private: is_private
         });
       }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [formTheme, formNotes]);
+  }, [title, content]);
 
   return (
     <div className='rsa-calendar-form-item'>
       <div className='rda-note-form-item'>
+
          <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}
@@ -47,16 +47,18 @@ const CalendarModalFormMyNotes = (props) => {
    
             <p></p>
             <span>Тема</span>
-            <Input value={formTheme}
-              onChange={(ev)=>{setFormTheme(ev.target.value)}}
+            <Input value={title}
+              onChange={(ev)=>{setTitle(ev.target.value)}}
+              variant={'underlined'}
               />
 
             <p></p>
             <span>Заметка</span>
-            <TextArea rows={4}
-              value={formNotes}
-              onChange={(ev)=>{setFormNotes(ev.target.value)}}
+            <TextArea rows={8}
+              value={content}
+              onChange={(ev)=>{setContent(ev.target.value)}}
               autoSize={{ minRows: TEXTAREA_MIN_ROWS, maxRows: TEXTAREA_MAX_ROWS }}
+              variant={'underlined'}
             />
             <p></p>
       
