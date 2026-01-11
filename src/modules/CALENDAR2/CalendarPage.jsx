@@ -54,6 +54,9 @@ import {
 
 // Стили
 import './components/style/calendarpage.css';
+import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import { PROD_AXIOS_INSTANCE } from '../../config/Api';
+import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 
 // Устанавливаем русскую локаль
 dayjs.locale('ru');
@@ -75,12 +78,25 @@ const CalendarPage = ({ userdata }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [createModalDate, setCreateModalDate] = useState(null);
+
+  const [baseFilters, setBaseFilters] = useState([]);
+  const [baseCompanies, setBaseCompanies] = useState([]);
   
-  // Фильтры (с URL синхронизацией)
+  // Фильтры (с URL синхронизацией - для выборки айтемов)
   const filters = useCalendarFilters(userdata);
   
   // ==================== ЗАГРУЗКА ДАННЫХ ====================
   
+  useEffect(() => {
+    if (!PRODMODE){
+      setBaseFilters(OM_ORG_FILTERDATA);
+      console.log('OM_ORG_FILTERDATA',OM_ORG_FILTERDATA)
+    } else {
+      get_org_filters();
+    }
+  }, []);
+
+
   // Загрузка пользователей при смене филиала
   useEffect(() => {
     const loadUsers = async () => {
@@ -205,6 +221,26 @@ const CalendarPage = ({ userdata }) => {
   }, [selectedEvent]);
 
   // ==================== РЕНДЕР ====================
+
+
+  // Get filler's data for selects
+const get_org_filters = async () => {
+  if (PRODMODE) {
+    try {
+      let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+        data: {},
+        _token: CSRF_TOKEN,
+      });
+      setBaseFilters(response.data.filters);
+      setBaseCompanies(response.data.filters?.companies);
+    } catch (e) {
+      console.log(e);
+    } finally {
+    }
+  } else {
+  }
+};
+
   
   // Филиалы из userdata (исключаем служебный id=1)
   const companies = useMemo(() => {
@@ -278,6 +314,8 @@ const CalendarPage = ({ userdata }) => {
           onCommentAdd={handleCommentAdd}
           currentUserId={filters.currentUserId}
           userdata={userdata}
+          companies={baseCompanies}
+          selects={baseFilters}
         />
       </div>
 
@@ -289,6 +327,8 @@ const CalendarPage = ({ userdata }) => {
         onCreate={handleEventCreate}
         organizations={MOCK_ORGANIZATIONS.filter(o => o.id_company === filters.companyId)}
         userdata={userdata}
+        companies={baseCompanies}
+        selects={baseFilters}
       />
     </div>
   );
