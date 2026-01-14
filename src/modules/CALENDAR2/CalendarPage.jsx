@@ -72,6 +72,7 @@ const CalendarPage = ({ userdata }) => {
   const [events, setEvents] = useState([]);
   const [users, setUsers] = useState([]);
   const [heatmapData, setHeatmapData] = useState({});
+  const [eventsTypes, setEventsTypes] = useState([])
   
   // UI состояние
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -87,14 +88,14 @@ const CalendarPage = ({ userdata }) => {
   
   // ==================== ЗАГРУЗКА ДАННЫХ ====================
   
-  useEffect(() => {
-    if (!PRODMODE){
-      setBaseFilters(OM_ORG_FILTERDATA);
-      console.log('OM_ORG_FILTERDATA',OM_ORG_FILTERDATA)
-    } else {
-      get_org_filters();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!PRODMODE){
+  //     setBaseFilters(OM_ORG_FILTERDATA);
+  //     console.log('OM_ORG_FILTERDATA',OM_ORG_FILTERDATA)
+  //   } else {
+  //     get_org_filters();
+  //   }
+  // }, []);
 
   const fetchSelects = async () => {
     if (PRODMODE) {
@@ -105,7 +106,8 @@ const CalendarPage = ({ userdata }) => {
 
         let content = response.data.content;
         setUsers(content.users);
-        setEvents(content.types);
+        setEventsTypes(content.types);
+        // setBaseCompanies(content.companies);
       } catch (e) {
         console.log(e);
       } finally {
@@ -113,17 +115,13 @@ const CalendarPage = ({ userdata }) => {
     } else {
       const usersMock = await fetchUsers(filters.companyId);
       setUsers(usersMock);
-      const eventsMock = await fetchCalendarEvents(filters.apiFilters);
-      setEvents(eventsMock);
+      setEventsTypes(EVENT_TYPES);
     }
   }
 
   useEffect(() => {
     fetchSelects().then(r => setUsersLoading(false));
-  }, [
-      filters.companyId,
-      filters.apiFilters
-  ]);
+  }, []);
 
   // Загрузка пользователей при смене филиала
   // useEffect(() => {
@@ -145,22 +143,22 @@ const CalendarPage = ({ userdata }) => {
 
 
   // Загрузка событий при изменении фильтров
-  // useEffect(() => {
-  //   const loadEvents = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const data = await fetchCalendarEvents(filters.apiFilters);
-  //       setEvents(data);
-  //     } catch (error) {
-  //       console.error('Ошибка загрузки событий:', error);
-  //       message.error('Не удалось загрузить события');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //
-  //   loadEvents();
-  // }, [filters.apiFilters]);
+  useEffect(() => {
+    const loadEvents = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchCalendarEvents(filters.apiFilters);
+        setEvents(data);
+      } catch (error) {
+        console.error('Ошибка загрузки событий:', error);
+        message.error('Не удалось загрузить события');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, [filters.apiFilters]);
 
   // Загрузка данных для heatmap (за текущий год)
   useEffect(() => {
@@ -253,22 +251,22 @@ const CalendarPage = ({ userdata }) => {
 
 
   // Get filler's data for selects
-const get_org_filters = async () => {
-  if (PRODMODE) {
-    try {
-      let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
-        data: {},
-        _token: CSRF_TOKEN,
-      });
-      setBaseFilters(response.data.filters);
-      setBaseCompanies(response.data.filters?.companies);
-    } catch (e) {
-      console.log(e);
-    } finally {
-    }
-  } else {
-  }
-};
+// const get_org_filters = async () => {
+//   if (PRODMODE) {
+//     try {
+//       let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+//         data: {},
+//         _token: CSRF_TOKEN,
+//       });
+//       setBaseFilters(response.data.filters);
+//       setBaseCompanies(response.data.filters?.companies);
+//     } catch (e) {
+//       console.log(e);
+//     } finally {
+//     }
+//   } else {
+//   }
+// };
 
   
   // Филиалы из userdata (исключаем служебный id=1)
@@ -298,7 +296,8 @@ const get_org_filters = async () => {
         usersLoading={usersLoading}
         currentUserId={filters.currentUserId}
         isAdmin={filters.isAdmin}
-        event_types={events}
+        event_types={eventsTypes}
+        myCompanyId={userdata.user.id_company}
       />
 
       {/* Минимап (Heatmap) */}
