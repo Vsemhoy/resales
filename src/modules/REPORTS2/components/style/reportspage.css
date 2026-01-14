@@ -1,0 +1,604 @@
+/**
+ * reportspage.css
+ * 
+ * Стили для страницы отчётов
+ */
+
+/* =============================================================================
+   ОСНОВНОЙ КОНТЕЙНЕР
+   ============================================================================= */
+
+.reports-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: calc(100vh - 64px);
+  padding: 16px 24px;
+  background: #f5f5f5;
+  text-align: left;
+}
+
+.reports-page-header {
+  margin-bottom: 16px;
+}
+
+.reports-page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.reports-page-content {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  min-height: 0;
+}
+
+.reports-table-wrapper {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+.reports-table-wrapper.with-sidebar {
+  width: calc(100% - 416px);
+}
+
+/* =============================================================================
+   ФИЛЬТРЫ
+   ============================================================================= */
+
+.reports-filters {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.reports-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.reports-filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reports-filter-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reports-filter-users,
+.reports-filter-types {
+  flex: 1;
+  min-width: 180px;
+}
+
+.reports-filter-checkbox {
+  display: flex;
+  align-items: center;
+  padding-bottom: 4px;
+}
+
+.reports-filter-user-option {
+  display: flex;
+  flex-direction: column;
+}
+
+.reports-filter-user-name {
+  font-weight: 500;
+}
+
+.reports-filter-user-dept {
+  font-size: 11px;
+  color: #999;
+}
+
+.reports-filter-type-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reports-filter-type-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.reports-filter-type-name {
+  font-weight: 500;
+}
+
+/* =============================================================================
+   НАВИГАЦИЯ
+   ============================================================================= */
+
+.reports-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.reports-nav-period {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reports-nav-arrow {
+  color: #666;
+  font-size: 14px;
+}
+
+.reports-nav-arrow:hover {
+  color: #1890ff;
+}
+
+.reports-nav-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.reports-nav-title {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.reports-nav-dates {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.reports-nav-current {
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+   ТАБЛИЦА
+   ============================================================================= */
+
+.reports-table-container {
+  overflow-x: auto;
+  padding: 16px;
+}
+
+.reports-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+/* Заголовки */
+.reports-th {
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  background: #fafafa;
+  border-bottom: 2px solid #f0f0f0;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.reports-th.sortable {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reports-th.sortable:hover {
+  background: #f0f0f0;
+}
+
+.reports-th.sortable.active {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.reports-th-content {
+  display: grid;
+  align-items: center;
+  gap: 4px;
+  grid-template-columns: auto 1fr 10px;
+}
+.reports-th-label {
+  /* max-width: 70px; */
+  width: 100%;
+  /* перенос слов, которые не влезают */
+  overflow-wrap: break-word; /* современный вариант */
+  word-wrap: break-word;     /* для старых браузеров */
+
+  /* на всякий случай */
+  white-space: normal;
+}
+
+.reports-sort-icon {
+  font-size: 10px;
+  margin-left: auto;
+}
+
+.reports-type-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.reports-th-action {
+  text-align: center;
+}
+
+/* Ячейки */
+.reports-td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.reports-td-name {
+  min-width: 180px;
+}
+
+.reports-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.reports-user-name {
+  font-weight: 500;
+}
+
+.reports-user-dept {
+  font-size: 11px;
+  color: #999;
+}
+
+.reports-td-number {
+  text-align: center;
+  width: 70px;
+}
+
+.reports-cell-value {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  min-width: 32px;
+  text-align: center;
+}
+
+.reports-td-number.has-value .reports-cell-value {
+  cursor: default;
+}
+
+.reports-td-total {
+  text-align: center;
+  width: 80px;
+  background: #fafafa;
+}
+
+.reports-total-value {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.reports-total-value.has-value {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.reports-td-action {
+  text-align: center;
+  width: 50px;
+}
+
+.reports-expand-btn {
+  color: #999;
+}
+
+.reports-expand-btn:hover {
+  color: #1890ff;
+}
+
+/* Строка итогов */
+.reports-row.total-row {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.reports-row.total-row .reports-td {
+  border-top: 2px solid #d9d9d9;
+  border-bottom: none;
+}
+
+.reports-row.total-row .reports-user-name {
+  color: #333;
+}
+
+/* Развёрнутая строка */
+.reports-row.expanded {
+  background: #e6f7ff;
+}
+
+.reports-row.expanded .reports-td {
+  border-bottom-color: transparent;
+}
+
+/* Пустое состояние */
+.reports-empty {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+/* =============================================================================
+   ПАНЕЛЬ ДЕТАЛИЗАЦИИ
+   ============================================================================= */
+
+  .reports-detail-row {
+        background: #dfe8ec;
+  }
+.reports-detail-row .reports-td {
+  padding: 0;
+  background: #fafafa;
+}
+
+.reports-detail-panel {
+  padding: 16px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.reports-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.reports-detail-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.reports-detail-count {
+  font-size: 12px;
+  color: #999;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.reports-detail-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.reports-detail-date-group {
+  margin-bottom: 16px;
+  border-top: 1px solid #ffffff9c;
+}
+
+.reports-detail-date-group:last-child {
+  margin-bottom: 0;
+}
+
+
+.reports-detail-date-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.reports-detail-events {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 8px;
+}
+
+.reports-detail-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  color: #999;
+}
+
+.reports-detail-empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+/* =============================================================================
+   КАРТОЧКА СОБЫТИЯ В ДЕТАЛИЗАЦИИ
+   ============================================================================= */
+
+.reports-detail-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 10px 12px;
+  border-left: 3px solid #1890ff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reports-detail-card:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.reports-detail-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.reports-detail-card-type {
+  font-size: 11px;
+}
+
+.reports-detail-card-time {
+  font-size: 11px;
+  color: #999;
+}
+
+.reports-detail-card-comments {
+  font-size: 11px;
+  color: #999;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.reports-detail-card-content {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reports-detail-card-org {
+  font-size: 12px;
+  color: #1890ff;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.reports-detail-card-amount {
+  font-size: 12px;
+  font-weight: 600;
+  color: #52c41a;
+  margin-bottom: 4px;
+}
+
+.reports-detail-card-author {
+  font-size: 11px;
+  color: #999;
+  text-align: right;
+}
+
+/* =============================================================================
+   АДАПТИВНОСТЬ
+   ============================================================================= */
+
+@media (max-width: 1200px) {
+  .reports-filters-row {
+    flex-wrap: wrap;
+  }
+  
+  .reports-filter-users,
+  .reports-filter-types {
+    min-width: 150px;
+  }
+  
+  .reports-detail-events {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .reports-page {
+    padding: 12px;
+  }
+  
+  .reports-navigation {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .reports-nav-period {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .reports-table-container {
+    padding: 8px;
+  }
+  
+  .reports-th,
+  .reports-td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  
+  .reports-td-name {
+    min-width: 120px;
+  }
+  
+  .reports-td-number {
+    width: 50px;
+  }
+  
+  .reports-cell-value {
+    padding: 2px 6px;
+    min-width: 24px;
+  }
+  
+  .reports-detail-events {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================================================
+   СКРОЛЛБАР
+   ============================================================================= */
+
+.reports-detail-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reports-detail-content::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.reports-detail-content::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 3px;
+}
+
+.reports-detail-content::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}

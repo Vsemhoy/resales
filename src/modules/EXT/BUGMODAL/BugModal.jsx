@@ -53,6 +53,7 @@ function BugModal(props) {
   const [filterResult,   setFilterResult] = useState(null);
   const [filterStatus,   setFilterStatus] = useState(1);
   const [filterUserId,   setFilterUserId] = useState([]);
+  const [filterId,   setFilterId] = useState(null);
 
   const [callToUnFocusOthers, setCallToUnFocusOthers] = useState(0);
 
@@ -174,6 +175,7 @@ style={{
     filterUserId, 
     onPage,
     currentPage,
+    filterId
   ]);
 
 
@@ -235,7 +237,8 @@ useEffect(() => {
         created_at: filterCreated,
         finished_at: filterFinish,
         user_ids: filterUserId,
-        status: filterStatus ? filterStatus : null
+        status: filterStatus ? filterStatus : null,
+        id: filterId
       };
 
         const format_data = {
@@ -512,6 +515,16 @@ useEffect(() => {
               </div>
               <div className={'sa-bug-table-head'}>
                 <div className={`${isAdmin ? 'sa-bug-table-row-ext' : 'sa-bug-table-row'}`}>
+                  <div className={'sa-bug-table-cell'}>
+                    <div>
+                        <Input placeholder='id' 
+                        value={filterId}
+                        allowClear
+                        onChange={(e)=>{setFilterId(e ? e.target.value : null)}}
+
+                        />
+                    </div>
+                  </div>
                   <div className={'sa-bug-table-cell'}>
                     <div>
                         <DatePicker.RangePicker

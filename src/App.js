@@ -40,6 +40,10 @@ import OrgPage from './modules/ORG_PAGE/OrgPage';
 import LocalLogger from './modules/EXT/LOCAL_LOGGER/LocalLoggerPage';
 import CuratorPageNEW from "./modules/CURATOR/CuratorPage";
 
+
+import CalendarPage from './modules/CALENDAR2/CalendarPage';
+import ReportsPage from './modules/REPORTS2/ReportsPage';
+
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
 	const [pageLoaded, setPageLoaded] = useState(false);
@@ -238,6 +242,19 @@ export const App = () => {
                                         element={<CustomIconPage userdata={0} />}
                                     />
                                     <Route path="/dev/icons/customicons" element={<CustomIconPage userdata={0} />} />
+
+
+                                      <Route
+                                        path={BASE_ROUTE + '/calendar'}
+                                        element={<CalendarPage userdata={userdata} />}
+                                    />
+                                    <Route path="/calendar" element={<CalendarPage userdata={userdata} />} />
+
+                                    <Route
+                                        path={BASE_ROUTE + '/reports'}
+                                        element={<ReportsPage userdata={userdata} />}
+                                    />
+                                    <Route path="/reports" element={<ReportsPage userdata={userdata} />} />
                                 </Routes>
                                 {!PRODMODE && (
                                     <Dropdown menu={{ items: devMenu }}>
