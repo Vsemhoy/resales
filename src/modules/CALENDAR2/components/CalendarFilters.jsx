@@ -32,10 +32,12 @@ const CalendarFilters = ({
   currentUserId,
   isAdmin,
   event_types,
+    myCompanyId
 }) => {
   
   // Типы для выбора (только real=1)
   const availableTypes = useMemo(() => {
+    console.log("event_types:" + event_types)
     const list = Array.isArray(event_types) ? event_types : [];
     return list.filter(t => t?.real === 1 || t?.id === 0);
   }, [event_types]);
@@ -112,7 +114,7 @@ const CalendarFilters = ({
         <div className="calendar-filter-item">
           <label className="calendar-filter-label">Филиал</label>
           <Select
-            value={companyId}
+            value={companyId === "" ? myCompanyId : companyId}
             onChange={onCompanyChange}
             style={{ width: 180 }}
             disabled={!isAdmin && companies.length <= 1}

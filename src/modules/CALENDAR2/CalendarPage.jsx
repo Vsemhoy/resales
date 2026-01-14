@@ -88,14 +88,14 @@ const CalendarPage = ({ userdata }) => {
   
   // ==================== ЗАГРУЗКА ДАННЫХ ====================
   
-  useEffect(() => {
-    if (!PRODMODE){
-      setBaseFilters(OM_ORG_FILTERDATA);
-      console.log('OM_ORG_FILTERDATA',OM_ORG_FILTERDATA)
-    } else {
-      get_org_filters();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!PRODMODE){
+  //     setBaseFilters(OM_ORG_FILTERDATA);
+  //     console.log('OM_ORG_FILTERDATA',OM_ORG_FILTERDATA)
+  //   } else {
+  //     get_org_filters();
+  //   }
+  // }, []);
 
   const fetchSelects = async () => {
     if (PRODMODE) {
@@ -107,6 +107,7 @@ const CalendarPage = ({ userdata }) => {
         let content = response.data.content;
         setUsers(content.users);
         setEventsTypes(content.types);
+        // setBaseCompanies(content.companies);
       } catch (e) {
         console.log(e);
       } finally {
@@ -120,10 +121,7 @@ const CalendarPage = ({ userdata }) => {
 
   useEffect(() => {
     fetchSelects().then(r => setUsersLoading(false));
-  }, [
-      filters.companyId,
-      filters.apiFilters
-  ]);
+  }, []);
 
   // Загрузка пользователей при смене филиала
   // useEffect(() => {
@@ -253,22 +251,22 @@ const CalendarPage = ({ userdata }) => {
 
 
   // Get filler's data for selects
-const get_org_filters = async () => {
-  if (PRODMODE) {
-    try {
-      let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
-        data: {},
-        _token: CSRF_TOKEN,
-      });
-      setBaseFilters(response.data.filters);
-      setBaseCompanies(response.data.filters?.companies);
-    } catch (e) {
-      console.log(e);
-    } finally {
-    }
-  } else {
-  }
-};
+// const get_org_filters = async () => {
+//   if (PRODMODE) {
+//     try {
+//       let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+//         data: {},
+//         _token: CSRF_TOKEN,
+//       });
+//       setBaseFilters(response.data.filters);
+//       setBaseCompanies(response.data.filters?.companies);
+//     } catch (e) {
+//       console.log(e);
+//     } finally {
+//     }
+//   } else {
+//   }
+// };
 
   
   // Филиалы из userdata (исключаем служебный id=1)
@@ -299,6 +297,7 @@ const get_org_filters = async () => {
         currentUserId={filters.currentUserId}
         isAdmin={filters.isAdmin}
         event_types={eventsTypes}
+        myCompanyId={userdata.user.id_company}
       />
 
       {/* Минимап (Heatmap) */}
