@@ -274,6 +274,8 @@ const CalendarPage = ({ userdata }) => {
     return (userdata?.companies || []).filter(c => c.id !== 1);
   }, [userdata]);
 
+  console.log(filters.companyId);
+
   return (
     <div className="calendar-page">
       {/* Заголовок */}
@@ -297,7 +299,7 @@ const CalendarPage = ({ userdata }) => {
         currentUserId={filters.currentUserId}
         isAdmin={filters.isAdmin}
         event_types={eventsTypes}
-        myCompanyId={userdata.user.id_company}
+        // myCompanyId={userdata.user.id_company}
       />
 
       {/* Минимап (Heatmap) */}

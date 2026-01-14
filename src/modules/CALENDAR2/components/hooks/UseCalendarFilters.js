@@ -46,6 +46,7 @@ const useCalendarFilters = (userdata) => {
   const currentUserId = userdata?.user?.id;
   const isAdmin = userdata?.user?.is_admin || userdata?.user?.super;
 
+  console.log("defaultCompanyId:" + defaultCompanyId)
   // ==================== ПАРСИНГ URL ПАРАМЕТРОВ ====================
   
   // Филиал
