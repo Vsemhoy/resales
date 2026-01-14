@@ -298,7 +298,7 @@ const get_org_filters = async () => {
         usersLoading={usersLoading}
         currentUserId={filters.currentUserId}
         isAdmin={filters.isAdmin}
-        event_types={EVENT_TYPES}
+        event_types={events}
       />
 
       {/* Минимап (Heatmap) */}
