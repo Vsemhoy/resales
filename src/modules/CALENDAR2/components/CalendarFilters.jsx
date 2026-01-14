@@ -31,12 +31,14 @@ const CalendarFilters = ({
   usersLoading,
   currentUserId,
   isAdmin,
+  event_types,
 }) => {
   
   // Типы для выбора (только real=1)
   const availableTypes = useMemo(() => {
-    return EVENT_TYPES.filter(t => t.real === 1 || t.id === 0);
-  }, []);
+    const list = Array.isArray(event_types) ? event_types : [];
+    return list.filter(t => t?.real === 1 || t?.id === 0);
+  }, [event_types]);
 
   // Опции пользователей
   const userOptions = useMemo(() => {
@@ -198,14 +200,14 @@ const CalendarFilters = ({
         </div>
 
         {/* Только с комментариями */}
-        <div className="calendar-filter-item calendar-filter-checkbox">
-          <Checkbox
-            checked={hasComments}
-            onChange={(e) => onHasCommentsChange(e.target.checked)}
-          >
-            С комментариями
-          </Checkbox>
-        </div>
+        {/*<div className="calendar-filter-item calendar-filter-checkbox">*/}
+        {/*  <Checkbox*/}
+        {/*    checked={hasComments}*/}
+        {/*    onChange={(e) => onHasCommentsChange(e.target.checked)}*/}
+        {/*  >*/}
+        {/*    С комментариями*/}
+        {/*  </Checkbox>*/}
+        {/*</div>*/}
       </div>
     </div>
   );

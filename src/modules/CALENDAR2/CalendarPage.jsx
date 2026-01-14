@@ -49,7 +49,7 @@ import {
   fetchUsers,
   groupEventsByDate,
   generateHeatmapData,
-  MOCK_ORGANIZATIONS,
+  MOCK_ORGANIZATIONS, EVENT_TYPES, MOCK_USERS,
 } from './components/mock/CALENDARMOCK';
 
 // Стили
@@ -96,42 +96,71 @@ const CalendarPage = ({ userdata }) => {
     }
   }, []);
 
+  const fetchSelects = async () => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/calendar/getselects', {
+          _token: CSRF_TOKEN,
+        });
+
+        let content = response.data.content;
+        setUsers(content.users);
+        setEvents(content.types);
+      } catch (e) {
+        console.log(e);
+      } finally {
+      }
+    } else {
+      const usersMock = await fetchUsers(filters.companyId);
+      setUsers(usersMock);
+      const eventsMock = await fetchCalendarEvents(filters.apiFilters);
+      setEvents(eventsMock);
+    }
+  }
+
+  useEffect(() => {
+    fetchSelects().then(r => setUsersLoading(false));
+  }, [
+      filters.companyId,
+      filters.apiFilters
+  ]);
 
   // Загрузка пользователей при смене филиала
-  useEffect(() => {
-    const loadUsers = async () => {
-      setUsersLoading(true);
-      try {
-        const data = await fetchUsers(filters.companyId);
-        setUsers(data);
-      } catch (error) {
-        console.error('Ошибка загрузки пользователей:', error);
-        message.error('Не удалось загрузить список сотрудников');
-      } finally {
-        setUsersLoading(false);
-      }
-    };
-    
-    loadUsers();
-  }, [filters.companyId]);
+  // useEffect(() => {
+  //   const loadUsers = async () => {
+  //     setUsersLoading(true);
+  //     try {
+  //       const data = await fetchUsers(filters.companyId);
+  //       setUsers(data);
+  //     } catch (error) {
+  //       console.error('Ошибка загрузки пользователей:', error);
+  //       message.error('Не удалось загрузить список сотрудников');
+  //     } finally {
+  //       setUsersLoading(false);
+  //     }
+  //   };
+  //
+  //   loadUsers();
+  // }, [filters.companyId]);
+
 
   // Загрузка событий при изменении фильтров
-  useEffect(() => {
-    const loadEvents = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchCalendarEvents(filters.apiFilters);
-        setEvents(data);
-      } catch (error) {
-        console.error('Ошибка загрузки событий:', error);
-        message.error('Не удалось загрузить события');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadEvents();
-  }, [filters.apiFilters]);
+  // useEffect(() => {
+  //   const loadEvents = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const data = await fetchCalendarEvents(filters.apiFilters);
+  //       setEvents(data);
+  //     } catch (error) {
+  //       console.error('Ошибка загрузки событий:', error);
+  //       message.error('Не удалось загрузить события');
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //
+  //   loadEvents();
+  // }, [filters.apiFilters]);
 
   // Загрузка данных для heatmap (за текущий год)
   useEffect(() => {
@@ -269,6 +298,7 @@ const get_org_filters = async () => {
         usersLoading={usersLoading}
         currentUserId={filters.currentUserId}
         isAdmin={filters.isAdmin}
+        event_types={EVENT_TYPES}
       />
 
       {/* Минимап (Heatmap) */}
@@ -320,16 +350,16 @@ const get_org_filters = async () => {
       </div>
 
       {/* Модалка создания события */}
-      <EventCreateModal
-        visible={createModalVisible}
-        date={createModalDate}
-        onCancel={() => setCreateModalVisible(false)}
-        onCreate={handleEventCreate}
-        organizations={MOCK_ORGANIZATIONS.filter(o => o.id_company === filters.companyId)}
-        userdata={userdata}
-        companies={baseCompanies}
-        selects={baseFilters}
-      />
+      {/*<EventCreateModal*/}
+      {/*  visible={createModalVisible}*/}
+      {/*  date={createModalDate}*/}
+      {/*  onCancel={() => setCreateModalVisible(false)}*/}
+      {/*  onCreate={handleEventCreate}*/}
+      {/*  organizations={MOCK_ORGANIZATIONS.filter(o => o.id_company === filters.companyId)}*/}
+      {/*  userdata={userdata}*/}
+      {/*  companies={baseCompanies}*/}
+      {/*  selects={baseFilters}*/}
+      {/*/>*/}
     </div>
   );
 };
