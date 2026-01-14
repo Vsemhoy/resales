@@ -72,6 +72,7 @@ const CalendarPage = ({ userdata }) => {
   const [events, setEvents] = useState([]);
   const [users, setUsers] = useState([]);
   const [heatmapData, setHeatmapData] = useState({});
+  const [eventsTypes, setEventsTypes] = useState([])
   
   // UI состояние
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -105,7 +106,7 @@ const CalendarPage = ({ userdata }) => {
 
         let content = response.data.content;
         setUsers(content.users);
-        setEvents(content.types);
+        setEventsTypes(content.types);
       } catch (e) {
         console.log(e);
       } finally {
@@ -113,8 +114,7 @@ const CalendarPage = ({ userdata }) => {
     } else {
       const usersMock = await fetchUsers(filters.companyId);
       setUsers(usersMock);
-      const eventsMock = await fetchCalendarEvents(filters.apiFilters);
-      setEvents(eventsMock);
+      setEventsTypes(EVENT_TYPES);
     }
   }
 
@@ -145,22 +145,22 @@ const CalendarPage = ({ userdata }) => {
 
 
   // Загрузка событий при изменении фильтров
-  // useEffect(() => {
-  //   const loadEvents = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const data = await fetchCalendarEvents(filters.apiFilters);
-  //       setEvents(data);
-  //     } catch (error) {
-  //       console.error('Ошибка загрузки событий:', error);
-  //       message.error('Не удалось загрузить события');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //
-  //   loadEvents();
-  // }, [filters.apiFilters]);
+  useEffect(() => {
+    const loadEvents = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchCalendarEvents(filters.apiFilters);
+        setEvents(data);
+      } catch (error) {
+        console.error('Ошибка загрузки событий:', error);
+        message.error('Не удалось загрузить события');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, [filters.apiFilters]);
 
   // Загрузка данных для heatmap (за текущий год)
   useEffect(() => {
@@ -298,7 +298,7 @@ const get_org_filters = async () => {
         usersLoading={usersLoading}
         currentUserId={filters.currentUserId}
         isAdmin={filters.isAdmin}
-        event_types={events}
+        event_types={eventsTypes}
       />
 
       {/* Минимап (Heatmap) */}
