@@ -395,7 +395,7 @@ const CuratorPageNEW = (props) => {
 
 	const fetchFilterSelects = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/filterlist`;
+			const path = `/api/v2/curators/selects`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,
@@ -527,8 +527,8 @@ const CuratorPageNEW = (props) => {
 
 				setIsAlertVisible(true);
 				setAlertMessage(`Успешно`);
-				let message = status === 1 ? "Успешное подтверждение" : "Вы отклонили заявку"
-				setAlertDescription(message);
+				// let message = status === 2 ? "Успешное подтверждение" : "Вы отклонили заявку"
+				setAlertDescription(response.data.message);
 				setAlertType('success');
 
 				await fetchCuratorOrders()
@@ -542,7 +542,7 @@ const CuratorPageNEW = (props) => {
 		} else {
 			setIsAlertVisible(true);
 			setAlertMessage(`Успешно`);
-			let message = status === 1 ? "Успешное подтверждение" : "Вы отклонили заявку"
+			let message = status === 2 ? "Успешное подтверждение" : "Вы отклонили заявку"
 			setAlertDescription(message);
 			setAlertType('success');
 		}
