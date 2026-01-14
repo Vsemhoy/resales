@@ -30,7 +30,7 @@ export const VIEW_MODE_LABELS = {
   [VIEW_MODES.DAY]: 'День',
   [VIEW_MODES.WEEK]: 'Неделя',
   [VIEW_MODES.MONTH]: 'Месяц',
-  [VIEW_MODES.QUARTER]: 'Квартал',
+  // [VIEW_MODES.QUARTER]: 'Квартал',
 };
 
 /**

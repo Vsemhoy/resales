@@ -25,7 +25,7 @@ const CalendarNavigation = ({
     { value: VIEW_MODES.DAY, label: VIEW_MODE_LABELS[VIEW_MODES.DAY] },
     { value: VIEW_MODES.WEEK, label: VIEW_MODE_LABELS[VIEW_MODES.WEEK] },
     { value: VIEW_MODES.MONTH, label: VIEW_MODE_LABELS[VIEW_MODES.MONTH] },
-    { value: VIEW_MODES.QUARTER, label: VIEW_MODE_LABELS[VIEW_MODES.QUARTER] },
+    // { value: VIEW_MODES.QUARTER, label: VIEW_MODE_LABELS[VIEW_MODES.QUARTER] },
   ];
 
   return (
