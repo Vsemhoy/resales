@@ -55,7 +55,7 @@ const CalendarFilters = ({
   // Рендер тега типа события
   const tagRender = (props) => {
     const { label, value, closable, onClose } = props;
-    const type = EVENT_TYPES.find(t => t.id === value);
+    const type = event_types.find(t => t.id === value);
     
     return (
       <Tag
