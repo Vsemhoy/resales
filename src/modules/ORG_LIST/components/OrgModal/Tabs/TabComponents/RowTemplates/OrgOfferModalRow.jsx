@@ -20,7 +20,7 @@ const OrgOfferlModalRow = (props) => {
 
 	return (
 		<div className={'sa-org-row-wrapper'}>
-			<div className={`sa-org-bid-row ${baseData?.deleted === 1 ? 'sa-org-bid-row-deleted' : ''}`}>
+			<div className={`sa-org-bid-row custom ${baseData?.deleted === 1 ? 'sa-org-bid-row-deleted' : ''}`}>
 				<div>
 					<div>
 						<NavLink
@@ -66,15 +66,6 @@ const OrgOfferlModalRow = (props) => {
 							</div>
 						) : (
 							''
-						)}
-					</div>
-				</div>
-				<div>
-					<div>
-						{baseData?.statusbid_id && baseData?.statusbid_id === 1 ? (
-							'Оплачено'
-						) : (
-							<span style={{color: 'gray'}}>Не оплачено</span>
 						)}
 					</div>
 				</div>

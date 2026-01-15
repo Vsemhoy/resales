@@ -679,6 +679,7 @@ export const filterEvents = (events, filters) => {
  * Группировка событий по дате
  */
 export const groupEventsByDate = (events) => {
+  if (!events) {return []}
   return events.reduce((acc, event) => {
     const date = event.event_date;
     if (!acc[date]) {

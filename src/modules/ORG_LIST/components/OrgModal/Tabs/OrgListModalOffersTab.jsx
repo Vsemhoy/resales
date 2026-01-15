@@ -184,7 +184,7 @@ const OrgListModalOffersTab = (props) => {
 
 				<Spin spinning={showLoader} delay={500}>
 					<div>
-						<div className={'sa-org-bid-row sa-org-bid-row-header'}>
+						<div className={'sa-org-bid-row custom sa-org-bid-row-header'}>
 							<div>
 								<div>id</div>
 							</div>
@@ -197,9 +197,6 @@ const OrgListModalOffersTab = (props) => {
 							</div>
 							<div>
 								<div>Менеджер</div>
-							</div>
-							<div>
-								<div>Статус оплаты</div>
 							</div>
 							<div>
 								<div>Статус</div>

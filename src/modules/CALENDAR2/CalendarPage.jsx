@@ -162,14 +162,22 @@ const CalendarPage = ({ userdata }) => {
   useEffect(() => {
     const loadEvents = async () => {
       setLoading(true);
-      try {
+      if (PRODMODE){
+
+        try {
+          const data = await fetchEvents(filters.apiFilters);
+          if (data){
+            setEvents(data);
+          }
+        } catch (error) {
+          console.error('Ошибка загрузки событий:', error);
+          message.error('Не удалось загрузить события');
+        } finally {
+          setLoading(false);
+        }
+      } else {
         const data = await fetchCalendarEvents(filters.apiFilters);
         setEvents(data);
-      } catch (error) {
-        console.error('Ошибка загрузки событий:', error);
-        message.error('Не удалось загрузить события');
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -186,7 +194,9 @@ const CalendarPage = ({ userdata }) => {
           dateFrom: dayjs().startOf('year').format('YYYY-MM-DD'),
           dateTo: dayjs().endOf('year').format('YYYY-MM-DD'),
         };
-        const yearEvents = await fetchCalendarEvents(yearFilters);
+        // const yearEvents = await fetchCalendarEvents(yearFilters);
+
+        const yearEvents = await fetchEvents(filters.apiFilters);
         const heatmap = generateHeatmapData(yearEvents, dayjs().year());
         setHeatmapData(heatmap);
       } catch (error) {
@@ -229,20 +239,20 @@ const CalendarPage = ({ userdata }) => {
   }, []);
 
   // Создание события
-  const handleEventCreate = useCallback(async (eventData) => {
-    try {
-      // TODO: Реальное создание через API
-      message.success('Событие создано');
-      setCreateModalVisible(false);
+  // const handleEventCreate = useCallback(async (eventData) => {
+  //   try {
+  //     // TODO: Реальное создание через API
+  //     message.success('Событие создано');
+  //     setCreateModalVisible(false);
       
-      // Перезагружаем события
-      const data = await fetchCalendarEvents(filters.apiFilters);
-      setEvents(data);
-    } catch (error) {
-      console.error('Ошибка создания события:', error);
-      message.error('Не удалось создать событие');
-    }
-  }, [filters.apiFilters]);
+  //     // Перезагружаем события
+  //     const data = await fetchCalendarEvents(filters.apiFilters);
+  //     setEvents(data);
+  //   } catch (error) {
+  //     console.error('Ошибка создания события:', error);
+  //     message.error('Не удалось создать событие');
+  //   }
+  // }, [filters.apiFilters]);
 
   // Добавление комментария
   const handleCommentAdd = useCallback(async (eventId, content) => {
