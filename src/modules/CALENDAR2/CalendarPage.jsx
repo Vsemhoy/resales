@@ -88,14 +88,9 @@ const CalendarPage = ({ userdata }) => {
   
   // ==================== ЗАГРУЗКА ДАННЫХ ====================
   
-  // useEffect(() => {
-  //   if (!PRODMODE){
-  //     setBaseFilters(OM_ORG_FILTERDATA);
-  //     console.log('OM_ORG_FILTERDATA',OM_ORG_FILTERDATA)
-  //   } else {
-  //     get_org_filters();
-  //   }
-  // }, []);
+  useEffect(() => {
+    fetchEvents(filters.apiFilters).then(r => setLoading(false));
+  }, []);
 
   const fetchSelects = async () => {
     if (PRODMODE) {
@@ -116,6 +111,24 @@ const CalendarPage = ({ userdata }) => {
       const usersMock = await fetchUsers(filters.companyId);
       setUsers(usersMock);
       setEventsTypes(EVENT_TYPES);
+    }
+  }
+
+  const fetchEvents = async (filters) => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/calendar/', {
+          data: {
+            filters: filters
+          },
+          _token: CSRF_TOKEN,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      const data = await fetchCalendarEvents(filters);
+      setEvents(data);
     }
   }
 
