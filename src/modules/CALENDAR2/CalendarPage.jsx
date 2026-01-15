@@ -115,7 +115,6 @@ const CalendarPage = ({ userdata }) => {
   }
 
   const fetchEvents = async (filters) => {
-    console.log(filters);
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/api/calendar/events', {
