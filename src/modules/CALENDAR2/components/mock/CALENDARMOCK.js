@@ -397,6 +397,7 @@ const generateCalendarEvents = () => {
     event_phone: "7999999999",
     event_post: "Должность",
     event_note: "Какая-то запись",
+    event_result: "Результат разговора",
 
     // created_at: date.format('YYYY-MM-DDTHH:mm:ss'),
     // updated_at: null,

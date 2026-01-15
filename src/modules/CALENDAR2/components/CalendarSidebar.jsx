@@ -22,7 +22,7 @@ import {
   UserOutlined,
   CalendarOutlined,
   BankOutlined,
-  ClockCircleOutlined, PhoneOutlined,
+  ClockCircleOutlined, PhoneOutlined, WechatWorkOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -226,6 +226,19 @@ const CalendarSidebar = ({
                   <div className="sidebar-detail-label">О чем говорили в прошлый раз</div>
                   <div className="sidebar-detail-value sidebar-note">
                     {event.event_note}
+                  </div>
+                </div>
+              </div>
+          )}
+
+          {/* Результат */}
+          {event.event_result && (
+              <div className="sidebar-detail-row">
+                <WechatWorkOutlined className="sidebar-detail-icon" />
+                <div className="sidebar-detail-content">
+                  <div className="sidebar-detail-label">Результат</div>
+                  <div className="sidebar-detail-value sidebar-note">
+                    {event.event_result}
                   </div>
                 </div>
               </div>
