@@ -909,9 +909,14 @@
   color: #333;
 }
 
-.sidebar-amount {
+.sidebar-phone {
   font-weight: 600;
-  color: #52c41a;
+  color: red;
+}
+
+.sidebar-note {
+  font-weight: 600;
+  color: black;
 }
 
 .sidebar-curator-tag {

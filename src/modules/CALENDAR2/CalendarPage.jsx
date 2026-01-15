@@ -123,6 +123,9 @@ const CalendarPage = ({ userdata }) => {
           },
           _token: CSRF_TOKEN,
         });
+
+        setEvents(response.data.content);
+
       } catch (e) {
         console.log(e);
       }
