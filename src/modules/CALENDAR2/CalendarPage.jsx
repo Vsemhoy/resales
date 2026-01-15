@@ -88,14 +88,9 @@ const CalendarPage = ({ userdata }) => {
   
   // ==================== ЗАГРУЗКА ДАННЫХ ====================
   
-  // useEffect(() => {
-  //   if (!PRODMODE){
-  //     setBaseFilters(OM_ORG_FILTERDATA);
-  //     console.log('OM_ORG_FILTERDATA',OM_ORG_FILTERDATA)
-  //   } else {
-  //     get_org_filters();
-  //   }
-  // }, []);
+  useEffect(() => {
+    fetchEvents(filters.apiFilters).then(r => setLoading(false));
+  }, []);
 
   const fetchSelects = async () => {
     if (PRODMODE) {
@@ -116,6 +111,24 @@ const CalendarPage = ({ userdata }) => {
       const usersMock = await fetchUsers(filters.companyId);
       setUsers(usersMock);
       setEventsTypes(EVENT_TYPES);
+    }
+  }
+
+  const fetchEvents = async (filters) => {
+    if (PRODMODE) {
+      try {
+        let response = await PROD_AXIOS_INSTANCE.post('/api/calendar/events', {
+          data: {
+            filters: filters
+          },
+          _token: CSRF_TOKEN,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      const data = await fetchCalendarEvents(filters);
+      setEvents(data);
     }
   }
 
@@ -274,6 +287,8 @@ const CalendarPage = ({ userdata }) => {
     return (userdata?.companies || []).filter(c => c.id !== 1);
   }, [userdata]);
 
+  console.log(filters.companyId);
+
   return (
     <div className="calendar-page">
       {/* Заголовок */}
@@ -297,7 +312,7 @@ const CalendarPage = ({ userdata }) => {
         currentUserId={filters.currentUserId}
         isAdmin={filters.isAdmin}
         event_types={eventsTypes}
-        myCompanyId={userdata.user.id_company}
+        // myCompanyId={userdata.user.id_company}
       />
 
       {/* Минимап (Heatmap) */}

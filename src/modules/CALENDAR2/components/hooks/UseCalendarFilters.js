@@ -42,10 +42,11 @@ const useCalendarFilters = (userdata) => {
   const [searchParams, setSearchParams] = useSearchParams();
   
   // Дефолтный филиал из userdata
-  const defaultCompanyId = userdata?.user?.id_company || 2;
+  const defaultCompanyId = userdata?.user?.active_company || 2;
   const currentUserId = userdata?.user?.id;
   const isAdmin = userdata?.user?.is_admin || userdata?.user?.super;
 
+  console.log("defaultCompanyId:" + defaultCompanyId)
   // ==================== ПАРСИНГ URL ПАРАМЕТРОВ ====================
   
   // Филиал
