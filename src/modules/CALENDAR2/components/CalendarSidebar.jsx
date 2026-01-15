@@ -22,7 +22,7 @@ import {
   UserOutlined,
   CalendarOutlined,
   BankOutlined,
-  ClockCircleOutlined,
+  ClockCircleOutlined, PhoneOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -33,6 +33,8 @@ import {
   addEventComment,
 } from './mock/CALENDARMOCK';
 import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
+import HighlightText from "../../../components/helpers/HighlightText";
+import {NavLink} from "react-router-dom";
 
 
 dayjs.extend(relativeTime);
@@ -60,6 +62,8 @@ const CalendarSidebar = ({
       setComments([]);
     }
   }, [visible, event?.id]);
+
+  console.log(event);
 
   const loadComments = async () => {
     setCommentsLoading(true);
@@ -155,7 +159,7 @@ const CalendarSidebar = ({
           </div>
           
           <h3 className="sidebar-title">
-            {event.content || eventType?.title}
+            {event.event_theme || eventType?.title}
           </h3>
           
           <div className="sidebar-meta">
@@ -180,109 +184,86 @@ const CalendarSidebar = ({
               <BankOutlined className="sidebar-detail-icon" />
               <div className="sidebar-detail-content">
                 <div className="sidebar-detail-label">Организация</div>
-                <div className="sidebar-detail-value">{event.org_name}</div>
+                <div className="sidebar-detail-value">
+                  <NavLink to={'/orgs/' + event.org_id} target="_blank">
+                    <HighlightText text={event.org_name}/>
+                  </NavLink>
+                </div>
               </div>
-              {event.is_curator === 1 && (
-                <Tag color="blue" className="sidebar-curator-tag">Куратор</Tag>
-              )}
+              {/*{event.is_curator === 1 && (*/}
+              {/*  <Tag color="blue" className="sidebar-curator-tag">Куратор</Tag>*/}
+              {/*)}*/}
             </div>
           )}
 
-          {/* Автор */}
+          {/* Контактное лицо */}
           <div className="sidebar-detail-row">
             <UserOutlined className="sidebar-detail-icon" />
             <div className="sidebar-detail-content">
-              <div className="sidebar-detail-label">Автор</div>
-              <div className="sidebar-detail-value">{event.user_name}</div>
+              <div className="sidebar-detail-label">Контактное лицо</div>
+              <div className="sidebar-detail-value">{event.user_name} {event.event_post}</div>
             </div>
           </div>
+
+          {/* Телефон для связи */}
+          {event.event_phone && (
+            <div className="sidebar-detail-row">
+              <PhoneOutlined className="sidebar-detail-icon" />
+              <div className="sidebar-detail-content">
+                <div className="sidebar-detail-label">Телефон для связи</div>
+                <div className="sidebar-detail-value sidebar-phone">
+                  {event.event_phone}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Запись */}
+          {event.event_note && (
+              <div className="sidebar-detail-row">
+                <CommentOutlined className="sidebar-detail-icon" />
+                <div className="sidebar-detail-content">
+                  <div className="sidebar-detail-label">О чем говорили в прошлый раз</div>
+                  <div className="sidebar-detail-value sidebar-note">
+                    {event.event_note}
+                  </div>
+                </div>
+              </div>
+          )}
 
           {/* Сумма (для КП/счетов) */}
-          {event.amount && (
-            <div className="sidebar-detail-row">
-              <span className="sidebar-detail-icon">💰</span>
-              <div className="sidebar-detail-content">
-                <div className="sidebar-detail-label">Сумма</div>
-                <div className="sidebar-detail-value sidebar-amount">
-                  {new Intl.NumberFormat('ru-RU', {
-                    style: 'currency',
-                    currency: 'RUB',
-                    maximumFractionDigits: 0,
-                  }).format(event.amount)}
-                </div>
-              </div>
-            </div>
-          )}
+          {/*{event.amount && (*/}
+          {/*  <div className="sidebar-detail-row">*/}
+          {/*    <span className="sidebar-detail-icon">💰</span>*/}
+          {/*    <div className="sidebar-detail-content">*/}
+          {/*      <div className="sidebar-detail-label">Сумма</div>*/}
+          {/*      <div className="sidebar-detail-value sidebar-amount">*/}
+          {/*        {new Intl.NumberFormat('ru-RU', {*/}
+          {/*          style: 'currency',*/}
+          {/*          currency: 'RUB',*/}
+          {/*          maximumFractionDigits: 0,*/}
+          {/*        }).format(event.amount)}*/}
+          {/*      </div>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*)}*/}
 
           {/* Статус */}
-          {event.status && (
-            <div className="sidebar-detail-row">
-              <span className="sidebar-detail-icon">📋</span>
-              <div className="sidebar-detail-content">
-                <div className="sidebar-detail-label">Статус</div>
-                <div className="sidebar-detail-value">
-                  <StatusTag status={event.status} />
-                </div>
-              </div>
-            </div>
-          )}
+          {/*{event.status && (*/}
+          {/*  <div className="sidebar-detail-row">*/}
+          {/*    <span className="sidebar-detail-icon">📋</span>*/}
+          {/*    <div className="sidebar-detail-content">*/}
+          {/*      <div className="sidebar-detail-label">Статус</div>*/}
+          {/*      <div className="sidebar-detail-value">*/}
+          {/*        <StatusTag status={event.status} />*/}
+          {/*      </div>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*)}*/}
         </div>
 
-        <Divider style={{ margin: '12px 0' }} />
+        {/*<Divider style={{ margin: '12px 0' }} />*/}
 
-        {/* Комментарии */}
-        <div className="sidebar-comments">
-          <div className="sidebar-comments-header">
-            <CommentOutlined />
-            <span>Комментарии</span>
-            <span className="sidebar-comments-count">
-              {comments.length}
-            </span>
-          </div>
-
-          <div className="sidebar-comments-list">
-            <Spin spinning={commentsLoading}>
-              {comments.length === 0 ? (
-                <Empty 
-                  description="Нет комментариев" 
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                />
-              ) : (
-                <List
-                  dataSource={comments}
-                  renderItem={comment => (
-                    <CommentItem 
-                      comment={comment} 
-                      isOwn={comment.user_id === currentUserId}
-                    />
-                  )}
-                />
-              )}
-            </Spin>
-          </div>
-
-          {/* Форма добавления */}
-          <div className="sidebar-comment-form">
-            <TextArea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Написать комментарий... (Ctrl+Enter для отправки)"
-              autoSize={{ minRows: 2, maxRows: 4 }}
-              disabled={submitting}
-            />
-            <Button
-              type="primary"
-              icon={<SendOutlined />}
-              onClick={handleSubmitComment}
-              loading={submitting}
-              disabled={!newComment.trim()}
-              className="sidebar-comment-submit"
-            >
-              Отправить
-            </Button>
-          </div>
-        </div>
       </div>
     </Drawer>
   );
