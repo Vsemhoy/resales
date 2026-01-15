@@ -930,7 +930,7 @@ export const calculateReportTotals = (reportData) => {
 export const fetchCalendarEvents = async (filters) => {
   // Имитация задержки сети
   await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 500));
-  
+
   return filterEvents(MOCK_CALENDAR_EVENTS, filters);
 };
 

@@ -90,7 +90,7 @@ const CalendarPage = ({ userdata }) => {
   
   useEffect(() => {
     fetchEvents(filters.apiFilters).then(r => setLoading(false));
-  }, []);
+  }, [filters.apiFilters]);
 
   const fetchSelects = async () => {
     if (PRODMODE) {
@@ -115,6 +115,7 @@ const CalendarPage = ({ userdata }) => {
   }
 
   const fetchEvents = async (filters) => {
+    console.log(filters);
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.post('/api/calendar/events', {
@@ -286,8 +287,6 @@ const CalendarPage = ({ userdata }) => {
   const companies = useMemo(() => {
     return (userdata?.companies || []).filter(c => c.id !== 1);
   }, [userdata]);
-
-  console.log(filters.companyId);
 
   return (
     <div className="calendar-page">
