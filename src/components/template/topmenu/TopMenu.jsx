@@ -7,7 +7,13 @@ import { Chat, ChatSocketProvider } from 'corp-chat-library-antd-react-socket';
 
 import { NavLink } from 'react-router-dom';
 import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE} from '../../../config/config';
-import {CloseCircleOutlined, HomeFilled, NotificationOutlined, WechatWorkOutlined} from '@ant-design/icons';
+import {
+	CalendarOutlined,
+	CloseCircleOutlined,
+	HomeFilled,
+	NotificationOutlined,
+	WechatWorkOutlined
+} from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
 import {Badge, Button, Dropdown} from 'antd';
@@ -242,15 +248,22 @@ const TopMenu = (props) => {
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
-				 <Badge count={+bugMultiCounter[0]}  color="#fa9614da" size='small' offset={[-6, 6]}>
 					<Button
 						type='text'
-						onClick={()=>{setopenBugModal(!openBugModal)}}
-						>
-						<BugAntIcon height={'28px'} style={{color: '#ffbf00'}}/>
+						onClick={()=>{window.open('/resales/calendar')}}
+					>
+						<CalendarOutlined style={{color: '#ffbf00'}}/>
 					</Button>
 
-				 </Badge>
+
+					 <Badge count={+bugMultiCounter[0]}  color="#fa9614da" size='small' offset={[-6, 6]}>
+						 <Button
+							type='text'
+							onClick={()=>{setopenBugModal(!openBugModal)}}
+							>
+							<BugAntIcon height={'28px'} style={{color: '#ffbf00'}}/>
+						</Button>
+				 	</Badge>
                     <Chat userdata={userdata}
                           httpParams={{
                               HTTP_HOST: HTTP_HOST,
