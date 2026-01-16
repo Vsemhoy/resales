@@ -250,7 +250,7 @@ const TopMenu = (props) => {
 				<div className={'sa-topmenu-userbox'}>
 					<Button
 						type='text'
-						onClick={()=>{window.open('/calendar')}}
+						onClick={()=>{window.open('/resales/calendar')}}
 					>
 						<CalendarOutlined style={{color: '#ffbf00'}}/>
 					</Button>
