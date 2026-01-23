@@ -1529,7 +1529,8 @@ export const SIMILAR_BIDS = {
 				"towns": "Барнаул",
 				"date": 1739176841,
 				"protection_project": 0,
-				"user": "Александр Кошелев"
+				"user": "Александр Кошелев",
+				"comment": "Какой-то комментарий"
 			},
 			"models": [
 				{
