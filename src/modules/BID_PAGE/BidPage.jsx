@@ -1449,6 +1449,11 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={bidOrgUser}
+							showSearch
+							optionFilterProp="label"
+							filterOption={(input, option) =>
+								(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+							}
 							options={prepareSelect(orgUsersSelect)}
 							onChange={(val) => setBidOrgUser(val)}
 							disabled={isDisabledInputManager()}
