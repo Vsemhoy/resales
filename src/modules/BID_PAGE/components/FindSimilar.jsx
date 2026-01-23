@@ -517,7 +517,9 @@ const FindSimilar = (props) => {
                     {`${dayjs(bid.date * 1000).format("DD.MM.YYYY")}`}
                 </div>
                 <div>
-                    <b>Из {similarData.length} моделей найдено {stats?.matches_found} </b>
+                    <b>Комментарий: </b>
+                    {bid.comment}
+                    {/*<b>Из {similarData.length} моделей найдено {stats?.matches_found} </b>*/}
                 </div>
                 <div>
                     <b>Модели: </b>
