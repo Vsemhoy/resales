@@ -7,7 +7,7 @@ import {
 	Affix,
 	Button,
 	// DatePicker,
-	Dropdown,
+	Dropdown, Input,
 	// Input,
 	Layout,
 	Pagination,
@@ -95,7 +95,7 @@ const OrgListPage = (props) => {
 
 	const [SKIPPER, setSKIPPER] = useState(0);
 
-
+	const [searchValue, setSearchValue] = useState(filterBox.search_all);
 
 	const [socketBusyOrglist, setsocketBusyOrglist] = useState([
 		/*{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", action: 'edit'},
@@ -374,6 +374,7 @@ const OrgListPage = (props) => {
 						site: filterBox.site,
 						comment: filterBox.comment,
 						creator: filterBox.creator,
+						search_all: filterBox.search_all,
 						// "created_until"  : filterBox.created_until ,
 						// "created_before" : filterBox.created_before,
 						// "updated_until"  : filterBox.updated_until ,
@@ -479,6 +480,7 @@ const OrgListPage = (props) => {
 	 * @param {*} filters
 	 */
 	const handleFilterChange = (filters) => {
+		console.log(filters)
 		setFilterBox((prev) => {
 			const updated = { ...prev }; // копируем старые фильтры
 
@@ -583,6 +585,7 @@ const OrgListPage = (props) => {
 	const handleClearAllBoxes = () => {
 		setFilterBox({});
 		setOrderBox({});
+		setSearchValue("");
 	};
 
 	const handleClearAllFilterBox = () => {
@@ -622,6 +625,18 @@ const OrgListPage = (props) => {
 		}
 		get_orglist_async();
 	};
+
+
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			filterBox.search_all = searchValue;
+			handleFilterChange(filterBox)
+		}, 300);
+
+		return () => clearTimeout(timer);
+	}, [searchValue, filterBox.search_all]);
+
 
 	return (
 		<div
@@ -686,7 +701,15 @@ const OrgListPage = (props) => {
 									Всего найдено: {total}
 								</Tag>
 							</div>
-							<div style={{ display: 'flex', alignItems: 'end' }}>
+							{/*<div style={{display: 'flex', alignItems: 'end'}}>*/}
+							{/*</div>*/}
+							<div style={{display: 'flex', alignItems: 'end'}}>
+								<Input
+									style={{ marginRight: '10px' }}
+									value={searchValue}
+									onChange={(e)  => {setSearchValue(e.target.value);}}
+								/>
+
 								{userdata?.user?.sales_role === 1 && userdata?.acls?.includes(60) && (
 									<Button type={'primary'} icon={<PlusOutlined />} onClick={handleCreateNewOrg}>
 										Добавить
