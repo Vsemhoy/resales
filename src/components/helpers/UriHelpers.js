@@ -111,12 +111,13 @@ export const useURLParams = () => {
 				'email',
 				'site',
 				'inn',
-        'creator',
+        		'creator',
 				'comment',
 				'created_until',
 				'created_before',
 				'updated_until',
 				'updated_before',
+				'search_all'
 			];
 
 			filterKeys.forEach((key) => {
