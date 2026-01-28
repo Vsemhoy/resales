@@ -585,6 +585,7 @@ const OrgListPage = (props) => {
 	const handleClearAllBoxes = () => {
 		setFilterBox({});
 		setOrderBox({});
+		setSearchValue("");
 	};
 
 	const handleClearAllFilterBox = () => {
