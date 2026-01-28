@@ -82,6 +82,7 @@ const ModelInput = (props) => {
                danger={props?.danger}
                status={props?.error ? 'error' : ''}
                min={props?.isOnlyPositive ? 1 : undefined}
+               onWheel={(e) => e.target.blur()}
         />
     );
 }
