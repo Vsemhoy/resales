@@ -1772,6 +1772,7 @@ const BidPage = (props) => {
                                 //}, 700);
                                 //return () => clearTimeout(timerPercent);
 							}}
+							onWheel={(e) => e.target.blur()}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
