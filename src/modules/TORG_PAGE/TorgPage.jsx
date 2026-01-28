@@ -452,7 +452,7 @@ useEffect(() => {
 	}, []);
 
 
-
+	console.log(userdata?.user?.id)
 
 
 	useEffect(() => {
@@ -1346,8 +1346,6 @@ useEffect(() => {
 }
 
 
-
-
 	// useEffect(() => {
 	// 	if (prevTab !== activeTab){
 	// 		formLogger.log('TAB_CHANGE', { from: prevTab, to: activeTab, org_id: item_id, time: dayjs() })
@@ -1441,7 +1439,7 @@ useEffect(() => {
 									<>
 									{userdata && userdata.acls && (userdata.acls.includes(137) || userdata.acls.includes(138) || userdata.acls.includes(139))
 									&&
-									!editMode && !lockBySocket && userdata?.user?.id !== baseMainData?.curator?.id && (
+									!editMode && !lockBySocket && (userdata?.user?.id !== baseMainData?.curator?.id || baseMainData?.id_company === 1) && (
 										<Tooltip title={'Запросить кураторство'} placement={'left'}>
 											<Button style={{marginRight: '12px'}}
 											color="cyan" variant="outlined"
@@ -1450,7 +1448,7 @@ useEffect(() => {
 												</Button>
 										</Tooltip>
 									)}
-									{!editMode && userdata?.user?.id === baseMainData?.curator?.id && (
+									{!editMode && (userdata?.user?.id === baseMainData?.curator?.id && baseMainData?.id_company !== 1) && (
 										<Tooltip title={'Вы куратор этой организации'} placement={'left'}>
 											<Button style={{marginRight: '12px'}}
 											className={'sa-me-curator'}

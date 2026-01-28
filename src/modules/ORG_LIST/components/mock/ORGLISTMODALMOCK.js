@@ -62,7 +62,7 @@ list: {
 	},
 
     creator: {
-    "id": 346,
+    "id": 46,
     "surname": "Вилкин",
     "name": "Огнеслав",
     "secondname": "Пушилович",
@@ -101,8 +101,8 @@ list: {
     "super": 1
 },
 curator: {
-    "id": 45,
-    "surname": "Мамонов",
+	"id": 46,
+	"surname": "Мамонов",
     "name": "Александр",
     "secondname": "Викторович",
     "id_occupy": 21,
