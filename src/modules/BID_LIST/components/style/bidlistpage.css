@@ -19,6 +19,7 @@
 		minmax(100px, 2fr)
 		minmax(100px, 2fr)
 		minmax(30px, 64px)
+		minmax(30px, 64px)
 		minmax(30px, 64px);
 }
 
@@ -33,6 +34,7 @@
 		minmax(50px, 170px)
 		minmax(50px, 100px)
 		minmax(100px, 1fr)
+		minmax(30px, 64px)
 		minmax(30px, 64px)
 		minmax(30px, 64px) !important;
 }

@@ -705,9 +705,12 @@ const OrgListPage = (props) => {
 							{/*</div>*/}
 							<div style={{display: 'flex', alignItems: 'end'}}>
 								<Input
-									style={{ marginRight: '10px' }}
+									// style={{  }}
 									value={searchValue}
 									onChange={(e)  => {setSearchValue(e.target.value);}}
+									style={{ width: '100%', marginRight: '10px' }}
+									// variant="filled"
+									allowClear
 								/>
 
 								{userdata?.user?.sales_role === 1 && userdata?.acls?.includes(60) && (

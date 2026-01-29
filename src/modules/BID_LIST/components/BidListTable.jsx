@@ -194,7 +194,7 @@ const BidListTable = (props) => {
 									<Input
 										type={'number'}
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										allowClear
 										value={bidId}
@@ -219,7 +219,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Input
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										allowClear
 										value={companyName}
@@ -244,7 +244,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Select
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										value={type}
 										options={props.filter_bid_types}
@@ -266,7 +266,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Select
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										value={protectStatus}
 										options={props.filter_protection_projects}
@@ -288,7 +288,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Select
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										value={stageStatus}
 										options={props.filter_steps}
@@ -310,7 +310,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<DatePicker
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										allowClear
 										value={dates ? dayjs.unix(dates) : null}
@@ -336,7 +336,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Select
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										value={manager}
 										options={props.filter_managers}
@@ -357,7 +357,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Input
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										allowClear
 										value={billNumber}
@@ -376,7 +376,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Input
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										allowClear
 										value={comment}
@@ -395,7 +395,7 @@ const BidListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Input
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										allowClear
 										value={objectName}
@@ -411,7 +411,7 @@ const BidListTable = (props) => {
 						<div className={'sa-table-box-cell'}>
 							<div
 								className={'sa-table-head-on'}
-								style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
 							>
 								<div className={'sa-pa-3'}>Список</div>
 							</div>
@@ -419,9 +419,18 @@ const BidListTable = (props) => {
 						<div className={'sa-table-box-cell'}>
 							<div
 								className={'sa-table-head-on'}
-								style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
 							>
 								<div className={'sa-pa-3'}>Файлы</div>
+							</div>
+						</div>
+						<div className={'sa-table-box-cell'}>
+							<div
+								className={'sa-table-head-on'}
+								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+							>
+								<div className={'sa-pa-3'}> Контакт. лицо
+								</div>
 							</div>
 						</div>
 					</div>
