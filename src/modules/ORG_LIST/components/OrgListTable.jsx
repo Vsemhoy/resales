@@ -222,7 +222,7 @@ const OrgListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Input
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										value={filterId}
 										onChange={(ev) => {
@@ -245,7 +245,7 @@ const OrgListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Input
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										value={filterName}
 										onChange={(ev) => {
@@ -269,7 +269,7 @@ const OrgListTable = (props) => {
 									<div className={'sa-pa-3'}>
 										<Input
 											size={'small'}
-											style={{ width: '100%' }}
+											style={{width: '100%'}}
 											variant="filled"
 											value={filterTown}
 											onChange={(ev) => {
@@ -293,7 +293,7 @@ const OrgListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Input
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										value={filterComment}
 										onChange={(ev) => {
@@ -310,7 +310,7 @@ const OrgListTable = (props) => {
 								<div className={'sa-pa-3'}>
 									<Input
 										size={'small'}
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										value={filterInn}
 										onChange={(ev) => {
@@ -335,7 +335,7 @@ const OrgListTable = (props) => {
 										size={'small'}
 										showSearch
 										optionFilterProp="label"
-										style={{ width: '100%' }}
+										style={{width: '100%'}}
 										variant="filled"
 										options={curatorList}
 										allowClear
@@ -402,6 +402,18 @@ const OrgListTable = (props) => {
 									Звонки
 								</TableHeadNameWithSort> */}
 								<div className={'sa-pa-3'}>Звонки</div>
+							</div>
+						</div>
+						<div className={'sa-table-box-cell'}>
+							<div className={'sa-table-head-on'}>
+								{/* <TableHeadNameWithSort
+									sort_key={'calls'}
+									on_sort_change={handleActivateSorter}
+									active_sort_items={sortOrders}
+								>
+									Звонки
+								</TableHeadNameWithSort> */}
+								<div className={'sa-pa-3'}>Проекты</div>
 							</div>
 						</div>
 					</div>
