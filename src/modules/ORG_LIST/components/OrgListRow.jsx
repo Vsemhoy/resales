@@ -28,6 +28,7 @@ import { BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../config/con
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { values } from 'lodash';
 import HighlightText from '../../../components/helpers/HighlightText';
+import {ProjectOutlined} from "@ant-design/icons";
 
 const OrgListRow = (props) => {
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
@@ -420,96 +421,115 @@ const antiTruncateText = (text, maxLength = 200) => {
 					</div>
 				) : ""
 			}>
-			<div
-				className={`sa-table-box-orgs sa-table-box-row ${active ? 'active' : ''}
+				<div
+					className={`sa-table-box-orgs sa-table-box-row ${active ? 'active' : ''}
 				${busyMode === 1 ? "sa-explore-row" : ""} ${busyMode === 2 ? "sa-busy-row" : ""}
 				`}
-				style={{ color: compColor, display: `${deleted ? 'none' : 'grid'}` }}
-				onDoubleClick={handleDoubleClick}
-				id={'orgrow_' + orgData.id}
-			>
-				<div
-					className={'sa-table-box-cell'}
-					// style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
+					style={{color: compColor, display: `${deleted ? 'none' : 'grid'}`}}
+					onDoubleClick={handleDoubleClick}
+					id={'orgrow_' + orgData.id}
 				>
-					<div>
-						<NavLink
-							to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}
-							state={'hello'}
-						>
-							{orgData.id}
-						</NavLink>
+					<div
+						className={'sa-table-box-cell'}
+						// style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
+					>
+						<div>
+							<NavLink
+								to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}
+								state={'hello'}
+							>
+								{orgData.id}
+							</NavLink>
+						</div>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div className={'sa-align-left'}>
+					<div className={'sa-table-box-cell'}>
+						<div className={'sa-align-left'}>
 							<div>
-										<Tooltip
-											color={'white'}
-											title={
-												orgData.middlename || orgData.subcompanies?.length > 0 || orgData.requisites?.length > 0  ? (
+								<Tooltip
+									color={'white'}
+									title={
+										orgData.middlename || orgData.subcompanies?.length > 0 || orgData.requisites?.length > 0 ? (
 											<div style={{padding: '6px'}}>
 												{orgData.middlename ? (
 													<>
-													<div className={'sa-table-orgs-header-in-tooltip'}>Второе название:</div>
+														<div className={'sa-table-orgs-header-in-tooltip'}>Второе
+															название:
+														</div>
 														<div style={{color: 'black'}}>
-															<HighlightText text={orgData.middlename} highlight={filterName} />
+															<HighlightText text={orgData.middlename}
+																		   highlight={filterName}/>
 														</div>
 													</>
-											): ""}
-											{orgData.subcompanies?.length > 0 && (
-												<>
-												{orgData.middlename && (
-													<div style={{padding: '8px'}}></div>
+												) : ""}
+												{orgData.subcompanies?.length > 0 && (
+													<>
+														{orgData.middlename && (
+															<div style={{padding: '8px'}}></div>
+														)}
+														<div className={'sa-table-orgs-header-in-tooltip'}>Дочерние
+															компании :
+														</div>
+														<List
+															style={{padding: '0px'}}
+															size="small"
+															className='sa-org-more-list-ee'
+															bordered
+															dataSource={orgData.subcompanies?.map((subco) => (subco.name))}
+															renderItem={(item) => <List.Item>
+																<div className={'sa-org-list-row-name-name-li'}>
+																	<span><BuildingOffice2Icon height={'18px'}/></span>
+																	<span><HighlightText text={item}
+																						 highlight={filterName}/></span>
+																</div>
+															</List.Item>}
+														/>
+													</>
 												)}
-												<div className={'sa-table-orgs-header-in-tooltip'}>Дочерние компании :</div>
-												<List
-													style={{padding: '0px'}}
-													size="small"
-													className='sa-org-more-list-ee'
-													bordered
-													dataSource={orgData.subcompanies?.map((subco)=>(subco.name))}
-													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}>
-														<span><BuildingOffice2Icon height={'18px'} /></span> <span><HighlightText text={item} highlight={filterName} /></span></div></List.Item>}
-												/>
-												</>
-											)}
-											{orgData.requisites?.length > 0 && (
-												<>
-												{orgData.middlename || orgData.subcompanies?.length > 0 ? (
-													<div style={{padding: '8px'}}></div>
-												): ""}
-												<div className={'sa-table-orgs-header-in-tooltip'}>Фирмы/плательщики :</div>
-												<List
-													style={{padding: '0px'}}
-													size="small"
-													className='sa-org-more-list-ee'
-													bordered
-													dataSource={orgData.requisites?.map((subco)=>(subco.name))}
-													renderItem={(item) => <List.Item><div className={'sa-org-list-row-name-name-li'}>
-														<span><TicketIcon height={'18px'} /></span> <span><HighlightText text={item} highlight={filterName} /></span></div></List.Item>}/>
-												</>
-											)}
-										
-										</div>) : null
-									} 
-									placement='bottom'>
-										
+												{orgData.requisites?.length > 0 && (
+													<>
+														{orgData.middlename || orgData.subcompanies?.length > 0 ? (
+															<div style={{padding: '8px'}}></div>
+														) : ""}
+														<div
+															className={'sa-table-orgs-header-in-tooltip'}>Фирмы/плательщики
+															:
+														</div>
+														<List
+															style={{padding: '0px'}}
+															size="small"
+															className='sa-org-more-list-ee'
+															bordered
+															dataSource={orgData.requisites?.map((subco) => (subco.name))}
+															renderItem={(item) => <List.Item>
+																<div className={'sa-org-list-row-name-name-li'}>
+																	<span><TicketIcon height={'18px'}/></span>
+																	<span><HighlightText text={item}
+																						 highlight={filterName}/></span>
+																</div>
+															</List.Item>}/>
+													</>
+												)}
 
-								<div className='sa-org-list-row-name-name'>
-									<NavLink to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
-										<HighlightText text={orgData.name} highlight={filterName} />
-									</NavLink>
+											</div>) : null
+									}
+									placement='bottom'>
+
+
+									<div className='sa-org-list-row-name-name'>
+										<NavLink
+											to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
+											<HighlightText text={orgData.name} highlight={filterName}/>
+										</NavLink>
 									</div>
 
 									{orgData.middlename ? (
 										<div className={'sa-org-list-row-name-midname'}>{orgData.middlename ? (
-											<div><HighlightText text={truncateText(orgData.middlename, 55)} 
-											highlight={filterName} />{antiTruncateText(orgData.middlename, 55) ? (
+											<div><HighlightText text={truncateText(orgData.middlename, 55)}
+																highlight={filterName}/>{antiTruncateText(orgData.middlename, 55) ? (
 												<>
-												{(orgData?.middlename && filterName && orgData.middlename?.toLowerCase().includes(filterName?.toLowerCase())) ? (
-													<span className='sa-text-higlighted'>...</span>
-												):('...')}
+													{(orgData?.middlename && filterName && orgData.middlename?.toLowerCase().includes(filterName?.toLowerCase())) ? (
+														<span className='sa-text-higlighted'>...</span>
+													) : ('...')}
 												</>
 											) : ''}</div>
 										) : (
@@ -518,101 +538,100 @@ const antiTruncateText = (text, maxLength = 200) => {
 											</div>
 										)}</div>
 									) : ""}
-										</Tooltip>
+								</Tooltip>
 
-								
-								
+
 							</div>
-							
-						
+
+
+						</div>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div className={'sa-align-left'} title={orgData.region_name}>
-						{orgData.town_name}
+					<div className={'sa-table-box-cell'}>
+						<div className={'sa-align-left'} title={orgData.region_name}>
+							{orgData.town_name}
+						</div>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div className={'sa-align-left'}>{orgData.comment}</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>{orgData.inn}</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div className={'sa-align-left'}>
-						{ShortName(orgData.curator_surname, orgData.curator_name, orgData.curator_secondname)}
+					<div className={'sa-table-box-cell'}>
+						<div className={'sa-align-left'}>{orgData.comment}</div>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>
-						{orgData.notes && orgData.notes !== '' && (
-							<Tooltip title={orgData.notes}>
-								<div>
-									<Bars3BottomLeftIcon height={'16px'} />
-								</div>
-							</Tooltip>
-						)}
+					<div className={'sa-table-box-cell'}>
+						<div>{orgData.inn}</div>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>
-						{orgData.profile && orgData.profile !== '' && orgData.profile !== 0 && (
-							<Tooltip title={orgData.kindofactivity}>
-								<div>{getProfileLiterals(orgData.profile)}</div>
-							</Tooltip>
-						)}
+					<div className={'sa-table-box-cell'}>
+						<div className={'sa-align-left'}>
+							{ShortName(orgData.curator_surname, orgData.curator_name, orgData.curator_secondname)}
+						</div>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div className={'sa-flex-4-columns'}>
+					<div className={'sa-table-box-cell'}>
 						<div>
-							{orgData.website && (
-								<Tooltip
-									title={
-										<div className="sa-flex-v">
-											{orgData.website.split(',').map((siter) => {
-												return wrapLink(siter);
-											})}
-										</div>
-									}
-								>
+							{orgData.notes && orgData.notes !== '' && (
+								<Tooltip title={orgData.notes}>
+									<div>
+										<Bars3BottomLeftIcon height={'16px'}/>
+									</div>
+								</Tooltip>
+							)}
+						</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>
+							{orgData.profile && orgData.profile !== '' && orgData.profile !== 0 && (
+								<Tooltip title={orgData.kindofactivity}>
+									<div>{getProfileLiterals(orgData.profile)}</div>
+								</Tooltip>
+							)}
+						</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div className={'sa-flex-4-columns'}>
+							<div>
+								{orgData.website && (
+									<Tooltip
+										title={
+											<div className="sa-flex-v">
+												{orgData.website.split(',').map((siter) => {
+													return wrapLink(siter);
+												})}
+											</div>
+										}
+									>
 									<span>
-										<GlobeAltIcon height={'18px'} />
+										<GlobeAltIcon height={'18px'}/>
 									</span>
-								</Tooltip>
-							)}
-						</div>
-						<div>
-							{/*{(orgData.is_prosound !== null || orgData.is_prosound === 2) && (*/}
+									</Tooltip>
+								)}
+							</div>
+							<div>
+								{/*{(orgData.is_prosound !== null || orgData.is_prosound === 2) && (*/}
 								{(orgData.is_prosound === 2) && (
-								<Tooltip title={'Профзвук'}>
-									<MusicalNoteIcon height={'16px'} />
-								</Tooltip>
-							)}
-						</div>
-						<div>
-							{orgData.subcompanies?.length > 0  ? (
-							<Dropdown menu={{ items: requisitesMenu}} placement="bottom">
-								<div
-									className={`sa-col-with-menu ${matchSubcompany ? "sa-col-win" : ""}`}
-								>
-									<BuildingOffice2Icon height={'18px'} />
-								</div>
-							</Dropdown>
-						): ""}
-						</div>
-						<div>
-							{ orgData.requisites?.length > 0  ? (
-							<Dropdown menu={{ items: paymersMenu}} placement="bottom">
-								<div
-									className={`sa-col-with-menu ${matchRequisite ? "sa-col-win" : ""}`}
-								>
-									<TicketIcon height={'18px'} />
-								</div>
-							</Dropdown>
-						): ""}
-						</div>
-						{/* <div>
+									<Tooltip title={'Профзвук'}>
+										<MusicalNoteIcon height={'16px'}/>
+									</Tooltip>
+								)}
+							</div>
+							<div>
+								{orgData.subcompanies?.length > 0 ? (
+									<Dropdown menu={{items: requisitesMenu}} placement="bottom">
+										<div
+											className={`sa-col-with-menu ${matchSubcompany ? "sa-col-win" : ""}`}
+										>
+											<BuildingOffice2Icon height={'18px'}/>
+										</div>
+									</Dropdown>
+								) : ""}
+							</div>
+							<div>
+								{orgData.requisites?.length > 0 ? (
+									<Dropdown menu={{items: paymersMenu}} placement="bottom">
+										<div
+											className={`sa-col-with-menu ${matchRequisite ? "sa-col-win" : ""}`}
+										>
+											<TicketIcon height={'18px'}/>
+										</div>
+									</Dropdown>
+								) : ""}
+							</div>
+							{/* <div>
               
             </div>
             <div>
@@ -627,73 +646,90 @@ const antiTruncateText = (text, maxLength = 200) => {
             <div>
               
             </div> */}
+						</div>
 					</div>
-				</div>
 
-				<div className={'sa-table-box-cell'}>
-					<div>
-						{orgData.bids?.length > 0 && (
-							<Dropdown menu={{ items: getBidsItems(orgData.bids) }} placement="bottom">
-								<div
-									className={'sa-col-with-menu'}
-									onClick={(item) =>
-										item.id_company === props.userdata?.user.active_company
-											? goToBid(item.id)
-											: console.log('fail')
-									}
-								>
-									<InboxStackIcon height={'18px'} />
-									<Tag color={'geekblue'}>{orgData?.bids_count ? (orgData.bids_count > 999 ? "999+" : orgData?.bids_count) : orgData.bids.length}</Tag>
-								</div>
-							</Dropdown>
-						)}
+					<div className={'sa-table-box-cell'}>
+						<div>
+							{orgData.bids?.length > 0 && (
+								<Dropdown menu={{items: getBidsItems(orgData.bids)}} placement="bottom">
+									<div
+										className={'sa-col-with-menu'}
+										onClick={(item) =>
+											item.id_company === props.userdata?.user.active_company
+												? goToBid(item.id)
+												: console.log('fail')
+										}
+									>
+										<InboxStackIcon height={'18px'}/>
+										<Tag
+											color={'geekblue'}>{orgData?.bids_count ? (orgData.bids_count > 999 ? "999+" : orgData?.bids_count) : orgData.bids.length}</Tag>
+									</div>
+								</Dropdown>
+							)}
+						</div>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>
-						{orgData.meetings?.length > 0 && (
-							<Dropdown menu={{ items: getMeetingsItems(orgData.meetings) }} placement="bottom">
-								<div
-									className={'sa-col-with-menu'}
-									onClick={(item) =>
-										item.id_company === props.userdata?.user.active_company
-											? goToBid(item.id)
-											: console.log('fail')
-									}
-								>
-									<BriefcaseIcon height={'18px'} />
-									<Tag color={'volcano'}>{orgData.meetings.length}</Tag>
-								</div>
-							</Dropdown>
-						)}
+					<div className={'sa-table-box-cell'}>
+						<div>
+							{orgData.meetings?.length > 0 && (
+								<Dropdown menu={{items: getMeetingsItems(orgData.meetings)}} placement="bottom">
+									<div
+										className={'sa-col-with-menu'}
+										onClick={(item) =>
+											item.id_company === props.userdata?.user.active_company
+												? goToBid(item.id)
+												: console.log('fail')
+										}
+									>
+										<BriefcaseIcon height={'18px'}/>
+										<Tag color={'volcano'}>{orgData.meetings.length}</Tag>
+									</div>
+								</Dropdown>
+							)}
+						</div>
 					</div>
-				</div>
-				<div className={'sa-table-box-cell'}>
-					<div>
-						{orgData.calls?.length > 0 && (
-							<Dropdown menu={{ items: getCallsItems(orgData.calls) }} placement="bottom">
-								<div
-									className={'sa-col-with-menu'}
-									onClick={(item) =>
-										item.id_company === props.userdata?.user.active_company
-											? goToBid(item.id)
-											: console.log('fail')
-									}
-								>
-									<PhoneArrowUpRightIcon height={'18px'} />
-									<Tag color={'green'}>{orgData.calls.length}</Tag>
-								</div>
-							</Dropdown>
-						)}
+					<div className={'sa-table-box-cell'}>
+						<div>
+							{orgData.calls?.length > 0 && (
+								<Dropdown menu={{items: getCallsItems(orgData.calls)}} placement="bottom">
+									<div
+										className={'sa-col-with-menu'}
+										onClick={(item) =>
+											item.id_company === props.userdata?.user.active_company
+												? goToBid(item.id)
+												: console.log('fail')
+										}
+									>
+										<PhoneArrowUpRightIcon height={'18px'}/>
+										<Tag color={'green'}>{orgData.calls.length}</Tag>
+									</div>
+								</Dropdown>
+							)}
+						</div>
 					</div>
-				</div>
-				{/* <div className={'sa-table-box-cell'}>
+					<div className={'sa-table-box-cell'}>
+						<div>
+							{/*{orgData.projects_count?.length > 0 && (*/}
+							{orgData.projects_count > 0 && (
+								// <Dropdown menu={{items: getCallsItems(orgData.calls)}} placement="bottom">
+								<Dropdown menu={{items: []}} placement="bottom">
+									<div
+										className={'sa-col-with-menu'}
+									>
+										<ProjectOutlined height={'18px'}/>
+										<Tag color={'green'}>{orgData.projects_count}</Tag>
+									</div>
+								</Dropdown>
+							)}
+						</div>
+					</div>
+					{/* <div className={'sa-table-box-cell'}>
         <div>1</div>
         </div>
         <div className={'sa-table-box-cell'}>
         <div>1</div>
         </div> */}
-			</div>
+				</div>
 			</Tooltip>
 		</Dropdown>
 	);

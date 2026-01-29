@@ -1,6 +1,6 @@
 .sa-table-box-orgs {
 	display: grid;
-	grid-template-columns: 85px 5fr 4fr 4fr 114px 200px 66px 66px 2fr 76px 76px 76px;
+	grid-template-columns: 85px 5fr 4fr 4fr 114px 200px 66px 66px 2fr 76px 76px 76px 76px;
 }
 
 .sa-filer-opened .sa-table-box-orgs {

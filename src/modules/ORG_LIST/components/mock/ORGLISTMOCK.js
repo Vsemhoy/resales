@@ -60,6 +60,7 @@ export const OM_COMP_LIST = [
 		rating_value: null,
 		rating_comment: null,
 		rating_name: null,
+		projects_count: 14,
     bids_count: 123,
     subcompanies: [
       {
