@@ -13,7 +13,7 @@ import {
 	DollarOutlined,
 	FileDoneOutlined,
 	LogoutOutlined,
-	SafetyOutlined,
+	SafetyOutlined, UserOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import PositionList from './PositionList';
@@ -171,7 +171,7 @@ const { getCurrentParamsString } = useURLParams();
 					<div className={'sa-table-box-cell'}>
 						<div className={'text-align-left'}>
 							<NavLink to={`/bids/${data.id}`} target={'_blank'}>
-								<HighlightText text={data.company_name} highlight={filterName} />
+								<HighlightText text={data.company_name} highlight={filterName}/>
 							</NavLink>
 						</div>
 					</div>
@@ -268,6 +268,13 @@ const { getCurrentParamsString } = useURLParams();
 								<Tag color={'cyan'}>{data.files_count}</Tag>
 							</Tooltip>
 						</div>
+					</div>
+					<div className="sa-table-box-cell">
+						{data.contact_user && (
+							<Tooltip title={data.contact_user}>
+								<UserOutlined/>
+							</Tooltip>
+						)}
 					</div>
 				</div>
 			</Tooltip>

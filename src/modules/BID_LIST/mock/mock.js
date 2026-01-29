@@ -26,7 +26,8 @@ export const BID_LIST = [
 		type_status: 1,
 		type_status_name: 'Коммерческое предложение',
 		username: 'Турелькин М. Г.',
-		last_message: 'Нет ИНН'
+		last_message: 'Нет ИНН',
+		contact_user: "Иванов И.И."
 	},
 	{
 		admin_accept_status_name: '',
@@ -55,6 +56,7 @@ export const BID_LIST = [
 		type_status: 1,
 		type_status_name: 'Коммерческое предложение',
 		username: 'Печка Д. В.',
+		contact_user: "Иванов И.И."
 	},
 	{
 		admin_accept_status_name: '',
@@ -83,6 +85,7 @@ export const BID_LIST = [
 		type_status: 1,
 		type_status_name: 'Коммерческое предложение',
 		username: 'Котострофов Е. А.',
+		contact_user: "Иванов И.И."
 	},
 	{
 		admin_accept_status_name: '',
