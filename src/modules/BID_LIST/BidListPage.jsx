@@ -109,7 +109,8 @@ const BidListPage = (props) => {
 		nds: parseInt(searchParams.get('nds')) || null,
 		complete: parseInt(searchParams.get('complete')) || null,
 	});
-	const parseArraySort = (stringOfSorts) => {
+    const filterBoxRef = useRef(filterBox);
+    const parseArraySort = (stringOfSorts) => {
 		const arr = [];
 		stringOfSorts.split(' ').forEach((item) => {
 			if (item) {
@@ -260,7 +261,10 @@ const BidListPage = (props) => {
     useEffect(() => {
         bidsRef.current = bids;
     }, [bids]);
-	useEffect(() => {
+    useEffect(() => {
+        filterBoxRef.current = filterBox;
+    }, [filterBox]);
+    useEffect(() => {
 		if (isMounted && currentPage && onPage && filterBox && orderBox) {
 			const timer = setTimeout(() => {
 				setIsLoading(true);
@@ -384,38 +388,43 @@ const BidListPage = (props) => {
 	};
 	const fetchBids = async () => {
 		if (PRODMODE) {
-			let dates = null;
-			if (filterBox.dates) {
-				const dateObj = dayjs.unix(filterBox.dates);
-				dates = [dateObj.startOf('day').unix() * 1000, dateObj.endOf('day').unix() * 1000];
-			}
-			const data = {
-				/* header */
-				bid_id: filterBox.bid_id,
-				company_name: filterBox.company_name,
-				type: filterBox.type,
-				protect_status: filterBox.protect_status,
-				stage_status: filterBox.stage_status,
-				dates: dates,
-				manager: filterBox.manager,
-				bill_number: filterBox.bill_number,
-				comment: filterBox.comment,
-				object_name: filterBox.object_name,
-				/* sider */
-				target_company: filterBox.target_company,
-				pay_status: filterBox.pay_status,
-				admin_accept: filterBox.admin_accept,
-				package: filterBox.package,
-				price: filterBox.price,
-				bid_currency: filterBox.bid_currency,
-				nds: filterBox.nds,
-				complete_status: filterBox.complete,
+            const currentFilterBox = filterBoxRef.current;
 
-				to: 0,
-				page: currentPage,
-				limit: onPage,
-				sort_orders: prepareOrderBox(orderBox),
-			};
+            let dates = null;
+            if (currentFilterBox.dates) {
+                const dateObj = dayjs.unix(currentFilterBox.dates);
+                dates = [
+                    dateObj.startOf('day').unix() * 1000,
+                    dateObj.endOf('day').unix() * 1000
+                ];
+            }
+
+            const data = {
+                bid_id: currentFilterBox.bid_id,
+                company_name: currentFilterBox.company_name,
+                type: currentFilterBox.type,
+                protect_status: currentFilterBox.protect_status,
+                stage_status: currentFilterBox.stage_status,
+                dates,
+                manager: currentFilterBox.manager,
+                bill_number: currentFilterBox.bill_number,
+                comment: currentFilterBox.comment,
+                object_name: currentFilterBox.object_name,
+
+                target_company: currentFilterBox.target_company,
+                pay_status: currentFilterBox.pay_status,
+                admin_accept: currentFilterBox.admin_accept,
+                package: currentFilterBox.package,
+                price: currentFilterBox.price,
+                bid_currency: currentFilterBox.bid_currency,
+                nds: currentFilterBox.nds,
+                complete_status: currentFilterBox.complete,
+
+                page: currentPage,
+                limit: onPage,
+                sort_orders: prepareOrderBox(orderBox),
+            };
+
 			console.log(data);
 			const path = `/sales/data/offerlist`;
 			try {
