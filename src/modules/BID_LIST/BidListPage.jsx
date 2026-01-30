@@ -387,7 +387,7 @@ const BidListPage = (props) => {
 		}
 	};
 	const fetchBids = async () => {
-		if (PRODMODE) {
+		if (PRODMODE) { // test
             const currentFilterBox = filterBoxRef.current;
 
             let dates = null;
