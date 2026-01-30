@@ -426,12 +426,20 @@ const BidListPage = (props) => {
             };
 
 			console.log(data);
-			const path = `/sales/data/offerlist`;
+			const path = `/sales/data/v2/offerlist`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data,
 					_token: CSRF_TOKEN,
 				});
+
+				if (response.data.status === 500) {
+					setIsAlertVisible(true);
+					setAlertMessage(`Произошла ошибка! ${path}`);
+					setAlertDescription(response?.data?.message || 'Неизвестная ошибка');
+					setAlertType('error');
+				}
+
                 setBidsWithHighlight(response.data.bid_list)
                 //setBids(response.data.bid_list);
 				setTotal(response.data.total_count);
