@@ -225,7 +225,7 @@ export const getProjectsItems = (projects) => {
 				const formattedDate = dayjs(date * 1000).format('DD.MM.YYYY');
 				const Label = () => {
 					return (
-						<Tooltip title={`Результат: 1`} placement="left">
+						<Tooltip placement="left">
 							<div style={{ fontSize: '12px' }}>
 								{`${formattedDate} ${project.name ?? ""} ${project.address ?? ""}`}
 							</div>
