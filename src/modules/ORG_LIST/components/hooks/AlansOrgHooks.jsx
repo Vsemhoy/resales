@@ -227,7 +227,6 @@ export const getProjectsItems = (projects) => {
 					return (
 						<Tooltip title={`Результат: 1`} placement="left">
 							<div style={{ fontSize: '12px' }}>
-								{/*{`${formattedDate} ${creator} ${subscriber}`}*/}
 								{`${formattedDate} ${project.name} ${project.address ?? ""}`}
 							</div>
 						</Tooltip>
