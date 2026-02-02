@@ -552,29 +552,7 @@ const antiTruncateText = (text, maxLength = 200) => {
 						</div>
 					</div>
 					<div className={'sa-table-box-cell'}>
-						<div className={'sa-align-left'}>{orgData.comment}</div>
-					</div>
-					<div className={'sa-table-box-cell'}>
-						<div>{orgData.inn}</div>
-					</div>
-					<div className={'sa-table-box-cell'}>
-						<div className={'sa-align-left'}>
-							{ShortName(orgData.curator_surname, orgData.curator_name, orgData.curator_secondname)}
-						</div>
-					</div>
-					<div className={'sa-table-box-cell'}>
-						<div>
-							{orgData.notes && orgData.notes !== '' && (
-								<Tooltip title={orgData.notes}>
-									<div>
-										<Bars3BottomLeftIcon height={'16px'}/>
-									</div>
-								</Tooltip>
-							)}
-						</div>
-					</div>
-					<div className={'sa-table-box-cell'}>
-						<div>
+						<div className={'sa-align-center'}>
 							{orgData.profile && orgData.profile !== '' && orgData.profile !== 0 && (
 								<Tooltip title={orgData.kindofactivity}>
 									<div>{getProfileLiterals(orgData.profile)}</div>
@@ -582,6 +560,37 @@ const antiTruncateText = (text, maxLength = 200) => {
 							)}
 						</div>
 					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>{orgData.notes}</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div>{orgData.inn}</div>
+					</div>
+					<div className={'sa-table-box-cell'}>
+						<div className={'sa-align-center'}>
+							{ShortName(orgData.curator_surname, orgData.curator_name, orgData.curator_secondname)}
+						</div>
+					</div>
+					{/*<div className={'sa-table-box-cell'}>*/}
+					{/*	<div>*/}
+					{/*		{orgData.notes && orgData.notes !== '' && (*/}
+					{/*			<Tooltip title={orgData.notes}>*/}
+					{/*				<div>*/}
+					{/*					<Bars3BottomLeftIcon height={'16px'}/>*/}
+					{/*				</div>*/}
+					{/*			</Tooltip>*/}
+					{/*		)}*/}
+					{/*	</div>*/}
+					{/*</div>*/}
+					{/*<div className={'sa-table-box-cell'}>*/}
+					{/*	<div>*/}
+					{/*		/!*{orgData.profile && orgData.profile !== '' && orgData.profile !== 0 && (*!/*/}
+					{/*		/!*	<Tooltip title={orgData.kindofactivity}>*!/*/}
+					{/*		/!*		<div>{getProfileLiterals(orgData.profile)}</div>*!/*/}
+					{/*		/!*	</Tooltip>*!/*/}
+					{/*		/!*)}*!/*/}
+					{/*	</div>*/}
+					{/*</div>*/}
 					<div className={'sa-table-box-cell'}>
 						<div className={'sa-flex-4-columns'}>
 							<div>
