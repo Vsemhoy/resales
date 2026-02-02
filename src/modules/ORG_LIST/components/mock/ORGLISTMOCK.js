@@ -61,6 +61,19 @@ export const OM_COMP_LIST = [
 		rating_comment: null,
 		rating_name: null,
 		projects_count: 14,
+		projects:[
+			{
+				"id": 1546,
+				"name": "Тест",
+				"date": 1756969201,
+				"address": "г. Екатеринбург, Свердловская обл., ул. Малышева, д. 65, корп. 2"
+			},
+			{
+				"id": 1545,
+				"name": "asdfsda",
+				"date": 1756969201
+			}
+		],
     bids_count: 123,
     subcompanies: [
       {

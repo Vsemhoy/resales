@@ -8,6 +8,7 @@ import { ShieldCheckIcon } from '@heroicons/react/24/solid';
 import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { BASE_ROUTE, HTTP_ROOT } from '../../../../config/config';
+import {ProjectOutlined} from "@ant-design/icons";
 // import { NavLink } from 'react-router-dom';
 
 export const getBidsItems = (bids) => {
@@ -205,3 +206,53 @@ const getLicensesItems = (licenses) => {
 	}
 	return licenses__items;
 };
+
+export const getProjectsItems = (projects) => {
+	console.log(projects)
+	return [
+		{
+			key: '1',
+			label: 'Последние проекты',
+			disabled: true,
+		},
+		{
+			type: 'divider',
+		},
+		...(projects && projects.length > 0
+			? projects.map((project, index) => {
+				// const key = 1;
+				const key = project.id;
+				// const result = project.name;
+				// const key = project?.find((project_props) => project_props.id === 'key').value;
+				const date = project.date;
+				// // const creator =
+				// // 	project.find((project_props) => project_props.id === 'creator_name').value || 'Нет данных';
+				// const result =
+				// 	project.find((project_props) => project_props.id === 'result').value || 'Нет данных';
+				// const subscriber = project.find((project_props) => project_props.id === 'subscriber').value;
+				const formattedDate = dayjs(date * 1000).format('DD.MM.YYYY');
+				const Label = () => {
+					return (
+						<Tooltip title={`Результат: 1`} placement="left">
+							<div style={{ fontSize: '12px' }}>
+								{/*{`${formattedDate} ${creator} ${subscriber}`}*/}
+								{`${formattedDate} ${project.name} ${project.address ?? ""}`}
+							</div>
+
+						{/*	// <Tooltip title={`Результат: ${result}`} placement="left">*/}
+						{/*// 	<div style={{ fontSize: '12px' }}>*/}
+						{/*// 		/!*{`${formattedDate} ${creator} ${subscriber}`}*!/*/}
+						{/*// 		/!*{`${formattedDate} ${subscriber}`}*!/*/}
+						{/*// 	</div>*/}
+						</Tooltip>
+					);
+				};
+				return {
+					key,
+					label: <Label />,
+					icon: <ProjectOutlined height={'18px'} />,
+				};
+			})
+			: []),
+	];
+}

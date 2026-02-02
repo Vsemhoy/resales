@@ -21,7 +21,7 @@ import {
 	PhoneArrowUpRightIcon,
 	TicketIcon,
 } from '@heroicons/react/24/solid';
-import { getBidsItems, getCallsItems, getMeetingsItems } from './hooks/AlansOrgHooks';
+import {getBidsItems, getCallsItems, getMeetingsItems, getProjectsItems} from './hooks/AlansOrgHooks';
 import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
 import { useURLParams } from '../../../components/helpers/UriHelpers';
 import { BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../config/config';
@@ -571,26 +571,6 @@ const antiTruncateText = (text, maxLength = 200) => {
 							{ShortName(orgData.curator_surname, orgData.curator_name, orgData.curator_secondname)}
 						</div>
 					</div>
-					{/*<div className={'sa-table-box-cell'}>*/}
-					{/*	<div>*/}
-					{/*		{orgData.notes && orgData.notes !== '' && (*/}
-					{/*			<Tooltip title={orgData.notes}>*/}
-					{/*				<div>*/}
-					{/*					<Bars3BottomLeftIcon height={'16px'}/>*/}
-					{/*				</div>*/}
-					{/*			</Tooltip>*/}
-					{/*		)}*/}
-					{/*	</div>*/}
-					{/*</div>*/}
-					{/*<div className={'sa-table-box-cell'}>*/}
-					{/*	<div>*/}
-					{/*		/!*{orgData.profile && orgData.profile !== '' && orgData.profile !== 0 && (*!/*/}
-					{/*		/!*	<Tooltip title={orgData.kindofactivity}>*!/*/}
-					{/*		/!*		<div>{getProfileLiterals(orgData.profile)}</div>*!/*/}
-					{/*		/!*	</Tooltip>*!/*/}
-					{/*		/!*)}*!/*/}
-					{/*	</div>*/}
-					{/*</div>*/}
 					<div className={'sa-table-box-cell'}>
 						<div className={'sa-flex-4-columns'}>
 							<div>
@@ -720,8 +700,8 @@ const antiTruncateText = (text, maxLength = 200) => {
 						<div>
 							{/*{orgData.projects_count?.length > 0 && (*/}
 							{orgData.projects_count > 0 && (
-								// <Dropdown menu={{items: getCallsItems(orgData.calls)}} placement="bottom">
-								<Dropdown menu={{items: []}} placement="bottom">
+								<Dropdown menu={{items: getProjectsItems(orgData.projects)}} placement="bottom">
+								{/*// <Dropdown menu={{items: []}} placement="bottom">*/}
 									<div
 										className={'sa-col-with-menu'}
 									>
