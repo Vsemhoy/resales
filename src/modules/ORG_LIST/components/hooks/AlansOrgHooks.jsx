@@ -220,16 +220,8 @@ export const getProjectsItems = (projects) => {
 		},
 		...(projects && projects.length > 0
 			? projects.map((project, index) => {
-				// const key = 1;
 				const key = project.id;
-				// const result = project.name;
-				// const key = project?.find((project_props) => project_props.id === 'key').value;
 				const date = project.date;
-				// // const creator =
-				// // 	project.find((project_props) => project_props.id === 'creator_name').value || 'Нет данных';
-				// const result =
-				// 	project.find((project_props) => project_props.id === 'result').value || 'Нет данных';
-				// const subscriber = project.find((project_props) => project_props.id === 'subscriber').value;
 				const formattedDate = dayjs(date * 1000).format('DD.MM.YYYY');
 				const Label = () => {
 					return (
@@ -238,12 +230,6 @@ export const getProjectsItems = (projects) => {
 								{/*{`${formattedDate} ${creator} ${subscriber}`}*/}
 								{`${formattedDate} ${project.name} ${project.address ?? ""}`}
 							</div>
-
-						{/*	// <Tooltip title={`Результат: ${result}`} placement="left">*/}
-						{/*// 	<div style={{ fontSize: '12px' }}>*/}
-						{/*// 		/!*{`${formattedDate} ${creator} ${subscriber}`}*!/*/}
-						{/*// 		/!*{`${formattedDate} ${subscriber}`}*!/*/}
-						{/*// 	</div>*/}
 						</Tooltip>
 					);
 				};
