@@ -8,6 +8,7 @@ import { ShieldCheckIcon } from '@heroicons/react/24/solid';
 import { Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { BASE_ROUTE, HTTP_ROOT } from '../../../../config/config';
+import {ProjectOutlined} from "@ant-design/icons";
 // import { NavLink } from 'react-router-dom';
 
 export const getBidsItems = (bids) => {
@@ -205,3 +206,38 @@ const getLicensesItems = (licenses) => {
 	}
 	return licenses__items;
 };
+
+export const getProjectsItems = (projects) => {
+	console.log(projects)
+	return [
+		{
+			key: '1',
+			label: 'Последние проекты',
+			disabled: true,
+		},
+		{
+			type: 'divider',
+		},
+		...(projects && projects.length > 0
+			? projects.map((project, index) => {
+				const key = project.id;
+				const date = project.date;
+				const formattedDate = dayjs(date * 1000).format('DD.MM.YYYY');
+				const Label = () => {
+					return (
+						<Tooltip placement="left">
+							<div style={{ fontSize: '12px' }}>
+								{`${formattedDate} ${project.name ?? ""} ${project.address ?? ""}`}
+							</div>
+						</Tooltip>
+					);
+				};
+				return {
+					key,
+					label: <Label />,
+					icon: <ProjectOutlined height={'18px'} />,
+				};
+			})
+			: []),
+	];
+}
