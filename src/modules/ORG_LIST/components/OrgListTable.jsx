@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import OrgListRow from './OrgListRow';
 import dayjs from 'dayjs';
+import {ProjectOutlined} from "@ant-design/icons";
+import {BriefcaseIcon, InboxStackIcon, PhoneArrowUpRightIcon} from "@heroicons/react/24/solid";
 
 const OrgListTable = (props) => {
 	const [userdata, setUserdata] = useState(null);
@@ -283,12 +285,18 @@ const OrgListTable = (props) => {
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
+								<div className={'sa-pa-3'}>Профиль</div>
+								<div className={'sa-pa-3'}></div>
+							</div>
+						</div>
+						<div className={'sa-table-box-cell'}>
+							<div className={'sa-table-head-on'}>
 								<TableHeadNameWithSort
 									sort_key={'comment'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
 								>
-									Комментарий
+									Памятка
 								</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
 									<Input
@@ -345,21 +353,14 @@ const OrgListTable = (props) => {
 								</div>
 							</div>
 						</div>
-						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Памятка</div>
-								<div className={'sa-pa-3'}>
-									{/* <Input size={'small'} style={{ width: '100%' }} variant='filled' /> */}
-								</div>
-							</div>
-						</div>
-						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Профиль</div>
-								<div className={'sa-pa-3'}></div>
-							</div>
-						</div>
-
+						{/*<div className={'sa-table-box-cell'}>*/}
+						{/*	<div className={'sa-table-head-on'}>*/}
+						{/*		<div className={'sa-pa-3'}>Памятка</div>*/}
+						{/*		<div className={'sa-pa-3'}>*/}
+						{/*			/!* <Input size={'small'} style={{ width: '100%' }} variant='filled' /> *!/*/}
+						{/*		</div>*/}
+						{/*	</div>*/}
+						{/*</div>*/}
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
 								<div className={'sa-pa-3'}>Свойства</div>
@@ -376,7 +377,10 @@ const OrgListTable = (props) => {
 								>
 									Заявки
 								</TableHeadNameWithSort> */}
-								<div className={'sa-pa-3'}>Заявки</div>
+								<div className={'sa-pa-3'}>
+									<InboxStackIcon height={'18px'}/>
+									{/*Заявки*/}
+								</div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
@@ -389,7 +393,10 @@ const OrgListTable = (props) => {
 									Встречи
 								</TableHeadNameWithSort> */}
 
-								<div className={'sa-pa-3'}>Встречи</div>
+								<div className={'sa-pa-3'}>
+									{/*Встречи*/}
+									<BriefcaseIcon height={'18px'}/>
+								</div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
@@ -401,7 +408,10 @@ const OrgListTable = (props) => {
 								>
 									Звонки
 								</TableHeadNameWithSort> */}
-								<div className={'sa-pa-3'}>Звонки</div>
+								<div className={'sa-pa-3'}>
+									{/*Звонки*/}
+									<PhoneArrowUpRightIcon height={'18px'}/>
+								</div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
@@ -413,7 +423,12 @@ const OrgListTable = (props) => {
 								>
 									Звонки
 								</TableHeadNameWithSort> */}
-								<div className={'sa-pa-3'}>Проекты</div>
+								<div className={'sa-pa-3'}>
+									{/*Проекты*/}
+									<ProjectOutlined height={'18px'}/>
+								</div>
+
+
 							</div>
 						</div>
 					</div>

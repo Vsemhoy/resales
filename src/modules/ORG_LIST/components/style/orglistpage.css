@@ -1,16 +1,14 @@
 .sa-table-box-orgs {
 	display: grid;
-	grid-template-columns: 85px 5fr 4fr 4fr 114px 200px 66px 66px 2fr 76px 76px 76px 76px;
+	grid-template-columns: 85px 3fr 2fr 66px 3fr 150px 250px 1.2fr 80px 80px 80px 80px;
 }
 
 .sa-filer-opened .sa-table-box-orgs {
-	grid-template-columns: 85px 5fr 4fr 4fr 114px 170px 50px 50px 2fr 72px 72px !important;
+	grid-template-columns: 85px 3fr 2fr 66px 3fr 150px 250px 1.2fr 80px 80px 80px 80px !important;
 }
 .sa-filer-opened .sa-table-box-orgs > *:last-child {
 	display: none;
 }
-
-
 
 .sa-col-with-menu {
 	display: flex;
