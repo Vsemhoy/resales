@@ -28,6 +28,93 @@ import ModelInput from "../BID_PAGE/components/ModelInput";
 import {useParams} from "react-router-dom";
 import {PDF} from "./mock/mock";
 
+const FILE_FIELD_NAMES = [
+    'structuralDiagrams',
+    'blockPlacements',
+    'placementOfAcousticSystems_placementOfAcousticSystems_file',
+    'placementOfAcousticSystems_lineArrayConfiguration_file',
+    'calculatingReverberationTime_reverberationTime_file',
+    'calculatingDirectSpl_levelDistributionMap_file',
+    'calculatingDirectSpl_levelDistributionChart_file',
+    'calculatingCoefficientSti_levelDistributionMap_file',
+    'calculatingCoefficientSti_levelDistributionChart_file',
+    'calculatingAlcons_levelDistributionMap_file',
+    'calculatingAlcons_levelDistributionChart_file',
+];
+
+const getFileNameFromUrl = (url = '') => {
+    const rawName = String(url).split('?')[0].split('#')[0].split('/').pop() || 'file';
+    try {
+        return decodeURIComponent(rawName);
+    } catch (_) {
+        return rawName;
+    }
+};
+
+const normalizeFileUrl = (url) => {
+    if (!url || typeof url !== 'string') {
+        return undefined;
+    }
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        return url;
+    }
+    if (url.startsWith('/')) {
+        return `${HTTP_HOST}${url}`;
+    }
+    return url;
+};
+
+const toUploadFile = (file, fieldName, index) => {
+    if (!file) {
+        return null;
+    }
+
+    if (typeof file === 'string') {
+        return {
+            uid: `${fieldName}-${index}`,
+            name: getFileNameFromUrl(file),
+            status: 'done',
+            url: normalizeFileUrl(file),
+        };
+    }
+
+    const url = file?.url || file?.link || file?.path || file?.file_link;
+    const name = file?.name || file?.file_name || file?.filename || file?.original_name || getFileNameFromUrl(url) || `file-${index + 1}`;
+
+    return {
+        ...file,
+        uid: String(file?.uid || file?.id || `${fieldName}-${index}`),
+        name,
+        status: file?.status || 'done',
+        url: normalizeFileUrl(url),
+    };
+};
+
+const normalizeUploadFileList = (value, fieldName) => {
+    if (!value) {
+        return [];
+    }
+    if (Array.isArray(value)) {
+        return value
+            .map((file, index) => toUploadFile(file, fieldName, index))
+            .filter(Boolean);
+    }
+    return [toUploadFile(value, fieldName, 0)].filter(Boolean);
+};
+
+const normalizeFormData = (payload = {}) => {
+    const unpacked = {
+        ...payload,
+        ...(payload?.acousticCalculation || {}),
+    };
+
+    FILE_FIELD_NAMES.forEach((fieldName) => {
+        unpacked[fieldName] = normalizeUploadFileList(unpacked[fieldName], fieldName);
+    });
+
+    return unpacked;
+};
+
 const BidPdfPage = () => {
 
     const { bidId } = useParams();
@@ -195,14 +282,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                accept=".jpg,.jpeg,.png"
+                                accept=".png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимый формат: .png !</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -214,14 +301,14 @@ const BidPdfPage = () => {
                             noStyle
                         >
                             <Upload.Dragger
-                                accept=".jpg,.jpeg,.png"
+                                accept=".png"
                                 beforeUpload={() => false}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Кликните или перетащите файл в эту область для загрузки.</p>
-                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимые форматы: JPG, JPEG, PNG.</p>
+                                <p className="ant-upload-hint">Поддерживается одиночная загрузка.  Допустимый формат: .png !</p>
                             </Upload.Dragger>
                         </Form.Item>
                     </Form.Item>
@@ -613,7 +700,7 @@ const BidPdfPage = () => {
                         } else {
                             setTabsTrans(prev => tabsCheckedSet(prev, response));
                         }
-                        form.setFieldsValue({ ...response.data });
+                        form.setFieldsValue(normalizeFormData(response.data));
                     }
                 } catch (e) {
                     console.log(e);
@@ -630,7 +717,7 @@ const BidPdfPage = () => {
                 } else {
                     setTabsTrans(prev => tabsCheckedSet(prev));
                 }
-                form.setFieldsValue({ ...PDF });
+                form.setFieldsValue(normalizeFormData(PDF));
                 setTimeout(() => setIsLoading(false), 500);
             }, 1000);
         }
