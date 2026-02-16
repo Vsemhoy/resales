@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ArrowLeftOutlined, CloseOutlined, InboxOutlined, PlusOutlined} from '@ant-design/icons';
+import {CloseOutlined, InboxOutlined, PlusOutlined} from '@ant-design/icons';
 import {
     Button,
     Card,
@@ -12,7 +12,6 @@ import {
     Radio,
     Spin,
     Switch,
-    Tag,
     Tabs,
     Tooltip,
     Upload
@@ -26,7 +25,7 @@ import {CSRF_TOKEN, HTTP_HOST, PRODMODE} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import MODELS from "../BID_PAGE/mock/mock_models";
 import ModelInput from "../BID_PAGE/components/ModelInput";
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {PDF} from "./mock/mock";
 
 const FILE_FIELD_NAMES = [
@@ -110,54 +109,21 @@ const normalizeFormData = (payload = {}) => {
     };
 
     FILE_FIELD_NAMES.forEach((fieldName) => {
-        const imageFieldName = `image_${fieldName}`;
-        const rawValue = unpacked[fieldName] || unpacked[imageFieldName];
-        unpacked[fieldName] = normalizeUploadFileList(rawValue, fieldName);
+        unpacked[fieldName] = normalizeUploadFileList(unpacked[fieldName], fieldName);
     });
 
     return unpacked;
 };
 
-const toServerFilePath = (value) => {
-    if (!value || typeof value !== 'string') {
-        return '';
-    }
-    if (value.startsWith(HTTP_HOST)) {
-        return value.slice(HTTP_HOST.length);
-    }
-    return value;
-};
-
-const getSavedFilePath = (fileList = []) => {
-    const hasNewFile = fileList.some((file) => !!file?.originFileObj);
-    if (hasNewFile) {
-        return '';
-    }
-    const existingFile = fileList.find((file) => !file?.originFileObj);
-    if (!existingFile) {
-        return '';
-    }
-    return toServerFilePath(existingFile?.url || existingFile?.path || existingFile?.link || existingFile?.file_link || '');
-};
-
-const collectSavedFilePaths = (data, fieldNames) => {
-    return fieldNames.reduce((acc, fieldName) => {
-        acc[fieldName] = getSavedFilePath(data?.[fieldName]);
-        return acc;
-    }, {});
-};
-
 const BidPdfPage = () => {
 
     const { bidId } = useParams();
-    const navigate = useNavigate();
 
     const [form] = Form.useForm();
 
     const [isLoading, setIsLoading] = useState(false);
 
     const [modelsSelect, setModelsSelect] = useState([]);
-    const [bidType, setBidType] = useState(null);
     const [bidSubtype, setBidSubtype] = useState(false);
     const [isCreatePdf, setIsCreatePdf] = useState(false);
     const [currency, setCurrency] = useState({ label: '$', value: '1' });
@@ -186,8 +152,7 @@ const BidPdfPage = () => {
     ]);
     const formStyle = {
         width: '98%',
-        flex: 1,
-        minHeight: 0,
+        height: '95%',
         background: '#ffffff94',
         borderRadius: 8,
         padding: 24,
@@ -728,7 +693,6 @@ const BidPdfPage = () => {
                         '_token': CSRF_TOKEN,
                     });
                     if (response.data) {
-                        setBidType(response.data?.type ?? response.data?.bidType ?? response.data?.type_id ?? null);
                         setBidSubtype(response.data?.bidSubtype);
                         setCurrency(response.data?.currency);
                         if (response.data?.bidSubtype) {
@@ -746,7 +710,6 @@ const BidPdfPage = () => {
             }, 1000);
         } else {
             setTimeout(() => {
-                setBidType(PDF?.type ?? PDF?.bidType ?? PDF?.type_id ?? null);
                 setBidSubtype(PDF?.bidSubtype);
                 setCurrency(PDF?.currency);
                 if (PDF?.bidSubtype) {
@@ -782,19 +745,6 @@ const BidPdfPage = () => {
     };
 
     const collectRequestData = (data) => {
-        const commonImagePaths = collectSavedFilePaths(data, ['structuralDiagrams', 'blockPlacements']);
-        const acousticImagePaths = collectSavedFilePaths(data, [
-            'placementOfAcousticSystems_placementOfAcousticSystems_file',
-            'placementOfAcousticSystems_lineArrayConfiguration_file',
-            'calculatingReverberationTime_reverberationTime_file',
-            'calculatingDirectSpl_levelDistributionMap_file',
-            'calculatingDirectSpl_levelDistributionChart_file',
-            'calculatingCoefficientSti_levelDistributionMap_file',
-            'calculatingCoefficientSti_levelDistributionChart_file',
-            'calculatingAlcons_levelDistributionMap_file',
-            'calculatingAlcons_levelDistributionChart_file',
-        ]);
-
         return {
             bidSubtype,
             currency,
@@ -803,8 +753,6 @@ const BidPdfPage = () => {
             email: data?.email,
             features: data?.features,
             recommendations: data?.recommendations,
-            ...commonImagePaths,
-            ...acousticImagePaths,
             selectionOfEquipment: !bidSubtype ? data?.selectionOfEquipment : null,
             acousticCalculation: !bidSubtype ? null : {
                 acousticCalculation_intro: data?.acousticCalculation_intro,
@@ -972,15 +920,6 @@ const BidPdfPage = () => {
     }, []);
 
     useEffect(() => {
-        const shortBidType = +bidType === 2 ? 'Счет' : 'КП';
-        if (bidId) {
-            document.title = `${shortBidType} PDF | ${bidId}`;
-            return;
-        }
-        document.title = 'КП PDF';
-    }, [bidId, bidType]);
-
-    useEffect(() => {
         if (form) {
             fetchBidPdfInfo().then();
         }
@@ -993,25 +932,11 @@ const BidPdfPage = () => {
         return tabs.filter(tab => tab.key === 1 || activeTabKeys.includes(tab.key));
     }, [bidSubtype, tabsProf, tabsTrans]);
 
-    const bidTypeLabel = +bidType === 2 ? 'Счет' : 'Коммерческое предложение';
-
     return (
         <Spin spinning={isLoading}>
             <Layout className={'sa-layout sa-w-100'}>
                 <Content>
                     <div className={'bid-pdf-page'}>
-                        <div className={'sa-bid-pdf-header'}>
-                            <Button
-                                icon={<ArrowLeftOutlined />}
-                                onClick={() => navigate(`/bids/${bidId}`)}
-                            >
-                                Назад
-                            </Button>
-                            <h1 className={'sa-bid-pdf-title'}>
-                                {bidTypeLabel}
-                                <Tag className={'sa-bid-pdf-title-tag'}>№{bidId}</Tag>
-                            </h1>
-                        </div>
                         <Form
                             labelCol={{ span: 6 }}
                             wrapperCol={{ span: 18 }}
@@ -1053,7 +978,7 @@ const BidPdfPage = () => {
                             backgroundColor: '#ffffff',
                             overflow: 'hidden',
                             position: 'sticky',
-                            top: '12px',
+                            top: '100px',
                             zIndex: 1
                         }}
                 >

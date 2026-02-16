@@ -23,6 +23,5 @@ export const PDF = {
             "feature": "авпывапыва"
         }
     ],
-    "selectionOfEquipment": "авпывапывапывапваыпвавпаывыап",
-
+    "selectionOfEquipment": "авпывапывапывапваыпвавпаывыап"
 };
