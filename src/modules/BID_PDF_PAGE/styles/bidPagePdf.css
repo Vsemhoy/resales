@@ -2,9 +2,35 @@
     width: 100%;
     height: calc(100vh - 44px);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+}
 
+.sa-bid-pdf-header {
+    width: 98%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff94;
+    border-radius: 8px;
+    padding: 10px 16px;
+}
+
+.sa-bid-pdf-title {
+    margin: 0;
+    font-size: 20px;
+    line-height: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sa-bid-pdf-title-tag {
+    font-size: 20px;
+    line-height: 30px;
 }
 
 .sa-bid-pdf-sider {
@@ -15,9 +41,10 @@
     background-color: var(--sider-bg-color);
     border-radius: 6px;
     position: sticky;
-    top: 2.5%;
+    top: 0;
     width: 95%;
     height: 300px;
+    margin-top: 12px;
     padding: 0 20px;
 }
 
