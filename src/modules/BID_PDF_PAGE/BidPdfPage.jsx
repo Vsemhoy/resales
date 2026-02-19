@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {ArrowLeftOutlined, CloseOutlined, InboxOutlined, PlusOutlined} from '@ant-design/icons';
 import {
     Button,
@@ -28,6 +28,7 @@ import MODELS from "../BID_PAGE/mock/mock_models";
 import ModelInput from "../BID_PAGE/components/ModelInput";
 import {useNavigate, useParams} from "react-router-dom";
 import {PDF} from "./mock/mock";
+import {useUserData} from "../../context/UserDataContext";
 
 const FILE_FIELD_NAMES = [
     'structuralDiagrams',
@@ -152,6 +153,12 @@ const BidPdfPage = () => {
     const { bidId } = useParams();
     const navigate = useNavigate();
 
+    const { userdata } = useUserData();
+    const userdataRef = useRef();
+    userdataRef.current = userdata;
+
+    const [isEngineer, setIsEngineer] = useState(false);
+
     const [form] = Form.useForm();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -161,6 +168,7 @@ const BidPdfPage = () => {
     const [bidSubtype, setBidSubtype] = useState(false);
     const [isCreatePdf, setIsCreatePdf] = useState(false);
     const [currency, setCurrency] = useState({ label: '$', value: '1' });
+    const [isNeedEngineer, setIsNeedEngineer] = useState(false);
     const [featureFields, setFeatureFields] = useState([
         {
             key: 1,
@@ -223,6 +231,7 @@ const BidPdfPage = () => {
         }
         return e?.fileList;
     };
+    const isFieldsDisabled = isNeedEngineer && !isEngineer;
 
     const tabs = [
         {
@@ -239,12 +248,12 @@ const BidPdfPage = () => {
                     <Form.Item name="tel"
                                label="Телефон"
                     >
-                        <Input />
+                        <Input disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item name="email"
                                label="E-mail"
                     >
-                        <Input />
+                        <Input disabled={isFieldsDisabled}/>
                     </Form.Item>
                 </Card>
             )
@@ -268,6 +277,7 @@ const BidPdfPage = () => {
                                             onClick={() => add()}
                                             block
                                             icon={<PlusOutlined />}
+                                            disabled={isFieldsDisabled}
                                     >
                                         Добавить особенность/требование
                                     </Button>
@@ -280,9 +290,12 @@ const BidPdfPage = () => {
                                                       style={{ width: '100%', height: 'autosize', resize: 'none' }}
                                                       autoSize={{ minRows: 1, maxRows: 5 }}
                                                       placeholder={'Особенность или требование...'}
+                                                      disabled={isFieldsDisabled}
                                             />
                                         </Form.Item>
-                                        <CloseOutlined onClick={() => remove(name)} />
+                                        <CloseOutlined onClick={() => {
+                                            if (!isFieldsDisabled) remove(name);
+                                        }}/>
                                     </Flex>
                                 ))}
                             </div>
@@ -306,6 +319,7 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
                     <Divider/>
@@ -319,6 +333,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -338,6 +353,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -365,6 +381,7 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
 
@@ -372,7 +389,7 @@ const BidPdfPage = () => {
 
                     <h4>Размещение акустических систем</h4>
                     <Form.Item name='placementOfAcousticSystems_placementOfAcousticSystems_name' label={'Расстановка акустических систем'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -384,6 +401,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -394,7 +412,7 @@ const BidPdfPage = () => {
                         </Form.Item>
                     </Form.Item>
                     <Form.Item name='placementOfAcousticSystems_lineArrayConfiguration_name' label={'Конфигурация линейного массива'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -406,6 +424,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -419,6 +438,7 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
 
@@ -426,7 +446,7 @@ const BidPdfPage = () => {
 
                     <h4>Расчет времени реверберации</h4>
                     <Form.Item name='calculatingReverberationTime_reverberationTime_name' label={'Время реверберации'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -438,6 +458,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -451,6 +472,7 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
 
@@ -458,7 +480,7 @@ const BidPdfPage = () => {
 
                     <h4>Расчет DIRECT SPL</h4>
                     <Form.Item name='calculatingDirectSpl_levelDistributionMap_name' label={'Карта распределения уровня DIRECT SPL'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -470,6 +492,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -480,7 +503,7 @@ const BidPdfPage = () => {
                         </Form.Item>
                     </Form.Item>
                     <Form.Item name='calculatingDirectSpl_levelDistributionChart_name' label={'График распределения уровня DIRECT SPL'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -492,6 +515,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -505,6 +529,7 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
 
@@ -515,6 +540,7 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
 
@@ -522,7 +548,7 @@ const BidPdfPage = () => {
 
                     <h4>Расчет коэффициента STI</h4>
                     <Form.Item name='calculatingCoefficientSti_levelDistributionMap_name' label={'Карта распределения STI'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -534,6 +560,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -544,7 +571,7 @@ const BidPdfPage = () => {
                         </Form.Item>
                     </Form.Item>
                     <Form.Item name='calculatingCoefficientSti_levelDistributionChart_name' label={'График распределения STI'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -556,6 +583,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -569,6 +597,7 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
 
@@ -576,7 +605,7 @@ const BidPdfPage = () => {
 
                     <h4>Расчет Alcons</h4>
                     <Form.Item name='calculatingAlcons_levelDistributionMap_name' label={'Карта распределения ALCONS'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -588,6 +617,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -598,7 +628,7 @@ const BidPdfPage = () => {
                         </Form.Item>
                     </Form.Item>
                     <Form.Item name='calculatingAlcons_levelDistributionChart_name' label={'График распределения ALCONS'}>
-                        <Input placeholder={'Подпишите изображение...'}/>
+                        <Input placeholder={'Подпишите изображение...'} disabled={isFieldsDisabled}/>
                     </Form.Item>
                     <Form.Item label={null}>
                         <Form.Item
@@ -610,6 +640,7 @@ const BidPdfPage = () => {
                             <Upload.Dragger
                                 accept=".jpg,.jpeg,.png"
                                 beforeUpload={() => false}
+                                disabled={isFieldsDisabled}
                             >
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
@@ -623,6 +654,7 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
 
@@ -633,12 +665,14 @@ const BidPdfPage = () => {
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
                     <Form.Item name='conclusion_recommendations' label={'Рекомендации'}>
                         <TextArea
                             autoSize={{ minRows: 2, maxRows: 5 }}
                             style={{ width: '100%', resize: 'none' }}
+                            disabled={isFieldsDisabled}
                         />
                     </Form.Item>
 
@@ -661,7 +695,10 @@ const BidPdfPage = () => {
                         {(fields, { add, remove }) => (
                             <div>
                                 <Flex justify={'center'} style={{ marginBottom: 5 }}>
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                    <Button type="dashed"
+                                            onClick={() => add()} block icon={<PlusOutlined />}
+                                            disabled={isFieldsDisabled}
+                                    >
                                         Добавить рекомендацию
                                     </Button>
                                 </Flex>
@@ -669,16 +706,15 @@ const BidPdfPage = () => {
                                     <Flex key={key} align="flex-start" justify="space-between" gap={'middle'}>
                                         <div style={{ height: 32, padding: '5px 0' }}>{idx + 1}.</div>
                                         <Form.Item name={[name, 'recommendation-model']}>
-                                            <Input />
+                                            <Input disabled={isFieldsDisabled}/>
                                         </Form.Item>
                                         <Form.Item name={[name, 'recommendation-count']} style={{ width: '10%' }}>
-                                            <ModelInput
-                                                disabled={false}
-                                                type={'model_count'}
-                                                onChangeModel={() => {}}
-                                                error={false}
-                                                isOnlyPositive={true}
-                                                title={'Количество моделей'}
+                                            <ModelInput type={'model_count'}
+                                                        onChangeModel={() => {}}
+                                                        error={false}
+                                                        isOnlyPositive={true}
+                                                        title={'Количество моделей'}
+                                                        disabled={isFieldsDisabled}
                                             />
                                         </Form.Item>
 
@@ -687,9 +723,14 @@ const BidPdfPage = () => {
                                                       style={{ width: '100%', height: 'autosize', resize: 'none' }}
                                                       autoSize={{ minRows: 1, maxRows: 5 }}
                                                       placeholder={'Примечание...'}
+                                                      disabled={isFieldsDisabled}
                                             />
                                         </Form.Item>
-                                        <CloseOutlined style={{ height: 32 }} onClick={() => remove(name)} />
+                                        <CloseOutlined style={{ height: 32 }}
+                                                       onClick={() => {
+                                                           if (!isFieldsDisabled) remove(name)
+                                                       }}
+                                        />
                                     </Flex>
                                 ))}
                             </div>
@@ -972,6 +1013,12 @@ const BidPdfPage = () => {
     }, []);
 
     useEffect(() => {
+        if (userdataRef.current?.user) {
+            setIsEngineer([7, 8, 20].includes(userdataRef.current.user?.id_departament));
+        }
+    }, [userdataRef]);
+
+    useEffect(() => {
         const shortBidType = +bidType === 2 ? 'Счет' : 'КП';
         if (bidId) {
             document.title = `${shortBidType} PDF | ${bidId}`;
@@ -991,7 +1038,7 @@ const BidPdfPage = () => {
             .filter(tab => tab.checked && tab.value !== '6')
             .map(tab => Number(tab.value));
         return tabs.filter(tab => tab.key === 1 || activeTabKeys.includes(tab.key));
-    }, [bidSubtype, tabsProf, tabsTrans]);
+    }, [bidSubtype, tabsProf, tabsTrans, isFieldsDisabled]);
     const bidTypeLabel = +bidType === 2 ? 'Счет' : 'Коммерческое предложение';
 
     return (
@@ -1040,6 +1087,7 @@ const BidPdfPage = () => {
                                 <Button type="primary"
                                         htmlType="submit"
                                         onClick={() => setIsCreatePdf(false)}
+                                        disabled={isFieldsDisabled}
                                 >
                                     Сохранить
                                 </Button>
@@ -1061,8 +1109,9 @@ const BidPdfPage = () => {
                         <Switch
                             checkedChildren="Профессиональный звук"
                             unCheckedChildren="Трансляционный звук"
-                            value={bidSubtype}
+                            checked={bidSubtype}
                             onChange={(_) => setBidSubtype((prev) => !prev)}
+                            disabled={isFieldsDisabled}
                         />
                         <Radio.Group
                             block
@@ -1071,12 +1120,14 @@ const BidPdfPage = () => {
                             onChange={handleCurrencyChange}
                             optionType="button"
                             buttonStyle="solid"
+                            disabled={isFieldsDisabled}
                         />
                         {bidSubtype ? tabsProf.map(tab => {
                             return (
                                 <Checkbox key={`checkbox-prof-${tab.value}`}
                                           onChange={(e) => setCheckboxChecked(tab, e.target.checked)}
                                           checked={tab.checked}
+                                          disabled={isFieldsDisabled}
                                 >
                                     {tab.label}
                                 </Checkbox>
@@ -1086,11 +1137,18 @@ const BidPdfPage = () => {
                                 <Checkbox key={`checkbox-trans-${tab.value}`}
                                           onChange={(e) => setCheckboxChecked(tab, e.target.checked)}
                                           checked={tab.checked}
+                                          disabled={isFieldsDisabled}
                                 >
                                     {tab.label}
                                 </Checkbox>
                             );
                         })}
+                        <Switch checkedChildren="Инженер работает"
+                                unCheckedChildren="Призвать инженера"
+                                checked={isNeedEngineer}
+                                onChange={(_) => setIsNeedEngineer((prev) => !prev)}
+                                loading={isNeedEngineer}
+                        />
                     </div>
                 </Sider>
             </Layout>
