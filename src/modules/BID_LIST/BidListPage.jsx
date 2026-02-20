@@ -21,6 +21,8 @@ const BidListPage = (props) => {
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
+    const [isEngineer, setIsEngineer] = useState(false);
+
 	const [isAlertVisible, setIsAlertVisible] = useState(false);
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertDescription, setAlertDescription] = useState('');
@@ -293,6 +295,9 @@ const BidListPage = (props) => {
 			setUserInfo(userdata.user);
 			setActiveRole(userdata.user.sales_role);
 		}
+        if (userdata?.user) {
+            setIsEngineer([7, 8, 20].includes(userdata.user?.id_departament));
+        }
 	}, [userdata]);
     useEffect(() => {
         console.log('CONNECTED bidList', connected)
@@ -799,7 +804,7 @@ const BidListPage = (props) => {
 							<div className={'sa-header-label-container-small'}>
 								<h1 className={'sa-header-label'}>Список заявок</h1>
 								<div>
-									<CurrencyMonitorBar />
+                                    {isEngineer ? null : <CurrencyMonitorBar/>}
 								</div>
 							</div>
 							<div className={'sa-header-label-container-small'}>
@@ -871,7 +876,7 @@ const BidListPage = (props) => {
 															'Неизвестная роль'}
 													</Tag>
 												</div>
-											) : (
+											) : !isEngineer ? (
 												<div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
 													Роль:
 													<Select
@@ -886,7 +891,7 @@ const BidListPage = (props) => {
 														onChange={fetchChangeRole}
 													/>
 												</div>
-											)}
+											) : null}
 										</div>
 									)}
 								</div>
@@ -960,22 +965,18 @@ const BidListPage = (props) => {
 								</div>
 								<div></div>
 								<div className={'sa-flex-gap'}>
-									{/*<Tooltip placement="bottom" title="Я временный куратор">
-                    <Button color="default" variant={false ? "solid" : "filled"}
-                        // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
-                    >Временные</Button>
-                  </Tooltip>*/}
-									<Tooltip placement="bottom" title="Заявки созданные Вами">
-										<Button
-											color="default"
-											variant={myBids ? 'solid' : 'filled'}
-											onClick={() => {
-												setMyBids(!myBids);
-											}}
-										>
-											Мои заявки
-										</Button>
-									</Tooltip>
+                                    {isEngineer ? null :
+                                        <Tooltip placement="bottom" title="Заявки созданные Вами">
+                                        <Button
+                                            color="default"
+                                            variant={myBids ? 'solid' : 'filled'}
+                                            onClick={() => {
+                                                setMyBids(!myBids);
+                                            }}
+                                        >
+                                            Мои заявки
+                                        </Button>
+                                    </Tooltip>}
 								</div>
 							</div>
 						</div>

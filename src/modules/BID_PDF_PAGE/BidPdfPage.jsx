@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ArrowLeftOutlined, CloseOutlined, InboxOutlined, PlusOutlined} from '@ant-design/icons';
 import {
     Button,
@@ -15,7 +15,7 @@ import {
     Tag,
     Tabs,
     Tooltip,
-    Upload
+    Upload, Select
 } from 'antd';
 import './styles/bidPagePdf.css';
 import {Content} from "antd/es/layout/layout";
@@ -29,6 +29,7 @@ import ModelInput from "../BID_PAGE/components/ModelInput";
 import {useNavigate, useParams} from "react-router-dom";
 import {PDF} from "./mock/mock";
 import {useUserData} from "../../context/UserDataContext";
+import CustomModal from "../../components/helpers/modals/CustomModal";
 
 const FILE_FIELD_NAMES = [
     'structuralDiagrams',
@@ -154,10 +155,9 @@ const BidPdfPage = () => {
     const navigate = useNavigate();
 
     const { userdata } = useUserData();
-    const userdataRef = useRef();
-    userdataRef.current = userdata;
 
     const [isEngineer, setIsEngineer] = useState(false);
+    const [isNeedEngineer, setIsNeedEngineer] = useState(false);
 
     const [form] = Form.useForm();
 
@@ -168,7 +168,29 @@ const BidPdfPage = () => {
     const [bidSubtype, setBidSubtype] = useState(false);
     const [isCreatePdf, setIsCreatePdf] = useState(false);
     const [currency, setCurrency] = useState({ label: '$', value: '1' });
-    const [isNeedEngineer, setIsNeedEngineer] = useState(false);
+
+    const [isOpenCustomModal, setIsOpenCustomModal] = useState(false);
+    const [customModalTitle, setCustomModalTitle] = useState('');
+    const [customModalText, setCustomModalText] = useState('');
+    const [customModalType, setCustomModalType] = useState('');
+    const [customModalFilling, setCustomModalFilling] = useState([]);
+    const [customModalButtons, setCustomModalButtons] = useState([]);
+
+    const isNeedEngineerButtons = [
+        {
+            id: 1,
+            text: "Нет",
+            color: "default",
+            variant: "outlined"
+        },
+        {
+            id: 2,
+            text: "Да",
+            color: "purple",
+            variant: "solid"
+        },
+    ];
+
     const [featureFields, setFeatureFields] = useState([
         {
             key: 1,
@@ -231,7 +253,8 @@ const BidPdfPage = () => {
         }
         return e?.fileList;
     };
-    const isFieldsDisabled = isNeedEngineer && !isEngineer;
+    //const isFieldsDisabled = isNeedEngineer && !isEngineer;
+    const isFieldsDisabled = (isEngineer && !isNeedEngineer) || (isNeedEngineer && !isEngineer);
 
     const tabs = [
         {
@@ -771,6 +794,7 @@ const BidPdfPage = () => {
                     if (response.data) {
                         setBidType(response.data?.type ?? response.data?.bidType ?? response.data?.type_id ?? null);
                         setBidSubtype(response.data?.bidSubtype);
+                        setIsNeedEngineer(response.data?.bidIsNeedEngineer);
                         setCurrency(response.data?.currency);
                         if (response.data?.bidSubtype) {
                             setTabsProf(prev => tabsCheckedSet(prev, response));
@@ -820,6 +844,22 @@ const BidPdfPage = () => {
                 }
             }
         }, 0);
+    };
+
+    const updateIsNeedEngineer = async () => {
+        if (PRODMODE) {
+            const path = `/api/v2/sales/pdf/engineer/${bidId}`;
+            try {
+                let response = await PROD_AXIOS_INSTANCE.post(path, {
+                    data: {
+                        isNeedEngineer,
+                    },
+                    _token: CSRF_TOKEN,
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        }
     };
 
     const collectRequestData = (data) => {
@@ -1008,15 +1048,31 @@ const BidPdfPage = () => {
         }
     };
 
+    const openCustomModal = (type, title, text, filling, buttons) => {
+        setCustomModalType(type);
+        setCustomModalTitle(title);
+        setCustomModalText(text);
+        setCustomModalFilling(filling);
+        setCustomModalButtons(buttons);
+        setTimeout(() => setIsOpenCustomModal(true), 200);
+    };
+    const customClick = (button_id) => {
+        if (+button_id === 2) {
+            updateIsNeedEngineer().then();
+        } else {
+            setIsNeedEngineer(false);
+        }
+        setIsOpenCustomModal(false);
+    };
+
     useEffect(() => {
         fetchBidModels().then();
     }, []);
 
     useEffect(() => {
-        if (userdataRef.current?.user) {
-            setIsEngineer([7, 8, 20].includes(userdataRef.current.user?.id_departament));
-        }
-    }, [userdataRef]);
+        const departmentId = userdata?.user?.id_departament ?? userdata?.user?.id_dapartament;
+        setIsEngineer([7, 8, 20].includes(departmentId));
+    }, [userdata]);
 
     useEffect(() => {
         const shortBidType = +bidType === 2 ? 'Счет' : 'КП';
@@ -1040,6 +1096,7 @@ const BidPdfPage = () => {
         return tabs.filter(tab => tab.key === 1 || activeTabKeys.includes(tab.key));
     }, [bidSubtype, tabsProf, tabsTrans, isFieldsDisabled]);
     const bidTypeLabel = +bidType === 2 ? 'Счет' : 'Коммерческое предложение';
+    const backPath = isEngineer ? '/bids' : `/bids/${bidId}`;
 
     return (
         <Spin spinning={isLoading}>
@@ -1049,7 +1106,7 @@ const BidPdfPage = () => {
                         <div className={'sa-bid-pdf-header'}>
                             <Button
                                 icon={<ArrowLeftOutlined />}
-                                onClick={() => navigate(`/bids/${bidId}`)}
+                                onClick={() => navigate(backPath)}
                             >
                                 Назад
                             </Button>
@@ -1143,15 +1200,52 @@ const BidPdfPage = () => {
                                 </Checkbox>
                             );
                         })}
-                        <Switch checkedChildren="Инженер работает"
-                                unCheckedChildren="Призвать инженера"
-                                checked={isNeedEngineer}
-                                onChange={(_) => setIsNeedEngineer((prev) => !prev)}
-                                loading={isNeedEngineer}
-                        />
+                        { isEngineer ? (
+                            <Switch  checkedChildren="Инженер работает"
+                                     unCheckedChildren="Работа завершена"
+                                     checked={isNeedEngineer}
+                                     onChange={(_) => {
+                                         setIsNeedEngineer((prev) => !prev);
+                                         openCustomModal(
+                                             'updateIsNeedEngineer',
+                                             'Закончить работу инженера.',
+                                             'После завершения работы инженера, у Вас не будет возможности изменять настройки PDF-документа для этой заявки. Продолжить?',
+                                             [],
+                                             isNeedEngineerButtons
+                                         );
+                                     }}
+                                     loading={!isNeedEngineer}
+                            />
+                            ) : (
+                                <Switch  checkedChildren="Инженер работает"
+                                         unCheckedChildren="Призвать инженера"
+                                         checked={isNeedEngineer}
+                                         onChange={(_) => {
+                                             setIsNeedEngineer((prev) => !prev);
+                                             openCustomModal(
+                                                 'updateIsNeedEngineer',
+                                                 'Привлечь инженера.',
+                                                 'После передачи задачи инженеру, у Вас не будет возможности изменять настройки PDF-документа для этой заявки. Продолжить?',
+                                                 [],
+                                                 isNeedEngineerButtons
+                                             );
+                                         }}
+                                         loading={isNeedEngineer}
+                                />
+                            )
+                        }
                     </div>
                 </Sider>
             </Layout>
+            <CustomModal
+                customClick={customClick}
+                customType={customModalType}
+                customText={customModalText}
+                customTitle={customModalTitle}
+                customFilling={customModalFilling}
+                customButtons={customModalButtons}
+                open={isOpenCustomModal}
+            />
         </Spin>
     );
 };

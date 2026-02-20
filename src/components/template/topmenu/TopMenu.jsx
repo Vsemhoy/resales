@@ -214,11 +214,9 @@ const TopMenu = (props) => {
 						</NavLink>
 					)}
 
-					{[2, 3].includes(topRole) && (
-						<NavLink to="/bids">
-							<div className={'sa-topmenu-button'}>Заявки</div>
-						</NavLink>
-					)}
+                    <NavLink to="/bids">
+                        <div className={'sa-topmenu-button'}>Заявки</div>
+                    </NavLink>
 
 					{[2, 3].includes(topRole) && (
 						<NavLink to="/price">
