@@ -32,6 +32,7 @@ const { getCurrentParamsString } = useURLParams();
 	const [data, setData] = useState(props.data);
 	const [acls, setAcls] = useState(null);
 	const [menuItems, setMenuItems] = useState([]);
+    const [isEngineer, setIsEngineer] = useState(true);
 
 	// Название компании в поиске
 	const [filterName, setFilterName] = useState(null);
@@ -57,6 +58,9 @@ const { getCurrentParamsString } = useURLParams();
 		if (props.userdata && props?.userdata?.acls) {
 			setAcls(props?.userdata?.acls);
 		}
+        if (props.userdata && props.userdata?.user) {
+            setIsEngineer([7, 8, 20].includes(props.userdata.user?.id_departament));
+        }
 	}, [props.userdata]);
 	useEffect(() => {
 		if (acls && acls.length > 0) {
@@ -135,7 +139,7 @@ const { getCurrentParamsString } = useURLParams();
 	const handleDoubleClick = () => {
 		if (props.on_double_click) {
 			props.on_double_click(data);
-			window.open(`${BASE_ROUTE}/bids/${data.id}`, '_blank');
+			window.open(`${BASE_ROUTE}/${isEngineer ? 'bidsPDF' : 'bids'}/${data.id}`, '_blank');
 		}
 	};
 
@@ -163,14 +167,14 @@ const { getCurrentParamsString } = useURLParams();
 						//style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
 					>
 						<div>
-							<NavLink to={`/bids/${data.id}`} target={'_blank'}>
+							<NavLink to={`/${isEngineer ? 'bidsPDF' : 'bids'}/${data.id}`} target={'_blank'}>
 								{data.id}
 							</NavLink>
 						</div>
 					</div>
 					<div className={'sa-table-box-cell'}>
 						<div className={'text-align-left'}>
-							<NavLink to={`/bids/${data.id}`} target={'_blank'}>
+							<NavLink to={`/${isEngineer ? 'bidsPDF' : 'bids'}/${data.id}`} target={'_blank'}>
 								<HighlightText text={data.company_name} highlight={filterName}/>
 							</NavLink>
 						</div>
