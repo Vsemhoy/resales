@@ -304,98 +304,147 @@ const Price = (props) => {
 			};
 		});
 	};
-	const handleExport = () => {
-		if (checkedKeys.length === 0) {
-			setIsAlertVisible(true);
-			setAlertMessage('Внимание!');
-			setAlertDescription('Выберите хотя бы один элемент для экспорта');
-			setAlertType('warning');
-			return;
-		}
 
-		// Функция для поиска моделей по ключам в исходных данных
-		const findModelsByKeys = (nodes, keys) => {
-			let models = [];
-			nodes.forEach((node) => {
-				if (node.isLeaf && keys.includes(node.key)) {
-					models.push(node.dataRef);
-				}
-				if (node.children) {
-					models = models.concat(findModelsByKeys(node.children, keys));
-				}
-			});
-			return models;
-		};
+    const handleExport = async () => {
+        if (checkedKeys.length === 0) {
+            setIsAlertVisible(true);
+            setAlertMessage('Внимание!');
+            setAlertDescription('Выберите хотя бы один элемент для экспорта');
+            setAlertType('warning');
+            return;
+        }
 
-		const selectedModels = findModelsByKeys(treeData, checkedKeys);
+        const checkedModelIds = checkedKeys
+            .filter(key => key.includes('model'))
+            .map(key => parseInt(key.split('-').pop()));
 
-		if (selectedModels.length === 0) {
-			setIsAlertVisible(true);
-			setAlertMessage('Внимание!');
-			setAlertDescription('Выбранные элементы не содержат моделей для экспорта');
-			setAlertType('warning');
-			return;
-		}
+        const buildSections = (nodes, depth = 0) => {
+            let sections = [];
 
-		// Формируем данные для Excel
-		const rows = selectedModels.map((m) => {
-			// Начинаем с базового объекта
-			const obj = {
-				'ID': m.id,
-				'Название': m.name,
-				'Описание': m.descr,
-			};
+            nodes.forEach((node) => {
+                const hasSelectedModels = (n) => {
+                    if (n.models?.some(m => checkedModelIds.includes(m.id))) return true;
+                    return n.childs?.some(child => hasSelectedModels(child));
+                };
 
-			// Функция для удобного добавления свойства, если оно есть в checkedList
-			const addIfChecked = (key, value) => {
-				if (checkedList && checkedList.find((c) => c.name === key)?.checked) {
-					obj[key] = value;
-				}
-			};
+                if (!hasSelectedModels(node)) return;
 
-			// Добавляем свойства с проверкой
-			addIfChecked(
-				'РРЦ',
-				`${
-					currentCurrency ? (m.prices.bo_price_40_rub / 100).toFixed(2) : (m.prices.bo_price_40 / 100).toFixed(2)
-				} ${getCurrencySymbol(m.currency)}`
-			);
-			addIfChecked(
-				'Розница',
-				`${
-					currentCurrency ? (m.prices.bo_price_0_rub / 100).toFixed(2) : (m.prices.bo_price_0 / 100).toFixed(2)
-				} ${getCurrencySymbol(m.currency)}`
-			);
-			addIfChecked(
-				'Прайс 10',
-				`${
-					currentCurrency ? (m.prices.bo_price_10_rub / 100).toFixed(2) : (m.prices.bo_price_10 / 100).toFixed(2)
-				} ${getCurrencySymbol(m.currency)}`
-			);
-			addIfChecked(
-				'Прайс 20',
-				`${
-					currentCurrency ? (m.prices.bo_price_20_rub / 100).toFixed(2) : (m.prices.bo_price_20 / 100).toFixed(2)
-				} ${getCurrencySymbol(m.currency)}`
-			);
-			addIfChecked(
-				'Прайс 30',
-				`${
-					currentCurrency ? (m.prices.bo_price_30_rub / 100).toFixed(2) : (m.prices.bo_price_30 / 100).toFixed(2)
-				} ${getCurrencySymbol(m.currency)}`
-			);
+                const selectedModels = node.models?.filter(m => checkedModelIds.includes(m.id)) || [];
 
-			return obj;
-		});
+                if (selectedModels.length > 0) {
+                    sections.push({ categoryName: node.name, depth, models: selectedModels });
+                } else {
+                    sections.push({ categoryName: node.name, depth, models: [] });
+                }
 
-		const ws = XLSX.utils.json_to_sheet(rows);
-		const wb = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(wb, ws, 'Прайс');
-		XLSX.writeFile(
-			wb,
-			`${dayjs().format('DD.MM.YYYY')}. Прайс_лист. ${currentCurrency ? 'Рубли' : 'Валюта'}.xlsx`
-		);
-	};
+                if (node.childs?.length > 0) {
+                    sections = sections.concat(buildSections(node.childs, depth + 1));
+                }
+            });
+
+            return sections;
+        };
+
+        const sections = buildSections(PRICE.childs);
+
+        if (!sections.some(s => s.models.length > 0)) {
+            setIsAlertVisible(true);
+            setAlertMessage('Внимание!');
+            setAlertDescription('Выбранные элементы не содержат моделей для экспорта');
+            setAlertType('warning');
+            return;
+        }
+
+        const firstModel = sections.find(s => s.models.length > 0)?.models[0];
+        const currencySymbol = firstModel ? getCurrencySymbol(firstModel.currency) : '';
+
+        const checkCol = (key) => checkedList?.find(c => c.name === key)?.checked;
+
+        const extraColumns = [];
+        if (checkCol('РРЦ'))      extraColumns.push(`РРЦ, ${currencySymbol}`);
+        if (checkCol('Розница'))  extraColumns.push(`Розница, ${currencySymbol}`);
+        if (checkCol('Прайс 10')) extraColumns.push(`Прайс 10, ${currencySymbol}`);
+        if (checkCol('Прайс 20')) extraColumns.push(`Прайс 20, ${currencySymbol}`);
+        if (checkCol('Прайс 30')) extraColumns.push(`Прайс 30, ${currencySymbol}`);
+
+        const allColumns = ['Название', 'Описание', ...extraColumns];
+        const totalCols = allColumns.length;
+
+        const ExcelJS = (await import('exceljs')).default;
+        const wb = new ExcelJS.Workbook();
+        const ws = wb.addWorksheet('Прайс');
+
+        const borderStyle = {
+            top:    { style: 'thin', color: { argb: 'FF000000' } },
+            left:   { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right:  { style: 'thin', color: { argb: 'FF000000' } },
+        };
+
+        // Заголовок
+        const headerRow = ws.addRow(allColumns);
+        headerRow.eachCell(cell => {
+            cell.font = { bold: true, size: 13 };
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9D9D9' } };
+            cell.border = borderStyle;
+        });
+
+        // Цвета для уровней категорий
+        const categoryColors = ['FF4472C4', 'FF70AD47', 'FFFFC000'];
+
+        sections.forEach(({ categoryName, depth, models }) => {
+            const catRow = ws.addRow([categoryName]);
+            ws.mergeCells(catRow.number, 1, catRow.number, totalCols);
+            const catCell = catRow.getCell(1);
+            catCell.font = { bold: true, size: 13, color: { argb: 'FFFFFFFF' } };
+            catCell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: categoryColors[depth % categoryColors.length] }
+            };
+            catCell.alignment = { indent: depth * 2 };
+            catCell.border = borderStyle;
+
+            models.forEach((m) => {
+                const getPrice = (rub, val) =>
+                    ((currentCurrency ? rub : val) / 100).toFixed(2);
+
+                const rowData = [m.name, m.descr];
+                if (checkCol('РРЦ'))      rowData.push(getPrice(m.prices.bo_price_40_rub, m.prices.bo_price_40));
+                if (checkCol('Розница'))  rowData.push(getPrice(m.prices.bo_price_0_rub,  m.prices.bo_price_0));
+                if (checkCol('Прайс 10')) rowData.push(getPrice(m.prices.bo_price_10_rub, m.prices.bo_price_10));
+                if (checkCol('Прайс 20')) rowData.push(getPrice(m.prices.bo_price_20_rub, m.prices.bo_price_20));
+                if (checkCol('Прайс 30')) rowData.push(getPrice(m.prices.bo_price_30_rub, m.prices.bo_price_30));
+
+                const modelRow = ws.addRow(rowData);
+                modelRow.font = { size: 12 };
+                modelRow.eachCell(cell => {
+                    cell.border = borderStyle;
+                });
+            });
+        });
+
+        // Автоширина колонок
+        ws.columns.forEach((col, i) => {
+            let maxLen = allColumns[i]?.length || 10;
+            col.eachCell(cell => {
+                const val = cell.value?.toString() || '';
+                if (val.length > maxLen) maxLen = val.length;
+            });
+            // Колонка "Описание" (индекс 1) — в два раза шире
+            const width = Math.min(maxLen + 2, 60);
+            col.width = i === 1 ? width * 2 : width;
+        });
+
+        const buffer = await wb.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${dayjs().format('DD.MM.YYYY')}. Прайс_лист. ${currentCurrency ? 'Рубли' : 'Валюта'}.xlsx`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
 
 	return (
 		<Spin tip="Загрузка прайс-листа..." spinning={loading}>
