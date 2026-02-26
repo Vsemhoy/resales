@@ -622,7 +622,7 @@ export const BID_INFO = {
             "percent": 0,
             "sklad": null
         },
-        {
+        /*{
             "id": 978344,
             "model_id": 19,
             "model_count": 1,
@@ -643,7 +643,7 @@ export const BID_INFO = {
             "presence": -2,
             "percent": 0,
             "sklad": 0
-        }
+        }*/
     ],
     /*"openmode": {
         "status": 1,

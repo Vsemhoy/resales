@@ -75,7 +75,7 @@
 }
 
 .sa-back {
-	background: #b4cbe4;
+    background: var(--app-background);
 }
 
 .sa-pa-12-24 {

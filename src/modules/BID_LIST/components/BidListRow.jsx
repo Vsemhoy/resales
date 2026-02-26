@@ -6,7 +6,7 @@ import {
 	LinkIcon,
 	NewspaperIcon,
 } from '@heroicons/react/24/outline';
-import { Dropdown, Menu, Tag, Tooltip } from 'antd';
+import {Button, Dropdown, Menu, Space, Tag, Tooltip} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
@@ -233,10 +233,14 @@ const { getCurrentParamsString } = useURLParams();
 								title={<PositionList bidId={data.id} fetch_path={'/sales/data/getbidmodels'}
 													 error_alert={props.error_alert}/>}
 								color="white"
+								getPopupContainer={() => document.body}
 								styles={{
 									body: {
 										color: 'black',
 										border: '1px solid #d9d9d9',
+										maxHeight: 'calc(100vh - 32px)',
+										overflowY: 'auto',
+										overflowX: 'hidden',
 									},
 									root: {
 										maxWidth: '400px'
@@ -254,18 +258,18 @@ const { getCurrentParamsString } = useURLParams();
 								title={<PositionList bidId={data.id} fetch_path={'/api/sales/doclist'}
 													 error_alert={props.error_alert}/>}
 								color="white"
-								style={{
-									maxWidth: '300px',
-									overflow: 'hidden',
-									wordWrap: 'break-word',
-								}}
+								getPopupContainer={() => document.body}
 								styles={{
 									body: {
 										color: 'black',
 										border: '1px solid #d9d9d9',
+										maxHeight: 'calc(100vh - 32px)',
+										overflowY: 'auto',
+										overflowX: 'hidden',
 									},
 									root: {
-										maxWidth: '400px'
+										maxWidth: '400px',
+										wordWrap: 'break-word',
 									}
 								}}
 							>
@@ -274,11 +278,13 @@ const { getCurrentParamsString } = useURLParams();
 						</div>
 					</div>
 					<div className="sa-table-box-cell">
-						{data.contact_user && (
-							<Tooltip title={data.contact_user}>
-								<UserOutlined/>
-							</Tooltip>
-						)}
+                        <div>
+                            {data.contact_user && (
+                                <Tooltip title={data.contact_user}>
+                                    <UserOutlined/>
+                                </Tooltip>
+                            )}
+                        </div>
 					</div>
 				</div>
 			</Tooltip>
