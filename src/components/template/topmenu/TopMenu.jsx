@@ -246,22 +246,25 @@ const TopMenu = (props) => {
 				</div>
 
 				<div className={'sa-topmenu-userbox'}>
-					<Button
-						type='text'
-						onClick={()=>{window.open('/resales/calendar')}}
-					>
-						<CalendarOutlined style={{color: '#ffbf00'}}/>
-					</Button>
+                    <div style={{ padding: '6px 12px' }}>
+                        <Button color={'geekblue'}
+                                variant={'solid'}
+                                onClick={()=>{setopenBugModal(!openBugModal)}}
+                        >
+                            <BugAntIcon height={'16px'}/>
+                            {+bugMultiCounter[0] > 0 && (
+                                <span className={'notification-badge'}>{bugMultiCounter[0]}</span>
+                            )}
+                        </Button>
+                    </div>
 
+                    <Button color={'primary'}
+                            variant={'solid'}
+                            onClick={()=>{window.open('/resales/calendar')}}
+                    >
+                        <CalendarOutlined height={'16px'} />
+                    </Button>
 
-					 <Badge count={+bugMultiCounter[0]}  color="#fa9614da" size='small' offset={[-6, 6]}>
-						 <Button
-							type='text'
-							onClick={()=>{setopenBugModal(!openBugModal)}}
-							>
-							<BugAntIcon height={'28px'} style={{color: '#ffbf00'}}/>
-						</Button>
-				 	</Badge>
                     <Chat userdata={userdata}
                           httpParams={{
                               HTTP_HOST: HTTP_HOST,

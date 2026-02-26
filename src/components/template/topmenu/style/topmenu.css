@@ -44,3 +44,13 @@
 div.sa-topmenu-button {
 	margin: auto 0;
 }
+
+.notification-badge {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.gold {
+    background-color: #ffbf00 !important;
+    color: white !important
+}
