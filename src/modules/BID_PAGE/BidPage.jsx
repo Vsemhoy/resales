@@ -71,6 +71,7 @@ const BidPage = (props) => {
 	const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
 	const [isSavingInfo, setIsSavingInfo] = useState(false);
 	const [isAlertVisible, setIsAlertVisible] = useState(false);
+	const [draggedModelIndex, setDraggedModelIndex] = useState(null);
 
 	const [lastUpdModel, setLastUpdModel] = useState(null);
 	const [isUpdateAll, setIsUpdateAll] = useState(false);
@@ -1072,7 +1073,7 @@ const BidPage = (props) => {
 	const handleAddModel = () => {
 	  let sort = 0;
 	  if (bidModels && bidModels.length > 0) {
-		  const lastModel = bidModels.sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
+		  const lastModel = [...bidModels].sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
 		  sort = lastModel.sort + 1;
 	  }
 	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
@@ -1181,6 +1182,25 @@ const BidPage = (props) => {
 			  setBidModels(bidModelsUpd);
 			  break;
 	  }
+	};
+	const handleModelsRowDragStart = (index) => {
+		if (isDisabledInputManager()) return;
+		setDraggedModelIndex(index);
+	};
+	const handleModelsRowDrop = (dropIndex) => {
+		if (isDisabledInputManager()) return;
+		if (draggedModelIndex === null || draggedModelIndex === dropIndex) return;
+		const reordered = [...sortedBidModels];
+		const [moved] = reordered.splice(draggedModelIndex, 1);
+		reordered.splice(dropIndex, 0, moved);
+		setBidModels(reordered.map((model, idx) => ({
+			...model,
+			sort: idx + 1,
+		})));
+		setDraggedModelIndex(null);
+	};
+	const handleModelsRowDragEnd = () => {
+		setDraggedModelIndex(null);
 	};
 	const handleOpenModelInfoExtra = (modelId) => {
 		setModelIdExtra(modelId);
@@ -1848,6 +1868,10 @@ const BidPage = (props) => {
 
         return () => clearTimeout(timer);
     };
+	const sortedBidModels = React.useMemo(() => {
+		if (!bidModels || bidModels.length === 0) return [];
+		return [...bidModels].sort((a, b) => +a.sort - +b.sort);
+	}, [bidModels]);
 
 	return (
 		<div className={'sa-bid-page-container'}>
@@ -2362,11 +2386,16 @@ const BidPage = (props) => {
 							)}
 							{userData?.user?.sales_role === 1 ? (
 								<div className={'sa-models-table'}>
-									{(bidModels && bidModels.length > 0) ?
-										bidModels.sort((a, b) => +a.sort - +b.sort).map((bidModel, idx) => (
+									{(sortedBidModels && sortedBidModels.length > 0) ?
+										sortedBidModels.map((bidModel, idx) => (
 											<div
 												className={'sa-models-table-row'}
 												key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
+												draggable={!isDisabledInputManager()}
+												onDragStart={() => handleModelsRowDragStart(idx)}
+												onDragOver={(e) => e.preventDefault()}
+												onDrop={() => handleModelsRowDrop(idx)}
+												onDragEnd={handleModelsRowDragEnd}
 											>
 												<div className={'sa-models-table-cell'}>
 													<p>{idx + 1}</p>
@@ -2456,11 +2485,16 @@ const BidPage = (props) => {
 								</div>
 							) : (
 								<div className={'sa-models-table'}>
-									{(bidModels && bidModels.length > 0) ?
-										bidModels.sort((a, b) => +a.sort - +b.sort).map((bidModel, idx) => (
+									{(sortedBidModels && sortedBidModels.length > 0) ?
+										sortedBidModels.map((bidModel, idx) => (
 											<div
-												className={`sa-models-table-row-two ${Math.random()}`}
-												key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}-${Math.random()}`}
+												className={'sa-models-table-row-two'}
+												key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
+												draggable={!isDisabledInputManager()}
+												onDragStart={() => handleModelsRowDragStart(idx)}
+												onDragOver={(e) => e.preventDefault()}
+												onDrop={() => handleModelsRowDrop(idx)}
+												onDragEnd={handleModelsRowDragEnd}
 											>
 												<div className={'sa-models-table-cell'}>
 													<p>{idx + 1}</p>
