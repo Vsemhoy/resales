@@ -651,18 +651,18 @@ export const BID_INFO = {
         "tagtext": "Просмотр",
         "color": "volcano"
     },*/
-	/*openmode: {
+	openmode: {
 		status: 2,
 		description: 'Режим редактирования',
 		tagtext: 'Редактирование',
 		color: 'green',
-	},*/
-	"openmode": {
+	},
+	/*"openmode": {
         "status": 3,
         "description": "Редактирование от администратора",
         "tagtext": "Разрешено",
         "color": "green"
-    },
+    },*/
 	/*"openmode": {
         "status": 4,
         "description": "Редактирование от бухгалтера",
@@ -1514,7 +1514,6 @@ export const PROJECT_INFO = {
 		name: 'Текущий',
 	},
 };
-
 export const SIMILAR_BIDS = {
 	"count_all": 3004,
 	"bids": [
@@ -2104,4 +2103,4 @@ export const SIMILAR_BIDS = {
             ]
         },
 	]
-}
+};
