@@ -840,7 +840,7 @@ const BidListPage = (props) => {
 									</Space.Compact>
 									<Tag
 										style={{
-											width: '160px',
+											/*width: '160px',*/
 											height: '32px',
 											lineHeight: '27px',
 											textAlign: 'center',
@@ -928,7 +928,7 @@ const BidListPage = (props) => {
 
 				<Content>
 					<Affix offsetTop={106}>
-						<div className={'sa-pagination-panel sa-pa-12-24 sa-back'}>
+						<div className={'sa-pagination-panel sa-pa-12 sa-back'}>
 							<div className={'sa-flex-space'}>
 								<div className={'sa-flex-gap'}>
 									{fromId && (

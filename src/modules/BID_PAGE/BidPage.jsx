@@ -1216,25 +1216,22 @@ const BidPage = (props) => {
 
         if (!dataToAdd || !dataToAdd.length) return;
 
-        // 🔁 Агрегируем dataToAdd: объединяем модели с одинаковым id, суммируя count
         const aggregatedData = dataToAdd.reduce((acc, item) => {
             const existing = acc.find(x => x.id === item.id);
             if (existing) {
-                existing.count += item.count; // суммируем количество
+                existing.count += item.count;
             } else {
-                acc.push({ ...item }); // глубокая копия, чтобы не мутировать оригинал
+                acc.push({ ...item });
             }
             return acc;
         }, []);
 
         let sort = 0;
         if (bidModels && bidModels.length > 0) {
-            // ✅ Безопасная сортировка: не мутировать оригинальный массив!
             const sorted = [...bidModels].sort((a, b) => a.sort - b.sort);
             sort = sorted[sorted.length - 1].sort;
         }
 
-        // ✅ Используем aggregatedData вместо dataToAdd
         const arr = aggregatedData
             .filter(newModel =>
                 modelsSelect.some(model => !model.used && model.id === newModel.id)
@@ -1246,18 +1243,18 @@ const BidPage = (props) => {
                     bid_id: bidId,
                     model_id: model.id,
                     model_name: model.name,
-                    model_count: newModel.count, // ← уже суммированное значение
+                    model_count: newModel.count,
                     not_available: 0,
                     percent: 0,
                     presence: -2,
-                    sort: sort + idx + 1, // ← +1, если sort — последний номер, а не индекс (часто sort начинается с 1)
+                    sort: sort + idx + 1,
                     type_model: model.type_model,
                     currency: model.currency,
                 };
             });
 
-        // ✅ Без JSON.parse(JSON.stringify(...)) — используем spread для поверхностной копии (если объекты plain)
-        setBidModels(prev => [...prev, ...arr]);
+        //setBidModels(prev => [...prev, ...arr]);
+        setBidModels(arr);
         isNeedCalcModelsTimerSetter(true);
         setIsParseModalOpen(false);
     };

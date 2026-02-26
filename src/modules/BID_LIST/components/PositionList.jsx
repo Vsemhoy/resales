@@ -1,21 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
-import { Button, Table } from 'antd';
+import { useEffect, useState } from 'react';
+import { Button, Tag } from 'antd';
 import style from './style/main.module.css';
 
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
-import { DownloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx-community';
+import {GET_BID_FILES, GET_BID_MODELS} from "../mock/mock";
+
+import { Space } from 'antd';
 
 const PositionList = ({ bidId, fetch_path, error_alert }) => {
 	const [tableHeader, setTableHeader] = useState('');
-	const [tableColumns, setTableColumns] = useState([]);
 	const [positions, setPositions] = useState(null);
 	const [files, setFiles] = useState(null);
-	const [comment, setComment] = useState(null);
 	const [load, setLoad] = useState(true);
-	const ref1 = useRef(null);
 
 	useEffect(() => {
 		fetchModelsReq().then();
@@ -35,88 +34,13 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 				const models_response = await PROD_AXIOS_INSTANCE.post(path, format_data);
 				if (models_response && models_response.data.data.models) {
 					setPositions(models_response.data.data.models);
-					setComment(models_response.data.data.bid_comment);
 					setTableHeader('СПЕЦИФИКАЦИЯ');
-					setTableColumns([
-						{
-							title: '',
-							dataIndex: 'id',
-							key: 'id',
-						},
-						{
-							title: 'Наименование',
-							dataIndex: 'model_name',
-							key: 'model_name',
-						},
-						{
-							title: 'Количество',
-							dataIndex: 'model_count',
-							key: 'model_count',
-						},
-					]);
 				} else if (models_response && models_response.data.data.files) {
 					setFiles(models_response.data.data.files);
 					setTableHeader('ФАЙЛЫ');
-					setTableColumns([
-						{
-							title: 'Наименование',
-							dataIndex: 'name_file',
-							key: 'name_file',
-						},
-						{
-							title: 'Дата',
-							dataIndex: 'created_at',
-							key: 'created_at',
-							render: (created_at) => {
-								if (!created_at) return '-';
-								return dayjs(created_at * 1000).format('DD.MM.YYYY HH:mm:ss');
-							},
-						},
-						{
-							title: 'Скачать',
-							key: 'download',
-							render: (_, record) => (
-								<Button
-									type="link"
-									icon={<DownloadOutlined />}
-									onClick={() => handleDownload(record)}
-									size="small"
-								></Button>
-							),
-						},
-					]);
 				} else if (models_response && models_response.data.content.files) {
-					console.log(models_response.data.content.files);
 					setFiles(models_response.data.content.files);
 					setTableHeader('ФАЙЛЫ');
-					setTableColumns([
-						{
-							title: 'Наименование',
-							dataIndex: 'name_file',
-							key: 'name_file',
-						},
-						{
-							title: 'Дата',
-							dataIndex: 'created_at',
-							key: 'created_at',
-							render: (created_at) => {
-								if (!created_at) return '-';
-								return dayjs(created_at * 1000).format('DD.MM.YYYY HH:mm:ss');
-							},
-						},
-						{
-							title: 'Скачать',
-							key: 'download',
-							render: (_, record) => (
-								<Button
-									type="link"
-									icon={<DownloadOutlined />}
-									onClick={() => handleDownload(record)}
-									size="small"
-								></Button>
-							),
-						},
-					]);
 				}
 				setLoad(false);
 			} catch (e) {
@@ -124,46 +48,54 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 				error_alert(path, e);
 				setLoad(false);
 			}
-		}
-	};
-
-	const handleDownload = async (file) => {
-		console.log(file);
-		let data = {};
-		if (file.type === 1) {
-			data = {
-				template_id: file.template_id,
-				id: file.id,
-				bid_id: bidId,
-				type: file.type,
-				new: false,
-			};
 		} else {
-			data = {
-				template_id: file.template_id,
-				id: file.id,
-				bid_id: bidId,
-				type: file.type,
-				new: false,
-			};
-		}
-		if (PRODMODE) {
-			const path = `/api/sales/makedoc`;
-			try {
-				const format_data = {
-					_token: CSRF_TOKEN,
-					data,
-				};
-				const file_response = await PROD_AXIOS_INSTANCE.post(path, format_data);
-				const parts = file_response.data.data.file_link.split('/');
-				const withSlash = '/' + parts.slice(1).join('/');
-				window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
-			} catch (e) {
-				console.log(e);
-				error_alert(path, e);
-			}
-		}
+            if (fetch_path) {
+                setLoad(true);
+                //setPositions(GET_BID_MODELS.models);
+                //setTableHeader('СПЕЦИФИКАЦИЯ');
+                setFiles(GET_BID_FILES.files);
+                setTableHeader('ФАЙЛЫ');
+                setLoad(false);
+            }
+        }
 	};
+    const handleDownload = async (file) => {
+        console.log(file);
+        let data = {};
+        if (file.type === 1) {
+            data = {
+                template_id: file.template_id,
+                id: file.id,
+                bid_id: bidId,
+                type: file.type,
+                new: false,
+            };
+        } else {
+            data = {
+                template_id: file.template_id,
+                id: file.id,
+                bid_id: bidId,
+                type: file.type,
+                new: false,
+            };
+        }
+        if (PRODMODE) {
+            const path = `/api/sales/makedoc`;
+            try {
+                const format_data = {
+                    _token: CSRF_TOKEN,
+                    data,
+                };
+                const file_response = await PROD_AXIOS_INSTANCE.post(path, format_data);
+                const parts = file_response.data.data.file_link.split('/');
+                const withSlash = '/' + parts.slice(1).join('/');
+                window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
+            } catch (e) {
+                console.log(e);
+                error_alert(path, e);
+            }
+        }
+    };
 	const handleExport = () => {
 		console.log(positions);
 		const rows = positions.map((m) => {
@@ -186,14 +118,24 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 	return (
 		<div>
 			<div className={style.add__header}>{tableHeader}</div>
-			<div ref={ref1}>
-				<Table
-					dataSource={positions ? positions : files}
-					columns={tableColumns}
-					pagination={false}
-					size={'small'}
-					loading={load}
-				/>
+			<div className={style.tags__container}>
+				{load && <div>Загрузка...</div>}
+				{!load && positions && positions.map((item, idx) => (
+                    <div key={`pos-${bidId}-${item.id || item.model_id || idx}`}>
+                        <Space.Compact block>
+                            <Button size={'small'} color={'default'} variant={'filled'}>{item.model_name}</Button>
+                            <Button size={'small'} color={'primary'} variant={'filled'}>{item.model_count}</Button>
+                        </Space.Compact>
+                    </div>
+				))}
+				{!load && !positions && files && files.map((item, idx) => (
+                    <div key={`file-${bidId}-${item.id || idx}`} onClick={() => handleDownload(item)}>
+                        <Space.Compact block>
+                            <Button size={'small'} color={'primary'} variant={'filled'}>{item.name_file.split('.')[item.name_file.split('.').length - 1]}</Button>
+                            <Button size={'small'} color={'default'} variant={'filled'}>{`${dayjs(item.created_at * 1000).format('DD.MM.YYYY HH:mm')}`}</Button>
+                        </Space.Compact>
+                    </div>
+				))}
 			</div>
 			{positions && (
 				<div className={style.add__btn}>

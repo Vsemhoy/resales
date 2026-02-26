@@ -1155,3 +1155,174 @@ export const FILTERS = {
 		},
 	]
 };
+
+export const GET_BID_MODELS = {
+    "models": [
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+        {
+            "model_count": 4,
+            "model_id": 111,
+            "price": "0",
+            "percent": 0,
+            "model_name": "SWS-03 ( i )"
+        },
+        {
+            "model_count": 1,
+            "model_id": 222,
+            "price": "0",
+            "percent": 0,
+            "model_name": "EOL-20"
+        },
+    ],
+    "bid_comment": ""
+};
+export const GET_BID_FILES = {
+    "files": [
+        {
+            "id": 187,
+            "name_file": "Коммерческое предложение для Современные торговые технологии.docx",
+            "type": 1,
+            "template_id": 1,
+            "created_at": 1768291062
+        },
+        {
+            "id": 186,
+            "name_file": "Коммерческое предложение для Современные торговые технологии.docx",
+            "type": 1,
+            "template_id": 1,
+            "created_at": 1765358215
+        },
+        {
+            "id": 185,
+            "name_file": "Коммерческое предложение для Современные торговые технологии.docx",
+            "type": 1,
+            "template_id": 1,
+            "created_at": 1764943423
+        }
+    ]
+};

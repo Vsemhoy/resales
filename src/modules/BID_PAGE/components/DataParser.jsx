@@ -29,16 +29,6 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
     };
 
     // Создаем быстрый поиск моделей
-    /*useEffect(() => {
-        if (models && models.length > 0) {
-            const map = {};
-            models.forEach(model => {
-                const modelNameSeo = model.name?.toLowerCase().replace(/\s/g, "");
-                map[modelNameSeo] = model.id;
-            });
-            setHashModels(map);
-        }
-    }, [models]);*/
     useEffect(() => {
         if (models && models.length > 0) {
             const map = {};
@@ -54,30 +44,6 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
     }, [models]);
 
     // Поиск модели по названию
-    /*const getModelName = (name) => {
-        if (!models || models.length === 0) return null;
-
-        if (!isNaN(name) && name !== '') {
-            return null;
-        }
-
-        name = name.toString().trim();
-        if (name.length <= 1) return null;
-
-        let nameLower = name.toLowerCase().replace(/\s/g, "");
-        let trname = nameLower;
-
-        Object.entries(replace_alphabet).forEach(([cyrillic, latin]) => {
-            trname = trname.replace(new RegExp(cyrillic, "ig"), latin);
-        });
-
-        if (hashModels[nameLower]) {
-            const id = hashModels[nameLower];
-            return models.find(m => m.id === id) ?? null;
-        }
-
-        return null;
-    };*/
     const getModelName = (name) => {
         if (!models || models.length === 0) return null;
 
@@ -105,12 +71,10 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
     };
 
     function generateUUID() {
-        // Проверяем поддержку
         if (typeof crypto !== 'undefined' && crypto.randomUUID) {
             return crypto.randomUUID();
         }
 
-        // Fallback: кастомная реализация UUID v4 (RFC 4122)
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
             const r = Math.random() * 16 | 0;
             const v = c === 'x' ? r : (r & 0x3 | 0x8);
@@ -128,7 +92,7 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
 
         const mod = {
             errorname: true,
-            key: generateUUID(), // вместо crypto.randomUUID()
+            key: generateUUID(),
             num: index + 1,
             name: "",
             count: 1,
@@ -169,7 +133,6 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
 
         const lines = val.split("\n");
 
-        // ВАЖНО: передаем index вручную
         const parsed = lines
             .map((line, index) => findModel(line, index))
             .filter(Boolean);
