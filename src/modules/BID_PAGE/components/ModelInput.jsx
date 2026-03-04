@@ -77,7 +77,7 @@ const ModelInput = (props) => {
                    handleChange(e.target.value);
                    // props.onChange(e.target.value);
                }}
-               onBlur={(e) => handleBlur(e.target.value)}
+               /*onBlur={(e) => handleBlur(e.target.value)}*/
                disabled={props?.disabled}
                danger={props?.danger}
                status={props?.error ? 'error' : ''}
