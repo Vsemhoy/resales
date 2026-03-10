@@ -120,9 +120,9 @@ const OrgListPage = (props) => {
         });
     }));
     useWebSocketSubscription('REFRESH_PAGE', () => get_orglist_async());
-    useWebSocketSubscription('UPDATE_ORG', ({ org_id }) => {
+useWebSocketSubscription('UPDATE_ORG', ({ org_id }) => {
         if (orgList.find(org => +org.id === +org_id)) {
-            get_orglist_async().then();
+            get_orglist_async(currentPage, onPage).then();
         }
     });
 
@@ -333,7 +333,7 @@ const OrgListPage = (props) => {
 	 * @param {*} req
 	 * @param {*} res
 	 */
-	const get_orglist_async = async () => {
+const get_orglist_async = async (overridePage = null, overrideOnPage = null) => {
 		if (PRODMODE) {
 			setShowLoader(true);
 			let sortBox =
@@ -388,8 +388,8 @@ const OrgListPage = (props) => {
 							filterBox.updated_before ? parseInt(filterBox.updated_before) * 1000 : null,
 							filterBox.updated_until ? parseInt(filterBox.updated_until) * 1000 : null,
 						],
-						page: currentPage,
-						limit: onPage,
+						page: overridePage !== null ? overridePage : currentPage,
+						limit: overrideOnPage !== null ? overrideOnPage : onPage,
 						inn: filterBox.inn,
 					},
 					_token: CSRF_TOKEN,
@@ -398,7 +398,7 @@ const OrgListPage = (props) => {
 				setOrgList(response.data.org_list);
 				setTotal(response.data.total_count);
 
-				let max = onPage * currentPage - (onPage - 1);
+				let max = (overrideOnPage !== null ? overrideOnPage : onPage) * (overridePage !== null ? overridePage : currentPage) - ((overrideOnPage !== null ? overrideOnPage : onPage) - 1);
 				if (response.data.total_count < max) {
 					setCurrentPage(1);
 				}
