@@ -394,6 +394,12 @@ const antiTruncateText = (text, maxLength = 200) => {
       }
     };
 
+    const getProfiles = (profile) => {
+        return (profile !== undefined && profile !== null && profile !== '' && +profile !== 0)
+            ? props?.profiles.find(prof => +prof.id === +profile)?.ext
+            : '';
+    };
+
 
 	return (
 		<Dropdown menu={{ items: menuItems }} trigger={['contextMenu']} key={`orgrow_${orgData.id}`}
@@ -553,9 +559,9 @@ const antiTruncateText = (text, maxLength = 200) => {
 					</div>
 					<div className={'sa-table-box-cell'}>
 						<div className={'sa-align-center'}>
-							{orgData.profile && orgData.profile !== '' && orgData.profile !== 0 && (
+							{!!orgData.profile && orgData.profile !== '' && orgData.profile !== 0 && (
 								<Tooltip title={orgData.kindofactivity}>
-									<div>{getProfileLiterals(orgData.profile)}</div>
+									<div>{getProfiles(orgData.profile)}</div>
 								</Tooltip>
 							)}
 						</div>
