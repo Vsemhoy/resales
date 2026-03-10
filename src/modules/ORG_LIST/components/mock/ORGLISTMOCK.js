@@ -24,8 +24,8 @@ export const OM_COMP_LIST = [
 		id: 1,
 		name: 'Тестовая карточка',
 		website: '',
-		profile: 9,
-		kindofactivity: '',
+		profile: 3,
+		kindofactivity: 'Розничные',
 		middlename: 'dfsdfsdfsdgfhdfghdgfhdfghfgdhgdfhdgfsaddgdfyhert45e3rhrdfdfggdfhgdf',
 		id8an_status: 0,
 		curator_id: 304,
@@ -74,8 +74,8 @@ export const OM_COMP_LIST = [
 				"date": 1756969201
 			}
 		],
-    bids_count: 123,
-    subcompanies: [
+        bids_count: 123,
+        subcompanies: [
       {
           "id": 12,
           "name": "ООО Новая заря",
