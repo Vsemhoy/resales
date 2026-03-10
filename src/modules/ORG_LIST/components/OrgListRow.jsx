@@ -555,7 +555,8 @@ const antiTruncateText = (text, maxLength = 200) => {
 						<div className={'sa-align-center'}>
 							{orgData.profile && orgData.profile !== '' && orgData.profile !== 0 && (
 								<Tooltip title={orgData.kindofactivity}>
-									<div>{getProfileLiterals(orgData.profile)}</div>
+									{/*<div>{getProfileLiterals(orgData.profile)}</div>*/}
+									<div>{props?.profiles.find(prof => +prof.id === +orgData.profile)?.ext}</div>
 								</Tooltip>
 							)}
 						</div>

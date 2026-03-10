@@ -836,6 +836,7 @@ const OrgListPage = (props) => {
 								selected_item={previewItem}
 								on_select_change={handleSelectedItemChange}
 								on_change_proc={handleOnChangeProcessFilter}
+                                profiles={baseFiltersData?.profiles?.map(prof => ({id: prof.id, ext: prof.ext}))}
 							/>
 						</Spin>
 

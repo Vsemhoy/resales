@@ -446,6 +446,7 @@ const OrgListTable = (props) => {
 						userdata={userdata}
 						company_color={props.base_companies?.find((item) => item.id === borg.id_company)?.color}
 						busy={socketBusyOrglist.filter((item)=> item.org_id === borg.id)}
+                        profiles={props?.profiles}
 					/>
 				))}
 			</div>
