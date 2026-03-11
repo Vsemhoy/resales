@@ -1,13 +1,12 @@
-import { useChatSocket } from '../../context/ChatSocketContext';
-import { PROD_API_URL } from '../../config/Api'; // Импортируем из Api.js
-import { CSRF_TOKEN } from '../../config/config';
+import {useChatSocket} from '../../context/ChatSocketContext';
+import {CSRF_TOKEN, HTTP_ROOT} from '../../config/config';
 
 export const WebSocketDebug = () => {
 	const { connected, messages, sendMessage, connectionStatus, reconnect } = useChatSocket();
 
 	// Функция для получения полного URL используя PROD_API_URL из Api.js
 	const getFullUrl = (endpoint) => {
-		let baseUrl = PROD_API_URL;
+		let baseUrl = HTTP_ROOT;
 
 		// Если в PROD_API_URL нет протокола, добавляем его
 		if (baseUrl && !baseUrl.startsWith('http')) {
@@ -99,7 +98,7 @@ export const WebSocketDebug = () => {
 			<div>Status: {connectionStatus}</div>
 			<div>Connected: {connected ? 'Yes ✅' : 'No ❌'}</div>
 			<div>Messages: {messages.length}</div>
-			<div>Base URL: {PROD_API_URL}</div>
+			<div>Base URL: {HTTP_ROOT}</div>
 
 			<div
 				style={{
