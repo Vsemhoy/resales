@@ -396,7 +396,7 @@ const antiTruncateText = (text, maxLength = 200) => {
 
     const getProfiles = (profile) => {
         return (profile !== undefined && profile !== null && profile !== '' && +profile !== 0)
-            ? props?.profiles.find(prof => +prof.id === +profile)?.ext
+            ? props?.profiles?.find(prof => +prof.id === +profile)?.ext
             : '';
     };
 
