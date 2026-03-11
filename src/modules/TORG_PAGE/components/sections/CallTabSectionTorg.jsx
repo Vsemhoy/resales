@@ -119,8 +119,9 @@ const CallTabSectionTorg = (props) => {
       setDepart(props.data.id8ref_departaments);
       setSubscriber(props.data.subscriber);
       setPost(props.data.post);
-      let phn = bracketSplitter(props.data.phone);
-
+      //let phn = bracketSplitter(props.data.phone);
+      let phn = splicePhone(props.data.phone);
+      console.log(phn)
       let pho = phn.number;
       let add = phn.add;
 
@@ -485,6 +486,48 @@ const CallTabSectionTorg = (props) => {
       addPhone
     ]);
 
+    /*const preSetPhone = (phoneStr) => {
+        console.log(phoneStr)
+        setPhone(phoneStr);
+        setACTION_FLAG(1);
+        handleChangeNumbers(phoneStr);
+    };*/
+
+    const preSetPhone = (phoneStr) => {
+        const match = phoneStr.match(/^(.*?)\s*\((\d+)\)\s*$/);
+
+        if (match) {
+            const cleanPhone = match[1].trim(); // '+7-4012-35-36-72'
+            const ext = match[2];              // '435'
+
+            setPhone(cleanPhone);
+            setTimeout(() => setAddPhone(ext), 0);
+            //setAddPhone(ext);
+        } else {
+            setPhone(phoneStr);
+            setTimeout(() => setAddPhone(''), 0);
+        }
+
+        setACTION_FLAG(1);
+        //handleChangeNumbers(phoneStr);
+    };
+
+    const splicePhone = (phoneStr) => {
+        const res = {
+            number: '',
+            add: '',
+        };
+        const match = phoneStr.match(/^(.*?)\s*\((\d+)\)\s*$/);
+
+        if (match) {
+            res.number = match[1];
+            res.add = match[2];
+        } else {
+            res.number = phoneStr;
+        }
+        return res;
+    };
+
 
   return (
     <div className={`sa-org-collapse-item
@@ -775,11 +818,7 @@ const CallTabSectionTorg = (props) => {
                   <AutoComplete
                     key={'textard_134_' + baseData?.id}
                     value={phone}
-                    onChange={(e) => {
-											setPhone(e);
-											setACTION_FLAG(1);
-                      handleChangeNumbers(e);
-										}}
+                    onChange={(e) => preSetPhone(e)}
                     // placeholder="Controlled autosize"
                     readOnly={!editMode}
                     disabled={!editMode}
