@@ -4,6 +4,6 @@ import {HTTP_ROOT, HTTP_HOST} from './config';
 // export const PROD_API_URL = 'https://pulse-retail.ru'
 axios.defaults.withCredentials = true;
 export const PROD_AXIOS_INSTANCE = axios.create({
-    baseURL: HTTP_ROOT,
+    baseURL: HTTP_HOST,
     timeout: 300000,
 });

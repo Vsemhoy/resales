@@ -17,10 +17,10 @@ export const BFF_PORT = 5003;
 // export const HOST_COMPONENT_ROOT = !PRODMODE ? '' : '/com/resales';
 
 // Новое
-export const HTTP_HOST = window.location.hostname; // только IP или домен, без порта
-export const HTTP_ROOT = `http://${window.location.hostname}`;
+export const HTTP_ROOT = window.location.hostname; // только IP или домен, без порта
+export const HTTP_HOST = `http://${window.location.hostname}`;
 export const FRONT_PORT = window.location.port;
-export const HTTP_ROOT_FRONT = `http://${window.location.hostname}:${FRONT_PORT}`;
+export const HTTP_HOST_FRONT = `http://${window.location.hostname}:${FRONT_PORT}`;
 export const BASE_NAME = PRODMODE ? '/' : '/';
 export const BASE_ROUTE = PRODMODE ? '' : '';
 export const CSRF_TOKEN = decodeURIComponent(
