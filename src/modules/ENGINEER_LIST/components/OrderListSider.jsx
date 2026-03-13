@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import DeclineEngineer from './DeclineEngineer';
 import PositionList from "../../BID_LIST/components/PositionList";
 import PositionList2 from "./PositionList2";
+import {ROUTE_PREFIX} from "../../../config/config";
 const useWindowSize = () => {
 	const [windowSize, setWindowSize] = useState({
 		width: window.innerWidth,
@@ -96,7 +97,7 @@ const OrderListSider = (props) => {
 													<label>Файлы</label>
 													<Tooltip
 														placement="leftTop"
-														title={<PositionList2 bidId={order.id} fetch_path={'/api/sales/engineer/orders/document/show/' + order.id}
+														title={<PositionList2 bidId={order.id} fetch_path={`${ROUTE_PREFIX}/sales/engineer/orders/document/show/` + order.id}
 																			 error_alert={props.error_alert}/>}
 														color="white"
 														style={{

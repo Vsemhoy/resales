@@ -14,7 +14,7 @@ import {
 	Space, Empty, Divider, message
 } from 'antd';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
-import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE} from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/bidPage.css';
 import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT, PROJECT_INFO, SELECTS} from './mock/mock';
@@ -420,7 +420,7 @@ const BidPage = (props) => {
 	};
 	const fetchBidInfo = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/v2/offers/${bidId}`
+			const path = `${ROUTE_PREFIX}/sales/v2/offers/${bidId}`
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,
@@ -564,7 +564,7 @@ const BidPage = (props) => {
 	};
 	const fetchSelects = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/v2/bidselects`;
+			const path = `${ROUTE_PREFIX}/sales/v2/bidselects`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {},
@@ -621,7 +621,7 @@ const BidPage = (props) => {
 	};
 	const fetchOrgSelects = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/v2/bidselects`;
+			const path = `${ROUTE_PREFIX}/sales/v2/bidselects`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: { orgId: bidOrg.id },
@@ -650,7 +650,7 @@ const BidPage = (props) => {
 	};
 	const fetchOrgUserSelects = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/v2/bidselects`;
+			const path = `${ROUTE_PREFIX}/sales/v2/bidselects`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: { orgUserId: bidOrgUser },
@@ -673,7 +673,7 @@ const BidPage = (props) => {
 	};
 	const fetchCurrencySelects = async () => {
 		if (PRODMODE) {
-			const path = `/api/currency/getcurrency`;
+			const path = `${ROUTE_PREFIX}/currency/getcurrency`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {},
@@ -697,7 +697,7 @@ const BidPage = (props) => {
 	};
 	const fetchBidModels = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/getmodels`;
+			const path = `${ROUTE_PREFIX}/sales/getmodels`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.get(path, {
 					data: {},
@@ -767,7 +767,7 @@ const BidPage = (props) => {
 			bid_models: bidModels,
 		};
 		console.log(data);
-		const path = `/api/sales/updatebid/${bidId}`;
+		const path = `${ROUTE_PREFIX}/sales/updatebid/${bidId}`;
 		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -822,7 +822,7 @@ const BidPage = (props) => {
 	const fetchCalcModels = async () => {
 		console.log('fetchCalcModels');
 		if (PRODMODE) {
-			const path = `/api/sales/calcmodels`;
+			const path = `${ROUTE_PREFIX}/sales/calcmodels`;
 			try {
 				setIsLoadingSmall(true);
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -862,7 +862,7 @@ const BidPage = (props) => {
 	};
 	const fetchWordFile = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/makedoc`;
+			const path = `${ROUTE_PREFIX}/sales/makedoc`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {
@@ -890,7 +890,7 @@ const BidPage = (props) => {
 	};
 	const fetchNewBid = async () => {
 		if (PRODMODE) {
-			const path = `/sales/data/makebid`;
+			const path = `${ROUTE_PREFIX}/sales/data/makebid`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {
@@ -915,7 +915,7 @@ const BidPage = (props) => {
 	const fetchBidPlace = async (newPlace, selectValue) => {
 		console.log(selectValue)
 		if (PRODMODE) {
-			const path = `/sales/data/changebidstage`;
+			const path = `${ROUTE_PREFIX}/sales/data/changebidstage`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					bid_id: bidId,
@@ -943,7 +943,7 @@ const BidPage = (props) => {
 	};
 	const fetchSend1c = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/send1c/${bidId}`;
+			const path = `${ROUTE_PREFIX}/sales/send1c/${bidId}`;
 			try {
 				console.log('send1c');
 				setIsLoading1c(true);
@@ -978,7 +978,7 @@ const BidPage = (props) => {
 	};
 	const fetchProjectInfo = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/v2/offers/project/${bidProject}`;
+			const path = `${ROUTE_PREFIX}/sales/v2/offers/project/${bidProject}`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,

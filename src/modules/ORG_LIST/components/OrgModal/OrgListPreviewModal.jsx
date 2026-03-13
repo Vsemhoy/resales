@@ -286,7 +286,7 @@ const OrgListPreviewModal = (props) => {
 	// const get_org_data_action = async (id) => {
 
 	//     try {
-	//         let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/' + activeTab, {
+	//         let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/' + activeTab, {
 	//           data: {},
 	//           _token: CSRF_TOKEN
 	//         });

@@ -1,7 +1,7 @@
 import { Button, Pagination, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
-import { BASE_ROUTE, CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../../config/config';
 import { MODAL_OFFERS_LIST } from '../../mock/MODALOFFERSTABMOCK';
 import OrgOfferModalRow from './TabComponents/RowTemplates/OrgOfferModalRow';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
@@ -61,7 +61,7 @@ const OrgListModalOffersTab = (props) => {
 
 	const get_org_data_action = async (id, cpage, onpage) => {
 		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/b', {
 				data: {
 					page: cpage,
 					limit: onpage,
@@ -118,7 +118,7 @@ const OrgListModalOffersTab = (props) => {
 						},
 					};
 					let new_bid_response = await PROD_AXIOS_INSTANCE.post(
-						"/sales/data/makebid",
+						`${ROUTE_PREFIX}/sales/data/makebid`,
 						format_data,
 					);
 					if (new_bid_response) {

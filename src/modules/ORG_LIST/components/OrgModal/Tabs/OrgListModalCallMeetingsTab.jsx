@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../../config/config';
 import { Collapse, Pagination, Spin } from 'antd';
 import { MODAL_CALLS_LIST } from '../../mock/MODALCALLSTABMOCK';
 import OrgCallsModalRow from './TabComponents/RowTemplates/OrgCallsModalRow';
@@ -103,7 +103,7 @@ const OrgListModalCallMeetingsTab = (props) => {
 
 	const get_org_data_action = async (id) => {
 		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/c', {
 				data: {
 					page: currentPage,
 					limit: onPage,

@@ -36,7 +36,7 @@ import dayjs from 'dayjs';
 import debounce from 'lodash/debounce';
 
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../config/config';
 import { ORGLIST_MODAL_MOCK_MAINTAB } from '../../../ORG_LIST/components/mock/ORGLISTMODALMOCK';
 
 import '../style/orgpage-forms.css';
@@ -76,7 +76,7 @@ const MainTabForm = ({
       
       if (PRODMODE) {
         const response = await PROD_AXIOS_INSTANCE.get(
-          `/api/sales/v2/orglist/${orgId}`
+          `${ROUTE_PREFIX}/sales/v2/orglist/${orgId}`
         );
         data = response.data?.content;
       } else {

@@ -1,5 +1,5 @@
 import {useChatSocket} from '../../context/ChatSocketContext';
-import {CSRF_TOKEN, HTTP_ROOT} from '../../config/config';
+import {CSRF_TOKEN, HTTP_ROOT, ROUTE_PREFIX} from '../../config/config';
 
 export const WebSocketDebug = () => {
 	const { connected, messages, sendMessage, connectionStatus, reconnect } = useChatSocket();
@@ -64,7 +64,7 @@ export const WebSocketDebug = () => {
 		sendMessage({
 			action: 'laravel_request',
 			requestId: requestId,
-			endpoint: getFullUrl('/api/sms/create/sms'),
+			endpoint: getFullUrl(`${ROUTE_PREFIX}/sms/create/sms`),
 			method: 'POST',
 			data: {
 				text: 'Тестовое сообщение через BFF ' + new Date().toLocaleTimeString(),

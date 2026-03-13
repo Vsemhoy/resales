@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import EngineerListRow from './EngineerListRow';
 import CopyMessageView from "../../ENGINEER_PAGE/components/CopyMessageView";
-import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 
 const EngineerListTable = (props) => {
@@ -67,7 +67,7 @@ const EngineerListTable = (props) => {
 	const handleCopySpecification = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/copy/' + openAddIntoBidSpecificationId, {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/copy/` + openAddIntoBidSpecificationId, {
 					_token: CSRF_TOKEN,
 					data: {
 						bidId: value
@@ -87,7 +87,7 @@ const EngineerListTable = (props) => {
 	const handleCopySpecificationIntoBid = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/intoBid/' + openAddIntoBidSpecificationId, {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/intoBid/` + openAddIntoBidSpecificationId, {
 					_token: CSRF_TOKEN,
 					data: {
 						bidId: value,
@@ -153,7 +153,7 @@ const EngineerListTable = (props) => {
 		console.log(openAddIntoBidSpecificationId);
 		if (PRODMODE){
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/final/' + openAddIntoBidSpecificationId, {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/final/` + openAddIntoBidSpecificationId, {
 					_token: CSRF_TOKEN,
 					data: {}
 				});

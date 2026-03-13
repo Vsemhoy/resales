@@ -5,7 +5,7 @@ import { Button, Table, Tag } from 'antd';
 import style from './style/main.module.css';
 
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 
 const PositionList = ({ bidId, type = 1 }) => {
 	const [positions, setPositions] = useState(null);
@@ -24,7 +24,7 @@ const PositionList = ({ bidId, type = 1 }) => {
 				},
 			};
 			const models_response = await PROD_AXIOS_INSTANCE.post(
-				'/sales/data/getbidmodels',
+				`${ROUTE_PREFIX}/sales/data/getbidmodels`,
 				format_data
 			);
 			models_response && setPositions(models_response.data.data.models);

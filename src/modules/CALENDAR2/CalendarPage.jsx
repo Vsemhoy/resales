@@ -54,7 +54,7 @@ import {
 
 // Стили
 import './components/style/calendarpage.css';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { OM_ORG_FILTERDATA } from '../ORG_LIST/components/mock/ORGLISTMOCK';
 
@@ -95,7 +95,7 @@ const CalendarPage = ({ userdata }) => {
   const fetchSelects = async () => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/calendar/getselects', {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/calendar/getselects`, {
           _token: CSRF_TOKEN,
         });
 
@@ -117,7 +117,7 @@ const CalendarPage = ({ userdata }) => {
   const fetchEvents = async (filters) => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/calendar/events', {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/calendar/events`, {
           data: {
             filters: filters
           },

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 
 import dayjs from 'dayjs';
-import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../../config/config';
 import { OM_ORG_FILTERDATA } from '../../../../ORG_LIST/components/mock/ORGLISTMOCK';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
 import { ORG_ERECTORS_MOCK, ORG_LINKBID_MOCK } from '../../mock/ORGPAGEMOCK';
@@ -276,7 +276,7 @@ const handleChangeData = (changed_data) => {
 
     if (PRODMODE){
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/passportselects`, {
           data: {
             erector: searchErector,
           },
@@ -304,7 +304,7 @@ const handleChangeData = (changed_data) => {
     const get_bidautofill_action = async (id) => {
       if (PRODMODE){
         try {
-          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
+          let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/passportselects`, {
             data: {linkbid: searchBid, org_id: orgId},
             _token: CSRF_TOKEN,
           });

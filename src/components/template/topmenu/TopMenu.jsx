@@ -6,7 +6,7 @@ import { Chat, ChatSocketProvider } from 'corp-chat-library-antd-react-socket';
 //import 'corp-chat-library-antd-react-socket/dist/style.css';
 
 import { NavLink } from 'react-router-dom';
-import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE} from '../../../config/config';
+import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 import {
 	CalendarOutlined,
 	CloseCircleOutlined,
@@ -173,7 +173,7 @@ const TopMenu = (props) => {
 	const set_user_company = async (newcom) => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/auth/me', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/auth/me`, {
 					id_company: newcom,
 					_token: CSRF_TOKEN,
 				});
@@ -274,10 +274,10 @@ const TopMenu = (props) => {
                               PROD_AXIOS_INSTANCE: null,
                           }}
                           fetchParams={{
-                              fetchChatsListPath: `${HTTP_HOST}/api/sms`,
-                              fetchChatMessagesPath: `${HTTP_HOST}/api/sms`,
-                              sendSmsPath: `${HTTP_HOST}/api/sms/create/sms`,
-                              markMessagesAsReadPath: `${HTTP_HOST}/api/sms/read`,
+                              fetchChatsListPath:       `${HTTP_HOST}${ROUTE_PREFIX}/sms`,
+                          fetchChatMessagesPath:        `${HTTP_HOST}${ROUTE_PREFIX}/sms`,
+                              sendSmsPath:              `${HTTP_HOST}${ROUTE_PREFIX}/sms/create/sms`,
+                              markMessagesAsReadPath:   `${HTTP_HOST}${ROUTE_PREFIX}/sms/read`,
                           }}
                           socketSubscribe={{
                               subscribeToChat: 'subscribeToChat'

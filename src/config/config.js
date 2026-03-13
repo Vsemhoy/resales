@@ -30,4 +30,4 @@ export const CSRF_TOKEN = decodeURIComponent(
         ?.split('=')[1] || ''
 );
 console.log('CSRF_TOKEN', CSRF_TOKEN);
-
+export const ROUTE_PREFIX = '/api';

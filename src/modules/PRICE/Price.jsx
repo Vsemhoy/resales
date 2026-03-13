@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { PRODMODE, CSRF_TOKEN } from '../../config/config';
+import {PRODMODE, CSRF_TOKEN, ROUTE_PREFIX} from '../../config/config';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
 import {Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix} from 'antd';
@@ -94,7 +94,7 @@ const Price = (props) => {
             const format_data = {
                 _token: CSRF_TOKEN,
             };
-            const path = `api/sales/price`;
+            const path = `${ROUTE_PREFIX}/sales/price`;
             try {
                 setLoading(true);
                 let fields_req = await PROD_AXIOS_INSTANCE.post(path, format_data);
@@ -116,7 +116,7 @@ const Price = (props) => {
     };
     const fetchCurrency = async () => {
         if (PRODMODE) {
-            const path = `api/currency/getcurrency`;
+            const path = `${ROUTE_PREFIX}/currency/getcurrency`;
             try {
                 setLoading(true);
                 const format_data = {

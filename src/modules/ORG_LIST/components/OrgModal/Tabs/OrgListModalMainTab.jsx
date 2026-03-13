@@ -1,7 +1,7 @@
 import { Button, Collapse, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../../config/config';
 import OrgModalContactsSection from './MainTabSections/OrgModalContactsSection';
 import OrgModalCommonSection from './MainTabSections/OrgModalCommonSection';
 import OrgModalDepartSection from './MainTabSections/OrgModalDepartSection';
@@ -273,7 +273,7 @@ const OrgListMainTab = (props) => {
 
 	const get_org_data_action = async (id) => {
 		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/m', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/m', {
 				data: {},
 				_token: CSRF_TOKEN,
 			});

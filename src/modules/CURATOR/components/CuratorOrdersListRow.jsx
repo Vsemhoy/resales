@@ -16,7 +16,7 @@ import {
 	SafetyOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import HighlightText from '../../../components/helpers/HighlightText';
 import { useURLParams } from '../../../components/helpers/UriHelpers';
@@ -65,7 +65,7 @@ const { getCurrentParamsString } = useURLParams();
 
 	const fetchNewBid = async (type) => {
 		if (PRODMODE) {
-			const path = `/sales/data/makebid`;
+			const path = `${ROUTE_PREFIX}/sales/data/makebid`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data: {
@@ -87,7 +87,7 @@ const { getCurrentParamsString } = useURLParams();
 	};
 	const fetchDeleteBid = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/deletebid/${data.id}`;
+			const path = `${ROUTE_PREFIX}/sales/deletebid/${data.id}`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.delete(path, {
 					_token: CSRF_TOKEN,

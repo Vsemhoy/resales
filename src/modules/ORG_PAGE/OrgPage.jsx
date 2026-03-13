@@ -17,7 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { LoadingOutlined, FlagOutlined, FlagFilled } from '@ant-design/icons';
 
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 
 // Формы вкладок
@@ -226,7 +226,7 @@ const OrgPage = ({ userdata }) => {
       
       if (PRODMODE) {
         const response = await PROD_AXIOS_INSTANCE.put(
-          `/api/sales/v2/updateorglist/${orgId}`,
+          `${ROUTE_PREFIX}/sales/v2/updateorglist/${orgId}`,
           {
             data: payload,
             _token: CSRF_TOKEN,
@@ -268,7 +268,7 @@ const OrgPage = ({ userdata }) => {
   const get_org_filters = async () => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/orgfilterlist`, {
           data: {},
           _token: CSRF_TOKEN,
         });

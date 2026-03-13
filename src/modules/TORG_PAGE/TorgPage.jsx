@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import {
 	useLocation,
 	useNavigate,
@@ -606,7 +606,7 @@ useEffect(() => {
 	const get_main_data_action = async (id) => {
 		setLoading(true);
 		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/m', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/m', {
 				data: {},
 				_token: CSRF_TOKEN,
 			});
@@ -675,7 +675,7 @@ useEffect(() => {
 	const get_org_filters = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/orgfilterlist`, {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
@@ -695,7 +695,7 @@ useEffect(() => {
   	const get_departs = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/timeskud/claims/getdepartments', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/timeskud/claims/getdepartments`, {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
@@ -748,7 +748,7 @@ useEffect(() => {
 		if (PRODMODE) {
 			setSaveProcess(20);
 			try {
-				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/updateorglist/' + itemId, {
+				let response = await PROD_AXIOS_INSTANCE.put(`${ROUTE_PREFIX}/sales/v2/updateorglist/` + itemId, {
 					data: data,
 					_token: CSRF_TOKEN,
 				});
@@ -831,7 +831,7 @@ useEffect(() => {
 		if (PRODMODE && itemId) {
 			setSaveProcess(20);
 			try {
-				let response = await PROD_AXIOS_INSTANCE.put('/api/sales/v2/logupdateorglist/' + itemId, {
+				let response = await PROD_AXIOS_INSTANCE.put(`${ROUTE_PREFIX}/sales/v2/logupdateorglist/` + itemId, {
 					data: data,
 					save_pushed: src === 'save_action' ? true : false,
 					_token: CSRF_TOKEN,
@@ -1036,7 +1036,7 @@ useEffect(() => {
 					formLogger.log('CURATOR_REQUEST', { id: item_id, current_curator: baseMainData.id8staff_list, target_curator: userdata?.user?.id });
 
 					let response = await PROD_AXIOS_INSTANCE.post(
-						"/api/curators/create",
+						`${ROUTE_PREFIX}/curators/create`,
 						format_data,
 					);
 					if (response) {

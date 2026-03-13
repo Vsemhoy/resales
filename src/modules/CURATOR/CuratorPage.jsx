@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {Affix, Alert, Button, Dropdown, Layout, Pagination, Select, Space, Spin, Tag, Tooltip} from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import CuratorListTable from './components/CuratorListTable';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import {CONFIRM_LIST, COUNT, SUPERVISOR} from './mock/mock';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/curatorlistpage.css';
@@ -208,7 +208,7 @@ const CuratorPageNEW = (props) => {
 				limit: onPage,
 			};
 			console.log(data);
-			const path = `/api/v2/curators`;
+			const path = `${ROUTE_PREFIX}/v2/curators`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data,
@@ -395,7 +395,7 @@ const CuratorPageNEW = (props) => {
 
 	const fetchFilterSelects = async () => {
 		if (PRODMODE) {
-			const path = `/api/v2/curators/selects`;
+			const path = `${ROUTE_PREFIX}/v2/curators/selects`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,
@@ -516,7 +516,7 @@ const CuratorPageNEW = (props) => {
 	
 	const handleStatusChange = async (order_id, status) => {
 		if (PRODMODE) {
-			const path = `/api/v2/curators/approved/` + order_id;
+			const path = `${ROUTE_PREFIX}/v2/curators/approved/` + order_id;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.put(path, {
 					data: {

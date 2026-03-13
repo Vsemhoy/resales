@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './currencymonitorbar.css';
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {CUR_COMPANY, CUR_CURRENCY} from "../../../modules/ENGINEER_PAGE/mock/mock";
 import {Spin} from "antd";
@@ -26,7 +26,7 @@ const CurrencyMonitorBar = (props) => {
 	const fetchCurrencySelects = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/currency/getcurrency', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/currency/getcurrency`, {
 					data: {},
 					_token: CSRF_TOKEN,
 				});

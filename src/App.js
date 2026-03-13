@@ -2,7 +2,7 @@ import './App.css';
 
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom';
-import {BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE, BFF_PORT, HTTP_HOST} from './config/config';
+import {BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE, BFF_PORT, HTTP_HOST, ROUTE_PREFIX} from './config/config';
 import './assets/theme.css';
 import './assets/layout.css';
 import './assets/table.css';
@@ -89,7 +89,7 @@ export const App = () => {
 
 	const get_userdata = async () => {
 		try {
-			let response = await PROD_AXIOS_INSTANCE.get('/usda?_token=' + CSRF_TOKEN);
+			let response = await PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/usda?_token=` + CSRF_TOKEN);
 			setUserdata(response.data);
 			setTopRole([7, 8, 20].includes(response?.data?.user?.id_departament) ? '/engineer' : '/orgs');
 		} catch (e) {

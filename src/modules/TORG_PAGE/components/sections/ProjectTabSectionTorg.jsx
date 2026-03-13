@@ -18,7 +18,7 @@ import {
 	ShortName,
 } from '../../../../components/helpers/TextHelpers';
 import { after } from 'lodash';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
 
 import { Option } from 'antd/es/mentions';
@@ -226,7 +226,7 @@ const ProjectTabSectionTorg = (props) => {
     if (!searchErector){ return; }
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/passportselects`, {
 					data: {
 						erector: searchErector,
 					},
@@ -251,7 +251,7 @@ const ProjectTabSectionTorg = (props) => {
     if (!orgId){ return; }
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/passportselects`, {
 					data: { linkbid: searchBid, org_id: orgId },
 					_token: CSRF_TOKEN,
 				});
@@ -272,7 +272,7 @@ const ProjectTabSectionTorg = (props) => {
     if (!id){ return; }
 		
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/curators/create', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/curators/create`, {
 					data: {id_project: id, user_id: userdata.user?.id},
 					_token: CSRF_TOKEN,
 				});

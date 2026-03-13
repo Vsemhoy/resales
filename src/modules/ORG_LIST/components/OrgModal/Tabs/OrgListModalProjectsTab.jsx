@@ -1,7 +1,7 @@
 import { Collapse, Pagination, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OrgBidTabRow from './TabComponents/OrgBidTabRow';
-import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../../config/config';
 import { OM_ORG_BIDS } from '../../mock/ORGLISTMOCK';
 import { NavLink } from 'react-router-dom';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
@@ -87,7 +87,7 @@ const OrgListModalProjectsTab = (props) => {
 
 	const get_org_data_action = async (id, cpage, onpage) => {
 		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/p', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/p', {
 				data: {
 					page: cpage,
 					limit: onpage,

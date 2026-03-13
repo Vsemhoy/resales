@@ -3,7 +3,7 @@ import ru from "antd/es/date-picker/locale/ru_RU";
 import ruRU from "antd/es/locale/ru_RU";
 import {Button, Checkbox, DatePicker, Drawer, Input, InputNumber, Segmented, Select, Table, Tag, Tooltip} from "antd";
 import {QuestionCircleOutlined} from "@ant-design/icons";
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {SIMILAR_BIDS} from "../mock/mock";
 import dayjs from "dayjs";
@@ -366,7 +366,7 @@ const FindSimilar = (props) => {
                 }
             };
             if (PRODMODE) {
-                const path = `/sales/data/getsimilarbid`
+                const path = `${ROUTE_PREFIX}/sales/data/getsimilarbid`
                 try {
                     setLoad(true);
                     let response = await PROD_AXIOS_INSTANCE.post(path, {
