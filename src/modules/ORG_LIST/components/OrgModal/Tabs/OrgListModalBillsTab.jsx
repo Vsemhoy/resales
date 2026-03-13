@@ -1,7 +1,7 @@
 import { Button, Pagination, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OrgBidTabRow from './TabComponents/OrgBidTabRow';
-import { BASE_ROUTE, CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../../config/config';
 import { OM_ORG_BIDS } from '../../mock/ORGLISTMOCK';
 import { NavLink } from 'react-router-dom';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
