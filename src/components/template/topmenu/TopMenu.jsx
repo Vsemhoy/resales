@@ -202,7 +202,7 @@ const TopMenu = (props) => {
 		<div className="sa-top-menu" style={{ padding: '0 12px' }}>
 			<div className={'sa-flex-space'}>
 				<div className={'sa-top-menu-buttons'}>
-					<NavLink to={`${HTTP_HOST}`}>
+					<NavLink to={`${HTTP_HOST}:3000`}>
 						<div className={'sa-topmenu-button'}>
 							<HomeFilled />
 						</div>
