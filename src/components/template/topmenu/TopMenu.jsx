@@ -164,7 +164,7 @@ const TopMenu = (props) => {
 		},
 		{
 			key: '3fgsd',
-			label: <NavLink to={`${HTTP_ROOT}/logout`}>Выйти из системы</NavLink>,
+			label: <NavLink to={`${HTTP_HOST}/logout`}>Выйти из системы</NavLink>,
 			icon: <ArrowTopRightOnSquareIcon height={'18px'} />,
 		},
 	];
@@ -202,7 +202,7 @@ const TopMenu = (props) => {
 		<div className="sa-top-menu" style={{ padding: '0 12px' }}>
 			<div className={'sa-flex-space'}>
 				<div className={'sa-top-menu-buttons'}>
-					<NavLink to={HTTP_HOST}>
+					<NavLink to={`${HTTP_HOST}`}>
 						<div className={'sa-topmenu-button'}>
 							<HomeFilled />
 						</div>
