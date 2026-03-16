@@ -84,7 +84,7 @@ const FilesBuhPage = (props) => {
 
     const fetchChangeRole = async (sales_role) => {
         if (PRODMODE) {
-            const path = `/auth/me`;
+            const path = `${ROUTE_PREFIX}/auth/me`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     place: sales_role,
