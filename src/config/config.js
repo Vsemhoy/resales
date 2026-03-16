@@ -29,5 +29,9 @@ export const CSRF_TOKEN = decodeURIComponent(
         .find(row => row.startsWith('XSRF-TOKEN='))
         ?.split('=')[1] || ''
 );
-console.log('CSRF_TOKEN', CSRF_TOKEN);
 export const ROUTE_PREFIX = '/api';
+
+console.log('HTTP_ROOT', HTTP_ROOT);
+console.log('HTTP_HOST', HTTP_HOST);
+console.log('CSRF_TOKEN', CSRF_TOKEN);
+console.log('ROUTE_PREFIX', ROUTE_PREFIX);
