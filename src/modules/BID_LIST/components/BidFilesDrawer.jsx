@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Drawer, Table} from "antd";
 import {DownloadOutlined} from "@ant-design/icons";
-import {CSRF_TOKEN, HTTP_HOST, PRODMODE} from "../../../config/config";
+import {CSRF_TOKEN, HTTP_HOST, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_API_URL, PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import dayjs from "dayjs";
 import {FILES} from "../../BID_PAGE/mock/mock";
@@ -116,7 +116,7 @@ const BidFilesDrawer = (props) => {
 
     const fetchFiles = async () => {
         if (PRODMODE) {
-            const path = `/api/sales/doclist`;
+            const path = `${ROUTE_PREFIX}/sales/doclist`;
             try {
                 const response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
@@ -166,7 +166,7 @@ const BidFilesDrawer = (props) => {
     };
     const fetchDownloadFile = async (template_id, id, type) => {
         if (PRODMODE) {
-            const path = `/api/sales/makedoc`;
+            const path = `${ROUTE_PREFIX}/sales/makedoc`;
             try {
                 const data = {
                     data: {

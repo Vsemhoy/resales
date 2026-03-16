@@ -24,7 +24,7 @@ import {
 import {getBidsItems, getCallsItems, getMeetingsItems, getProjectsItems} from './hooks/AlansOrgHooks';
 import { getProfileLiterals } from '../../../components/definitions/SALESDEF';
 import { useURLParams } from '../../../components/helpers/UriHelpers';
-import { BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { values } from 'lodash';
 import HighlightText from '../../../components/helpers/HighlightText';
@@ -308,7 +308,7 @@ const antiTruncateText = (text, maxLength = 200) => {
 			try {
 						
 						let orgdel = await PROD_AXIOS_INSTANCE.delete(
-							"/api/sales/delete/" + orgData.id + "?_token=" + CSRF_TOKEN,
+							`${ROUTE_PREFIX}/sales/delete/` + orgData.id + "?_token=" + CSRF_TOKEN,
 						);
 						if (orgdel) {
 							setDeleted(true);
@@ -371,7 +371,7 @@ const antiTruncateText = (text, maxLength = 200) => {
           },
         };
         let new_bid_response = await PROD_AXIOS_INSTANCE.post(
-          "/sales/data/makebid",
+          `${ROUTE_PREFIX}/sales/data/makebid`,
           format_data,
         );
         if (new_bid_response) {

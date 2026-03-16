@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
 import { nanoid } from 'nanoid';
 import { useUserData } from '../../context/UserDataContext';
@@ -38,7 +38,7 @@ export const useSendSms = () => {
 				})
 			);
 			console.log(to);
-			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
+			const response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sms/create/sms`, formData);
 
 			console.log('[useSendSms] Ответ от сервера:', response);
 

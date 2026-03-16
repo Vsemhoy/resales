@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './components/style/bidlistpage.css';
-import {CSRF_TOKEN, PRODMODE} from '../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import {NavLink, useParams, useSearchParams} from 'react-router-dom';
 import {Affix, Alert, Button, Dropdown, Layout, Pagination, Select, Space, Spin, Tag, Tooltip,} from 'antd';
 import {Content} from 'antd/es/layout/layout';
@@ -349,7 +349,7 @@ const BidListPage = (props) => {
 	};
 	const fetchFilterSelects = async () => {
 		if (PRODMODE) {
-			const path = `/api/sales/filterlist`;
+			const path = `${ROUTE_PREFIX}/sales/filterlist`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					_token: CSRF_TOKEN,
@@ -431,7 +431,7 @@ const BidListPage = (props) => {
             };
 
 			console.log(data);
-			const path = `/sales/data/v2/offerlist`;
+			const path = `${ROUTE_PREFIX}/sales/data/v2/offerlist`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					data,
@@ -469,7 +469,7 @@ const BidListPage = (props) => {
 	};
 	const fetchChangeRole = async (sales_role) => {
 		if (PRODMODE) {
-			const path = `/auth/me`;
+			const path = `${ROUTE_PREFIX}/auth/me`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					place: sales_role,

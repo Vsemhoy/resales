@@ -22,7 +22,7 @@ import {Content} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import TextArea from "antd/es/input/TextArea";
 import NameSelect from "../BID_PAGE/components/NameSelect";
-import {CSRF_TOKEN, HTTP_HOST, PRODMODE} from "../../config/config";
+import {CSRF_TOKEN, HTTP_HOST, PRODMODE, ROUTE_PREFIX} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import MODELS from "../BID_PAGE/mock/mock_models";
 import ModelInput from "../BID_PAGE/components/ModelInput";
@@ -766,7 +766,7 @@ const BidPdfPage = () => {
 
     const fetchBidModels = async () => {
         if (PRODMODE) {
-            const path = `/api/sales/getmodels`;
+            const path = `${ROUTE_PREFIX}/sales/getmodels`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.get(path, {
                     data: {},
@@ -788,7 +788,7 @@ const BidPdfPage = () => {
         if (PRODMODE) {
             setTimeout(async () => {
                 try {
-                    let response = await PROD_AXIOS_INSTANCE.post(`api/sales/pdf/show/${bidId}`, {
+                    let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/pdf/show/${bidId}`, {
                         '_token': CSRF_TOKEN,
                     });
                     if (response.data) {
@@ -835,7 +835,7 @@ const BidPdfPage = () => {
                     formData.append('_token', CSRF_TOKEN);
                     formData.append('data', JSON.stringify(requestData));
                     collectFiles(formData, data);
-                    let response = await PROD_AXIOS_INSTANCE.post(`api/sales/pdf/${isCreatePdf ? 'create' : 'save'}/${bidId}`, formData);
+                    let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/pdf/${isCreatePdf ? 'create' : 'save'}/${bidId}`, formData);
                     if (isCreatePdf && response.data?.file_link) {
                         window.open(`${HTTP_HOST}${response.data?.file_link}`, '_blank');
                     }
@@ -848,7 +848,7 @@ const BidPdfPage = () => {
 
     const updateIsNeedEngineer = async () => {
         if (PRODMODE) {
-            const path = `/api/v2/sales/pdf/engineer/${bidId}`;
+            const path = `${ROUTE_PREFIX}/v2/sales/pdf/engineer/${bidId}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {

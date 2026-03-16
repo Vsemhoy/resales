@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Drawer, Table, Tabs, Tag, Timeline, Tooltip} from "antd";
 import {CheckCircleOutlined, EyeOutlined, RedoOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {ACTION_OPTIONS, LOGS} from "../../BID_PAGE/mock/mock";
 
@@ -88,7 +88,7 @@ const BidHistoryDrawer = (props) => {
 
     const fetchActionOptions = async () => {
         if (PRODMODE) {
-            const path = `/api/sales/bidselects`;
+            const path = `${ROUTE_PREFIX}/sales/bidselects`;
             try {
                 const format_data = {
                     _token: CSRF_TOKEN,
@@ -111,7 +111,7 @@ const BidHistoryDrawer = (props) => {
 
     const fetchLogs = async () => {
         if (PRODMODE) {
-            const path = `api/sales/bidlog/${bidId}?_token=${CSRF_TOKEN}&action_type=${page}`;
+            const path = `${ROUTE_PREFIX}/sales/bidlog/${bidId}?_token=${CSRF_TOKEN}&action_type=${page}`;
             try {
                 setIsLoading(true);
                 let response = await PROD_AXIOS_INSTANCE.get(path);

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Drawer, Spin, Table} from "antd";
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {EXTRA} from "../mock/mock";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 
@@ -50,7 +50,7 @@ const ModelInfoExtraDrawer = (props) => {
     const fetchModelInfoExtra = async () => {
         if (PRODMODE) {
             try {
-                let response = await PROD_AXIOS_INSTANCE.get(`/sales/data/getmodelprops/?_token=${CSRF_TOKEN}&model_id=${extraId}`, {
+                let response = await PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/sales/data/getmodelprops/?_token=${CSRF_TOKEN}&model_id=${extraId}`, {
                     _token: CSRF_TOKEN,
                 });
                 if (response.data.props) {

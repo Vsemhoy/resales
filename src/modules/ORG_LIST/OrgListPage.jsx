@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useUserData } from '../../context/UserDataContext';
 import './components/style/orglistpage.css';
-import { BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE } from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import {
 	Affix,
@@ -348,9 +348,9 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 
 			let route = '/api/sales/orglist';
 			if (userdata?.user?.id === 558 || userdata?.user?.id === 46){
-				route = '/api/sales/v2/orglist'
+				route = `${ROUTE_PREFIX}/sales/v2/orglist`
 			}
-			route = '/api/sales/v2/orglist'
+			route = `${ROUTE_PREFIX}/sales/v2/orglist`
 
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(route, {
@@ -422,7 +422,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 	const get_org_filters = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('api/sales/orgfilterlist', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/orgfilterlist`, {
 					data: {},
 					_token: CSRF_TOKEN,
 				});
@@ -613,7 +613,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 			const format_data = {
 				_token: CSRF_TOKEN,
 			};
-			let new_bid_response = await PROD_AXIOS_INSTANCE.post('/api/sales/orgcreate', format_data);
+			let new_bid_response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/orgcreate`, format_data);
 			if (new_bid_response) {
 				window.open(BASE_ROUTE + '/orgs/' + new_bid_response.data.org_id, '_blank');
 			}

@@ -10,7 +10,7 @@ import {
     RollbackOutlined,
     SearchOutlined, UploadOutlined
 } from "@ant-design/icons";
-import {CSRF_TOKEN, PRODMODE} from "../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../config/config";
 import {REGIONS, TOWNS} from "./mock/mock";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import CustomInput from "./components/CustomInput";
@@ -123,7 +123,7 @@ const Regtown = (props) => {
 
     const fetchRegions = async () => {
         if (PRODMODE) {
-            const path = `/api/regiontown/regions`;
+            const path = `${ROUTE_PREFIX}/regiontown/regions`;
             setIsLoadingRegions(true);
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -152,7 +152,7 @@ const Regtown = (props) => {
 
     const fetchTownsByRegions = async () => {
         if (PRODMODE) {
-            const path = `/api/regiontown/towns`;
+            const path = `${ROUTE_PREFIX}/regiontown/towns`;
             setIsLoadingTowns(true);
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -273,7 +273,7 @@ const Regtown = (props) => {
     };
     const saveNewRegion = async () => {
         if (PRODMODE) {
-            const path = `/api/regiontown/regions/create`;
+            const path = `${ROUTE_PREFIX}/regiontown/regions/create`;
             // setIsLoadingRegions(true);
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -305,7 +305,7 @@ const Regtown = (props) => {
     };
     const saveNewTown = async () => {
         if (PRODMODE) {
-            const path = `/api/regiontown/towns/create`;
+            const path = `${ROUTE_PREFIX}/regiontown/towns/create`;
             // setIsLoadingTowns(true);
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -337,7 +337,7 @@ const Regtown = (props) => {
     };
     const regionUpdate = async (region) => {
         if (PRODMODE) {
-            const path = `/api/regiontown/regions/update/${region.id}`;
+            const path = `${ROUTE_PREFIX}/regiontown/regions/update/${region.id}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: region,
@@ -365,7 +365,7 @@ const Regtown = (props) => {
     };
     const townUpdate = async (town) => {
         if (PRODMODE) {
-            const path = `/api/regiontown/towns/update/${town.id}`;
+            const path = `${ROUTE_PREFIX}/regiontown/towns/update/${town.id}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
@@ -430,7 +430,7 @@ const Regtown = (props) => {
 
     const handleDeleteRegion = async (regionId) => {
         if (PRODMODE) {
-            const path = `/api/regiontown/regions/${regionId}`;
+            const path = `${ROUTE_PREFIX}/regiontown/regions/${regionId}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.delete(path, {
                     _token: CSRF_TOKEN,
@@ -458,7 +458,7 @@ const Regtown = (props) => {
 
     const handleDeleteTown = async (townId) => {
         if (PRODMODE) {
-            const path = `/api/regiontown/towns/${townId}`;
+            const path = `${ROUTE_PREFIX}/regiontown/towns/${townId}`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.delete(path, {
                     _token: CSRF_TOKEN,

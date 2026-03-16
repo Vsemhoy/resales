@@ -25,7 +25,7 @@ import { ChevronRightIcon, TrashIcon } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../config/config';
 import { MODAL_NOTES_LIST } from '../../../ORG_LIST/components/mock/MODALNOTESTABMOCK';
 import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
 
@@ -69,7 +69,7 @@ const NotesTabForm = ({
     try {
       if (PRODMODE) {
         const response = await PROD_AXIOS_INSTANCE.post(
-          `/api/sales/v2/orglist/${orgId}/n`,
+          `${ROUTE_PREFIX}/sales/v2/orglist/${orgId}/n`,
           {
             data: { page: currentPage, limit: pageSize },
             _token: CSRF_TOKEN,

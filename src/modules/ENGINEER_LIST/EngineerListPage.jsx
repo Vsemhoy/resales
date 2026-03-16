@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useUserData } from '../../context/UserDataContext';
 
 import './components/style/engineerlistpage.css';
-import { BASE_ROUTE, CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import {
 	Affix,
@@ -200,7 +200,7 @@ const EngineerListPage = () => {
 	const fetchFilterSelects = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/filter/list', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/filter/list`, {
 					_token: CSRF_TOKEN,
 				});
 				if (response.data) {
@@ -233,7 +233,7 @@ const EngineerListPage = () => {
 				sort_orders: orderBox,
 			};
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer`, {
 					data,
 					_token: CSRF_TOKEN,
 				});
@@ -361,7 +361,7 @@ const EngineerListPage = () => {
 
 	const fetchNewSpec = async () => {
 		if (PRODMODE) {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/add', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/add`, {
 				_token: CSRF_TOKEN,
 				data: {},
 			});
@@ -374,7 +374,7 @@ const EngineerListPage = () => {
 
 	const fetchNewOrder = async () => {
 		if (PRODMODE) {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/new`, {
 				_token: CSRF_TOKEN,
 			});
 
@@ -388,7 +388,7 @@ const EngineerListPage = () => {
 	const fetchOrders = async () => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/show', {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/show`, {
 					_token: CSRF_TOKEN,
 					data: {},
 				});
@@ -427,7 +427,7 @@ const EngineerListPage = () => {
 				setIsOpenModal(true);
 				setModalOrderID(order_id);
 			} else {
-				let response = PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/delete/' + order_id, {
+				let response = PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/delete/` + order_id, {
 					_token: CSRF_TOKEN,
 					data: {
 						reason: modalReason,
@@ -513,7 +513,7 @@ const EngineerListPage = () => {
 				formData.append('files[]', file.originFileObj || file);
 			});
 
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/new', formData, {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/new`, formData, {
 				headers: {
 					'Content-Type': 'multipart/form-data',
 				},
@@ -528,7 +528,7 @@ const EngineerListPage = () => {
 		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(
-					'/api/sales/engineer/orders/accept/' + order_id,
+					`${ROUTE_PREFIX}/sales/engineer/orders/accept/` + order_id,
 					{
 						_token: CSRF_TOKEN,
 					}

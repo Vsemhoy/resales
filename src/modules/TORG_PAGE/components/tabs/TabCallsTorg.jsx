@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../config/config';
 import dayjs from 'dayjs';
 import { Button, Empty, Pagination, Spin } from 'antd';
 import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
@@ -175,7 +175,7 @@ const TabCallsTorg = (props) => {
     if (PRODMODE){
       setLoading(true);
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/c', {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/c', {
           data: {
             page: currentPage,
             limit: onPage,

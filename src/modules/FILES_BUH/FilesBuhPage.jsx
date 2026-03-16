@@ -16,7 +16,7 @@ import {
 } from "antd";
 import {CaretLeftFilled, CloseOutlined, FilterOutlined, UploadOutlined} from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
-import {CSRF_TOKEN, PRODMODE} from "../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../config/Api";
 import TextArea from "antd/es/input/TextArea";
 import Sider from "antd/es/layout/Sider";
@@ -84,7 +84,7 @@ const FilesBuhPage = (props) => {
 
     const fetchChangeRole = async (sales_role) => {
         if (PRODMODE) {
-            const path = `/auth/me`;
+            const path = `${ROUTE_PREFIX}/auth/me`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     place: sales_role,
@@ -111,7 +111,7 @@ const FilesBuhPage = (props) => {
 
     const fetchStartScript = async () => {
         if (PRODMODE) {
-            const path = `/api/cron/savebidsfiles`;
+            const path = `${ROUTE_PREFIX}/cron/savebidsfiles`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.get(path);
                 if (response.data.count === 0) {

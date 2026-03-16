@@ -4,7 +4,7 @@ import './components/style/bugmodal.css';
 import { Modal, Tabs, Table, Select, Button, Form, Input, Space, Tag, Tooltip, DatePicker, Pagination, Empty } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
-import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { BUGMODALMOCK } from './components/BUGMODALMOCK';
 import { countBy, forIn } from 'lodash';
@@ -212,7 +212,7 @@ useEffect(() => {
           data: {content: data},
           _token: CSRF_TOKEN,
         };
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/report', format_data);
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/bugs/report`, format_data);
         if (response) {
           getReportsAction();
           let nv = bugMultiCounter;
@@ -250,7 +250,7 @@ useEffect(() => {
           _token: CSRF_TOKEN
           ,
         };
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/getreports', format_data);
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/bugs/getreports`, format_data);
         if (response) {
           setBugReports(response.data.content?.page);
           setTotal(response.data.total);
@@ -268,7 +268,7 @@ useEffect(() => {
   const getStatusesAction = async () => {
       try {
 			
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/getselects', );
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/bugs/getselects`, );
         if (response) {
           let narr = response.data.selects?.statuses;
      

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Drawer, Table} from "antd";
 import {DownloadOutlined} from "@ant-design/icons";
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_API_URL, PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import dayjs from "dayjs";
 import {FILES} from "../../BID_PAGE/mock/mock";
@@ -49,7 +49,7 @@ const EngineerFilesDrawer = (props) => {
     const fetchFiles = async () => {
         if (PRODMODE) {
             try {
-                const response = await PROD_AXIOS_INSTANCE.post("/api/sales/engineer/orders/document/show/" + props.bidId, {
+                const response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/document/show/` + props.bidId, {
                     data: {},
                     _token: CSRF_TOKEN,
                 });

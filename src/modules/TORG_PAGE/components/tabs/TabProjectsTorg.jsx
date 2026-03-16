@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../config/config';
 import dayjs from 'dayjs';
 import { Button, Empty, Pagination, Spin } from 'antd';
 import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
@@ -144,7 +144,7 @@ const get_projects_data_action = async () => {
   if (PRODMODE){
     setLoading(true);
     try {
-      let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + orgId + '/p', {
+      let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + orgId + '/p', {
           data: {
             page: currentPage,
             limit: onPage,
@@ -212,7 +212,7 @@ const get_projects_data_action = async () => {
                     date_create: dayjs().unix(),
                     id_company: userdata.user.active_company,
                     created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-                    author_id: userdata.user.id,  
+                    //author_id: userdata.user.id,
                     curator: {
                       id: userdata.user.id,
                       surname: userdata?.user.surname,

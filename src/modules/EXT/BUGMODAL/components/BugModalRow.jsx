@@ -5,7 +5,7 @@ import HighlightText from '../../../../components/helpers/HighlightText';
 import TextArea from 'antd/es/input/TextArea';
 import { Select } from 'antd';
 import { ShortName } from '../../../../components/helpers/TextHelpers';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
 
 
@@ -156,7 +156,7 @@ useEffect(() => {
           data: {content: data},
           _token: CSRF_TOKEN,
         };
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/bugs/updatereport/' + itemId, format_data);
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/bugs/updatereport/` + itemId, format_data);
         if (response) {
             setRowOnSaveState(false)
         }

@@ -3,7 +3,7 @@ import { Button, Tag } from 'antd';
 import style from './style/main.module.css';
 
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx-community';
 import {GET_BID_FILES, GET_BID_MODELS} from "../mock/mock";
@@ -85,7 +85,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
             };
         }
         if (PRODMODE) {
-            const path = `/api/sales/makedoc`;
+            const path = `${ROUTE_PREFIX}/sales/makedoc`;
             try {
                 const format_data = {
                     _token: CSRF_TOKEN,

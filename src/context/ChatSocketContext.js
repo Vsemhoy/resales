@@ -1,6 +1,6 @@
 import {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {io} from 'socket.io-client';
-import {CSRF_TOKEN, PRODMODE} from '../config/config.js';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../config/config.js';
 import {CHAT_LIST_MOCK, CHAT_MOCK, CHAT_MOCK_NEW} from '../modules/CHAT/mock/mock.js';
 import {useUserData} from "./UserDataContext";
 import {PROD_AXIOS_INSTANCE} from "../config/Api";
@@ -134,7 +134,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		setLoadingChatList(true);
 		if (PRODMODE) {
 			try {
-				const endpoint = `/api/sms`;
+				const endpoint = `${ROUTE_PREFIX}/sms`;
 				const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
 					data: {search},
 					_token: CSRF_TOKEN,
@@ -159,7 +159,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		setLoadingChat(true);
 		if (PRODMODE) {
 			try {
-				const endpoint = `/api/sms/${chatId}`;
+				const endpoint = `${ROUTE_PREFIX}/sms/${chatId}`;
 				const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
                     data: {
                         last_id: lastMsg,
@@ -227,7 +227,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 				});
 			}
 			console.log(to);
-			const response = await PROD_AXIOS_INSTANCE.post('/api/sms/create/sms', formData);
+			const response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sms/create/sms`, formData);
 
 			console.log('[useSendSms] Ответ от сервера:', response);
 
@@ -245,7 +245,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 		for (const id of messageIds) {
 			if (PRODMODE) {
 				try {
-					const endpoint = `/api/sms/read/${id}`;
+					const endpoint = `${ROUTE_PREFIX}/sms/read/${id}`;
 					const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
 						_token: CSRF_TOKEN,
 					});
@@ -258,7 +258,7 @@ export const ChatSocketProvider = ({ children, url }) => {
 					console.log(e);
 				}
 			} else {
-				console.log(`/api/sms/read/${id}`)
+				console.log(`${ROUTE_PREFIX}/sms/read/${id}`)
 			}
 		}
     }, []);

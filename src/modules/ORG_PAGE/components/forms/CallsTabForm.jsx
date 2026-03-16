@@ -27,7 +27,7 @@ import dayjs from 'dayjs';
 import debounce from 'lodash/debounce';
 
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../config/config';
 import { MODAL_CALLS_LIST } from '../../../ORG_LIST/components/mock/MODALCALLSTABMOCK';
 import { ANTD_PAGINATION_LOCALE } from '../../../../config/Localization';
 
@@ -99,7 +99,7 @@ const CallsTabForm = ({
     try {
       if (PRODMODE) {
         const response = await PROD_AXIOS_INSTANCE.post(
-          `/api/sales/v2/orglist/${orgId}/c`,
+          `${ROUTE_PREFIX}/sales/v2/orglist/${orgId}/c`,
           {
             data: { page: currentPage, limit: pageSize },
             _token: CSRF_TOKEN,

@@ -37,7 +37,7 @@ import CalendarModalFormNote from './ModalForms/CalendarModalFormNote';
 import CalendarModalFormCall from './ModalForms/CalendarModalFormCall';
 import CalendarModalFormProject from './ModalForms/CalendarModalFormProject';
 import CalendarModalFormMyNotes from './ModalForms/CalendarModalFormMyNotes';
-import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { ORG_ERECTORS_MOCK } from '../../TORG_PAGE/components/mock/ORGPAGEMOCK';
 
@@ -125,7 +125,7 @@ const EventCreateModal = ({
     if (!searchErector){ return; }
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/passportselects', {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/passportselects`, {
           data: {
             erector: searchErector,
           },

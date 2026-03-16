@@ -1,7 +1,7 @@
 import { Pagination, Spin, Tag, message } from 'antd';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../../config/config';
 import { ANTD_PAGINATION_LOCALE } from '../../../../../config/Localization';
 import OrgHistoryModalRow from '../Tabs/TabComponents/RowTemplates/OrgHistoryModalRow';
 import { MODAL_HISTORY_LIST } from '../../mock/MODALHISTORYTABMOCK';
@@ -111,7 +111,7 @@ const OrgListModalHistoryTab = (props) => {
 		try {
 			reset ? setLoading(true) : setLoadingMore(true);
 
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/h', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/h', {
 				data: { page, limit },
 				_token: CSRF_TOKEN,
 			});

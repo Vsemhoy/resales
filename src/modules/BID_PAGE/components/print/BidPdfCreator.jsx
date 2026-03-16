@@ -3,7 +3,7 @@ import {Button, Flex, Input, Radio} from "antd";
 import FullScreenSpin from "./components/FullScreenSpin";
 import Print from "./components/Print";
 import './style/print.css';
-import {CSRF_TOKEN, PRODMODE} from "../../../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../../config/config";
 import {useParams} from "react-router-dom";
 import {PROD_AXIOS_INSTANCE} from "../../../../config/Api";
 import {CALC_PDF, INFO_PDF, MODELS_PDF} from "../../mock/mock";
@@ -53,7 +53,7 @@ const BidPdfCreator = () => {
     const fetchInfoFromServer = async () => {
         if (PRODMODE) {
             try {
-                let response = await PROD_AXIOS_INSTANCE.get(`/api/sales/informationpng/${bidId}`, {
+                let response = await PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/sales/informationpng/${bidId}`, {
                     _token: CSRF_TOKEN,
                 });
                 if (response.data) {
@@ -69,7 +69,7 @@ const BidPdfCreator = () => {
     const fetchModelsFromServer = async () => {
         if (PRODMODE) {
             try {
-                let response = await PROD_AXIOS_INSTANCE.get(`/api/sales/anmodelpng/${bidId}`, {
+                let response = await PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/sales/anmodelpng/${bidId}`, {
                     _token: CSRF_TOKEN,
                 });
                 if (response.data) {
@@ -85,7 +85,7 @@ const BidPdfCreator = () => {
     const fetchCalcModels = async () => {
         if (PRODMODE) {
             try {
-                let response = await PROD_AXIOS_INSTANCE.post('/api/sales/calcmodels', {
+                let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/calcmodels`, {
                     data: {
                         bid_info: {
                             bidCurrency: info?.titleInfo?.currency,

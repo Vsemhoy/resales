@@ -5,22 +5,22 @@ export const PRODMODE = !(
 export const BFF_PORT = 5003;
 
 // Старое
-/*export const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
-	? document.querySelector('meta[name="csrf-token"]').content
-	: 'http://localhost/';*/
-/*export const HTTP_HOST = document.querySelector('meta[name="host"]')
-	? document.querySelector('meta[name="host"]').content
-	: null;
-export const HTTP_ROOT = HTTP_HOST ? HTTP_HOST.replace('resales', '') : '';*/
-//export const BASE_NAME = PRODMODE ? '/resales' : '/';
-//export const BASE_ROUTE = PRODMODE ? '/resales' : '';
-//export const HOST_COMPONENT_ROOT = !PRODMODE ? '' : '/com/resales';
+// export const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
+// 	? document.querySelector('meta[name="csrf-token"]').content
+// 	: 'http://localhost/';
+// export const HTTP_HOST = document.querySelector('meta[name="host"]')
+// 	? document.querySelector('meta[name="host"]').content
+// 	: null;
+// export const HTTP_ROOT = HTTP_HOST ? HTTP_HOST.replace('resales', '') : '';
+// export const BASE_NAME = PRODMODE ? '/resales' : '/';
+// export const BASE_ROUTE = PRODMODE ? '/resales' : '';
+// export const HOST_COMPONENT_ROOT = !PRODMODE ? '' : '/com/resales';
 
 // Новое
-export const HTTP_HOST = window.location.hostname; // только IP или домен, без порта
-export const HTTP_ROOT = `http://${window.location.hostname}`;
+export const HTTP_ROOT = window.location.hostname; // только IP или домен, без порта
+export const HTTP_HOST = `http://${window.location.hostname}`;
 export const FRONT_PORT = window.location.port;
-export const HTTP_ROOT_FRONT = `http://${window.location.hostname}:${FRONT_PORT}`;
+export const HTTP_HOST_FRONT = `http://${window.location.hostname}:${FRONT_PORT}`;
 export const BASE_NAME = PRODMODE ? '/' : '/';
 export const BASE_ROUTE = PRODMODE ? '' : '';
 export const CSRF_TOKEN = decodeURIComponent(
@@ -29,5 +29,9 @@ export const CSRF_TOKEN = decodeURIComponent(
         .find(row => row.startsWith('XSRF-TOKEN='))
         ?.split('=')[1] || ''
 );
-console.log('CSRF_TOKEN', CSRF_TOKEN);
+export const ROUTE_PREFIX = '/api';
 
+console.log('HTTP_ROOT', HTTP_ROOT);
+console.log('HTTP_HOST', HTTP_HOST);
+console.log('CSRF_TOKEN', CSRF_TOKEN);
+console.log('ROUTE_PREFIX', ROUTE_PREFIX);

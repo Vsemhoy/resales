@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config.js';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config.js';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api.js';
 
 export default function useSms({ chatId, search, mock}) {
@@ -11,7 +11,7 @@ export default function useSms({ chatId, search, mock}) {
 		const fetchMessages = async () => {
 			if (PRODMODE) {
 				try {
-					const endpoint = chatId ? `/api/sms/${chatId}` : '/api/sms';
+					const endpoint = chatId ? `${ROUTE_PREFIX}/sms/${chatId}` : `${ROUTE_PREFIX}/sms`;
 					const response = await PROD_AXIOS_INSTANCE.post(endpoint, {
 						data: { search },
 						_token: CSRF_TOKEN,

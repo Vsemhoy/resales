@@ -1,7 +1,7 @@
 import { Button, Pagination, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import OrgBidTabRow from './TabComponents/OrgBidTabRow';
-import { BASE_ROUTE, CSRF_TOKEN, PRODMODE } from '../../../../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../../config/config';
 import { OM_ORG_BIDS } from '../../mock/ORGLISTMOCK';
 import { NavLink } from 'react-router-dom';
 import { PROD_AXIOS_INSTANCE } from '../../../../../config/Api';
@@ -64,7 +64,7 @@ const OrgListModalBillsTab = (props) => {
 
 	const get_org_data_action = async (id, cpage, onpage) => {
 		try {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + id + '/b', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + id + '/b', {
 				data: {
 					page: cpage,
 					limit: onpage,
@@ -120,7 +120,7 @@ const OrgListModalBillsTab = (props) => {
 						},
 					};
 					let new_bid_response = await PROD_AXIOS_INSTANCE.post(
-						"/sales/data/makebid",
+						`${ROUTE_PREFIX}/sales/data/makebid`,
 						format_data,
 					);
 					if (new_bid_response) {

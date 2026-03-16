@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from 'antd';
 import { useParams } from 'react-router-dom';
-import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/engPage.css'
 // import { BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, SELECTS, ALLMODELS_LIST } from './mock/mock';
@@ -193,7 +193,7 @@ const EngineerPage = (props) => {
   const fetchBidInfo = async () => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post(`/api/sales/engineer/` + bidId, {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/` + bidId, {
           data: {},
           _token: CSRF_TOKEN
         });
@@ -252,7 +252,7 @@ const EngineerPage = (props) => {
     if (PRODMODE) {
       try {
         let response = await PROD_AXIOS_INSTANCE.post(
-            '/api/sales/engineer/orders/accept/' + order_id,
+            `${ROUTE_PREFIX}/sales/engineer/orders/accept/` + order_id,
             {
               _token: CSRF_TOKEN,
             }
@@ -286,7 +286,7 @@ const EngineerPage = (props) => {
   const fetchBidModels = async () => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.get('/api/sales/getmodels', {
+        let response = await PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/sales/getmodels`, {
           data: {},
           _token: CSRF_TOKEN,
         });
@@ -318,7 +318,7 @@ const EngineerPage = (props) => {
 
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.put(`/api/sales/engineer/${bidId}`, {
+        let response = await PROD_AXIOS_INSTANCE.put(`${ROUTE_PREFIX}/sales/engineer/${bidId}`, {
           data,
           _token: CSRF_TOKEN,
         });
@@ -347,7 +347,7 @@ const EngineerPage = (props) => {
     if (PRODMODE) {
       try {
         setIsLoadingSmall(true);
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/calcmodels', {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/calcmodels`, {
           data: {
             bid_info: {
               bidCurrency,
@@ -478,7 +478,7 @@ const EngineerPage = (props) => {
   const handleCopySpecification = async (spec_id) => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/copy/' + bidId, {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/copy/` + bidId, {
           _token: CSRF_TOKEN,
           data: {
             bidId: spec_id
@@ -498,7 +498,7 @@ const EngineerPage = (props) => {
   const handleCopySpecificationIntoBid = async (value) => {
     if (PRODMODE) {
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/intoBid/' + bidId, {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/intoBid/` + bidId, {
           _token: CSRF_TOKEN,
           data: {
             bidId: value,
@@ -556,7 +556,7 @@ const EngineerPage = (props) => {
   const handleSpecificationFinal = async () => {
       if (PRODMODE){
         try {
-          let response = await PROD_AXIOS_INSTANCE.post('/api/sales/engineer/orders/final/' + bidId, {
+          let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/engineer/orders/final/` + bidId, {
             _token: CSRF_TOKEN,
             data: {}
           });

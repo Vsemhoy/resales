@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {
     Button,
     Checkbox,
@@ -344,7 +344,7 @@ const FindSimilarDrawer = (props) => {
                 }
             };
             if (PRODMODE) {
-                const path = `/sales/data/getsimilarbid`
+                const path = `${ROUTE_PREFIX}/sales/data/getsimilarbid`
                 try {
                     setLoad(true);
                     let response = await PROD_AXIOS_INSTANCE.post(path, {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PROD_AXIOS_INSTANCE } from '../../../../config/Api';
-import { CSRF_TOKEN, PRODMODE } from '../../../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../../config/config';
 import { MODAL_NOTES_LIST } from '../../../ORG_LIST/components/mock/MODALNOTESTABMOCK';
 import NoteTabSectionTorg from '../sections/NoteTabSectionTorg';
 import dayjs from 'dayjs';
@@ -136,7 +136,7 @@ const TabNotesTorg = (props) => {
   const get_notes_data_action = async () => {
     if (PRODMODE){
       try {
-        let response = await PROD_AXIOS_INSTANCE.post('/api/sales/v2/orglist/' + orgId + '/n', {
+        let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/` + orgId + '/n', {
           data: {
             page: currentPage,
             limit: onPage,

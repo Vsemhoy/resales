@@ -9,7 +9,7 @@ import { Content } from 'antd/es/layout/layout';
 import { NavLink } from 'react-router-dom';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import CuratorListTable from './components/CuratorListTable';
-import { CSRF_TOKEN, PRODMODE } from '../../config/config';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import {CONFIRM_LIST, COUNT, SUPERVISOR} from './mock/mock';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 // import './components/style/eng.css';
@@ -57,7 +57,7 @@ const CuratorPageNEW = (props) => {
 
 	const fetchNeedCuratorsApproved = async () => {
 		if (PRODMODE) {
-			let response = await PROD_AXIOS_INSTANCE.post('/api/v2/curators', {
+			let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/v2/curators`, {
 				_token: CSRF_TOKEN,
 			});
 			setCompanies(response.data.curators);
@@ -73,7 +73,7 @@ const CuratorPageNEW = (props) => {
 	const approve = async (status, id) => {
 		setButtonLoading(true);
 		if (PRODMODE) {
-			let response = await PROD_AXIOS_INSTANCE.put('/api/curators/approved/' + id, {
+			let response = await PROD_AXIOS_INSTANCE.put(`${ROUTE_PREFIX}/curators/approved/` + id, {
 				status: status,
 				_token: CSRF_TOKEN,
 			});

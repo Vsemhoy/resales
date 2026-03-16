@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {AutoComplete, Drawer, Tag} from "antd";
-import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
+import {BASE_ROUTE, CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {ORG_SUGGESTIONS} from "../mock/mock";
 import {CopyOutlined, FileSyncOutlined, LoadingOutlined} from "@ant-design/icons";
@@ -39,7 +39,7 @@ const BidDuplicationDrawer = (props) => {
 
     const fetchOrgs = async () => {
         if (PRODMODE) {
-            const path = `/sales/data/getorgsuggestions`;
+            const path = `${ROUTE_PREFIX}/sales/data/getorgsuggestions`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
@@ -67,7 +67,7 @@ const BidDuplicationDrawer = (props) => {
 
     const createDuplicate = async (type) => {
         if (PRODMODE) {
-            const path = `/sales/data/makebid`;
+            const path = `${ROUTE_PREFIX}/sales/data/makebid`;
             try {
                 let response = await PROD_AXIOS_INSTANCE.post(path, {
                     data: {
@@ -78,7 +78,7 @@ const BidDuplicationDrawer = (props) => {
                     _token: CSRF_TOKEN,
                 });
                 if (response.data.message === "OK" && response.data.item_id) {
-                    window.open(`/resales/bids/${response.data.item_id}`, '_blank');
+                    window.open(`${BASE_ROUTE}/bids/${response.data.item_id}`, '_blank');
                 }
             } catch (e) {
                 console.log(e);
