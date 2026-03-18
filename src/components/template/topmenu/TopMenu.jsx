@@ -50,7 +50,7 @@ const TopMenu = (props) => {
 
 	useEffect(() => {
 		setUserdata(props.userdata);
-		if (props.userdata?.user.is_admin){
+		if (props.userdata?.user?.is_admin){
 			setIsAdmin(true);
 		}
 	}, [props.userdata]);
