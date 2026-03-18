@@ -260,7 +260,7 @@ const TopMenu = (props) => {
 
                     <Button color={'primary'}
                             variant={'solid'}
-                            onClick={()=>{window.open('/resales/calendar')}}
+                            onClick={()=>{window.open('/calendar')}}
                     >
                         <CalendarOutlined height={'16px'} />
                     </Button>
