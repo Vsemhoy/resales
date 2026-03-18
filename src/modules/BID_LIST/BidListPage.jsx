@@ -469,7 +469,7 @@ const BidListPage = (props) => {
 	};
 	const fetchChangeRole = async (sales_role) => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/auth/me`;
+			const path = `${ROUTE_PREFIX}/update/sales_role`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
 					place: sales_role,
@@ -481,6 +481,7 @@ const BidListPage = (props) => {
 						props.changed_user_data(response.data);
 					}
 				}
+                props.new_changed_user_data();
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);

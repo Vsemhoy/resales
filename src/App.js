@@ -163,11 +163,11 @@ export const App = () => {
 
                                     <Route
                                         path={'/bids'}
-                                        element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
+                                        element={<BidListPage userdata={userdata} new_changed_user_data={() => get_userdata()} changed_user_data={setUserdata} />}
                                     />
                                     <Route
                                         path="/bids"
-                                        element={<BidListPage userdata={userdata} changed_user_data={setUserdata} />}
+                                        element={<BidListPage userdata={userdata} new_changed_user_data={() => get_userdata()} changed_user_data={setUserdata} />}
                                     />
 
                                     <Route

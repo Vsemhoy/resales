@@ -173,12 +173,12 @@ const TopMenu = (props) => {
 	const set_user_company = async (newcom) => {
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/auth/me`, {
+				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/update/active_company`, {
 					id_company: newcom,
 					_token: CSRF_TOKEN,
 				});
 				if (response.data) {
-					setUserdata(response.data); // Обновляем данные пользователя
+					//setUserdata(response.data); // Обновляем данные пользователя
 					props.changed_user_data();
 				}
 			} catch (e) {
