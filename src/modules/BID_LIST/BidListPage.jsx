@@ -477,9 +477,9 @@ const BidListPage = (props) => {
 				});
 				console.log('response', response);
 				if (response.data) {
-					if (props.changed_user_data) {
+					/*if (props.changed_user_data) {
 						props.changed_user_data(response.data);
-					}
+					}*/
 				}
                 props.new_changed_user_data();
 			} catch (e) {
