@@ -14,7 +14,7 @@ import {
 	Space, Empty, Divider, message
 } from 'antd';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
-import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../config/config';
+import {BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/bidPage.css';
 import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT, PROJECT_INFO, SELECTS} from './mock/mock';
@@ -876,7 +876,7 @@ const BidPage = (props) => {
 				if (response.data) {
 					const parts = response.data.data.file_link.split('/');
 					const withSlash = '/' + parts.slice(1).join('/');
-					window.open(`${withSlash}`, '_blank', 'noopener,noreferrer');
+					window.open(`${HTTP_HOST}${withSlash}`, '_blank', 'noopener,noreferrer');
 					setBidFilesCount(bidFilesCount + 1);
 				}
 			} catch (e) {
