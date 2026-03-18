@@ -182,7 +182,7 @@ const BidFilesDrawer = (props) => {
                 const response = await PROD_AXIOS_INSTANCE.post(path, data, config,);
                 const parts = response.data.data.file_link.split('/');
                 const withSlash = '/' + parts.slice(1).join('/');
-                window.open(`${withSlash}`, "_blank", "noopener,noreferrer",);
+                window.open(`${HTTP_HOST}${withSlash}`, "_blank", "noopener,noreferrer",);
             } catch (e) {
                 console.log(e);
                 props.error_alert(path, e);
