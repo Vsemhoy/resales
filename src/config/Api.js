@@ -30,7 +30,7 @@ const handleAuthError = (status) => {
         //sessionStorage.clear();
 
         // 3️⃣ Редирект на главную
-        window.location.href = HTTP_HOST;
+        //window.location.href = HTTP_HOST;
     }
 };
 
