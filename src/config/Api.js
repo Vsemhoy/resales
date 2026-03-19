@@ -26,8 +26,8 @@ const handleAuthError = (status) => {
         });
 
         // 2️⃣ Очистка localStorage / sessionStorage (если там хранятся токены)
-        localStorage.clear();
-        sessionStorage.clear();
+        //localStorage.clear();
+        //sessionStorage.clear();
 
         // 3️⃣ Редирект на главную
         window.location.href = HTTP_HOST;
