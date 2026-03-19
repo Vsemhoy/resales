@@ -7,3 +7,16 @@ export const PROD_AXIOS_INSTANCE = axios.create({
     baseURL: HTTP_HOST,
     timeout: 300000,
 });
+PROD_AXIOS_INSTANCE.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response && error.response.status === 419) {
+            console.log('Session expired / CSRF token invalid');
+            window.location.href = HTTP_HOST;
+        }
+
+        return Promise.reject(error);
+    }
+);
