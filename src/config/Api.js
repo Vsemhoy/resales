@@ -15,8 +15,8 @@ export const PROD_AXIOS_INSTANCE = axios.create({
 
 // 👇 универсальный обработчик
 const handleAuthError = (status) => {
-    if (status === 403 || status === 419) {
-        console.log('Session expired / CSRF token invalid');
+    if ([401, 403, 419].includes(status)) {
+        console.log('Auth/session error:', status);
         window.location.href = HTTP_HOST;
     }
 };
