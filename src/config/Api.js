@@ -17,6 +17,19 @@ export const PROD_AXIOS_INSTANCE = axios.create({
 const handleAuthError = (status) => {
     if ([401, 403, 419].includes(status)) {
         console.log('Auth/session error:', status);
+
+        // 1️⃣ Очистка всех cookies на текущем домене
+        document.cookie.split(";").forEach((c) => {
+            document.cookie = c
+                .replace(/^ +/, "")
+                .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        });
+
+        // 2️⃣ Очистка localStorage / sessionStorage (если там хранятся токены)
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // 3️⃣ Редирект на главную
         window.location.href = HTTP_HOST;
     }
 };
