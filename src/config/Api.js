@@ -12,7 +12,10 @@ PROD_AXIOS_INSTANCE.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response && error.response.status === 419) {
+        if (
+            (error.response && error.response.status === 419) ||
+            (error.response && error.response.status === 403)
+        ) {
             console.log('Session expired / CSRF token invalid');
             window.location.href = HTTP_HOST;
         }
