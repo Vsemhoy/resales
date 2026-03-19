@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { HTTP_ROOT, HTTP_HOST } from './config';
+import { HTTP_HOST } from './config';
 
 axios.defaults.withCredentials = true;
 
@@ -50,3 +50,16 @@ PROD_AXIOS_INSTANCE.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+PROD_AXIOS_INSTANCE.interceptors.request.use((config) => {
+    const xsrfToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('XSRF-TOKEN='))
+        ?.split('=')[1];
+
+    if (xsrfToken) {
+        config.headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfToken);
+    }
+
+    return config;
+});
