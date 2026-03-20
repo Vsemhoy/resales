@@ -2399,7 +2399,7 @@ const BidPage = (props) => {
 												</div>
 												<div className={'sa-models-table-cell align-left'}>
 													<NameSelect
-														options={prepareSelect(modelsSelect)?.filter(option => [0, 1, 3].includes(option.type_model))}
+														options={prepareSelect(modelsSelect)}
 														model={bidModel}
 														disabled={isDisabledInputManager()}
 														onUpdateModelName={handleChangeModel}
