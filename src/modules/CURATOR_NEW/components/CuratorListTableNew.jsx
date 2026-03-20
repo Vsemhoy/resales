@@ -121,6 +121,25 @@ const CuratorListTableNew = (props) => {
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
 								<TableHeadNameWithSort
+									sort_key={'org_id'}
+									on_sort_change={handleActivateSorter}
+									active_sort_items={sortOrders}
+								>
+									Инициатор
+								</TableHeadNameWithSort>
+								<div className={'sa-pa-3'}>
+									<Input
+										size={'small'}
+										style={{ width: '100%' }}
+										variant="filled"
+										onChange={(val) => props.on_change_filter_box('org_id', val.target.value)}
+									/>
+								</div>
+							</div>
+						</div>
+                        <div className={'sa-table-box-cell'}>
+							<div className={'sa-table-head-on'}>
+								<TableHeadNameWithSort
 									sort_key={'username'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
