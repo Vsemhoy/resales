@@ -11,7 +11,7 @@ import { countBy, forIn } from 'lodash';
 import { ANTD_PAGINATION_LOCALE } from '../../../config/Localization';
 import dayjs from 'dayjs';
 import HighlightText from '../../../components/helpers/HighlightText';
-import HighlightTextBreaker from '../../../components/helpers/HighlightTextBreaker.js';
+import HighlightTextBreaker from '../../../components/helpers/HighlightTextBreaker.jsx';
 import BugModalRow from './components/BugModalRow.jsx';
 import { 
   CaretLeftOutlined, CaretRightOutlined, DownloadOutlined,

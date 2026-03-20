@@ -2,8 +2,6 @@ import React from 'react';
 
 const StopwatchPlusIcon = ({ height = '100%' }) => (
 	<svg
-		height="200px"
-		width="200px"
 		viewBox="0 0 58 58"
 		xmlns="http://www.w3.org/2000/svg"
 		style={{ enableBackground: 'new 0 0 58 58' }}

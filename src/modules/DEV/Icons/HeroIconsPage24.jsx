@@ -151,7 +151,6 @@ const HeroIconsPage24 = () => {
 								fontSize: 12,
 								textAlign: 'center',
 								wordBreak: 'break-all',
-								fontSize: 'medium',
 							}}
 						>
 							{name}

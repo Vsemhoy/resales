@@ -1,6 +1,6 @@
 import styles from './style/Chat.module.css';
 import {useEffect, useMemo, useState} from 'react';
-import {useUserData} from '../../../context/UserDataContext.js';
+import {useUserData} from '../../../context/UserDataContext.jsx';
 import {useChatRole} from '../../../hooks/sms/useChatRole.js';
 import {Badge, Button, Dropdown, Space} from 'antd';
 import {MessageOutlined} from '@ant-design/icons';

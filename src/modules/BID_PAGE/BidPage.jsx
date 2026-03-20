@@ -17,7 +17,7 @@ import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/bidPage.css';
-import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT, PROJECT_INFO, SELECTS} from './mock/mock';
+import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT_INFO, SELECTS} from './mock/mock';
 import MODELS from './mock/mock_models';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import {
