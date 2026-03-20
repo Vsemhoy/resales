@@ -5,8 +5,6 @@ const StateWaitIcon = ({ height = '100%' }) => (
 		version="1.1"
 		xmlns="http://www.w3.org/2000/svg"
 		xmlnsXlink="http://www.w3.org/1999/xlink"
-		width="800px"
-		height="800px"
 		viewBox="0 0 32 32"
 		xmlSpace="preserve"
 		style={{ enableBackground: 'new 0 0 32 32' }}

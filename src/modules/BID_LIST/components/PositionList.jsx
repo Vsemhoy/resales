@@ -5,7 +5,7 @@ import style from './style/main.module.css';
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 import dayjs from 'dayjs';
-import * as XLSX from 'xlsx-community';
+import XLSX from '../../../utils/xlsxCommunityShim';
 import {GET_BID_FILES, GET_BID_MODELS} from "../mock/mock";
 
 import { Space } from 'antd';

@@ -120,7 +120,7 @@ const OrgListTable = (props) => {
 			props.base_filters?.curator !== null &&
 			props.base_filters?.curator !== '' &&
 			props.base_filters?.curator !== 'null' &&
-			props.base_filters?.curator !== NaN &&
+			!Number.isNaN(Number(props.base_filters?.curator)) &&
 			props.base_filters?.curator !== undefined
 		) {
 			setFilterCurator(parseInt(props.base_filters.curator));

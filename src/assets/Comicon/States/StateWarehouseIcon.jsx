@@ -2,8 +2,6 @@ import React from 'react';
 
 const StateWarehouseIcon = ({ height = '100%' }) => (
 	<svg
-		width="800px"
-		height="800px"
 		viewBox="0 0 512 512"
 		id="Layer_1"
 		version="1.1"

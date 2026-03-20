@@ -42,7 +42,7 @@ import {
 } from './components/mock/ORGLISTMOCK';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
-import { readOrgURL, updateURL, useURLParams } from '../../components/helpers/UriHelpers';
+import { useURLParams } from '../../components/helpers/UriHelpers';
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
 import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
 import {PRICE as usr} from "../PRICE/mock/mock";

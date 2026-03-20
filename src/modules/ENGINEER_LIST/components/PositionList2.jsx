@@ -6,7 +6,7 @@ import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { CSRF_TOKEN, PRODMODE } from '../../../config/config';
 import { DownloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import * as XLSX from 'xlsx-community';
+import XLSX from '../../../utils/xlsxCommunityShim';
 import {FILES} from "../mock/mock";
 
 const PositionList2 = ({ bidId, fetch_path, error_alert }) => {

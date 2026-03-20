@@ -296,7 +296,7 @@ const OrgListSiderFilter = (props) => {
 			props.base_filters?.curators !== null &&
 			props.base_filters?.curators !== '' &&
 			props.base_filters?.curators !== 'null' &&
-			props.base_filters?.curators !== NaN &&
+			!Number.isNaN(Number(props.base_filters?.curators)) &&
 			props.base_filters?.curators !== undefined
 		) {
 			setListCreators(props.base_filters.curators);

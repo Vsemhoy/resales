@@ -2,8 +2,6 @@ import React from 'react';
 
 const StateForbiddenIcon = ({ height = '100%' }) => (
 	<svg
-		width="800px"
-		height="800px"
 		viewBox="0 0 100 100"
 		xmlns="http://www.w3.org/2000/svg"
 		style={{ enableBackground: 'new 0 0 100 100' }}
