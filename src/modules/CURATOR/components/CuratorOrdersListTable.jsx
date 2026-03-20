@@ -194,8 +194,8 @@ const CuratorOrdersListTable = (props) => {
                                     value={orderId}
                                     onChange={(val) =>
                                         val.target.value && +val.target.value !== 0
-                                            ? setOrderId(val.target.value)
-                                            : setOrderId(null)
+                                            ? setOrgId(val.target.value)
+                                            : setOrgId(null)
                                     }
                                 />
                             </div>
