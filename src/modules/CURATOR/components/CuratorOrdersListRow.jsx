@@ -173,6 +173,13 @@ const { getCurrentParamsString } = useURLParams();
 					<div className={'sa-table-box-cell'}>
 						<div className={'text-align-center'}>
 							<NavLink to={`/orgs/${data.org_id}`} target={'_blank'}>
+								<HighlightText text={data.org_id} highlight={filterName}/>
+							</NavLink>
+						</div>
+					</div>
+                    <div className={'sa-table-box-cell'}>
+						<div className={'text-align-center'}>
+							<NavLink to={`/orgs/${data.org_id}`} target={'_blank'}>
 								<HighlightText text={data.org_name} highlight={filterName}/>
 							</NavLink>
 						</div>

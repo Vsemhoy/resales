@@ -18,23 +18,18 @@ const CuratorOrdersListTable = (props) => {
 	const [filterTriggered, setFilterTriggered] = useState(null);
 
 	const [orderId, setOrderId] = useState(null);
+	const [orgId, setOrgId] = useState(null);
 	const [companyName, setCompanyName] = useState(null);
 	const [userName, setUserName] = useState(null);
-
-
-	// const [type, setType] = useState(null);
-	// const [protectStatus, setProtectStatus] = useState(null);
-	// const [stageStatus, setStageStatus] = useState(null);
 	const [dates, setDates] = useState(null);
-	// const [manager, setManager] = useState(null);
-	// const [billNumber, setBillNumber] = useState(null);
-	// const [comment, setComment] = useState(null);
-	// const [objectName, setObjectName] = useState(null);
 
 	useEffect(() => {
 		if (props.filter_box.order_id !== orderId) {
 			setOrderId(props.filter_box.order_id);
 		}
+        if (props.filter_box.org_id !== orderId) {
+            setOrderId(props.filter_box.org_id);
+        }
 		if (props.filter_box.company_name !== companyName) {
 			setCompanyName(props.filter_box.company_name);
 			setFilterName(props.filter_box.company_name);
@@ -42,27 +37,9 @@ const CuratorOrdersListTable = (props) => {
 		if (props.filter_box.user_name !== userName) {
 			setUserName(props.filter_box.user_name);
 		}
-		// if (props.filter_box.protect_status !== protectStatus) {
-		// 	setProtectStatus(props.filter_box.protect_status);
-		// }
-		// if (props.filter_box.stage_status !== stageStatus) {
-		// 	setStageStatus(props.filter_box.stage_status);
-		// }
 		if (props.filter_box.dates !== dates) {
 			setDates(props.filter_box.dates);
 		}
-		// if (props.filter_box.manager !== manager) {
-		// 	setManager(props.filter_box.manager);
-		// }
-		// if (props.filter_box.bill_number !== billNumber) {
-		// 	setBillNumber(props.filter_box.bill_number);
-		// }
-		// if (props.filter_box.comment !== comment) {
-		// 	setComment(props.filter_box.comment);
-		// }
-		// if (props.filter_box.object_name !== objectName) {
-		// 	setObjectName(props.filter_box.object_name);
-		// }
 		setFilterTriggered(dayjs().unix());
 	}, [props.filter_box]);
 
@@ -77,16 +54,10 @@ const CuratorOrdersListTable = (props) => {
 		const timer = setTimeout((filterBox) => {
 			const newFilterBox = {
 				order_id: orderId ?? null,
+				org_id: orgId ?? null,
 				company_name: companyName ?? null,
 				user_name: userName ?? null,
-				// type: type ?? null,
-				// protect_status: protectStatus ?? null,
-				// stage_status: stageStatus ?? null,
 				dates: dates ?? null,
-				// manager: manager ?? null,
-				// bill_number: billNumber ?? null,
-				// comment: comment ?? null,
-				// object_name: objectName ?? null,
 			};
 			console.log(newFilterBox);
 			props.on_change_filter_box(newFilterBox);
@@ -95,15 +66,10 @@ const CuratorOrdersListTable = (props) => {
 		return () => clearTimeout(timer);
 	}, [
 		orderId,
+        orgId,
 		companyName,
 		userName,
-		// protectStatus,
-		// stageStatus,
 		dates,
-		// manager,
-		// billNumber,
-		// comment,
-		// objectName,
 	]);
 
 
@@ -122,40 +88,6 @@ const CuratorOrdersListTable = (props) => {
 			props.on_set_sort_orders(sortOrders);
 		}
 	}, [sortOrders]);
-
-	// useEffect(() => {
-	// 	if (!arraysEqualIgnore(props.order_box, sortOrders)) {
-	// 		setSortOrders(props.order_box);
-	// 	}
-	// }, [props.order_box]);
-
-	// const arraysEqualIgnore = (arr1, arr2) => {
-	// 	if (arr1.length !== arr2.length) {
-	// 		return false;
-	// 	}
-	//
-	// 	// Создаем копии и сортируем по key для consistent comparison
-	// 	const sorted1 = [...arr1].sort((a, b) => a.key - b.key);
-	// 	const sorted2 = [...arr2].sort((a, b) => a.key - b.key);
-	//
-	// 	// Сравниваем каждый объект
-	// 	for (let i = 0; i < sorted1.length; i++) {
-	// 		if (sorted1[i].key !== sorted2[i].key || sorted1[i].order !== sorted2[i].order) {
-	// 			return false;
-	// 		}
-	// 	}
-	//
-	// 	return true;
-	// };
-
-	// const handlePreviewOpen = (item, state) => {
-	// 	console.log('Hello');
-	// 	// setPreviewItem(item);
-	// 	// setIsPreviewOpen(true);
-	// 	if (props.on_preview_open) {
-	// 		props.on_preview_open(item, state);
-	// 	}
-	// };
 
 	/**
 	 * Обработчик сортировки колонок в таблице - триггер: клик на TableHeadNameWithSort
@@ -244,6 +176,30 @@ const CuratorOrdersListTable = (props) => {
 								</div>
 							</div>
 						</div>
+                        <div className={'sa-table-head-on'}>
+                            <TableHeadNameWithSort
+                                sort_key={'org_id'}
+                                on_sort_change={handleActivateSorter}
+                                active_sort_items={sortOrders}
+                            >
+                                id
+                            </TableHeadNameWithSort>
+                            <div className={'sa-pa-3'}>
+                                <Input
+                                    type={'number'}
+                                    size={'small'}
+                                    style={{width: '100%'}}
+                                    variant="filled"
+                                    allowClear
+                                    value={orderId}
+                                    onChange={(val) =>
+                                        val.target.value && +val.target.value !== 0
+                                            ? setOrderId(val.target.value)
+                                            : setOrderId(null)
+                                    }
+                                />
+                            </div>
+                        </div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
 								<TableHeadNameWithSort
@@ -299,154 +255,6 @@ const CuratorOrdersListTable = (props) => {
 								{props.supervisor ? ("Действия") : ("Статус")}
 							</div>
 						</div>
-						{/*<div className={'sa-table-box-cell'}>*/}
-						{/*	<div className={'sa-table-head-on'}>*/}
-						{/*		<TableHeadNameWithSort*/}
-						{/*			sort_key={'stage_id'}*/}
-						{/*			on_sort_change={handleActivateSorter}*/}
-						{/*			active_sort_items={sortOrders}*/}
-						{/*		>*/}
-						{/*			Этап*/}
-						{/*		</TableHeadNameWithSort>*/}
-						{/*		<div className={'sa-pa-3'}>*/}
-						{/*			<Select*/}
-						{/*				size={'small'}*/}
-						{/*				style={{width: '100%'}}*/}
-						{/*				variant="filled"*/}
-						{/*				value={stageStatus}*/}
-						{/*				options={props.filter_steps}*/}
-						{/*				onChange={(val) => setStageStatus(val)}*/}
-						{/*				allowClear*/}
-						{/*			/>*/}
-						{/*		</div>*/}
-						{/*	</div>*/}
-						{/*</div>*/}
-						{/*<div className={'sa-table-box-cell'}>*/}
-						{/*	<div className={'sa-table-head-on'}>*/}
-						{/*		<TableHeadNameWithSort*/}
-						{/*			sort_key={'date'}*/}
-						{/*			on_sort_change={handleActivateSorter}*/}
-						{/*			active_sort_items={sortOrders}*/}
-						{/*		>*/}
-						{/*			Дата*/}
-						{/*		</TableHeadNameWithSort>*/}
-						{/*		<div className={'sa-pa-3'}>*/}
-						{/*			<DatePicker*/}
-						{/*				size={'small'}*/}
-						{/*				style={{width: '100%'}}*/}
-						{/*				variant="filled"*/}
-						{/*				allowClear*/}
-						{/*				value={dates ? dayjs.unix(dates) : null}*/}
-						{/*				onChange={(date, dateString) => {*/}
-						{/*					console.log(date);*/}
-						{/*					console.log(dateString);*/}
-						{/*					setDates(date ? date.unix() : null);*/}
-						{/*				}}*/}
-						{/*				format="DD.MM.YYYY"*/}
-						{/*			/>*/}
-						{/*		</div>*/}
-						{/*	</div>*/}
-						{/*</div>*/}
-						{/*<div className={'sa-table-box-cell'}>*/}
-						{/*	<div className={'sa-table-head-on'}>*/}
-						{/*		<TableHeadNameWithSort*/}
-						{/*			sort_key={'username'}*/}
-						{/*			on_sort_change={handleActivateSorter}*/}
-						{/*			active_sort_items={sortOrders}*/}
-						{/*		>*/}
-						{/*			Менеджер*/}
-						{/*		</TableHeadNameWithSort>*/}
-						{/*		<div className={'sa-pa-3'}>*/}
-						{/*			<Select*/}
-						{/*				size={'small'}*/}
-						{/*				style={{width: '100%'}}*/}
-						{/*				variant="filled"*/}
-						{/*				value={manager}*/}
-						{/*				options={props.filter_managers}*/}
-						{/*				onChange={(val) => setManager(val)}*/}
-						{/*				allowClear*/}
-						{/*				showSearch*/}
-						{/*				optionFilterProp="label"*/}
-						{/*				filterOption={(input, option) =>*/}
-						{/*					option.label.toLowerCase().includes(input.toLowerCase())*/}
-						{/*				}*/}
-						{/*			/>*/}
-						{/*		</div>*/}
-						{/*	</div>*/}
-						{/*</div>*/}
-						{/*<div className={'sa-table-box-cell'}>*/}
-						{/*	<div className={'sa-table-head-on'}>*/}
-						{/*		<div className={'sa-pa-3'}>Счета</div>*/}
-						{/*		<div className={'sa-pa-3'}>*/}
-						{/*			<Input*/}
-						{/*				size={'small'}*/}
-						{/*				style={{width: '100%'}}*/}
-						{/*				variant="filled"*/}
-						{/*				allowClear*/}
-						{/*				value={billNumber}*/}
-						{/*				onChange={(val) =>*/}
-						{/*					val.target.value && +val.target.value !== 0*/}
-						{/*						? setBillNumber(val.target.value)*/}
-						{/*						: setBillNumber(null)*/}
-						{/*				}*/}
-						{/*			/>*/}
-						{/*		</div>*/}
-						{/*	</div>*/}
-						{/*</div>*/}
-						{/*<div className={'sa-table-box-cell'}>*/}
-						{/*	<div className={'sa-table-head-on'}>*/}
-						{/*		<div className={'sa-pa-3'}>Комментарий</div>*/}
-						{/*		<div className={'sa-pa-3'}>*/}
-						{/*			<Input*/}
-						{/*				size={'small'}*/}
-						{/*				style={{width: '100%'}}*/}
-						{/*				variant="filled"*/}
-						{/*				allowClear*/}
-						{/*				value={comment}*/}
-						{/*				onChange={(val) =>*/}
-						{/*					val.target.value && +val.target.value !== 0*/}
-						{/*						? setComment(val.target.value)*/}
-						{/*						: setComment(null)*/}
-						{/*				}*/}
-						{/*			/>*/}
-						{/*		</div>*/}
-						{/*	</div>*/}
-						{/*</div>*/}
-						{/*<div className={'sa-table-box-cell'}>*/}
-						{/*	<div className={'sa-table-head-on'}>*/}
-						{/*		<div className={'sa-pa-3'}>Объект</div>*/}
-						{/*		<div className={'sa-pa-3'}>*/}
-						{/*			<Input*/}
-						{/*				size={'small'}*/}
-						{/*				style={{width: '100%'}}*/}
-						{/*				variant="filled"*/}
-						{/*				allowClear*/}
-						{/*				value={objectName}*/}
-						{/*				onChange={(val) =>*/}
-						{/*					val.target.value && +val.target.value !== 0*/}
-						{/*						? setObjectName(val.target.value)*/}
-						{/*						: setObjectName(null)*/}
-						{/*				}*/}
-						{/*			/>*/}
-						{/*		</div>*/}
-						{/*	</div>*/}
-						{/*</div>*/}
-						{/*<div className={'sa-table-box-cell'}>*/}
-						{/*	<div*/}
-						{/*		className={'sa-table-head-on'}*/}
-						{/*		style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}*/}
-						{/*	>*/}
-						{/*		<div className={'sa-pa-3'}>Список</div>*/}
-						{/*	</div>*/}
-						{/*</div>*/}
-						{/*<div className={'sa-table-box-cell'}>*/}
-						{/*	<div*/}
-						{/*		className={'sa-table-head-on'}*/}
-						{/*		style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}*/}
-						{/*	>*/}
-						{/*		<div className={'sa-pa-3'}>Файлы</div>*/}
-						{/*	</div>*/}
-						{/*</div>*/}
 					</div>
 				</div>
 			</Affix>
