@@ -50,7 +50,7 @@ const ModelInfoExtraDrawer = (props) => {
     const fetchModelInfoExtra = async () => {
         if (PRODMODE) {
             try {
-                let response = await PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/sales/data/getmodelprops/?_token=${CSRF_TOKEN}&model_id=${extraId}`, {
+                let response = await PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/sales/data/getmodelprops?_token=${CSRF_TOKEN}&model_id=${extraId}`, {
                     _token: CSRF_TOKEN,
                 });
                 if (response.data.props) {
