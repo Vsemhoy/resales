@@ -63,6 +63,9 @@ const CuratorListRowNew = (props) => {
 					<div>{dayjs.unix(data.created_at).format('DD.MM.YYYY')}</div>
 				</div>
 				<div className={'sa-table-box-cell'}>
+					<div>{data.org_id}</div>
+				</div>
+                <div className={'sa-table-box-cell'}>
 					<div>{data.full_name}</div>
 				</div>
 				<div className={'sa-table-box-cell text-align-center'}>
