@@ -51,7 +51,7 @@ const CuratorPageNEW = (props) => {
 	const [filterBox, setFilterBox] = useState({
 		/* header */
 		order_id: searchParams.get('order_id') || null,
-		org_id: searchParams.get('order_id') || null,
+		org_id: searchParams.get('org_id') || null,
 		company_name: searchParams.get('company_name') || null,
 		user_name: searchParams.get('user_name') || null,
 		dates: searchParams.get('dates') || null,
