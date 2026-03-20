@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
 	Affix,
 	Alert,
@@ -75,6 +75,10 @@ const BidPage = (props) => {
 
 	const [lastUpdModel, setLastUpdModel] = useState(null);
 	const [isUpdateAll, setIsUpdateAll] = useState(false);
+	const [bidModelsVersion, setBidModelsVersion] = useState(0);
+	const bidModelsVersionRef = useRef(0);
+	const calcRequestIdRef = useRef(0);
+	const bidModelsRef = useRef([]);
 
 	const [isOpenBaseInfo, setIsOpenBaseInfo] = useState(false);
 
@@ -263,6 +267,12 @@ const BidPage = (props) => {
 			setUserData(props.userdata);
 		}
 	}, [props.userdata]);
+	useEffect(() => {
+		bidModelsVersionRef.current = bidModelsVersion;
+	}, [bidModelsVersion]);
+	useEffect(() => {
+		bidModelsRef.current = bidModels;
+	}, [bidModels]);
     useEffect(() => {
 		if (userData && userData.user) {
             setIsOpenBaseInfo(userData.user.sales_role === 2 || userData.user.sales_role === 3);
@@ -823,6 +833,9 @@ const BidPage = (props) => {
 		console.log('fetchCalcModels');
 		if (PRODMODE) {
 			const path = `${ROUTE_PREFIX}/sales/calcmodels`;
+			const requestId = ++calcRequestIdRef.current;
+			const requestVersion = bidModelsVersionRef.current;
+			const requestModelsSnapshot = JSON.parse(JSON.stringify(bidModelsRef.current));
 			try {
 				setIsLoadingSmall(true);
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -838,6 +851,25 @@ const BidPage = (props) => {
 					_token: CSRF_TOKEN,
 				});
 				if (response.data.content) {
+					const isStaleRequest = calcRequestIdRef.current !== requestId;
+					const hasLocalChanges = bidModelsVersionRef.current !== requestVersion;
+					if (isStaleRequest) {
+						setTimeout(() => setIsLoadingSmall(false), 500);
+						return;
+					}
+					if (hasLocalChanges) {
+						const content = response.data.content;
+						if (content.models) {
+							const mergedModels = mergeCalculatedModels(
+								bidModelsRef.current,
+								content.models,
+								requestModelsSnapshot,
+							);
+							setBidModels(mergedModels);
+						}
+						setTimeout(() => setIsLoadingSmall(false), 500);
+						return;
+					}
 					const content = response.data.content;
 					if (content.models) setBidModels(content.models);
 					if (content.amounts) setAmounts(content.amounts);
@@ -1070,6 +1102,58 @@ const BidPage = (props) => {
 		  maximumFractionDigits: 2
 	  }).format(number);
 	};
+	const editableModelFields = [
+		'model_id',
+		'model_name',
+		'model_count',
+		'percent',
+		'presence',
+		'sklad',
+		'sort',
+		'type_model',
+		'currency',
+		'not_available',
+	];
+	const getModelKey = (model) => `${model?.id ?? 'null'}:${model?.sort ?? 'null'}`;
+	const pickEditableFields = (model) => {
+		const picked = {};
+		editableModelFields.forEach((field) => {
+			if (Object.prototype.hasOwnProperty.call(model || {}, field)) {
+				picked[field] = model[field];
+			}
+		});
+		return picked;
+	};
+	const didEditableChange = (currentModel, requestModel) => {
+		return editableModelFields.some(
+			(field) => String(currentModel?.[field] ?? '') !== String(requestModel?.[field] ?? ''),
+		);
+	};
+	const mergeCalculatedModels = (currentModels, serverModels, requestModels) => {
+		if (!Array.isArray(currentModels) || currentModels.length === 0) return serverModels || [];
+		if (!Array.isArray(serverModels) || serverModels.length === 0) return currentModels;
+
+		const serverByKey = new Map(serverModels.map((model) => [getModelKey(model), model]));
+		const requestByKey = new Map(
+			(Array.isArray(requestModels) ? requestModels : []).map((model) => [getModelKey(model), model]),
+		);
+
+		return currentModels.map((currentModel) => {
+			const key = getModelKey(currentModel);
+			const serverModel = serverByKey.get(key);
+			if (!serverModel) return currentModel;
+
+			const requestModel = requestByKey.get(key);
+			if (didEditableChange(currentModel, requestModel)) {
+				return currentModel;
+			}
+
+			return {
+				...serverModel,
+				...pickEditableFields(currentModel),
+			};
+		});
+	};
 	const handleAddModel = () => {
 	  let sort = 0;
 	  if (bidModels && bidModels.length > 0) {
@@ -1091,12 +1175,14 @@ const BidPage = (props) => {
 		  "currency": 0,
 	  });
 	  setBidModels(bidModelsUpd);
+	  setBidModelsVersion(prev => prev + 1);
 	};
 	const handleDeleteModelFromBid = (bidModelId, bidModelSort, bidModelSelectId) => {
         const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
         const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
         bidModelsUpd.splice(bidModelIdx, 1);
         setBidModels(bidModelsUpd);
+		setBidModelsVersion(prev => prev + 1);
         setModelsSelect(prev => {
             const index = prev.findIndex(model => model.id === bidModelSelectId);
             if (index === -1) return prev;
@@ -1134,6 +1220,7 @@ const BidPage = (props) => {
 	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
 	  bidModelsUpd[oldModelIdx] = newModelObj;
 	  setBidModels(bidModelsUpd);
+	  setBidModelsVersion(prev => prev + 1);
       setModelsSelect(prev => {
           const index = prev.findIndex(model => model.id === newId);
           if (index === -1) return prev;
@@ -1162,6 +1249,7 @@ const BidPage = (props) => {
 		  case 'model_count':
 			  bidModelsUpd[bidModelIdx].model_count = value;
 			  setBidModels(bidModelsUpd);
+			  setBidModelsVersion(prev => prev + 1);
 			  //setIsNeedCalcMoney(true);
               isNeedCalcModelsTimerSetter(true);
 			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
@@ -1169,6 +1257,7 @@ const BidPage = (props) => {
 		  case 'percent':
 			  bidModelsUpd[bidModelIdx].percent = value;
 			  setBidModels(bidModelsUpd);
+			  setBidModelsVersion(prev => prev + 1);
 			  //setIsNeedCalcMoney(true);
               isNeedCalcModelsTimerSetter(true);
 			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
@@ -1176,10 +1265,12 @@ const BidPage = (props) => {
 		  case 'presence':
 			  bidModelsUpd[bidModelIdx].presence = value;
 			  setBidModels(bidModelsUpd);
+			  setBidModelsVersion(prev => prev + 1);
 			  break;
 		  case 'sklad':
 			  bidModelsUpd[bidModelIdx].sklad = value;
 			  setBidModels(bidModelsUpd);
+			  setBidModelsVersion(prev => prev + 1);
 			  break;
 	  }
 	};
@@ -1197,6 +1288,7 @@ const BidPage = (props) => {
 			...model,
 			sort: idx + 1,
 		})));
+		setBidModelsVersion(prev => prev + 1);
 		setDraggedModelIndex(null);
 	};
 	const handleModelsRowDragEnd = () => {
@@ -1255,6 +1347,7 @@ const BidPage = (props) => {
 
         //setBidModels(prev => [...prev, ...arr]);
         setBidModels(arr);
+		setBidModelsVersion(prev => prev + 1);
         isNeedCalcModelsTimerSetter(true);
         setIsParseModalOpen(false);
     };
