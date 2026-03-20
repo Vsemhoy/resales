@@ -456,7 +456,7 @@ useEffect(() => {
 
 
 	useEffect(() => {
-		if (userdata !== null && userdata.companies && userdata.companies.lenght > 0) {
+		if (userdata !== null && userdata.companies && userdata.companies.length > 0) {
 			setBaseCompanies(userdata.companies);
 		}
 	}, [userdata]);
@@ -566,6 +566,39 @@ useEffect(() => {
 			label: item.name,
 		}));
 	}, [baseCompanies]);
+
+	const orgCompany = useMemo(() => {
+		if (!baseMainData?.id_company) return null;
+		const targetId = Number(baseMainData.id_company);
+		return (
+			baseCompanies.find((item) => {
+				const itemId = Number(item?.id ?? item?.company_id ?? item?.id_company);
+				const name = String(item?.name || '').toLowerCase();
+				if (name === 'all companies' || name === 'все компании') return false;
+				return itemId === targetId;
+			}) || null
+		);
+	}, [baseCompanies, baseMainData?.id_company]);
+
+	const orgCompanyLabel = useMemo(() => {
+		const directName =
+			baseMainData?.company_name ||
+			baseMainData?.company?.name ||
+			orgCompany?.name ||
+			'';
+		const name = String(directName || '').toLowerCase();
+		if (name === 'all companies' || name === 'все компании') return '';
+		return directName;
+	}, [baseMainData?.company_name, baseMainData?.company?.name, orgCompany?.name]);
+
+	const orgCompanyColor = useMemo(() => {
+		return (
+			baseMainData?.company_color ||
+			baseMainData?.company?.color ||
+			orgCompany?.color ||
+			'default'
+		);
+	}, [baseMainData?.company_color, baseMainData?.company?.color, orgCompany?.color]);
 
 	const goBack = () => {
 		// const returnPath = location.state?.from;
@@ -1408,7 +1441,12 @@ useEffect(() => {
 					<div className={'sa-outlet-body'}>
           <Affix offsetTop={36} className={` ${lockBySocket ? 'sa-busy-header' : ''}`}>    
 						<div className={'sa-orgpage-sub-header sa-flex-space'}>
-							<div className={'sa-orgpage-sub-name'}>{baseMainData?.name}</div>
+							<div className={'sa-orgpage-sub-title'}>
+								<div className={'sa-orgpage-sub-name'}>{baseMainData?.name}</div>
+								{orgCompanyLabel ? (
+									<Tag color={orgCompanyColor}>{orgCompanyLabel}</Tag>
+								) : null}
+							</div>
 							<div>
 								
 							</div>
