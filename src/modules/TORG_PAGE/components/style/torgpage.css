@@ -57,6 +57,19 @@
 	font-size: 18px;
 	padding: 6px 12px;
 }
+.sa-orgpage-sub-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.sa-orgpage-sub-title .ant-tag {
+	margin: 0;
+	height: 32px;
+	line-height: 30px;
+	padding: 0 12px;
+	display: inline-flex;
+	align-items: center;
+}
 .sa-orgpage-sub-control {
 	grid-gap: 0px !important;
 }
