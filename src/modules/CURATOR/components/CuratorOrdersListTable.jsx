@@ -163,7 +163,7 @@ const CuratorOrdersListTable = (props) => {
 										style={{width: '100%'}}
 										variant="filled"
 										allowClear
-										// value={dates ? dayjs.unix(dates) : null}
+										value={dates ? dayjs.unix(Number(dates)) : null}
 										onChange={(date, dateString) => {
 											console.log(date);
 											console.log(dateString);
