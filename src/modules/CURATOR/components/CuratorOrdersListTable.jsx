@@ -182,7 +182,7 @@ const CuratorOrdersListTable = (props) => {
                                 on_sort_change={handleActivateSorter}
                                 active_sort_items={sortOrders}
                             >
-                                id
+                                id организации
                             </TableHeadNameWithSort>
                             <div className={'sa-pa-3'}>
                                 <Input
