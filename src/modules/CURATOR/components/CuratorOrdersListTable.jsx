@@ -191,7 +191,7 @@ const CuratorOrdersListTable = (props) => {
                                     style={{width: '100%'}}
                                     variant="filled"
                                     allowClear
-                                    value={orderId}
+                                    value={orgId}
                                     onChange={(val) =>
                                         val.target.value && +val.target.value !== 0
                                             ? setOrgId(val.target.value)
