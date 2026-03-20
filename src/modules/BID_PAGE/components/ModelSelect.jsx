@@ -42,7 +42,7 @@ const ModelSelect = (props) => {
     return (
         <Select style={{width: '100%'}}
                 value={value}
-                options={props?.options.filter(option => [0, 1, 3].includes(option.type_model))}
+                options={props?.options}
                 showSearch
                 optionFilterProp="label"
                 filterOption={(input, option) =>
