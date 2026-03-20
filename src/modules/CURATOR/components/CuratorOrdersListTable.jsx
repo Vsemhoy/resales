@@ -27,8 +27,8 @@ const CuratorOrdersListTable = (props) => {
 		if (props.filter_box.order_id !== orderId) {
 			setOrderId(props.filter_box.order_id);
 		}
-        if (props.filter_box.org_id !== orderId) {
-            setOrderId(props.filter_box.org_id);
+        if (props.filter_box.org_id !== orgId) {
+            setOrgId(props.filter_box.org_id);
         }
 		if (props.filter_box.company_name !== companyName) {
 			setCompanyName(props.filter_box.company_name);
@@ -78,9 +78,7 @@ const CuratorOrdersListTable = (props) => {
 			setFilterName(companyName);
 		}, 1500);
 		return () => clearTimeout(timer);
-	}, [
-		companyName,
-	]);
+	}, [companyName]);
 
 	useEffect(() => {
 		console.log('sortOrders', sortOrders);
