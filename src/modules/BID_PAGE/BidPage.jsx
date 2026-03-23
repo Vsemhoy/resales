@@ -152,6 +152,36 @@ const BidPage = (props) => {
 	const [bidFilesCount, setBidFilesCount] = useState(0);
 	/* ПРОЕКТ */
 	const [bidProject, setBidProject] = useState(null); // проект из карточки организации
+
+
+    const [selects, setSelects] = useState({
+        type: [],
+        actionEnum: [],
+        adminAccept: [],
+        bidCurrency: [],
+        nds: [],
+        package: [],
+        presence: [],
+        complete: [],
+        price: [],
+        pay: [],
+        protection: [],
+        stage: [],
+        conveyance: [],
+        insurance: [],
+        companies: [],
+        templateWord: [],
+        reasons: [],
+        // org-зависимые
+        orgUsers: [],
+        requisite: [],
+        factAddress: [],
+        phones: [],
+        // user-зависимые
+        emails: [],
+    });
+
+
 	/* МОДЕЛИ */
 	const [bidModels, setBidModels] = useState([]);
 	const [amounts, setAmounts] = useState({
@@ -171,31 +201,6 @@ const BidPage = (props) => {
 	/* СЕЛЕКТ ПО МОДЕЛЯМ */
 	const [modelsSelect, setModelsSelect] = useState([]);
 	const [garbage, setGarbage] = useState([]);
-	/* ВСЕ ОСТАЛЬНЫЕ СЕЛЕКТЫ */
-	const [typeSelect, setTypeSelect] = useState([]);
-	const [actionEnumSelect, setActionEnumSelect] = useState([]);
-	const [adminAcceptSelect, setAdminAcceptSelect] = useState([]);
-	const [bidCurrencySelect, setBidCurrencySelect] = useState([]);
-	const [bidPresenceSelect, setBidPresenceSelect] = useState([]);
-	const [completeSelect, setCompleteSelect] = useState([]);
-	const [ndsSelect, setNdsSelect] = useState([]);
-	const [packageSelect, setPackageSelect] = useState([]);
-	const [paySelect, setPaySelect] = useState([]);
-	const [presenceSelect, setPresenceSelect] = useState([]);
-	const [priceSelect, setPriceSelect] = useState([]);
-	const [protectionSelect, setProtectionSelect] = useState([]);
-	const [stageSelect, setStageSelect] = useState([]);
-	const [templateWordSelect, setTemplateWordSelect] = useState([]);
-	const [companies, setCompanies] = useState([]);
-	const [conveyanceSelect, setConveyanceSelect] = useState([]);
-	const [insuranceSelect, setInsuranceSelect] = useState([]);
-	/* ЭКСТРА СЕЛЕКТЫ */
-	const [orgUsersSelect, setOrgUsersSelect] = useState([]);
-	const [requisiteSelect, setRequisiteSelect] = useState([]);
-	const [factAddressSelect, setFactAddressSelect] = useState([]);
-	const [phoneSelect, setPhoneSelect] = useState([]);
-	const [emailSelect, setEmailSelect] = useState([]);
-	const [reasonsSelect, setReasonsSelect] = useState([]);
 	/* ОСТАЛЬНОЕ */
 	const [modelIdExtra, setModelIdExtra] = useState(null);
 	const [modelNameExtra, setModelNameExtra] = useState('');
@@ -526,24 +531,26 @@ const BidPage = (props) => {
 			try {
                 const selects = await getBidSelects({});
 				if (selects) {
-					setTypeSelect(selects.type_select);
-					setActionEnumSelect(selects.action_enum);
-					setAdminAcceptSelect(selects.admin_accept_select);
-					setBidCurrencySelect(selects.bid_currency_select);
-					setBidPresenceSelect(selects.bid_presence_select);
-					setCompleteSelect(selects.complete_select);
-					setConveyanceSelect(selects.conveyance_select);
-					setInsuranceSelect(selects.insurance_select);
-					setNdsSelect(selects.nds_select);
-					setPackageSelect(selects.package_select);
-					setPaySelect(selects.pay_select);
-					setPresenceSelect(selects.presence);
-					setPriceSelect(selects.price_select);
-					setProtectionSelect(selects.protection_select);
-					setStageSelect(selects.stage_select);
-					setTemplateWordSelect(selects.template_word_select);
-					setCompanies(selects.companies);
-                    setReasonsSelect(selects.reasons);
+                    setSelects(prev => ({
+                        ...prev,
+                        type: selects.type_select,
+                        actionEnum: selects.action_enum,
+                        adminAccept: selects.admin_accept_select,
+                        currency: selects.bid_currency_select,
+                        nds: selects.nds_select,
+                        package: selects.package_select,
+                        presence: selects.presence,
+                        complete: selects.complete_select,
+                        price: selects.price_select,
+                        pay: selects.pay_select,
+                        protection: selects.protection_select,
+                        stage: selects.stage_select,
+                        conveyance: selects.conveyance_select,
+                        insurance: selects.insurance_select,
+                        companies: selects.companies,
+                        templateWord: selects.template_word_select,
+                        reasons: selects.reasons,
+                    }));
 				}
 			} catch (e) {
 				console.log(e);
@@ -559,10 +566,13 @@ const BidPage = (props) => {
 			try {
                 const selects = await getBidSelects({ orgId: bidOrg.id });
 				if (selects) {
-					setOrgUsersSelect(selects.orgusers_select);
-					setRequisiteSelect(selects.requisite_select);
-					setFactAddressSelect(selects.fact_address_select);
-					setPhoneSelect(selects.org_phones_select);
+                    setSelects(prev => ({
+                        ...prev,
+                        orgUsers: selects.orgusers_select,
+                        requisite: selects.requisite_select,
+                        factAddress: selects.fact_address_select,
+                        phones: selects.org_phones_select,
+                    }));
 				}
 			} catch (e) {
 				console.log(e);
@@ -578,7 +588,10 @@ const BidPage = (props) => {
 			try {
                 const selects = await getBidSelects({ orgUserId: baseInfo.orgUser });
 				if (selects) {
-					setEmailSelect(selects.contact_email_select);
+                    setSelects(prev => ({
+                        ...prev,
+                        emails: selects.contact_email_select,
+                    }));
 				}
 			} catch (e) {
 				console.log(e);
@@ -1385,10 +1398,10 @@ const BidPage = (props) => {
 							filterOption={(input, option) =>
 								(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
 							}
-							options={prepareSelect(orgUsersSelect)}
+							options={prepareSelect(selects.orgUsers)}
 							onChange={(val) => setBaseInfo({...baseInfo, orgUser: val})}
 							disabled={isDisabledInputManager()}
-							defaultValue={(orgUsersSelect && orgUsersSelect.length > 0) ? orgUsersSelect[orgUsersSelect.length - 1].id : null}
+							defaultValue={(selects.orgUsers && selects.orgUsers.length > 0) ? selects.orgUsers[selects.orgUsers.length - 1].id : null}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1398,7 +1411,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={baseInfo.protectionProject}
-							options={prepareSelect(protectionSelect)}
+							options={prepareSelect(selects.protection)}
 							onChange={(val) => setBaseInfo({...baseInfo, protectionProject: val})}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1473,7 +1486,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={bill.requisite}
-							options={prepareSelect(requisiteSelect)}
+							options={prepareSelect(selects.requisite)}
 							onChange={(val) => setBill({...bill, requisite: val})}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1485,7 +1498,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={bill.conveyance}
-							options={prepareSelect(conveyanceSelect)}
+							options={prepareSelect(selects.conveyance)}
 							onChange={(val) => setBill({...bill, conveyance: val})}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1497,10 +1510,10 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={bill.factAddress}
-							options={prepareSelect(factAddressSelect)}
+							options={prepareSelect(selects.factAddress)}
 							onChange={(val) => setBill({...bill, factAddress: val})}
 							disabled={isDisabledInputManager()}
-							defaultValue={(factAddressSelect && factAddressSelect.length > 0) ? factAddressSelect[factAddressSelect.length - 1].id : null}
+							defaultValue={(selects.factAddress && selects.factAddress.length > 0) ? selects.factAddress[selects.factAddress.length - 1].id : null}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1510,10 +1523,10 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={bill.phone}
-							options={prepareSelect(phoneSelect)}
+							options={prepareSelect(selects.phones)}
 							onChange={(val) => setBill({...bill, phone: val})}
 							disabled={isDisabledInputManager()}
-							defaultValue={(phoneSelect && phoneSelect.length > 0) ? phoneSelect[phoneSelect.length - 1].id : null}
+							defaultValue={(selects.phones && selects.phones.length > 0) ? selects.phones[selects.phones.length - 1].id : null}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1523,10 +1536,10 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={bill.email}
-							options={prepareSelect(emailSelect)}
+							options={prepareSelect(selects.emails)}
 							onChange={(val) => setBill({...bill, email: val})}
 							disabled={isDisabledInputManager()}
-							defaultValue={(emailSelect && emailSelect.length > 0) ? emailSelect[emailSelect.length - 1].id : null}
+							defaultValue={(selects.emails && selects.emails.length > 0) ? selects.emails[selects.emails.length - 1].id : null}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1536,7 +1549,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={bill.insurance}
-							options={prepareSelect(insuranceSelect)}
+							options={prepareSelect(selects.insurance)}
 							onChange={(val) => setBill({...bill, insurance: val})}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1548,7 +1561,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={bill.package}
-							options={prepareSelect(packageSelect)}
+							options={prepareSelect(selects.package)}
 							onChange={(val) => setBill({...bill, package: val})}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1662,7 +1675,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={finance.currency}
-							options={prepareSelect(bidCurrencySelect)}
+							options={prepareSelect(selects.bidCurrency)}
 							onChange={(val) => {
                                 setFinance(prev => ({ ...prev, currency: val }));
                                 isNeedCalcModelsTimerSetter(true);
@@ -1678,7 +1691,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={finance.priceStatus}
-							options={prepareSelect(priceSelect)}
+							options={prepareSelect(selects.price)}
 							onChange={(val) => {
                                 setFinance(prev => ({ ...prev, priceStatus: val }));
                                 isNeedCalcModelsTimerSetter(true);
@@ -1711,7 +1724,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={finance.nds}
-							options={prepareSelect(ndsSelect)}
+							options={prepareSelect(selects.nds)}
 							onChange={(val) => {
                                 setFinance(prev => ({ ...prev, nds: val }));
                                 isNeedCalcModelsTimerSetter(true);
