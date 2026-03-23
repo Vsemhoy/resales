@@ -74,7 +74,7 @@ const BidPage = (props) => {
 	const { bidId } = useParams();
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
-	const [isMounted, setIsMounted] = useState(false);
+	//const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isLoadingSmall, setIsLoadingSmall] = useState(false);
 	const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
@@ -148,10 +148,6 @@ const BidPage = (props) => {
         percent: null,
         nds: null,
     });
-	/*const [bidCurrency, setBidCurrency] = useState(null);
-	const [bidPriceStatus, setBidPriceStatus] = useState(null);
-	const [bidPercent, setBidPercent] = useState(null);
-	const [bidNds, setBidNds] = useState(null);*/
 	/* ФАЙЛЫ */
 	const [bidFilesCount, setBidFilesCount] = useState(0);
 	/* ПРОЕКТ */
@@ -249,27 +245,22 @@ const BidPage = (props) => {
 	const [findSimilarTitle, setFindSimilarTitle] = useState(`Поиск похожих`);
 
 
-	useEffect(() => {
-		if (!isMounted) {
-			fetchInfo().then(() => {
-				setIsNeedCalcMoney(true);
-			});
-			setIsMounted(true);
-		}
-	}, []);
+    useEffect(() => {
+        fetchInfo().then(() => setIsNeedCalcMoney(true));
+    }, []);
 	useEffect(() => {
 		if (isMounted && bidOrg && bidOrg.id) {
 			fetchOrgSelects().then();
 		}
 	}, [bidOrg]);
-	useEffect(() => {
-		if (isMounted && baseInfo.orgUser) {
-			fetchOrgUserSelects().then();
-		}
+    useEffect(() => {
+        if (baseInfo.orgUser) fetchOrgUserSelects().then();
+    }, [baseInfo.orgUser]);
+    useEffect(() => {
         if (baseInfo.object) {
             setFindSimilarTitle(`Поиск похожих: "${baseInfo.object}"`);
         }
-	}, [baseInfo]);
+    }, [baseInfo.object]);
 	useEffect(() => {
 		if (bidProject) {
 			fetchProjectInfo().then();
@@ -345,7 +336,7 @@ const BidPage = (props) => {
 		}
 	}, [openMode]);
 	useEffect(() => {
-		if (isMounted && isNeedCalcMoney) {
+		if (isNeedCalcMoney) {
 			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
 			const timer = setTimeout(() => {
 				fetchCalcModels().then(() => {
@@ -467,10 +458,10 @@ const BidPage = (props) => {
 							setBidOrg(baseInfo.org);
 							setBidCurator(baseInfo.curator);
                             setBaseInfo({
-                                orguser: baseInfo.orguser,
-                                protection: baseInfo.protection,
+                                orgUser: baseInfo.orguser,
+                                protectionProject  : baseInfo.protection,
                                 object: baseInfo.object,
-                                sellby: baseInfo.sellby
+                                sellBy: baseInfo.sellby
                             });
 							setBidProject(baseInfo.project);
 						}
@@ -503,8 +494,8 @@ const BidPage = (props) => {
 							const finance = bid.finance;
                             setFinance({
                                 currency: finance.bid_currency,
-                                price: finance.status,
-                                person: finance.percent,
+                                priceStatus: finance.status,
+                                percent: finance.percent,
                                 nds: finance.nds,
                             });
 						}
@@ -1315,7 +1306,7 @@ const BidPage = (props) => {
 		return !(model && +model.model_count === +model.sklad);
 	};
 	const isManagerDone = () => {
-		return (baseInfo.orgUser && requisite && phone);
+		return (baseInfo.orgUser && bill.requisite && bill.phone);
 	};
 	const isAdminDone = () => {
 		return !(bidModels.find(model => +model.model_count !== +model.sklad));
@@ -1673,10 +1664,9 @@ const BidPage = (props) => {
 							value={finance.currency}
 							options={prepareSelect(bidCurrencySelect)}
 							onChange={(val) => {
-                                //const timerCurrency = setTimeout(() => {
-                                    handleChangeFinanceBlock('bidCurrency', val);
-                                //}, 700);
-                                //return () => clearTimeout(timerCurrency);
+                                setFinance(prev => ({ ...prev, currency: val }));
+                                isNeedCalcModelsTimerSetter(true);
+                                setIsUpdateAll(true);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1690,10 +1680,9 @@ const BidPage = (props) => {
 							value={finance.priceStatus}
 							options={prepareSelect(priceSelect)}
 							onChange={(val) => {
-                                //const timerPriceStatus = setTimeout(() => {
-                                    handleChangeFinanceBlock('bidPriceStatus', val);
-                                //}, 700);
-                                //return () => clearTimeout(timerPriceStatus);
+                                setFinance(prev => ({ ...prev, priceStatus: val }));
+                                isNeedCalcModelsTimerSetter(true);
+                                setIsUpdateAll(true);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1707,10 +1696,9 @@ const BidPage = (props) => {
 							value={finance.percent}
 							type="number"
 							onChange={(e) => {
-                                //const timerPercent = setTimeout(() => {
-                                    handleChangeFinanceBlock('bidPercent', e.target.value);
-                                //}, 700);
-                                //return () => clearTimeout(timerPercent);
+                                setFinance(prev => ({ ...prev, percent: e.target.value }));
+                                isNeedCalcModelsTimerSetter(true);
+                                setIsUpdateAll(true);
 							}}
 							onWheel={(e) => e.target.blur()}
 							disabled={isDisabledInputManager()}
@@ -1725,10 +1713,9 @@ const BidPage = (props) => {
 							value={finance.nds}
 							options={prepareSelect(ndsSelect)}
 							onChange={(val) => {
-                                //const timerNds = setTimeout(() => {
-                                    handleChangeFinanceBlock('bidNds', val);
-                                //}, 700);
-                                //return () => clearTimeout(timerNds);
+                                setFinance(prev => ({ ...prev, nds: val }));
+                                isNeedCalcModelsTimerSetter(true);
+                                setIsUpdateAll(true);
 							}}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1744,7 +1731,6 @@ const BidPage = (props) => {
 			content: content,
 		});
 	};
-
 	const handleClick = async (bidModelID) => {
 		const result = modelsSelect.filter(item => item.id === bidModelID);
 
@@ -1767,27 +1753,6 @@ const BidPage = (props) => {
 			}
 		}
 	};
-
-    const handleChangeFinanceBlock = (key, value) => {
-        switch (key) {
-            case 'bidCurrency':
-                setFinance({...finance, currency: value});
-                break;
-            case 'bidPriceStatus':
-                setFinance({...finance, priceStatus: value});
-                break;
-            case 'bidPercent':
-                setFinance({...finance, percent: value});
-                break;
-            case 'bidNds':
-                setFinance({...finance, nds: value});
-                break;
-        }
-        //setIsNeedCalcMoney(true);
-        isNeedCalcModelsTimerSetter(true);
-        setIsUpdateAll(true);
-    };
-
     const isNeedCalcModelsTimerSetter = (bool) => {
         const timer = setTimeout(() => {
             setIsNeedCalcMoney(bool);
