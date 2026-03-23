@@ -1803,8 +1803,8 @@ const BidPage = (props) => {
 									</div>
 									<div className={'sa-header-label-container-small'}>
 										{bidIdCompany &&
-											companies &&
-											companies.find((comp) => comp.id === bidIdCompany) &&
+											selects.companies &&
+											selects.companies.find((comp) => comp.id === bidIdCompany) &&
 											bidOrg &&
 											bidOrg.name && (
 												<div className={'sa-vertical-flex'} style={{ alignItems: 'baseline' }}>
@@ -1814,9 +1814,9 @@ const BidPage = (props) => {
 															textAlign: 'center',
 															fontSize: '14px',
 														}}
-														color={companies.find((comp) => comp.id === bidIdCompany)?.color}
+														color={selects.companies.find((comp) => comp.id === bidIdCompany)?.color}
 													>
-														{companies.find((comp) => comp.id === bidIdCompany)?.name}
+														{selects.companies.find((comp) => comp.id === bidIdCompany)?.name}
 													</Tag>
 													для
 													<Tag
