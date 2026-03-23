@@ -517,7 +517,7 @@ const BidPage = (props) => {
 	const fetchSelects = async () => {
 		if (PRODMODE) {
 			try {
-                const selects = await getBidSelects();
+                const selects = await getBidSelects({});
 				if (selects) {
 					setTypeSelect(selects.type_select);
 					setActionEnumSelect(selects.action_enum);
