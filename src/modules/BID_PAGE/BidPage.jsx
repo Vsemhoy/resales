@@ -59,6 +59,15 @@ import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubsc
 import OrgProjectEditorSectionBox from "../TORG_PAGE/components/sections/ext/OrgProjectEditorSectionBox.jsx"
 
 import FindSimilar from "./components/FindSimilar";
+import {
+    calcModels, changePlace,
+    getBidInfo,
+    getBidModels,
+    getBidSelects,
+    getCurrencySelects, getNewBid, getProjectInfo,
+    getWordFile, toSent1C,
+    updateBid
+} from "../../api/bids.api";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -430,18 +439,13 @@ const BidPage = (props) => {
 	};
 	const fetchBidInfo = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/v2/offers/${bidId}`
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					_token: CSRF_TOKEN,
-				});
-				console.log(response);
-				if (response.data.content) {
-					const content = response.data.content;
-					const openMode = content?.openmode;
+                const data = await getBidInfo(bidId);
+				if (data) {
+					const openMode = data?.openmode;
 					setOpenMode(openMode);
-					if (content.bid) {
-						const bid = content?.bid;
+					if (data.bid) {
+						const bid = data?.bid;
 
 						setBidActions(bid.actions);
 
@@ -489,13 +493,13 @@ const BidPage = (props) => {
 							setBidNds(finance.nds);
 						}
 					}
-					if (content.bid_models) {
-						setBidModels(content.bid_models);
+					if (data.bid_models) {
+						setBidModels(data.bid_models);
 					}
 					setTimeout(() => {
 						setDefaultInfo({
-							bid: content.bid,
-							bid_models: content.bid_models,
+							bid: data.bid,
+							bid_models: data.bid_models,
 						});
 					}, 500);
 				}
@@ -503,85 +507,18 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!}`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setIsLoadingChangePlaceBtn('');
 			}
-		} else {
-			const openMode = BID_INFO?.openmode;
-			setOpenMode(openMode);
-			if (BID_INFO.bid) {
-				const bid = BID_INFO?.bid;
-
-				setBidActions(bid.actions);
-
-				setBidIdCompany(bid.id_company);
-				setBidType(bid.type);
-				setBidPlace(bid.place);
-				setBidFilesCount(bid.files_count);
-
-				if (bid.base_info) {
-					const baseInfo = bid.base_info;
-					setBidOrg(baseInfo.org);
-					setBidCurator(baseInfo.curator);
-					setBidOrgUser(baseInfo.orguser);
-					setBidProtectionProject(baseInfo.protection);
-					setBidObject(baseInfo.object);
-					setBidSellBy(baseInfo.sellby);
-					setBidProject(baseInfo.project);
-				}
-				if (bid.bill) {
-					const bill = bid.bill;
-					setRequisite(bill.requisite);
-					setConveyance(bill.conveyance);
-					setFactAddress(bill.fact_address);
-					setPhone(bill.org_phone);
-					setEmail(bill.contact_email);
-					setInsurance(bill.insurance);
-					setBidPackage(bill.package);
-					setConsignee(bill.consignee);
-					setOtherEquipment(bill.other_equipment);
-					setIsSended1c(bill.send1c);
-				}
-				if (bid.comments) {
-					const comments = bid.comments;
-					setBidCommentEngineer(comments.engineer);
-					setBidCommentManager(comments.manager);
-					setBidCommentAdmin(comments.admin);
-					setBidCommentAccountant(comments.accountant);
-					setBidCommentAddEquipment(comments.add_equipment);
-				}
-				if (bid.finance) {
-					const finance = bid.finance;
-					setBidCurrency(finance.bid_currency);
-					setBidPriceStatus(finance.status);
-					setBidPercent(finance.percent);
-					setBidNds(finance.nds);
-				}
-			}
-			if (BID_INFO.bid_models) {
-				setBidModels(BID_INFO.bid_models);
-			}
-			setTimeout(() => {
-				setDefaultInfo({
-					bid: BID_INFO.bid,
-					bid_models: BID_INFO.bid_models,
-				});
-			}, 500);
-			setIsLoadingChangePlaceBtn('');
 		}
 	};
 	const fetchSelects = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/v2/bidselects`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					data: {},
-					_token: CSRF_TOKEN,
-				});
-				if (response.data && response.data.selects) {
-					const selects = response.data.selects;
+                const selects = await getBidSelects();
+				if (selects) {
 					setTypeSelect(selects.type_select);
 					setActionEnumSelect(selects.action_enum);
 					setAdminAcceptSelect(selects.admin_accept_select);
@@ -604,41 +541,17 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		} else {
-			setTypeSelect(SELECTS.type_select);
-			setActionEnumSelect(SELECTS.action_enum);
-			setAdminAcceptSelect(SELECTS.admin_accept_select);
-			setBidCurrencySelect(SELECTS.bid_currency_select);
-			setBidPresenceSelect(SELECTS.bid_presence_select);
-			setCompleteSelect(SELECTS.complete_select);
-			setConveyanceSelect(SELECTS.conveyance_select);
-			setInsuranceSelect(SELECTS.insurance_select);
-			setNdsSelect(SELECTS.nds_select);
-			setPackageSelect(SELECTS.package_select);
-			setPaySelect(SELECTS.pay_select);
-			setPresenceSelect(SELECTS.presence);
-			setPriceSelect(SELECTS.price_select);
-			setProtectionSelect(SELECTS.protection_select);
-			setStageSelect(SELECTS.stage_select);
-			setTemplateWordSelect(SELECTS.template_word_select);
-			setCompanies(SELECTS.companies);
-            setReasonsSelect(SELECTS.reasons);
 		}
 	};
 	const fetchOrgSelects = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/v2/bidselects`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					data: { orgId: bidOrg.id },
-					_token: CSRF_TOKEN,
-				});
-				if (response.data && response.data.selects) {
-					const selects = response.data.selects;
+                const selects = await getBidSelects({ orgId: bidOrg.id });
+				if (selects) {
 					setOrgUsersSelect(selects.orgusers_select);
 					setRequisiteSelect(selects.requisite_select);
 					setFactAddressSelect(selects.fact_address_select);
@@ -647,147 +560,71 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		} else {
-			setOrgUsersSelect(SELECTS.orgusers_select);
-			setRequisiteSelect(SELECTS?.requisite_select);
-			setFactAddressSelect(SELECTS?.fact_address_select);
-			setPhoneSelect(SELECTS?.org_phones_select);
 		}
 	};
 	const fetchOrgUserSelects = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/v2/bidselects`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					data: { orgUserId: bidOrgUser },
-					_token: CSRF_TOKEN,
-				});
-				if (response.data && response.data.selects) {
-					const selects = response.data.selects;
+                const selects = await getBidSelects({ orgUserId: bidOrgUser });
+				if (selects) {
 					setEmailSelect(selects.contact_email_select);
 				}
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		} else {
-			setEmailSelect(SELECTS?.contact_email_select);
 		}
 	};
 	const fetchCurrencySelects = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/currency/getcurrency`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					data: {},
-					_token: CSRF_TOKEN,
-				});
-				if (response.data) {
-					setCompanyCurrency(response.data.company);
-					setBankCurrency(response.data.currency);
+                const currency = await getCurrencySelects();
+				if (currency) {
+					setCompanyCurrency(currency.company);
+					setBankCurrency(currency.currency);
 				}
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		} else {
-			setCompanyCurrency(CUR_COMPANY);
-			setBankCurrency(CUR_CURRENCY);
 		}
 	};
 	const fetchBidModels = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/getmodels`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.get(path, {
-					data: {},
-					_token: CSRF_TOKEN,
-				});
-				if (response.data) {
-					setGarbage(response.data.info);
-					setModelsSelect(response.data.models);
+                const models = await getBidModels();
+				if (models) {
+					setGarbage(models.info);
+					setModelsSelect(models.models);
 				}
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		} else {
-			setGarbage([]);
-			setModelsSelect(MODELS);
 		}
 	};
 	const fetchUpdates = async (newPlace) => {
-		console.log('fetchUpdates');
-		const data = {
-			bid: {
-				id: bidId,
-				id_company: bidIdCompany,
-				place: bidPlace,
-				type: bidType,
-				files_count: bidFilesCount,
-				base_info: {
-					org: bidOrg,
-					curator: bidCurator,
-					orguser: bidOrgUser,
-					protection: bidProtectionProject,
-					object: bidObject,
-					sellby: bidSellBy,
-				},
-				bill:
-					+bidType === 2
-						? {
-								requisite: requisite,
-								conveyance: conveyance,
-								fact_address: factAddress,
-								org_phone: phone,
-								contact_email: email,
-								insurance: insurance,
-								package: bidPackage,
-								consignee: consignee,
-								other_equipment: otherEquipment,
-						  }
-						: null,
-				comments: {
-					engineer: bidCommentEngineer,
-					manager: bidCommentManager,
-					admin: bidCommentAdmin,
-					accountant: bidCommentAccountant,
-					add_equipment: bidCommentAddEquipment,
-				},
-				finance: {
-					bid_currency: bidCurrency,
-					status: bidPriceStatus,
-					percent: bidPercent,
-					nds: bidNds,
-				},
-			},
-			bid_models: bidModels,
-		};
-		console.log(data);
-		const path = `${ROUTE_PREFIX}/sales/updatebid/${bidId}`;
+        const data = collectUpdates();
 		if (PRODMODE) {
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					data,
-					_token: CSRF_TOKEN,
-				});
-				if (response.data.message) {
+                const message = await updateBid(bidId, data);
+				if (message) {
 					setIsAlertVisible(true);
 					setAlertMessage('Успех!');
-					setAlertDescription(response.data.message);
+					setAlertDescription(message);
 					setAlertType('success');
 					setIsSmthChanged(false);
 					updateDefaultInfo();
@@ -816,41 +653,27 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		} else {
-			setIsAlertVisible(true);
-			setAlertMessage(`Успех! ${path}`);
-			setAlertDescription('Успешное обновление');
-			setAlertType('success');
-			setIsSmthChanged(false);
-			updateDefaultInfo();
 		}
 	};
 	const fetchCalcModels = async () => {
-		console.log('fetchCalcModels');
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/calcmodels`;
 			const requestId = ++calcRequestIdRef.current;
 			const requestVersion = bidModelsVersionRef.current;
 			const requestModelsSnapshot = JSON.parse(JSON.stringify(bidModelsRef.current));
 			try {
 				setIsLoadingSmall(true);
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					data: {
-						bid_info: {
-							bidCurrency,
-							bidPriceStatus,
-							bidPercent,
-							bidNds,
-						},
-						bid_models: bidModels,
-					},
-					_token: CSRF_TOKEN,
-				});
-				if (response.data.content) {
+                const bid_info = {
+                    bidCurrency,
+                    bidPriceStatus,
+                    bidPercent,
+                    bidNds,
+                };
+                const content = await calcModels(bid_info, bidModels);
+				if (content) {
 					const isStaleRequest = calcRequestIdRef.current !== requestId;
 					const hasLocalChanges = bidModelsVersionRef.current !== requestVersion;
 					if (isStaleRequest) {
@@ -858,7 +681,6 @@ const BidPage = (props) => {
 						return;
 					}
 					if (hasLocalChanges) {
-						const content = response.data.content;
 						if (content.models) {
 							const mergedModels = mergeCalculatedModels(
 								bidModelsRef.current,
@@ -870,7 +692,6 @@ const BidPage = (props) => {
 						setTimeout(() => setIsLoadingSmall(false), 500);
 						return;
 					}
-					const content = response.data.content;
 					if (content.models) setBidModels(content.models);
 					if (content.amounts) setAmounts(content.amounts);
 					if (content.models_data) setEngineerParameters(content.models_data);
@@ -879,34 +700,25 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setTimeout(() => setIsLoadingSmall(false), 500);
 			}
-		} else {
-			setIsLoadingSmall(true);
-			//setBidModels(CALC_INFO.models);
-			//setAmounts(CALC_INFO.amounts);
-			//setEngineerParameters(CALC_INFO.models_data);
-			setTimeout(() => setIsLoadingSmall(false), 500);
 		}
 	};
 	const fetchWordFile = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/makedoc`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					data: {
-						bid_id: bidId,
-						new: true,
-						template_id: +bidIdCompany - 1,
-						type: 1
-					},
-					_token: CSRF_TOKEN,
-				});
-				if (response.data) {
-					const parts = response.data.data.file_link.split('/');
+                const data = {
+                    bid_id: bidId,
+                    new: true,
+                    template_id: +bidIdCompany - 1,
+                    type: 1
+                };
+                const response = await getWordFile(data);
+				if (response) {
+					const parts = response.data.file_link.split('/');
 					const withSlash = '/' + parts.slice(1).join('/');
 					window.open(`${HTTP_HOST}${withSlash}`, '_blank', 'noopener,noreferrer');
 					setBidFilesCount(bidFilesCount + 1);
@@ -914,7 +726,7 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -922,23 +734,20 @@ const BidPage = (props) => {
 	};
 	const fetchNewBid = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/data/makebid`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					data: {
-						bid: bidId,
-						org: bidOrg.id,
-						type: 2
-					},
-					_token: CSRF_TOKEN,
-				});
-				if (response.data) {
-					window.open(`${BASE_ROUTE}/bids/${response.data.item_id}`, '_blank');
+                const data = {
+                    bid: bidId,
+                    org: bidOrg.id,
+                    type: 2
+                }
+                const newId = await getNewBid(data);
+				if (newId) {
+					window.open(`${BASE_ROUTE}/bids/${newId}`, '_blank');
 				}
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -947,27 +756,23 @@ const BidPage = (props) => {
 	const fetchBidPlace = async (newPlace, selectValue) => {
 		console.log(selectValue)
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/data/changebidstage`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					bid_id: bidId,
-					data: {
-						bid: bidId,
-						stage: newPlace,
-						reason: selectValue
-					},
-					_token: CSRF_TOKEN,
-				});
-				if (response.data) {
+                const data = {
+                    bid: bidId,
+                    stage: newPlace,
+                    reason: selectValue
+                };
+                const response = await changePlace(bidId, data);
+				if (response) {
 					setIsAlertVisible(true);
 					setAlertMessage('Успех!');
-					setAlertDescription(response.data.message.message);
+					setAlertDescription(response.message.message);
 					setAlertType('success');
 				}
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
@@ -975,17 +780,13 @@ const BidPage = (props) => {
 	};
 	const fetchSend1c = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/send1c/${bidId}`;
 			try {
-				console.log('send1c');
 				setIsLoading1c(true);
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					_token: CSRF_TOKEN,
-				});
-				if (response.data) {
+                const response = await toSent1C(bidId);
+				if (response) {
 					setIsAlertVisible(true);
 					setAlertMessage('Успех!');
-					setAlertDescription(response.data.message);
+					setAlertDescription(response.message);
 					setAlertType('success');
 					setIsSended1c(1);
 				}
@@ -993,44 +794,78 @@ const BidPage = (props) => {
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
-		} else {
-			setIsLoading1c(true);
-			setIsAlertVisible(true);
-			setAlertMessage('Успех!');
-			setAlertDescription("Заявка успешно передана в 1С");
-			setAlertType('success');
-			setIsSended1c(1);
-			setTimeout(() => setIsLoading1c(false), 500);
 		}
 	};
 	const fetchProjectInfo = async () => {
 		if (PRODMODE) {
-			const path = `${ROUTE_PREFIX}/sales/v2/offers/project/${bidProject}`;
 			try {
-				let response = await PROD_AXIOS_INSTANCE.post(path, {
-					_token: CSRF_TOKEN,
-				});
-				if (response.data?.content) {
-					setProjectInfo(response.data?.content?.project);
+                const response = await getProjectInfo(bidProject);
+				if (response?.content) {
+					setProjectInfo(response?.content?.project);
 				}
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
-		} else {
-			setProjectInfo(PROJECT_INFO);
 		}
 	};
 
+    const collectUpdates = () => {
+        return {
+            bid: {
+                id: bidId,
+                id_company: bidIdCompany,
+                place: bidPlace,
+                type: bidType,
+                files_count: bidFilesCount,
+                base_info: {
+                    org: bidOrg,
+                    curator: bidCurator,
+                    orguser: bidOrgUser,
+                    protection: bidProtectionProject,
+                    object: bidObject,
+                    sellby: bidSellBy,
+                },
+                bill:
+                    +bidType === 2
+                        ? {
+                            requisite: requisite,
+                            conveyance: conveyance,
+                            fact_address: factAddress,
+                            org_phone: phone,
+                            contact_email: email,
+                            insurance: insurance,
+                            package: bidPackage,
+                            consignee: consignee,
+                            other_equipment: otherEquipment,
+                        }
+                        : null,
+                comments: {
+                    engineer: bidCommentEngineer,
+                    manager: bidCommentManager,
+                    admin: bidCommentAdmin,
+                    accountant: bidCommentAccountant,
+                    add_equipment: bidCommentAddEquipment,
+                },
+                finance: {
+                    bid_currency: bidCurrency,
+                    status: bidPriceStatus,
+                    percent: bidPercent,
+                    nds: bidNds,
+                },
+            },
+            bid_models: bidModels,
+        };
+    }
 	const areArraysEqual = (arr1, arr2) => {
 		// Проверка длины
 		if (arr1.length !== arr2.length) return false;

@@ -4,6 +4,7 @@ import './index.css';
 import { App } from './App';
 import reportWebVitals from './reportWebVitals';
 import { ConfigProvider } from 'antd';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 /* + LOCALE */
 import ruRU from 'antd/lib/locale/ru_RU'; // Импорт русской локали
@@ -19,12 +20,16 @@ const customLocale = {
 	},
 };
 
+const queryClient = new QueryClient();
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
-		<ConfigProvider locale={customLocale}>
-			<App />
-		</ConfigProvider>
+        <QueryClientProvider client={queryClient}>
+            <ConfigProvider locale={customLocale}>
+                <App />
+            </ConfigProvider>
+        </QueryClientProvider>
 	</React.StrictMode>
 );
 
