@@ -31,7 +31,7 @@ export const getCurrencySelects = (params) =>
     }).then(r => r.data);
 
 export const getBidModels = (params) =>
-    PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/getmodels`, {
+    PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/sales/getmodels`, {
         data: params,
         _token: CSRF_TOKEN
     }).then(r => r.data);
