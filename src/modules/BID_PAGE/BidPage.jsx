@@ -81,6 +81,7 @@ const BidPage = (props) => {
 	const [isSavingInfo, setIsSavingInfo] = useState(false);
 	const [isAlertVisible, setIsAlertVisible] = useState(false);
 	const [draggedModelIndex, setDraggedModelIndex] = useState(null);
+    const [isSended1c, setIsSended1c] = useState(0);
 
 	const [lastUpdModel, setLastUpdModel] = useState(null);
 	const [isUpdateAll, setIsUpdateAll] = useState(false);
@@ -114,32 +115,43 @@ const BidPage = (props) => {
 	const [companyCurrency, setCompanyCurrency] = useState(null);
 	const [bankCurrency, setBankCurrency] = useState(null);
 	/* БАЗОВЫЙ БЛОК */
-	const [bidOrgUser, setBidOrgUser] = useState(null);
-	const [bidProtectionProject, setBidProtectionProject] = useState(null);
-	const [bidObject, setBidObject] = useState(null);
-	const [bidSellBy, setBidSellBy] = useState(null); // срок реализации
+    const [baseInfo, setBaseInfo] = useState({
+        orgUser: null,
+        protectionProject: null,
+        object: null,
+        sellBy: null,
+    });
 	/* БЛОК ПЛАТЕЛЬЩИКА */
-	const [requisite, setRequisite] = useState(null);
-	const [conveyance, setConveyance] = useState(null);
-	const [factAddress, setFactAddress] = useState(null);
-	const [phone, setPhone] = useState(null);
-	const [email, setEmail] = useState(null);
-	const [insurance, setInsurance] = useState(null);
-	const [bidPackage, setBidPackage] = useState(null);
-	const [consignee, setConsignee] = useState(null);
-	const [otherEquipment, setOtherEquipment] = useState(null);
-	const [isSended1c, setIsSended1c] = useState(0);
+    const [bill, setBill] = useState({
+        requisite: null,
+        conveyance: null,
+        factAddress: null,
+        phone: null,
+        email: null,
+        insurance: null,
+        package: null,
+        consignee: null,
+        otherEquipment: null,
+    });
 	/* БЛОК КОММЕНТАРИЕВ */
-	const [bidCommentEngineer, setBidCommentEngineer] = useState(null);
-	const [bidCommentManager, setBidCommentManager] = useState(null);
-	const [bidCommentAdmin, setBidCommentAdmin] = useState(null);
-	const [bidCommentAccountant, setBidCommentAccountant] = useState(null);
-	const [bidCommentAddEquipment, setBidCommentAddEquipment] = useState(null);
+    const [comments, setComments] = useState({
+        engineer: null,
+        manager: null,
+        admin: null,
+        accountant: null,
+        addEquipment: null,
+    });
 	/* ФИНАНСОВЫЙ БЛОК */
-	const [bidCurrency, setBidCurrency] = useState(null);
+    const [finance, setFinance] = useState({
+        currency: null,
+        priceStatus: null,
+        percent: null,
+        nds: null,
+    });
+	/*const [bidCurrency, setBidCurrency] = useState(null);
 	const [bidPriceStatus, setBidPriceStatus] = useState(null);
 	const [bidPercent, setBidPercent] = useState(null);
-	const [bidNds, setBidNds] = useState(null);
+	const [bidNds, setBidNds] = useState(null);*/
 	/* ФАЙЛЫ */
 	const [bidFilesCount, setBidFilesCount] = useState(0);
 	/* ПРОЕКТ */
@@ -251,20 +263,18 @@ const BidPage = (props) => {
 		}
 	}, [bidOrg]);
 	useEffect(() => {
-		if (isMounted && bidOrgUser) {
+		if (isMounted && baseInfo.orgUser) {
 			fetchOrgUserSelects().then();
 		}
-	}, [bidOrgUser]);
+        if (baseInfo.object) {
+            setFindSimilarTitle(`Поиск похожих: "${baseInfo.object}"`);
+        }
+	}, [baseInfo]);
 	useEffect(() => {
 		if (bidProject) {
 			fetchProjectInfo().then();
 		}
 	}, [bidProject]);
-    useEffect(() => {
-		if (bidObject) {
-            setFindSimilarTitle(`Поиск похожих: "${bidObject}"`);
-        }
-    }, [bidObject]);
 	useEffect(() => {
 		if (bidType) {
 			document.title = `${+bidType === 1 ? 'КП' : +bidType === 2 ? 'Счет' : ''} | ${bidId}`;
@@ -363,33 +373,33 @@ const BidPage = (props) => {
 			const bid = defaultInfo.bid;
 			let flag = false;
 			/* base info */
-			if (+bid.base_info.orguser !== +bidOrgUser) flag = true;
-			if (+bid.base_info.protection !== +bidProtectionProject) flag = true;
-			if (bid.base_info.object !== bidObject) flag = true;
-			if (bid.base_info.sellby !== bidSellBy) flag = true;
+			if (+bid.base_info.orguser !== +baseInfo.orgUser) flag = true;
+			if (+bid.base_info.protection !== +baseInfo.protectionProject) flag = true;
+			if (bid.base_info.object !== baseInfo.object) flag = true;
+			if (bid.base_info.sellby !== baseInfo.sellBy) flag = true;
 			/* bill */
 			if (bid.bill) {
-				if (+bid.bill.requisite !== +requisite) flag = true;
-				if (+bid.bill.conveyance !== +conveyance) flag = true;
-				if (+bid.bill.fact_address !== +factAddress) flag = true;
-				if (+bid.bill.org_phone !== +phone) flag = true;
-				if (+bid.bill.contact_email !== +email) flag = true;
-				if (+bid.bill.insurance !== +insurance) flag = true;
-				if (+bid.bill.package !== +bidPackage) flag = true;
-				if (bid.bill.consignee !== consignee) flag = true;
-				if (bid.bill.other_equipment !== otherEquipment) flag = true;
+				if (+bid.bill.requisite !== +bill.requisite) flag = true;
+				if (+bid.bill.conveyance !== +bill.conveyance) flag = true;
+				if (+bid.bill.fact_address !== +bill.factAddress) flag = true;
+				if (+bid.bill.org_phone !== +bill.phone) flag = true;
+				if (+bid.bill.contact_email !== +bill.email) flag = true;
+				if (+bid.bill.insurance !== +bill.insurance) flag = true;
+				if (+bid.bill.package !== +bill.package) flag = true;
+				if (bid.bill.consignee !== bill.consignee) flag = true;
+				if (bid.bill.other_equipment !== bill.otherEquipment) flag = true;
 			}
 			/* comments */
-			if (bid.comments.engineer !== bidCommentEngineer) flag = true;
-			if (bid.comments.manager !== bidCommentManager) flag = true;
-			if (bid.comments.admin !== bidCommentAdmin) flag = true;
-			if (bid.comments.accountant !== bidCommentAccountant) flag = true;
-			if (bid.comments.add_equipment !== bidCommentAddEquipment) flag = true;
+			if (bid.comments.engineer !== comments.engineer) flag = true;
+			if (bid.comments.manager !== comments.manager) flag = true;
+			if (bid.comments.admin !== comments.admin) flag = true;
+			if (bid.comments.accountant !== comments.accountant) flag = true;
+			if (bid.comments.add_equipment !== comments.add_equipment) flag = true;
 			/* finance */
-			if (bid.finance.bid_currency !== bidCurrency) flag = true;
-			if (bid.finance.status !== bidPriceStatus) flag = true;
-			if (String(bid.finance.percent) !== String(bidPercent)) flag = true;
-			if (bid.finance.nds !== bidNds) flag = true;
+			if (bid.finance.bid_currency !== finance.currency) flag = true;
+			if (bid.finance.status !== finance.priceStatus) flag = true;
+			if (String(bid.finance.percent) !== String(finance.percent)) flag = true;
+			if (bid.finance.nds !== finance.nds) flag = true;
 			/* bid_models */
 			if (!areArraysEqual(defaultInfo.bid_models, bidModels)) flag = true;
 
@@ -397,15 +407,13 @@ const BidPage = (props) => {
 		}
 	}, [
 		/* base info */
-		bidOrgUser, bidProtectionProject, bidObject, bidSellBy,
+        baseInfo,
 		/* bill */
-		requisite, conveyance, factAddress, phone, email,
-		insurance, bidPackage, consignee, otherEquipment,
+		bill,
 		/* comments */
-		bidCommentEngineer, bidCommentManager, bidCommentAdmin,
-		bidCommentAccountant, bidCommentAddEquipment,
+		comments,
 		/* finance */
-		bidCurrency, bidPriceStatus, bidPercent, bidNds,
+		finance,
 		/* bid_models */
 		bidModels
 	]);
@@ -458,39 +466,47 @@ const BidPage = (props) => {
 							const baseInfo = bid.base_info;
 							setBidOrg(baseInfo.org);
 							setBidCurator(baseInfo.curator);
-							setBidOrgUser(baseInfo.orguser);
-							setBidProtectionProject(baseInfo.protection);
-							setBidObject(baseInfo.object);
-							setBidSellBy(baseInfo.sellby);
+                            setBaseInfo({
+                                orguser: baseInfo.orguser,
+                                protection: baseInfo.protection,
+                                object: baseInfo.object,
+                                sellby: baseInfo.sellby
+                            });
 							setBidProject(baseInfo.project);
 						}
 						if (bid.bill) {
 							const bill = bid.bill;
-							setRequisite(bill.requisite);
-							setConveyance(bill.conveyance);
-							setFactAddress(bill.fact_address);
-							setPhone(bill.org_phone);
-							setEmail(bill.contact_email);
-							setInsurance(bill.insurance);
-							setBidPackage(bill.package);
-							setConsignee(bill.consignee);
-							setOtherEquipment(bill.other_equipment);
+                            setBill({
+                                requisite: bill.requisite,
+                                conveyance: bill.conveyance,
+                                factAddress: bill.fact_address,
+                                phone: bill.org_phone,
+                                email: bill.contact_email,
+                                insurance: bill.insurance,
+                                package: bill.package,
+                                consignee: bill.consignee,
+                                otherEquipment: bill.other_equipment,
+                            });
 							setIsSended1c(bill.send1c);
 						}
 						if (bid.comments) {
 							const comments = bid.comments;
-							setBidCommentEngineer(comments.engineer);
-							setBidCommentManager(comments.manager);
-							setBidCommentAdmin(comments.admin);
-							setBidCommentAccountant(comments.accountant);
-							setBidCommentAddEquipment(comments.add_equipment);
+                            setComments({
+                                engineer: comments.engineer,
+                                manager: comments.manager,
+                                admin: comments.admin,
+                                accountant: comments.accountant,
+                                addEquipment: comments.add_equipment,
+                            });
 						}
 						if (bid.finance) {
 							const finance = bid.finance;
-							setBidCurrency(finance.bid_currency);
-							setBidPriceStatus(finance.status);
-							setBidPercent(finance.percent);
-							setBidNds(finance.nds);
+                            setFinance({
+                                currency: finance.bid_currency,
+                                price: finance.status,
+                                person: finance.percent,
+                                nds: finance.nds,
+                            });
 						}
 					}
 					if (data.bid_models) {
@@ -569,7 +585,7 @@ const BidPage = (props) => {
 	const fetchOrgUserSelects = async () => {
 		if (PRODMODE) {
 			try {
-                const selects = await getBidSelects({ orgUserId: bidOrgUser });
+                const selects = await getBidSelects({ orgUserId: baseInfo.orgUser });
 				if (selects) {
 					setEmailSelect(selects.contact_email_select);
 				}
@@ -667,10 +683,10 @@ const BidPage = (props) => {
 			try {
 				setIsLoadingSmall(true);
                 const bid_info = {
-                    bidCurrency,
-                    bidPriceStatus,
-                    bidPercent,
-                    bidNds,
+                    bidCurrency: finance.currency,
+                    bidPriceStatus: finance.priceStatus,
+                    bidPercent: finance.percent,
+                    bidNds: finance.nds,
                 };
                 const content = await calcModels(bid_info, bidModels);
 				if (content) {
@@ -830,37 +846,27 @@ const BidPage = (props) => {
                 base_info: {
                     org: bidOrg,
                     curator: bidCurator,
-                    orguser: bidOrgUser,
-                    protection: bidProtectionProject,
-                    object: bidObject,
-                    sellby: bidSellBy,
+                    orguser: baseInfo.orgUser,
+                    protection: baseInfo.protectionProject,
+                    object: baseInfo.object,
+                    sellby: baseInfo.sellBy,
                 },
                 bill:
                     +bidType === 2
-                        ? {
-                            requisite: requisite,
-                            conveyance: conveyance,
-                            fact_address: factAddress,
-                            org_phone: phone,
-                            contact_email: email,
-                            insurance: insurance,
-                            package: bidPackage,
-                            consignee: consignee,
-                            other_equipment: otherEquipment,
-                        }
+                        ? bill
                         : null,
                 comments: {
-                    engineer: bidCommentEngineer,
-                    manager: bidCommentManager,
-                    admin: bidCommentAdmin,
-                    accountant: bidCommentAccountant,
-                    add_equipment: bidCommentAddEquipment,
+                    engineer: comments.engineer,
+                    manager: comments.manager,
+                    admin: comments.admin,
+                    accountant: comments.accountant,
+                    add_equipment: comments.addEquipment,
                 },
                 finance: {
-                    bid_currency: bidCurrency,
-                    status: bidPriceStatus,
-                    percent: bidPercent,
-                    nds: bidNds,
+                    bid_currency: finance.currency,
+                    status: finance.priceStatus,
+                    percent: finance.percent,
+                    nds: finance.nds,
                 },
             },
             bid_models: bidModels,
@@ -929,7 +935,7 @@ const BidPage = (props) => {
 	  return formatted === `не число` ? <MinusOutlined /> : formatted + (symbol ? symbol : '');
 	};
 	const currencySymbol = (bidModel) => {
-	  return +bidCurrency === 1 ? '₽' : +bidCurrency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
+	  return +finance.currency === 1 ? '₽' : +finance.currency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
 	}
 	const formatNumberWithSpaces = (number) => {
 	  return new Intl.NumberFormat('ru-RU', {
@@ -1188,35 +1194,35 @@ const BidPage = (props) => {
     };
 	const updateDefaultInfo = () => {
 		const defaultInfoUpd = JSON.parse(JSON.stringify(defaultInfo));
-		defaultInfoUpd.bid.base_info.orguser = bidOrgUser;
-		defaultInfoUpd.bid.base_info.protection = bidProtectionProject;
-		defaultInfoUpd.bid.base_info.object = bidObject;
-		defaultInfoUpd.bid.base_info.sellby = bidSellBy;
+		defaultInfoUpd.bid.base_info.orguser =          baseInfo.orgUser;
+		defaultInfoUpd.bid.base_info.protection =       baseInfo.protectionProject;
+		defaultInfoUpd.bid.base_info.object =           baseInfo.object;
+		defaultInfoUpd.bid.base_info.sellby =           baseInfo.sellBy;
 
 		if (defaultInfoUpd.bid.bill) {
-			defaultInfoUpd.bid.bill.requisite = requisite;
-			defaultInfoUpd.bid.bill.conveyance = conveyance;
-			defaultInfoUpd.bid.bill.fact_address = factAddress;
-			defaultInfoUpd.bid.bill.org_phone = phone;
-			defaultInfoUpd.bid.bill.contact_email = email;
-			defaultInfoUpd.bid.bill.insurance = insurance;
-			defaultInfoUpd.bid.bill.package = bidPackage;
-			defaultInfoUpd.bid.bill.consignee = consignee;
-			defaultInfoUpd.bid.bill.other_equipment = otherEquipment;
+			defaultInfoUpd.bid.bill.requisite =         bill.requisite;
+			defaultInfoUpd.bid.bill.conveyance =        bill.conveyance;
+			defaultInfoUpd.bid.bill.fact_address =      bill.factAddress;
+			defaultInfoUpd.bid.bill.org_phone =         bill.phone;
+			defaultInfoUpd.bid.bill.contact_email =     bill.email;
+			defaultInfoUpd.bid.bill.insurance =         bill.insurance;
+			defaultInfoUpd.bid.bill.package =           bill.package;
+			defaultInfoUpd.bid.bill.consignee =         bill.consignee;
+			defaultInfoUpd.bid.bill.other_equipment =   bill.otherEquipment;
 		}
 
-		defaultInfoUpd.bid.comments.engineer = bidCommentEngineer;
-		defaultInfoUpd.bid.comments.manager = bidCommentManager;
-		defaultInfoUpd.bid.comments.admin = bidCommentAdmin;
-		defaultInfoUpd.bid.comments.accountant = bidCommentAccountant;
-		defaultInfoUpd.bid.comments.add_equipment = bidCommentAddEquipment;
+		defaultInfoUpd.bid.comments.engineer =          comments.engineer;
+		defaultInfoUpd.bid.comments.manager =           comments.manager;
+		defaultInfoUpd.bid.comments.admin =             comments.admin;
+		defaultInfoUpd.bid.comments.accountant =        comments.accountant;
+		defaultInfoUpd.bid.comments.add_equipment =     comments.addEquipment;
 
-		defaultInfoUpd.bid.finance.bid_currency = bidCurrency;
-		defaultInfoUpd.bid.finance.status = bidPriceStatus;
-		defaultInfoUpd.bid.finance.percent = bidPercent;
-		defaultInfoUpd.bid.finance.nds = bidNds;
+		defaultInfoUpd.bid.finance.bid_currency =       finance.currency;
+		defaultInfoUpd.bid.finance.status =             finance.priceStatus;
+		defaultInfoUpd.bid.finance.percent =            finance.percent;
+		defaultInfoUpd.bid.finance.nds =                finance.nds;
 
-		defaultInfoUpd.bid_models = bidModels;
+		defaultInfoUpd.bid_models =                     bidModels;
 
 		setDefaultInfo(defaultInfoUpd);
 	};
@@ -1306,14 +1312,10 @@ const BidPage = (props) => {
 	};
 	const isErrorInput = (bidModelId) => {
 		const model = bidModels.find(model => model.id === bidModelId);
-		if (model && +model.model_count === +model.sklad) {
-			return false;
-		} else {
-			return true;
-		}
+		return !(model && +model.model_count === +model.sklad);
 	};
 	const isManagerDone = () => {
-		return (bidOrgUser && requisite && phone);
+		return (baseInfo.orgUser && requisite && phone);
 	};
 	const isAdminDone = () => {
 		return !(bidModels.find(model => +model.model_count !== +model.sklad));
@@ -1386,14 +1388,14 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bidOrgUser}
+							value={baseInfo.orgUser}
 							showSearch
 							optionFilterProp="label"
 							filterOption={(input, option) =>
 								(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
 							}
 							options={prepareSelect(orgUsersSelect)}
-							onChange={(val) => setBidOrgUser(val)}
+							onChange={(val) => setBaseInfo({...baseInfo, orgUser: val})}
 							disabled={isDisabledInputManager()}
 							defaultValue={(orgUsersSelect && orgUsersSelect.length > 0) ? orgUsersSelect[orgUsersSelect.length - 1].id : null}
 						/>
@@ -1404,9 +1406,10 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bidProtectionProject}
+							value={baseInfo.protectionProject}
 							options={prepareSelect(protectionSelect)}
-							onChange={(val) => setBidProtectionProject(val)}
+							//onChange={(val) => setBidProtectionProject(val)}
+							onChange={(val) => setBaseInfo({...baseInfo, protectionProject: val})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1416,8 +1419,8 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={bidObject}
-							onChange={(e) => setBidObject(e.target.value)}
+							value={baseInfo.object}
+							onChange={(e) => setBaseInfo({...baseInfo, object: e.target.value})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1427,8 +1430,8 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={bidSellBy}
-							onChange={(e) => setBidSellBy(e.target.value)}
+							value={baseInfo.sellBy}
+							onChange={(e) => setBaseInfo({...baseInfo, sellBy: e.target.value})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1479,9 +1482,9 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={requisite}
+							value={bill.requisite}
 							options={prepareSelect(requisiteSelect)}
-							onChange={(val) => setRequisite(val)}
+							onChange={(val) => setBill({...bill, requisite: val})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1491,9 +1494,9 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={conveyance}
+							value={bill.conveyance}
 							options={prepareSelect(conveyanceSelect)}
-							onChange={(val) => setConveyance(val)}
+							onChange={(val) => setBill({...bill, conveyance: val})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1503,9 +1506,9 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={factAddress}
+							value={bill.factAddress}
 							options={prepareSelect(factAddressSelect)}
-							onChange={(val) => setFactAddress(val)}
+							onChange={(val) => setBill({...bill, factAddress: val})}
 							disabled={isDisabledInputManager()}
 							defaultValue={(factAddressSelect && factAddressSelect.length > 0) ? factAddressSelect[factAddressSelect.length - 1].id : null}
 						/>
@@ -1516,9 +1519,9 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={phone}
+							value={bill.phone}
 							options={prepareSelect(phoneSelect)}
-							onChange={(val) => setPhone(val)}
+							onChange={(val) => setBill({...bill, phone: val})}
 							disabled={isDisabledInputManager()}
 							defaultValue={(phoneSelect && phoneSelect.length > 0) ? phoneSelect[phoneSelect.length - 1].id : null}
 						/>
@@ -1529,9 +1532,9 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={email}
+							value={bill.email}
 							options={prepareSelect(emailSelect)}
-							onChange={(val) => setEmail(val)}
+							onChange={(val) => setBill({...bill, email: val})}
 							disabled={isDisabledInputManager()}
 							defaultValue={(emailSelect && emailSelect.length > 0) ? emailSelect[emailSelect.length - 1].id : null}
 						/>
@@ -1542,9 +1545,9 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={insurance}
+							value={bill.insurance}
 							options={prepareSelect(insuranceSelect)}
-							onChange={(val) => setInsurance(val)}
+							onChange={(val) => setBill({...bill, insurance: val})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1554,9 +1557,9 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bidPackage}
+							value={bill.package}
 							options={prepareSelect(packageSelect)}
-							onChange={(val) => setBidPackage(val)}
+							onChange={(val) => setBill({...bill, package: val})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1566,8 +1569,8 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={consignee}
-							onChange={(e) => setConsignee(e.target.value)}
+							value={bill.consignee}
+							onChange={(e) => setBill({...bill, consignee: e.target.value})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1577,8 +1580,8 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={otherEquipment}
-							onChange={(e) => setOtherEquipment(e.target.value)}
+							value={bill.otherEquipment}
+							onChange={(e) => setBill({...bill, otherEquipment: e.target.value})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1604,9 +1607,9 @@ const BidPage = (props) => {
 							<p>Комментарий инженера</p>
 						</div>
 						<TextArea
-							value={bidCommentEngineer}
+							value={comments.engineer}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setBidCommentEngineer(e.target.value)}
+							onChange={(e) => setComments({...comments, engineer: e.target.value})}
 							disabled={isDisabledInput()}/**/
 						/>
 					</div>
@@ -1615,9 +1618,9 @@ const BidPage = (props) => {
 							<p>Комментарий менеджера</p>
 						</div>
 						<TextArea
-							value={bidCommentManager}
+							value={comments.manager}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setBidCommentManager(e.target.value)}
+							onChange={(e) => setComments({...comments, manager: e.target.value})}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1626,9 +1629,9 @@ const BidPage = (props) => {
 							<p>Комментарий администратора</p>
 						</div>
 						<TextArea
-							value={bidCommentAdmin}
+							value={comments.admin}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setBidCommentAdmin(e.target.value)}
+							onChange={(e) => setComments({...comments, admin: e.target.value})}
 							disabled={isDisabledInputAdmin()}
 						/>
 					</div>
@@ -1637,9 +1640,9 @@ const BidPage = (props) => {
 							<p>Комментарий бухгалтера</p>
 						</div>
 						<TextArea
-							value={bidCommentAccountant}
+							value={comments.accountant}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setBidCommentAccountant(e.target.value)}
+							onChange={(e) => setComments({...comments, accountant: e.target.value})}
 							disabled={isDisabledInputBuh()}
 						/>
 					</div>
@@ -1648,9 +1651,9 @@ const BidPage = (props) => {
 							<p>Дополнительное оборудование</p>
 						</div>
 						<TextArea
-							value={bidCommentAddEquipment}
+							value={comments.addEquipment}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setBidCommentAddEquipment(e.target.value)}
+							onChange={(e) => setComments({...comments, addEquipment: e.target.value})}
 							disabled={isDisabledInput()}
 						/>
 					</div>
@@ -1668,7 +1671,7 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bidCurrency}
+							value={finance.currency}
 							options={prepareSelect(bidCurrencySelect)}
 							onChange={(val) => {
                                 //const timerCurrency = setTimeout(() => {
@@ -1685,7 +1688,7 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bidPriceStatus}
+							value={finance.priceStatus}
 							options={prepareSelect(priceSelect)}
 							onChange={(val) => {
                                 //const timerPriceStatus = setTimeout(() => {
@@ -1702,7 +1705,7 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={bidPercent}
+							value={finance.percent}
 							type="number"
 							onChange={(e) => {
                                 //const timerPercent = setTimeout(() => {
@@ -1720,7 +1723,7 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bidNds}
+							value={finance.nds}
 							options={prepareSelect(ndsSelect)}
 							onChange={(val) => {
                                 //const timerNds = setTimeout(() => {
@@ -1769,16 +1772,16 @@ const BidPage = (props) => {
     const handleChangeFinanceBlock = (key, value) => {
         switch (key) {
             case 'bidCurrency':
-                setBidCurrency(value);
+                setFinance({...finance, currency: value});
                 break;
             case 'bidPriceStatus':
-                setBidPriceStatus(value);
+                setFinance({...finance, priceStatus: value});
                 break;
             case 'bidPercent':
-                setBidPercent(value);
+                setFinance({...finance, percent: value});
                 break;
             case 'bidNds':
-                setBidNds(value);
+                setFinance({...finance, nds: value});
                 break;
         }
         //setIsNeedCalcMoney(true);
