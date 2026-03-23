@@ -249,7 +249,7 @@ const BidPage = (props) => {
         fetchInfo().then(() => setIsNeedCalcMoney(true));
     }, []);
 	useEffect(() => {
-		if (isMounted && bidOrg && bidOrg.id) {
+		if (bidOrg && bidOrg.id) {
 			fetchOrgSelects().then();
 		}
 	}, [bidOrg]);
