@@ -385,7 +385,7 @@ const BidPage = (props) => {
 			if (bid.comments.manager !== comments.manager) flag = true;
 			if (bid.comments.admin !== comments.admin) flag = true;
 			if (bid.comments.accountant !== comments.accountant) flag = true;
-			if (bid.comments.add_equipment !== comments.add_equipment) flag = true;
+			if (bid.comments.add_equipment !== comments.addEquipment) flag = true;
 			/* finance */
 			if (bid.finance.bid_currency !== finance.currency) flag = true;
 			if (bid.finance.status !== finance.priceStatus) flag = true;
