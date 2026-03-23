@@ -620,11 +620,11 @@ const BidPage = (props) => {
         const data = collectUpdates();
 		if (PRODMODE) {
 			try {
-                const message = await updateBid(bidId, data);
-				if (message) {
+                const response = await updateBid(bidId, data);
+				if (response.message) {
 					setIsAlertVisible(true);
 					setAlertMessage('Успех!');
-					setAlertDescription(message);
+					setAlertDescription(response.message);
 					setAlertType('success');
 					setIsSmthChanged(false);
 					updateDefaultInfo();
