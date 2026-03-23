@@ -2351,7 +2351,7 @@ const BidPage = (props) => {
 												</div>
 												<div className={'sa-models-table-cell'}>
 													<ModelSelect
-														options={prepareSelect(presenceSelect)}
+														options={prepareSelect(selects.presence)}
 														value={bidModel.presence}
 														bidModelId={bidModel.id}
 														bidModelSort={bidModel.sort}
@@ -2455,7 +2455,7 @@ const BidPage = (props) => {
 												</div>
 												<div className={'sa-models-table-cell'}>
 													<ModelSelect
-														options={prepareSelect(presenceSelect)}
+														options={prepareSelect(selects.presence)}
 														value={bidModel.presence}
 														bidModelId={bidModel.id}
 														bidModelSort={bidModel.sort}
