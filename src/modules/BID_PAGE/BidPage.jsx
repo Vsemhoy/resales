@@ -918,11 +918,11 @@ const BidPage = (props) => {
 	};
 	const countOfComments = () => {
 	  return [
-		  bidCommentEngineer,
-		  bidCommentManager,
-		  bidCommentAdmin,
-		  bidCommentAccountant,
-		  bidCommentAddEquipment
+		  comments.engineer,
+		  comments.manager,
+		  comments.admin,
+		  comments.accountant,
+		  comments.addEquipment,
 	  ].filter(comment => comment).length;
 	};
 	const prepareEngineerParameter = (engineerParameter) => {
