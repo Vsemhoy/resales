@@ -1408,7 +1408,6 @@ const BidPage = (props) => {
 							style={{ width: '100%', textAlign: 'left' }}
 							value={baseInfo.protectionProject}
 							options={prepareSelect(protectionSelect)}
-							//onChange={(val) => setBidProtectionProject(val)}
 							onChange={(val) => setBaseInfo({...baseInfo, protectionProject: val})}
 							disabled={isDisabledInputManager()}
 						/>
@@ -2731,7 +2730,7 @@ const BidPage = (props) => {
             >
                 <FindSimilar bid_id={bidId}
                              bid_models={bidModels}
-                             protection_project={bidProtectionProject}
+                             protection_project={baseInfo.protectionProject}
                              error_alert={(path, e) => {
                                  setIsAlertVisible(true);
                                  setAlertMessage(`Произошла ошибка! ${path}`);
@@ -2740,18 +2739,6 @@ const BidPage = (props) => {
                              }}
                 />
             </Modal>
-            {/*<FindSimilarDrawer isOpenDrawer={isFindSimilarDrawerOpen}
-                               closeDrawer={() => setIsFindSimilarDrawerOpen(false)}
-                               bid_id={bidId}
-                               bid_models={bidModels}
-                               protection_project={bidProtectionProject}
-                               error_alert={(path, e) => {
-                                   setIsAlertVisible(true);
-                                   setAlertMessage(`Произошла ошибка! ${path}`);
-                                   setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-                                   setAlertType('error');
-                               }}
-            />*/}
 			<ModelInfoExtraDrawer model_id={modelIdExtra}
 								  model_name={modelNameExtra}
 								  closeDrawer={handleCloseDrawerExtra}
