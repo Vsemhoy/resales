@@ -494,6 +494,12 @@ const CallTabSectionTorg = (props) => {
     };*/
 
     const preSetPhone = (phoneStr) => {
+        if (!phoneStr) {
+            setPhone('');
+            setTimeout(() => setAddPhone(''), 0);
+            setACTION_FLAG(1);
+            return;
+        }
         const match = phoneStr.match(/^(.*?)\s*\((\d+)\)\s*$/);
 
         if (match) {
@@ -517,6 +523,7 @@ const CallTabSectionTorg = (props) => {
             number: '',
             add: '',
         };
+        if (!phoneStr) return res;
         const match = phoneStr.match(/^(.*?)\s*\((\d+)\)\s*$/);
 
         if (match) {
