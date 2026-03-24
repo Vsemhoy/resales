@@ -366,7 +366,7 @@ const FindSimilar = (props) => {
                 }
             };
             if (PRODMODE) {
-                const path = `${ROUTE_PREFIX}/sales/data/getsimilarbidV2`
+                const path = `${ROUTE_PREFIX}/sales/data/getsimilarbid`
                 try {
                     setLoad(true);
                     let response = await PROD_AXIOS_INSTANCE.post(path, {
