@@ -584,7 +584,11 @@ const BidPage = (props) => {
 	};
 
     const handleSave = () => {
-        saveBid(collectUpdates());
+        saveBid(collectUpdates(), {
+            onSuccess: () => {
+                fetchCalcModels().then();
+            },
+        });
     };
     const collectUpdates = () => {
         return {
@@ -993,7 +997,8 @@ const BidPage = (props) => {
                         onSuccess: () => {
                             if (isManagerDone()) {
                                 setBidPlace(2);
-                                fetchBidPlace(2);
+                                fetchBidPlace(2).then();
+                                fetchCalcModels().then();
                             } else {
                                 setIsAlertVisible(true);
                                 setAlertMessage('Заполните поля!');
@@ -1032,7 +1037,8 @@ const BidPage = (props) => {
                         onSuccess: () => {
                             if (isAdminDone()) {
                                 setBidPlace(3);
-                                fetchBidPlace(3);
+                                fetchBidPlace(3).then();
+                                fetchCalcModels().then();
                             } else {
                                 setIsAlertVisible(true);
                                 setAlertMessage('Заполните поля!');
