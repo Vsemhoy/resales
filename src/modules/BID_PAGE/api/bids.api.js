@@ -1,5 +1,5 @@
-import {CSRF_TOKEN, ROUTE_PREFIX} from "../config/config";
-import {PROD_AXIOS_INSTANCE} from "../config/Api";
+import {CSRF_TOKEN, ROUTE_PREFIX} from "../../../config/config";
+import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 
 export const getBidInfo = (bidId) =>
     PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/offers/${bidId}`, {
