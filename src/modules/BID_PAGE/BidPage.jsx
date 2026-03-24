@@ -629,6 +629,7 @@ const BidPage = (props) => {
 	  return rounded % 1 === 0 ? Math.round(rounded) : rounded;
 	};
     const prepareAmount = (amount, symbol) => {
+        console.log('amount', amount);
         const value = +amount;
         if (isNaN(value)) {
             return <MinusOutlined />;
