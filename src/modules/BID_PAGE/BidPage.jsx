@@ -193,7 +193,7 @@ const BidPage = (props) => {
 	const [bidProject, setBidProject] = useState(null); // проект из карточки организации
 
     /* СЕЛЕКТЫ */
-    const selects = useBidSelects(bidOrg?.id, baseInfo.orgUser);
+    const selects = useBidSelects(bidOrg?.id, form.baseInfo.orgUser);
 
 	/* МОДЕЛИ */
 	const [bidModels, setBidModels] = useState([]);
@@ -380,6 +380,9 @@ const BidPage = (props) => {
 
     useEffect(() => {
         if (serverData) {
+
+            setOpenMode(serverData.openmode);
+
             const { bid, bid_models } = serverData;
 
             setBidActions(bid.actions);
@@ -387,9 +390,9 @@ const BidPage = (props) => {
             setBidType(bid.type);
             setBidPlace(bid.place);
             setBidFilesCount(bid.files_count);
-            setBidOrg(bid.baseInfo.org);
-            setBidCurator(bid.baseInfo.curator);
-            setBidProject(bid.baseInfo.project);
+            setBidOrg(bid.base_info.org);
+            setBidCurator(bid.base_info.curator);
+            setBidProject(bid.base_info.project);
             setIsSended1c(bid.bill.send1c);
 
             setForm({
@@ -604,12 +607,12 @@ const BidPage = (props) => {
 			try {
 				setIsLoadingSmall(true);
                 const bid_info = {
-                    bidCurrency: finance.currency,
-                    bidPriceStatus: finance.priceStatus,
-                    bidPercent: finance.percent,
-                    bidNds: finance.nds,
+                    bidCurrency: form.finance.currency,
+                    bidPriceStatus: form.finance.priceStatus,
+                    bidPercent: form.finance.percent,
+                    bidNds: form.finance.nds,
                 };
-                const content = await calcModels(bid_info, bidModels);
+                const content = await calcModels(bid_info, form.models);
 				if (content) {
 					const isStaleRequest = calcRequestIdRef.current !== requestId;
 					const hasLocalChanges = bidModelsVersionRef.current !== requestVersion;
@@ -805,13 +808,7 @@ const BidPage = (props) => {
 	  }
 	};
 	const countOfComments = () => {
-	  return [
-		  comments.engineer,
-		  comments.manager,
-		  comments.admin,
-		  comments.accountant,
-		  comments.addEquipment,
-	  ].filter(comment => comment).length;
+        return Object.values(form.comments).filter(Boolean).length;
 	};
 	const prepareEngineerParameter = (engineerParameter) => {
 	  const rounded = (+engineerParameter).toFixed(2);
@@ -823,7 +820,7 @@ const BidPage = (props) => {
 	  return formatted === `не число` ? <MinusOutlined /> : formatted + (symbol ? symbol : '');
 	};
 	const currencySymbol = (bidModel) => {
-	  return +finance.currency === 1 ? '₽' : +finance.currency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
+	  return +form.finance.currency === 1 ? '₽' : +form.finance.currency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
 	}
 	const formatNumberWithSpaces = (number) => {
 	  return new Intl.NumberFormat('ru-RU', {
@@ -1156,7 +1153,7 @@ const BidPage = (props) => {
 				break;
 			case 'toAdmin':
 				if (+button_id === 2) {
-					fetchUpdates(2).then();
+                    handleSave();
                     setIsLoadingChangePlaceBtn('');
 				}
 				break;
@@ -1176,21 +1173,21 @@ const BidPage = (props) => {
 			case 'backManagerWithSelect':
 				if (+button_id === 2) {
 					setBidPlace(1);
-					fetchBidPlace(1, selectValue).then(() => fetchBidInfo().then());
+					fetchBidPlace(1, selectValue)//.then(() => fetchBidInfo().then());
 				} else if (+button_id === 1) {
 					setIsLoadingChangePlaceBtn('');
 				}
 				break;
 			case 'toBuh':
 				if (+button_id === 2) {
-					fetchUpdates(3).then();
+                    handleSave();
                     setIsLoadingChangePlaceBtn('');
 				}
 				break;
 			case 'backAdminWithSelect':
 				if (+button_id === 2) {
 					setBidPlace(2);
-					fetchBidPlace(2, selectValue).then(() => fetchBidInfo().then());
+					fetchBidPlace(2, selectValue)//.then(() => fetchBidInfo().then());
 				} else if (+button_id === 1) {
 					setIsLoadingChangePlaceBtn('');
 				}
@@ -1203,7 +1200,7 @@ const BidPage = (props) => {
 		return !(model && +model.model_count === +model.sklad);
 	};
 	const isManagerDone = () => {
-		return (baseInfo.orgUser && bill.requisite && bill.phone);
+		return (from.baseInfo.orgUser && form.bill.requisite && form.bill.phone);
 	};
 	const isAdminDone = () => {
 		return !(bidModels.find(model => +model.model_count !== +model.sklad));
@@ -1276,14 +1273,17 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={baseInfo.orgUser}
+							value={form.baseInfo.orgUser}
 							showSearch
 							optionFilterProp="label"
 							filterOption={(input, option) =>
 								(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
 							}
 							options={prepareSelect(selects.orgUsers)}
-							onChange={(val) => setBaseInfo({...baseInfo, orgUser: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                baseInfo: { ...prev.baseInfo, orgUser: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 							defaultValue={(selects.orgUsers && selects.orgUsers.length > 0) ? selects.orgUsers[selects.orgUsers.length - 1].id : null}
 						/>
@@ -1294,9 +1294,12 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={baseInfo.protectionProject}
+							value={form.baseInfo.protectionProject}
 							options={prepareSelect(selects.protection)}
-							onChange={(val) => setBaseInfo({...baseInfo, protectionProject: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                baseInfo: { ...prev.baseInfo, protectionProject: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1306,8 +1309,11 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={baseInfo.object}
-							onChange={(e) => setBaseInfo({...baseInfo, object: e.target.value})}
+							value={form.baseInfo.object}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                baseInfo: { ...prev.baseInfo, object: e.target.value }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1317,8 +1323,11 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={baseInfo.sellBy}
-							onChange={(e) => setBaseInfo({...baseInfo, sellBy: e.target.value})}
+							value={form.baseInfo.sellBy}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                baseInfo: { ...prev.baseInfo, sellBy: e.target.value }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1369,9 +1378,12 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bill.requisite}
+							value={form.bill.requisite}
 							options={prepareSelect(selects.requisite)}
-							onChange={(val) => setBill({...bill, requisite: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, requisite: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1381,9 +1393,12 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bill.conveyance}
+							value={form.bill.conveyance}
 							options={prepareSelect(selects.conveyance)}
-							onChange={(val) => setBill({...bill, conveyance: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, conveyance: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1393,9 +1408,12 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bill.factAddress}
+							value={form.bill.factAddress}
 							options={prepareSelect(selects.factAddress)}
-							onChange={(val) => setBill({...bill, factAddress: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, factAddress: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 							defaultValue={(selects.factAddress && selects.factAddress.length > 0) ? selects.factAddress[selects.factAddress.length - 1].id : null}
 						/>
@@ -1406,9 +1424,12 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bill.phone}
+							value={form.bill.phone}
 							options={prepareSelect(selects.phones)}
-							onChange={(val) => setBill({...bill, phone: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, phone: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 							defaultValue={(selects.phones && selects.phones.length > 0) ? selects.phones[selects.phones.length - 1].id : null}
 						/>
@@ -1419,9 +1440,12 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bill.email}
+							value={form.bill.email}
 							options={prepareSelect(selects.emails)}
-							onChange={(val) => setBill({...bill, email: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, email: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 							defaultValue={(selects.emails && selects.emails.length > 0) ? selects.emails[selects.emails.length - 1].id : null}
 						/>
@@ -1432,9 +1456,12 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bill.insurance}
+							value={form.bill.insurance}
 							options={prepareSelect(selects.insurance)}
-							onChange={(val) => setBill({...bill, insurance: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, insurance: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1444,9 +1471,12 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={bill.package}
+							value={form.bill.package}
 							options={prepareSelect(selects.package)}
-							onChange={(val) => setBill({...bill, package: val})}
+                            onChange={(val) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, package: val }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1456,8 +1486,11 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={bill.consignee}
-							onChange={(e) => setBill({...bill, consignee: e.target.value})}
+							value={form.bill.consignee}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, consignee: e.target.value }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1467,8 +1500,11 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={bill.otherEquipment}
-							onChange={(e) => setBill({...bill, otherEquipment: e.target.value})}
+							value={form.bill.otherEquipment}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                bill: { ...prev.bill, otherEquipment: e.target.value }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1494,9 +1530,12 @@ const BidPage = (props) => {
 							<p>Комментарий инженера</p>
 						</div>
 						<TextArea
-							value={comments.engineer}
+							value={form.comments.engineer}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setComments({...comments, engineer: e.target.value})}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                comments: { ...prev.comments, engineer: e.target.value }
+                            }))}
 							disabled={isDisabledInput()}/**/
 						/>
 					</div>
@@ -1505,9 +1544,12 @@ const BidPage = (props) => {
 							<p>Комментарий менеджера</p>
 						</div>
 						<TextArea
-							value={comments.manager}
+							value={form.comments.manager}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setComments({...comments, manager: e.target.value})}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                comments: { ...prev.comments, manager: e.target.value }
+                            }))}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1516,9 +1558,12 @@ const BidPage = (props) => {
 							<p>Комментарий администратора</p>
 						</div>
 						<TextArea
-							value={comments.admin}
+							value={form.comments.admin}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setComments({...comments, admin: e.target.value})}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                comments: { ...prev.comments, admin: e.target.value }
+                            }))}
 							disabled={isDisabledInputAdmin()}
 						/>
 					</div>
@@ -1527,10 +1572,13 @@ const BidPage = (props) => {
 							<p>Комментарий бухгалтера</p>
 						</div>
 						<TextArea
-							value={comments.accountant}
+							value={form.comments.accountant}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setComments({...comments, accountant: e.target.value})}
-							disabled={isDisabledInputBuh()}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                comments: { ...prev.comments, accountant: e.target.value }
+                            }))}
+                            disabled={isDisabledInputBuh()}
 						/>
 					</div>
 					<div className={'sa-info-list-row'}>
@@ -1538,10 +1586,13 @@ const BidPage = (props) => {
 							<p>Дополнительное оборудование</p>
 						</div>
 						<TextArea
-							value={comments.addEquipment}
+							value={form.comments.addEquipment}
 							autoSize={{ minRows: 2, maxRows: 6 }}
-							onChange={(e) => setComments({...comments, addEquipment: e.target.value})}
-							disabled={isDisabledInput()}
+                            onChange={(e) => setForm(prev => ({
+                                ...prev,
+                                comments: { ...prev.comments, addEquipment: e.target.value }
+                            }))}
+                            disabled={isDisabledInput()}
 						/>
 					</div>
 				</div>
@@ -1558,13 +1609,16 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={finance.currency}
+							value={form.finance.currency}
 							options={prepareSelect(selects.currency)}
-							onChange={(val) => {
-                                setFinance(prev => ({ ...prev, currency: val }));
+                            onChange={(val) => {
+                                setForm(prev => ({
+                                    ...prev,
+                                    finance: {...prev.finance, currency: val}
+                                }));
                                 isNeedCalcModelsTimerSetter(true);
                                 setIsUpdateAll(true);
-							}}
+                            }}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1574,13 +1628,16 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={finance.priceStatus}
+							value={form.finance.priceStatus}
 							options={prepareSelect(selects.price)}
-							onChange={(val) => {
-                                setFinance(prev => ({ ...prev, priceStatus: val }));
+                            onChange={(val) => {
+                                setForm(prev => ({
+                                    ...prev,
+                                    finance: {...prev.finance, priceStatus: val}
+                                }));
                                 isNeedCalcModelsTimerSetter(true);
                                 setIsUpdateAll(true);
-							}}
+                            }}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1590,13 +1647,16 @@ const BidPage = (props) => {
 						</div>
 						<Input
 							style={{ width: '100%', height: '32px' }}
-							value={finance.percent}
+							value={form.finance.percent}
 							type="number"
-							onChange={(e) => {
-                                setFinance(prev => ({ ...prev, percent: e.target.value }));
+                            onChange={(e) => {
+                                setForm(prev => ({
+                                    ...prev,
+                                    finance: {...prev.finance, percent: e.target.value }
+                                }));
                                 isNeedCalcModelsTimerSetter(true);
                                 setIsUpdateAll(true);
-							}}
+                            }}
 							onWheel={(e) => e.target.blur()}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1607,13 +1667,16 @@ const BidPage = (props) => {
 						</div>
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
-							value={finance.nds}
+							value={form.finance.nds}
 							options={prepareSelect(selects.nds)}
-							onChange={(val) => {
-                                setFinance(prev => ({ ...prev, nds: val }));
+                            onChange={(val) => {
+                                setForm(prev => ({
+                                    ...prev,
+                                    finance: {...prev.finance, nds: val}
+                                }));
                                 isNeedCalcModelsTimerSetter(true);
                                 setIsUpdateAll(true);
-							}}
+                            }}
 							disabled={isDisabledInputManager()}
 						/>
 					</div>
@@ -1800,7 +1863,7 @@ const BidPage = (props) => {
 																		[<Select key="return-reason-select"
 																				 		style={{width:'100%'}}
 																						placeholder={'Причина возврата заявки'}
-																						options={prepareSelect(reasonsSelect)}
+																						options={prepareSelect(selects.reasons)}
 																		/>],
 																		returnButtons
 																	);
