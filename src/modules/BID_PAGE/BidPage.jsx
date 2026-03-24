@@ -159,7 +159,7 @@ const BidPage = (props) => {
     const selects = useBidSelects(bidOrg?.id, form.baseInfo.orgUser);
 
 	/* МОДЕЛИ */
-	const [bidModels, setBidModels] = useState([]);
+	//const [bidModels, setBidModels] = useState([]);
 	const [amounts, setAmounts] = useState({
 		usd: 0,
 		eur: 0,
@@ -255,8 +255,8 @@ const BidPage = (props) => {
 		bidModelsVersionRef.current = bidModelsVersion;
 	}, [bidModelsVersion]);
 	useEffect(() => {
-		bidModelsRef.current = bidModels;
-	}, [bidModels]);
+		bidModelsRef.current = form.models;
+	}, [form.models]);
     useEffect(() => {
 		if (userData && userData.user) {
             setIsOpenBaseInfo(userData.user.sales_role === 2 || userData.user.sales_role === 3);
@@ -321,10 +321,10 @@ const BidPage = (props) => {
 		}
 	}, [isAlertVisible]);
     useEffect(() => {
-        if (bidModels && bidModels.length > 0 && modelsSelect && modelsSelect.length > 0) {
+        if (form.models && form.models.length > 0 && modelsSelect && modelsSelect.length > 0) {
             setModelsSelect(prev => {
                 return prev.map((model) => {
-                    if (bidModels.find(bidModel => +bidModel.model_id === +model.id)) {
+                    if (form.models.find(bidModel => +bidModel.model_id === +model.id)) {
                         return {
                             ...model,
                             used: true,
@@ -338,7 +338,7 @@ const BidPage = (props) => {
                 });
             });
         }
-    }, [bidModels]);
+    }, [form.models]);
 
     useEffect(() => {
         if (serverData) {
@@ -439,12 +439,22 @@ const BidPage = (props) => {
 								content.models,
 								requestModelsSnapshot,
 							);
-							setBidModels(mergedModels);
+							//setBidModels(mergedModels);
+                            setForm(prev => ({
+                                ...prev,
+                                models: mergedModels,
+                            }));
 						}
 						setTimeout(() => setIsLoadingSmall(false), 500);
 						return;
 					}
-					if (content.models) setBidModels(content.models);
+					if (content.models) {
+                        //setBidModels(content.models);
+                        setForm(prev => ({
+                            ...prev,
+                            models: content.models,
+                        }));
+                    }
 					if (content.amounts) setAmounts(content.amounts);
 					if (content.models_data) setEngineerParameters(content.models_data);
 				}
@@ -805,7 +815,7 @@ const BidPage = (props) => {
 	  const bidModelIdx = form.models.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
 	  const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
 	  switch (type) {
-		  case 'model_count':
+          case 'model_count':
 			  bidModelsUpd[bidModelIdx].model_count = value;
 			  //setBidModels(bidModelsUpd);
               setForm(prev => ({
@@ -815,7 +825,7 @@ const BidPage = (props) => {
 			  setBidModelsVersion(prev => prev + 1);
 			  //setIsNeedCalcMoney(true);
               isNeedCalcModelsTimerSetter(true);
-			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+			  setLastUpdModel(form.models.find(model => model.id === bidModelId).model_id);
 			  break;
           case 'percent':
 			  bidModelsUpd[bidModelIdx].percent = value;
