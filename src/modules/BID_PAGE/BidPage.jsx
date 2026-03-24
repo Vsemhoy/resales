@@ -64,17 +64,19 @@ import {
     getBidInfo,
     getBidModels,
     getBidSelects,
-    getCurrencySelects, getNewBid, getProjectInfo,
+    getCurrencySelects, getModels, getNewBid, getProjectInfo,
     getWordFile, toSent1C,
     updateBid
 } from "./api/bids.api";
 import {useBidSelects} from "./hooks/useBidSelects";
 import {areObjectsEqual, areArraysEqual} from "./utils/areEqual";
 import {useBidData} from "./hooks/useBidData";
+import {useQueryClient} from "@tanstack/react-query";
 
 const { TextArea } = Input;
 
 const BidPage = (props) => {
+    const queryClient = useQueryClient();
 	const { bidId } = useParams();
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
@@ -149,42 +151,7 @@ const BidPage = (props) => {
 	const [bidOrg, setBidOrg] = useState({});
 	const [bidCurator, setBidCurator] = useState({});
 	const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
-	const [companyCurrency, setCompanyCurrency] = useState(null);
-	const [bankCurrency, setBankCurrency] = useState(null);
-	/* БАЗОВЫЙ БЛОК */
-    const [baseInfo, setBaseInfo] = useState({
-        orgUser: null,
-        protectionProject: null,
-        object: null,
-        sellBy: null,
-    });
-	/* БЛОК ПЛАТЕЛЬЩИКА */
-    const [bill, setBill] = useState({
-        requisite: null,
-        conveyance: null,
-        factAddress: null,
-        phone: null,
-        email: null,
-        insurance: null,
-        package: null,
-        consignee: null,
-        otherEquipment: null,
-    });
-	/* БЛОК КОММЕНТАРИЕВ */
-    const [comments, setComments] = useState({
-        engineer: null,
-        manager: null,
-        admin: null,
-        accountant: null,
-        addEquipment: null,
-    });
-	/* ФИНАНСОВЫЙ БЛОК */
-    const [finance, setFinance] = useState({
-        currency: null,
-        priceStatus: null,
-        percent: null,
-        nds: null,
-    });
+
 
 	/* ФАЙЛЫ */
 	const [bidFilesCount, setBidFilesCount] = useState(0);
@@ -214,7 +181,6 @@ const BidPage = (props) => {
 
 	/* СЕЛЕКТ ПО МОДЕЛЯМ */
 	const [modelsSelect, setModelsSelect] = useState([]);
-	const [garbage, setGarbage] = useState([]);
 
 	/* ОСТАЛЬНОЕ */
 	const [modelIdExtra, setModelIdExtra] = useState(null);
@@ -266,13 +232,13 @@ const BidPage = (props) => {
 
 
     useEffect(() => {
-        fetchInfo().then(() => setIsNeedCalcMoney(true));
+        fetchModels().then(() => setIsNeedCalcMoney(true));
     }, []);
     useEffect(() => {
-        if (baseInfo.object) {
-            setFindSimilarTitle(`Поиск похожих: "${baseInfo.object}"`);
+        if (form.baseInfo.object) {
+            setFindSimilarTitle(`Поиск похожих: "${form.baseInfo.object}"`);
         }
-    }, [baseInfo.object]);
+    }, [form.baseInfo.object]);
 	useEffect(() => {
 		if (bidProject) {
 			fetchProjectInfo().then();
@@ -393,7 +359,7 @@ const BidPage = (props) => {
             setBidOrg(bid.base_info.org);
             setBidCurator(bid.base_info.curator);
             setBidProject(bid.base_info.project);
-            setIsSended1c(bid.bill.send1c);
+            setIsSended1c(bid.bill?.send1c);
 
             setForm({
                 baseInfo: {
@@ -433,118 +399,11 @@ const BidPage = (props) => {
         }
     }, [serverData]);
 
-	const fetchInfo = async () => {
-		await fetchBidModels();
-		await fetchCurrencySelects();
-	};
-	/*const fetchBidInfo = async () => {
+	const fetchModels = async () => {
 		if (PRODMODE) {
 			try {
-                const data = await getBidInfo(bidId);
-				if (data) {
-					const openMode = data?.openmode;
-					setOpenMode(openMode);
-					if (data.bid) {
-						const bid = data?.bid;
-
-						setBidActions(bid.actions);
-
-						setBidIdCompany(bid.id_company);
-						setBidType(bid.type);
-						setBidPlace(bid.place);
-						setBidFilesCount(bid.files_count);
-
-						if (bid.base_info) {
-							const baseInfo = bid.base_info;
-							setBidOrg(baseInfo.org);
-							setBidCurator(baseInfo.curator);
-                            setBaseInfo({
-                                orgUser: baseInfo.orguser,
-                                protectionProject  : baseInfo.protection,
-                                object: baseInfo.object,
-                                sellBy: baseInfo.sellby
-                            });
-							setBidProject(baseInfo.project);
-						}
-						if (bid.bill) {
-							const bill = bid.bill;
-                            setBill({
-                                requisite: bill.requisite,
-                                conveyance: bill.conveyance,
-                                factAddress: bill.fact_address,
-                                phone: bill.org_phone,
-                                email: bill.contact_email,
-                                insurance: bill.insurance,
-                                package: bill.package,
-                                consignee: bill.consignee,
-                                otherEquipment: bill.other_equipment,
-                            });
-							setIsSended1c(bill.send1c);
-						}
-						if (bid.comments) {
-							const comments = bid.comments;
-                            setComments({
-                                engineer: comments.engineer,
-                                manager: comments.manager,
-                                admin: comments.admin,
-                                accountant: comments.accountant,
-                                addEquipment: comments.add_equipment,
-                            });
-						}
-						if (bid.finance) {
-							const finance = bid.finance;
-                            setFinance({
-                                currency: finance.bid_currency,
-                                priceStatus: finance.status,
-                                percent: finance.percent,
-                                nds: finance.nds,
-                            });
-						}
-					}
-					if (data.bid_models) {
-						setBidModels(data.bid_models);
-					}
-					setTimeout(() => {
-						setDefaultInfo({
-							bid: data.bid,
-							bid_models: data.bid_models,
-						});
-					}, 500);
-				}
-				setIsLoadingChangePlaceBtn('');
-			} catch (e) {
-				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!}`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
-				setIsLoadingChangePlaceBtn('');
-			}
-		}
-	};*/
-	const fetchCurrencySelects = async () => {
-		if (PRODMODE) {
-			try {
-                const currency = await getCurrencySelects();
-				if (currency) {
-					setCompanyCurrency(currency.company);
-					setBankCurrency(currency.currency);
-				}
-			} catch (e) {
-				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
-			}
-		}
-	};
-	const fetchBidModels = async () => {
-		if (PRODMODE) {
-			try {
-                const models = await getBidModels();
+                const models = await getModels();
 				if (models) {
-					setGarbage(models.info);
 					setModelsSelect(models.models);
 				}
 			} catch (e) {
@@ -556,49 +415,6 @@ const BidPage = (props) => {
 			}
 		}
 	};
-	/*const fetchUpdates = async (newPlace) => {
-        const data = collectUpdates();
-		if (PRODMODE) {
-			try {
-                const response = await updateBid(bidId, data);
-				if (response.message) {
-					setIsAlertVisible(true);
-					setAlertMessage('Успех!');
-					setAlertDescription(response.message);
-					setAlertType('success');
-					setIsSmthChanged(false);
-					//updateDefaultInfo();
-				}
-				if (newPlace && newPlace === 2) {
-					if (isManagerDone()) {
-						setBidPlace(2);
-						fetchBidPlace(2).then(() => fetchBidInfo().then());
-					} else {
-						setIsAlertVisible(true);
-						setAlertMessage('Заполните поля!');
-						setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
-						setAlertType('warning');
-					}
-				} else if (newPlace && newPlace === 3) {
-					if (isAdminDone()) {
-						setBidPlace(3);
-						fetchBidPlace(3).then(() => fetchBidInfo().then());
-					} else {
-						setIsAlertVisible(true);
-						setAlertMessage('Заполните поля!');
-						setAlertDescription('Количество моделей должно быть равно количеству на складе');
-						setAlertType('warning');
-					}
-				}
-			} catch (e) {
-				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
-			}
-		}
-	};*/
 	const fetchCalcModels = async () => {
 		if (PRODMODE) {
 			const requestId = ++calcRequestIdRef.current;
@@ -704,6 +520,8 @@ const BidPage = (props) => {
                 };
                 const response = await changePlace(bidId, data);
 				if (response) {
+                    queryClient.invalidateQueries({ queryKey: ['bid', bidId] });
+
 					setIsAlertVisible(true);
 					setAlertMessage('Успех!');
 					setAlertDescription(response.message.message);
@@ -1077,40 +895,6 @@ const BidPage = (props) => {
         isNeedCalcModelsTimerSetter(true);
         setIsParseModalOpen(false);
     };
-	/*const updateDefaultInfo = () => {
-		const defaultInfoUpd = JSON.parse(JSON.stringify(defaultInfo));
-		defaultInfoUpd.bid.base_info.orguser =          baseInfo.orgUser;
-		defaultInfoUpd.bid.base_info.protection =       baseInfo.protectionProject;
-		defaultInfoUpd.bid.base_info.object =           baseInfo.object;
-		defaultInfoUpd.bid.base_info.sellby =           baseInfo.sellBy;
-
-		if (defaultInfoUpd.bid.bill) {
-			defaultInfoUpd.bid.bill.requisite =         bill.requisite;
-			defaultInfoUpd.bid.bill.conveyance =        bill.conveyance;
-			defaultInfoUpd.bid.bill.fact_address =      bill.factAddress;
-			defaultInfoUpd.bid.bill.org_phone =         bill.phone;
-			defaultInfoUpd.bid.bill.contact_email =     bill.email;
-			defaultInfoUpd.bid.bill.insurance =         bill.insurance;
-			defaultInfoUpd.bid.bill.package =           bill.package;
-			defaultInfoUpd.bid.bill.consignee =         bill.consignee;
-			defaultInfoUpd.bid.bill.other_equipment =   bill.otherEquipment;
-		}
-
-		defaultInfoUpd.bid.comments.engineer =          comments.engineer;
-		defaultInfoUpd.bid.comments.manager =           comments.manager;
-		defaultInfoUpd.bid.comments.admin =             comments.admin;
-		defaultInfoUpd.bid.comments.accountant =        comments.accountant;
-		defaultInfoUpd.bid.comments.add_equipment =     comments.addEquipment;
-
-		defaultInfoUpd.bid.finance.bid_currency =       finance.currency;
-		defaultInfoUpd.bid.finance.status =             finance.priceStatus;
-		defaultInfoUpd.bid.finance.percent =            finance.percent;
-		defaultInfoUpd.bid.finance.nds =                finance.nds;
-
-		defaultInfoUpd.bid_models =                     bidModels;
-
-		setDefaultInfo(defaultInfoUpd);
-	};*/
 	const openCustomModal = (type, title, text, filling, buttons) => {
 		setCustomModalType(type);
 		setCustomModalTitle(title);
@@ -1152,10 +936,22 @@ const BidPage = (props) => {
 				}
 				break;
 			case 'toAdmin':
-				if (+button_id === 2) {
-                    handleSave();
+                if (+button_id === 2) {
+                    saveBid(collectUpdates(), {
+                        onSuccess: () => {
+                            if (isManagerDone()) {
+                                setBidPlace(2);
+                                fetchBidPlace(2);
+                            } else {
+                                setIsAlertVisible(true);
+                                setAlertMessage('Заполните поля!');
+                                setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
+                                setAlertType('warning');
+                            }
+                        }
+                    });
                     setIsLoadingChangePlaceBtn('');
-				}
+                }
 				break;
 			case 'backManager':
 				openCustomModal(
@@ -1173,21 +969,33 @@ const BidPage = (props) => {
 			case 'backManagerWithSelect':
 				if (+button_id === 2) {
 					setBidPlace(1);
-					fetchBidPlace(1, selectValue)//.then(() => fetchBidInfo().then());
+					fetchBidPlace(1, selectValue).then();
 				} else if (+button_id === 1) {
 					setIsLoadingChangePlaceBtn('');
 				}
 				break;
 			case 'toBuh':
-				if (+button_id === 2) {
-                    handleSave();
+                if (+button_id === 2) {
+                    saveBid(collectUpdates(), {
+                        onSuccess: () => {
+                            if (isAdminDone()) {
+                                setBidPlace(3);
+                                fetchBidPlace(3);
+                            } else {
+                                setIsAlertVisible(true);
+                                setAlertMessage('Заполните поля!');
+                                setAlertDescription('Количество моделей должно быть равно количеству на складе');
+                                setAlertType('warning');
+                            }
+                        }
+                    });
                     setIsLoadingChangePlaceBtn('');
-				}
+                }
 				break;
 			case 'backAdminWithSelect':
 				if (+button_id === 2) {
 					setBidPlace(2);
-					fetchBidPlace(2, selectValue)//.then(() => fetchBidInfo().then());
+					fetchBidPlace(2, selectValue).then();
 				} else if (+button_id === 1) {
 					setIsLoadingChangePlaceBtn('');
 				}
@@ -1200,7 +1008,7 @@ const BidPage = (props) => {
 		return !(model && +model.model_count === +model.sklad);
 	};
 	const isManagerDone = () => {
-		return (from.baseInfo.orgUser && form.bill.requisite && form.bill.phone);
+		return (form.baseInfo.orgUser && form.bill.requisite && form.bill.phone);
 	};
 	const isAdminDone = () => {
 		return !(bidModels.find(model => +model.model_count !== +model.sklad));
@@ -1827,7 +1635,7 @@ const BidPage = (props) => {
 																} else {
 																	if (isManagerDone()) {
 																		setBidPlace(2);
-																		fetchBidPlace(2).then(() => fetchBidInfo().then());
+																		fetchBidPlace(2).then();
 																	} else {
 																		setIsAlertVisible(true);
 																		setAlertMessage('Заполните поля!');
@@ -1886,7 +1694,7 @@ const BidPage = (props) => {
 																} else {
 																	if (isAdminDone()) {
 																		setBidPlace(3);
-																		fetchBidPlace(3).then(() => fetchBidInfo().then());
+																		fetchBidPlace(3).then();
 																	} else {
 																		setIsAlertVisible(true);
 																		setAlertMessage('Заполните поля!');
@@ -1913,7 +1721,7 @@ const BidPage = (props) => {
 																	[<Select key="return-reason-select"
 																			 style={{width:'100%'}}
 																			 placeholder={'Причина возврата заявки'}
-																			 options={prepareSelect(reasonsSelect)}
+																			 options={prepareSelect(selects.reasons)}
 																	/>],
 																	returnButtons
 																);
@@ -1925,7 +1733,7 @@ const BidPage = (props) => {
 															onClick={() => {
 																setIsLoadingChangePlaceBtn('done');
 																setBidPlace(4);
-																fetchBidPlace(4).then(() => fetchBidInfo().then());
+																fetchBidPlace(4).then();
 															}}
 													>Завершить счет <CheckCircleOutlined /></Button>
 												</Space.Compact>
@@ -1938,7 +1746,7 @@ const BidPage = (props) => {
 															onClick={() => {
 																setIsLoadingChangePlaceBtn('backBuh');
 																setBidPlace(3);
-																fetchBidPlace(3).then(() => fetchBidInfo().then());
+																fetchBidPlace(3).then();
 															}}
 													><ArrowLeftOutlined /> Вернуть бухгалтеру</Button>
 												</Space.Compact>
@@ -2655,7 +2463,7 @@ const BidPage = (props) => {
             >
                 <FindSimilar bid_id={bidId}
                              bid_models={bidModels}
-                             protection_project={baseInfo.protectionProject}
+                             protection_project={form.baseInfo.protectionProject}
                              error_alert={(path, e) => {
                                  setIsAlertVisible(true);
                                  setAlertMessage(`Произошла ошибка! ${path}`);
