@@ -41,6 +41,6 @@ export default defineConfig({
 		},
 	},
     build: {
-        sourcemap: true  // добавь это
+        sourcemap: true
     }
 });
