@@ -69,16 +69,17 @@ import {
     updateBid
 } from "./api/bids.api";
 import {useBidSelects} from "./hooks/useBidSelects";
+import {areObjectsEqual, areArraysEqual} from "./utils/areEqual";
+import {useBidData} from "./hooks/useBidData";
+
 const { TextArea } = Input;
 
 const BidPage = (props) => {
 	const { bidId } = useParams();
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
-	const [isLoading, setIsLoading] = useState(false);
 	const [isLoadingSmall, setIsLoadingSmall] = useState(false);
 	const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
-	const [isSavingInfo, setIsSavingInfo] = useState(false);
 	const [isAlertVisible, setIsAlertVisible] = useState(false);
 	const [draggedModelIndex, setDraggedModelIndex] = useState(null);
     const [isSended1c, setIsSended1c] = useState(0);
@@ -104,8 +105,44 @@ const BidPage = (props) => {
 		'view': null,
 	});
 	const [openMode, setOpenMode] = useState(null); // просмотр, редактирование
-	const [isSmthChanged, setIsSmthChanged] = useState(false);
-	const [defaultInfo, setDefaultInfo] = useState(null);
+
+
+    const [form, setForm] = useState({
+        baseInfo: {
+            orgUser: null,
+            protectionProject: null,
+            object: null,
+            sellBy: null
+        },
+        bill: {
+            requisite: null,
+            conveyance: null,
+            factAddress: null,
+            phone: null,
+            email: null,
+            insurance: null,
+            package: null,
+            consignee: null,
+            otherEquipment: null,
+        },
+        comments: {
+            engineer: null,
+            manager: null,
+            admin: null,
+            accountant: null,
+            addEquipment: null,
+        },
+        finance: {
+            currency: null,
+            priceStatus: null,
+            percent: null,
+            nds: null,
+        },
+        models: [],
+    });
+
+    const { serverData, isLoading, saveBid, isSaving, isDirty } = useBidData(bidId, form);
+
 	/* ШАПКА СТРАНИЦЫ */
 	const [bidType, setBidType] = useState(null);
 	const [bidIdCompany, setBidIdCompany] = useState(null);
@@ -148,38 +185,16 @@ const BidPage = (props) => {
         percent: null,
         nds: null,
     });
+
 	/* ФАЙЛЫ */
 	const [bidFilesCount, setBidFilesCount] = useState(0);
+
 	/* ПРОЕКТ */
 	const [bidProject, setBidProject] = useState(null); // проект из карточки организации
+
     /* СЕЛЕКТЫ */
     const selects = useBidSelects(bidOrg?.id, baseInfo.orgUser);
-    /*const [selects, setSelects] = useState({
-        type: [],
-        actionEnum: [],
-        adminAccept: [],
-        currency: [],
-        nds: [],
-        package: [],
-        presence: [],
-        complete: [],
-        price: [],
-        pay: [],
-        protection: [],
-        stage: [],
-        conveyance: [],
-        insurance: [],
-        companies: [],
-        templateWord: [],
-        reasons: [],
-        // org-зависимые
-        orgUsers: [],
-        requisite: [],
-        factAddress: [],
-        phones: [],
-        // user-зависимые
-        emails: [],
-    });*/
+
 	/* МОДЕЛИ */
 	const [bidModels, setBidModels] = useState([]);
 	const [amounts, setAmounts] = useState({
@@ -196,9 +211,11 @@ const BidPage = (props) => {
 		mass: 0,
 		size: 0,
 	});
+
 	/* СЕЛЕКТ ПО МОДЕЛЯМ */
 	const [modelsSelect, setModelsSelect] = useState([]);
 	const [garbage, setGarbage] = useState([]);
+
 	/* ОСТАЛЬНОЕ */
 	const [modelIdExtra, setModelIdExtra] = useState(null);
 	const [modelNameExtra, setModelNameExtra] = useState('');
@@ -251,14 +268,6 @@ const BidPage = (props) => {
     useEffect(() => {
         fetchInfo().then(() => setIsNeedCalcMoney(true));
     }, []);
-	/*useEffect(() => {
-		if (bidOrg && bidOrg.id) {
-			fetchOrgSelects().then();
-		}
-	}, [bidOrg]);*/
-    /*useEffect(() => {
-        if (baseInfo.orgUser) fetchOrgUserSelects().then();
-    }, [baseInfo.orgUser]);*/
     useEffect(() => {
         if (baseInfo.object) {
             setFindSimilarTitle(`Поиск похожих: "${baseInfo.object}"`);
@@ -311,24 +320,12 @@ const BidPage = (props) => {
         }
     }, [connected]);
 	useEffect(() => {
-		if (isSavingInfo) {
-			fetchUpdates().then(() => {
-				setTimeout(() => setIsSavingInfo(false), 500);
-			});
-		}
-	}, [isSavingInfo]);
-	useEffect(() => {
 		if (openMode) {
 			const handleKeyDown = (event) => {
 				//console.log('event', event);
 				if ((event.ctrlKey || event.metaKey) && event.code === 'KeyS' && openMode?.status !== 1 && openMode?.status !== 4 && openMode?.status !== 5) {
 					event.preventDefault();
-					setIsSavingInfo(prev => {
-						if (!prev) {
-							return true;
-						}
-						return prev;
-					});
+					handleSave();
 				}
 			};
 
@@ -361,55 +358,6 @@ const BidPage = (props) => {
 			return () => clearTimeout(timer);
 		}
 	}, [isAlertVisible]);
-	useEffect(() => {
-		if (defaultInfo) {
-			const bid = defaultInfo.bid;
-			let flag = false;
-			/* base info */
-			if (+bid.base_info.orguser !== +baseInfo.orgUser) flag = true;
-			if (+bid.base_info.protection !== +baseInfo.protectionProject) flag = true;
-			if (bid.base_info.object !== baseInfo.object) flag = true;
-			if (bid.base_info.sellby !== baseInfo.sellBy) flag = true;
-			/* bill */
-			if (bid.bill) {
-				if (+bid.bill.requisite !== +bill.requisite) flag = true;
-				if (+bid.bill.conveyance !== +bill.conveyance) flag = true;
-				if (+bid.bill.fact_address !== +bill.factAddress) flag = true;
-				if (+bid.bill.org_phone !== +bill.phone) flag = true;
-				if (+bid.bill.contact_email !== +bill.email) flag = true;
-				if (+bid.bill.insurance !== +bill.insurance) flag = true;
-				if (+bid.bill.package !== +bill.package) flag = true;
-				if (bid.bill.consignee !== bill.consignee) flag = true;
-				if (bid.bill.other_equipment !== bill.otherEquipment) flag = true;
-			}
-			/* comments */
-			if (bid.comments.engineer !== comments.engineer) flag = true;
-			if (bid.comments.manager !== comments.manager) flag = true;
-			if (bid.comments.admin !== comments.admin) flag = true;
-			if (bid.comments.accountant !== comments.accountant) flag = true;
-			if (bid.comments.add_equipment !== comments.addEquipment) flag = true;
-			/* finance */
-			if (bid.finance.bid_currency !== finance.currency) flag = true;
-			if (bid.finance.status !== finance.priceStatus) flag = true;
-			if (String(bid.finance.percent) !== String(finance.percent)) flag = true;
-			if (bid.finance.nds !== finance.nds) flag = true;
-			/* bid_models */
-			if (!areArraysEqual(defaultInfo.bid_models, bidModels)) flag = true;
-
-			setIsSmthChanged(flag);
-		}
-	}, [
-		/* base info */
-        baseInfo,
-		/* bill */
-		bill,
-		/* comments */
-		comments,
-		/* finance */
-		finance,
-		/* bid_models */
-		bidModels
-	]);
     useEffect(() => {
         if (bidModels && bidModels.length > 0 && modelsSelect && modelsSelect.length > 0) {
             setModelsSelect(prev => {
@@ -430,15 +378,63 @@ const BidPage = (props) => {
         }
     }, [bidModels]);
 
+    useEffect(() => {
+        if (serverData) {
+            const { bid, bid_models } = serverData;
+
+            setBidActions(bid.actions);
+            setBidIdCompany(bid.id_company);
+            setBidType(bid.type);
+            setBidPlace(bid.place);
+            setBidFilesCount(bid.files_count);
+            setBidOrg(bid.baseInfo.org);
+            setBidCurator(bid.baseInfo.curator);
+            setBidProject(bid.baseInfo.project);
+            setIsSended1c(bid.bill.send1c);
+
+            setForm({
+                baseInfo: {
+                    orgUser: bid.base_info.orguser,
+                    protectionProject: bid.base_info.protection,
+                    object: bid.base_info.object,
+                    sellBy: bid.base_info.sellby,
+                },
+                bill: {
+                    requisite: bid.bill.requisite,
+                    conveyance: bid.bill.conveyance,
+                    factAddress: bid.bill.fact_address,
+                    phone: bid.bill.org_phone,
+                    email: bid.bill.contact_email,
+                    insurance: bid.bill.insurance,
+                    package: bid.bill.package,
+                    consignee: bid.bill.consignee,
+                    otherEquipment: bid.bill.other_equipment,
+                },
+                comments: {
+                    engineer: bid.comments.engineer,
+                    manager: bid.comments.manager,
+                    admin: bid.comments.admin,
+                    accountant: bid.comments.accountant,
+                    addEquipment: bid.comments.add_equipment,
+                },
+                finance: {
+                    currency: bid.finance.bid_currency,
+                    priceStatus: bid.finance.status,
+                    percent: bid.finance.percent,
+                    nds: bid.finance.nds,
+                },
+                models: bid_models,
+            });
+
+            setIsLoadingChangePlaceBtn('');
+        }
+    }, [serverData]);
+
 	const fetchInfo = async () => {
-		setIsLoading(true);
-		await fetchBidInfo();
 		await fetchBidModels();
-		setTimeout(() => setIsLoading(false), 1000);
-		//await fetchSelects();
 		await fetchCurrencySelects();
 	};
-	const fetchBidInfo = async () => {
+	/*const fetchBidInfo = async () => {
 		if (PRODMODE) {
 			try {
                 const data = await getBidInfo(bidId);
@@ -522,82 +518,6 @@ const BidPage = (props) => {
 				setIsLoadingChangePlaceBtn('');
 			}
 		}
-	};
-	/*const fetchSelects = async () => {
-		if (PRODMODE) {
-			try {
-                const selects = await getBidSelects({});
-				if (selects) {
-                    setSelects(prev => ({
-                        ...prev,
-                        type: selects.type_select,
-                        actionEnum: selects.action_enum,
-                        adminAccept: selects.admin_accept_select,
-                        currency: selects.bid_currency_select,
-                        nds: selects.nds_select,
-                        package: selects.package_select,
-                        presence: selects.presence,
-                        complete: selects.complete_select,
-                        price: selects.price_select,
-                        pay: selects.pay_select,
-                        protection: selects.protection_select,
-                        stage: selects.stage_select,
-                        conveyance: selects.conveyance_select,
-                        insurance: selects.insurance_select,
-                        companies: selects.companies,
-                        templateWord: selects.template_word_select,
-                        reasons: selects.reasons,
-                    }));
-				}
-			} catch (e) {
-				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
-			}
-		}
-	};*/
-	/*const fetchOrgSelects = async () => {
-		if (PRODMODE) {
-			try {
-                const selects = await getBidSelects({ orgId: bidOrg.id });
-				if (selects) {
-                    setSelects(prev => ({
-                        ...prev,
-                        orgUsers: selects.orgusers_select,
-                        requisite: selects.requisite_select,
-                        factAddress: selects.fact_address_select,
-                        phones: selects.org_phones_select,
-                    }));
-				}
-			} catch (e) {
-				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
-			}
-		}
-	};*/
-	/*const fetchOrgUserSelects = async () => {
-		if (PRODMODE) {
-			try {
-                const selects = await getBidSelects({ orgUserId: baseInfo.orgUser });
-				if (selects) {
-                    setSelects(prev => ({
-                        ...prev,
-                        emails: selects.contact_email_select,
-                    }));
-				}
-			} catch (e) {
-				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
-			}
-		}
 	};*/
 	const fetchCurrencySelects = async () => {
 		if (PRODMODE) {
@@ -633,7 +553,7 @@ const BidPage = (props) => {
 			}
 		}
 	};
-	const fetchUpdates = async (newPlace) => {
+	/*const fetchUpdates = async (newPlace) => {
         const data = collectUpdates();
 		if (PRODMODE) {
 			try {
@@ -644,7 +564,7 @@ const BidPage = (props) => {
 					setAlertDescription(response.message);
 					setAlertType('success');
 					setIsSmthChanged(false);
-					updateDefaultInfo();
+					//updateDefaultInfo();
 				}
 				if (newPlace && newPlace === 2) {
 					if (isManagerDone()) {
@@ -675,7 +595,7 @@ const BidPage = (props) => {
 				setAlertType('error');
 			}
 		}
-	};
+	};*/
 	const fetchCalcModels = async () => {
 		if (PRODMODE) {
 			const requestId = ++calcRequestIdRef.current;
@@ -836,6 +756,9 @@ const BidPage = (props) => {
 		}
 	};
 
+    const handleSave = () => {
+        saveBid(collectUpdates());
+    };
     const collectUpdates = () => {
         return {
             bid: {
@@ -847,68 +770,33 @@ const BidPage = (props) => {
                 base_info: {
                     org: bidOrg,
                     curator: bidCurator,
-                    orguser: baseInfo.orgUser,
-                    protection: baseInfo.protectionProject,
-                    object: baseInfo.object,
-                    sellby: baseInfo.sellBy,
+                    orguser: form.baseInfo.orgUser,
+                    protection: form.baseInfo.protectionProject,
+                    object: form.baseInfo.object,
+                    sellby: form.baseInfo.sellBy,
                 },
                 bill:
                     +bidType === 2
-                        ? bill
+                        ? form.bill
                         : null,
                 comments: {
-                    engineer: comments.engineer,
-                    manager: comments.manager,
-                    admin: comments.admin,
-                    accountant: comments.accountant,
-                    add_equipment: comments.addEquipment,
+                    engineer: form.comments.engineer,
+                    manager: form.comments.manager,
+                    admin: form.comments.admin,
+                    accountant: form.comments.accountant,
+                    add_equipment: form.comments.addEquipment,
                 },
                 finance: {
-                    bid_currency: finance.currency,
-                    status: finance.priceStatus,
-                    percent: finance.percent,
-                    nds: finance.nds,
+                    bid_currency: form.finance.currency,
+                    status: form.finance.priceStatus,
+                    percent: form.finance.percent,
+                    nds: form.finance.nds,
                 },
             },
-            bid_models: bidModels,
+            bid_models: form.models,
         };
-    }
-	const areArraysEqual = (arr1, arr2) => {
-		// Проверка длины
-		if (arr1.length !== arr2.length) return false;
+    };
 
-		// Проверка каждого элемента
-		return arr1.every((item, index) => {
-			const item2 = arr2[index];
-
-			// Если оба объекта
-			if (typeof item === 'object' && item !== null &&
-				typeof item2 === 'object' && item2 !== null) {
-				return areObjectsEqual(item, item2);
-			}
-
-			// Для примитивов
-			return item === item2;
-		});
-	};
-	const areObjectsEqual = (obj1, obj2) => {
-		const keys1 = Object.keys(obj1);
-
-		//if (keys1.length !== keys2.length) return false;
-
-		return keys1.every(key => {
-			// Рекурсивная проверка для вложенных объектов
-			if (typeof obj1[key] === 'object' && obj1[key] !== null &&
-				typeof obj2[key] === 'object' && obj2[key] !== null) {
-				return areObjectsEqual(obj1[key], obj2[key]);
-			}
-			if (key !== 'moneyOne' && key !== 'moneyCount') {
-				return String(obj1[key]) === String(obj2[key]);
-			} else {
-				return true;
-			}
-		});
-	};
 	const prepareSelect = (select) => {
 	  if (select) {
 		  return select.map((item) => ({value: item.id, label: item.name, used: item.used}));
@@ -1192,7 +1080,7 @@ const BidPage = (props) => {
         isNeedCalcModelsTimerSetter(true);
         setIsParseModalOpen(false);
     };
-	const updateDefaultInfo = () => {
+	/*const updateDefaultInfo = () => {
 		const defaultInfoUpd = JSON.parse(JSON.stringify(defaultInfo));
 		defaultInfoUpd.bid.base_info.orguser =          baseInfo.orgUser;
 		defaultInfoUpd.bid.base_info.protection =       baseInfo.protectionProject;
@@ -1225,7 +1113,7 @@ const BidPage = (props) => {
 		defaultInfoUpd.bid_models =                     bidModels;
 
 		setDefaultInfo(defaultInfoUpd);
-	};
+	};*/
 	const openCustomModal = (type, title, text, filling, buttons) => {
 		setCustomModalType(type);
 		setCustomModalTitle(title);
@@ -1239,25 +1127,25 @@ const BidPage = (props) => {
 		switch (customModalType) {
 			case 'word':
 				if (+button_id === 2) {
-					setIsSavingInfo(true);
+					handleSave();
 					setTimeout(() => fetchWordFile().then(), 200);
 				}
 				break;
             case 'pdf':
 				if (+button_id === 2) {
-					setIsSavingInfo(true);
+					handleSave();
 					setTimeout(() => navigate(`/bidsPDF/${bidId}`), 200);
 				}
 				break;
             case 'duplicate':
 				if (+button_id === 2) {
-					setIsSavingInfo(true);
+					handleSave();
 					setTimeout(() => setIsBidDuplicateDrawerOpen(true), 200);
 				}
 				break;
 			case 'bill':
 				if (+button_id === 2) {
-					setIsSavingInfo(true);
+					handleSave();
 					setTimeout(() => fetchNewBid().then(), 200);
 				}
 				break;
@@ -1849,7 +1737,7 @@ const BidPage = (props) => {
 													<Tooltip title={openMode.description}>
 														<Tag color={openMode.color}>{openMode.tagtext}</Tag>
 													</Tooltip>
-													{isSmthChanged && (
+													{isDirty && (
 														<Tooltip title={'Не забудьте сохранить'}>
 															<Tag color='red-inverse'>Есть несохраненные данные</Tag>
 														</Tooltip>
@@ -1865,7 +1753,7 @@ const BidPage = (props) => {
 															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toAdmin'}
 															onClick={() => {
 																setIsLoadingChangePlaceBtn('toAdmin');
-																if (isSmthChanged) {
+																if (isDirty) {
 																	openCustomModal(
 																		'toAdmin',
 																		'Передать администратору',
@@ -1896,7 +1784,7 @@ const BidPage = (props) => {
 															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backManager'}
 															onClick={() => {
 																setIsLoadingChangePlaceBtn('backManager');
-																if (isSmthChanged) {
+																if (isDirty) {
 																	openCustomModal(
 																		'backManager',
 																		'Вернуть менеджеру',
@@ -1924,7 +1812,7 @@ const BidPage = (props) => {
 															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toBuh'}
 															onClick={() => {
 																setIsLoadingChangePlaceBtn('toBuh');
-																if (isSmthChanged) {
+																if (isDirty) {
 																	openCustomModal(
 																		'toBuh',
 																		'Передать бухгалтеру',
@@ -1997,11 +1885,11 @@ const BidPage = (props) => {
 												type={'primary'}
 												style={{ width: '150px' }}
 												icon={<SaveOutlined />}
-												loading={isSavingInfo}
-												onClick={() => setIsSavingInfo(true)}
+												loading={isSaving}
+												onClick={() => handleSave()}
 												disabled={isDisabledInput()} /* || openMode?.status === 4 */
 											>
-												{isSavingInfo ? 'Сохраняем...' : 'Сохранить'}
+												{isSaving ? 'Сохраняем...' : 'Сохранить'}
 											</Button>
 										</div>
 									</div>
@@ -2031,7 +1919,7 @@ const BidPage = (props) => {
 										variant="outlined"
 										icon={<FileWordOutlined className={'sa-bid-page-btn-icon'}/>}
 										onClick={() => {
-                                            if (isSmthChanged) {
+                                            if (isDirty) {
                                                 openCustomModal(
                                                     'word',
                                                     'Создание Word документа',
@@ -2080,7 +1968,7 @@ const BidPage = (props) => {
 									variant="outlined"
 									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'}/>}
 									onClick={() => {
-										if (isSmthChanged) {
+										if (isDirty) {
 											openCustomModal(
 												'pdf',
 												'Переход в интерфейс создания PDF-документа',
@@ -2141,7 +2029,7 @@ const BidPage = (props) => {
 										variant="outlined"
 										icon={<CopyOutlined className={'sa-bid-page-btn-icon'}/>}
 										onClick={() => {
-                                            if (isSmthChanged) {
+                                            if (isDirty) {
                                                 openCustomModal(
                                                     'duplicate',
                                                     'Создание дубликата',
@@ -2164,7 +2052,7 @@ const BidPage = (props) => {
 										variant="outlined"
 										icon={<DollarOutlined className={'sa-bid-page-btn-icon'}/>}
 										onClick={() => {
-											if (isSmthChanged) {
+											if (isDirty) {
 												openCustomModal(
 													'bill',
 													'Создание счета на базе КП',
