@@ -696,11 +696,11 @@ const BidPage = (props) => {
 	};
 	const handleAddModel = () => {
 	  let sort = 0;
-	  if (bidModels && bidModels.length > 0) {
-		  const lastModel = [...bidModels].sort((a, b) => +a.sort - +b.sort)[bidModels.length - 1];
+	  if (form.models && form.models.length > 0) {
+		  const lastModel = [...form.models].sort((a, b) => +a.sort - +b.sort)[form.models.length - 1];
 		  sort = lastModel.sort + 1;
 	  }
-	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+	  const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
 	  bidModelsUpd.push({
 		  "id": 0,
 		  "bid_id": bidId,
@@ -714,14 +714,22 @@ const BidPage = (props) => {
 		  "type_model": 0,
 		  "currency": 0,
 	  });
-	  setBidModels(bidModelsUpd);
+	  //setBidModels(bidModelsUpd);
+      setForm(prev => ({
+          ...prev,
+          models: bidModelsUpd,
+      }));
 	  setBidModelsVersion(prev => prev + 1);
 	};
 	const handleDeleteModelFromBid = (bidModelId, bidModelSort, bidModelSelectId) => {
-        const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
-        const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+        const bidModelIdx = form.models.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
+        const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
         bidModelsUpd.splice(bidModelIdx, 1);
-        setBidModels(bidModelsUpd);
+        //setBidModels(bidModelsUpd);
+        setForm(prev => ({
+            ...prev,
+            models: bidModelsUpd,
+        }));
 		setBidModelsVersion(prev => prev + 1);
         setModelsSelect(prev => {
             const index = prev.findIndex(model => model.id === bidModelSelectId);
@@ -742,8 +750,8 @@ const BidPage = (props) => {
 	};
 	const handleChangeModel = (newId, oldId, oldSort) => {
 	  const newModel = modelsSelect.find(model => model.id === newId);
-	  const oldModel = bidModels.find(model => (model.id === oldId && model.sort === oldSort));
-	  const oldModelIdx = bidModels.findIndex(model => (model.id === oldId && model.sort === oldSort));
+	  const oldModel = form.models.find(model => (model.id === oldId && model.sort === oldSort));
+	  const oldModelIdx = form.models.findIndex(model => (model.id === oldId && model.sort === oldSort));
 	  const newModelObj = {
 		  "id": oldId,
 		  "bid_id": bidId,
@@ -757,9 +765,13 @@ const BidPage = (props) => {
 		  "type_model": newModel.type_model,
 		  "currency": newModel.currency,
 	  };
-	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+	  const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
 	  bidModelsUpd[oldModelIdx] = newModelObj;
-	  setBidModels(bidModelsUpd);
+	  //setBidModels(bidModelsUpd);
+      setForm(prev => ({
+          ...prev,
+          models: bidModelsUpd,
+      }));
 	  setBidModelsVersion(prev => prev + 1);
       setModelsSelect(prev => {
           const index = prev.findIndex(model => model.id === newId);
@@ -783,33 +795,49 @@ const BidPage = (props) => {
 	  setLastUpdModel(newId);
 	};
 	const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
-	  const bidModelIdx = bidModels.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
-	  const bidModelsUpd = JSON.parse(JSON.stringify(bidModels));
+	  const bidModelIdx = form.models.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
+	  const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
 	  switch (type) {
 		  case 'model_count':
 			  bidModelsUpd[bidModelIdx].model_count = value;
-			  setBidModels(bidModelsUpd);
+			  //setBidModels(bidModelsUpd);
+              setForm(prev => ({
+                  ...prev,
+                  models: bidModelsUpd,
+              }));
 			  setBidModelsVersion(prev => prev + 1);
 			  //setIsNeedCalcMoney(true);
               isNeedCalcModelsTimerSetter(true);
 			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
 			  break;
-		  case 'percent':
+          case 'percent':
 			  bidModelsUpd[bidModelIdx].percent = value;
-			  setBidModels(bidModelsUpd);
+			  //setBidModels(bidModelsUpd);
+              setForm(prev => ({
+                  ...prev,
+                  models: bidModelsUpd,
+              }));
 			  setBidModelsVersion(prev => prev + 1);
 			  //setIsNeedCalcMoney(true);
               isNeedCalcModelsTimerSetter(true);
-			  setLastUpdModel(bidModels.find(model => model.id === bidModelId).model_id);
+			  setLastUpdModel(form.models.find(model => model.id === bidModelId).model_id);
 			  break;
 		  case 'presence':
 			  bidModelsUpd[bidModelIdx].presence = value;
-			  setBidModels(bidModelsUpd);
+			  //setBidModels(bidModelsUpd);
+              setForm(prev => ({
+                  ...prev,
+                  models: bidModelsUpd,
+              }));
 			  setBidModelsVersion(prev => prev + 1);
 			  break;
 		  case 'sklad':
 			  bidModelsUpd[bidModelIdx].sklad = value;
-			  setBidModels(bidModelsUpd);
+			  //setBidModels(bidModelsUpd);
+              setForm(prev => ({
+                  ...prev,
+                  models: bidModelsUpd,
+              }));
 			  setBidModelsVersion(prev => prev + 1);
 			  break;
 	  }
@@ -824,10 +852,17 @@ const BidPage = (props) => {
 		const reordered = [...sortedBidModels];
 		const [moved] = reordered.splice(draggedModelIndex, 1);
 		reordered.splice(dropIndex, 0, moved);
-		setBidModels(reordered.map((model, idx) => ({
+		/*setBidModels(reordered.map((model, idx) => ({
 			...model,
 			sort: idx + 1,
-		})));
+		})));*/
+        setForm(prev => ({
+            ...prev,
+            models: reordered.map((model, idx) => ({
+                ...model,
+                sort: idx + 1,
+            })),
+        }));
 		setBidModelsVersion(prev => prev + 1);
 		setDraggedModelIndex(null);
 	};
@@ -836,7 +871,7 @@ const BidPage = (props) => {
 	};
 	const handleOpenModelInfoExtra = (modelId) => {
 		setModelIdExtra(modelId);
-		const name = bidModels.find(model => model.model_id === modelId).model_name;
+		const name = form.models.find(model => model.model_id === modelId).model_name;
 		setModelNameExtra(name);
 	};
 	const handleCloseDrawerExtra = () => {
@@ -859,8 +894,8 @@ const BidPage = (props) => {
         }, []);
 
         let sort = 0;
-        if (bidModels && bidModels.length > 0) {
-            const sorted = [...bidModels].sort((a, b) => a.sort - b.sort);
+        if (form.models && form.models.length > 0) {
+            const sorted = [...form.models].sort((a, b) => a.sort - b.sort);
             sort = sorted[sorted.length - 1].sort;
         }
 
@@ -886,7 +921,11 @@ const BidPage = (props) => {
             });
 
         //setBidModels(prev => [...prev, ...arr]);
-        setBidModels(arr);
+        //setBidModels(arr);
+        setForm(prev => ({
+            ...prev,
+            models: arr,
+        }));
 		setBidModelsVersion(prev => prev + 1);
         isNeedCalcModelsTimerSetter(true);
         setIsParseModalOpen(false);
@@ -1000,14 +1039,14 @@ const BidPage = (props) => {
 		setIsOpenCustomModal(false);
 	};
 	const isErrorInput = (bidModelId) => {
-		const model = bidModels.find(model => model.id === bidModelId);
+		const model = form.models.find(model => model.id === bidModelId);
 		return !(model && +model.model_count === +model.sklad);
 	};
 	const isManagerDone = () => {
 		return (form.baseInfo.orgUser && form.bill.requisite && form.bill.phone);
 	};
 	const isAdminDone = () => {
-		return !(bidModels.find(model => +model.model_count !== +model.sklad));
+		return !(form.models.find(model => +model.model_count !== +model.sklad));
 	};
 	const isDisabledInput = () => {
 		if (openMode?.status === 1 || openMode?.status === 5) return true;
@@ -1525,9 +1564,9 @@ const BidPage = (props) => {
         return () => clearTimeout(timer);
     };
 	const sortedBidModels = React.useMemo(() => {
-		if (!bidModels || bidModels.length === 0) return [];
-		return [...bidModels].sort((a, b) => +a.sort - +b.sort);
-	}, [bidModels]);
+		if (!form.models || form.models.length === 0) return [];
+		return [...form.models].sort((a, b) => +a.sort - +b.sort);
+	}, [form.models]);
 
 	return (
 		<div className={'sa-bid-page-container'}>
@@ -2458,7 +2497,7 @@ const BidPage = (props) => {
                 }}
             >
                 <FindSimilar bid_id={bidId}
-                             bid_models={bidModels}
+                             bid_models={form.models}
                              protection_project={form.baseInfo.protectionProject}
                              error_alert={(path, e) => {
                                  setIsAlertVisible(true);
