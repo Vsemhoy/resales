@@ -74,7 +74,6 @@ const BidPage = (props) => {
 	const { bidId } = useParams();
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
-	//const [isMounted, setIsMounted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isLoadingSmall, setIsLoadingSmall] = useState(false);
 	const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
@@ -152,13 +151,12 @@ const BidPage = (props) => {
 	const [bidFilesCount, setBidFilesCount] = useState(0);
 	/* ПРОЕКТ */
 	const [bidProject, setBidProject] = useState(null); // проект из карточки организации
-
-
+    /* СЕЛЕКТЫ */
     const [selects, setSelects] = useState({
         type: [],
         actionEnum: [],
         adminAccept: [],
-        bidCurrency: [],
+        currency: [],
         nds: [],
         package: [],
         presence: [],
@@ -180,8 +178,6 @@ const BidPage = (props) => {
         // user-зависимые
         emails: [],
     });
-
-
 	/* МОДЕЛИ */
 	const [bidModels, setBidModels] = useState([]);
 	const [amounts, setAmounts] = useState({
@@ -342,7 +338,6 @@ const BidPage = (props) => {
 	}, [openMode]);
 	useEffect(() => {
 		if (isNeedCalcMoney) {
-			// && bidCurrency && bidPriceStatus && bidPercent && bidNds && bidModels
 			const timer = setTimeout(() => {
 				fetchCalcModels().then(() => {
 					//setIsNeedCalcMoney(false);
@@ -896,7 +891,6 @@ const BidPage = (props) => {
 	};
 	const areObjectsEqual = (obj1, obj2) => {
 		const keys1 = Object.keys(obj1);
-		const keys2 = Object.keys(obj2);
 
 		//if (keys1.length !== keys2.length) return false;
 
@@ -1675,7 +1669,7 @@ const BidPage = (props) => {
 						<Select
 							style={{ width: '100%', textAlign: 'left' }}
 							value={finance.currency}
-							options={prepareSelect(selects.bidCurrency)}
+							options={prepareSelect(selects.currency)}
 							onChange={(val) => {
                                 setFinance(prev => ({ ...prev, currency: val }));
                                 isNeedCalcModelsTimerSetter(true);
