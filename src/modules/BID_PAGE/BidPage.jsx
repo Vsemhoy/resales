@@ -628,11 +628,17 @@ const BidPage = (props) => {
 	  const rounded = (+engineerParameter).toFixed(2);
 	  return rounded % 1 === 0 ? Math.round(rounded) : rounded;
 	};
-	const prepareAmount = (amount, symbol) => {
-	  const rounded = (+amount / 100).toFixed(2);
-	  let formatted =  formatNumberWithSpaces(rounded % 1 === 0 ? Math.round(rounded) : rounded);
-	  return formatted === `не число` ? <MinusOutlined /> : formatted + (symbol ? symbol : '');
-	};
+    const prepareAmount = (amount, symbol) => {
+        const value = +amount;
+        if (isNaN(value)) {
+            return <MinusOutlined />;
+        }
+        const rounded = (value / 100).toFixed(2);
+        let formatted = formatNumberWithSpaces(
+            rounded % 1 === 0 ? Math.round(rounded) : rounded
+        );
+        return formatted + (symbol ? symbol : '');
+    };
 	const currencySymbol = (bidModel) => {
 	  return +form.finance.currency === 1 ? '₽' : +form.finance.currency === 0 ? (bidModel.currency === 1 ? '€' : '$') : ''
 	}
