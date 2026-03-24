@@ -61,12 +61,8 @@ import OrgProjectEditorSectionBox from "../TORG_PAGE/components/sections/ext/Org
 import FindSimilar from "./components/FindSimilar";
 import {
     calcModels, changePlace,
-    getBidInfo,
-    getBidModels,
-    getBidSelects,
-    getCurrencySelects, getModels, getNewBid, getProjectInfo,
+    getModels, getNewBid, getProjectInfo,
     getWordFile, toSent1C,
-    updateBid
 } from "./api/bids.api";
 import {useBidSelects} from "./hooks/useBidSelects";
 import {areObjectsEqual, areArraysEqual} from "./utils/areEqual";
@@ -369,15 +365,15 @@ const BidPage = (props) => {
                     sellBy: bid.base_info.sellby,
                 },
                 bill: {
-                    requisite: bid.bill.requisite,
-                    conveyance: bid.bill.conveyance,
-                    factAddress: bid.bill.fact_address,
-                    phone: bid.bill.org_phone,
-                    email: bid.bill.contact_email,
-                    insurance: bid.bill.insurance,
-                    package: bid.bill.package,
-                    consignee: bid.bill.consignee,
-                    otherEquipment: bid.bill.other_equipment,
+                    requisite: bid.bill?.requisite,
+                    conveyance: bid.bill?.conveyance,
+                    factAddress: bid.bill?.fact_address,
+                    phone: bid.bill?.org_phone,
+                    email: bid.bill?.contact_email,
+                    insurance: bid.bill?.insurance,
+                    package: bid.bill?.package,
+                    consignee: bid.bill?.consignee,
+                    otherEquipment: bid.bill?.other_equipment,
                 },
                 comments: {
                     engineer: bid.comments.engineer,
