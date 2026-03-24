@@ -67,7 +67,8 @@ import {
     getCurrencySelects, getNewBid, getProjectInfo,
     getWordFile, toSent1C,
     updateBid
-} from "../../api/bids.api";
+} from "./api/bids.api";
+import {useBidSelects} from "./hooks/useBidSelects";
 const { TextArea } = Input;
 
 const BidPage = (props) => {
@@ -152,7 +153,8 @@ const BidPage = (props) => {
 	/* ПРОЕКТ */
 	const [bidProject, setBidProject] = useState(null); // проект из карточки организации
     /* СЕЛЕКТЫ */
-    const [selects, setSelects] = useState({
+    const selects = useBidSelects(bidOrg?.id, baseInfo.orgUser);
+    /*const [selects, setSelects] = useState({
         type: [],
         actionEnum: [],
         adminAccept: [],
@@ -177,7 +179,7 @@ const BidPage = (props) => {
         phones: [],
         // user-зависимые
         emails: [],
-    });
+    });*/
 	/* МОДЕЛИ */
 	const [bidModels, setBidModels] = useState([]);
 	const [amounts, setAmounts] = useState({
@@ -249,14 +251,14 @@ const BidPage = (props) => {
     useEffect(() => {
         fetchInfo().then(() => setIsNeedCalcMoney(true));
     }, []);
-	useEffect(() => {
+	/*useEffect(() => {
 		if (bidOrg && bidOrg.id) {
 			fetchOrgSelects().then();
 		}
-	}, [bidOrg]);
-    useEffect(() => {
+	}, [bidOrg]);*/
+    /*useEffect(() => {
         if (baseInfo.orgUser) fetchOrgUserSelects().then();
-    }, [baseInfo.orgUser]);
+    }, [baseInfo.orgUser]);*/
     useEffect(() => {
         if (baseInfo.object) {
             setFindSimilarTitle(`Поиск похожих: "${baseInfo.object}"`);
@@ -433,7 +435,7 @@ const BidPage = (props) => {
 		await fetchBidInfo();
 		await fetchBidModels();
 		setTimeout(() => setIsLoading(false), 1000);
-		await fetchSelects();
+		//await fetchSelects();
 		await fetchCurrencySelects();
 	};
 	const fetchBidInfo = async () => {
@@ -521,7 +523,7 @@ const BidPage = (props) => {
 			}
 		}
 	};
-	const fetchSelects = async () => {
+	/*const fetchSelects = async () => {
 		if (PRODMODE) {
 			try {
                 const selects = await getBidSelects({});
@@ -555,8 +557,8 @@ const BidPage = (props) => {
 				setAlertType('error');
 			}
 		}
-	};
-	const fetchOrgSelects = async () => {
+	};*/
+	/*const fetchOrgSelects = async () => {
 		if (PRODMODE) {
 			try {
                 const selects = await getBidSelects({ orgId: bidOrg.id });
@@ -577,8 +579,8 @@ const BidPage = (props) => {
 				setAlertType('error');
 			}
 		}
-	};
-	const fetchOrgUserSelects = async () => {
+	};*/
+	/*const fetchOrgUserSelects = async () => {
 		if (PRODMODE) {
 			try {
                 const selects = await getBidSelects({ orgUserId: baseInfo.orgUser });
@@ -596,7 +598,7 @@ const BidPage = (props) => {
 				setAlertType('error');
 			}
 		}
-	};
+	};*/
 	const fetchCurrencySelects = async () => {
 		if (PRODMODE) {
 			try {
