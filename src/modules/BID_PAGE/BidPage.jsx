@@ -372,8 +372,7 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({
-					type: 'error',
+				messageApi.open({type: 'error',duration: 0,
 					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
 				});
 			}
@@ -397,8 +396,7 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({
-					type: 'error',
+				messageApi.open({type: 'error',duration: 0,
 					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
 				});
 			}
@@ -418,8 +416,7 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({
-					type: 'error',
+				messageApi.open({type: 'error',duration: 0,
 					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
 				});
 			}
@@ -438,15 +435,13 @@ const BidPage = (props) => {
 				if (response) {
                     queryClient.invalidateQueries({ queryKey: ['bid', bidId] });
 
-					messageApi.open({
-						type: 'success',
+					messageApi.open({type: 'success',duration: 3,
 						content: response.message.message,
 					});
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({
-					type: 'error',
+				messageApi.open({type: 'error',duration: 0,
 					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
 				});
 			}
@@ -458,8 +453,7 @@ const BidPage = (props) => {
 				setIsLoading1c(true);
                 const response = await toSent1C(bidId);
 				if (response) {
-					messageApi.open({
-						type: 'success',
+					messageApi.open({type: 'success',duration: 3,
 						content: response.message,
 					});
 					setIsSend1c(1);
@@ -467,8 +461,7 @@ const BidPage = (props) => {
 				setTimeout(() => setIsLoading1c(false), 500);
 			} catch (e) {
 				console.log(e);
-				messageApi.open({
-					type: 'error',
+				messageApi.open({type: 'error',duration: 0,
 					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
 				});
 				setTimeout(() => setIsLoading1c(false), 500);
@@ -484,8 +477,7 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({
-					type: 'error',
+				messageApi.open({type: 'error',duration: 0,
 					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
 				});
 				setTimeout(() => setIsLoading1c(false), 500);
@@ -496,14 +488,12 @@ const BidPage = (props) => {
     const handleSave = () => {
         saveBid(collectUpdates(), {
             onSuccess: () => {
-                messageApi.open({
-                    type: 'success',
+                messageApi.open({type: 'success',duration: 3,
                     content: 'Сохранено',
                 });
             },
             onError: (e) => {
-                messageApi.open({
-                    type: 'error',
+                messageApi.open({type: 'error',duration: 0,
                     content: `Произошла ошибка! ${e?.response?.data?.message || e?.message || 'Неизвестная ошибка'}`,
                 });
             },
@@ -606,8 +596,7 @@ const BidPage = (props) => {
                 setBidPlace(2);
                 fetchBidPlace(2).then();
             } else {
-                messageApi.open({
-                    type: 'warning',
+                messageApi.open({type: 'warning',duration: 3,
                     content: 'Заполните поля! Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"',
                 });
                 setIsLoadingChangePlaceBtn('');
@@ -652,8 +641,7 @@ const BidPage = (props) => {
                 setBidPlace(3);
                 fetchBidPlace(3).then();
             } else {
-                messageApi.open({
-                    type: 'warning',
+                messageApi.open({type: 'warning',duration: 3,
                     content: 'Заполните поля! Количество моделей должно быть равно количеству на складе',
                 });
                 setIsLoadingChangePlaceBtn('');
@@ -708,7 +696,8 @@ const BidPage = (props) => {
 		  minimumFractionDigits: 0,
 		  maximumFractionDigits: 2
 	  }).format(number);
-	};const openCustomModal = (type, title, text, filling, buttons) => {
+	};
+const openCustomModal = (type, title, text, filling, buttons) => {
 		setCustomModalType(type);
 		setCustomModalTitle(title);
 		setCustomModalText(text);
@@ -756,8 +745,7 @@ const BidPage = (props) => {
                                 setBidPlace(2);
                                 fetchBidPlace(2).then();
                             } else {
-                                messageApi.open({
-                                    type: 'warning',
+                                messageApi.open({type: 'warning',duration: 3,
                                     content: 'Заполните поля! Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"',
                                 });
                             }
@@ -795,8 +783,7 @@ const BidPage = (props) => {
                                 setBidPlace(3);
                                 fetchBidPlace(3).then();
                             } else {
-                                messageApi.open({
-                                    type: 'warning',
+                                messageApi.open({type: 'warning',duration: 3,
                                     content: 'Заполните поля! Количество моделей должно быть равно количеству на складе',
                                 });
                             }
@@ -1197,8 +1184,7 @@ const BidPage = (props) => {
                              bid_models={form.models}
                              protection_project={form.baseInfo.protectionProject}
                              error_alert={(path, e) => {
-                                 messageApi.open({
-                                     type: 'error',
+                                 messageApi.open({type: 'error', duration: 0,
                                      content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
                                  });
                               }}
@@ -1213,8 +1199,7 @@ const BidPage = (props) => {
 								  bidId={bidId}
 								  bidType={bidType}
                                   error_alert={(path, e) => {
-                                      messageApi.open({
-                                          type: 'error',
+                                      messageApi.open({type: 'error',duration: 0,
                                           content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
                                       });
                                   }}
@@ -1224,8 +1209,7 @@ const BidPage = (props) => {
 							  bidId={bidId}
 							  bidActions={bidActions}
                               error_alert={(path, e) => {
-                                  messageApi.open({
-                                      type: 'error',
+                                  messageApi.open({type: 'error',duration: 0,
                                       content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
                                   });
                               }}
@@ -1235,8 +1219,7 @@ const BidPage = (props) => {
 							bidId={bidId}
                             bidType={bidType}
                             error_alert={(path, e) => {
-                                messageApi.open({
-                                    type: 'error',
+                                messageApi.open({type: 'error',duration: 0,
                                     content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
                                 });
                             }}
@@ -1255,6 +1238,7 @@ const BidPage = (props) => {
 };
 
 export default BidPage;
+
 
 
 
