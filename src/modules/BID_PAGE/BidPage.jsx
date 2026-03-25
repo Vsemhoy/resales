@@ -20,11 +20,9 @@ import './components/style/bidPage.css';
 import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT_INFO, SELECTS} from './mock/mock';
 import MODELS from './mock/mock_models';
 import {
-	BlockOutlined, CheckOutlined,
-	FileSearchOutlined,
+	CheckOutlined,
 	LoadingOutlined,
 	MinusOutlined,
-	PlusOutlined,
 } from '@ant-design/icons';
 import ModelInfoExtraDrawer from "./components/ModelInfoExtraDrawer";
 import ProjectInfo from "./components/ProjectInfo";
@@ -40,6 +38,7 @@ import { BidFinanceSection } from "./components/BidFinanceSection";
 import { BidActionsToolbar } from "./components/BidActionsToolbar";
 import { BidPageHeader } from "./components/BidPageHeader";
 import { BidModelsTable } from "./components/BidModelsTable";
+import { BidModelsFooter } from "./components/BidModelsFooter";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -1376,163 +1375,17 @@ const BidPage = (props) => {
                                 onDragEnd={handleModelsRowDragEnd}
                             />
 
-							<div className={'sa-bid-models-footer'}>
-								<div className={'sa-footer-btns'}>
-									<Button
-										style={{width: '30%'}}
-										color="primary"
-										variant="outlined"
-										icon={<PlusOutlined/>}
-										onClick={handleAddModel}
-										disabled={isDisabledInputManager()}
-									>
-										Добавить модель
-									</Button>
-									<Button
-										style={{width: '30%'}}
-										color="primary"
-										variant="filled"
-										icon={<FileSearchOutlined/>}
-										onClick={() => setIsParseModalOpen(true)}
-										disabled={isDisabledInputManager()}
-									>
-										Анализ сырых данных
-									</Button>
-									<Button
-										style={{width: '30%'}}
-										color="primary"
-										variant="filled"
-										icon={<BlockOutlined/>}
-										onClick={() => setIsFindSimilarDrawerOpen(true)}
-									>
-										Похожие
-									</Button>
-								</div>
-								<div className={'sa-footer-table-amounts'}>
-									<div className={'sa-footer-table'}>
-										<div className={'sa-footer-table-col'}>
-											<div className={'sa-footer-table-cell'}>
-												<p>Высота об-ния: </p>
-												{!isCalculating ? (
-													<p>
-														<span>{prepareEngineerParameter(engineerParams.unit)}</span> U
-													</p>
-												) : (
-													<LoadingOutlined/>
-												)}
-											</div>
-											<div className={'sa-footer-table-cell'}>
-												<p>Высота шкафа: </p>
-												{!isCalculating ? (
-													<p>
-														<span>{prepareEngineerParameter(engineerParams.box_size)}</span> U
-													</p>
-												) : (
-													<LoadingOutlined/>
-												)}
-											</div>
-										</div>
-										<div className={'sa-footer-table-col'}>
-											<div className={'sa-footer-table-cell'}>
-												<p>Потр. мощ.: </p>
-												{!isCalculating ? (
-													<p>
-														<span>
-															{prepareEngineerParameter(engineerParams.power_consumption)}
-														</span>{' '}
-														кВт
-													</p>
-												) : (
-													<LoadingOutlined/>
-												)}
-											</div>
-											<div className={'sa-footer-table-cell'}>
-												<p>Вых. мощность: </p>
-												{!isCalculating ? (
-													<p>
-														<span>{prepareEngineerParameter(engineerParams.max_power)}</span> Вт
-													</p>
-												) : (
-													<LoadingOutlined/>
-												)}
-											</div>
-										</div>
-										<div className={'sa-footer-table-col'}>
-											<div className={'sa-footer-table-cell'}>
-												<p>Мощность АС: </p>
-												{!isCalculating ? (
-													<p>
-														<span>
-															{prepareEngineerParameter(engineerParams.rated_power_speaker)}
-														</span>{' '}
-														Вт
-													</p>
-												) : (
-													<LoadingOutlined/>
-												)}
-											</div>
-											<div className={'sa-footer-table-cell'}>
-												<p>Масса: </p>
-												{!isCalculating ? (
-													<p>
-														<span>{prepareEngineerParameter(engineerParams.mass)}</span> кг
-													</p>
-												) : (
-													<LoadingOutlined/>
-												)}
-											</div>
-										</div>
-										<div className={'sa-footer-table-col'}>
-											<div className={'sa-footer-table-cell'}>
-												<p>Объем:</p>
-												{!isCalculating ? (
-													<p>
-														<span>{prepareEngineerParameter(engineerParams.size)}</span> m3
-													</p>
-												) : (
-													<LoadingOutlined/>
-												)}
-											</div>
-										</div>
-									</div>
-									<div className={'sa-footer-amounts'}>
-										<div className={'sa-footer-amounts-col'}>
-											<div className={'sa-footer-amounts-cell'}>
-												<p>Сумма в долларах</p>
-											</div>
-											<div className={'sa-footer-amounts-cell'}>
-												<p>Сумма в евро</p>
-											</div>
-											<div className={'sa-footer-amounts-cell'}>
-												<p>Сумма в рублях</p>
-											</div>
-										</div>
-										<div className={'sa-footer-amounts-col'}>
-											<div className={'sa-footer-amounts-cell cell-amount'}>
-												{!isCalculating ? (
-													<p>{prepareAmount(amounts.usd)} $</p>
-												) : (
-													<LoadingOutlined />
-												)}
-											</div>
-											<div className={'sa-footer-amounts-cell cell-amount'}>
-												{!isCalculating ? (
-													<p>{prepareAmount(amounts.eur)} €</p>
-												) : (
-													<LoadingOutlined />
-												)}
-											</div>
-											<div className={'sa-footer-amounts-cell cell-amount'}>
-												{!isCalculating ? (
-													<p>{prepareAmount(amounts.rub)} ₽</p>
-												) : (
-													<LoadingOutlined />
-												)}
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+							<BidModelsFooter
+								isCalculating={isCalculating}
+								engineerParams={engineerParams}
+								amounts={amounts}
+								prepareAmount={prepareAmount}
+								prepareEngineerParameter={prepareEngineerParameter}
+								onAddModel={handleAddModel}
+								onOpenParse={() => setIsParseModalOpen(true)}
+								onOpenFindSimilar={() => setIsFindSimilarDrawerOpen(true)}
+								isDisabledInputManager={isDisabledInputManager()}
+							/>
 						</div>
 
 					</div>
@@ -1666,3 +1519,5 @@ const BidPage = (props) => {
 };
 
 export default BidPage;
+
+
