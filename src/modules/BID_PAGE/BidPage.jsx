@@ -46,6 +46,8 @@ import { BidBillSection } from "./components/BidBillSection";
 import { BidFinanceSection } from "./components/BidFinanceSection";
 import { BidActionsToolbar } from "./components/BidActionsToolbar";
 import { BidPageHeader } from "./components/BidPageHeader";
+import { BidModelsHeaderPrimary } from "./components/BidModelsHeaderPrimary";
+import { BidModelsRowPrimary } from "./components/BidModelsRowPrimary";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -1359,33 +1361,7 @@ const BidPage = (props) => {
 							<div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
 
 							{ userData?.user?.sales_role === 1 ? (
-								<div className={'sa-models-table-row sa-header-row'}>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>№</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p className={'align-left'}>Название</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p className={'align-left'}>Кол-во</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p className={'align-left'}>Процент</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>Цена</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>Сумма</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>Наличие</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}
-										 style={{boxShadow: 'none'}}
-									></div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}></div>
-								</div>
+                                <BidModelsHeaderPrimary />
 							) : (
 								<div className={'sa-models-table-row-two sa-header-row'}>
 									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
@@ -1421,98 +1397,27 @@ const BidPage = (props) => {
 								<div className={'sa-models-table'}>
 									{(sortedBidModels && sortedBidModels.length > 0) ?
 										sortedBidModels.map((bidModel, idx) => (
-											<div
-												className={'sa-models-table-row'}
-												key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
-												draggable={!isDisabledInputManager()}
-												onDragStart={() => handleModelsRowDragStart(idx)}
-												onDragOver={(e) => e.preventDefault()}
-												onDrop={() => handleModelsRowDrop(idx)}
-												onDragEnd={handleModelsRowDragEnd}
-											>
-												<div className={'sa-models-table-cell'}
-													style={{cursor: 'grab'}}
-												>
-													<p>{idx + 1}</p>
-												</div>
-												<div className={'sa-models-table-cell align-left'}>
-													<NameSelect
-														options={prepareSelect(modelsSelect?.filter(option => [0, 1, 3].includes(option.type_model)))}
-														model={bidModel}
-														disabled={isDisabledInputManager()}
-														onUpdateModelName={handleChangeModel}
-													/>
-												</div>
-												<div className={'sa-models-table-cell'}>
-													<ModelInput
-														value={bidModel.model_count}
-														bidModelId={bidModel.id}
-														bidModelSort={bidModel.sort}
-														disabled={isDisabledInputManager()}
-														type={'model_count'}
-                                                        isOnlyPositive={true}
-														onChangeModel={handleChangeModelInfo}
-													/>
-												</div>
-												<div className={'sa-models-table-cell'}>
-													<ModelInput
-														value={bidModel.percent}
-														bidModelId={bidModel.id}
-														bidModelSort={bidModel.sort}
-														disabled={isDisabledInputManager()}
-														type={'percent'}
-                                                        isOnlyPositive={false}
-														onChangeModel={handleChangeModelInfo}
-													/>
-												</div>
-												<div className={'sa-models-table-cell'}>
-													{(isCalculating) ? (
-														<LoadingOutlined/>
-													) : (
-														<p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
-													)}
-												</div>
-												<div className={'sa-models-table-cell'}>
-													{(isCalculating) ? (
-														<LoadingOutlined/>
-													) : (
-														<p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
-													)}
-												</div>
-												<div className={'sa-models-table-cell'}>
-													<ModelSelect
-														options={prepareSelect(selects.presence)}
-														value={bidModel.presence}
-														bidModelId={bidModel.id}
-														bidModelSort={bidModel.sort}
-														disabled={isDisabledInput()}
-														type={'presence'}
-														onChangeModel={handleChangeModelInfo}
-													/>
-												</div>
-												<div
-													className={'sa-models-table-cell'}
-													style={{padding: 0, boxShadow: 'none'}}
-												>
-													{bidModel.model_id && (
-														<Button
-															color="primary"
-															variant="filled"
-															icon={<InfoCircleOutlined/>}
-															onClick={() => handleOpenModelInfoExtra(bidModel.model_id)}
-														></Button>
-													)}
-												</div>
-												<div className={'sa-models-table-cell'} style={{padding: 0}}>
-													<Button
-														color="danger"
-														variant="filled"
-														icon={<DeleteOutlined/>}
-														onClick={( ) => handleDeleteModelFromBid(bidModel.id, bidModel.sort, bidModel.model_id)}
-														disabled={isDisabledInputManager()}
-													></Button>
-												</div>
-											</div>
+                                            <BidModelsRowPrimary
+                                                key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
+                                                bidModel={bidModel}
+                                                index={idx}
+                                                draggable={!isDisabledInputManager()}
+                                                onDragStart={() => handleModelsRowDragStart(idx)}
+                                                onDragOver={(e) => e.preventDefault()}
+                                                onDrop={() => handleModelsRowDrop(idx)}
+                                                onDragEnd={handleModelsRowDragEnd}
+                                                nameOptions={prepareSelect(modelsSelect?.filter(option => [0, 1, 3].includes(option.type_model)))}
+                                                presenceOptions={prepareSelect(selects.presence)}
+                                                isDisabledInputManager={isDisabledInputManager()}
+                                                isDisabledInput={isDisabledInput()}
+                                                isCalculating={isCalculating}
+                                                prepareAmount={prepareAmount}
+                                                currencySymbol={currencySymbol}
+                                                onChangeModel={handleChangeModel}
+                                                onChangeModelInfo={handleChangeModelInfo}
+                                                onOpenModelInfoExtra={() => handleOpenModelInfoExtra(bidModel.model_id)}
+                                                onDelete={() => handleDeleteModelFromBid(bidModel.id, bidModel.sort, bidModel.model_id)}
+                                            />
 										)) : (
 											<Empty/>
 										)
