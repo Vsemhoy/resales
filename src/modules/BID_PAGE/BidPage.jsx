@@ -21,18 +21,11 @@ import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT_INFO, SELECTS} f
 import MODELS from './mock/mock_models';
 import {
 	BlockOutlined, CheckOutlined,
-	CopyOutlined,
-	DeleteOutlined,
-	DownloadOutlined,
 	FileSearchOutlined,
-	InfoCircleOutlined,
 	LoadingOutlined,
 	MinusOutlined,
 	PlusOutlined,
 } from '@ant-design/icons';
-import NameSelect from './components/NameSelect';
-import ModelInput from './components/ModelInput';
-import ModelSelect from './components/ModelSelect';
 import ModelInfoExtraDrawer from "./components/ModelInfoExtraDrawer";
 import ProjectInfo from "./components/ProjectInfo";
 import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
@@ -48,6 +41,8 @@ import { BidActionsToolbar } from "./components/BidActionsToolbar";
 import { BidPageHeader } from "./components/BidPageHeader";
 import { BidModelsHeaderPrimary } from "./components/BidModelsHeaderPrimary";
 import { BidModelsRowPrimary } from "./components/BidModelsRowPrimary";
+import { BidModelsHeaderSecondary } from "./components/BidModelsHeaderSecondary";
+import { BidModelsRowSecondary } from "./components/BidModelsRowSecondary";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -1363,35 +1358,7 @@ const BidPage = (props) => {
 							{ userData?.user?.sales_role === 1 ? (
                                 <BidModelsHeaderPrimary />
 							) : (
-								<div className={'sa-models-table-row-two sa-header-row'}>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>№</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p className={'align-left'}>Название</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p className={'align-left'}>Кол-во</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p className={'align-left'}>Процент</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>Цена</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>Сумма</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>Наличие</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}>
-										<p>Склад</p>
-									</div>
-									<div className={'sa-models-table-cell sa-models-table-cell-header'}
-										 style={{boxShadow: 'none'}}
-									></div>
-								</div>
+                                <BidModelsHeaderSecondary />
 							)}
 							{userData?.user?.sales_role === 1 ? (
 								<div className={'sa-models-table'}>
@@ -1427,104 +1394,28 @@ const BidPage = (props) => {
 								<div className={'sa-models-table'}>
 									{(sortedBidModels && sortedBidModels.length > 0) ?
 										sortedBidModels.map((bidModel, idx) => (
-											<div
-												className={'sa-models-table-row-two'}
-												key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
-												draggable={!isDisabledInputManager()}
-												onDragStart={() => handleModelsRowDragStart(idx)}
-												onDragOver={(e) => e.preventDefault()}
-												onDrop={() => handleModelsRowDrop(idx)}
-												onDragEnd={handleModelsRowDragEnd}
-											>
-												<div className={'sa-models-table-cell'}
-													style={{cursor: 'grab'}}
-												>
-													<p>{idx + 1}</p>
-												</div>
-												<div className={'sa-models-table-cell align-left'}>
-													<NameSelect
-														options={prepareSelect(modelsSelect)}
-														model={bidModel}
-														disabled={isDisabledInputManager()}
-														onUpdateModelName={handleChangeModel}
-													/>
-
-													<Button
-														icon={<CopyOutlined />}
-														onClick={() => handleClick(bidModel.model_id)}
-													/>
-												</div>
-												<div className={'sa-models-table-cell'}>
-													<ModelInput
-														value={bidModel.model_count}
-														bidModelId={bidModel.id}
-														bidModelSort={bidModel.sort}
-														disabled={isDisabledInputManager()}
-														type={'model_count'}
-														onChangeModel={handleChangeModelInfo}
-														error={isErrorInput(bidModel.id)}
-                                                        isOnlyPositive={true}
-													/>
-												</div>
-												<div className={'sa-models-table-cell'}>
-													<ModelInput
-														value={bidModel.percent}
-														bidModelId={bidModel.id}
-														bidModelSort={bidModel.sort}
-														disabled={isDisabledInputManager()}
-														type={'percent'}
-														onChangeModel={handleChangeModelInfo}
-													/>
-												</div>
-												<div className={'sa-models-table-cell'}>
-													{(isCalculating) ? (
-														<LoadingOutlined/>
-													) : (
-														<p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
-													)}
-												</div>
-												<div className={'sa-models-table-cell'}>
-													{(isCalculating) ? (
-														<LoadingOutlined/>
-													) : (
-														<p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
-													)}
-												</div>
-												<div className={'sa-models-table-cell'}>
-													<ModelSelect
-														options={prepareSelect(selects.presence)}
-														value={bidModel.presence}
-														bidModelId={bidModel.id}
-														bidModelSort={bidModel.sort}
-														disabled={(isDisabledInputManager() && isDisabledInputAdmin())}
-														type={'presence'}
-														onChangeModel={handleChangeModelInfo}
-													/>
-												</div>
-												<div className={'sa-models-table-cell'}>
-													<ModelInput
-														value={bidModel.sklad}
-														bidModelId={bidModel.id}
-														bidModelSort={bidModel.sort}
-														disabled={isDisabledInputAdmin()}
-														type={'sklad'}
-														onChangeModel={handleChangeModelInfo}
-													/>
-												</div>
-												<div
-													className={'sa-models-table-cell'}
-													style={{padding: 0, boxShadow: 'none'}}
-												>
-													{bidModel.model_id && (
-														<Button
-															color="primary"
-															variant="filled"
-															icon={<InfoCircleOutlined/>}
-															onClick={() => handleOpenModelInfoExtra(bidModel.model_id)}
-														></Button>
-													)}
-												</div>
-											</div>
+                                            <BidModelsRowSecondary
+                                                key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
+                                                bidModel={bidModel}
+                                                index={idx}
+                                                draggable={!isDisabledInputManager()}
+                                                onDragStart={() => handleModelsRowDragStart(idx)}
+                                                onDragOver={(e) => e.preventDefault()}
+                                                onDrop={() => handleModelsRowDrop(idx)}
+                                                onDragEnd={handleModelsRowDragEnd}
+                                                nameOptions={prepareSelect(modelsSelect)}
+                                                presenceOptions={prepareSelect(selects.presence)}
+                                                isDisabledInputManager={isDisabledInputManager()}
+                                                isDisabledInputAdmin={isDisabledInputAdmin()}
+                                                isCalculating={isCalculating}
+                                                prepareAmount={prepareAmount}
+                                                currencySymbol={currencySymbol}
+                                                isErrorInput={isErrorInput}
+                                                onChangeModel={handleChangeModel}
+                                                onChangeModelInfo={handleChangeModelInfo}
+                                                onOpenModelInfoExtra={() => handleOpenModelInfoExtra(bidModel.model_id)}
+                                                onCopyName={handleClick}
+                                            />
 										)) : (
 											<Empty/>
 										)
