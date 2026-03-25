@@ -49,6 +49,10 @@ import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
 import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
 import DataParser from "./components/DataParser";
 import FindSimilarDrawer from "./components/FindSimilarDrawer";
+import { BidCommentsSection } from "./components/BidCommentsSection";
+import { BidBaseInfoSection } from "./components/BidBaseInfoSection";
+import { BidBillSection } from "./components/BidBillSection";
+import { BidFinanceSection } from "./components/BidFinanceSection";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -379,60 +383,6 @@ const BidPage = (props) => {
 			}
 		}
 	};
-	/*const fetchCalcModels = async () => {
-		if (PRODMODE) {
-			const requestId = ++calcRequestIdRef.current;
-			try {
-				//setIsLoadingSmall(true);
-                const bid_info = {
-                    bidCurrency: form.finance.currency,
-                    bidPriceStatus: form.finance.priceStatus,
-                    bidPercent: form.finance.percent,
-                    bidNds: form.finance.nds,
-                };
-                const content = await calcModels(bid_info, form.models);
-				if (content) {
-					const isStaleRequest = calcRequestIdRef.current !== requestId;
-					if (isStaleRequest) {
-						//setTimeout(() => setIsLoadingSmall(false), 500);
-						return;
-					}
-					if (hasLocalChanges) {
-						if (content.models) {
-							const mergedModels = mergeCalculatedModels(
-								content.models,
-								requestModelsSnapshot,
-							);
-							//setBidModels(mergedModels);
-                            setForm(prev => ({
-                                ...prev,
-                                models: mergedModels,
-                            }));
-						}
-						//setTimeout(() => setIsLoadingSmall(false), 500);
-						return;
-					}
-					if (content.models) {
-                        //setBidModels(content.models);
-                        setForm(prev => ({
-                            ...prev,
-                            models: content.models,
-                        }));
-                    }
-					//if (content.amounts) setAmounts(content.amounts);
-					//if (content.models_data) setEngineerParameters(content.models_data);
-				}
-				//setTimeout(() => setIsLoadingSmall(false), 500);
-			} catch (e) {
-				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
-				//setTimeout(() => setIsLoadingSmall(false), 500);
-			}
-		}
-	};*/
 	const fetchWordFile = async () => {
 		if (PRODMODE) {
 			try {
@@ -598,9 +548,33 @@ const BidPage = (props) => {
 		  return [];
 	  }
 	};
-	const countOfComments = () => {
+    const countOfComments = () => {
         return Object.values(form.comments).filter(Boolean).length;
 	};
+    const handleCommentChange = useCallback((field, value) => {
+        setForm(prev => ({
+            ...prev,
+            comments: { ...prev.comments, [field]: value },
+        }));
+    }, []);
+    const handleBaseInfoChange = useCallback((field, value) => {
+        setForm(prev => ({
+            ...prev,
+            baseInfo: { ...prev.baseInfo, [field]: value },
+        }));
+    }, []);
+    const handleBillChange = useCallback((field, value) => {
+        setForm(prev => ({
+            ...prev,
+            bill: { ...prev.bill, [field]: value },
+        }));
+    }, []);
+    const handleFinanceChange = useCallback((field, value) => {
+        setForm(prev => ({
+            ...prev,
+            finance: { ...prev.finance, [field]: value },
+        }));
+    }, []);
 	const prepareEngineerParameter = (engineerParameter) => {
 	  const rounded = (+engineerParameter).toFixed(2);
 	  return rounded % 1 === 0 ? Math.round(rounded) : rounded;
@@ -1066,249 +1040,42 @@ const BidPage = (props) => {
 			key: 1,
 			label: <div style={{ display: 'flex' }}>Основная информация</div>,
 			children: (
-				<div className={'sa-info-list-hide-wrapper'}>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Контактное лицо</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.baseInfo.orgUser}
-							showSearch
-							optionFilterProp="label"
-							filterOption={(input, option) =>
-								(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-							}
-							options={prepareSelect(selects.orgUsers)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                baseInfo: { ...prev.baseInfo, orgUser: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-							defaultValue={(selects.orgUsers && selects.orgUsers.length > 0) ? selects.orgUsers[selects.orgUsers.length - 1].id : null}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Защита проекта</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.baseInfo.protectionProject}
-							options={prepareSelect(selects.protection)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                baseInfo: { ...prev.baseInfo, protectionProject: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Объект</p>
-						</div>
-						<Input
-							style={{ width: '100%', height: '32px' }}
-							value={form.baseInfo.object}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                baseInfo: { ...prev.baseInfo, object: e.target.value }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Срок реализации</p>
-						</div>
-						<Input
-							style={{ width: '100%', height: '32px' }}
-							value={form.baseInfo.sellBy}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                baseInfo: { ...prev.baseInfo, sellBy: e.target.value }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Связанный проект</p>
-						</div>
-						{bidProject ? (
-							<Tag
-								style={{
-									width: '35px',
-									height: '35px',
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									cursor: 'pointer',
-								}}
-								color={'cyan'}
-								onClick={() => setIsProjectDataModalOpen(true)}
-							>
-								{+bidProject}
-							</Tag>
-						) : (
-							<MinusOutlined />
-						)}
-					</div>
-                    <div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Дата создания</p>
-						</div>
-                        <Input
-                            style={{ width: '100%', height: '32px' }}
-                            value={bidActions.create?.date ? dayjs(bidActions.create?.date * 1000).format("DD.MM.YYYY HH:mm:ss") : ''}
-                            disabled={true}
-                        />
-					</div>
-				</div>
+                <BidBaseInfoSection
+                    values={form.baseInfo}
+                    orgUsersOptions={prepareSelect(selects.orgUsers)}
+                    protectionOptions={prepareSelect(selects.protection)}
+                    orgUsersDefaultValue={(selects.orgUsers && selects.orgUsers.length > 0) ? selects.orgUsers[selects.orgUsers.length - 1].id : null}
+                    onChange={handleBaseInfoChange}
+                    isDisabled={isDisabledInputManager()}
+                    bidProjectId={bidProject}
+                    onOpenProject={() => setIsProjectDataModalOpen(true)}
+                    createdAtLabel={bidActions.create?.date ? dayjs(bidActions.create?.date * 1000).format("DD.MM.YYYY HH:mm:ss") : ''}
+                />
 			),
 		},
 		{
 			key: 2,
 			label: <div style={{ display: 'flex' }}>Плательщик</div>,
 			children: (
-				<div className={'sa-info-list-hide-wrapper'}>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Плательщик</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.bill.requisite}
-							options={prepareSelect(selects.requisite)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, requisite: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Способ транспортировки</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.bill.conveyance}
-							options={prepareSelect(selects.conveyance)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, conveyance: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Фактический адрес</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.bill.factAddress}
-							options={prepareSelect(selects.factAddress)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, factAddress: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-							defaultValue={(selects.factAddress && selects.factAddress.length > 0) ? selects.factAddress[selects.factAddress.length - 1].id : null}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Телефон</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.bill.phone}
-							options={prepareSelect(selects.phones)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, phone: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-							defaultValue={(selects.phones && selects.phones.length > 0) ? selects.phones[selects.phones.length - 1].id : null}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Email</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.bill.email}
-							options={prepareSelect(selects.emails)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, email: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-							defaultValue={(selects.emails && selects.emails.length > 0) ? selects.emails[selects.emails.length - 1].id : null}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Страховка</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.bill.insurance}
-							options={prepareSelect(selects.insurance)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, insurance: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Упаковка</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.bill.package}
-							options={prepareSelect(selects.package)}
-                            onChange={(val) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, package: val }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Грузополучатель</p>
-						</div>
-						<Input
-							style={{ width: '100%', height: '32px' }}
-							value={form.bill.consignee}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, consignee: e.target.value }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Доп. оборудование</p>
-						</div>
-						<Input
-							style={{ width: '100%', height: '32px' }}
-							value={form.bill.otherEquipment}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                bill: { ...prev.bill, otherEquipment: e.target.value }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-				</div>
+                <BidBillSection
+                    values={form.bill}
+                    options={{
+                        requisite: prepareSelect(selects.requisite),
+                        conveyance: prepareSelect(selects.conveyance),
+                        factAddress: prepareSelect(selects.factAddress),
+                        phones: prepareSelect(selects.phones),
+                        emails: prepareSelect(selects.emails),
+                        insurance: prepareSelect(selects.insurance),
+                        package: prepareSelect(selects.package),
+                    }}
+                    defaults={{
+                        factAddress: (selects.factAddress && selects.factAddress.length > 0) ? selects.factAddress[selects.factAddress.length - 1].id : null,
+                        phone: (selects.phones && selects.phones.length > 0) ? selects.phones[selects.phones.length - 1].id : null,
+                        email: (selects.emails && selects.emails.length > 0) ? selects.emails[selects.emails.length - 1].id : null,
+                    }}
+                    onChange={handleBillChange}
+                    isDisabled={isDisabledInputManager()}
+                />
 			),
 		},
 		{
@@ -1324,155 +1091,33 @@ const BidPage = (props) => {
 				</div>
 			),
 			children: (
-				<div className={'sa-info-list-hide-wrapper'}>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Комментарий инженера</p>
-						</div>
-						<TextArea
-							value={form.comments.engineer}
-							autoSize={{ minRows: 2, maxRows: 6 }}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                comments: { ...prev.comments, engineer: e.target.value }
-                            }))}
-							disabled={isDisabledInput()}/**/
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Комментарий менеджера</p>
-						</div>
-						<TextArea
-							value={form.comments.manager}
-							autoSize={{ minRows: 2, maxRows: 6 }}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                comments: { ...prev.comments, manager: e.target.value }
-                            }))}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Комментарий администратора</p>
-						</div>
-						<TextArea
-							value={form.comments.admin}
-							autoSize={{ minRows: 2, maxRows: 6 }}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                comments: { ...prev.comments, admin: e.target.value }
-                            }))}
-							disabled={isDisabledInputAdmin()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Комментарий бухгалтера</p>
-						</div>
-						<TextArea
-							value={form.comments.accountant}
-							autoSize={{ minRows: 2, maxRows: 6 }}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                comments: { ...prev.comments, accountant: e.target.value }
-                            }))}
-                            disabled={isDisabledInputBuh()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Дополнительное оборудование</p>
-						</div>
-						<TextArea
-							value={form.comments.addEquipment}
-							autoSize={{ minRows: 2, maxRows: 6 }}
-                            onChange={(e) => setForm(prev => ({
-                                ...prev,
-                                comments: { ...prev.comments, addEquipment: e.target.value }
-                            }))}
-                            disabled={isDisabledInput()}
-						/>
-					</div>
-				</div>
+                <BidCommentsSection
+                    values={form.comments}
+                    onChange={handleCommentChange}
+                    disabled={{
+                        engineer: isDisabledInput(),
+                        manager: isDisabledInputManager(),
+                        admin: isDisabledInputAdmin(),
+                        accountant: isDisabledInputBuh(),
+                        addEquipment: isDisabledInput(),
+                    }}
+                />
 			),
 		},
 		{
 			key: 4,
 			label: <div style={{ display: 'flex' }}>Финансовый блок</div>,
 			children: (
-				<div className={'sa-info-list-hide-wrapper'}>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Валюта</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.finance.currency}
-							options={prepareSelect(selects.currency)}
-                            onChange={(val) => {
-                                setForm(prev => ({
-                                    ...prev,
-                                    finance: {...prev.finance, currency: val}
-                                }));
-                            }}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Статус</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.finance.priceStatus}
-							options={prepareSelect(selects.price)}
-                            onChange={(val) => {
-                                setForm(prev => ({
-                                    ...prev,
-                                    finance: {...prev.finance, priceStatus: val}
-                                }));
-                            }}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Добавить процент</p>
-						</div>
-						<Input
-							style={{ width: '100%', height: '32px' }}
-							value={form.finance.percent}
-							type="number"
-                            onChange={(e) => {
-                                setForm(prev => ({
-                                    ...prev,
-                                    finance: {...prev.finance, percent: e.target.value }
-                                }));
-                            }}
-							onWheel={(e) => e.target.blur()}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-					<div className={'sa-info-list-row'}>
-						<div className={'sa-list-row-label'}>
-							<p>Вычесть НДС?</p>
-						</div>
-						<Select
-							style={{ width: '100%', textAlign: 'left' }}
-							value={form.finance.nds}
-							options={prepareSelect(selects.nds)}
-                            onChange={(val) => {
-                                setForm(prev => ({
-                                    ...prev,
-                                    finance: {...prev.finance, nds: val}
-                                }));
-                            }}
-							disabled={isDisabledInputManager()}
-						/>
-					</div>
-				</div>
+                <BidFinanceSection
+                    values={form.finance}
+                    options={{
+                        currency: prepareSelect(selects.currency),
+                        price: prepareSelect(selects.price),
+                        nds: prepareSelect(selects.nds),
+                    }}
+                    onChange={handleFinanceChange}
+                    isDisabled={isDisabledInputManager()}
+                />
 			),
 		},
 	];
