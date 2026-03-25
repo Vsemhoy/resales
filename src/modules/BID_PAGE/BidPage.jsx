@@ -19,7 +19,6 @@ import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import './components/style/bidPage.css';
 import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT_INFO, SELECTS} from './mock/mock';
 import MODELS from './mock/mock_models';
-import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import {
 	ArrowLeftOutlined,
 	ArrowRightOutlined,
@@ -49,6 +48,7 @@ import { BidBaseInfoSection } from "./components/BidBaseInfoSection";
 import { BidBillSection } from "./components/BidBillSection";
 import { BidFinanceSection } from "./components/BidFinanceSection";
 import { BidActionsToolbar } from "./components/BidActionsToolbar";
+import { BidPageHeader } from "./components/BidPageHeader";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -571,6 +571,29 @@ const BidPage = (props) => {
             finance: { ...prev.finance, [field]: value },
         }));
     }, []);
+    const handleToAdminClick = () => {
+        setIsLoadingChangePlaceBtn('toAdmin');
+        if (isDirty) {
+            openCustomModal(
+                'toAdmin',
+                'Передать администратору',
+                'У Вас есть несохраненные изменения! Подтвердите сохранение перед передачей администратору.',
+                [],
+                baseButtons
+            );
+        } else {
+            if (isManagerDone()) {
+                setBidPlace(2);
+                fetchBidPlace(2).then();
+            } else {
+                setIsAlertVisible(true);
+                setAlertMessage('Заполните поля!');
+                setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
+                setAlertType('warning');
+                setIsLoadingChangePlaceBtn('');
+            }
+        }
+    };
 	const prepareEngineerParameter = (engineerParameter) => {
 	  const rounded = (+engineerParameter).toFixed(2);
 	  return rounded % 1 === 0 ? Math.round(rounded) : rounded;
@@ -1158,232 +1181,162 @@ const BidPage = (props) => {
 				<div className={'sa-bid-page'}>
 					<Affix>
 						<div style={{ padding: '10px 12px 0 12px' }}>
-							<div
-								className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}
-								style={{ margin: 0 }}
-							>
-								<div className={'sa-header-label-container'}>
-									<div className={'sa-header-label-container-small'}>
-										<h1 className={`sa-header-label`}>
-											{+bidType === 1 ? 'Коммерческое предложение ' : +bidType === 2 ? 'Счет ' : ''}
-											<Tag style={{fontSize: '20px', lineHeight: '30px'}}>№{bidId}</Tag>
-										</h1>
-										<div className={'sa-bid-steps-currency'}>
-											<div>
-												<CurrencyMonitorBar />
-											</div>
-										</div>
-									</div>
-									<div className={'sa-header-label-container-small'}>
-										{bidIdCompany &&
-											selects.companies &&
-											selects.companies.find((comp) => comp.id === bidIdCompany) &&
-											bidOrg &&
-											bidOrg.name && (
-												<div className={'sa-vertical-flex'} style={{ alignItems: 'baseline' }}>
-													От компании
-													<Tag
-														style={{
-															textAlign: 'center',
-															fontSize: '14px',
-														}}
-														color={selects.companies.find((comp) => comp.id === bidIdCompany)?.color}
-													>
-														{selects.companies.find((comp) => comp.id === bidIdCompany)?.name}
-													</Tag>
-													для
-													<Tag
-														style={{
-															textAlign: 'center',
-															fontSize: '14px',
-															cursor: 'pointer',
-														}}
-														color="geekblue"
-														onClick={() => window.open(`${BASE_ROUTE}/orgs/${bidOrg.id}`, '_blank')}
-													>
-														{bidOrg.name}
-													</Tag>
-                                                    <Tag style={{
-                                                        textAlign: 'center',
-                                                        fontSize: '14px',
-                                                        cursor: 'pointer'
+                            <BidPageHeader
+                                bidType={bidType}
+                                bidId={bidId}
+                                bidIdCompany={bidIdCompany}
+                                companies={selects.companies}
+                                bidOrg={bidOrg}
+                                userRole={userData?.user?.sales_role}
+                                isDirty={isDirty}
+                                openMode={openMode}
+                                onOpenOrg={() => window.open(`${BASE_ROUTE}/orgs/${bidOrg.id}`, '_blank')}
+                                statusActions={(
+                                    <>
+                                        {+bidType === 2 && +bidPlace === 1 && (
+                                            <Space.Compact>
+                                                <Button
+                                                    className={'sa-select-custom-admin'}
+                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toAdmin')}
+                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toAdmin'}
+                                                    onClick={handleToAdminClick}
+                                                >
+                                                    Передать администратору <ArrowRightOutlined />
+                                                </Button>
+                                            </Space.Compact>
+                                        )}
+                                        {+bidType === 2 && +bidPlace === 2 && (
+                                            <Space.Compact>
+                                                <Button
+                                                    className={'sa-select-custom-manager'}
+                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backManager')}
+                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backManager'}
+                                                    onClick={() => {
+                                                        setIsLoadingChangePlaceBtn('backManager');
+                                                        if (isDirty) {
+                                                            openCustomModal(
+                                                                'backManager',
+                                                                'Вернуть менеджеру',
+                                                                'У Вас есть несохраненные изменения! Подтвердите сохранение перед тем как вернуть менеджеру.',
+                                                                [],
+                                                                baseButtons
+                                                            );
+                                                        } else {
+                                                            openCustomModal(
+                                                                'backManagerWithSelect',
+                                                                'Вернуть менеджеру',
+                                                                'Укажите причину возврата менеджеру.',
+                                                                [<Select key="return-reason-select"
+                                                                             style={{width:'100%'}}
+                                                                             placeholder={'Причина возврата заявки'}
+                                                                             options={prepareSelect(selects.reasons)}
+                                                                />],
+                                                                returnButtons
+                                                            );
+                                                        }
                                                     }}
-                                                    >№{bidOrg.id}</Tag>
-													Ваша роль:
-													{userData && userData?.user?.sales_role === 1 && (
-														<Tag color={'blue'}>менеджер</Tag>
-													)}
-													{userData && userData?.user?.sales_role === 2 && (
-														<Tag color={'volcano'}>администратор</Tag>
-													)}
-													{userData && userData?.user?.sales_role === 3 && (
-														<Tag color={'magenta'}>бухгалтер</Tag>
-													)}
-													{userData && userData?.user?.sales_role === 4 && (
-														<Tag color={'gold'}>завершено</Tag>
-													)}
-													Режим:{' '}
-													<Tooltip title={openMode.description}>
-														<Tag color={openMode.color}>{openMode.tagtext}</Tag>
-													</Tooltip>
-													{isDirty && (
-														<Tooltip title={'Не забудьте сохранить'}>
-															<Tag color='red-inverse'>Есть несохраненные данные</Tag>
-														</Tooltip>
-													)}
-												</div>
-											)
-										}
-										<div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-											{+bidType === 2 && +bidPlace === 1 && (
-												<Space.Compact>
-													<Button className={'sa-select-custom-admin'}
-															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toAdmin')}
-															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toAdmin'}
-															onClick={() => {
-																setIsLoadingChangePlaceBtn('toAdmin');
-																if (isDirty) {
-																	openCustomModal(
-																		'toAdmin',
-																		'Передать администратору',
-																		'У Вас есть несохраненные изменения! Подтвердите сохранение перед передачей администратору.',
-																		[],
-																		baseButtons
-																	);
-																} else {
-																	if (isManagerDone()) {
-																		setBidPlace(2);
-																		fetchBidPlace(2).then();
-																	} else {
-																		setIsAlertVisible(true);
-																		setAlertMessage('Заполните поля!');
-																		setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
-																		setAlertType('warning');
-																		setIsLoadingChangePlaceBtn('');
-																	}
-																}
-															}}
-													>Передать администратору <ArrowRightOutlined /></Button>
-												</Space.Compact>
-											)}
-											{+bidType === 2 && +bidPlace === 2 && (
-												<Space.Compact>
-													<Button className={'sa-select-custom-manager'}
-															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backManager')}
-															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backManager'}
-															onClick={() => {
-																setIsLoadingChangePlaceBtn('backManager');
-																if (isDirty) {
-																	openCustomModal(
-																		'backManager',
-																		'Вернуть менеджеру',
-																		'У Вас есть несохраненные изменения! Подтвердите сохранение перед тем как вернуть менеджеру.',
-																		[],
-																		baseButtons
-																	);
-																} else {
-																	openCustomModal(
-																		'backManagerWithSelect',
-																		'Вернуть менеджеру',
-																		'Укажите причину возврата менеджеру.',
-																		[<Select key="return-reason-select"
-																				 		style={{width:'100%'}}
-																						placeholder={'Причина возврата заявки'}
-																						options={prepareSelect(selects.reasons)}
-																		/>],
-																		returnButtons
-																	);
-																}
-															}}
-													><ArrowLeftOutlined /> Вернуть менеджеру</Button>
-													<Button className={'sa-select-custom-bugh'}
-															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toBuh')}
-															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toBuh'}
-															onClick={() => {
-																setIsLoadingChangePlaceBtn('toBuh');
-																if (isDirty) {
-																	openCustomModal(
-																		'toBuh',
-																		'Передать бухгалтеру',
-																		'У Вас есть несохраненные изменения! Подтвердите сохранение перед передачей бухгалтеру.',
-																		[],
-																		baseButtons
-																	);
-																} else {
-																	if (isAdminDone()) {
-																		setBidPlace(3);
-																		fetchBidPlace(3).then();
-																	} else {
-																		setIsAlertVisible(true);
-																		setAlertMessage('Заполните поля!');
-																		setAlertDescription('Количество моделей должно быть равно количеству на складе');
-																		setAlertType('warning');
-																		setIsLoadingChangePlaceBtn('');
-																	}
-																}
-															}}
-													>Передать бухгалтеру <ArrowRightOutlined /></Button>
-												</Space.Compact>
-											)}
-											{+bidType === 2 && +bidPlace === 3 && (
-												<Space.Compact>
-													<Button className={'sa-select-custom-admin'}
-															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backAdmin')}
-															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backAdmin'}
-															onClick={() => {
-																setIsLoadingChangePlaceBtn('backAdmin');
-																openCustomModal(
-																	'backAdminWithSelect',
-																	'Вернуть администратору',
-																	'Укажите причину возврата администратору.',
-																	[<Select key="return-reason-select"
-																			 style={{width:'100%'}}
-																			 placeholder={'Причина возврата заявки'}
-																			 options={prepareSelect(selects.reasons)}
-																	/>],
-																	returnButtons
-																);
-															}}
-													><ArrowLeftOutlined /> Вернуть администратору</Button>
-													<Button className={'sa-select-custom-end'}
-															disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'done')}
-															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'done'}
-															onClick={() => {
-																setIsLoadingChangePlaceBtn('done');
-																setBidPlace(4);
-																fetchBidPlace(4).then();
-															}}
-													>Завершить счет <CheckCircleOutlined /></Button>
-												</Space.Compact>
-											)}
-											{+bidType === 2 && +bidPlace === 4 && (
-												<Space.Compact>
-													<Button className={'sa-select-custom-bugh'}
-															disabled={openMode?.status !== 5 || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backBuh')}
-															loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backBuh'}
-															onClick={() => {
-																setIsLoadingChangePlaceBtn('backBuh');
-																setBidPlace(3);
-																fetchBidPlace(3).then();
-															}}
-													><ArrowLeftOutlined /> Вернуть бухгалтеру</Button>
-												</Space.Compact>
-											)}
+                                                >
+                                                    <ArrowLeftOutlined /> Вернуть менеджеру
+                                                </Button>
+                                                <Button
+                                                    className={'sa-select-custom-bugh'}
+                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toBuh')}
+                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toBuh'}
+                                                    onClick={() => {
+                                                        setIsLoadingChangePlaceBtn('toBuh');
+                                                        if (isDirty) {
+                                                            openCustomModal(
+                                                                'toBuh',
+                                                                'Передать бухгалтеру',
+                                                                'У Вас есть несохраненные изменения! Подтвердите сохранение перед передачей бухгалтеру.',
+                                                                [],
+                                                                baseButtons
+                                                            );
+                                                        } else {
+                                                            if (isAdminDone()) {
+                                                                setBidPlace(3);
+                                                                fetchBidPlace(3).then();
+                                                            } else {
+                                                                setIsAlertVisible(true);
+                                                                setAlertMessage('Заполните поля!');
+                                                                setAlertDescription('Количество моделей должно быть равно количеству на складе');
+                                                                setAlertType('warning');
+                                                                setIsLoadingChangePlaceBtn('');
+                                                            }
+                                                        }
+                                                    }}
+                                                >
+                                                    Передать бухгалтеру <ArrowRightOutlined />
+                                                </Button>
+                                            </Space.Compact>
+                                        )}
+                                        {+bidType === 2 && +bidPlace === 3 && (
+                                            <Space.Compact>
+                                                <Button
+                                                    className={'sa-select-custom-admin'}
+                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backAdmin')}
+                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backAdmin'}
+                                                    onClick={() => {
+                                                        setIsLoadingChangePlaceBtn('backAdmin');
+                                                        openCustomModal(
+                                                            'backAdminWithSelect',
+                                                            'Вернуть администратору',
+                                                            'Укажите причину возврата администратору.',
+                                                            [<Select key="return-reason-select"
+                                                                     style={{width:'100%'}}
+                                                                     placeholder={'Причина возврата заявки'}
+                                                                     options={prepareSelect(selects.reasons)}
+                                                            />],
+                                                            returnButtons
+                                                        );
+                                                    }}
+                                                >
+                                                    <ArrowLeftOutlined /> Вернуть администратору
+                                                </Button>
+                                                <Button
+                                                    className={'sa-select-custom-end'}
+                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'done')}
+                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'done'}
+                                                    onClick={() => {
+                                                        setIsLoadingChangePlaceBtn('done');
+                                                        setBidPlace(4);
+                                                        fetchBidPlace(4).then();
+                                                    }}
+                                                >
+                                                    Завершить счет <CheckCircleOutlined />
+                                                </Button>
+                                            </Space.Compact>
+                                        )}
+                                        {+bidType === 2 && +bidPlace === 4 && (
+                                            <Space.Compact>
+                                                <Button
+                                                    className={'sa-select-custom-bugh'}
+                                                    disabled={openMode?.status !== 5 || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backBuh')}
+                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backBuh'}
+                                                    onClick={() => {
+                                                        setIsLoadingChangePlaceBtn('backBuh');
+                                                        setBidPlace(3);
+                                                        fetchBidPlace(3).then();
+                                                    }}
+                                                >
+                                                    <ArrowLeftOutlined /> Вернуть бухгалтеру
+                                                </Button>
+                                            </Space.Compact>
+                                        )}
 
-											<Button
-												type={'primary'}
-												style={{ width: '150px' }}
-												icon={<SaveOutlined />}
-												loading={isSaving}
-												onClick={() => handleSave()}
-												disabled={isDisabledInput()} /* || openMode?.status === 4 */
-											>
-												{isSaving ? 'Сохраняем...' : 'Сохранить'}
-											</Button>
-										</div>
-									</div>
-								</div>
-							</div>
+                                        <Button
+                                            type={'primary'}
+                                            style={{ width: '150px' }}
+                                            icon={<SaveOutlined />}
+                                            loading={isSaving}
+                                            onClick={() => handleSave()}
+                                            disabled={isDisabledInput()} /* || openMode?.status === 4 */
+                                        >
+                                            {isSaving ? 'Сохраняем...' : 'Сохранить'}
+                                        </Button>
+                                    </>
+                                )}
+                            />
 						</div>
 					</Affix>
 					<div className={isOpenBaseInfo ?  'sa-bid-page-info-container' : 'sa-bid-page-info-container-closed'}>
