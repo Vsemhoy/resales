@@ -2,6 +2,7 @@ import React from 'react';
 import { Tag } from 'antd';
 import CurrencyMonitorBar from '../../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import { BidHeaderMeta } from './BidHeaderMeta';
+import { BidStatusActions } from './BidStatusActions';
 
 export const BidPageHeader = ({
     bidType,
@@ -13,7 +14,7 @@ export const BidPageHeader = ({
     isDirty,
     openMode,
     onOpenOrg,
-    statusActions,
+    statusActionsProps,
 }) => (
     <div
         className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}
@@ -46,7 +47,7 @@ export const BidPageHeader = ({
                     onOpenOrg={onOpenOrg}
                 />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    {statusActions}
+                    <BidStatusActions {...statusActionsProps} />
                 </div>
             </div>
         </div>
