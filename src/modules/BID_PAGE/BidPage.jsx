@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
 	Affix,
 	Alert,
@@ -68,6 +68,7 @@ import {useBidSelects} from "./hooks/useBidSelects";
 import {areObjectsEqual, areArraysEqual} from "./utils/areEqual";
 import {useBidData} from "./hooks/useBidData";
 import {useQueryClient} from "@tanstack/react-query";
+import {useCalcModels} from "./hooks/useCalcModels";
 
 const { TextArea } = Input;
 
@@ -76,27 +77,14 @@ const BidPage = (props) => {
 	const { bidId } = useParams();
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
-	const [isLoadingSmall, setIsLoadingSmall] = useState(false);
-	const [isNeedCalcMoney, setIsNeedCalcMoney] = useState(false);
 	const [isAlertVisible, setIsAlertVisible] = useState(false);
 	const [draggedModelIndex, setDraggedModelIndex] = useState(null);
-    const [isSended1c, setIsSended1c] = useState(0);
-
-	const [lastUpdModel, setLastUpdModel] = useState(null);
-	const [isUpdateAll, setIsUpdateAll] = useState(false);
-	const [bidModelsVersion, setBidModelsVersion] = useState(0);
-	const bidModelsVersionRef = useRef(0);
-	const calcRequestIdRef = useRef(0);
-	const bidModelsRef = useRef([]);
-
+    const [isSend1c, setIsSend1c] = useState(0);
 	const [isOpenBaseInfo, setIsOpenBaseInfo] = useState(false);
-
 	const [userData, setUserData] = useState(null);
-
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertDescription, setAlertDescription] = useState('');
 	const [alertType, setAlertType] = useState('');
-
 	const [bidActions, setBidActions] = useState({
 		'create': null,
 		'update': null,
@@ -104,6 +92,12 @@ const BidPage = (props) => {
 	});
 	const [openMode, setOpenMode] = useState(null); // просмотр, редактирование
 
+    /* ШАПКА СТРАНИЦЫ */
+    const [bidType, setBidType] = useState(null);
+    const [bidIdCompany, setBidIdCompany] = useState(null);
+    const [bidOrg, setBidOrg] = useState({});
+    const [bidCurator, setBidCurator] = useState({});
+    const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
 
     const [form, setForm] = useState({
         baseInfo: {
@@ -138,16 +132,24 @@ const BidPage = (props) => {
         },
         models: [],
     });
+    const {
+        serverData,
+        isLoading,
+        saveBid,
+        isSaving,
+        isDirty
+    } = useBidData(bidId, form);
 
-    const { serverData, isLoading, saveBid, isSaving, isDirty } = useBidData(bidId, form);
-
-	/* ШАПКА СТРАНИЦЫ */
-	const [bidType, setBidType] = useState(null);
-	const [bidIdCompany, setBidIdCompany] = useState(null);
-	const [bidOrg, setBidOrg] = useState({});
-	const [bidCurator, setBidCurator] = useState({});
-	const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
-
+    const {
+        isCalculating,
+        amounts,
+        engineerParams,
+        calculate
+    } = useCalcModels(
+        form.models,
+        form.finance,
+        handleModelsUpdate,
+    );
 
 	/* ФАЙЛЫ */
 	const [bidFilesCount, setBidFilesCount] = useState(0);
@@ -157,23 +159,6 @@ const BidPage = (props) => {
 
     /* СЕЛЕКТЫ */
     const selects = useBidSelects(bidOrg?.id, form.baseInfo.orgUser);
-
-	/* МОДЕЛИ */
-	//const [bidModels, setBidModels] = useState([]);
-	const [amounts, setAmounts] = useState({
-		usd: 0,
-		eur: 0,
-		rub: 0,
-	});
-	const [engineerParameters, setEngineerParameters] = useState({
-		unit: 0,
-		box_size: 0,
-		power_consumption: 0,
-		max_power: 0,
-		rated_power_speaker: 0,
-		mass: 0,
-		size: 0,
-	});
 
 	/* СЕЛЕКТ ПО МОДЕЛЯМ */
 	const [modelsSelect, setModelsSelect] = useState([]);
@@ -228,7 +213,7 @@ const BidPage = (props) => {
 
 
     useEffect(() => {
-        fetchModels().then(() => setIsNeedCalcMoney(true));
+        fetchModels().then();
     }, []);
     useEffect(() => {
         if (form.baseInfo.object) {
@@ -251,12 +236,6 @@ const BidPage = (props) => {
 			setUserData(props.userdata);
 		}
 	}, [props.userdata]);
-	useEffect(() => {
-		bidModelsVersionRef.current = bidModelsVersion;
-	}, [bidModelsVersion]);
-	useEffect(() => {
-		bidModelsRef.current = form.models;
-	}, [form.models]);
     useEffect(() => {
 		if (userData && userData.user) {
             setIsOpenBaseInfo(userData.user.sales_role === 2 || userData.user.sales_role === 3);
@@ -297,20 +276,6 @@ const BidPage = (props) => {
 			};
 		}
 	}, [openMode]);
-	useEffect(() => {
-		if (isNeedCalcMoney) {
-			const timer = setTimeout(() => {
-				fetchCalcModels().then(() => {
-					//setIsNeedCalcMoney(false);
-                    isNeedCalcModelsTimerSetter(false);
-					setLastUpdModel(null);
-					setIsUpdateAll(false);
-				});
-			}, 700);
-
-			return () => clearTimeout(timer);
-		}
-	}, [isNeedCalcMoney]);
 	useEffect(() => {
 		if (isAlertVisible && alertType !== 'error') {
 			const timer = setTimeout(() => {
@@ -355,7 +320,7 @@ const BidPage = (props) => {
             setBidOrg(bid.base_info.org);
             setBidCurator(bid.base_info.curator);
             setBidProject(bid.base_info.project);
-            setIsSended1c(bid.bill?.send1c);
+            setIsSend1c(bid.bill?.send1c);
 
             setForm({
                 baseInfo: {
@@ -411,13 +376,11 @@ const BidPage = (props) => {
 			}
 		}
 	};
-	const fetchCalcModels = async () => {
+	/*const fetchCalcModels = async () => {
 		if (PRODMODE) {
 			const requestId = ++calcRequestIdRef.current;
-			const requestVersion = bidModelsVersionRef.current;
-			const requestModelsSnapshot = JSON.parse(JSON.stringify(bidModelsRef.current));
 			try {
-				setIsLoadingSmall(true);
+				//setIsLoadingSmall(true);
                 const bid_info = {
                     bidCurrency: form.finance.currency,
                     bidPriceStatus: form.finance.priceStatus,
@@ -427,15 +390,13 @@ const BidPage = (props) => {
                 const content = await calcModels(bid_info, form.models);
 				if (content) {
 					const isStaleRequest = calcRequestIdRef.current !== requestId;
-					const hasLocalChanges = bidModelsVersionRef.current !== requestVersion;
 					if (isStaleRequest) {
-						setTimeout(() => setIsLoadingSmall(false), 500);
+						//setTimeout(() => setIsLoadingSmall(false), 500);
 						return;
 					}
 					if (hasLocalChanges) {
 						if (content.models) {
 							const mergedModels = mergeCalculatedModels(
-								bidModelsRef.current,
 								content.models,
 								requestModelsSnapshot,
 							);
@@ -445,7 +406,7 @@ const BidPage = (props) => {
                                 models: mergedModels,
                             }));
 						}
-						setTimeout(() => setIsLoadingSmall(false), 500);
+						//setTimeout(() => setIsLoadingSmall(false), 500);
 						return;
 					}
 					if (content.models) {
@@ -455,20 +416,20 @@ const BidPage = (props) => {
                             models: content.models,
                         }));
                     }
-					if (content.amounts) setAmounts(content.amounts);
-					if (content.models_data) setEngineerParameters(content.models_data);
+					//if (content.amounts) setAmounts(content.amounts);
+					//if (content.models_data) setEngineerParameters(content.models_data);
 				}
-				setTimeout(() => setIsLoadingSmall(false), 500);
+				//setTimeout(() => setIsLoadingSmall(false), 500);
 			} catch (e) {
 				console.log(e);
 				setIsAlertVisible(true);
 				setAlertMessage(`Произошла ошибка!`);
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
-				setTimeout(() => setIsLoadingSmall(false), 500);
+				//setTimeout(() => setIsLoadingSmall(false), 500);
 			}
 		}
-	};
+	};*/
 	const fetchWordFile = async () => {
 		if (PRODMODE) {
 			try {
@@ -552,7 +513,7 @@ const BidPage = (props) => {
 					setAlertMessage('Успех!');
 					setAlertDescription(response.message);
 					setAlertType('success');
-					setIsSended1c(1);
+					setIsSend1c(1);
 				}
 				setTimeout(() => setIsLoading1c(false), 500);
 			} catch (e) {
@@ -586,7 +547,7 @@ const BidPage = (props) => {
     const handleSave = () => {
         saveBid(collectUpdates(), {
             onSuccess: () => {
-                setTimeout(() => fetchCalcModels().then(), 0);
+                setTimeout(() => calculate(form.models, form.finance).then(), 0);
             },
         });
     };
@@ -627,6 +588,9 @@ const BidPage = (props) => {
             bid_models: form.models,
         };
     };
+    const handleModelsUpdate = useCallback((newModels) => {
+        setForm(prev => ({ ...prev, models: newModels }));
+    }, []);
 
 	const prepareSelect = (select) => {
 	  if (select) {
@@ -740,18 +704,15 @@ const BidPage = (props) => {
           ...prev,
           models: bidModelsUpd,
       }));
-	  setBidModelsVersion(prev => prev + 1);
 	};
 	const handleDeleteModelFromBid = (bidModelId, bidModelSort, bidModelSelectId) => {
         const bidModelIdx = form.models.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
         const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
         bidModelsUpd.splice(bidModelIdx, 1);
-        //setBidModels(bidModelsUpd);
         setForm(prev => ({
             ...prev,
             models: bidModelsUpd,
         }));
-		setBidModelsVersion(prev => prev + 1);
         setModelsSelect(prev => {
             const index = prev.findIndex(model => model.id === bidModelSelectId);
             if (index === -1) return prev;
@@ -766,8 +727,6 @@ const BidPage = (props) => {
                 }
             });
         });
-	    //setIsNeedCalcMoney(true);
-        isNeedCalcModelsTimerSetter(true);
 	};
 	const handleChangeModel = (newId, oldId, oldSort) => {
 	  const newModel = modelsSelect.find(model => model.id === newId);
@@ -788,12 +747,10 @@ const BidPage = (props) => {
 	  };
 	  const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
 	  bidModelsUpd[oldModelIdx] = newModelObj;
-	  //setBidModels(bidModelsUpd);
       setForm(prev => ({
           ...prev,
           models: bidModelsUpd,
       }));
-	  setBidModelsVersion(prev => prev + 1);
       setModelsSelect(prev => {
           const index = prev.findIndex(model => model.id === newId);
           if (index === -1) return prev;
@@ -811,9 +768,6 @@ const BidPage = (props) => {
               }
           });
       });
-	  //setIsNeedCalcMoney(true);
-      isNeedCalcModelsTimerSetter(true);
-	  setLastUpdModel(newId);
 	};
 	const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
 	  const bidModelIdx = form.models.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
@@ -821,45 +775,31 @@ const BidPage = (props) => {
 	  switch (type) {
           case 'model_count':
 			  bidModelsUpd[bidModelIdx].model_count = value;
-			  //setBidModels(bidModelsUpd);
               setForm(prev => ({
                   ...prev,
                   models: bidModelsUpd,
               }));
-			  setBidModelsVersion(prev => prev + 1);
-			  //setIsNeedCalcMoney(true);
-              isNeedCalcModelsTimerSetter(true);
-			  setLastUpdModel(form.models.find(model => model.id === bidModelId).model_id);
 			  break;
           case 'percent':
 			  bidModelsUpd[bidModelIdx].percent = value;
-			  //setBidModels(bidModelsUpd);
               setForm(prev => ({
                   ...prev,
                   models: bidModelsUpd,
               }));
-			  setBidModelsVersion(prev => prev + 1);
-			  //setIsNeedCalcMoney(true);
-              isNeedCalcModelsTimerSetter(true);
-			  setLastUpdModel(form.models.find(model => model.id === bidModelId).model_id);
 			  break;
 		  case 'presence':
 			  bidModelsUpd[bidModelIdx].presence = value;
-			  //setBidModels(bidModelsUpd);
               setForm(prev => ({
                   ...prev,
                   models: bidModelsUpd,
               }));
-			  setBidModelsVersion(prev => prev + 1);
 			  break;
 		  case 'sklad':
 			  bidModelsUpd[bidModelIdx].sklad = value;
-			  //setBidModels(bidModelsUpd);
               setForm(prev => ({
                   ...prev,
                   models: bidModelsUpd,
               }));
-			  setBidModelsVersion(prev => prev + 1);
 			  break;
 	  }
 	};
@@ -884,7 +824,6 @@ const BidPage = (props) => {
                 sort: idx + 1,
             })),
         }));
-		setBidModelsVersion(prev => prev + 1);
 		setDraggedModelIndex(null);
 	};
 	const handleModelsRowDragEnd = () => {
@@ -947,8 +886,6 @@ const BidPage = (props) => {
             ...prev,
             models: arr,
         }));
-		setBidModelsVersion(prev => prev + 1);
-        isNeedCalcModelsTimerSetter(true);
         setIsParseModalOpen(false);
     };
 	const openCustomModal = (type, title, text, filling, buttons) => {
@@ -998,7 +935,7 @@ const BidPage = (props) => {
                             if (isManagerDone()) {
                                 setBidPlace(2);
                                 fetchBidPlace(2).then();
-                                setTimeout(() => fetchCalcModels().then(), 0);
+                                setTimeout(() => calculate(form.models, form.finance).then(), 0);
                             } else {
                                 setIsAlertVisible(true);
                                 setAlertMessage('Заполните поля!');
@@ -1038,7 +975,7 @@ const BidPage = (props) => {
                             if (isAdminDone()) {
                                 setBidPlace(3);
                                 fetchBidPlace(3).then();
-                                setTimeout(() => fetchCalcModels().then(), 0);
+                                setTimeout(() => calculate(form.models, form.finance).then(), 0);
                             } else {
                                 setIsAlertVisible(true);
                                 setAlertMessage('Заполните поля!');
@@ -1482,8 +1419,6 @@ const BidPage = (props) => {
                                     ...prev,
                                     finance: {...prev.finance, currency: val}
                                 }));
-                                isNeedCalcModelsTimerSetter(true);
-                                setIsUpdateAll(true);
                             }}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1501,8 +1436,6 @@ const BidPage = (props) => {
                                     ...prev,
                                     finance: {...prev.finance, priceStatus: val}
                                 }));
-                                isNeedCalcModelsTimerSetter(true);
-                                setIsUpdateAll(true);
                             }}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1520,8 +1453,6 @@ const BidPage = (props) => {
                                     ...prev,
                                     finance: {...prev.finance, percent: e.target.value }
                                 }));
-                                isNeedCalcModelsTimerSetter(true);
-                                setIsUpdateAll(true);
                             }}
 							onWheel={(e) => e.target.blur()}
 							disabled={isDisabledInputManager()}
@@ -1540,8 +1471,6 @@ const BidPage = (props) => {
                                     ...prev,
                                     finance: {...prev.finance, nds: val}
                                 }));
-                                isNeedCalcModelsTimerSetter(true);
-                                setIsUpdateAll(true);
                             }}
 							disabled={isDisabledInputManager()}
 						/>
@@ -1579,13 +1508,6 @@ const BidPage = (props) => {
 			}
 		}
 	};
-    const isNeedCalcModelsTimerSetter = (bool) => {
-        const timer = setTimeout(() => {
-            setIsNeedCalcMoney(bool);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    };
 	const sortedBidModels = React.useMemo(() => {
 		if (!form.models || form.models.length === 0) return [];
 		return [...form.models].sort((a, b) => +a.sort - +b.sort);
@@ -1864,16 +1786,16 @@ const BidPage = (props) => {
 								</Tooltip>
 							)}
 							{(+bidType === 2 && bidPlace === 3 && (userData?.user?.sales_role === 3 || userData?.user?.super === 1)) && (
-								<Tooltip title={isSended1c ? 'Уже было отправлено в 1С' : 'Отправить в 1С'} placement={'right'}>
+								<Tooltip title={isSend1c ? 'Уже было отправлено в 1С' : 'Отправить в 1С'} placement={'right'}>
 									<Badge count={bidFilesCount} color={'geekblue'}>
 										<Button
 											className={'sa-bid-page-btn'}
-											color={isSended1c ? "danger" : "primary"}
+											color={isSend1c ? "danger" : "primary"}
 											variant="outlined"
 											style={{fontSize: '20px', fontWeight: 'bold'}}
 											disabled={isLoading1c}
 											onClick={() => {
-												if (isSended1c) {
+												if (isSend1c) {
 													openCustomModal(
 														'1c',
 														'Отправить данные в 1С',
@@ -2151,14 +2073,14 @@ const BidPage = (props) => {
 													/>
 												</div>
 												<div className={'sa-models-table-cell'}>
-													{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
+													{(isCalculating) ? (
 														<LoadingOutlined/>
 													) : (
 														<p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
 													)}
 												</div>
 												<div className={'sa-models-table-cell'}>
-													{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
+													{(isCalculating) ? (
 														<LoadingOutlined/>
 													) : (
 														<p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
@@ -2257,14 +2179,14 @@ const BidPage = (props) => {
 													/>
 												</div>
 												<div className={'sa-models-table-cell'}>
-													{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
+													{(isCalculating) ? (
 														<LoadingOutlined/>
 													) : (
 														<p>{prepareAmount(+bidModel?.moneyOne, currencySymbol(bidModel))}</p>
 													)}
 												</div>
 												<div className={'sa-models-table-cell'}>
-													{(isLoadingSmall && +lastUpdModel === +bidModel.model_id) || isUpdateAll ? (
+													{(isCalculating) ? (
 														<LoadingOutlined/>
 													) : (
 														<p>{prepareAmount(+bidModel?.moneyCount, currencySymbol(bidModel))}</p>
@@ -2349,9 +2271,9 @@ const BidPage = (props) => {
 										<div className={'sa-footer-table-col'}>
 											<div className={'sa-footer-table-cell'}>
 												<p>Высота об-ния: </p>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>
-														<span>{prepareEngineerParameter(engineerParameters.unit)}</span> U
+														<span>{prepareEngineerParameter(engineerParams.unit)}</span> U
 													</p>
 												) : (
 													<LoadingOutlined/>
@@ -2359,9 +2281,9 @@ const BidPage = (props) => {
 											</div>
 											<div className={'sa-footer-table-cell'}>
 												<p>Высота шкафа: </p>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>
-														<span>{prepareEngineerParameter(engineerParameters.box_size)}</span> U
+														<span>{prepareEngineerParameter(engineerParams.box_size)}</span> U
 													</p>
 												) : (
 													<LoadingOutlined/>
@@ -2371,10 +2293,10 @@ const BidPage = (props) => {
 										<div className={'sa-footer-table-col'}>
 											<div className={'sa-footer-table-cell'}>
 												<p>Потр. мощ.: </p>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>
 														<span>
-															{prepareEngineerParameter(engineerParameters.power_consumption)}
+															{prepareEngineerParameter(engineerParams.power_consumption)}
 														</span>{' '}
 														кВт
 													</p>
@@ -2384,9 +2306,9 @@ const BidPage = (props) => {
 											</div>
 											<div className={'sa-footer-table-cell'}>
 												<p>Вых. мощность: </p>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>
-														<span>{prepareEngineerParameter(engineerParameters.max_power)}</span> Вт
+														<span>{prepareEngineerParameter(engineerParams.max_power)}</span> Вт
 													</p>
 												) : (
 													<LoadingOutlined/>
@@ -2396,10 +2318,10 @@ const BidPage = (props) => {
 										<div className={'sa-footer-table-col'}>
 											<div className={'sa-footer-table-cell'}>
 												<p>Мощность АС: </p>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>
 														<span>
-															{prepareEngineerParameter(engineerParameters.rated_power_speaker)}
+															{prepareEngineerParameter(engineerParams.rated_power_speaker)}
 														</span>{' '}
 														Вт
 													</p>
@@ -2409,9 +2331,9 @@ const BidPage = (props) => {
 											</div>
 											<div className={'sa-footer-table-cell'}>
 												<p>Масса: </p>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>
-														<span>{prepareEngineerParameter(engineerParameters.mass)}</span> кг
+														<span>{prepareEngineerParameter(engineerParams.mass)}</span> кг
 													</p>
 												) : (
 													<LoadingOutlined/>
@@ -2421,9 +2343,9 @@ const BidPage = (props) => {
 										<div className={'sa-footer-table-col'}>
 											<div className={'sa-footer-table-cell'}>
 												<p>Объем:</p>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>
-														<span>{prepareEngineerParameter(engineerParameters.size)}</span> m3
+														<span>{prepareEngineerParameter(engineerParams.size)}</span> m3
 													</p>
 												) : (
 													<LoadingOutlined/>
@@ -2445,21 +2367,21 @@ const BidPage = (props) => {
 										</div>
 										<div className={'sa-footer-amounts-col'}>
 											<div className={'sa-footer-amounts-cell cell-amount'}>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>{prepareAmount(amounts.usd)} $</p>
 												) : (
 													<LoadingOutlined />
 												)}
 											</div>
 											<div className={'sa-footer-amounts-cell cell-amount'}>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>{prepareAmount(amounts.eur)} €</p>
 												) : (
 													<LoadingOutlined />
 												)}
 											</div>
 											<div className={'sa-footer-amounts-cell cell-amount'}>
-												{!isLoadingSmall ? (
+												{!isCalculating ? (
 													<p>{prepareAmount(amounts.rub)} ₽</p>
 												) : (
 													<LoadingOutlined />
