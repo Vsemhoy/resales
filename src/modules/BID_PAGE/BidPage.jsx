@@ -517,7 +517,17 @@ const BidPage = (props) => {
                 },
                 bill:
                     +bidType === 2
-                        ? form.bill
+                        ? {
+                            consignee: form.bill.consignee,
+                            contact_email: form.bill.email,
+                            conveyance: form.bill.conveyance,
+                            fact_address: form.bill.factAddress,
+                            insurance: form.bill.insurance,
+                            org_phone: form.bill.phone,
+                            other_equipment: form.bill.otherEquipment,
+                            package: form.bill.package,
+                            requisite: form.bill.requisite,
+                        }
                         : null,
                 comments: {
                     engineer: form.comments.engineer,
