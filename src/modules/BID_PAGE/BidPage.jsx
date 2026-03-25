@@ -46,7 +46,6 @@ import { BidBillSection } from "./components/BidBillSection";
 import { BidFinanceSection } from "./components/BidFinanceSection";
 import { BidActionsToolbar } from "./components/BidActionsToolbar";
 import { BidPageHeader } from "./components/BidPageHeader";
-import { BidStatusActions } from "./components/BidStatusActions";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -1269,25 +1268,23 @@ const BidPage = (props) => {
                                 isDirty={isDirty}
                                 openMode={openMode}
                                 onOpenOrg={() => window.open(`${BASE_ROUTE}/orgs/${bidOrg.id}`, '_blank')}
-                                statusActions={(
-                                    <BidStatusActions
-                                        bidType={bidType}
-                                        bidPlace={bidPlace}
-                                        openModeStatus={openMode?.status}
-                                        isDirty={isDirty}
-                                        isSaving={isSaving}
-                                        isDisabledInput={isDisabledInput()}
-                                        isLoadingChangePlaceBtn={isLoadingChangePlaceBtn}
-                                        onSave={handleSave}
-                                        onToAdmin={handleToAdminClick}
-                                        onBackManager={handleBackManagerClick}
-                                        onBackManagerWithSelect={handleBackManagerWithSelect}
-                                        onToBuh={handleToBuhClick}
-                                        onBackAdminWithSelect={handleBackAdminWithSelect}
-                                        onDone={handleDoneClick}
-                                        onBackBuh={handleBackBuhClick}
-                                    />
-                                )}
+                                statusActionsProps={{
+                                    bidType,
+                                    bidPlace,
+                                    openModeStatus: openMode?.status,
+                                    isDirty,
+                                    isSaving,
+                                    isDisabledInput: isDisabledInput(),
+                                    isLoadingChangePlaceBtn,
+                                    onSave: handleSave,
+                                    onToAdmin: handleToAdminClick,
+                                    onBackManager: handleBackManagerClick,
+                                    onBackManagerWithSelect: handleBackManagerWithSelect,
+                                    onToBuh: handleToBuhClick,
+                                    onBackAdminWithSelect: handleBackAdminWithSelect,
+                                    onDone: handleDoneClick,
+                                    onBackBuh: handleBackBuhClick,
+                                }}
                             />
 						</div>
 					</Affix>
