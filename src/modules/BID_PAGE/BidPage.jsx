@@ -140,6 +140,9 @@ const BidPage = (props) => {
         isDirty
     } = useBidData(bidId, form);
 
+    const handleModelsUpdate = useCallback((newModels) => {
+        setForm(prev => ({ ...prev, models: newModels }));
+    }, []);
     const {
         isCalculating,
         amounts,
@@ -588,9 +591,6 @@ const BidPage = (props) => {
             bid_models: form.models,
         };
     };
-    const handleModelsUpdate = useCallback((newModels) => {
-        setForm(prev => ({ ...prev, models: newModels }));
-    }, []);
 
 	const prepareSelect = (select) => {
 	  if (select) {
