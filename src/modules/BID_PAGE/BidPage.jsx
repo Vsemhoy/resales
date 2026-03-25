@@ -20,9 +20,7 @@ import './components/style/bidPage.css';
 import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT_INFO, SELECTS} from './mock/mock';
 import MODELS from './mock/mock_models';
 import {
-	ArrowLeftOutlined,
-	ArrowRightOutlined,
-	BlockOutlined, CheckCircleOutlined, CheckOutlined,
+	BlockOutlined, CheckOutlined,
 	CopyOutlined,
 	DeleteOutlined,
 	DownloadOutlined,
@@ -31,7 +29,6 @@ import {
 	LoadingOutlined,
 	MinusOutlined,
 	PlusOutlined,
-	SaveOutlined,
 } from '@ant-design/icons';
 import NameSelect from './components/NameSelect';
 import ModelInput from './components/ModelInput';
@@ -49,6 +46,7 @@ import { BidBillSection } from "./components/BidBillSection";
 import { BidFinanceSection } from "./components/BidFinanceSection";
 import { BidActionsToolbar } from "./components/BidActionsToolbar";
 import { BidPageHeader } from "./components/BidPageHeader";
+import { BidStatusActions } from "./components/BidStatusActions";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -603,6 +601,76 @@ const BidPage = (props) => {
                 setIsLoadingChangePlaceBtn('');
             }
         }
+    };
+    const handleBackManagerClick = () => {
+        setIsLoadingChangePlaceBtn('backManager');
+        openCustomModal(
+            'backManager',
+            'Вернуть менеджеру',
+            'У Вас есть несохраненные изменения! Подтвердите сохранение перед тем как вернуть менеджеру.',
+            [],
+            baseButtons
+        );
+    };
+    const handleBackManagerWithSelect = () => {
+        openCustomModal(
+            'backManagerWithSelect',
+            'Вернуть менеджеру',
+            'Укажите причину возврата менеджеру.',
+            [<Select key="return-reason-select"
+                     style={{width:'100%'}}
+                     placeholder={'Причина возврата заявки'}
+                     options={prepareSelect(selects.reasons)}
+            />],
+            returnButtons
+        );
+    };
+    const handleToBuhClick = () => {
+        setIsLoadingChangePlaceBtn('toBuh');
+        if (isDirty) {
+            openCustomModal(
+                'toBuh',
+                'Передать бухгалтеру',
+                'У Вас есть несохраненные изменения! Подтвердите сохранение перед передачей бухгалтеру.',
+                [],
+                baseButtons
+            );
+        } else {
+            if (isAdminDone()) {
+                setBidPlace(3);
+                fetchBidPlace(3).then();
+            } else {
+                setIsAlertVisible(true);
+                setAlertMessage('Заполните поля!');
+                setAlertDescription('Количество моделей должно быть равно количеству на складе');
+                setAlertType('warning');
+                setIsLoadingChangePlaceBtn('');
+            }
+        }
+    };
+    const handleBackAdminWithSelect = () => {
+        setIsLoadingChangePlaceBtn('backAdmin');
+        openCustomModal(
+            'backAdminWithSelect',
+            'Вернуть администратору',
+            'Укажите причину возврата администратору.',
+            [<Select key="return-reason-select"
+                     style={{width:'100%'}}
+                     placeholder={'Причина возврата заявки'}
+                     options={prepareSelect(selects.reasons)}
+            />],
+            returnButtons
+        );
+    };
+    const handleDoneClick = () => {
+        setIsLoadingChangePlaceBtn('done');
+        setBidPlace(4);
+        fetchBidPlace(4).then();
+    };
+    const handleBackBuhClick = () => {
+        setIsLoadingChangePlaceBtn('backBuh');
+        setBidPlace(3);
+        fetchBidPlace(3).then();
     };
 	const prepareEngineerParameter = (engineerParameter) => {
 	  const rounded = (+engineerParameter).toFixed(2);
@@ -1202,149 +1270,23 @@ const BidPage = (props) => {
                                 openMode={openMode}
                                 onOpenOrg={() => window.open(`${BASE_ROUTE}/orgs/${bidOrg.id}`, '_blank')}
                                 statusActions={(
-                                    <>
-                                        {+bidType === 2 && +bidPlace === 1 && (
-                                            <Space.Compact>
-                                                <Button
-                                                    className={'sa-select-custom-admin'}
-                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toAdmin')}
-                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toAdmin'}
-                                                    onClick={handleToAdminClick}
-                                                >
-                                                    Передать администратору <ArrowRightOutlined />
-                                                </Button>
-                                            </Space.Compact>
-                                        )}
-                                        {+bidType === 2 && +bidPlace === 2 && (
-                                            <Space.Compact>
-                                                <Button
-                                                    className={'sa-select-custom-manager'}
-                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backManager')}
-                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backManager'}
-                                                    onClick={() => {
-                                                        setIsLoadingChangePlaceBtn('backManager');
-                                                        if (isDirty) {
-                                                            openCustomModal(
-                                                                'backManager',
-                                                                'Вернуть менеджеру',
-                                                                'У Вас есть несохраненные изменения! Подтвердите сохранение перед тем как вернуть менеджеру.',
-                                                                [],
-                                                                baseButtons
-                                                            );
-                                                        } else {
-                                                            openCustomModal(
-                                                                'backManagerWithSelect',
-                                                                'Вернуть менеджеру',
-                                                                'Укажите причину возврата менеджеру.',
-                                                                [<Select key="return-reason-select"
-                                                                             style={{width:'100%'}}
-                                                                             placeholder={'Причина возврата заявки'}
-                                                                             options={prepareSelect(selects.reasons)}
-                                                                />],
-                                                                returnButtons
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    <ArrowLeftOutlined /> Вернуть менеджеру
-                                                </Button>
-                                                <Button
-                                                    className={'sa-select-custom-bugh'}
-                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'toBuh')}
-                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'toBuh'}
-                                                    onClick={() => {
-                                                        setIsLoadingChangePlaceBtn('toBuh');
-                                                        if (isDirty) {
-                                                            openCustomModal(
-                                                                'toBuh',
-                                                                'Передать бухгалтеру',
-                                                                'У Вас есть несохраненные изменения! Подтвердите сохранение перед передачей бухгалтеру.',
-                                                                [],
-                                                                baseButtons
-                                                            );
-                                                        } else {
-                                                            if (isAdminDone()) {
-                                                                setBidPlace(3);
-                                                                fetchBidPlace(3).then();
-                                                            } else {
-                                                                setIsAlertVisible(true);
-                                                                setAlertMessage('Заполните поля!');
-                                                                setAlertDescription('Количество моделей должно быть равно количеству на складе');
-                                                                setAlertType('warning');
-                                                                setIsLoadingChangePlaceBtn('');
-                                                            }
-                                                        }
-                                                    }}
-                                                >
-                                                    Передать бухгалтеру <ArrowRightOutlined />
-                                                </Button>
-                                            </Space.Compact>
-                                        )}
-                                        {+bidType === 2 && +bidPlace === 3 && (
-                                            <Space.Compact>
-                                                <Button
-                                                    className={'sa-select-custom-admin'}
-                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backAdmin')}
-                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backAdmin'}
-                                                    onClick={() => {
-                                                        setIsLoadingChangePlaceBtn('backAdmin');
-                                                        openCustomModal(
-                                                            'backAdminWithSelect',
-                                                            'Вернуть администратору',
-                                                            'Укажите причину возврата администратору.',
-                                                            [<Select key="return-reason-select"
-                                                                     style={{width:'100%'}}
-                                                                     placeholder={'Причина возврата заявки'}
-                                                                     options={prepareSelect(selects.reasons)}
-                                                            />],
-                                                            returnButtons
-                                                        );
-                                                    }}
-                                                >
-                                                    <ArrowLeftOutlined /> Вернуть администратору
-                                                </Button>
-                                                <Button
-                                                    className={'sa-select-custom-end'}
-                                                    disabled={isDisabledInput() || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'done')}
-                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'done'}
-                                                    onClick={() => {
-                                                        setIsLoadingChangePlaceBtn('done');
-                                                        setBidPlace(4);
-                                                        fetchBidPlace(4).then();
-                                                    }}
-                                                >
-                                                    Завершить счет <CheckCircleOutlined />
-                                                </Button>
-                                            </Space.Compact>
-                                        )}
-                                        {+bidType === 2 && +bidPlace === 4 && (
-                                            <Space.Compact>
-                                                <Button
-                                                    className={'sa-select-custom-bugh'}
-                                                    disabled={openMode?.status !== 5 || (isLoadingChangePlaceBtn && isLoadingChangePlaceBtn !== 'backBuh')}
-                                                    loading={isLoadingChangePlaceBtn && isLoadingChangePlaceBtn === 'backBuh'}
-                                                    onClick={() => {
-                                                        setIsLoadingChangePlaceBtn('backBuh');
-                                                        setBidPlace(3);
-                                                        fetchBidPlace(3).then();
-                                                    }}
-                                                >
-                                                    <ArrowLeftOutlined /> Вернуть бухгалтеру
-                                                </Button>
-                                            </Space.Compact>
-                                        )}
-
-                                        <Button
-                                            type={'primary'}
-                                            style={{ width: '150px' }}
-                                            icon={<SaveOutlined />}
-                                            loading={isSaving}
-                                            onClick={() => handleSave()}
-                                            disabled={isDisabledInput()} /* || openMode?.status === 4 */
-                                        >
-                                            {isSaving ? 'Сохраняем...' : 'Сохранить'}
-                                        </Button>
-                                    </>
+                                    <BidStatusActions
+                                        bidType={bidType}
+                                        bidPlace={bidPlace}
+                                        openModeStatus={openMode?.status}
+                                        isDirty={isDirty}
+                                        isSaving={isSaving}
+                                        isDisabledInput={isDisabledInput()}
+                                        isLoadingChangePlaceBtn={isLoadingChangePlaceBtn}
+                                        onSave={handleSave}
+                                        onToAdmin={handleToAdminClick}
+                                        onBackManager={handleBackManagerClick}
+                                        onBackManagerWithSelect={handleBackManagerWithSelect}
+                                        onToBuh={handleToBuhClick}
+                                        onBackAdminWithSelect={handleBackAdminWithSelect}
+                                        onDone={handleDoneClick}
+                                        onBackBuh={handleBackBuhClick}
+                                    />
                                 )}
                             />
 						</div>
