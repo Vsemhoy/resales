@@ -18,6 +18,7 @@ export const useCalcModels = (models, finance, onModelsUpdate) => {
     const calcRequestIdRef     = useRef(0);
     const latestModelsRef      = useRef(models);
     const latestModelsVersion  = useRef(0);
+    const lastAppliedSignatureRef = useRef(null);
 
     // всегда актуальная ссылка на models
     useEffect(() => {
@@ -82,10 +83,17 @@ export const useCalcModels = (models, finance, onModelsUpdate) => {
     useEffect(() => {
         if (!debouncedModels?.length) return;
 
+        const makeSignature = (modelsVal, financeVal) =>
+            JSON.stringify({ models: modelsVal, finance: financeVal });
+
+        const currentSignature = makeSignature(debouncedModels, debouncedFinance);
+        if (currentSignature === lastAppliedSignatureRef.current) return;
+
         calculate(debouncedModels, debouncedFinance).then(result => {
             if (result?.mergedModels) {
                 const isSame = JSON.stringify(result.mergedModels) === JSON.stringify(debouncedModels);
                 if (!isSame) {
+                    lastAppliedSignatureRef.current = makeSignature(result.mergedModels, debouncedFinance);
                     onModelsUpdate(result.mergedModels);
                 }
             }
