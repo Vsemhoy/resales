@@ -84,8 +84,10 @@ export const useCalcModels = (models, finance, onModelsUpdate) => {
 
         calculate(debouncedModels, debouncedFinance).then(result => {
             if (result?.mergedModels) {
-                // возвращаем обновлённые модели наружу
-                onModelsUpdate?.(result.mergedModels);
+                const isSame = JSON.stringify(result.mergedModels) === JSON.stringify(debouncedModels);
+                if (!isSame) {
+                    onModelsUpdate(result.mergedModels);
+                }
             }
         });
     }, [debouncedModels, debouncedFinance]);
