@@ -550,7 +550,6 @@ const BidPage = (props) => {
     const handleSave = () => {
         saveBid(collectUpdates(), {
             onSuccess: () => {
-                setTimeout(() => calculate(form.models, form.finance).then(), 0);
             },
         });
     };
@@ -935,7 +934,6 @@ const BidPage = (props) => {
                             if (isManagerDone()) {
                                 setBidPlace(2);
                                 fetchBidPlace(2).then();
-                                setTimeout(() => calculate(form.models, form.finance).then(), 0);
                             } else {
                                 setIsAlertVisible(true);
                                 setAlertMessage('Заполните поля!');
@@ -975,7 +973,6 @@ const BidPage = (props) => {
                             if (isAdminDone()) {
                                 setBidPlace(3);
                                 fetchBidPlace(3).then();
-                                setTimeout(() => calculate(form.models, form.finance).then(), 0);
                             } else {
                                 setIsAlertVisible(true);
                                 setAlertMessage('Заполните поля!');
