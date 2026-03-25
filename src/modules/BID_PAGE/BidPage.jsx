@@ -26,14 +26,9 @@ import {
 	BlockOutlined, CheckCircleOutlined, CheckOutlined,
 	CopyOutlined,
 	DeleteOutlined,
-	DollarOutlined,
 	DownloadOutlined,
-	FilePdfOutlined,
 	FileSearchOutlined,
-	FileWordOutlined,
-	HistoryOutlined,
 	InfoCircleOutlined,
-	LayoutOutlined,
 	LoadingOutlined,
 	MinusOutlined,
 	PlusOutlined,
@@ -53,6 +48,7 @@ import { BidCommentsSection } from "./components/BidCommentsSection";
 import { BidBaseInfoSection } from "./components/BidBaseInfoSection";
 import { BidBillSection } from "./components/BidBillSection";
 import { BidFinanceSection } from "./components/BidFinanceSection";
+import { BidActionsToolbar } from "./components/BidActionsToolbar";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -1392,175 +1388,28 @@ const BidPage = (props) => {
 					</Affix>
 					<div className={isOpenBaseInfo ?  'sa-bid-page-info-container' : 'sa-bid-page-info-container-closed'}>
 
-						<div className={'sa-bid-page-btns-wrapper'}>
-                            <Tooltip title={'Основная информация'} placement={'right'}>
-                                <Button
-                                    className={'sa-bid-page-btn'}
-                                    color="primary"
-                                    variant={isOpenBaseInfo ? "solid" : "outlined"}
-                                    icon={<LayoutOutlined className={'sa-bid-page-btn-icon'}/>}
-                                    onClick={() => {
-                                        setIsOpenBaseInfo(!isOpenBaseInfo);
-                                    }}
-                                ></Button>
-                            </Tooltip>
-							{+bidType === 1 && (
-								<Tooltip title={'Сохранить в WORD'} placement={'right'}>
-									<Button
-										className={'sa-bid-page-btn'}
-										color="primary"
-										variant="outlined"
-										icon={<FileWordOutlined className={'sa-bid-page-btn-icon'}/>}
-										onClick={() => {
-                                            if (isDirty) {
-                                                openCustomModal(
-                                                    'word',
-                                                    'Создание Word документа',
-                                                    'У Вас есть несохраненные изменения! Подтвердите сохранение перед созданием документа.',
-                                                    [],
-                                                    baseButtons
-                                                );
-                                            } else {
-                                                fetchWordFile().then();
-                                            }
-                                        }}
-									></Button>
-								</Tooltip>
-							)}
-							{(+bidType === 2 && bidPlace === 3 && (userData?.user?.sales_role === 3 || userData?.user?.super === 1)) && (
-								<Tooltip title={isSend1c ? 'Уже было отправлено в 1С' : 'Отправить в 1С'} placement={'right'}>
-									<Badge count={bidFilesCount} color={'geekblue'}>
-										<Button
-											className={'sa-bid-page-btn'}
-											color={isSend1c ? "danger" : "primary"}
-											variant="outlined"
-											style={{fontSize: '20px', fontWeight: 'bold'}}
-											disabled={isLoading1c}
-											onClick={() => {
-												if (isSend1c) {
-													openCustomModal(
-														'1c',
-														'Отправить данные в 1С',
-														'Данные уже были отправлены в 1С! Подтвердите повторную отправку данных.',
-														[],
-														buttons1C
-													);
-												} else {
-													fetchSend1c().then();
-												}
-											}}
-										>1С</Button>
-									</Badge>
-								</Tooltip>
-							)}
-
-							<Tooltip title={'Сохранить в PDF'} placement={'right'}>
-								<Button
-									className={'sa-bid-page-btn'}
-									color="primary"
-									variant="outlined"
-									icon={<FilePdfOutlined className={'sa-bid-page-btn-icon'}/>}
-									onClick={() => {
-										if (isDirty) {
-											openCustomModal(
-												'pdf',
-												'Переход в интерфейс создания PDF-документа',
-												'У Вас есть несохраненные изменения! Подтвердите сохранение перед сменой интерфейса.',
-												[],
-												baseButtons
-											);
-										} else {
-											navigate(`/bidsPDF/${bidId}`);
-										}
-									}}
-								></Button>
-							</Tooltip>
-							{+bidType === 1 && (
-								<Tooltip title={'Файлы'} placement={'right'}>
-									<Badge count={bidFilesCount} color={'geekblue'}>
-										<Button
-											className={'sa-bid-page-btn'}
-											color="primary"
-											variant="outlined"
-											icon={<DownloadOutlined className={'sa-bid-page-btn-icon'}/>}
-											onClick={() => setIsBidFilesDrawerOpen(true)}
-										></Button>
-									</Badge>
-								</Tooltip>
-							)}
-							{+bidType === 2 && (
-								<Tooltip title={'Счета'} placement={'right'}>
-									<Badge count={bidFilesCount} color={'geekblue'}>
-										<Button
-											className={'sa-bid-page-btn'}
-											color="primary"
-											variant="outlined"
-											icon={<DownloadOutlined className={'sa-bid-page-btn-icon'}/>}
-											onClick={() => setIsBidFilesDrawerOpen(true)}
-										></Button>
-									</Badge>
-								</Tooltip>
-							)}
-							<div className={'divider'}></div>
-							<Tooltip title={'История'} placement={'right'}>
-								<Button
-									className={'sa-bid-page-btn'}
-									color="primary"
-									variant="outlined"
-									icon={<HistoryOutlined className={'sa-bid-page-btn-icon'}/>}
-									onClick={() => setIsBidHistoryDrawerOpen(true)}
-								></Button>
-							</Tooltip>
-							{(userData?.user?.sales_role === 1 || userData?.user?.super === 1) && (
-								<div className={'divider'}></div>
-							)}
-							{(userData?.user?.sales_role === 1 || userData?.user?.super === 1) && (
-								<Tooltip title={'Дублировать'} placement={'right'}>
-									<Button
-										className={'sa-bid-page-btn'}
-										color="primary"
-										variant="outlined"
-										icon={<CopyOutlined className={'sa-bid-page-btn-icon'}/>}
-										onClick={() => {
-                                            if (isDirty) {
-                                                openCustomModal(
-                                                    'duplicate',
-                                                    'Создание дубликата',
-                                                    'У Вас есть несохраненные изменения! Подтвердите сохранение перед созданием дубликата.',
-                                                    [],
-                                                    baseButtons
-                                                );
-                                            } else {
-                                                setIsBidDuplicateDrawerOpen(true);
-                                            }
-                                        }}
-									></Button>
-								</Tooltip>
-							)}
-							{+bidType === 1 && (
-								<Tooltip title={'Создать счет'} placement={'right'}>
-									<Button
-										className={'sa-bid-page-btn'}
-										color="primary"
-										variant="outlined"
-										icon={<DollarOutlined className={'sa-bid-page-btn-icon'}/>}
-										onClick={() => {
-											if (isDirty) {
-												openCustomModal(
-													'bill',
-													'Создание счета на базе КП',
-													'У Вас есть несохраненные изменения! Подтвердите сохранение перед созданием нового счета.',
-													[],
-													baseButtons
-												);
-											} else {
-												fetchNewBid().then();
-											}
-										}}
-									></Button>
-								</Tooltip>
-							)}
-						</div>
+                        <BidActionsToolbar
+                            bidType={bidType}
+                            bidPlace={bidPlace}
+                            isDirty={isDirty}
+                            isSend1c={isSend1c}
+                            isLoading1c={isLoading1c}
+                            filesCount={bidFilesCount}
+                            isOpenBaseInfo={isOpenBaseInfo}
+                            onToggleBaseInfo={() => setIsOpenBaseInfo(!isOpenBaseInfo)}
+                            onOpenFiles={() => setIsBidFilesDrawerOpen(true)}
+                            onOpenHistory={() => setIsBidHistoryDrawerOpen(true)}
+                            onOpenDuplicate={() => setIsBidDuplicateDrawerOpen(true)}
+                            onFetchWordFile={() => fetchWordFile().then()}
+                            onNavigatePdf={() => navigate(`/bidsPDF/${bidId}`)}
+                            onFetchSend1c={() => fetchSend1c().then()}
+                            onFetchNewBid={() => fetchNewBid().then()}
+                            openCustomModal={openCustomModal}
+                            baseButtons={baseButtons}
+                            buttons1C={buttons1C}
+                            userRole={userData?.user?.sales_role}
+                            isSuper={userData?.user?.super}
+                        />
 
 						<div className={'sa-bid-page-info-wrapper'}>
 							<div className={'sa-info-models-header'}>Основные данные</div>
