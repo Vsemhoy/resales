@@ -2115,7 +2115,9 @@ const BidPage = (props) => {
 												onDrop={() => handleModelsRowDrop(idx)}
 												onDragEnd={handleModelsRowDragEnd}
 											>
-												<div className={'sa-models-table-cell'}>
+												<div className={'sa-models-table-cell'}
+													style={{cursor: 'grab'}}
+												>
 													<p>{idx + 1}</p>
 												</div>
 												<div className={'sa-models-table-cell align-left'}>
@@ -2214,7 +2216,9 @@ const BidPage = (props) => {
 												onDrop={() => handleModelsRowDrop(idx)}
 												onDragEnd={handleModelsRowDragEnd}
 											>
-												<div className={'sa-models-table-cell'}>
+												<div className={'sa-models-table-cell'}
+													style={{cursor: 'grab'}}
+												>
 													<p>{idx + 1}</p>
 												</div>
 												<div className={'sa-models-table-cell align-left'}>
