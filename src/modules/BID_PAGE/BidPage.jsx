@@ -496,6 +496,16 @@ const BidPage = (props) => {
     const handleSave = () => {
         saveBid(collectUpdates(), {
             onSuccess: () => {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Сохранено',
+                });
+            },
+            onError: (e) => {
+                messageApi.open({
+                    type: 'error',
+                    content: `Произошла ошибка! ${e?.response?.data?.message || e?.message || 'Неизвестная ошибка'}`,
+                });
             },
         });
     };
