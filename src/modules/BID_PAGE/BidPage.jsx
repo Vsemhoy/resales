@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
 	Affix,
-	Alert,
 	Badge,
 	Button,
 	Collapse,
@@ -68,13 +67,9 @@ const BidPage = (props) => {
 	const { bidId } = useParams();
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
-	const [isAlertVisible, setIsAlertVisible] = useState(false);
-    const [isSend1c, setIsSend1c] = useState(0);
+	const [isSend1c, setIsSend1c] = useState(0);
 	const [isOpenBaseInfo, setIsOpenBaseInfo] = useState(false);
 	const [userData, setUserData] = useState(null);
-	const [alertMessage, setAlertMessage] = useState('');
-	const [alertDescription, setAlertDescription] = useState('');
-	const [alertType, setAlertType] = useState('');
 	const [bidActions, setBidActions] = useState({
 		'create': null,
 		'update': null,
@@ -293,15 +288,6 @@ const BidPage = (props) => {
 			};
 		}
 	}, [openMode]);
-	useEffect(() => {
-		if (isAlertVisible && alertType !== 'error') {
-			const timer = setTimeout(() => {
-				setIsAlertVisible(false);
-			}, 3000);
-
-			return () => clearTimeout(timer);
-		}
-	}, [isAlertVisible]);
     useEffect(() => {
         if (form.models && form.models.length > 0 && modelsSelect && modelsSelect.length > 0) {
             setModelsSelect(prev => {
@@ -386,10 +372,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
+				messageApi.open({
+					type: 'error',
+					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+				});
 			}
 		}
 	};
@@ -411,10 +397,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
+				messageApi.open({
+					type: 'error',
+					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+				});
 			}
 		}
 	};
@@ -432,10 +418,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
+				messageApi.open({
+					type: 'error',
+					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+				});
 			}
 		}
 	};
@@ -452,17 +438,17 @@ const BidPage = (props) => {
 				if (response) {
                     queryClient.invalidateQueries({ queryKey: ['bid', bidId] });
 
-					setIsAlertVisible(true);
-					setAlertMessage('Успех!');
-					setAlertDescription(response.message.message);
-					setAlertType('success');
+					messageApi.open({
+						type: 'success',
+						content: response.message.message,
+					});
 				}
 			} catch (e) {
 				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
+				messageApi.open({
+					type: 'error',
+					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+				});
 			}
 		}
 	};
@@ -472,19 +458,19 @@ const BidPage = (props) => {
 				setIsLoading1c(true);
                 const response = await toSent1C(bidId);
 				if (response) {
-					setIsAlertVisible(true);
-					setAlertMessage('Успех!');
-					setAlertDescription(response.message);
-					setAlertType('success');
+					messageApi.open({
+						type: 'success',
+						content: response.message,
+					});
 					setIsSend1c(1);
 				}
 				setTimeout(() => setIsLoading1c(false), 500);
 			} catch (e) {
 				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
+				messageApi.open({
+					type: 'error',
+					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+				});
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
 		}
@@ -498,10 +484,10 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				setIsAlertVisible(true);
-				setAlertMessage(`Произошла ошибка!`);
-				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-				setAlertType('error');
+				messageApi.open({
+					type: 'error',
+					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+				});
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
 		}
@@ -610,10 +596,10 @@ const BidPage = (props) => {
                 setBidPlace(2);
                 fetchBidPlace(2).then();
             } else {
-                setIsAlertVisible(true);
-                setAlertMessage('Заполните поля!');
-                setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
-                setAlertType('warning');
+                messageApi.open({
+                    type: 'warning',
+                    content: 'Заполните поля! Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"',
+                });
                 setIsLoadingChangePlaceBtn('');
             }
         }
@@ -656,10 +642,10 @@ const BidPage = (props) => {
                 setBidPlace(3);
                 fetchBidPlace(3).then();
             } else {
-                setIsAlertVisible(true);
-                setAlertMessage('Заполните поля!');
-                setAlertDescription('Количество моделей должно быть равно количеству на складе');
-                setAlertType('warning');
+                messageApi.open({
+                    type: 'warning',
+                    content: 'Заполните поля! Количество моделей должно быть равно количеству на складе',
+                });
                 setIsLoadingChangePlaceBtn('');
             }
         }
@@ -760,10 +746,10 @@ const BidPage = (props) => {
                                 setBidPlace(2);
                                 fetchBidPlace(2).then();
                             } else {
-                                setIsAlertVisible(true);
-                                setAlertMessage('Заполните поля!');
-                                setAlertDescription('Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
-                                setAlertType('warning');
+                                messageApi.open({
+                                    type: 'warning',
+                                    content: 'Заполните поля! Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"',
+                                });
                             }
                         }
                     });
@@ -799,10 +785,10 @@ const BidPage = (props) => {
                                 setBidPlace(3);
                                 fetchBidPlace(3).then();
                             } else {
-                                setIsAlertVisible(true);
-                                setAlertMessage('Заполните поля!');
-                                setAlertDescription('Количество моделей должно быть равно количеству на складе');
-                                setAlertType('warning');
+                                messageApi.open({
+                                    type: 'warning',
+                                    content: 'Заполните поля! Количество моделей должно быть равно количеству на складе',
+                                });
                             }
                         }
                     });
@@ -1201,11 +1187,11 @@ const BidPage = (props) => {
                              bid_models={form.models}
                              protection_project={form.baseInfo.protectionProject}
                              error_alert={(path, e) => {
-                                 setIsAlertVisible(true);
-                                 setAlertMessage(`Произошла ошибка! ${path}`);
-                                 setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-                                 setAlertType('error');
-                             }}
+                                 messageApi.open({
+                                     type: 'error',
+                                     content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+                                 });
+                              }}
                 />
             </Modal>
 			<ModelInfoExtraDrawer model_id={modelIdExtra}
@@ -1216,34 +1202,34 @@ const BidPage = (props) => {
 								  closeDrawer={() => setIsBidDuplicateDrawerOpen(false)}
 								  bidId={bidId}
 								  bidType={bidType}
-								  error_alert={(path, e) => {
-									  setIsAlertVisible(true);
-									  setAlertMessage(`Произошла ошибка! ${path}`);
-									  setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-									  setAlertType('error');
-								  }}
+                                  error_alert={(path, e) => {
+                                      messageApi.open({
+                                          type: 'error',
+                                          content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+                                      });
+                                  }}
 			/>
 			<BidHistoryDrawer isOpenDrawer={isBidHistoryDrawerOpen}
 							  closeDrawer={() => setIsBidHistoryDrawerOpen(false)}
 							  bidId={bidId}
 							  bidActions={bidActions}
-							  error_alert={(path, e) => {
-								  setIsAlertVisible(true);
-								  setAlertMessage(`Произошла ошибка! ${path}`);
-								  setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-								  setAlertType('error');
-							  }}
+                              error_alert={(path, e) => {
+                                  messageApi.open({
+                                      type: 'error',
+                                      content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+                                  });
+                              }}
 			/>
 			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
 							closeDrawer={() => setIsBidFilesDrawerOpen(false)}
 							bidId={bidId}
                             bidType={bidType}
-							error_alert={(path, e) => {
-								setIsAlertVisible(true);
-								setAlertMessage(`Произошла ошибка! ${path}`);
-								setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
-								setAlertType('error');
-							}}
+                            error_alert={(path, e) => {
+                                messageApi.open({
+                                    type: 'error',
+                                    content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
+                                });
+                            }}
 			/>
 			<CustomModal
 				customClick={customClick}
@@ -1254,23 +1240,6 @@ const BidPage = (props) => {
 				customButtons={customModalButtons}
 				open={isOpenCustomModal}
 			/>
-			{isAlertVisible && (
-				<Alert
-					message={alertMessage}
-					description={alertDescription}
-					type={alertType}
-					showIcon
-					closable
-					style={{
-						position: 'fixed',
-						bottom: 40,
-						right: 20,
-						zIndex: 9999,
-						width: 350,
-					}}
-					onClose={() => setIsAlertVisible(false)}
-				/>
-			)}
 		</div>
 	);
 };
