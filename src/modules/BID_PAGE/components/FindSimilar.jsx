@@ -486,7 +486,7 @@ const FindSimilar = (props) => {
                     {bid.org_name}
                     <a
                         style={{ fontSize: "12px", marginLeft: "10px" }}
-                        href={`/resales/bids/${bid.id}`}
+                        href={`/bids/${bid.id}`}
                     >
                         {"  ID " + bid.id}
                     </a>{" "}
