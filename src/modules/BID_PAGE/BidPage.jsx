@@ -223,6 +223,40 @@ const BidPage = (props) => {
 	const [socketTimestamp, setSocketTimestamp] = useState(0);
 	const [findSimilarTitle, setFindSimilarTitle] = useState(`Поиск похожих`);
 
+	const showError = (content) => {
+		messageApi.open({
+			type: 'error',
+			duration: 0,
+			key: 'global-error',
+			content: (
+				<span>
+					{content}{' '}
+					<Button
+						type="link"
+						size="small"
+						onClick={() => messageApi.destroy('global-error')}
+					>
+						Закрыть
+					</Button>
+				</span>
+			),
+		});
+	};
+	const showSuccess = (content) => {
+		messageApi.open({
+			type: 'success',
+			duration: 3,
+			content,
+		});
+	};
+	const showWarning = (content) => {
+		messageApi.open({
+			type: 'warning',
+			duration: 3,
+			content,
+		});
+	};
+
 
     useEffect(() => {
         fetchModels().then();
@@ -372,9 +406,7 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({type: 'error',duration: 0,
-					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-				});
+				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 			}
 		}
 	};
@@ -396,9 +428,7 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({type: 'error',duration: 0,
-					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-				});
+				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 			}
 		}
 	};
@@ -416,9 +446,7 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({type: 'error',duration: 0,
-					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-				});
+				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 			}
 		}
 	};
@@ -435,15 +463,11 @@ const BidPage = (props) => {
 				if (response) {
                     queryClient.invalidateQueries({ queryKey: ['bid', bidId] });
 
-					messageApi.open({type: 'success',duration: 3,
-						content: response.message.message,
-					});
+					showSuccess(response.message.message);
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({type: 'error',duration: 0,
-					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-				});
+				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 			}
 		}
 	};
@@ -453,17 +477,13 @@ const BidPage = (props) => {
 				setIsLoading1c(true);
                 const response = await toSent1C(bidId);
 				if (response) {
-					messageApi.open({type: 'success',duration: 3,
-						content: response.message,
-					});
+					showSuccess(response.message);
 					setIsSend1c(1);
 				}
 				setTimeout(() => setIsLoading1c(false), 500);
 			} catch (e) {
 				console.log(e);
-				messageApi.open({type: 'error',duration: 0,
-					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-				});
+				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
 		}
@@ -477,9 +497,7 @@ const BidPage = (props) => {
 				}
 			} catch (e) {
 				console.log(e);
-				messageApi.open({type: 'error',duration: 0,
-					content: `Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-				});
+				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
 		}
@@ -488,14 +506,10 @@ const BidPage = (props) => {
     const handleSave = () => {
         saveBid(collectUpdates(), {
             onSuccess: () => {
-                messageApi.open({type: 'success',duration: 3,
-                    content: 'Сохранено',
-                });
+                showSuccess('Сохранено');
             },
             onError: (e) => {
-                messageApi.open({type: 'error',duration: 0,
-                    content: `Произошла ошибка! ${e?.response?.data?.message || e?.message || 'Неизвестная ошибка'}`,
-                });
+                showError(`Произошла ошибка! ${e?.response?.data?.message || e?.message || 'Неизвестная ошибка'}`);
             },
         });
     };
@@ -596,9 +610,7 @@ const BidPage = (props) => {
                 setBidPlace(2);
                 fetchBidPlace(2).then();
             } else {
-                messageApi.open({type: 'warning',duration: 3,
-                    content: 'Заполните поля! Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"',
-                });
+                showWarning('Заполните поля! Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
                 setIsLoadingChangePlaceBtn('');
             }
         }
@@ -641,9 +653,7 @@ const BidPage = (props) => {
                 setBidPlace(3);
                 fetchBidPlace(3).then();
             } else {
-                messageApi.open({type: 'warning',duration: 3,
-                    content: 'Заполните поля! Количество моделей должно быть равно количеству на складе',
-                });
+                showWarning('Заполните поля! Количество моделей должно быть равно количеству на складе');
                 setIsLoadingChangePlaceBtn('');
             }
         }
@@ -745,9 +755,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                                 setBidPlace(2);
                                 fetchBidPlace(2).then();
                             } else {
-                                messageApi.open({type: 'warning',duration: 3,
-                                    content: 'Заполните поля! Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"',
-                                });
+                                showWarning('Заполните поля! Эти поля должны быть заполнены: "Контактное лицо", "Плательщик", "Телефон"');
                             }
                         }
                     });
@@ -783,9 +791,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                                 setBidPlace(3);
                                 fetchBidPlace(3).then();
                             } else {
-                                messageApi.open({type: 'warning',duration: 3,
-                                    content: 'Заполните поля! Количество моделей должно быть равно количеству на складе',
-                                });
+                                showWarning('Заполните поля! Количество моделей должно быть равно количеству на складе');
                             }
                         }
                     });
@@ -957,10 +963,9 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 	];
 
 	const bufAlert = (content, type) => {
-		messageApi.open({
-			type: type,
-			content: content,
-		});
+		if (type === 'error') return showError(content);
+		if (type === 'warning') return showWarning(content);
+		return showSuccess(content);
 	};
 	const handleClick = async (bidModelID) => {
 		const result = modelsSelect.filter(item => item.id === bidModelID);
@@ -1184,9 +1189,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                              bid_models={form.models}
                              protection_project={form.baseInfo.protectionProject}
                              error_alert={(path, e) => {
-                                 messageApi.open({type: 'error', duration: 0,
-                                     content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-                                 });
+                                 showError(`Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
                               }}
                 />
             </Modal>
@@ -1199,9 +1202,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 								  bidId={bidId}
 								  bidType={bidType}
                                   error_alert={(path, e) => {
-                                      messageApi.open({type: 'error',duration: 0,
-                                          content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-                                      });
+                                      showError(`Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
                                   }}
 			/>
 			<BidHistoryDrawer isOpenDrawer={isBidHistoryDrawerOpen}
@@ -1209,9 +1210,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 							  bidId={bidId}
 							  bidActions={bidActions}
                               error_alert={(path, e) => {
-                                  messageApi.open({type: 'error',duration: 0,
-                                      content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-                                  });
+                                  showError(`Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
                               }}
 			/>
 			<BidFilesDrawer isOpenDrawer={isBidFilesDrawerOpen}
@@ -1219,9 +1218,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 							bidId={bidId}
                             bidType={bidType}
                             error_alert={(path, e) => {
-                                messageApi.open({type: 'error',duration: 0,
-                                    content: `Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`,
-                                });
+                                showError(`Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
                             }}
 			/>
 			<CustomModal
@@ -1238,6 +1235,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 };
 
 export default BidPage;
+
 
 
 
