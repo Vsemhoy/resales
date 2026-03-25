@@ -11,7 +11,7 @@ import {
 	Steps,
 	Tag,
 	Tooltip,
-	Space, Empty, Divider, message
+	Space, Divider, message
 } from 'antd';
 import {NavLink, useNavigate, useParams} from 'react-router-dom';
 import {BASE_ROUTE, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../config/config';
@@ -39,10 +39,7 @@ import { BidBillSection } from "./components/BidBillSection";
 import { BidFinanceSection } from "./components/BidFinanceSection";
 import { BidActionsToolbar } from "./components/BidActionsToolbar";
 import { BidPageHeader } from "./components/BidPageHeader";
-import { BidModelsHeaderPrimary } from "./components/BidModelsHeaderPrimary";
-import { BidModelsRowPrimary } from "./components/BidModelsRowPrimary";
-import { BidModelsHeaderSecondary } from "./components/BidModelsHeaderSecondary";
-import { BidModelsRowSecondary } from "./components/BidModelsRowSecondary";
+import { BidModelsTable } from "./components/BidModelsTable";
 import dayjs from "dayjs";
 import CustomModal from "../../components/helpers/modals/CustomModal";
 import customModal from "../../components/helpers/modals/CustomModal";
@@ -1355,73 +1352,29 @@ const BidPage = (props) => {
 						<div className={'sa-bid-page-models-wrapper'}>
 							<div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
 
-							{ userData?.user?.sales_role === 1 ? (
-                                <BidModelsHeaderPrimary />
-							) : (
-                                <BidModelsHeaderSecondary />
-							)}
-							{userData?.user?.sales_role === 1 ? (
-								<div className={'sa-models-table'}>
-									{(sortedBidModels && sortedBidModels.length > 0) ?
-										sortedBidModels.map((bidModel, idx) => (
-                                            <BidModelsRowPrimary
-                                                key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
-                                                bidModel={bidModel}
-                                                index={idx}
-                                                draggable={!isDisabledInputManager()}
-                                                onDragStart={() => handleModelsRowDragStart(idx)}
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDrop={() => handleModelsRowDrop(idx)}
-                                                onDragEnd={handleModelsRowDragEnd}
-                                                nameOptions={prepareSelect(modelsSelect?.filter(option => [0, 1, 3].includes(option.type_model)))}
-                                                presenceOptions={prepareSelect(selects.presence)}
-                                                isDisabledInputManager={isDisabledInputManager()}
-                                                isDisabledInput={isDisabledInput()}
-                                                isCalculating={isCalculating}
-                                                prepareAmount={prepareAmount}
-                                                currencySymbol={currencySymbol}
-                                                onChangeModel={handleChangeModel}
-                                                onChangeModelInfo={handleChangeModelInfo}
-                                                onOpenModelInfoExtra={() => handleOpenModelInfoExtra(bidModel.model_id)}
-                                                onDelete={() => handleDeleteModelFromBid(bidModel.id, bidModel.sort, bidModel.model_id)}
-                                            />
-										)) : (
-											<Empty/>
-										)
-									}
-								</div>
-							) : (
-								<div className={'sa-models-table'}>
-									{(sortedBidModels && sortedBidModels.length > 0) ?
-										sortedBidModels.map((bidModel, idx) => (
-                                            <BidModelsRowSecondary
-                                                key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
-                                                bidModel={bidModel}
-                                                index={idx}
-                                                draggable={!isDisabledInputManager()}
-                                                onDragStart={() => handleModelsRowDragStart(idx)}
-                                                onDragOver={(e) => e.preventDefault()}
-                                                onDrop={() => handleModelsRowDrop(idx)}
-                                                onDragEnd={handleModelsRowDragEnd}
-                                                nameOptions={prepareSelect(modelsSelect)}
-                                                presenceOptions={prepareSelect(selects.presence)}
-                                                isDisabledInputManager={isDisabledInputManager()}
-                                                isDisabledInputAdmin={isDisabledInputAdmin()}
-                                                isCalculating={isCalculating}
-                                                prepareAmount={prepareAmount}
-                                                currencySymbol={currencySymbol}
-                                                isErrorInput={isErrorInput}
-                                                onChangeModel={handleChangeModel}
-                                                onChangeModelInfo={handleChangeModelInfo}
-                                                onOpenModelInfoExtra={() => handleOpenModelInfoExtra(bidModel.model_id)}
-                                                onCopyName={handleClick}
-                                            />
-										)) : (
-											<Empty/>
-										)
-									}
-								</div>
-							)}
+                            <BidModelsTable
+                                isManager={userData?.user?.sales_role === 1}
+                                sortedBidModels={sortedBidModels}
+                                nameOptionsPrimary={prepareSelect(modelsSelect?.filter(option => [0, 1, 3].includes(option.type_model)))}
+                                nameOptionsSecondary={prepareSelect(modelsSelect)}
+                                presenceOptions={prepareSelect(selects.presence)}
+                                isDisabledInputManager={isDisabledInputManager()}
+                                isDisabledInput={isDisabledInput()}
+                                isDisabledInputAdmin={isDisabledInputAdmin()}
+                                isCalculating={isCalculating}
+                                prepareAmount={prepareAmount}
+                                currencySymbol={currencySymbol}
+                                isErrorInput={isErrorInput}
+                                onChangeModel={handleChangeModel}
+                                onChangeModelInfo={handleChangeModelInfo}
+                                onOpenModelInfoExtra={handleOpenModelInfoExtra}
+                                onDeletePrimary={handleDeleteModelFromBid}
+                                onCopyName={handleClick}
+                                onDragStart={handleModelsRowDragStart}
+                                onDragOver={(e) => e.preventDefault()}
+                                onDrop={handleModelsRowDrop}
+                                onDragEnd={handleModelsRowDragEnd}
+                            />
 
 							<div className={'sa-bid-models-footer'}>
 								<div className={'sa-footer-btns'}>
