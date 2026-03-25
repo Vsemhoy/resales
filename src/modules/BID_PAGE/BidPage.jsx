@@ -59,6 +59,7 @@ import {areObjectsEqual, areArraysEqual} from "./utils/areEqual";
 import {useBidData} from "./hooks/useBidData";
 import {useQueryClient} from "@tanstack/react-query";
 import {useCalcModels} from "./hooks/useCalcModels";
+import {useBidModels} from "./hooks/useBidModels";
 
 const { TextArea } = Input;
 
@@ -68,7 +69,6 @@ const BidPage = (props) => {
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
 	const [isAlertVisible, setIsAlertVisible] = useState(false);
-	const [draggedModelIndex, setDraggedModelIndex] = useState(null);
     const [isSend1c, setIsSend1c] = useState(0);
 	const [isOpenBaseInfo, setIsOpenBaseInfo] = useState(false);
 	const [userData, setUserData] = useState(null);
@@ -155,10 +155,34 @@ const BidPage = (props) => {
 
 	/* СЕЛЕКТ ПО МОДЕЛЯМ */
 	const [modelsSelect, setModelsSelect] = useState([]);
+    const {
+        sortedBidModels,
+        handleAddModel,
+        handleDeleteModelFromBid,
+        handleChangeModel,
+        handleChangeModelInfo,
+        handleModelsRowDragStart,
+        handleModelsRowDrop,
+        handleModelsRowDragEnd,
+        handleOpenModelInfoExtra,
+        handleCloseDrawerExtra,
+        addParseModels,
+        modelIdExtra,
+        modelNameExtra,
+    } = useBidModels({
+        bidId,
+        formModels: form.models,
+        setForm,
+        modelsSelect,
+        setModelsSelect,
+        isDisabledInputManager: () => (openMode?.status !== 2),
+    });
+    const handleParseModels = useCallback((dataToAdd) => {
+        addParseModels(dataToAdd);
+        setIsParseModalOpen(false);
+    }, [addParseModels]);
 
 	/* ОСТАЛЬНОЕ */
-	const [modelIdExtra, setModelIdExtra] = useState(null);
-	const [modelNameExtra, setModelNameExtra] = useState('');
 	const [isProjectDataModalOpen, setIsProjectDataModalOpen] = useState(false);
 	const [isBidDuplicateDrawerOpen, setIsBidDuplicateDrawerOpen] = useState(false);
 	const [isBidHistoryDrawerOpen, setIsBidHistoryDrawerOpen] = useState(false);
@@ -688,269 +712,7 @@ const BidPage = (props) => {
 		  minimumFractionDigits: 0,
 		  maximumFractionDigits: 2
 	  }).format(number);
-	};
-	const editableModelFields = [
-		'model_id',
-		'model_name',
-		'model_count',
-		'percent',
-		'presence',
-		'sklad',
-		'sort',
-		'type_model',
-		'currency',
-		'not_available',
-	];
-	const getModelKey = (model) => `${model?.id ?? 'null'}:${model?.sort ?? 'null'}`;
-	const pickEditableFields = (model) => {
-		const picked = {};
-		editableModelFields.forEach((field) => {
-			if (Object.prototype.hasOwnProperty.call(model || {}, field)) {
-				picked[field] = model[field];
-			}
-		});
-		return picked;
-	};
-	const didEditableChange = (currentModel, requestModel) => {
-		return editableModelFields.some(
-			(field) => String(currentModel?.[field] ?? '') !== String(requestModel?.[field] ?? ''),
-		);
-	};
-	const mergeCalculatedModels = (currentModels, serverModels, requestModels) => {
-		if (!Array.isArray(currentModels) || currentModels.length === 0) return serverModels || [];
-		if (!Array.isArray(serverModels) || serverModels.length === 0) return currentModels;
-
-		const serverByKey = new Map(serverModels.map((model) => [getModelKey(model), model]));
-		const requestByKey = new Map(
-			(Array.isArray(requestModels) ? requestModels : []).map((model) => [getModelKey(model), model]),
-		);
-
-		return currentModels.map((currentModel) => {
-			const key = getModelKey(currentModel);
-			const serverModel = serverByKey.get(key);
-			if (!serverModel) return currentModel;
-
-			const requestModel = requestByKey.get(key);
-			if (didEditableChange(currentModel, requestModel)) {
-				return currentModel;
-			}
-
-			return {
-				...serverModel,
-				...pickEditableFields(currentModel),
-			};
-		});
-	};
-	const handleAddModel = () => {
-	  let sort = 0;
-	  if (form.models && form.models.length > 0) {
-		  const lastModel = [...form.models].sort((a, b) => +a.sort - +b.sort)[form.models.length - 1];
-		  sort = lastModel.sort + 1;
-	  }
-	  const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
-	  bidModelsUpd.push({
-		  "id": 0,
-		  "bid_id": bidId,
-		  "model_id": null,
-		  "model_count": 1,
-		  "model_name": "",
-		  "not_available": 0,
-		  "percent": null,
-		  "presence": null,
-		  "sort": sort,
-		  "type_model": 0,
-		  "currency": 0,
-	  });
-	  //setBidModels(bidModelsUpd);
-      setForm(prev => ({
-          ...prev,
-          models: bidModelsUpd,
-      }));
-	};
-	const handleDeleteModelFromBid = (bidModelId, bidModelSort, bidModelSelectId) => {
-        const bidModelIdx = form.models.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
-        const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
-        bidModelsUpd.splice(bidModelIdx, 1);
-        setForm(prev => ({
-            ...prev,
-            models: bidModelsUpd,
-        }));
-        setModelsSelect(prev => {
-            const index = prev.findIndex(model => model.id === bidModelSelectId);
-            if (index === -1) return prev;
-            return prev.map((model, idx) => {
-                if (+idx === +index) {
-                    return {
-                        ...model,
-                        used: false,
-                    }
-                } else {
-                    return model;
-                }
-            });
-        });
-	};
-	const handleChangeModel = (newId, oldId, oldSort) => {
-	  const newModel = modelsSelect.find(model => model.id === newId);
-	  const oldModel = form.models.find(model => (model.id === oldId && model.sort === oldSort));
-	  const oldModelIdx = form.models.findIndex(model => (model.id === oldId && model.sort === oldSort));
-	  const newModelObj = {
-		  "id": oldId,
-		  "bid_id": bidId,
-		  "model_id": newId,
-		  "model_name": newModel.name,
-		  "model_count": 1,
-		  "not_available": 0,
-		  "percent": 0,
-		  "presence": -2,
-		  "sort": oldModel.sort,
-		  "type_model": newModel.type_model,
-		  "currency": newModel.currency,
-	  };
-	  const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
-	  bidModelsUpd[oldModelIdx] = newModelObj;
-      setForm(prev => ({
-          ...prev,
-          models: bidModelsUpd,
-      }));
-      setModelsSelect(prev => {
-          const index = prev.findIndex(model => model.id === newId);
-          if (index === -1) return prev;
-          return prev.map((model, idx) => {
-              if (+idx === +index) {
-                  return {
-                      ...model,
-                      used: true,
-                  }
-              } else {
-                  return {
-                      ...model,
-                      used: false,
-                  };
-              }
-          });
-      });
-	};
-	const handleChangeModelInfo = (type, value, bidModelId, bidModelSort) => {
-	  const bidModelIdx = form.models.findIndex(model => (model.id === bidModelId && model.sort === bidModelSort));
-	  const bidModelsUpd = JSON.parse(JSON.stringify(form.models));
-	  switch (type) {
-          case 'model_count':
-			  bidModelsUpd[bidModelIdx].model_count = value;
-              setForm(prev => ({
-                  ...prev,
-                  models: bidModelsUpd,
-              }));
-			  break;
-          case 'percent':
-			  bidModelsUpd[bidModelIdx].percent = value;
-              setForm(prev => ({
-                  ...prev,
-                  models: bidModelsUpd,
-              }));
-			  break;
-		  case 'presence':
-			  bidModelsUpd[bidModelIdx].presence = value;
-              setForm(prev => ({
-                  ...prev,
-                  models: bidModelsUpd,
-              }));
-			  break;
-		  case 'sklad':
-			  bidModelsUpd[bidModelIdx].sklad = value;
-              setForm(prev => ({
-                  ...prev,
-                  models: bidModelsUpd,
-              }));
-			  break;
-	  }
-	};
-	const handleModelsRowDragStart = (index) => {
-		if (isDisabledInputManager()) return;
-		setDraggedModelIndex(index);
-	};
-	const handleModelsRowDrop = (dropIndex) => {
-		if (isDisabledInputManager()) return;
-		if (draggedModelIndex === null || draggedModelIndex === dropIndex) return;
-		const reordered = [...sortedBidModels];
-		const [moved] = reordered.splice(draggedModelIndex, 1);
-		reordered.splice(dropIndex, 0, moved);
-		/*setBidModels(reordered.map((model, idx) => ({
-			...model,
-			sort: idx + 1,
-		})));*/
-        setForm(prev => ({
-            ...prev,
-            models: reordered.map((model, idx) => ({
-                ...model,
-                sort: idx + 1,
-            })),
-        }));
-		setDraggedModelIndex(null);
-	};
-	const handleModelsRowDragEnd = () => {
-		setDraggedModelIndex(null);
-	};
-	const handleOpenModelInfoExtra = (modelId) => {
-		setModelIdExtra(modelId);
-		const name = form.models.find(model => model.model_id === modelId).model_name;
-		setModelNameExtra(name);
-	};
-	const handleCloseDrawerExtra = () => {
-		setModelIdExtra(null);
-		setModelNameExtra('');
-	};
-    const addParseModels = (dataToAdd) => {
-        console.log(dataToAdd);
-
-        if (!dataToAdd || !dataToAdd.length) return;
-
-        const aggregatedData = dataToAdd.reduce((acc, item) => {
-            const existing = acc.find(x => x.id === item.id);
-            if (existing) {
-                existing.count += item.count;
-            } else {
-                acc.push({ ...item });
-            }
-            return acc;
-        }, []);
-
-        let sort = 0;
-        if (form.models && form.models.length > 0) {
-            const sorted = [...form.models].sort((a, b) => a.sort - b.sort);
-            sort = sorted[sorted.length - 1].sort;
-        }
-
-        const arr = aggregatedData
-            .filter(newModel =>
-                modelsSelect.some(model => !model.used && model.id === newModel.id)
-            )
-            .map((newModel, idx) => {
-                const model = modelsSelect.find(m => m.id === newModel.id);
-                return {
-                    id: 0,
-                    bid_id: bidId,
-                    model_id: model.id,
-                    model_name: model.name,
-                    model_count: newModel.count,
-                    not_available: 0,
-                    percent: 0,
-                    presence: -2,
-                    sort: sort + idx + 1,
-                    type_model: model.type_model,
-                    currency: model.currency,
-                };
-            });
-
-        //setBidModels(prev => [...prev, ...arr]);
-        //setBidModels(arr);
-        setForm(prev => ({
-            ...prev,
-            models: arr,
-        }));
-        setIsParseModalOpen(false);
-    };
-	const openCustomModal = (type, title, text, filling, buttons) => {
+	};const openCustomModal = (type, title, text, filling, buttons) => {
 		setCustomModalType(type);
 		setCustomModalTitle(title);
 		setCustomModalText(text);
@@ -1239,11 +1001,6 @@ const BidPage = (props) => {
 			}
 		}
 	};
-	const sortedBidModels = React.useMemo(() => {
-		if (!form.models || form.models.length === 0) return [];
-		return [...form.models].sort((a, b) => +a.sort - +b.sort);
-	}, [form.models]);
-
 	return (
 		<div className={'sa-bid-page-container'}>
 			{contextHolder}
@@ -1420,7 +1177,7 @@ const BidPage = (props) => {
 			</Modal>
             <DataParser openModal={isParseModalOpen}
                         closeModal={() => setIsParseModalOpen(false)}
-                        addParseModels={(dataToAdd) => addParseModels(dataToAdd)}
+                        addParseModels={handleParseModels}
                         models={modelsSelect}
             />
             <Modal
@@ -1519,5 +1276,8 @@ const BidPage = (props) => {
 };
 
 export default BidPage;
+
+
+
 
 
