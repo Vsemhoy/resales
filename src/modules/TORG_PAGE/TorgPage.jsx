@@ -1689,7 +1689,7 @@ useEffect(() => {
 					closable
 					style={{
 						position: 'fixed',
-						top: 20,
+						bottom: 40,
 						right: 20,
 						zIndex: 9999,
 						width: 350,
