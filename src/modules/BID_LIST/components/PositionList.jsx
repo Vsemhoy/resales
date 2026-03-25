@@ -25,6 +25,9 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
         return [...positions].sort((a, b) => +a.sort - +b.sort);
     }, [positions]);
 
+    const hasPositions = sortedBidModels.length > 0;
+    const hasFiles = files && files.length > 0;
+
 	const fetchModelsReq = async () => {
 		if (PRODMODE) {
 			const path = fetch_path;
@@ -125,7 +128,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 			<div className={style.add__header}>{tableHeader}</div>
 			<div className={style.tags__container}>
 				{load && <div>Загрузка...</div>}
-				{!load && sortedBidModels && sortedBidModels.map((item, idx) => (
+				{!load && hasPositions && sortedBidModels.map((item, idx) => (
                     <div key={`pos-${bidId}-${item.id || item.model_id || idx}`}>
                         <Space.Compact block>
                             <Button size={'small'} color={'default'} variant={'filled'}>{item.model_name}</Button>
@@ -133,7 +136,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
                         </Space.Compact>
                     </div>
 				))}
-				{!load && !sortedBidModels && files && files.map((item, idx) => (
+				{!load && !hasPositions && hasFiles && files.map((item, idx) => (
                     <div key={`file-${bidId}-${item.id || idx}`} onClick={() => handleDownload(item)}>
                         <Space.Compact block>
                             <Button size={'small'} color={'primary'} variant={'filled'}>{item.name_file.split('.')[item.name_file.split('.').length - 1]}</Button>
@@ -142,7 +145,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
                     </div>
 				))}
 			</div>
-			{sortedBidModels && (
+			{hasPositions && (
 				<div className={style.add__btn}>
 					<Button onClick={() => handleExport()} size={'small'}>
 						Экспорт в EXCEL
