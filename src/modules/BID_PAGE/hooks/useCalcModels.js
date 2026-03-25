@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { calcModels } from '../api/bids.api';
 import { useDebounce } from './useDebounce';
+import { mergeCalculatedModels } from './useBidModels';
 
 export const useCalcModels = (models, finance, onModelsUpdate) => {
     const [isCalculating, setIsCalculating] = useState(false);
