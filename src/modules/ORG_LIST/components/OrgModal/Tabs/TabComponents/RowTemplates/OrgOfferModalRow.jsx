@@ -86,7 +86,7 @@ const OrgOfferlModalRow = (props) => {
 					<div style={{wordBreak: 'break-all'}}>
 						<Tooltip
 							placement="leftTop"
-							title={<PositionList bidId={baseData?.id} path={`${ROUTE_PREFIX}/sales/data/getbidmodels`}/>}
+							title={<PositionList bidId={baseData?.id} fetch_path={`${ROUTE_PREFIX}/sales/data/getbidmodels`}/>}
 							color="white"
 							overlayInnerStyle={{
 								color: 'black',
