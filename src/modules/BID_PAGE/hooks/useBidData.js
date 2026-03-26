@@ -16,7 +16,11 @@ export const useBidData = (bidId, form) => {
     } = useQuery({
         queryKey: ['bid', bidId],
         queryFn: () => getBidInfo(bidId),
-        staleTime: 0, // всегда перезапрашивать при фокусе
+        staleTime: Infinity, // не рефетчим автоматически, чтобы не перетирать несохранённые правки
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        refetchOnMount: false,
+        gcTime: 30 * 60 * 1000,
     });
 
     // --- сохранение ---
