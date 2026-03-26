@@ -84,9 +84,9 @@ const BidPage = (props) => {
     const [bidCurator, setBidCurator] = useState({});
     const [bidPlace, setBidPlace] = useState(null); // статус по пайплайну
 
-    const [form, setForm] = useState({
-        baseInfo: {
-            orgUser: null,
+	const [form, setForm] = useState({
+		baseInfo: {
+			orgUser: null,
             protectionProject: null,
             object: null,
             sellBy: null
@@ -115,8 +115,9 @@ const BidPage = (props) => {
             percent: null,
             nds: null,
         },
-        models: [],
-    });
+		models: [],
+	});
+	const formRef = useRef(form);
     const {
         serverData,
         isLoading,
@@ -342,8 +343,8 @@ const BidPage = (props) => {
         }
     }, [form.models]);
 
-    useEffect(() => {
-        if (serverData) {
+	useEffect(() => {
+		if (serverData) {
 
             setOpenMode(serverData.openmode);
 
@@ -393,9 +394,13 @@ const BidPage = (props) => {
                 models: bid_models,
             });
 
-            setIsLoadingChangePlaceBtn('');
-        }
-    }, [serverData]);
+			setIsLoadingChangePlaceBtn('');
+		}
+	}, [serverData]);
+
+	useEffect(() => {
+		formRef.current = form;
+	}, [form]);
 
 	const fetchModels = async () => {
 		if (PRODMODE) {
@@ -514,53 +519,54 @@ const BidPage = (props) => {
             },
         });
     };
-    const collectUpdates = () => {
-        return {
-            bid: {
-                id: bidId,
-                id_company: bidIdCompany,
-                place: bidPlace,
-                type: bidType,
-                files_count: bidFilesCount,
-                base_info: {
-                    org: bidOrg,
-                    curator: bidCurator,
-                    orguser: form.baseInfo.orgUser,
-                    protection: form.baseInfo.protectionProject,
-                    object: form.baseInfo.object,
-                    sellby: form.baseInfo.sellBy,
-                },
-                bill:
-                    +bidType === 2
-                        ? {
-                            consignee: form.bill.consignee,
-                            contact_email: form.bill.email,
-                            conveyance: form.bill.conveyance,
-                            fact_address: form.bill.factAddress,
-                            insurance: form.bill.insurance,
-                            org_phone: form.bill.phone,
-                            other_equipment: form.bill.otherEquipment,
-                            package: form.bill.package,
-                            requisite: form.bill.requisite,
-                        }
-                        : null,
-                comments: {
-                    engineer: form.comments.engineer,
-                    manager: form.comments.manager,
-                    admin: form.comments.admin,
-                    accountant: form.comments.accountant,
-                    add_equipment: form.comments.addEquipment,
-                },
-                finance: {
-                    bid_currency: form.finance.currency,
-                    status: form.finance.priceStatus,
-                    percent: form.finance.percent,
-                    nds: form.finance.nds,
-                },
-            },
-            bid_models: form.models,
-        };
-    };
+	const collectUpdates = () => {
+		const currentForm = formRef.current || form;
+		return {
+			bid: {
+				id: bidId,
+				id_company: bidIdCompany,
+				place: bidPlace,
+				type: bidType,
+				files_count: bidFilesCount,
+				base_info: {
+					org: bidOrg,
+					curator: bidCurator,
+					orguser: currentForm.baseInfo.orgUser,
+					protection: currentForm.baseInfo.protectionProject,
+					object: currentForm.baseInfo.object,
+					sellby: currentForm.baseInfo.sellBy,
+				},
+				bill:
+					+bidType === 2
+						? {
+							consignee: currentForm.bill.consignee,
+							contact_email: currentForm.bill.email,
+							conveyance: currentForm.bill.conveyance,
+							fact_address: currentForm.bill.factAddress,
+							insurance: currentForm.bill.insurance,
+							org_phone: currentForm.bill.phone,
+							other_equipment: currentForm.bill.otherEquipment,
+							package: currentForm.bill.package,
+							requisite: currentForm.bill.requisite,
+						}
+						: null,
+				comments: {
+					engineer: currentForm.comments.engineer,
+					manager: currentForm.comments.manager,
+					admin: currentForm.comments.admin,
+					accountant: currentForm.comments.accountant,
+					add_equipment: currentForm.comments.addEquipment,
+				},
+				finance: {
+					bid_currency: currentForm.finance.currency,
+					status: currentForm.finance.priceStatus,
+					percent: currentForm.finance.percent,
+					nds: currentForm.finance.nds,
+				},
+			},
+			bid_models: currentForm.models,
+		};
+	};
 
 	const prepareSelect = (select) => {
 	  if (select) {
