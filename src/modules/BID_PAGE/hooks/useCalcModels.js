@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { calcModels } from '../api/bids.api';
 import { useDebounce } from './useDebounce';
-import { mergeCalculatedModels } from './useBidModels';
 
 export const useCalcModels = (models, finance, onModelsUpdate) => {
     const [isCalculating, setIsCalculating] = useState(false);
@@ -19,6 +18,8 @@ export const useCalcModels = (models, finance, onModelsUpdate) => {
     const calcRequestIdRef     = useRef(0);
     const latestModelsRef      = useRef(models);
     const latestModelsVersion  = useRef(0);
+    const latestFinanceRef     = useRef(finance);
+    const latestFinanceVersion = useRef(0);
     const lastAppliedSignatureRef = useRef(null);
 
     // всегда актуальная ссылка на models
@@ -26,12 +27,16 @@ export const useCalcModels = (models, finance, onModelsUpdate) => {
         latestModelsRef.current = models;
         latestModelsVersion.current += 1;
     }, [models]);
+    useEffect(() => {
+        latestFinanceRef.current = finance;
+        latestFinanceVersion.current += 1;
+    }, [finance]);
 
     // функция пересчёта — принимает данные аргументами, не из замыкания
     const calculate = useCallback(async (modelsToCalc, financeToCalc) => {
         const requestId      = ++calcRequestIdRef.current;
         const requestVersion = latestModelsVersion.current;
-        const snapshot       = JSON.parse(JSON.stringify(modelsToCalc));
+        const requestFinanceVersion = latestFinanceVersion.current;
 
         setIsCalculating(true);
 
@@ -50,19 +55,10 @@ export const useCalcModels = (models, finance, onModelsUpdate) => {
             if (calcRequestIdRef.current !== requestId) return null;
 
             // пока летел запрос — модели изменились локально
-            if (latestModelsVersion.current !== requestVersion) {
-                if (content.models) {
-                    return {
-                        // мёрдж: серверные цены + локальные изменения пользователя
-                        mergedModels: mergeCalculatedModels(
-                            latestModelsRef.current,
-                            content.models,
-                            snapshot,
-                        ),
-                        amounts:       null,
-                        engineerParams: null,
-                    };
-                }
+            if (
+                latestModelsVersion.current !== requestVersion ||
+                latestFinanceVersion.current !== requestFinanceVersion
+            ) {
                 return null;
             }
 
