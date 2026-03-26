@@ -1,4 +1,3 @@
-// hooks/useBidData.js
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { getBidInfo, updateBid } from '../api/bids.api';
