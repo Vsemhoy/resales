@@ -29,7 +29,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
     const hasFiles = files && files.length > 0;
 
 	const fetchModelsReq = async () => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			const path = fetch_path;
 			try {
 				setLoad(true);
@@ -56,7 +56,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 				error_alert(path, e);
 				setLoad(false);
 			}
-		} else {
+		/*} else {
             if (fetch_path) {
                 setLoad(true);
                 //setPositions(GET_BID_MODELS.models);
@@ -65,7 +65,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
                 setTableHeader('ФАЙЛЫ');
                 setLoad(false);
             }
-        }
+        }*/
 	};
     const handleDownload = async (file) => {
         console.log(file);
@@ -87,7 +87,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
                 new: false,
             };
         }
-        if (PRODMODE) {
+        //if (PRODMODE) {
             const path = `${ROUTE_PREFIX}/sales/makedoc`;
             try {
                 const format_data = {
@@ -102,7 +102,7 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
                 console.log(e);
                 error_alert(path, e);
             }
-        }
+        //}
     };
 	const handleExport = () => {
 		console.log(positions);

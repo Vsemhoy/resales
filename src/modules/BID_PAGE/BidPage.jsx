@@ -403,7 +403,7 @@ const BidPage = (props) => {
 	}, [form]);
 
 	const fetchModels = async () => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			try {
                 const models = await getModels();
 				if (models) {
@@ -413,10 +413,10 @@ const BidPage = (props) => {
 				console.log(e);
 				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 			}
-		}
+		//}
 	};
 	const fetchWordFile = async () => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			try {
                 const data = {
                     bid_id: bidId,
@@ -435,10 +435,10 @@ const BidPage = (props) => {
 				console.log(e);
 				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 			}
-		}
+		//}
 	};
 	const fetchNewBid = async () => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			try {
                 const data = {
                     bid: bidId,
@@ -453,11 +453,11 @@ const BidPage = (props) => {
 				console.log(e);
 				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 			}
-		}
+		//}
 	};
 	const fetchBidPlace = async (newPlace, selectValue) => {
 		console.log(selectValue)
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			try {
                 const data = {
                     bid: bidId,
@@ -474,10 +474,10 @@ const BidPage = (props) => {
 				console.log(e);
 				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 			}
-		}
+		//}
 	};
 	const fetchSend1c = async () => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			try {
 				setIsLoading1c(true);
                 const response = await toSent1C(bidId);
@@ -491,10 +491,10 @@ const BidPage = (props) => {
 				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
-		}
+		//}
 	};
 	const fetchProjectInfo = async () => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			try {
                 const response = await getProjectInfo(bidProject);
 				if (response?.content) {
@@ -505,7 +505,7 @@ const BidPage = (props) => {
 				showError(`Произошла ошибка! ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
-		}
+		//}
 	};
 
     const handleSave = () => {

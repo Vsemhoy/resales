@@ -57,13 +57,13 @@ export const App = () => {
     });
 
 	useEffect(() => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			get_userdata();
-		} else {
-			setUserdata(MS_USER);
-			setTopRole([7, 8, 20].includes(MS_USER.user?.id_departament) ? '/engineer' : '/orgs');
-			setPageLoaded(true);
-		}
+		// } else {
+		// 	setUserdata(MS_USER);
+		// 	setTopRole([7, 8, 20].includes(MS_USER.user?.id_departament) ? '/engineer' : '/orgs');
+		// 	setPageLoaded(true);
+		// }
 	}, []);
 
 	useEffect(() => {
@@ -256,21 +256,19 @@ export const App = () => {
                                     />
                                     <Route path="/reports" element={<ReportsPage userdata={userdata} />} />
                                 </Routes>
-                                {!PRODMODE && (
-                                    <Dropdown menu={{ items: devMenu }}>
-                                        <div
-                                            style={{
-                                                position: 'fixed',
-                                                bottom: '0px',
-                                                color: 'orangered',
-                                                opacity: '0.9',
-                                            }}
-                                            title="DEV MODE"
-                                        >
-                                            <ExclamationTriangleIcon height={'64px'} />
-                                        </div>
-                                    </Dropdown>
-                                )}
+                                <Dropdown menu={{ items: devMenu }}>
+                                    <div
+                                        style={{
+                                            position: 'fixed',
+                                            bottom: '0px',
+                                            color: 'orangered',
+                                            opacity: '0.9',
+                                        }}
+                                        title="DEV MODE"
+                                    >
+                                        <ExclamationTriangleIcon height={'64px'} />
+                                    </div>
+                                </Dropdown>
                             </div>
                             <AlertCustom alertInfo={alertInfo} isAlertVisibleKey={isAlertVisibleKey}/>
                         </div>
