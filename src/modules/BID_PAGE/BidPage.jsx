@@ -504,6 +504,7 @@ const BidPage = (props) => {
 	};
 
     const handleSave = () => {
+        console.log(collectUpdates());
         saveBid(collectUpdates(), {
             onSuccess: () => {
                 showSuccess('Сохранено');
