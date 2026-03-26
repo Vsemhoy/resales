@@ -348,7 +348,7 @@ const BidListPage = (props) => {
 		setIsLoading(false);
 	};
 	const fetchFilterSelects = async () => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			const path = `${ROUTE_PREFIX}/sales/filterlist`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -376,7 +376,7 @@ const BidListPage = (props) => {
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		} else {
+		/*} else {
 			setFilterStep(FILTERS.step);
 			setFilterProtectionProject(FILTERS.protection_project);
 			setFilterBidType(FILTERS.type_select);
@@ -389,10 +389,10 @@ const BidListPage = (props) => {
 			setFilterCompleteSelect(FILTERS.complete_select);
 			setFilterManagersSelect(FILTERS.managers_select);
 			setFilterCompaniesSelect(FILTERS.companies);
-		}
+		}*/
 	};
 	const fetchBids = async () => {
-		if (PRODMODE) { // test
+		//if (PRODMODE) { // test
             const currentFilterBox = filterBoxRef.current;
 
             let dates = null;
@@ -461,14 +461,14 @@ const BidListPage = (props) => {
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		} else {
+		/*} else {
 			console.log(123);
 			setBids(BID_LIST);
 			setTotal(33000);
-		}
+		}*/
 	};
 	const fetchChangeRole = async (sales_role) => {
-		if (PRODMODE) {
+		//if (PRODMODE) {
 			const path = `${ROUTE_PREFIX}/update/sales_role`;
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(path, {
@@ -489,7 +489,7 @@ const BidListPage = (props) => {
 				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
 				setAlertType('error');
 			}
-		}
+		//}
 	};
 
 	const prepareOrderBox = (orders) => {
