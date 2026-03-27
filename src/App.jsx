@@ -256,7 +256,7 @@ export const App = () => {
                                     />
                                     <Route path="/reports" element={<ReportsPage userdata={userdata} />} />
                                 </Routes>
-                                {PRODMODE && (
+                                {!PRODMODE && (
                                     <Dropdown menu={{items: devMenu}}>
                                         <div
                                             style={{
