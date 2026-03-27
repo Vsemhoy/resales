@@ -256,19 +256,21 @@ export const App = () => {
                                     />
                                     <Route path="/reports" element={<ReportsPage userdata={userdata} />} />
                                 </Routes>
-                                <Dropdown menu={{ items: devMenu }}>
-                                    <div
-                                        style={{
-                                            position: 'fixed',
-                                            bottom: '0px',
-                                            color: 'orangered',
-                                            opacity: '0.9',
-                                        }}
-                                        title="DEV MODE"
-                                    >
-                                        <ExclamationTriangleIcon height={'64px'} />
-                                    </div>
-                                </Dropdown>
+                                {PRODMODE && (
+                                    <Dropdown menu={{items: devMenu}}>
+                                        <div
+                                            style={{
+                                                position: 'fixed',
+                                                bottom: '0px',
+                                                color: 'orangered',
+                                                opacity: '0.9',
+                                            }}
+                                            title="DEV MODE"
+                                        >
+                                            <ExclamationTriangleIcon height={'64px'}/>
+                                        </div>
+                                    </Dropdown>
+                                )}
                             </div>
                             <AlertCustom alertInfo={alertInfo} isAlertVisibleKey={isAlertVisibleKey}/>
                         </div>
