@@ -13,7 +13,7 @@ export const updateBid = (bidId, data) =>
     }).then(r => r.data);
 
 export const calcModels = (bidInfo, bidModels) =>
-    PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/calcmodels/O1`, {
+    PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/calcmodelsO1`, {
         data: { bid_info: bidInfo, bid_models: bidModels },
         _token: CSRF_TOKEN
     }).then(r => r.data.content);
