@@ -88,6 +88,8 @@ const BidListPage = (props) => {
 		bid_currency: null,
 		nds: null,
 		complete: null,
+		created_before: null,
+		created_until: null,
 	};
 	const [filterBox, setFilterBox] = useState({
 		/* header */
@@ -110,6 +112,8 @@ const BidListPage = (props) => {
 		bid_currency: parseInt(searchParams.get('bid_currency')) || null,
 		nds: parseInt(searchParams.get('nds')) || null,
 		complete: parseInt(searchParams.get('complete')) || null,
+		created_before: parseInt(searchParams.get('created_before')) || null,
+		created_until: parseInt(searchParams.get('created_until')) || null,
 	});
     const filterBoxRef = useRef(filterBox);
     const parseArraySort = (stringOfSorts) => {
@@ -403,6 +407,17 @@ const BidListPage = (props) => {
                     dateObj.endOf('day').unix() * 1000
                 ];
             }
+			let createdAt = null;
+			if (currentFilterBox.created_before || currentFilterBox.created_until) {
+				createdAt = [
+					currentFilterBox.created_before
+						? dayjs.unix(currentFilterBox.created_before).startOf('day').unix() * 1000
+						: null,
+					currentFilterBox.created_until
+						? dayjs.unix(currentFilterBox.created_until).endOf('day').unix() * 1000
+						: null,
+				];
+			}
 
             const data = {
                 bid_id: currentFilterBox.bid_id,
@@ -424,6 +439,7 @@ const BidListPage = (props) => {
                 bid_currency: currentFilterBox.bid_currency,
                 nds: currentFilterBox.nds,
                 complete_status: currentFilterBox.complete,
+				created_at: createdAt,
 
                 page: currentPage,
                 limit: onPage,
@@ -619,6 +635,14 @@ const BidListPage = (props) => {
 		if (filterBox.complete !== newFilterBox.complete) {
 			filterBoxUpd.complete = newFilterBox.complete;
 			handleSearchParamsChange('complete', newFilterBox.complete);
+		}
+		if (filterBox.created_before !== newFilterBox.created_before) {
+			filterBoxUpd.created_before = newFilterBox.created_before;
+			handleSearchParamsChange('created_before', newFilterBox.created_before);
+		}
+		if (filterBox.created_until !== newFilterBox.created_until) {
+			filterBoxUpd.created_until = newFilterBox.created_until;
+			handleSearchParamsChange('created_until', newFilterBox.created_until);
 		}
 		console.log(areObjectsEqual(filterBox, filterBoxUpd));
 		if (!areObjectsEqual(filterBox, filterBoxUpd)) {
