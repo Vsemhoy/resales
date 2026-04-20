@@ -292,7 +292,9 @@ const OrgListSiderFilter = (props) => {
 			}))
 		);
 
-		if (
+        setListCreators(props.base_filters?.curators);
+
+		/*if (
 			props.base_filters?.curators !== null &&
 			props.base_filters?.curators !== '' &&
 			props.base_filters?.curators !== 'null' &&
@@ -302,7 +304,7 @@ const OrgListSiderFilter = (props) => {
 			setListCreators(props.base_filters.curators);
 		} else {
 			setListCreators(null);
-		}
+		}*/
 
 	}, [props.base_filters]);
 
