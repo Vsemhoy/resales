@@ -276,8 +276,8 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
           <div key={weekIndex} className="calendar-month-week">
             {week.map(day => {
               const events = eventsByDate[day.dateStr] || [];
-              const visibleEvents = events.slice(0, 12);
-              const moreCount = events.length - 12;
+              //const visibleEvents = events.slice(0, 12);
+              //const moreCount = events.length - 12;
               
               return (
                 <div
@@ -297,7 +297,7 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                   </div>
                   
                   <div className="calendar-month-events">
-                    {visibleEvents.map(event => (
+                    {events.map(event => (
                       <EventBadge
                         key={event.id}
                         event={event}
@@ -306,11 +306,11 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                       />
                     ))}
                     
-                    {moreCount > 0 && (
+                    {/*{moreCount > 0 && (
                       <div className="calendar-month-more">
                         +{moreCount} ещё
                       </div>
-                    )}
+                    )}*/}
                   </div>
                 </div>
               );
