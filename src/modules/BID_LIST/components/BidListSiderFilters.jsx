@@ -1,5 +1,6 @@
 import { PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Affix, Button, Input, Select } from 'antd';
+import { Affix, Button, DatePicker, Input, Select } from 'antd';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 
 const BidListSiderFilters = (props) => {
@@ -11,6 +12,8 @@ const BidListSiderFilters = (props) => {
 	const [bidCurrency, setBidCurrency] = useState(null);
 	const [nds, setNds] = useState(null);
 	const [completeStatus, setCompleteStatus] = useState(null);
+	const [createdBefore, setCreatedBefore] = useState(null);
+	const [createdUntil, setCreatedUntil] = useState(null);
 
 	useEffect(() => {
 		if (props.filter_box.target_company !== targetCompany) {
@@ -37,6 +40,12 @@ const BidListSiderFilters = (props) => {
 		if (props.filter_box.complete !== completeStatus) {
 			setCompleteStatus(props.filter_box.complete);
 		}
+		if (props.filter_box.created_before !== createdBefore) {
+			setCreatedBefore(props.filter_box.created_before);
+		}
+		if (props.filter_box.created_until !== createdUntil) {
+			setCreatedUntil(props.filter_box.created_until);
+		}
 	}, [props.filter_box]);
 
 	useEffect(() => {
@@ -50,6 +59,8 @@ const BidListSiderFilters = (props) => {
 				bid_currency: bidCurrency ?? null,
 				nds: nds ?? null,
 				complete: completeStatus ?? null,
+				created_before: createdBefore ?? null,
+				created_until: createdUntil ?? null,
 			};
 			props.on_change_filter_box(newFilterBox);
 		}, 700); // ⏱️ 1 секунда задержки
@@ -63,6 +74,8 @@ const BidListSiderFilters = (props) => {
 		bidCurrency,
 		nds,
 		completeStatus,
+		createdBefore,
+		createdUntil,
 	]);
 
 	return (
@@ -176,6 +189,30 @@ const BidListSiderFilters = (props) => {
 							options={props.filter_complete_select}
 							onChange={(val) => setCompleteStatus(val)}
 							allowClear
+						/>
+					</div>
+				</div>
+				<div className={'sider-unit'}>
+					<div className="sider-unit-title">Дата создания заявки</div>
+					<div className="sider-unit-control">
+						<DatePicker.RangePicker
+							style={{ width: '100%' }}
+							value={[
+								createdBefore ? dayjs.unix(createdBefore) : null,
+								createdUntil ? dayjs.unix(createdUntil) : null,
+							]}
+							format="DD.MM.YYYY"
+							allowClear
+							allowEmpty={[true, true]}
+							onChange={(date) => {
+								if (date) {
+									setCreatedBefore(date[0] ? date[0].unix() : null);
+									setCreatedUntil(date[1] ? date[1].unix() : null);
+								} else {
+									setCreatedBefore(null);
+									setCreatedUntil(null);
+								}
+							}}
 						/>
 					</div>
 				</div>
