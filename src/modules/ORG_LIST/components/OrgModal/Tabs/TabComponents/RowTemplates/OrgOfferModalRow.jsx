@@ -70,9 +70,9 @@ const OrgOfferlModalRow = (props) => {
 						)}
 					</div>
 				</div>
-				<div>
+				{/*<div>
 					<div>{baseData?.deleted === 1 ? 'Удалено' : <div>{baseData?.place?.name}</div>}</div>
-				</div>
+				</div>*/}
 				<div>
 					<div style={{textAlign: 'left'}}>{baseData?.comment}</div>
 				</div>
