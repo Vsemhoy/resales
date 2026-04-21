@@ -72,10 +72,8 @@ const OrgBillModalRow = (props) => {
 				</div>
 				<div>
 					<div>
-						{baseData?.statusbid_id && baseData?.statusbid_id === 1 ? (
+						{!!(baseData?.bill_number && baseData?.bill_number === 1) && (
 							'Оплачено'
-						) : (
-							<span style={{color: 'gray'}}>Не оплачено</span>
 						)}
 					</div>
 				</div>
