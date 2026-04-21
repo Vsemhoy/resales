@@ -198,9 +198,9 @@ const OrgListModalOffersTab = (props) => {
 							<div>
 								<div>Менеджер</div>
 							</div>
-							<div>
+							{/*<div>
 								<div>Статус</div>
-							</div>
+							</div>*/}
 							<div>
 								<div>Комментарий</div>
 							</div>
