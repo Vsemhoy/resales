@@ -71,7 +71,7 @@ const OrgBillModalRow = (props) => {
 					</div>
 				</div>
 				<div>
-					<div>
+					<div style={{color: `${baseData?.bill_number === 'не оплачен' ? '#42424291' : 'black'}`}}>
 						{baseData?.bill_number}
 					</div>
 				</div>
