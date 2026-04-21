@@ -72,9 +72,7 @@ const OrgBillModalRow = (props) => {
 				</div>
 				<div>
 					<div>
-						{!!(baseData?.bill_number && baseData?.bill_number === 1) && (
-							'Оплачено'
-						)}
+						{baseData?.bill_number}
 					</div>
 				</div>
 				<div>
