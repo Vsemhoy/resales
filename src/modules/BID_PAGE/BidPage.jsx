@@ -816,15 +816,26 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 		}
 		setIsOpenCustomModal(false);
 	};
+    const parseFilledNumber = (value) => {
+        if (value === null || value === undefined || value === '') return null;
+        const number = Number(value);
+        return Number.isFinite(number) ? number : null;
+    };
+    const isModelSkladFilled = (model) => {
+        if (!model) return false;
+        const modelCount = parseFilledNumber(model.model_count);
+        const skladCount = parseFilledNumber(model.sklad);
+        return modelCount !== null && skladCount !== null && modelCount === skladCount;
+    };
 	const isErrorInput = (bidModelId) => {
 		const model = form.models.find(model => model.id === bidModelId);
-		return !(model && +model.model_count === +model.sklad);
+		return !isModelSkladFilled(model);
 	};
 	const isManagerDone = () => {
 		return (form.baseInfo.orgUser && form.bill.requisite && form.bill.phone);
 	};
 	const isAdminDone = () => {
-		return !(form.models.find(model => +model.model_count !== +model.sklad));
+		return form.models.every(isModelSkladFilled);
 	};
 	const isDisabledInput = () => {
 		if (openMode?.status === 1 || openMode?.status === 5) return true;

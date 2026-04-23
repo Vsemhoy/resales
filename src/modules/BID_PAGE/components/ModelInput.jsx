@@ -6,7 +6,6 @@ const ModelInput = (props) => {
     const [bidModelId, setBidModelId] = useState(0);
     const [bidModelSort, setBidModelSort] = useState(null);
     const [type, setType] = useState('');
-    const [timeoutId, setTimeoutId] = useState(null);
 
     useEffect(() => {
         if (props.value || props.value === 0) {
@@ -30,24 +29,10 @@ const ModelInput = (props) => {
         }
     }, [props.type]);
 
-    useEffect(() => {
-        return () => {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-        };
-    }, [timeoutId]);
-
     const handleChange = (newValue) => {
         if (props?.isOnlyPositive && +newValue.replace(/^0+/, '') < 1 && newValue !== '' && newValue === '-') return;
         setValue(newValue);
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-        const newTimeoutId = setTimeout(() => {
-            props.onChangeModel(type, newValue, bidModelId, bidModelSort);
-        }, 300);
-        setTimeoutId(newTimeoutId);
+        props.onChangeModel(type, newValue, bidModelId, bidModelSort);
     };
 
     const handleBlur = (newValue) => {
@@ -59,13 +44,7 @@ const ModelInput = (props) => {
             setValue(+newValue.replace(/^0+/, ''));
             num = +newValue.replace(/^0+/, '');
         }
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-        const newTimeoutId = setTimeout(() => {
-            props.onChangeModel(type, num, bidModelId, bidModelSort);
-        }, 300);
-        setTimeoutId(newTimeoutId);
+        props.onChangeModel(type, num, bidModelId, bidModelSort);
     };
 
     return (
