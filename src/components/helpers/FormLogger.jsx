@@ -187,14 +187,13 @@ class FormLoggerService {
 //   }
 
 async _initDB() {
-  // console.log('TRY TO INIT');
-  // indexedDB.deleteDatabase(this.DB_NAME);
   if (this._isInitializing) return this._initPromise;
+  if (this.db) return this.db;
 
   this._isInitializing = true;
 
   this._initPromise = new Promise((resolve, reject) => {
-    console.log('[IDB] Открываем базу...', DB_NAME, DB_VERSION);
+    log('Opening DB...', DB_NAME, DB_VERSION);
     
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
@@ -213,12 +212,12 @@ async _initDB() {
 
     request.onupgradeneeded = (event) => {
     try {
-      console.log('[IDB] onupgradeneeded запущен');
+      log('onupgradeneeded');
       const db = event.target.result;
       const oldVersion = event.oldVersion; // может быть 0
 
       if (!db.objectStoreNames.contains('logs')) {
-        console.log('[IDB] Создаём хранилище logs');
+        log('Creating logs object store');
         const store = db.createObjectStore('logs', { keyPath: 'id' });
         store.createIndex('timestampMs', 'timestampMs', { unique: false });
         store.createIndex('date', 'date', { unique: false });
@@ -232,22 +231,36 @@ async _initDB() {
         }
       }
     } catch (err) {
-      console.error('[IDB] Ошибка в onupgradeneeded:', err);
+      logError('onupgradeneeded error:', err);
       // Без этого ошибка "утонет"
     }
   };
 
     request.onsuccess = (event) => {
-      console.log('[IDB] База успешно открыта');
-      const db = event.target.result;
-      // Важно: слушаем закрытие!
-      db.onclose = () => console.warn('[IDB] База закрыта (возможно, ошибка или память)');
-      resolve(db);
+      log('DB opened');
+      const openedDb = event.target.result;
+      this.db = openedDb;
+      this._isInitializing = false;
+      this._initPromise = null;
+      openedDb.onclose = () => {
+        log('DB closed');
+        this._resetDbState();
+      };
+      openedDb.onversionchange = () => {
+        log('DB versionchange: closing active connection');
+        try { openedDb.close(); } catch (e) {}
+        this._resetDbState();
+      };
+      resolve(openedDb);
     };
 
     request.onerror = (event) => {
-      console.error('[IDB] Ошибка открытия базы:', event.target.error);
+      logError('DB open error:', event.target.error);
+      this._resetDbState();
       reject(event.target.error);
+    };
+    request.onblocked = () => {
+      log('DB open blocked');
     };
   });
 
@@ -265,12 +278,8 @@ async _initDB() {
   // }
 
   async _ensureDB() {
-    try {
-      return await this._initDB();
-    } catch (e) {
-      console.error(e);
-      return null; // ← вот отсюда null!
-    }
+    if (this.db) return this.db;
+    return this._initDB();
   }
 
   // ===================== ОБСЛУЖИВАНИЕ БД =====================
@@ -300,6 +309,10 @@ async _initDB() {
         await this._trimToLimit(CONFIG.HARD_LIMIT_RECORDS * 0.8);
       }
     } catch (e) {
+      if (this._isDbClosingError(e)) {
+        log('Maintenance skipped: DB is closing');
+        return;
+      }
       logError('Maintenance error:', e);
     }
   }
@@ -318,12 +331,7 @@ async _initDB() {
   }
 
   async _deleteOldestRecords(count) {
-    const db = await this._ensureDB();
-    if (!db) return 0;
-    
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
-      const store = tx.objectStore(STORE_NAME);
+    return this._withStore('readwrite', (store, resolve, reject) => {
       const index = store.index('timestampMs');
       const request = index.openCursor(null, 'next');
       
@@ -342,7 +350,7 @@ async _initDB() {
       };
       
       request.onerror = () => reject(request.error);
-    });
+    }, 0);
   }
 
   async _trimToLimit(targetCount) {
@@ -425,14 +433,12 @@ async _initDB() {
   // }
 
     async log(action, data, meta = {}) {
-      console.log(this._settings);
       if (action === 'FORM_SNAPSHOT' && this._settings.saveSnapshots === false) {
         return null;
       }
       if (!this._canLog(action)) return null;
 
     try {
-      const db = await this._ensureDB();
       const now = new Date();
       
       const logEntry = {
@@ -461,21 +467,26 @@ async _initDB() {
         },
       };
 
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
+      return this._withStore('readwrite', (store, resolve, reject) => {
         const request = store.add(logEntry);
         
         request.onsuccess = () => resolve(logEntry.id);
         request.onerror = () => {
-          console.error('[FormLogger] Ошибка записи:', request.error);
+          logError('Write error:', request.error);
           reject(request.error);
         };
-      });
+      }, null);
     } catch (e) {
-      console.error('[FormLogger] Ошибка записи лога:', e);
+      logError('Log write failed:', e);
       return null;
     }
+  }
+
+  logFireAndForget(action, data, meta = {}) {
+    Promise.resolve()
+      .then(() => this.log(action, data, meta))
+      .catch((e) => logError('Non-blocking log failed:', e));
+    return null;
   }
 
   async testWrite() {
@@ -490,16 +501,16 @@ async _initDB() {
     
     return new Promise((resolve, reject) => {
       req.onsuccess = () => {
-        console.log('[IDB] Тестовая запись УСПЕШНА!');
+        log('testWrite success');
         resolve();
       };
       req.onerror = (e) => {
-        console.error('[IDB] Ошибка записи:', e.target.error);
+        logError('testWrite write error:', e.target.error);
         reject(e.target.error);
       };
     });
   } catch (err) {
-    console.error('[IDB] Ошибка инициализации:', err);
+    logError('testWrite init error:', err);
   }
 }
 
@@ -534,17 +545,12 @@ async _initDB() {
 
   async getRecordsCount() {
     try {
-      const db = await this._ensureDB();
-      if (!db) return 0;
-      
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
+      return this._withStore('readonly', (store, resolve, reject) => {
         const request = store.count();
         
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
-      });
+      }, 0);
     } catch (e) {
       return 0;
     }
@@ -578,12 +584,7 @@ async _initDB() {
 
   async getLogs({ name = null, comState = null, date = null, action = null, fromDate = null, toDate = null, page = 1, limit = 50 } = {}) {
     try {
-      const db = await this._ensureDB();
-      if (!db) return [];
-      
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
+      return this._withStore('readonly', (store, resolve, reject) => {
         const request = store.getAll();
         
         request.onsuccess = () => {
@@ -596,7 +597,7 @@ async _initDB() {
         };
         
         request.onerror = () => reject(request.error);
-      });
+      }, []);
     } catch (e) {
       return [];
     }
@@ -636,18 +637,13 @@ async _initDB() {
     try {
       const hasFilters = Object.values(filters).some(v => v && (!Array.isArray(v) || v.length > 0));
       if (!hasFilters) return this.getRecordsCount();
-      
-      const db = await this._ensureDB();
-      if (!db) return 0;
-      
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
+
+      return this._withStore('readonly', (store, resolve, reject) => {
         const request = store.getAll();
         
         request.onsuccess = () => resolve(this._filterLogs(request.result || [], filters).length);
         request.onerror = () => reject(request.error);
-      });
+      }, 0);
     } catch (e) {
       return 0;
     }
@@ -717,18 +713,13 @@ async _initDB() {
 
   async getSessionLogs() {
     try {
-      const db = await this._ensureDB();
-      if (!db) return [];
-      
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
+      return this._withStore('readonly', (store, resolve, reject) => {
         const index = store.index('sessionId');
         const request = index.getAll(IDBKeyRange.only(this.sessionId));
         
         request.onsuccess = () => resolve((request.result || []).sort((a, b) => b.timestampMs - a.timestampMs));
         request.onerror = () => reject(request.error);
-      });
+      }, []);
     } catch (e) {
       return [];
     }
@@ -762,12 +753,8 @@ async _initDB() {
 
   async clearAll() {
     try {
-      const db = await this._ensureDB();
-      if (!db) return;
-      
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const request = tx.objectStore(STORE_NAME).clear();
+      return this._withStore('readwrite', (store, resolve, reject) => {
+        const request = store.clear();
         request.onsuccess = () => { this._invalidateCache(); resolve(); };
         request.onerror = () => reject(request.error);
       });
@@ -782,14 +769,9 @@ async _initDB() {
 
   async _clearOlderThanInternal(days) {
     try {
-      const db = await this._ensureDB();
-      if (!db) return 0;
-      
       const cutoff = Date.now() - days * 86400000;
       
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, 'readwrite');
-        const store = tx.objectStore(STORE_NAME);
+      return this._withStore('readwrite', (store, resolve, reject, tx) => {
         const request = store.getAll();
         
         request.onsuccess = () => {
@@ -802,7 +784,7 @@ async _initDB() {
           };
         };
         request.onerror = () => reject(request.error);
-      });
+      }, 0);
     } catch (e) {
       return 0;
     }
@@ -810,21 +792,47 @@ async _initDB() {
 
   async clearByOrg(orgId) {
     const logs = await this.getLogsByOrg(orgId);
-    const db = await this._ensureDB();
-    if (!db || !logs.length) return 0;
-    
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
-      const store = tx.objectStore(STORE_NAME);
+    if (!logs.length) return 0;
+
+    return this._withStore('readwrite', (store, resolve, reject, tx) => {
       logs.forEach(l => store.delete(l.id));
       tx.oncomplete = () => { this._invalidateCache(); resolve(logs.length); };
       tx.onerror = () => reject(tx.error);
-    });
+    }, 0);
   }
 
   // ===================== ПРИВАТНЫЕ МЕТОДЫ =====================
 
   _invalidateCache() { this._statsCache = null; this._statsCacheTime = 0; }
+
+  _resetDbState() {
+    this.db = null;
+    this._isInitializing = false;
+    this._initPromise = null;
+  }
+
+  _isDbClosingError(error) {
+    const text = String(error?.message || error || '').toLowerCase();
+    return text.includes('connection is closing') || text.includes('database connection is closing');
+  }
+
+  async _withStore(mode, executor, fallback = null, attempt = 0) {
+    try {
+      const db = await this._ensureDB();
+      if (!db) return fallback;
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, mode);
+        const store = tx.objectStore(STORE_NAME);
+        executor(store, resolve, reject, tx);
+      });
+    } catch (e) {
+      if ((this._isDbClosingError(e) || e?.name === 'InvalidStateError') && attempt < 1) {
+        this._resetDbState();
+        return this._withStore(mode, executor, fallback, attempt + 1);
+      }
+      throw e;
+    }
+  }
 
   _sanitizeData(data) {
     try {
@@ -924,10 +932,17 @@ export const LOG_TYPE_CONFIG = {
 };
 
 export const useFormLogger = (orgId, orgName = null) => ({
-  log: (action, data = {}) => formLogger.log(action, data, { orgId, orgName }),
-  logChange: (field, value, extra = {}) => formLogger.log(LOG_ACTIONS.FIELD_CHANGE, { field, value, ...extra }, { orgId, orgName }),
-  logSnapshot: (formValues, action = LOG_ACTIONS.FORM_SNAPSHOT) => formLogger.logFormState(action, formValues, { orgId, orgName }),
-  logFullSnapshot: (formValues, action = LOG_ACTIONS.FORM_SNAPSHOT) => formLogger.logFullFormState(action, formValues, { orgId, orgName }),
-  logBeforeSave: (payload) => formLogger.logBeforeSave(payload, { orgId, orgName }),
-  logError: (errorType, error, context = {}) => formLogger.logError(errorType, error, { ...context, orgId, orgName }),
+  log: (action, data = {}) => formLogger.logFireAndForget(action, data, { orgId, orgName }),
+  logChange: (field, value, extra = {}) => formLogger.logFireAndForget(LOG_ACTIONS.FIELD_CHANGE, { field, value, ...extra }, { orgId, orgName }),
+  logSnapshot: (formValues, action = LOG_ACTIONS.FORM_SNAPSHOT) => formLogger.logFireAndForget(action, formLogger._compactFormData(formValues), { orgId, orgName, isFormSnapshot: true }),
+  logFullSnapshot: (formValues, action = LOG_ACTIONS.FORM_SNAPSHOT) => formLogger.logFireAndForget(action, formValues, { orgId, orgName, isFullSnapshot: true }),
+  logBeforeSave: (payload) => formLogger.logFireAndForget('BEFORE_SAVE', payload, { orgId, orgName, isSaveAttempt: true }),
+  logError: (errorType, error, context = {}) => formLogger.logFireAndForget('ERROR', {
+    errorType,
+    message: error?.message || String(error),
+    stack: error?.stack,
+    responseStatus: error?.response?.status,
+    responseData: error?.response?.data,
+    context,
+  }, { isError: true, ...context, orgId, orgName }),
 });
