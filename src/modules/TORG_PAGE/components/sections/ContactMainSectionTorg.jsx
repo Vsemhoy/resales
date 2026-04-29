@@ -1202,7 +1202,7 @@ const CollectAndSend = (stackName, data) => {
                     autoSize={{ minRows: TORG_MIN_ROWS_TEXTAREA, maxRows: TORG_MAX_ROWS_TEXTAREA }}
                     disabled={!editMode}
                     variant="borderless"
-                    maxLength={60}
+                    maxLength={100}
                   />,
                   required: true,
                   value: occupy
