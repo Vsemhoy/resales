@@ -55,7 +55,7 @@
 		"push-all-bogdan": "git add . && git commit -m\"update\" && git push origin master:bogdan",
 		"fetch-all": "git fetch origin && git merge origin/master",
 		"postinstall": "npm audit --audit-level=high || node -e \"process.exit(0)\"",
-        "update": "git fetch origin && git reset --hard origin/master"
+        "update": "git fetch origin && git reset --hard origin/master && npm run build"
 	},
 	"eslintConfig": {
 		"extends": [
