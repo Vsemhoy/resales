@@ -1141,7 +1141,7 @@ const TabMainTorg = (props) => {
             {ORGLEGADDRESSES.map((item)=>(
               <OrgLegalAddressMicroSectionTorg
                 key={'orlega_' + item.id + itemId}
-                allow_delete={true}
+                allow_delete={false}
                 data={item}
                 org_id={itemId}
                 edit_mode={editMode}
@@ -1155,7 +1155,7 @@ const TabMainTorg = (props) => {
             {ORGADDRESSES.map((item)=>(
               <OrgAddressMicroSectionTorg
                 key={'oraada_' + item.id + itemId}
-                allow_delete={true}
+                allow_delete={false}
                 data={item}
                 org_id={itemId}
                 edit_mode={editMode}
@@ -1503,7 +1503,7 @@ const TabMainTorg = (props) => {
                     selects={selects}
                     id_orgs={itemId}
                     collapse={true}
-                    allow_delete={true}
+                    allow_delete={false}
                     on_collect={(payload)=>{props.on_change_contact(payload)}}
                     />
 

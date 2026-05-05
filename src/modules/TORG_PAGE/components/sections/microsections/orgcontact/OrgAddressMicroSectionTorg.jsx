@@ -201,7 +201,7 @@ const OrgAddressMicroSectionTorg = (props) => {
             value: comment,
           },
         ]}
-        action={
+        action={allowDelete && (
           <Button
             className="sa-org-sub-sub-section-row-action"
             size="small"
@@ -214,7 +214,7 @@ const OrgAddressMicroSectionTorg = (props) => {
               setACTION_FLAG(1);
             }}
           />
-        }
+        )}
       />
     </div>
   );
