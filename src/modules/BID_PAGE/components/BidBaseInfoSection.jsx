@@ -4,6 +4,7 @@ import { MinusOutlined } from '@ant-design/icons';
 
 export const BidBaseInfoSection = ({
     values,
+    templateWordCompanyOptions,
     orgUsersOptions,
     protectionOptions,
     orgUsersDefaultValue,
@@ -14,6 +15,23 @@ export const BidBaseInfoSection = ({
     createdAtLabel,
 }) => (
     <div className={'sa-info-list-hide-wrapper'}>
+        <div className={'sa-info-list-row'}>
+            <div className={'sa-list-row-label'}>
+                <p>Шаблон word</p>
+            </div>
+            <Select
+                style={{ width: '100%', textAlign: 'left' }}
+                value={values.wordTemplateCompany}
+                showSearch
+                optionFilterProp="label"
+                filterOption={(input, option) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                }
+                options={templateWordCompanyOptions}
+                onChange={(val) => onChange('wordTemplateCompany', val)}
+                disabled={isDisabled}
+            />
+        </div>
         <div className={'sa-info-list-row'}>
             <div className={'sa-list-row-label'}>
                 <p>Контактное лицо</p>
@@ -101,4 +119,3 @@ export const BidBaseInfoSection = ({
         </div>
     </div>
 );
-

@@ -600,14 +600,6 @@ useEffect(() => {
 		);
 	}, [baseMainData?.company_color, baseMainData?.company?.color, orgCompany?.color]);
 
-	const canManageOrgCompanyActions = useMemo(() => {
-		const orgCompanyId = Number(baseMainData?.id_company);
-		const activeCompanyId = Number(userdata?.user?.active_company);
-
-		if (!orgCompanyId) return true;
-		return orgCompanyId === 1 || orgCompanyId === activeCompanyId;
-	}, [baseMainData?.id_company, userdata?.user?.active_company]);
-
 	const goBack = () => {
 		// const returnPath = location.state?.from;
 		const referrer = document.referrer;
@@ -1544,16 +1536,14 @@ useEffect(() => {
 												Редактирует: {lockUser ? lockUser.username : ''}
 											</div>
 										):(
-										canManageOrgCompanyActions && (
-											<Button
-											color="primary"
-												variant="outlined"
-												onClick={triggerEditMode}
-												icon={<PencilIcon height={'16px'} />}
-											>
-												Редактировать
-											</Button>
-										)
+										<Button
+										color="primary"
+											variant="outlined"
+											onClick={triggerEditMode}
+											icon={<PencilIcon height={'16px'} />}
+										>
+											Редактировать
+										</Button>
 
 										)}
 									</div>
@@ -1574,7 +1564,6 @@ useEffect(() => {
 							data={{ id: itemId }}
 							environment={'editor'} 
 							org_name={orgName}
-							can_manage_company_actions={canManageOrgCompanyActions}
 							/>
 						)}
 
@@ -1583,7 +1572,6 @@ useEffect(() => {
 								data={{ id: itemId }}
 								environment={'editor'}
 								org_name={orgName}
-								can_manage_company_actions={canManageOrgCompanyActions}
 							/>
 						)}
 
