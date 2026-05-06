@@ -352,10 +352,10 @@ const BidPage = (props) => {
             const { bid, bid_models } = serverData;
             const wordTemplateCompany =
                 bid.typeTitle ??
-                ((bid.base_info?.org?.id_company ??
+                (bid.base_info?.org?.id_company ??
                     bid.base_info?.org?.company_id ??
                     bid.base_info?.org?.company?.id ??
-                    bid.id_company) - 1);
+                    bid.id_company);
 
             setBidActions(bid.actions);
             setBidIdCompany(bid.id_company);
@@ -429,7 +429,7 @@ const BidPage = (props) => {
                 const data = {
                     bid_id: bidId,
                     new: true,
-                    template_id: +(formRef.current?.baseInfo?.wordTemplateCompany ?? bidIdCompany - 1),
+                    template_id: +(formRef.current?.baseInfo?.wordTemplateCompany ?? bidIdCompany),
                     type: 1
                 };
                 const response = await getWordFile(data);
@@ -588,7 +588,7 @@ const BidPage = (props) => {
 		if (!select) return [];
 		return select
 			.filter((item) => Number(item.id) !== 1)
-			.map((item) => ({value: Number(item.id) - 1, label: item.name, used: item.used}));
+			.map((item) => ({value: item.id, label: item.name, used: item.used}));
 	};
     const countOfComments = () => {
         return Object.values(form.comments).filter(Boolean).length;
