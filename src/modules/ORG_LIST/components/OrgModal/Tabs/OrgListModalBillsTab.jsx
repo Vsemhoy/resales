@@ -24,7 +24,6 @@ const OrgListModalBillsTab = (props) => {
 	const [dataList, setDataList] = useState([]);
 
 	const [navigateLink, setNavigateLink] = useState('/bids?');
-	const canManageCompanyActions = props.can_manage_company_actions !== false;
 
 	useEffect(() => {
 		if (baseOrgData?.name && props.on_load) {
@@ -174,13 +173,11 @@ const OrgListModalBillsTab = (props) => {
 					</div>
 					<div className={'sa-flex-gap'}>
 						{/* Здесь будут фильтры */}
-						{canManageCompanyActions && (
-							<Button 
-							size={'small'}
-								onClick={()=>{create_bid(orgId, 2)}}>
-								Создать Счет
-							</Button>
-						)}
+						<Button 
+						size={'small'}
+							onClick={()=>{create_bid(orgId, 2)}}>
+							Создать Счет
+						</Button>
 						<NavLink to={navigateLink}>
 							<Button size={'small'}>Открыть в полном списке</Button>
 						</NavLink>

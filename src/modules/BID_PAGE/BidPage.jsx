@@ -86,6 +86,7 @@ const BidPage = (props) => {
 
 	const [form, setForm] = useState({
 		baseInfo: {
+			wordTemplateCompany: null,
 			orgUser: null,
             protectionProject: null,
             object: null,
@@ -349,6 +350,12 @@ const BidPage = (props) => {
             setOpenMode(serverData.openmode);
 
             const { bid, bid_models } = serverData;
+            const wordTemplateCompany =
+                bid.typeTitle ??
+                ((bid.base_info?.org?.id_company ??
+                    bid.base_info?.org?.company_id ??
+                    bid.base_info?.org?.company?.id ??
+                    bid.id_company) - 1);
 
             setBidActions(bid.actions);
             setBidIdCompany(bid.id_company);
@@ -362,6 +369,7 @@ const BidPage = (props) => {
 
             setForm({
                 baseInfo: {
+                    wordTemplateCompany,
                     orgUser: bid.base_info.orguser,
                     protectionProject: bid.base_info.protection,
                     object: bid.base_info.object,
@@ -421,7 +429,7 @@ const BidPage = (props) => {
                 const data = {
                     bid_id: bidId,
                     new: true,
-                    template_id: +bidIdCompany - 1,
+                    template_id: +(formRef.current?.baseInfo?.wordTemplateCompany ?? bidIdCompany - 1),
                     type: 1
                 };
                 const response = await getWordFile(data);
@@ -525,6 +533,7 @@ const BidPage = (props) => {
 			bid: {
 				id: bidId,
 				id_company: bidIdCompany,
+				typeTitle: currentForm.baseInfo.wordTemplateCompany,
 				place: bidPlace,
 				type: bidType,
 				files_count: bidFilesCount,
@@ -574,6 +583,12 @@ const BidPage = (props) => {
 	  } else {
 		  return [];
 	  }
+	};
+	const prepareCompanySelect = (select) => {
+		if (!select) return [];
+		return select
+			.filter((item) => Number(item.id) !== 1)
+			.map((item) => ({value: Number(item.id) - 1, label: item.name, used: item.used}));
 	};
     const countOfComments = () => {
         return Object.values(form.comments).filter(Boolean).length;
@@ -900,6 +915,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 			children: (
                 <BidBaseInfoSection
                     values={form.baseInfo}
+                    templateWordCompanyOptions={prepareCompanySelect(selects.companies)}
                     orgUsersOptions={prepareSelect(selects.orgUsers)}
                     protectionOptions={prepareSelect(selects.protection)}
                     orgUsersDefaultValue={(selects.orgUsers && selects.orgUsers.length > 0) ? selects.orgUsers[selects.orgUsers.length - 1].id : null}
