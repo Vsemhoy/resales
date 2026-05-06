@@ -40,10 +40,10 @@ export const useBidData = (bidId, form) => {
         const bid = data.bid;
         const wordTemplateCompany =
             bid.typeTitle ??
-            ((bid.base_info?.org?.id_company ??
+            (bid.base_info?.org?.id_company ??
                 bid.base_info?.org?.company_id ??
                 bid.base_info?.org?.company?.id ??
-                bid.id_company) - 1);
+                bid.id_company);
 
         if (wordTemplateCompany !== form.baseInfo.wordTemplateCompany) return true;
         if (bid.base_info.orguser !== form.baseInfo.orgUser) return true;
