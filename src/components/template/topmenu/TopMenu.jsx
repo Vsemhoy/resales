@@ -11,12 +11,14 @@ import {
 	CalendarOutlined,
 	CloseCircleOutlined,
 	HomeFilled,
+	LoginOutlined,
 	NotificationOutlined,
+	UserOutlined,
 	WechatWorkOutlined
 } from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
-import {Badge, Button, Dropdown} from 'antd';
+import {Avatar, Badge, Button, Dropdown} from 'antd';
 import { ShortName } from '../../helpers/TextHelpers';
 import {
 	ArrowTopRightOnSquareIcon,
@@ -156,22 +158,25 @@ const TopMenu = (props) => {
 		setRoleMenu(roles);
 	}, [userdata]);
 
-	const userMenu = [
+	const userMenuItems = [
 		{
-			key: 'rwterw2',
+			key: 'status',
+			label: 'Статус: Онлайн',
+		},
+		{
+			key: 'loclog',
 			label: <NavLink to="/loclog"><div>Локальные логи</div></NavLink>,
 			icon: <RectangleStackIcon height={'18px'} />,
 		},
 		{
-			key: '3fgsd',
-			label: <NavLink to={`${HTTP_HOST}/logout`}>Выйти из системы</NavLink>,
-			icon: <ArrowTopRightOnSquareIcon height={'18px'} />,
+			key: `${HTTP_HOST}/logout`,
+			label: <NavLink to={`${HTTP_HOST}/logout`}>Выйти</NavLink>,
+			icon: <LoginOutlined />,
 		},
 	];
 
 	/** ------------------ FETCHES ---------------- */
 	const set_user_company = async (newcom) => {
-		if (PRODMODE) {
 			try {
 				let response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/update/active_company`, {
 					id_company: newcom,
@@ -184,9 +189,6 @@ const TopMenu = (props) => {
 			} catch (e) {
 				console.log(e);
 			}
-		} else {
-			props.changed_user_data();
-		}
 	};
 
 	const changeUserCompany = (company_id) => {
@@ -305,9 +307,52 @@ const TopMenu = (props) => {
                                  onNewAlert={props.onNewAlert}
                     />
                     {/*<NotiBtn />*/}
-					<Dropdown menu={{ items: userMenu }}>
+					{/*
+					<Dropdown menu={{ items: userMenuItems }}>
 						<div className={'sa-flex-gap'}>
 							{ShortName(userdata?.user?.surname, userdata?.user?.name, userdata?.user?.secondname)}
+						</div>
+					</Dropdown>
+					*/}
+					<Dropdown menu={{ items: userMenuItems }} trigger={['hover']}>
+						<div
+							style={{
+								cursor: 'pointer',
+								display: 'flex',
+								alignItems: 'center',
+								margin: '0 8px',
+								height: '32px',
+								padding: '0 12px',
+								borderRadius: '6px',
+								border: '1px solid color-mix(in srgb, var(--app-primary-color) 52%, var(--table-border-divider-color))',
+								background: 'color-mix(in srgb, var(--app-soft-surface-color) 86%, #ffffff 14%)',
+								boxShadow: 'rgba(255, 255, 255, 0.55) 0px 0px 2px',
+								backdropFilter: 'blur(6px)',
+								boxSizing: 'border-box',
+							}}
+						>
+							{userdata?.user ? (
+								<div style={{ display: 'flex', alignItems: 'center', gap: '8px', lineHeight: 1 }}>
+									<Avatar
+										size={22}
+										style={{
+											backgroundColor: '#fff',
+											color: '#000',
+											border: '1px solid rgba(34, 60, 80, 0.24)',
+											boxShadow: 'rgba(255, 255, 255, 0.55) 0px 0px 2px',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: 'center',
+										}}
+										icon={<UserOutlined />}
+									/>
+									<span style={{fontWeight: 500, color: 'var(--app-text-color)', fontSize: '14px', whiteSpace: 'nowrap'}}>
+										{userdata.user.surname} {userdata.user.name}
+									</span>
+								</div>
+							) : (
+								<span>Пользователь</span>
+							)}
 						</div>
 					</Dropdown>
 					<Dropdown menu={{ items: companiesMenu }}>
