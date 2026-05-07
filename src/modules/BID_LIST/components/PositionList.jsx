@@ -16,6 +16,14 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
 	const [files, setFiles] = useState(null);
 	const [load, setLoad] = useState(true);
 
+	const getFileName = (file) => file?.name_file || file?.file_name || file?.name || file?.file_link || '';
+
+	const getFileExtension = (file) => {
+		const fileName = String(getFileName(file));
+		const parts = fileName.split('.');
+		return parts.length > 1 ? parts[parts.length - 1] : 'file';
+	};
+
 	useEffect(() => {
 		fetchModelsReq().then();
 	}, [bidId]);
@@ -136,10 +144,10 @@ const PositionList = ({ bidId, fetch_path, error_alert }) => {
                         </Space.Compact>
                     </div>
 				))}
-				{!load && !hasPositions && hasFiles && files.map((item, idx) => (
+				{!load && !hasPositions && hasFiles && files.filter(Boolean).map((item, idx) => (
                     <div key={`file-${bidId}-${item.id || idx}`} onClick={() => handleDownload(item)}>
                         <Space.Compact block>
-                            <Button size={'small'} color={'primary'} variant={'filled'}>{item.name_file.split('.')[item.name_file.split('.').length - 1]}</Button>
+                            <Button size={'small'} color={'primary'} variant={'filled'}>{getFileExtension(item)}</Button>
                             <Button size={'small'} color={'default'} variant={'filled'}>{`${dayjs(item.created_at * 1000).format('DD.MM.YYYY HH:mm')}`}</Button>
                         </Space.Compact>
                     </div>
