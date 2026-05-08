@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import {PRODMODE, CSRF_TOKEN, ROUTE_PREFIX} from '../../config/config';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
@@ -345,6 +345,10 @@ const Price = (props) => {
             return sections;
         };
 
+
+
+
+        
         const sections = buildSections(data);
 
         if (!sections.some(s => s.models.length > 0)) {
@@ -362,8 +366,8 @@ const Price = (props) => {
 
         const extraColumns = [];
         if (checkCol('РРЦ'))      extraColumns.push(`РРЦ ${currencySymbol}`);
-        if (checkCol('Розница'))  extraColumns.push(`Розница ${currencySymbol}`);
-        if (checkCol('Прайс 10')) extraColumns.push(`Прайс 10 ${currencySymbol}`);
+        if (checkCol('Розница'))  extraColumns.push(`Перепродажа ${currencySymbol}`);
+        if (checkCol('Прайс 10')) extraColumns.push(`Проектная ${currencySymbol}`);
         if (checkCol('Прайс 20')) extraColumns.push(`Прайс 20 ${currencySymbol}`);
         if (checkCol('Прайс 30')) extraColumns.push(`Прайс 30 ${currencySymbol}`);
 
@@ -380,71 +384,136 @@ const Price = (props) => {
             bottom: { style: 'thin', color: { argb: 'FF000000' } },
             right:  { style: 'thin', color: { argb: 'FF000000' } },
         };
+        const borderStyle2 = {
+            top:    { style: 'none', color: { argb: 'FF000000' } },
+            left:   { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'none', color: { argb: 'FF000000' } },
+            right:  { style: 'thin', color: { argb: 'FF000000' } },
+        };
 
-        // Заголовок
-        const headerRow = ws.addRow(allColumns);
-        headerRow.eachCell(cell => {
-            cell.font = { bold: true, size: 18 };
-            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9D9D9' } };
-            cell.border = borderStyle;
-        });
+        const borderStyleLast = {
+            top:    { style: 'none', color: { argb: 'FF000000' } },
+            left:   { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'double', color: { argb: 'FF000000' } },
+            right:  { style: 'thin', color: { argb: 'FF000000' } },
+        };
 
+        // Padding
+        for (let i = 0; i < 7; i++) {
+            ws.addRow([]);
+        }
+        
+        const titleRow = ws.addRow(['Прайс лист от 07.05.2020']);
+        ws.mergeCells(titleRow.number, 1, titleRow.number, totalCols);
+        
+        const titleCell = titleRow.getCell(1);
+        titleCell.value = 'Прайс лист от ' + dayjs().format('DD.MM.YYYY');
+        titleCell.font = { bold: true, size: 11 };  // жирный + размер шрифта
+        titleCell.alignment = { horizontal: 'center' };  // по центру
+        
+        ws.addRow([]);
+
+
+        const activeCompanyId = props.userdata?.user?.active_company;
+        try {
+            const response = await fetch(parseInt(activeCompanyId) === 3 ? '/price_hat_rondo.png' : '/price_hat_arstel.png');
+            if (response.ok) {
+                const arrayBuffer = await response.arrayBuffer();
+                const imageId = wb.addImage({
+                    buffer: arrayBuffer,
+                    extension: 'png',
+                });
+                ws.addImage(imageId, {
+                    tl: { col: 0, row: parseInt(activeCompanyId) === 3 ? 1 : 2 },
+                    br: { col: 4, row: 7 },
+                });
+            } else {
+                console.error('Image fetch failed:', response.status, response.statusText);
+            }
+        } catch (e) {
+            console.error('Image insert failed:', e);
+        }
+
+
+
+        // // Заголовок
+        // const headerRow = ws.addRow(allColumns);
+        // headerRow.eachCell(cell => {
+        //         cell.font = { 
+        //         // family: 'Arial',     // ← задаём Arial
+        //         bold: true,          // жирный
+        //         size: 11             // размер
+        //     };
+        //     cell.style.font.name = ('Arial');
+        //     // cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9D9D9' } };
+        //     cell.border = borderStyle;
+        // });
+        
+        let lastRow = null;
         sections.forEach(({ categoryName, depth, models }) => {
             // Показываем только SUBCATEGORY (depth === 2), COMPANY и CATEGORY пропускаем
             if (depth < 2) return;
 
             // Название SUBCATEGORY выводим во второй столбец (Описание), первый оставляем пустым
-            const catRow = ws.addRow(['', categoryName]);
-            ws.mergeCells(catRow.number, 2, catRow.number, totalCols);
-            const catCell = catRow.getCell(2);
-            catCell.font = { bold: true, size: 18, color: { argb: 'FF333333' } };
-            catCell.fill = {
-                type: 'pattern',
-                pattern: 'solid',
-                // Нейтральный светло-серый цвет
-                fgColor: { argb: 'FFD6DCE4' }
+            const catRow = ws.addRow([categoryName.trim(), '', ...extraColumns]);
+            ws.mergeCells(catRow.number, 1, catRow.number, 2);
+
+
+            catRow.eachCell(cell => {
+                cell.font = { 
+                // family: 'Arial',     // ← задаём Arial
+                bold: true,          // жирный
+                size: 9             // размер
             };
-            catCell.alignment = { indent: 1 };
+            cell.style.font.name = ('Arial');
+            // cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9D9D9' } };
+            cell.border = borderStyle;
+
+            const catCell = catRow.getCell(2);
+            catCell.font = { bold: true, size: 11, color: { argb: 'FF333333' } };
+            catCell.style.font.name = ('Arial');
+
             catCell.border = borderStyle;
             catRow.getCell(1).border = borderStyle;
-
-            models.forEach((m) => {
-                const getPrice = (rub, val) =>
-                    ((currentCurrency ? rub : val) / 100).toFixed(2);
-
-                const rowData = [m.name, m.descr];
-                if (checkCol('РРЦ'))      rowData.push(getPrice(m.prices.bo_price_40_rub, m.prices.bo_price_40));
-                if (checkCol('Розница'))  rowData.push(getPrice(m.prices.bo_price_0_rub,  m.prices.bo_price_0));
-                if (checkCol('Прайс 10')) rowData.push(getPrice(m.prices.bo_price_10_rub, m.prices.bo_price_10));
-                if (checkCol('Прайс 20')) rowData.push(getPrice(m.prices.bo_price_20_rub, m.prices.bo_price_20));
-                if (checkCol('Прайс 30')) rowData.push(getPrice(m.prices.bo_price_30_rub, m.prices.bo_price_30));
-
-                const modelRow = ws.addRow(rowData);
-                modelRow.font = { size: 16 };
-                modelRow.eachCell(cell => {
-                    cell.border = borderStyle;
-                });
+        });
+        
+        models.forEach((m) => {
+            const getPrice = (rub, val) =>
+                ((currentCurrency ? rub : val) / 100).toFixed(2);
+            
+            const rowData = [m.name, m.descr];
+            if (checkCol('РРЦ'))      rowData.push(Number(getPrice(m.prices.bo_price_40_rub, m.prices.bo_price_40)));
+            if (checkCol('Розница'))  rowData.push(Number(getPrice(m.prices.bo_price_0_rub,  m.prices.bo_price_0)));
+            if (checkCol('Прайс 10')) rowData.push(Number(getPrice(m.prices.bo_price_10_rub, m.prices.bo_price_10)));
+            if (checkCol('Прайс 20')) rowData.push(Number(getPrice(m.prices.bo_price_20_rub, m.prices.bo_price_20)));
+            if (checkCol('Прайс 30')) rowData.push(Number(getPrice(m.prices.bo_price_30_rub, m.prices.bo_price_30)));
+            
+            const modelRow = ws.addRow(rowData);
+            modelRow.font = { size: 11 };
+            modelRow.eachCell((cell, i) => {
+                cell.border = borderStyle2;
+                if (i > 2){
+                    cell.numFmt = currentCurrency ? '#,##0.00 "₽"' : '$ #,##0.00';
+                }
+            });
+            lastRow = modelRow;
             });
         });
 
-        // Автоширина колонок
-        ws.columns.forEach((col, i) => {
-            let maxLen = allColumns[i]?.length || 10;
-            col.eachCell(cell => {
-                const val = cell.value?.toString() || '';
-                if (val.length > maxLen) maxLen = val.length;
-            });
-            const width = Math.min(maxLen + 2, 60);
-            // Колонка "Описание" (индекс 1) — в два раза шире
-            // Колонки цен (индексы 2-6) — фиксированная ширина 20
-            if (i === 1) {
-                col.width = width * 2;
-            } else if (i >= 2) {
-                col.width = Math.max(width, 20);
-            } else {
-                col.width = Math.max(width, 20);
-            }
+        lastRow?.eachCell(cell => {
+            cell.border = borderStyleLast;
         });
+
+        // Фиксированная ширина колонок
+        ws.columns = [
+            { width: 168 / 8 },  // Название (128px)
+            { width: 448 / 8 },  // Описание (448px)
+            { width: 120 / 8 },   // РРЦ (64px)
+            { width: 120 / 8 },   // Розница (64px)
+            { width: 120 / 8 },   // Прайс 10 (64px)
+            { width: 120 / 8 },   // Прайс 20 (64px)
+            { width: 120 / 8 }    // Прайс 30 (64px)
+        ];
 
         const buffer = await wb.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
