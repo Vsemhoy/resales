@@ -485,7 +485,7 @@ export const PRICE = {
                                 },
                                 {
                                     "id": 325,
-                                    "name": "SP-200",
+                                    "name": "",
                                     "currency": 1,
                                     "name_seo": "SP-200",
                                     "prices": {

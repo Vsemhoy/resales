@@ -434,20 +434,6 @@ const Price = (props) => {
             console.error('Image insert failed:', e);
         }
 
-
-
-        // // Заголовок
-        // const headerRow = ws.addRow(allColumns);
-        // headerRow.eachCell(cell => {
-        //         cell.font = { 
-        //         // family: 'Arial',     // ← задаём Arial
-        //         bold: true,          // жирный
-        //         size: 11             // размер
-        //     };
-        //     cell.style.font.name = ('Arial');
-        //     // cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD9D9D9' } };
-        //     cell.border = borderStyle;
-        // });
         
         let lastRow = null;
         sections.forEach(({ categoryName, depth, models }) => {
@@ -480,24 +466,28 @@ const Price = (props) => {
         models.forEach((m) => {
             const getPrice = (rub, val) =>
                 ((currentCurrency ? rub : val) / 100).toFixed(2);
-            
-            const rowData = [m.name, m.descr];
-            if (checkCol('РРЦ'))      rowData.push(Number(getPrice(m.prices.bo_price_40_rub, m.prices.bo_price_40)));
-            if (checkCol('Розница'))  rowData.push(Number(getPrice(m.prices.bo_price_0_rub,  m.prices.bo_price_0)));
-            if (checkCol('Прайс 10')) rowData.push(Number(getPrice(m.prices.bo_price_10_rub, m.prices.bo_price_10)));
-            if (checkCol('Прайс 20')) rowData.push(Number(getPrice(m.prices.bo_price_20_rub, m.prices.bo_price_20)));
-            if (checkCol('Прайс 30')) rowData.push(Number(getPrice(m.prices.bo_price_30_rub, m.prices.bo_price_30)));
-            
-            const modelRow = ws.addRow(rowData);
-            modelRow.font = { size: 11 };
-            modelRow.eachCell((cell, i) => {
-                cell.border = borderStyle2;
-                if (i > 2){
-                    cell.numFmt = currentCurrency ? '#,##0.00 "₽"' : '$ #,##0.00';
+
+                if (m.name || m.name.trim() !== ''){
+                    const rowData = [m.name, m.descr];
+                    if (checkCol('РРЦ'))      rowData.push(Number(getPrice(m.prices.bo_price_40_rub, m.prices.bo_price_40)));
+                    if (checkCol('Розница'))  rowData.push(Number(getPrice(m.prices.bo_price_0_rub,  m.prices.bo_price_0)));
+                    if (checkCol('Прайс 10')) rowData.push(Number(getPrice(m.prices.bo_price_10_rub, m.prices.bo_price_10)));
+                    if (checkCol('Прайс 20')) rowData.push(Number(getPrice(m.prices.bo_price_20_rub, m.prices.bo_price_20)));
+                    if (checkCol('Прайс 30')) rowData.push(Number(getPrice(m.prices.bo_price_30_rub, m.prices.bo_price_30)));
+                    
+                    const modelRow = ws.addRow(rowData);
+                    modelRow.font = { size: 11 };
+                    modelRow.eachCell((cell, i) => {
+                        cell.border = borderStyle2;
+                        if (i > 2){
+                            cell.numFmt = currentCurrency ? '#,##0.00 "₽"' : '$ #,##0.00';
+                        }
+                        });
+                        lastRow = modelRow;
+                    
                 }
             });
-            lastRow = modelRow;
-            });
+
         });
 
         lastRow?.eachCell(cell => {
