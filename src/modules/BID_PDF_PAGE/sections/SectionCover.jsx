@@ -1,19 +1,91 @@
-// Заглушка секции — скопируй как шаблон для каждой из:
-// SectionCover, SectionToc, SectionFeatures, SectionSelectEquipment,
-// SectionAcoustic, SectionRecommendations, SectionSpecials, SectionRondoDelivery
-
 import React from 'react'
+import { Input } from 'antd'
+import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
+import { COVER_BLOCKS } from '../components/coverBlocks'
 
-export default function SectionCover({ data, onChange, companyId, draftId }) {
-  // data       — весь formData (читаем своё, пишем через onChange)
-  // onChange   — (newData) => void, передаём весь formData с патчем
-  // companyId  — '2' (Arstel) | '3' (Rondo)
-  // draftId    — id драфта (для загрузки файлов)
+export default function SectionCover({ data, onChange }) {
+  const set = (key, val) => onChange({ ...data, [key]: val })
 
   return (
-    <div style={{ padding: '12px' }}>
-      {/* TODO: форма обложки */}
-      <span style={{ color: '#bfbfbf', fontSize: 12 }}>SectionCover — в разработке</span>
+    <TabWrap>
+      <Section title="Данные на обложку" description="Предзаполнено из КП — отредактируй если нужно">
+        <Grid2>
+          <Field label="Исходящий номер">
+            <Input placeholder="81740" value={data.ext_number || ''} onChange={e => set('ext_number', e.target.value)} />
+          </Field>
+          <div />
+          <Field label="Кому — имя (в дательном падеже)">
+            <Input placeholder="Иванову Ивану" value={data.target_name || ''} onChange={e => set('target_name', e.target.value)} />
+          </Field>
+          <Field label="Кому — должность и организация">
+            <Input placeholder="Директору ООО «Ромашка»" value={data.target_occupy || ''} onChange={e => set('target_occupy', e.target.value)} />
+          </Field>
+          <Field label="Адрес объекта">
+            <Input placeholder="г. Санкт-Петербург, ул. Примерная, 1" value={data.object_address || ''} onChange={e => set('object_address', e.target.value)} />
+          </Field>
+          <Field label="Название объекта">
+            <Input placeholder="АО Полиметалл" value={data.object_name || ''} onChange={e => set('object_name', e.target.value)} />
+          </Field>
+          <Field label="Выполнил — имя">
+            <Input placeholder="Кошелев Александр" value={data.manager_name || ''} onChange={e => set('manager_name', e.target.value)} />
+          </Field>
+          <Field label="Выполнил — должность">
+            <Input placeholder="Коммерческий директор" value={data.manager_occupy || ''} onChange={e => set('manager_occupy', e.target.value)} />
+          </Field>
+        </Grid2>
+      </Section>
+
+      <Section title="Контактные данные">
+        <Grid2>
+          <Field label="Телефон">
+            <Input placeholder="+7 (812) 123-45-67" value={data.tel || ''} onChange={e => set('tel', e.target.value)} />
+          </Field>
+          <Field label="Email">
+            <Input placeholder="sales@arstel.com" value={data.email || ''} onChange={e => set('email', e.target.value)} />
+          </Field>
+        </Grid2>
+      </Section>
+
+      <Section title="Картинка на обложку" description="Правая часть титульного листа">
+        <CoverBlockPicker value={data.coverBlock ?? null} onChange={url => set('coverBlock', url)} />
+      </Section>
+    </TabWrap>
+  )
+}
+
+function CoverBlockPicker({ value, onChange }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div
+        onClick={() => onChange(null)}
+        style={{
+          width: 80, height: 60, border: `2px solid ${!value ? '#1677ff' : '#d9d9d9'}`,
+          borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', fontSize: 11, color: '#8c8c8c', background: '#fafafa',
+        }}
+      >
+        Без картинки
+      </div>
+      {COVER_BLOCKS.map(block => (
+        <div
+          key={block.filename}
+          onClick={() => onChange(value === block.url ? null : block.url)}
+          title={block.name}
+          style={{
+            width: 80, height: 60, border: `2px solid ${value === block.url ? '#1677ff' : '#d9d9d9'}`,
+            borderRadius: 6, overflow: 'hidden', cursor: 'pointer', position: 'relative',
+          }}
+        >
+          <img src={block.url} alt={block.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          {value === block.url && (
+            <div style={{ position: 'absolute', top: 2, right: 2, background: '#1677ff', borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" width="10" height="10">
+                <polyline points="2,6 5,9 10,3" />
+              </svg>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   )
 }

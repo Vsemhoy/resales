@@ -1,15 +1,11 @@
-// ─── Конфиг секций PDF-редактора ──────────────────────────────────────────────
-// target: null  = показывается для обеих систем
-// target: 't'   = только Трансляционная
-// target: 'p'   = только Профессиональная
-
 export const ALL_SECTIONS = [
-  { key: 'cover',           label: 'Обложка',               draggable: false, target: null, required: true  },
+  { key: 'cover',           label: 'Обложка',               draggable: false, target: null, required: false },
   { key: 'toc',             label: 'Оглавление',            draggable: false, target: null, required: false },
   { key: 'features',        label: 'Особенности системы',   draggable: true,  target: null, required: false },
   { key: 'selectEquipment', label: 'Выбор оборудования',    draggable: true,  target: 't',  required: false },
   { key: 'acoustic',        label: 'Акустический расчёт',   draggable: true,  target: 'p',  required: false },
   { key: 'recommendations', label: 'Рекомендации',          draggable: true,  target: null, required: false },
+  { key: 'specifications',  label: 'Спецификация',          draggable: true,  target: null, required: false },
   { key: 'specials',        label: 'Описание оборудования', draggable: true,  target: null, required: false },
   { key: 'rondoDelivery',   label: 'Условия поставки',      draggable: true,  target: null, required: false },
 ]
@@ -31,19 +27,16 @@ export const ORIENTATION_OPTIONS = [
 ]
 
 export const TARGET_OPTIONS = [
-  { value: 't', label: 'Трансляционная'  },
+  { value: 't', label: 'Трансляционная'   },
   { value: 'p', label: 'Профессиональная' },
 ]
 
-// Секции, видимые при данном targetSystem
 export function getVisibleSections(targetSystem) {
   return ALL_SECTIONS.filter(s => s.target === null || s.target === targetSystem)
 }
 
-// Дефолтный порядок секций — просто массив ключей
 export const DEFAULT_SECTION_ORDER = ALL_SECTIONS.map(s => s.key)
 
-// Дефолтно включённые секции
 export const DEFAULT_ENABLED = {
   cover:           true,
   toc:             true,
@@ -51,6 +44,7 @@ export const DEFAULT_ENABLED = {
   selectEquipment: false,
   acoustic:        false,
   recommendations: false,
+  specifications:  true,
   specials:        false,
   rondoDelivery:   false,
 }

@@ -19,6 +19,7 @@ import SectionSelectEquipment from './sections/SectionSelectEquipment'
 import SectionAcoustic        from './sections/SectionAcoustic'
 import SectionRecommendations from './sections/SectionRecommendations'
 import SectionSpecials        from './sections/SectionSpecials'
+import SectionSpecifications from './sections/SectionSpecifications'
 import SectionRondoDelivery   from './sections/SectionRondoDelivery'
 
 const SECTION_COMPONENTS = {
@@ -29,6 +30,7 @@ const SECTION_COMPONENTS = {
   acoustic:        SectionAcoustic,
   recommendations: SectionRecommendations,
   specials:        SectionSpecials,
+  specifications:  SectionSpecifications,
   rondoDelivery:   SectionRondoDelivery,
 }
 

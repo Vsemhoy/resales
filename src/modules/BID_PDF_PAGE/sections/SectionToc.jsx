@@ -1,4 +1,10 @@
 import React from 'react'
-export default function SectionToc({ data, onChange, companyId, draftId }) {
-  return <div style={{ padding: '12px', color: '#bfbfbf', fontSize: 12 }}>SectionToc — в разработке</div>
+import { Section, TabWrap } from '../components/FormParts'
+
+export default function SectionToc() {
+  return (
+    <TabWrap>
+      <Section title="Оглавление" description="Генерируется автоматически в конце документа по включённым секциям" />
+    </TabWrap>
+  )
 }
