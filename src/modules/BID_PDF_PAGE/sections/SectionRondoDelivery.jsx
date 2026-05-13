@@ -1,6 +1,5 @@
 import React from 'react'
 import { Input } from 'antd'
-import { RichTextEditor } from '../components/RichTextEditor'
 import { Section, Field, TabWrap } from '../components/FormParts'
 
 const DELIVERY_DEFAULTS = [
@@ -10,8 +9,7 @@ const DELIVERY_DEFAULTS = [
   'По условиям договора поставка осуществляется при 100% предоплате со склада в Санкт-Петербурге. Цены указаны с учетом НДС 22%.',
 ]
 
-export default function SectionRondoDelivery({ data, onChange, companyId }) {
-  const accent  = companyId === '3' ? '#269435' : '#FF5903'
+export default function SectionRondoDelivery({ data, onChange }) {
   const rd      = data.rondoDelivery || {}
   const set     = (key, val) => onChange({ ...data, rondoDelivery: { ...rd, [key]: val } })
   const items   = rd.deliveryItems || DELIVERY_DEFAULTS
@@ -22,7 +20,7 @@ export default function SectionRondoDelivery({ data, onChange, companyId }) {
       <Section title="Условия поставки" description="Четыре пункта — отображаются карточками">
         {items.map((item, i) => (
           <Field key={i} label={`Пункт ${i + 1}`}>
-            <RichTextEditor value={item} onChange={val => setItem(i, val)} accent={accent} />
+            <Input.TextArea autoSize={{ minRows: 2 }} maxLength={250} value={item} onChange={e => setItem(i, e.target.value)} />
           </Field>
         ))}
       </Section>
@@ -35,12 +33,7 @@ export default function SectionRondoDelivery({ data, onChange, companyId }) {
           <Input placeholder="Петр Петров" value={rd.byeName || ''} onChange={e => set('byeName', e.target.value)} />
         </Field>
         <Field label="Контакты">
-          <Input.TextArea
-            placeholder={'+7 (812) 339-8972\nzakaz@rondo-sound.ru\nrondo-sound.ru'}
-            autoSize={{ minRows: 3 }}
-            value={rd.byeContacts || ''}
-            onChange={e => set('byeContacts', e.target.value)}
-          />
+          <Input.TextArea placeholder={'+7 (812) 339-8972\nzakaz@rondo-sound.ru\nrondo-sound.ru'} autoSize={{ minRows: 3 }} value={rd.byeContacts || ''} onChange={e => set('byeContacts', e.target.value)} />
         </Field>
       </Section>
     </TabWrap>

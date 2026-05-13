@@ -1,14 +1,11 @@
 import React from 'react'
 import { Input, Button, InputNumber } from 'antd'
-import { RichTextEditor } from '../components/RichTextEditor'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
 
 const EMPTY_REC = { 'recommendation-model': '', 'recommendation-count': 1, 'recommendation-text': '', 'recommendation-note': '' }
 
-export default function SectionRecommendations({ data, onChange, companyId }) {
-  const accent = companyId === '3' ? '#269435' : '#FF5903'
-  const recs   = data.recommendations || [{ ...EMPTY_REC }]
-
+export default function SectionRecommendations({ data, onChange }) {
+  const recs    = data.recommendations || [{ ...EMPTY_REC }]
   const setRec  = (i, key, val) => { const n = [...recs]; n[i] = { ...n[i], [key]: val }; onChange({ ...data, recommendations: n }) }
   const addRec  = () => onChange({ ...data, recommendations: [...recs, { ...EMPTY_REC }] })
   const removeRec = (i) => onChange({ ...data, recommendations: recs.filter((_, idx) => idx !== i) })
@@ -32,7 +29,7 @@ export default function SectionRecommendations({ data, onChange, companyId }) {
                 </Field>
               </Grid2>
               <Field label="Описание">
-                <RichTextEditor value={rec['recommendation-text'] || ''} onChange={val => setRec(i, 'recommendation-text', val)} accent={accent} placeholder="Назначение и обоснование..." />
+                <Input.TextArea autoSize={{ minRows: 2 }} placeholder="Назначение и обоснование..." value={rec['recommendation-text'] || ''} onChange={e => setRec(i, 'recommendation-text', e.target.value)} />
               </Field>
               <Field label="Примечание">
                 <Input placeholder="Доп. условие, оговорка..." value={rec['recommendation-note'] || ''} onChange={e => setRec(i, 'recommendation-note', e.target.value)} />
