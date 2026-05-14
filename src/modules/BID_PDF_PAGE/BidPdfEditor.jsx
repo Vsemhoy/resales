@@ -12,6 +12,8 @@ import {
 } from './sectionConfig'
 import classes from './BidPdfEditor.module.css'
 import { CoversDrawer } from './components/CoversDrawer'
+import { pdf } from '@react-pdf/renderer'
+import { PdfDocument } from './pdf/PdfDocument'
 import { SectionMiniPreview } from './components/SectionMiniPreview'
 
 import SectionCover           from './sections/SectionCover'
@@ -63,6 +65,31 @@ export default function BidPdfEditor() {
   const [sectionOrder,    setSectionOrder]    = useState(DEFAULT_SECTION_ORDER)
   const [activeSection,   setActiveSection]   = useState('cover')
   const [coversOpen,     setCoversOpen]     = useState(false)
+  const [printing,       setPrinting]       = useState(false)
+
+  const handlePrint = async () => {
+    setPrinting(true)
+    console.log('442435', 442435)
+    try {
+      const blob = await pdf(
+        <PdfDocument
+          formData={formData}
+          draft={draft}
+          currency={currency}
+          companyId={companyId}
+          enabledSections={enabledSections}
+          sectionOrder={sectionOrder}
+          models={[]}
+        />
+      ).toBlob()
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+    } catch (e) {
+      console.error('PDF error:', e)
+    } finally {
+      setPrinting(false)
+    }
+  }
 
   const { status: saveStatus, errMsg: saveErr } = useAutoSave(draftId, formData, currency, 2000, isReady)
 
@@ -203,7 +230,9 @@ export default function BidPdfEditor() {
             <SaveIndicator status={saveStatus} errMsg={saveErr} />
             <Button danger icon={<CodepenOutlined />} size="small">Инженер работает!</Button>
             <Button type="primary" icon={<PrinterOutlined />} size="small"
-              style={{ background: accent, borderColor: accent }}>В печать!</Button>
+              style={{ background: accent, borderColor: accent }}
+              onClick={() => { handlePrint();}}
+              >В печать 2</Button>
           </div>
         </div>
 
