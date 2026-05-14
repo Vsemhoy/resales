@@ -14,7 +14,7 @@
 		"antd": "^5.26.4",
 		"axios": "^1.13.6",
 		"corp-chat-library-antd-react-socket": "^1.2.15",
-		"corp-notificator-library-antd-react-socket": "^0.0.18",
+		"corp-notificator-library-antd-react-socket": "^0.0.23",
 		"dayjs": "^1.11.13",
 		"emoji-picker-react": "^4.13.3",
 		"exceljs": "^4.4.0",
