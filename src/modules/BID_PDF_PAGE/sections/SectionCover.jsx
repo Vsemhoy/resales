@@ -1,7 +1,7 @@
 import React from 'react'
 import { Input } from 'antd'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
-import { COVER_BLOCKS } from '../components/coverBlocks'
+import { useCovers } from '../components/CoversDrawer'
 
 export default function SectionCover({ data, onChange }) {
   const set = (key, val) => onChange({ ...data, [key]: val })
@@ -54,8 +54,11 @@ export default function SectionCover({ data, onChange }) {
 }
 
 function CoverBlockPicker({ value, onChange }) {
+  const { covers, loading } = useCovers()
+
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      {/* Без картинки */}
       <div
         onClick={() => onChange(null)}
         style={{
@@ -66,18 +69,23 @@ function CoverBlockPicker({ value, onChange }) {
       >
         Без картинки
       </div>
-      {COVER_BLOCKS.map(block => (
+      {/* Скелетоны пока грузим */}
+      {loading && [1,2,3].map(i => (
+        <div key={i} style={{ width: 80, height: 60, borderRadius: 6, background: '#f0f0f0', animation: 'pulse 1.5s infinite' }} />
+      ))}
+      {/* Обложки с бэка */}
+      {!loading && covers.map(cover => (
         <div
-          key={block.filename}
-          onClick={() => onChange(value === block.url ? null : block.url)}
-          title={block.name}
+          key={cover.filename}
+          onClick={() => onChange(value === cover.url ? null : cover.url)}
+          title={cover.filename}
           style={{
-            width: 80, height: 60, border: `2px solid ${value === block.url ? '#1677ff' : '#d9d9d9'}`,
+            width: 80, height: 60, border: `2px solid ${value === cover.url ? '#1677ff' : '#d9d9d9'}`,
             borderRadius: 6, overflow: 'hidden', cursor: 'pointer', position: 'relative',
           }}
         >
-          <img src={block.url} alt={block.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          {value === block.url && (
+          <img src={cover.url} alt={cover.filename} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          {value === cover.url && (
             <div style={{ position: 'absolute', top: 2, right: 2, background: '#1677ff', borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" width="10" height="10">
                 <polyline points="2,6 5,9 10,3" />

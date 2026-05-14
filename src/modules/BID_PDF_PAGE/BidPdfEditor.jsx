@@ -11,6 +11,7 @@ import {
   getVisibleSections, DEFAULT_SECTION_ORDER, DEFAULT_ENABLED,
 } from './sectionConfig'
 import classes from './BidPdfEditor.module.css'
+import { CoversDrawer } from './components/CoversDrawer'
 import { SectionMiniPreview } from './components/SectionMiniPreview'
 
 import SectionCover           from './sections/SectionCover'
@@ -61,6 +62,7 @@ export default function BidPdfEditor() {
   const [enabledSections, setEnabledSections] = useState(DEFAULT_ENABLED)
   const [sectionOrder,    setSectionOrder]    = useState(DEFAULT_SECTION_ORDER)
   const [activeSection,   setActiveSection]   = useState('cover')
+  const [coversOpen,     setCoversOpen]     = useState(false)
 
   const { status: saveStatus, errMsg: saveErr } = useAutoSave(draftId, formData, currency, 2000, isReady)
 
@@ -209,6 +211,17 @@ export default function BidPdfEditor() {
         <div className={classes.titlebar}>
           <span className={classes.bidId}>#{bidId}</span>
           <span className={classes.bidObject}>{draft?.object || 'Без названия'}</span>
+          <button
+            onClick={() => setCoversOpen(true)}
+            style={{
+              marginLeft: 'auto', border: '1px solid #e8e8e8', background: '#fafafa',
+              borderRadius: 4, padding: '2px 10px', cursor: 'pointer', fontSize: 12,
+              color: '#595959', display: 'flex', alignItems: 'center', gap: 4,
+              whiteSpace: 'nowrap', flexShrink: 0,
+            }}
+          >
+            🖼 Обложки
+          </button>
         </div>
 
         {/* ── Три колонки ───────────────────────────────────────────────────── */}
@@ -316,6 +329,12 @@ export default function BidPdfEditor() {
 
         </div>
       </div>
+      <CoversDrawer
+        open={coversOpen}
+        onClose={() => setCoversOpen(false)}
+        selectedUrl={formData.coverBlock ?? null}
+        onSelect={url => setFormData(fd => ({ ...fd, coverBlock: url }))}
+      />
     </ConfigProvider>
   )
 }
