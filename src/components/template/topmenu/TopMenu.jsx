@@ -77,6 +77,33 @@ const TopMenu = (props) => {
 		});
 	}, []);
 
+	const handleNewChatMessage = useCallback((payload) => {
+		const message = payload?.right || payload?.sms || payload?.message || payload;
+		const listMessage = payload?.left || {};
+		const sender = listMessage?.from || {};
+		const currentUserId = userdata?.user?.id;
+		const senderId = message?.from_id || message?.from || sender?.id || listMessage?.from_id;
+
+		if (!message || (currentUserId && senderId && +senderId === +currentUserId)) {
+			return;
+		}
+
+		if (!('Notification' in window) || Notification.permission !== 'granted') {
+			return;
+		}
+
+		const senderName = [sender?.surname, sender?.name].filter(Boolean).join(' ');
+		const title = senderName || 'Новое сообщение';
+		const body = message?.text || listMessage?.text || 'Новое сообщение';
+		const messageId = message?.id || listMessage?.id || message?.created_at || listMessage?.created_at;
+
+		new Notification(title, {
+			body,
+			icon: '/favicon.ico',
+			tag: messageId ? `chat-message-${messageId}` : undefined,
+		});
+	}, [userdata?.user?.id]);
+
 	useEffect(() => {
 		setUserdata(props.userdata);
 		if (props.userdata?.user?.is_admin){
@@ -331,6 +358,7 @@ const TopMenu = (props) => {
                               newSms: 'new:sms',
                               updateSms: 'update:sms',
                           }}
+                          onNewMessage={handleNewChatMessage}
                     />
                     <Notificator userdata={userdata}
                                  httpParams={{
