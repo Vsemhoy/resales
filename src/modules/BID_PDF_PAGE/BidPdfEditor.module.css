@@ -59,7 +59,7 @@
   display: grid;
   grid-template-columns: 20px 1fr 20px;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   padding: 7px 8px;
   cursor: pointer;
   transition: background 0.15s;
@@ -134,7 +134,7 @@
 
 /* ── Правая: минимап ────────────────────────────────────────────────────────── */
 .minimap {
-  width: 80px;
+  width: 96px;
   flex-shrink: 0;
   background: #fff;
   border-left: 1px solid #e8e8e8;
@@ -142,7 +142,7 @@
   padding: 6px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .minimapTitle {

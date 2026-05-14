@@ -11,6 +11,7 @@ import {
   getVisibleSections, DEFAULT_SECTION_ORDER, DEFAULT_ENABLED,
 } from './sectionConfig'
 import classes from './BidPdfEditor.module.css'
+import { SectionMiniPreview } from './components/SectionMiniPreview'
 
 import SectionCover           from './sections/SectionCover'
 import SectionToc             from './sections/SectionToc'
@@ -274,49 +275,41 @@ export default function BidPdfEditor() {
           {/* Правая: минимап */}
           <div className={classes.minimap}>
             <div className={classes.minimapTitle}>Навигация</div>
-            {/* Обложка */}
+
             {coverSection && (
-              <Tooltip title={coverSection.label} placement="left">
-                <div
-                  className={[classes.minimapBlock, activeSection === 'cover' ? classes.minimapBlockActive : ''].join(' ')}
-                  style={activeSection === 'cover' ? { borderColor: accent, background: accent + '22' } : {}}
-                  onClick={() => setActiveSection('cover')}
-                />
-              </Tooltip>
+              <MiniCard
+                section={coverSection}
+                isActive={activeSection === 'cover'}
+                isEnabled={enabledSections.cover ?? true}
+                accent={accent}
+                onClick={() => setActiveSection('cover')}
+              />
             )}
-            {/* Драгабельные */}
+
             {orderedDraggable.map(section => {
               const isEnabled = section.required || enabledSections[section.key]
-              const isActive  = activeSection === section.key
               return (
-                <Tooltip key={section.key} title={section.label} placement="left">
-                  <div
-                    className={[
-                      classes.minimapBlock,
-                      isActive   ? classes.minimapBlockActive   : '',
-                      !isEnabled ? classes.minimapBlockDisabled : '',
-                    ].join(' ')}
-                    style={isActive ? { borderColor: accent, background: accent + '22' } : {}}
-                    onClick={() => isEnabled && setActiveSection(section.key)}
-                  />
-                </Tooltip>
+                <MiniCard
+                  key={section.key}
+                  section={section}
+                  isActive={activeSection === section.key}
+                  isEnabled={isEnabled}
+                  accent={accent}
+                  onClick={() => isEnabled && setActiveSection(section.key)}
+                />
               )
             })}
-            {/* TOC внизу */}
+
             {tocSection && (
               <>
                 <div className={classes.minimapDivider} />
-                <Tooltip title={tocSection.label} placement="left">
-                  <div
-                    className={[
-                      classes.minimapBlock,
-                      activeSection === 'toc' ? classes.minimapBlockActive : '',
-                      !enabledSections.toc    ? classes.minimapBlockDisabled : '',
-                    ].join(' ')}
-                    style={activeSection === 'toc' ? { borderColor: accent, background: accent + '22' } : {}}
-                    onClick={() => enabledSections.toc && setActiveSection('toc')}
-                  />
-                </Tooltip>
+                <MiniCard
+                  section={tocSection}
+                  isActive={activeSection === 'toc'}
+                  isEnabled={!!enabledSections.toc}
+                  accent={accent}
+                  onClick={() => enabledSections.toc && setActiveSection('toc')}
+                />
               </>
             )}
           </div>
@@ -324,6 +317,48 @@ export default function BidPdfEditor() {
         </div>
       </div>
     </ConfigProvider>
+  )
+}
+
+// ─── MiniCard — плашка минимапа ───────────────────────────────────────────────
+function MiniCard({ section, isActive, isEnabled, accent, onClick }) {
+  return (
+    <Tooltip title={section.label} placement="left">
+      <div
+        onClick={onClick}
+        style={{
+          width: '100%',
+          height: 52,
+          borderRadius: 5,
+          border: `1.5px solid ${isActive ? accent : '#e8e8e8'}`,
+          background: isActive ? accent + '0d' : '#fafafa',
+          cursor: isEnabled ? 'pointer' : 'default',
+          opacity: isEnabled ? 1 : 0.3,
+          overflow: 'hidden',
+          flexShrink: 0,
+          transition: 'all 0.15s',
+          position: 'relative',
+        }}
+      >
+        <SectionMiniPreview
+          sectionKey={section.key}
+          accent={accent}
+          isActive={isActive}
+        />
+        {/* Лейбл снизу */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          fontSize: 8, fontWeight: 600, textAlign: 'center',
+          color: isActive ? accent : '#94a3b8',
+          background: isActive ? accent + '15' : 'rgba(255,255,255,0.85)',
+          padding: '1px 2px',
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          textTransform: 'uppercase', letterSpacing: '0.03em',
+        }}>
+          {section.label}
+        </div>
+      </div>
+    </Tooltip>
   )
 }
 

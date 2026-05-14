@@ -2,7 +2,7 @@ export const ALL_SECTIONS = [
   { key: 'cover',           label: 'Обложка',               draggable: false, target: null, required: false },
   { key: 'toc',             label: 'Оглавление',            draggable: false, target: null, required: false },
   { key: 'features',        label: 'Особенности системы',   draggable: true,  target: null, required: false },
-  { key: 'selectEquipment', label: 'Выбор оборудования',    draggable: true,  target: 't',  required: false },
+  { key: 'selectEquipment', label: 'Выбор оборудования',    draggable: true,  target: null,  required: false },
   { key: 'acoustic',        label: 'Акустический расчёт',   draggable: true,  target: 'p',  required: false },
   { key: 'recommendations', label: 'Рекомендации',          draggable: true,  target: null, required: false },
   { key: 'specifications',  label: 'Спецификация',          draggable: true,  target: null, required: false },
