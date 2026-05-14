@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import { getDraft } from './api'
+import { getDraft, getBidModels } from './api'
 import { restoreFilesIntoFormData } from './api/files'
 import { useAutoSave } from './useAutoSave'
 import {
@@ -13,6 +13,7 @@ import {
 import classes from './BidPdfEditor.module.css'
 import { CoversDrawer } from './components/CoversDrawer'
 import { pdf } from '@react-pdf/renderer'
+import { registerFonts } from './pdf/components/PdfFonts'
 import { PdfDocument } from './pdf/PdfDocument'
 import { SectionMiniPreview } from './components/SectionMiniPreview'
 
@@ -65,11 +66,12 @@ export default function BidPdfEditor() {
   const [sectionOrder,    setSectionOrder]    = useState(DEFAULT_SECTION_ORDER)
   const [activeSection,   setActiveSection]   = useState('cover')
   const [coversOpen,     setCoversOpen]     = useState(false)
+  const [models,         setModels]         = useState([])
   const [printing,       setPrinting]       = useState(false)
 
   const handlePrint = async () => {
+    registerFonts()
     setPrinting(true)
-    console.log('442435', 442435)
     try {
       const blob = await pdf(
         <PdfDocument
@@ -79,7 +81,7 @@ export default function BidPdfEditor() {
           companyId={companyId}
           enabledSections={enabledSections}
           sectionOrder={sectionOrder}
-          models={[]}
+          models={models}
         />
       ).toBlob()
       const url = URL.createObjectURL(blob)
@@ -94,6 +96,7 @@ export default function BidPdfEditor() {
   const { status: saveStatus, errMsg: saveErr } = useAutoSave(draftId, formData, currency, 2000, isReady)
 
   useEffect(() => {
+    getBidModels(bidId).then(data => setModels(Array.isArray(data) ? data : (data?.models ?? []))).catch(() => {})
     getDraft(draftId)
       .then(data => {
         setDraft(data)
@@ -230,9 +233,9 @@ export default function BidPdfEditor() {
             <SaveIndicator status={saveStatus} errMsg={saveErr} />
             <Button danger icon={<CodepenOutlined />} size="small">Инженер работает!</Button>
             <Button type="primary" icon={<PrinterOutlined />} size="small"
-              style={{ background: accent, borderColor: accent }}
-              onClick={() => { handlePrint();}}
-              >В печать 2</Button>
+              loading={printing}
+              onClick={handlePrint}
+              style={{ background: accent, borderColor: accent }}>В печать!</Button>
           </div>
         </div>
 

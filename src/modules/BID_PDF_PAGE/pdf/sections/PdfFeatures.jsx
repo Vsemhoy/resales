@@ -4,46 +4,49 @@ import { mm } from '../theme/units'
 
 function SectionHeading({ theme, number, title }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: mm(6), marginTop: mm(2) }} wrap={false}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: mm(6), marginTop: mm(4) }}>
       <View style={{ width: mm(1.5), height: mm(10), backgroundColor: theme.accent, marginRight: mm(4) }} />
       <View>
-        {number && <Text style={{ fontSize: theme.fontSize.xs, color: theme.accent, fontFamily: theme.fonts.regular, letterSpacing: 1 }}>РАЗДЕЛ {number}</Text>}
-        <Text style={{ fontSize: theme.fontSize.lg, color: theme.black, fontWeight: 700, fontFamily: theme.fonts.bold }}>{title}</Text>
+        {number && (
+          <Text style={{ fontSize: theme.fontSize.xs, color: theme.accent, fontFamily: theme.fonts.regular }}>
+            РАЗДЕЛ {number}
+          </Text>
+        )}
+        <Text style={{ fontSize: theme.fontSize.lg, color: theme.black, fontFamily: theme.fonts.bold, fontWeight: 700 }}>
+          {title}
+        </Text>
       </View>
     </View>
   )
+}
+
+function stripHtml(html) {
+  return (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').trim()
 }
 
 export function PdfFeatures({ theme, data, sectionNumber }) {
-  const features = data?.features || []
+  const features = (data?.features || []).filter(f => f.feature)
   if (!features.length) return null
 
   return (
-    <View break>
+    <View>
       <SectionHeading theme={theme} number={sectionNumber} title="Особенности системы" />
-      <View style={{ gap: mm(3) }}>
-        {features.map((f, i) => (
-          <View key={i} style={{ flexDirection: 'row', alignItems: 'flex-start' }} wrap={false}>
-            <View style={{
-              width: mm(6), height: mm(6), borderRadius: mm(3),
-              backgroundColor: theme.accent, marginRight: mm(4), marginTop: mm(1), flexShrink: 0,
-              alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Text style={{ fontSize: theme.fontSize.xs, color: theme.white, fontFamily: theme.fonts.bold, fontWeight: 700 }}>
-                {i + 1}
-              </Text>
-            </View>
-            <Text style={{ fontSize: theme.fontSize.base, color: theme.black, fontFamily: theme.fonts.regular, lineHeight: 1.5, flex: 1 }}>
-              {stripHtml(f.feature || '')}
+      {features.map((f, i) => (
+        <View key={i} style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: mm(3) }}>
+          <View style={{
+            width: mm(6), height: mm(6), borderRadius: mm(3),
+            backgroundColor: theme.accent, marginRight: mm(4), marginTop: mm(1), flexShrink: 0,
+            alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Text style={{ fontSize: theme.fontSize.xs, color: theme.white, fontFamily: theme.fonts.bold, fontWeight: 700 }}>
+              {i + 1}
             </Text>
           </View>
-        ))}
-      </View>
+          <Text style={{ fontSize: theme.fontSize.base, color: theme.black, fontFamily: theme.fonts.regular, flex: 1 }}>
+            {stripHtml(f.feature)}
+          </Text>
+        </View>
+      ))}
     </View>
   )
-}
-
-// Простая очистка от HTML тегов для @react-pdf
-function stripHtml(html) {
-  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').trim()
 }

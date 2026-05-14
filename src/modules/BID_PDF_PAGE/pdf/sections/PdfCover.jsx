@@ -1,95 +1,61 @@
 import React from 'react'
-import { View, Text, Image } from '@react-pdf/renderer'
+import { View, Text } from '@react-pdf/renderer'
 import { mm } from '../theme/units'
 
-export function PdfCover({ theme, data, draft, currency }) {
-  const s = {
-    page: {
-      flex: 1, minHeight: mm(257), // A4 height - margins
-      flexDirection: 'row',
-    },
-    left: {
-      flex: 1, paddingTop: mm(30), paddingBottom: mm(10),
-      flexDirection: 'column', justifyContent: 'space-between',
-    },
-    right: {
-      width: mm(70), backgroundColor: theme.grayLight,
-      overflow: 'hidden',
-    },
-    coverImg: { width: '100%', height: '100%', objectFit: 'cover' },
-
-    kpLabel: {
-      fontSize: theme.fontSize.xs, color: theme.gray, letterSpacing: 1.5,
-      textTransform: 'uppercase', fontFamily: theme.fonts.regular,
-      marginBottom: mm(4),
-    },
-    title: {
-      fontSize: theme.fontSize.xl, color: theme.black, fontWeight: 700,
-      fontFamily: theme.fonts.bold, marginBottom: mm(2), lineHeight: 1.3,
-    },
-    subtitle: {
-      fontSize: theme.fontSize.sm, color: theme.gray,
-      fontFamily: theme.fonts.regular, lineHeight: 1.5,
-    },
-
-    divider: { height: 2, width: mm(20), backgroundColor: theme.accent, marginVertical: mm(8) },
-
-    toLabel: { fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginBottom: mm(1) },
-    toName:  { fontSize: theme.fontSize.base, color: theme.black, fontWeight: 600, fontFamily: theme.fonts.bold },
-    toOccupy:{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginTop: mm(1) },
-
-    bottomRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
-    managerBlock: {},
-    managerName:  { fontSize: theme.fontSize.sm, color: theme.black, fontWeight: 600, fontFamily: theme.fonts.bold },
-    managerOccupy:{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular },
-    contactBlock: { alignItems: 'flex-end' },
-    contact:      { fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, lineHeight: 1.6 },
-  }
-
+export function PdfCover({ theme, data, draft }) {
   return (
-    <View style={s.page} break>
+    <View style={{ flexDirection: 'row', minHeight: mm(240) }}>
+
       {/* Левая колонка */}
-      <View style={s.left}>
-        {/* Верхний блок */}
-        <View>
-          <Text style={s.kpLabel}>Коммерческое предложение</Text>
-          {data?.ext_number && (
-            <Text style={[s.kpLabel, { marginBottom: mm(8) }]}>№ {data.ext_number}</Text>
-          )}
-          <Text style={s.title}>{draft?.object || 'Система'}</Text>
-          {data?.object_address && (
-            <Text style={s.subtitle}>{data.object_address}</Text>
-          )}
-          <View style={s.divider} />
-          {(data?.target_name || data?.target_occupy) && (
-            <View>
-              <Text style={s.toLabel}>Кому</Text>
-              {data.target_name   && <Text style={s.toName}>{data.target_name}</Text>}
-              {data.target_occupy && <Text style={s.toOccupy}>{data.target_occupy}</Text>}
-            </View>
-          )}
-        </View>
+      <View style={{ flex: 1, paddingTop: mm(20), paddingBottom: mm(10), paddingRight: mm(8) }}>
 
-        {/* Нижний блок */}
-        <View style={s.bottomRow}>
-          <View style={s.managerBlock}>
-            {data?.manager_name   && <Text style={s.managerName}>{data.manager_name}</Text>}
-            {data?.manager_occupy && <Text style={s.managerOccupy}>{data.manager_occupy}</Text>}
+        <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginBottom: mm(4) }}>
+          Коммерческое предложение{data?.ext_number ? ` № ${data.ext_number}` : ''}
+        </Text>
+
+        <Text style={{ fontSize: theme.fontSize.xl, color: theme.black, fontFamily: theme.fonts.bold, fontWeight: 700, marginBottom: mm(3) }}>
+          {draft?.object || 'Система'}
+        </Text>
+
+        {data?.object_address && (
+          <Text style={{ fontSize: theme.fontSize.sm, color: theme.gray, fontFamily: theme.fonts.regular, marginBottom: mm(8) }}>
+            {data.object_address}
+          </Text>
+        )}
+
+        {/* Акцент-полоска */}
+        <View style={{ height: 2, width: mm(20), backgroundColor: theme.accent, marginBottom: mm(8) }} />
+
+        {data?.target_name && (
+          <View style={{ marginBottom: mm(8) }}>
+            <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginBottom: mm(1) }}>Кому</Text>
+            <Text style={{ fontSize: theme.fontSize.base, color: theme.black, fontFamily: theme.fonts.bold, fontWeight: 600 }}>{data.target_name}</Text>
+            {data?.target_occupy && (
+              <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginTop: mm(1) }}>{data.target_occupy}</Text>
+            )}
           </View>
-          <View style={s.contactBlock}>
-            {data?.tel   && <Text style={s.contact}>{data.tel}</Text>}
-            {data?.email && <Text style={s.contact}>{data.email}</Text>}
+        )}
+
+        {/* Менеджер */}
+        {data?.manager_name && (
+          <View style={{ marginTop: mm(20) }}>
+            <Text style={{ fontSize: theme.fontSize.sm, color: theme.black, fontFamily: theme.fonts.bold, fontWeight: 600 }}>{data.manager_name}</Text>
+            {data?.manager_occupy && (
+              <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular }}>{data.manager_occupy}</Text>
+            )}
+            {data?.tel && (
+              <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginTop: mm(2) }}>{data.tel}</Text>
+            )}
+            {data?.email && (
+              <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular }}>{data.email}</Text>
+            )}
           </View>
-        </View>
+        )}
       </View>
 
-      {/* Правая колонка — картинка */}
-      <View style={s.right}>
-        {data?.coverBlock
-          ? <Image src={data.coverBlock} style={s.coverImg} />
-          : <View style={{ flex: 1, backgroundColor: theme.accent + '22' }} />
-        }
-      </View>
+      {/* Правая колонка — цветная плашка */}
+      <View style={{ width: mm(70), backgroundColor: theme.accent + '22', borderRadius: mm(2) }} />
+
     </View>
   )
 }

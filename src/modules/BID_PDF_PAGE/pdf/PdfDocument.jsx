@@ -1,97 +1,88 @@
 import React from 'react'
-import { Document, Page, View } from '@react-pdf/renderer'
-import { registerFonts } from './components/PdfFonts'
-import { PdfHeader } from './components/PdfHeader'
-import { PdfFooter } from './components/PdfFooter'
-import { PdfCover } from './sections/PdfCover'
-import { PdfFeatures } from './sections/PdfFeatures'
-import { PdfSpecifications } from './sections/PdfSpecifications'
-import { PdfToc } from './sections/PdfToc'
+import { Document, Page, View, Text } from '@react-pdf/renderer'
 import { arstelTheme } from './theme/arstel'
 import { rondoTheme } from './theme/rondo'
+import { PdfCover }            from './sections/PdfCover'
+import { PdfFeatures }         from './sections/PdfFeatures'
+import { PdfSelectEquipment }  from './sections/PdfSelectEquipment'
+import { PdfRecommendations }  from './sections/PdfRecommendations'
+import { PdfSpecifications }   from './sections/PdfSpecifications'
+import { PdfSpecials }         from './sections/PdfSpecials'
+import { PdfToc }              from './sections/PdfToc'
 import { mm } from './theme/units'
-
-registerFonts()
 
 export function PdfDocument({ formData, draft, currency, companyId, enabledSections, sectionOrder, models = [] }) {
   const theme = companyId === '3' ? rondoTheme : arstelTheme
   const p     = theme.page
 
-  // Считаем номера разделов для видимых секций (кроме cover и toc)
+  // Нумерация разделов — TOC и Cover не нумеруются
   const sectionNumbers = {}
   let num = 1
   for (const key of sectionOrder) {
     if (key === 'cover' || key === 'toc') continue
-    if (enabledSections[key]) { sectionNumbers[key] = num++ }
+    if (enabledSections[key]) sectionNumbers[key] = num++
   }
 
-  const pageStyle = {
-    fontFamily: theme.fonts.regular,
-    paddingTop:    p.marginTop + mm(12),   // + header height
-    paddingBottom: p.marginBottom + mm(14), // + footer height
-    paddingLeft:   p.marginLeft,
-    paddingRight:  p.marginRight,
-  }
+  // Секции без cover и toc — они рендерятся отдельно
+  const contentSections = sectionOrder.filter(k => k !== 'cover' && k !== 'toc')
 
   return (
     <Document>
-      <Page size={p.size} orientation={p.orientation} style={pageStyle}>
+      <Page size="A4" style={{
+        paddingTop: mm(28), paddingBottom: mm(28),
+        paddingLeft: p.marginLeft, paddingRight: p.marginRight,
+        fontFamily: theme.fonts.regular,
+      }}>
 
-        <PdfHeader theme={theme} draft={draft} />
-        <PdfFooter theme={theme} />
+        {/* Хедер fixed */}
+        <View fixed style={{ position: 'absolute', top: mm(8), left: p.marginLeft, right: p.marginRight, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: theme.fontSize.sm, color: theme.accent, fontFamily: theme.fonts.bold }}>
+            {companyId === '3' ? 'RONDO' : 'ARSTEL'}
+          </Text>
+          <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray }}>{draft?.object || ''}</Text>
+        </View>
 
-        {/* ── Секции по порядку ─────────────────────────────────────────────── */}
-        {sectionOrder.map(key => {
-          if (!enabledSections[key] && key !== 'cover') return null
+        {/* Футер fixed */}
+        <View fixed style={{ position: 'absolute', bottom: mm(8), left: p.marginLeft, right: p.marginRight, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: theme.fontSize.xs, color: theme.accent }}>
+            {companyId === '3' ? 'rondo-sound.ru' : 'arstel.com'}
+          </Text>
+          <Text
+            style={{ fontSize: theme.fontSize.xs, color: theme.gray }}
+            render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+          />
+        </View>
+
+        {/* Обложка — всегда первая */}
+        {enabledSections.cover !== false && (
+          <PdfCover theme={theme} data={formData} draft={draft} currency={currency} />
+        )}
+
+        {/* Контентные секции в порядке из редактора */}
+        {contentSections.map(key => {
+          if (!enabledSections[key]) return null
+          const n = sectionNumbers[key]
 
           switch (key) {
-            case 'cover':
-              return (
-                <PdfCover
-                  key="cover"
-                  theme={theme}
-                  data={formData}
-                  draft={draft}
-                  currency={currency}
-                />
-              )
-
             case 'features':
-              return enabledSections.features ? (
-                <PdfFeatures
-                  key="features"
-                  theme={theme}
-                  data={formData}
-                  sectionNumber={sectionNumbers.features}
-                />
-              ) : null
-
+              return <PdfFeatures        key={key} theme={theme} data={formData} sectionNumber={n} />
+            case 'selectEquipment':
+              return <PdfSelectEquipment key={key} theme={theme} data={formData} sectionNumber={n} />
+            case 'recommendations':
+              return <PdfRecommendations key={key} theme={theme} data={formData} currency={currency} sectionNumber={n} />
             case 'specifications':
-              return enabledSections.specifications ? (
-                <PdfSpecifications
-                  key="specifications"
-                  theme={theme}
-                  models={models}
-                  currency={currency}
-                  tableFootnote={formData.tableFootnote}
-                  sectionNumber={sectionNumbers.specifications}
-                />
-              ) : null
-
-            case 'toc':
-              return enabledSections.toc ? (
-                <PdfToc
-                  key="toc"
-                  theme={theme}
-                  enabledSections={enabledSections}
-                  sectionOrder={sectionOrder}
-                />
-              ) : null
-
+              return <PdfSpecifications  key={key} theme={theme} models={models} currency={currency} tableFootnote={formData.tableFootnote} sectionNumber={n} />
+            case 'specials':
+              return <PdfSpecials        key={key} theme={theme} data={formData} models={models} sectionNumber={n} />
             default:
-              return null // остальные секции — stub, добавим позже
+              return null
           }
         })}
+
+        {/* TOC — всегда последний */}
+        {enabledSections.toc && (
+          <PdfToc theme={theme} enabledSections={enabledSections} sectionOrder={sectionOrder} />
+        )}
 
       </Page>
     </Document>
