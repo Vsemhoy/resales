@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import './style/topmenu.css';
 import ChatBtn from '../../../modules/CHAT/components/ChatBtn';
 
@@ -6,7 +6,7 @@ import { Chat, ChatSocketProvider } from 'corp-chat-library-antd-react-socket';
 //import 'corp-chat-library-antd-react-socket/dist/style.css';
 
 import { NavLink } from 'react-router-dom';
-import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
+import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 import {
 	CalendarOutlined,
 	CloseCircleOutlined,
@@ -50,12 +50,82 @@ const TopMenu = (props) => {
 
 	const [bugMultiCounter, setBugMultiCounter] = useState([0,0,0,0]);
 
+	const requestBrowserNotificationPermission = useCallback(async () => {
+		if (!('Notification' in window) || Notification.permission !== 'default') {
+			return;
+		}
+
+		try {
+			await Notification.requestPermission();
+		} catch (error) {
+			console.log('Browser notification permission request failed:', error);
+		}
+	}, []);
+
+	const handleNewNotification = useCallback((notification) => {
+		if (!('Notification' in window) || Notification.permission !== 'granted') {
+			return;
+		}
+
+		const title = notification?.name || 'Новое уведомление';
+		const body = notification?.message || notification?.content || '';
+
+		new Notification(title, {
+			body,
+			icon: '/favicon.ico',
+			tag: notification?.id ? `notification-${notification.id}` : undefined,
+		});
+	}, []);
+
+	const handleNewChatMessage = useCallback((payload) => {
+		const message = payload?.right || payload?.sms || payload?.message || payload;
+		const listMessage = payload?.left || {};
+		const sender = listMessage?.from || {};
+		const currentUserId = userdata?.user?.id;
+		const senderId = message?.from_id || message?.from || sender?.id || listMessage?.from_id;
+
+		if (!message || (currentUserId && senderId && +senderId === +currentUserId)) {
+			return;
+		}
+
+		if (!('Notification' in window) || Notification.permission !== 'granted') {
+			return;
+		}
+
+		const senderName = [sender?.surname, sender?.name].filter(Boolean).join(' ');
+		const title = senderName || 'Новое сообщение';
+		const body = message?.text || listMessage?.text || 'Новое сообщение';
+		const messageId = message?.id || listMessage?.id || message?.created_at || listMessage?.created_at;
+
+		new Notification(title, {
+			body,
+			icon: '/favicon.ico',
+			tag: messageId ? `chat-message-${messageId}` : undefined,
+		});
+	}, [userdata?.user?.id]);
+
 	useEffect(() => {
 		setUserdata(props.userdata);
 		if (props.userdata?.user?.is_admin){
 			setIsAdmin(true);
 		}
 	}, [props.userdata]);
+
+	useEffect(() => {
+		requestBrowserNotificationPermission();
+
+		const handleFirstUserAction = () => {
+			requestBrowserNotificationPermission();
+		};
+
+		window.addEventListener('click', handleFirstUserAction, { once: true });
+		window.addEventListener('keydown', handleFirstUserAction, { once: true });
+
+		return () => {
+			window.removeEventListener('click', handleFirstUserAction);
+			window.removeEventListener('keydown', handleFirstUserAction);
+		};
+	}, [requestBrowserNotificationPermission]);
 
 	// Закрытие debugger при клике вне компонента
 	useEffect(() => {
@@ -288,6 +358,7 @@ const TopMenu = (props) => {
                               newSms: 'new:sms',
                               updateSms: 'update:sms',
                           }}
+                          onNewMessage={handleNewChatMessage}
                     />
                     <Notificator userdata={userdata}
                                  httpParams={{
@@ -305,6 +376,7 @@ const TopMenu = (props) => {
                                      readNotification: 'read:notification',
                                  }}
                                  onNewAlert={props.onNewAlert}
+                                 onNewNotification={handleNewNotification}
                     />
                     {/*<NotiBtn />*/}
 					{/*
