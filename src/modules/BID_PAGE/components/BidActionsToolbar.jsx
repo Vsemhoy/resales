@@ -50,26 +50,8 @@ export const BidActionsToolbar = ({
 
     const handlePdfClick = async () => {
         setDraftsLoading(true)
-        try {
-            const res  = await PROD_AXIOS_INSTANCE.get(`${HTTP_HOST}/api/soma/pdf/draftlist/${bidId}`);
-            const json = await res?.data;
-            const list = json?.data ?? []
-            if (list.length === 0) {
-                // Нет драфтов — сразу в редактор без дровера
-                onNavigatePdf()
-                console.log('res', res)
-            } else {
-                // Есть драфты — открываем дровер со списком
-                setDrafts(list)
-                setDrawerOpen(true)
-            }
-        } catch {
-            // Ошибка — идём как раньше
-            onNavigatePdf()
-            console.log('error')
-        } finally {
-            setDraftsLoading(false)
-        }
+        onNavigatePdf()
+        setDraftsLoading(false)
     }
 
     const openPdf = () => {
