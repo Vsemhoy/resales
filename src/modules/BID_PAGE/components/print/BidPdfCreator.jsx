@@ -113,6 +113,7 @@ const BidPdfCreator = () => {
         }
     };
     const handlePrint = () => {
+        console.log('first', 53453)
         setIsPrint(true);
     };
     const handleCurrencyChange = (e) => {

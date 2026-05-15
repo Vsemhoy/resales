@@ -44,6 +44,8 @@ import CuratorPageNEW from "./modules/CURATOR/CuratorPage";
 import CalendarPage from './modules/CALENDAR2/CalendarPage';
 import ReportsPage from './modules/REPORTS2/ReportsPage';
 
+import BidPdfEditor from './modules/BID_PDF_PAGE/BidPdfEditor';
+
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
 	const [pageLoaded, setPageLoaded] = useState(false);
@@ -255,6 +257,10 @@ export const App = () => {
                                         element={<ReportsPage userdata={userdata} />}
                                     />
                                     <Route path="/reports" element={<ReportsPage userdata={userdata} />} />
+
+                                    <Route path="/bidsPDF/:bidId"           element={<BidPdfPage />} />
+                                    <Route path="/bidsPDF/:bidId/:draftId"  element={<BidPdfEditor />} />
+
                                 </Routes>
                                 {!PRODMODE && (
                                     <Dropdown menu={{items: devMenu}}>

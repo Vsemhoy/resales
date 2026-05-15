@@ -1063,6 +1063,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 					<div className={isOpenBaseInfo ?  'sa-bid-page-info-container' : 'sa-bid-page-info-container-closed'}>
 
                         <BidActionsToolbar
+							bidId={bidId}
                             bidType={bidType}
                             bidPlace={bidPlace}
                             isDirty={isDirty}
