@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Drawer, Button, Spin, Popconfirm, Upload } from 'antd'
+import { Drawer, Button, Spin, Popconfirm, Image } from 'antd'
 import { PictureOutlined, UploadOutlined, DeleteOutlined, CheckOutlined } from '@ant-design/icons'
 import { getCovers, putCover, deleteCover } from '../api/covers.api'
 
@@ -152,7 +152,14 @@ function CoverCard({ url, label, isSelected, isDeleting, onClick, onDelete }) {
       {/* Превью */}
       <div style={{ height: 120, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
         {url
-          ? <img src={url} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ? (
+            <Image
+              src={url} alt={label}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              preview={{ mask: '🔍 Открыть' }}
+              onClick={e => e.stopPropagation()}
+            />
+          )
           : <PictureOutlined style={{ fontSize: 32, color: '#bfbfbf' }} />
         }
       </div>

@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+import { Image } from 'antd'
 import { uploadAccalcFile, wasteAccalcFiles, getAccalcFileUrl } from '../api/accalcs'
 
 export function AccalcFileUpload({ draftId, prefix = '', value, onChange, label = 'Файл' }) {
@@ -46,11 +47,14 @@ export function AccalcFileUpload({ draftId, prefix = '', value, onChange, label 
         {loading && <span style={{ fontSize: 12, color: '#8c8c8c' }}>Загрузка...</span>}
         {!loading && hasFile && (
           <>
-            <img
-              src={previewUrl} alt=""
-              style={{ maxHeight: 48, maxWidth: 80, objectFit: 'contain', borderRadius: 3 }}
-              onError={e => { e.target.style.display = 'none' }}
-            />
+            <div onClick={e => e.stopPropagation()}>
+              <Image
+                src={previewUrl} alt=""
+                height={48} style={{ maxWidth: 80, objectFit: 'contain', borderRadius: 3 }}
+                preview={{ mask: '🔍' }}
+                onError={() => {}}
+              />
+            </div>
             <span style={{ flex: 1, fontSize: 12, color: '#52c41a', fontWeight: 500 }}>✓ {value}</span>
             <button
               onClick={handleRemove}

@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
+import { HtmlToPdf } from '../components/HtmlToPdf'
 import { mm } from '../theme/units'
 
 function SectionHeading({ theme, number, title }) {
@@ -20,9 +21,6 @@ function SectionHeading({ theme, number, title }) {
   )
 }
 
-function stripHtml(html) {
-  return (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').trim()
-}
 
 export function PdfFeatures({ theme, data, sectionNumber }) {
   const features = (data?.features || []).filter(f => f.feature)
@@ -42,9 +40,9 @@ export function PdfFeatures({ theme, data, sectionNumber }) {
               {i + 1}
             </Text>
           </View>
-          <Text style={{ fontSize: theme.fontSize.base, color: theme.black, fontFamily: theme.fonts.regular, flex: 1 }}>
-            {stripHtml(f.feature)}
-          </Text>
+          <View style={{ flex: 1 }}>
+            <HtmlToPdf html={f.feature} theme={theme} />
+          </View>
         </View>
       ))}
     </View>
