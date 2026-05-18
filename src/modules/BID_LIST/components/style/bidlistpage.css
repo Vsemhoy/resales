@@ -127,6 +127,12 @@
 	background-color: #fff0f6 !important;
 	border-color: #ffadd2 !important;
 }
+.sa-select-custom-engineer,
+.sa-select-custom-engineer .ant-select-selector {
+	color: #08979c !important;
+	background-color: #e6fffb !important;
+	border-color: #87e8de !important;
+}
 
 .sa-default-outlined-btn-color {
 	border-color: black !important;
