@@ -88,10 +88,20 @@ export default function SectionCustomBlock({
 
       <Section title="Изображение" description="Растягивается на всю ширину между текстами">
         <FileUploadField
-          label={null} role="customBlockImage"
+          label={null} role={`customBlock_${data?.id || 'block'}_image`}
           draftId={draftId} value={block.image}
           onChange={val => set('image', val)}
         />
+        {block.image && (
+          <Field label="Подпись к рисунку">
+            <Input
+              value={block.imageTitle ?? `Блок ${block.title || ''}`}
+              onChange={e => set('imageTitle', e.target.value)}
+              placeholder={`Блок ${block.title || ''}`}
+              size="small"
+            />
+          </Field>
+        )}
       </Section>
 
       <Section title="Таблица" description="Если колонки не заданы — таблица не отображается">

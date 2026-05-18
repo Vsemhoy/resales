@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip } from 'antd'
+import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { getDraft, getBidModels } from './api'
@@ -70,6 +70,7 @@ export default function BidPdfEditor() {
   const [sectionOrder,    setSectionOrder]    = useState(DEFAULT_SECTION_ORDER)
   const [activeSection,   setActiveSection]   = useState('cover')
   const [coversOpen,     setCoversOpen]     = useState(false)
+  const [figuresEnabled, setFiguresEnabled] = useState(true)
   const [customSections, setCustomSections] = useState({})
   const [models,         setModels]         = useState([])
   const [printing,       setPrinting]       = useState(false)
@@ -87,6 +88,7 @@ export default function BidPdfEditor() {
           enabledSections={enabledSections}
           sectionOrder={sectionOrder}
           models={models}
+          figuresEnabled={figuresEnabled}
         />
       ).toBlob()
       const url = URL.createObjectURL(blob)
@@ -113,7 +115,8 @@ export default function BidPdfEditor() {
         setTargetSystem(meta.targetSystem ?? (data.kp_type === 2 ? 'p' : 't'))
         if (fd._enabledSections) setEnabledSections(prev => ({ ...prev, ...fd._enabledSections }))
         if (fd._sectionOrder)    setSectionOrder(fd._sectionOrder)
-        if (fd._customSections) setCustomSections(fd._customSections)
+        if (fd._customSections)  setCustomSections(fd._customSections)
+        if (fd._figuresEnabled !== undefined) setFiguresEnabled(fd._figuresEnabled)
         setFormData(fd)
         setTimeout(() => setIsReady(true), 100)
       })
@@ -142,6 +145,11 @@ export default function BidPdfEditor() {
   }, [])
 
   const handleFormChange = useCallback((newData) => setFormData(newData), [])
+
+  const handleFiguresToggle = (v) => {
+    setFiguresEnabled(v)
+    setFormData(fd => ({ ...fd, _figuresEnabled: v }))
+  }
 
   const addCustomBlock = useCallback(() => {
     const id  = uuid()
@@ -321,6 +329,10 @@ export default function BidPdfEditor() {
             />
             <Select value={targetSystem}   onChange={handleTarget}       options={TARGET_OPTIONS}      style={{ width: 150 }} />
             <Select value={currency.value} onChange={handleCurrency}     options={CURRENCY_OPTIONS}    style={{ width: 64  }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginLeft: 4 }}>
+              <Switch size="small" checked={figuresEnabled} onChange={handleFiguresToggle} />
+              <span style={{ fontSize: 12, color: '#595959', whiteSpace: 'nowrap' }}>Нумерация рис.</span>
+            </div>
           </div>
           <div className={classes.topbarRight}>
             <SaveIndicator status={saveStatus} errMsg={saveErr} />
@@ -414,7 +426,7 @@ export default function BidPdfEditor() {
                 </div>
                 {activeSecDef?.isCustom
                   ? <SectionCustomBlock
-                      data={customSections[activeSecDef.customId] || {}}
+                      data={{ id: activeSecDef.customId, ...(customSections[activeSecDef.customId] || {}) }}
                       onChange={blockData => updateCustomBlock(activeSecDef.customId, blockData)}
                       onRemove={() => removeCustomBlock(activeSecDef.key)}
                       sectionNumber={sectionNumbers[activeSecDef.key]}

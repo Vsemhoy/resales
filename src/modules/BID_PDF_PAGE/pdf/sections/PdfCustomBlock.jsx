@@ -27,7 +27,7 @@ function SectionHeading({ theme, title }) {
   )
 }
 
-export function PdfCustomBlock({ theme, block }) {
+export function PdfCustomBlock({ theme, block, blockId, figureRegistry = new Map(), figuresEnabled = true }) {
   if (!block) return null
 
   const cols       = block.columns || []
@@ -52,6 +52,11 @@ export function PdfCustomBlock({ theme, block }) {
       {coverUrl && (
         <View style={{ marginVertical: mm(4) }}>
           <Image src={coverUrl} style={{ width: '100%', objectFit: 'contain' }} />
+          {figuresEnabled && figureRegistry.get(`custom_${blockId}_image`) && (
+            <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, textAlign: 'center', marginTop: mm(2) }}>
+              {`Рисунок ${figureRegistry.get('custom_' + blockId + '_image').num}. ${figureRegistry.get('custom_' + blockId + '_image').title}`}
+            </Text>
+          )}
         </View>
       )}
 
