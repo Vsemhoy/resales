@@ -4,7 +4,7 @@ import { DownOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons'
 import { getBidModels } from '../api'
 import { HTTP_HOST } from '../../../config/config'
 import { Section, Field, TabWrap } from '../components/FormParts'
-import { COVER_BLOCKS } from '../components/coverBlocks'
+import { useCovers } from '../components/CoversDrawer'
 
 export default function SectionSpecials({ data, onChange, bidId, companyId }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
@@ -65,30 +65,11 @@ export default function SectionSpecials({ data, onChange, bidId, companyId }) {
     <TabWrap>
       {/* ── Обложка раздела ─────────────────────────────────────────────────── */}
       <Section title="Картинка на обложку раздела" description="Страница-заголовок раздела">
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          <div
-            onClick={() => onChange({ ...data, specialsCoverBlock: null })}
-            style={{
-              width: 80, height: 60, border: `2px solid ${!data.specialsCoverBlock ? accent : '#d9d9d9'}`,
-              borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', fontSize: 11, color: '#8c8c8c', background: '#fafafa',
-            }}
-          >Без картинки</div>
-          {COVER_BLOCKS.map(block => (
-            <div
-              key={block.filename}
-              onClick={() => onChange({ ...data, specialsCoverBlock: data.specialsCoverBlock === block.url ? null : block.url })}
-              title={block.name}
-              style={{
-                width: 80, height: 60,
-                border: `2px solid ${data.specialsCoverBlock === block.url ? accent : '#d9d9d9'}`,
-                borderRadius: 6, overflow: 'hidden', cursor: 'pointer',
-              }}
-            >
-              <img src={block.url} alt={block.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-          ))}
-        </div>
+        <CoverPicker
+          value={data.specialsCoverBlock}
+          onChange={url => onChange({ ...data, specialsCoverBlock: url })}
+          accent={accent}
+        />
       </Section>
 
       {/* ── Список моделей ───────────────────────────────────────────────────── */}
@@ -227,5 +208,49 @@ export default function SectionSpecials({ data, onChange, bidId, companyId }) {
         })}
       </Section>
     </TabWrap>
+  )
+}
+
+// ─── Пикер обложек — тянет с апи как в SectionCover ─────────────────────────
+function CoverPicker({ value, onChange, accent }) {
+  const { covers, loading } = useCovers()
+
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div
+        onClick={() => onChange(null)}
+        style={{
+          width: 80, height: 60, border: `2px solid ${!value ? accent : '#d9d9d9'}`,
+          borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', fontSize: 11, color: '#8c8c8c', background: '#fafafa',
+        }}
+      >Без картинки</div>
+
+      {loading && [1,2,3].map(i => (
+        <div key={i} style={{ width: 80, height: 60, borderRadius: 6, background: '#f0f0f0' }} />
+      ))}
+
+      {!loading && covers.map(cover => (
+        <div
+          key={cover.filename}
+          onClick={() => onChange(value === cover.url ? null : cover.url)}
+          title={cover.filename}
+          style={{
+            width: 80, height: 60,
+            border: `2px solid ${value === cover.url ? accent : '#d9d9d9'}`,
+            borderRadius: 6, overflow: 'hidden', cursor: 'pointer', position: 'relative',
+          }}
+        >
+          <img src={cover.url} alt={cover.filename} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          {value === cover.url && (
+            <div style={{ position: 'absolute', top: 2, right: 2, background: accent, borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" width="10" height="10">
+                <polyline points="2,6 5,9 10,3" />
+              </svg>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   )
 }

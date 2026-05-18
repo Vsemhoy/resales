@@ -9,9 +9,13 @@ import { PdfRecommendations }  from './sections/PdfRecommendations'
 import { PdfSpecifications }   from './sections/PdfSpecifications'
 import { PdfSpecials }         from './sections/PdfSpecials'
 import { PdfToc }              from './sections/PdfToc'
+import { PdfCustomBlock }      from './sections/PdfCustomBlock'
+import { buildFigureRegistry } from './components/buildFigureRegistry'
 import { mm } from './theme/units'
 
-export function PdfDocument({ formData, draft, currency, companyId, enabledSections, sectionOrder, models = [] }) {
+const CUSTOM_PREFIX = 'custom_'
+
+export function PdfDocument({ formData, draft, currency, companyId, enabledSections, sectionOrder, models = [], figuresEnabled = true }) {
   const theme = companyId === '3' ? rondoTheme : arstelTheme
   const p     = theme.page
 
@@ -24,6 +28,8 @@ export function PdfDocument({ formData, draft, currency, companyId, enabledSecti
   }
 
   // Секции без cover и toc — они рендерятся отдельно
+  const figureRegistry = buildFigureRegistry({ sectionOrder, enabledSections, formData, figuresEnabled })
+
   const contentSections = sectionOrder.filter(k => k !== 'cover' && k !== 'toc')
 
   return (
@@ -67,7 +73,7 @@ export function PdfDocument({ formData, draft, currency, companyId, enabledSecti
             case 'features':
               return <PdfFeatures        key={key} theme={theme} data={formData} sectionNumber={n} />
             case 'selectEquipment':
-              return <PdfSelectEquipment key={key} theme={theme} data={formData} sectionNumber={n} />
+              return <PdfSelectEquipment key={key} theme={theme} data={formData} sectionNumber={n} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} />
             case 'recommendations':
               return <PdfRecommendations key={key} theme={theme} data={formData} currency={currency} sectionNumber={n} />
             case 'specifications':
@@ -75,6 +81,12 @@ export function PdfDocument({ formData, draft, currency, companyId, enabledSecti
             case 'specials':
               return <PdfSpecials        key={key} theme={theme} data={formData} models={models} sectionNumber={n} />
             default:
+              if (key.startsWith(CUSTOM_PREFIX)) {
+                const id    = key.replace(CUSTOM_PREFIX, '')
+                const block = formData?._customSections?.[id]
+                if (!block) return null
+                return <PdfCustomBlock key={key} theme={theme} block={block} blockId={id} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} />
+              }
               return null
           }
         })}
