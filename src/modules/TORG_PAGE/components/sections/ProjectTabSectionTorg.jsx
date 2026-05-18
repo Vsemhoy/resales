@@ -431,6 +431,9 @@ const ProjectTabSectionTorg = (props) => {
 
 
 
+	const createdAtDate =
+		data?.created_at && dayjs(data.created_at).isValid() ? dayjs(data.created_at) : null;
+
 	return (
 		<div
 			className={`sa-org-collapse-item
@@ -476,11 +479,11 @@ const ProjectTabSectionTorg = (props) => {
 					<div className={'sa-pa-6 sa-org-section-text'}>
 						<div className="sa-org-section-label">{name ? name : 'Без темы '}</div>
 						<span className="sa-date-text">
-							{date !== null
+							{createdAtDate !== null
 								? 
-								  (date ? getMonthName(dayjs(date).month() + 1) : '') +
+								  (createdAtDate ? getMonthName(dayjs(createdAtDate).month() + 1) : '') +
 								   ` - ` +
-								  date?.format('YYYY')
+								  createdAtDate?.format('YYYY')
 								: ''}
 						</span>{' '}
 						<span className="sa-author-text">
@@ -560,7 +563,7 @@ const ProjectTabSectionTorg = (props) => {
 								input: (
 									<DatePicker
 										key={'texpard_3_' + data?.id}
-										value={date}
+										value={createdAtDate}
 										// onChange={e => setNote(e.target.value)}
 										readOnly={true}
 										variant="borderless"

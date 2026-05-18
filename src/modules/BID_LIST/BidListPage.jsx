@@ -141,12 +141,17 @@ const BidListPage = (props) => {
 		{
 			value: 2,
 			label: 'Администратор',
-			acl: 90,
+			acl: 91,
 		},
 		{
 			value: 3,
 			label: 'Бухгалтер',
-			acl: 91,
+			acl: 90,
+		},
+		{
+			value: 4,
+			label: 'Инженер',
+			acl: 153,
 		},
 	]);
 
@@ -290,7 +295,8 @@ const BidListPage = (props) => {
 			// 89 - менеджер
 			// 91 - администратор
 			// 90 - бухгалтер
-			const found = userdata.acls.filter((num) => [89, 90, 91].includes(num));
+			// 153 - инженер
+			const found = userdata.acls.filter((num) => [89, 90, 91, 153].includes(num));
 			if (found) setIsHasRole(true);
 			console.log('found', found.length);
 			setIsOneRole(found.length === 1);
@@ -895,6 +901,7 @@ const BidListPage = (props) => {
                                     ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
                                     ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
                                     ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
+                                    ${activeRole === 4 ? 'sa-select-custom-engineer' : ''}
                                   `}
 													>
 														{roles.find((role) => role.value === activeRole)?.label ||
@@ -909,6 +916,7 @@ const BidListPage = (props) => {
                                         ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
                                         ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
                                         ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
+                                        ${activeRole === 4 ? 'sa-select-custom-engineer' : ''}
                                       `}
 														style={{ width: '150px', marginRight: '8px' }}
 														options={roles.filter((role) => userdata?.acls?.includes(role.acl))}
