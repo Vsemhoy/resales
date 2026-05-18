@@ -895,6 +895,7 @@ const BidListPage = (props) => {
                                     ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
                                     ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
                                     ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
+                                    ${activeRole === 4 ? 'sa-select-custom-engineer' : ''}
                                   `}
 													>
 														{roles.find((role) => role.value === activeRole)?.label ||
@@ -909,6 +910,7 @@ const BidListPage = (props) => {
                                         ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
                                         ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
                                         ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
+                                        ${activeRole === 4 ? 'sa-select-custom-engineer' : ''}
                                       `}
 														style={{ width: '150px', marginRight: '8px' }}
 														options={roles.filter((role) => userdata?.acls?.includes(role.acl))}
