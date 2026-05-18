@@ -111,6 +111,9 @@
   border-radius: 6px;
   border: 1px solid #e8e8e8;
   overflow: hidden;
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .sectionTitle {

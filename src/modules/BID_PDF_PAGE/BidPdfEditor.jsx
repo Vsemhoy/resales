@@ -274,7 +274,24 @@ export default function BidPdfEditor() {
             : <span style={{ width: 14, display: 'inline-block' }} />
           }
         </span>
-        <span className={classes.sectionLabel}>{section.label}</span>
+        <span className={classes.sectionLabel}>
+          {sectionNumbers[section.key] && (
+            <span style={{ color: accent, fontWeight: 700, marginRight: 4, fontSize: 11, flexShrink: 0 }}>
+              {sectionNumbers[section.key]}.
+            </span>
+          )}
+          {section.isCustom
+            ? <>
+                <span>Блок</span>
+                {customSections[section.customId]?.title && (
+                  <span style={{ color: accent, fontWeight: 600, marginLeft: 4, fontSize: 11 }}>
+                    {customSections[section.customId].title}
+                  </span>
+                )}
+              </>
+            : section.label
+          }
+        </span>
         {!section.required && (
           <Checkbox
             checked={!!enabledSections[section.key]}
