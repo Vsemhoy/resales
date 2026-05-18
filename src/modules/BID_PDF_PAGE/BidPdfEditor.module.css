@@ -45,7 +45,7 @@
 
 /* ── Левая: список секций ───────────────────────────────────────────────────── */
 .sectionList {
-  width: 200px;
+  width: 330px;
   flex-shrink: 0;
   background: #fff;
   border-right: 1px solid #e8e8e8;
@@ -134,7 +134,7 @@
 
 /* ── Правая: минимап ────────────────────────────────────────────────────────── */
 .minimap {
-  width: 96px;
+  width: 134px;
   flex-shrink: 0;
   background: #fff;
   border-left: 1px solid #e8e8e8;

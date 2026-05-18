@@ -48,3 +48,21 @@ export const DEFAULT_ENABLED = {
   specials:        false,
   rondoDelivery:   false,
 }
+
+// ─── Кастомные блоки ──────────────────────────────────────────────────────────
+export const CUSTOM_PREFIX = 'custom_'
+export const isCustomKey   = (key) => key.startsWith(CUSTOM_PREFIX)
+export const customKey     = (id)  => `${CUSTOM_PREFIX}${id}`
+export const customId      = (key) => key.replace(CUSTOM_PREFIX, '')
+
+export function makeCustomSection(id) {
+  return {
+    key:       customKey(id),
+    label:     'Блок',
+    draggable: true,
+    target:    null,
+    required:  false,
+    isCustom:  true,
+    customId:  id,
+  }
+}

@@ -9,7 +9,10 @@ import { PdfRecommendations }  from './sections/PdfRecommendations'
 import { PdfSpecifications }   from './sections/PdfSpecifications'
 import { PdfSpecials }         from './sections/PdfSpecials'
 import { PdfToc }              from './sections/PdfToc'
+import { PdfCustomBlock }      from './sections/PdfCustomBlock'
 import { mm } from './theme/units'
+
+const CUSTOM_PREFIX = 'custom_'
 
 export function PdfDocument({ formData, draft, currency, companyId, enabledSections, sectionOrder, models = [] }) {
   const theme = companyId === '3' ? rondoTheme : arstelTheme
@@ -75,6 +78,12 @@ export function PdfDocument({ formData, draft, currency, companyId, enabledSecti
             case 'specials':
               return <PdfSpecials        key={key} theme={theme} data={formData} models={models} sectionNumber={n} />
             default:
+              if (key.startsWith(CUSTOM_PREFIX)) {
+                const id    = key.replace(CUSTOM_PREFIX, '')
+                const block = formData?._customSections?.[id]
+                if (!block) return null
+                return <PdfCustomBlock key={key} theme={theme} block={block} />
+              }
               return null
           }
         })}

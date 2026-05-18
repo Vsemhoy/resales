@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined } from '@ant-design/icons'
@@ -9,6 +9,7 @@ import { useAutoSave } from './useAutoSave'
 import {
   CURRENCY_OPTIONS, COMPANY_OPTIONS, ORIENTATION_OPTIONS, TARGET_OPTIONS,
   getVisibleSections, DEFAULT_SECTION_ORDER, DEFAULT_ENABLED,
+  CUSTOM_PREFIX, isCustomKey, customKey, customId, makeCustomSection,
 } from './sectionConfig'
 import classes from './BidPdfEditor.module.css'
 import { CoversDrawer } from './components/CoversDrawer'
@@ -26,6 +27,7 @@ import SectionRecommendations from './sections/SectionRecommendations'
 import SectionSpecials        from './sections/SectionSpecials'
 import SectionSpecifications from './sections/SectionSpecifications'
 import SectionRondoDelivery   from './sections/SectionRondoDelivery'
+import SectionCustomBlock     from './sections/SectionCustomBlock'
 
 const SECTION_COMPONENTS = {
   cover:           SectionCover,
@@ -49,6 +51,8 @@ const COMPACT_THEME = {
   },
 }
 
+const uuid = () => Math.random().toString(36).slice(2, 8)
+
 export default function BidPdfEditor() {
   const { bidId, draftId } = useParams()
 
@@ -66,6 +70,7 @@ export default function BidPdfEditor() {
   const [sectionOrder,    setSectionOrder]    = useState(DEFAULT_SECTION_ORDER)
   const [activeSection,   setActiveSection]   = useState('cover')
   const [coversOpen,     setCoversOpen]     = useState(false)
+  const [customSections, setCustomSections] = useState({})
   const [models,         setModels]         = useState([])
   const [printing,       setPrinting]       = useState(false)
 
@@ -108,6 +113,7 @@ export default function BidPdfEditor() {
         setTargetSystem(meta.targetSystem ?? (data.kp_type === 2 ? 'p' : 't'))
         if (fd._enabledSections) setEnabledSections(prev => ({ ...prev, ...fd._enabledSections }))
         if (fd._sectionOrder)    setSectionOrder(fd._sectionOrder)
+        if (fd._customSections) setCustomSections(fd._customSections)
         setFormData(fd)
         setTimeout(() => setIsReady(true), 100)
       })
@@ -137,6 +143,56 @@ export default function BidPdfEditor() {
 
   const handleFormChange = useCallback((newData) => setFormData(newData), [])
 
+  const addCustomBlock = useCallback(() => {
+    const id  = uuid()
+    const key = customKey(id)
+    const newSection = { title: 'Новый блок', columns: [], rows: [], textAbove: '', textBelow: '', image: null }
+    setCustomSections(prev => {
+      const next = { ...prev, [id]: newSection }
+      setFormData(fd => ({ ...fd, _customSections: next }))
+      return next
+    })
+    setSectionOrder(prev => {
+      const tocIdx = prev.indexOf('toc')
+      const next = [...prev]
+      if (tocIdx >= 0) next.splice(tocIdx, 0, key)
+      else next.push(key)
+      setFormData(fd => ({ ...fd, _sectionOrder: next }))
+      return next
+    })
+    setEnabledSections(prev => ({ ...prev, [key]: true }))
+    setActiveSection(key)
+  }, [])
+
+  const removeCustomBlock = useCallback((key) => {
+    const id = customId(key)
+    setCustomSections(prev => {
+      const next = { ...prev }
+      delete next[id]
+      setFormData(fd => ({ ...fd, _customSections: next }))
+      return next
+    })
+    setSectionOrder(prev => {
+      const next = prev.filter(k => k !== key)
+      setFormData(fd => ({ ...fd, _sectionOrder: next }))
+      return next
+    })
+    setEnabledSections(prev => {
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+    setActiveSection('cover')
+  }, [])
+
+  const updateCustomBlock = useCallback((id, blockData) => {
+    setCustomSections(prev => {
+      const next = { ...prev, [id]: blockData }
+      setFormData(fd => ({ ...fd, _customSections: next }))
+      return next
+    })
+  }, [])
+
   const handleDragEnd = ({ source, destination }) => {
     if (!destination || source.index === destination.index) return
 
@@ -156,9 +212,29 @@ export default function BidPdfEditor() {
     setFormData(fd => ({ ...fd, _sectionOrder: newOrder }))
   }
 
-  // Видимые секции по targetSystem и в нужном порядке
+  // Видимые секции по targetSystem и в нужном порядке (включая кастомные)
   const visible        = getVisibleSections(targetSystem)
-  const orderedVisible = sectionOrder.map(k => visible.find(s => s.key === k)).filter(Boolean)
+  const orderedVisible = sectionOrder.map(k => {
+    if (isCustomKey(k)) {
+      const id = customId(k)
+      return customSections[id]
+        ? makeCustomSection(id)
+        : null
+    }
+    return visible.find(s => s.key === k) || null
+  }).filter(Boolean)
+
+  // Сквозная нумерация — только включённые драггабельные секции
+  const sectionNumbers = useMemo(() => {
+    const nums = {}
+    let n = 1
+    for (const section of orderedVisible) {
+      if (!section.draggable) continue   // cover и toc без номера
+      const enabled = section.required || enabledSections[section.key]
+      if (enabled) nums[section.key] = n++
+    }
+    return nums
+  }, [orderedVisible, enabledSections])
 
   // Обложка — первая, TOC — последняя, всё остальное — драгабельная зона
   const coverSection      = orderedVisible.find(s => s.key === 'cover')
@@ -232,7 +308,7 @@ export default function BidPdfEditor() {
           <div className={classes.topbarRight}>
             <SaveIndicator status={saveStatus} errMsg={saveErr} />
             <Button danger icon={<CodepenOutlined />} size="small">Инженер работает!</Button>
-            <Button type="primary" icon={<PrinterOutlined />} size="small"
+<Button type="primary" icon={<PrinterOutlined />} size="small"
               loading={printing}
               onClick={handlePrint}
               style={{ background: accent, borderColor: accent }}>В печать!</Button>
@@ -285,7 +361,21 @@ export default function BidPdfEditor() {
               </Droppable>
             </DragDropContext>
 
-            {/* Оглавление — фиксированное внизу, вне Droppable */}
+            {/* Кнопка добавить блок */}
+            <div style={{ padding: '6px 8px', borderTop: '1px solid #f0f0f0' }}>
+              <button
+                onClick={addCustomBlock}
+                style={{
+                  width: '100%', border: `1px dashed ${accent}66`, background: accent + '08',
+                  borderRadius: 5, padding: '5px 0', cursor: 'pointer',
+                  fontSize: 12, color: accent, fontWeight: 600,
+                }}
+              >
+                + Блок
+              </button>
+            </div>
+
+          {/* Оглавление — фиксированное внизу, вне Droppable */}
             {tocSection && (
               <div className={classes.tocDivider} />
             )}
@@ -298,20 +388,35 @@ export default function BidPdfEditor() {
             {activeSecDef && (
               <div className={classes.sectionBlock}>
                 <div className={classes.sectionTitle} style={{ borderColor: accent }}>
-                  {activeSecDef.label}
+                  {sectionNumbers[activeSecDef?.key]
+                    ? <span style={{ color: accent, marginRight: 6 }}>{sectionNumbers[activeSecDef.key]}.</span>
+                    : null}
+                  {activeSecDef.isCustom
+                    ? (customSections[activeSecDef.customId]?.title || 'Блок')
+                    : activeSecDef.label}
                 </div>
-                {ActiveSection
-                  ? <ActiveSection
-                      data={formData}
-                      onChange={handleFormChange}
-                      currency={currency}
-                      companyId={companyId}
-                      orientation={orientation}
-                      targetSystem={targetSystem}
+                {activeSecDef?.isCustom
+                  ? <SectionCustomBlock
+                      data={customSections[activeSecDef.customId] || {}}
+                      onChange={blockData => updateCustomBlock(activeSecDef.customId, blockData)}
+                      onRemove={() => removeCustomBlock(activeSecDef.key)}
+                      sectionNumber={sectionNumbers[activeSecDef.key]}
+                      blockIndex={Object.keys(customSections).indexOf(activeSecDef.customId) + 1}
                       draftId={draftId}
-                      bidId={bidId}
+                      companyId={companyId}
                     />
-                  : <div className={classes.sectionPlaceholder}>— секция в разработке —</div>
+                  : ActiveSection
+                    ? <ActiveSection
+                        data={formData}
+                        onChange={handleFormChange}
+                        currency={currency}
+                        companyId={companyId}
+                        orientation={orientation}
+                        targetSystem={targetSystem}
+                        draftId={draftId}
+                        bidId={bidId}
+                      />
+                    : <div className={classes.sectionPlaceholder}>— секция в разработке —</div>
                 }
               </div>
             )}
