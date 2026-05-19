@@ -35,7 +35,8 @@ function colSum(rows, colId) {
 const fmt = (n) => Number(n).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 export default function SectionCustomBlock({
-  data, onChange, onRemove, draftId, companyId, sectionNumber, blockIndex
+  data, onChange, onRemove, draftId, companyId, sectionNumber, blockIndex,
+  figureRegistry = new Map(), figuresEnabled = true
 }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
   const block  = data || {}
@@ -92,16 +93,23 @@ export default function SectionCustomBlock({
           draftId={draftId} value={block.image}
           onChange={val => set('image', val)}
         />
-        {block.image && (
-          <Field label="Подпись к рисунку">
-            <Input
-              value={block.imageTitle ?? `Блок ${block.title || ''}`}
-              onChange={e => set('imageTitle', e.target.value)}
-              placeholder={`Блок ${block.title || ''}`}
-              size="small"
-            />
-          </Field>
-        )}
+        {block.image && figuresEnabled && (() => {
+          const figKey = `custom_${data?.id || 'block'}_image`
+          const fig    = figureRegistry.get(figKey)
+          return (
+            <Field label={fig ? `Рис. ${fig.num} — подпись` : 'Подпись к рисунку'}>
+              <Input
+                value={block.imageTitle ?? `Блок ${block.title || ''}`}
+                onChange={e => set('imageTitle', e.target.value)}
+                placeholder={`Блок ${block.title || ''}`}
+                size="small"
+                prefix={fig
+                  ? <span style={{ color: '#8c8c8c', fontSize: 11, whiteSpace: 'nowrap' }}>Рис. {fig.num}.</span>
+                  : null}
+              />
+            </Field>
+          )
+        })()}
       </Section>
 
       <Section title="Таблица" description="Если колонки не заданы — таблица не отображается">
@@ -201,7 +209,7 @@ export default function SectionCustomBlock({
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               {rows.map((row, ri) => (
-                <div key={row.id} style={{ display: 'flex', gap: 4, alignItems: 'center', background: ri % 2 ? '#fafafa' : '#fff', borderRadius: 4 }}>
+                <div key={row.id} style={{ display: 'flex', gap: 4, alignItems: 'center', background: ri % 2 ? '#fafafa' : '#fff', borderRadius: 4, width: 'calc(100% - 30px)' }}>
                   <span style={{ width: 28, textAlign: 'right', fontSize: 11, color: '#bfbfbf', flexShrink: 0 }}>{ri + 1}</span>
                   {withWidths.map(col => (
                     <Input

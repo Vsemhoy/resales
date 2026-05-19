@@ -14,7 +14,8 @@ import {
 import classes from './BidPdfEditor.module.css'
 import { CoversDrawer } from './components/CoversDrawer'
 import { pdf } from '@react-pdf/renderer'
-import { registerFonts } from './pdf/components/PdfFonts'
+import { registerFonts }       from './pdf/components/PdfFonts'
+import { buildFigureRegistry } from './pdf/components/buildFigureRegistry'
 import { PdfDocument } from './pdf/PdfDocument'
 import { SectionMiniPreview } from './components/SectionMiniPreview'
 
@@ -244,6 +245,11 @@ export default function BidPdfEditor() {
     return nums
   }, [orderedVisible, enabledSections])
 
+  // Реестр рисунков для отображения номеров в формах
+  const figureRegistry = useMemo(() => buildFigureRegistry({
+    sectionOrder, enabledSections, formData, figuresEnabled,
+  }), [sectionOrder, enabledSections, formData, figuresEnabled])
+
   // Обложка — первая, TOC — последняя, всё остальное — драгабельная зона
   const coverSection      = orderedVisible.find(s => s.key === 'cover')
   const tocSection        = orderedVisible.find(s => s.key === 'toc')
@@ -433,6 +439,8 @@ export default function BidPdfEditor() {
                       blockIndex={Object.keys(customSections).indexOf(activeSecDef.customId) + 1}
                       draftId={draftId}
                       companyId={companyId}
+                      figureRegistry={figureRegistry}
+                      figuresEnabled={figuresEnabled}
                     />
                   : ActiveSection
                     ? <ActiveSection
@@ -444,6 +452,8 @@ export default function BidPdfEditor() {
                         targetSystem={targetSystem}
                         draftId={draftId}
                         bidId={bidId}
+                        figureRegistry={figureRegistry}
+                        figuresEnabled={figuresEnabled}
                       />
                     : <div className={classes.sectionPlaceholder}>— секция в разработке —</div>
                 }
