@@ -25,21 +25,21 @@ const PORTRAIT = {
 
   // Поля страницы
   marginTop:   mm(20),
-  marginBottom:mm(24),
+  marginBottom:mm(20),
   marginLeft:  mm(20),
   marginRight: mm(20),
 
   // Рабочая область
   contentW:    mm(170),   // 210 - 20 - 20
-  contentH:    mm(253),   // 297 - 20 - 24
+  contentH:    mm(257),   // 297 - 20 - 20
 
   // Шапка и подвал
   headerH:     mm(12),
-  footerH:     mm(10),
+  footerH:     mm(8),
 
   // Паддинг контента с учётом шапки/подвала
   paddingTop:    mm(20) + mm(12),
-  paddingBottom: mm(24) + mm(10),
+  paddingBottom: mm(20) + mm(8),
 
   // Фото-блоки
   imgMaxW:     mm(170),       // на всю ширину

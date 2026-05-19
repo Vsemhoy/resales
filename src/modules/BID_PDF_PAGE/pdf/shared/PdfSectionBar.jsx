@@ -5,7 +5,7 @@ import { View, Text } from '@react-pdf/renderer'
 export function PdfSectionBar({ cfg, number, title }) {
   const { color, text, font, weight, space } = cfg
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: space.md, marginTop: space.lg }} wrap={false}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: space.md, marginTop: space.md }} wrap={false}>
       <View style={{ width: 1.5, height: text.lg * 1.8, backgroundColor: color.sectionBar, marginRight: space.sm }} />
       <View>
         {number !== undefined && (

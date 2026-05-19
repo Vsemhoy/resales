@@ -3,6 +3,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import { StarterKit } from '@tiptap/starter-kit'
 import { Color } from '@tiptap/extension-color'
 import { TextStyle } from '@tiptap/extension-text-style'
+import TextAlign  from '@tiptap/extension-text-align'
 import classes from './RichTextEditor.module.css'
 
 // ─── RichTextEditor ───────────────────────────────────────────────────────────
@@ -20,6 +21,7 @@ export function RichTextEditor({ value, onChange, accent = '#FF5903', placeholde
       StarterKit,
       TextStyle,
       Color,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content: value || '',
     onUpdate: ({ editor }) => {
@@ -128,6 +130,21 @@ function Toolbar({ editor, accent, rawMode, onToggleRaw }) {
         () => editor.chain().focus().toggleOrderedList().run(),
         'Нумерованный список',
         <span>1.</span>
+      )}
+
+      {/* Justify */}
+      {btn(
+        editor.isActive({ textAlign: 'justify' }),
+        () => editor.chain().focus().setTextAlign(
+          editor.isActive({ textAlign: 'justify' }) ? 'left' : 'justify'
+        ).run(),
+        'По ширине',
+        <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
+          <rect x="0" y="0"  width="14" height="1.5" rx="0.75"/>
+          <rect x="0" y="3"  width="14" height="1.5" rx="0.75"/>
+          <rect x="0" y="6"  width="14" height="1.5" rx="0.75"/>
+          <rect x="0" y="9"  width="14" height="1.5" rx="0.75"/>
+        </svg>
       )}
 
       <div className={classes.sep} />

@@ -2,11 +2,20 @@ import React from 'react'
 import { Document, Page } from '@react-pdf/renderer'
 import { getConfig } from './pdf_config'
 import { registerFonts } from './components/PdfFonts'
-import { PdfPageFrame } from './PdfPageFrame'
-import { PdfBlockCoverFull } from './blocks/PdfBlockCoverFull'
-import { PdfBlockCoverHat }  from './blocks/PdfBlockCoverHat'
+import { buildFigureRegistry } from './components/buildFigureRegistry'
+import { PdfPageFrame }              from './PdfPageFrame'
+import { PdfBlockCoverFull }         from './blocks/PdfBlockCoverFull'
+import { PdfBlockCoverHat }          from './blocks/PdfBlockCoverHat'
+import { PdfBlockFeatures }          from './blocks/PdfBlockFeatures'
+import { PdfBlockSpecifications }    from './blocks/PdfBlockSpecifications'
+import { PdfBlockSpecials }          from './blocks/PdfBlockSpecials'
+import { PdfBlockSelectEquipment }   from './blocks/PdfBlockSelectEquipment'
+import { PdfBlockRecommendations }   from './blocks/PdfBlockRecommendations'
+import { PdfBlockCustom }            from './blocks/PdfBlockCustom'
 
 registerFonts()
+
+const CUSTOM_PREFIX = 'custom_'
 
 export function PdfDocumentV2({
   formData,
@@ -20,9 +29,23 @@ export function PdfDocumentV2({
   figuresEnabled  = true,
 }) {
   const cfg = getConfig(companyId, orientation)
-  const { layout } = cfg
+  const { layout, color, font: f } = cfg
 
   const coverMode = formData?.coverMode ?? 'cover'
+
+  const figureRegistry = buildFigureRegistry({
+    sectionOrder, enabledSections, formData, figuresEnabled,
+  })
+
+  // Нумерация разделов
+  const sectionNumbers = {}
+  let num = 1
+  for (const key of sectionOrder) {
+    if (key === 'cover' || key === 'toc') continue
+    if (enabledSections[key]) sectionNumbers[key] = num++
+  }
+
+  const contentSections = sectionOrder.filter(k => k !== 'cover' && k !== 'toc')
 
   return (
     <Document>
@@ -34,21 +57,49 @@ export function PdfDocumentV2({
           paddingBottom: layout.paddingBottom,
           paddingLeft:   layout.marginLeft,
           paddingRight:  layout.marginRight,
-          fontFamily:    cfg.font.regular,
-          backgroundColor: cfg.color.bgPage,
+          fontFamily:    f.regular,
+          backgroundColor: color.bgPage,
         }}
       >
-        {/* Хедер и футер */}
         <PdfPageFrame cfg={cfg} draft={draft} companyId={companyId} />
 
-        {/* ── Обложка ───────────────────────────────────────────────────── */}
-        {(enabledSections.cover !== false) && (
+        {/* Обложка */}
+        {enabledSections.cover !== false && (
           coverMode === 'hat'
             ? <PdfBlockCoverHat  cfg={cfg} data={formData} draft={draft} />
             : <PdfBlockCoverFull cfg={cfg} data={formData} draft={draft} />
         )}
 
-        {/* TODO: остальные секции — добавляем по одной */}
+        {/* Секции по порядку */}
+        {contentSections.map(key => {
+          if (!enabledSections[key]) return null
+          const n = sectionNumbers[key]
+
+          if (key === 'features')
+            return <PdfBlockFeatures key={key} cfg={cfg} data={formData} sectionNumber={n} />
+
+          if (key === 'selectEquipment')
+            return <PdfBlockSelectEquipment key={key} cfg={cfg} data={formData} sectionNumber={n} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} />
+
+          if (key === 'recommendations')
+            return <PdfBlockRecommendations key={key} cfg={cfg} data={formData} currency={currency} sectionNumber={n} />
+
+          if (key === 'specifications')
+            return <PdfBlockSpecifications key={key} cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} sectionNumber={n} />
+
+          if (key === 'specials')
+            return <PdfBlockSpecials key={key} cfg={cfg} data={formData} models={models} sectionNumber={n} />
+
+          if (key.startsWith(CUSTOM_PREFIX)) {
+            const id    = key.replace(CUSTOM_PREFIX, '')
+            const block = formData?._customSections?.[id]
+            return block
+              ? <PdfBlockCustom key={key} cfg={cfg} block={block} blockId={id} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} />
+              : null
+          }
+
+          return null
+        })}
 
       </Page>
     </Document>

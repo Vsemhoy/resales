@@ -9,42 +9,39 @@ export function PdfPageFrame({ cfg, draft, companyId }) {
 
   return (
     <>
-      {/* Хедер */}
-      <View fixed style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0,
-        height: layout.marginTop,
-        paddingTop: layout.marginTop * 0.3,
-        paddingHorizontal: layout.marginLeft,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}>
-        <Text style={{
-          fontSize: text.sm, color: color.accent,
-          fontFamily: font.bold, fontWeight: weight.bold,
-        }}>
-          {companyId === '3' ? 'RONDO' : 'ARSTEL'}
-        </Text>
-        {draft?.object ? (
-          <Text style={{
-            fontSize: text.xs, color: color.textSecondary,
-            fontFamily: font.regular,
+      {/* Хедер — только на первой странице */}
+      <View
+        fixed
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: layout.marginTop }}
+        render={({ pageNumber }) => pageNumber > 1 ? null : (
+          <View style={{
+            paddingTop: layout.marginTop * 0.3,
+            paddingHorizontal: layout.marginLeft,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            height: layout.marginTop,
           }}>
-            {draft.object}
-          </Text>
-        ) : null}
-      </View>
+            <Text style={{ fontSize: text.sm, color: color.accent, fontFamily: font.bold, fontWeight: weight.bold }}>
+              {companyId === '3' ? 'RONDO' : 'ARSTEL'}
+            </Text>
+            {draft?.object ? (
+              <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>
+                {draft.object}
+              </Text>
+            ) : null}
+          </View>
+        )}
+      />
 
-      {/* Линия под хедером */}
-      <View fixed style={{
-        position: 'absolute',
-        top: layout.marginTop - 1,
-        left: layout.marginLeft,
-        right: layout.marginRight,
-        height: 0.5,
-        backgroundColor: color.divider,
-      }} />
+      {/* Линия под хедером — только на первой странице */}
+      <View
+        fixed
+        style={{ position: 'absolute', top: layout.marginTop - 1, left: layout.marginLeft, right: layout.marginRight, height: 0.5 }}
+        render={({ pageNumber }) => pageNumber > 1 ? null : (
+          <View style={{ height: 0.5, backgroundColor: color.divider }} />
+        )}
+      />
 
       {/* Футер */}
       <View fixed style={{
