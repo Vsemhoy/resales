@@ -12,10 +12,12 @@ import { PdfBlockSpecials }          from './blocks/PdfBlockSpecials'
 import { PdfBlockSelectEquipment }   from './blocks/PdfBlockSelectEquipment'
 import { PdfBlockRecommendations }   from './blocks/PdfBlockRecommendations'
 import { PdfBlockCustom }            from './blocks/PdfBlockCustom'
+import { PdfBlockPageBreak }         from './blocks/PdfBlockPageBreak'
 
 registerFonts()
 
-const CUSTOM_PREFIX = 'custom_'
+const CUSTOM_PREFIX    = 'custom_'
+const PAGEBREAK_PREFIX = 'pageBreak_'
 
 export function PdfDocumentV2({
   formData,
@@ -89,6 +91,9 @@ export function PdfDocumentV2({
 
           if (key === 'specials')
             return <PdfBlockSpecials key={key} cfg={cfg} data={formData} models={models} sectionNumber={n} />
+
+          if (key.startsWith(PAGEBREAK_PREFIX))
+            return <PdfBlockPageBreak key={key} />
 
           if (key.startsWith(CUSTOM_PREFIX)) {
             const id    = key.replace(CUSTOM_PREFIX, '')
