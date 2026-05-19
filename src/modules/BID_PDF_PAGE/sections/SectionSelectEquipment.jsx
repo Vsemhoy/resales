@@ -4,7 +4,7 @@ import { Section, Field, TabWrap } from '../components/FormParts'
 import { FileUploadField } from '../components/FileUploadField'
 import { RichTextEditor } from '../components/RichTextEditor'
 
-export default function SectionSelectEquipment({ data, onChange, draftId, companyId }) {
+export default function SectionSelectEquipment({ data, onChange, draftId, companyId, figureRegistry = new Map(), figuresEnabled = true }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
   const set = (key, val) => onChange({ ...data, [key]: val })
 
@@ -33,13 +33,20 @@ export default function SectionSelectEquipment({ data, onChange, draftId, compan
               value={data.structuralDiagrams}
               onChange={val => set('structuralDiagrams', val)}
             />
-            {data.structuralDiagrams && (
-              <Field label="Подпись к рисунку">
+            {data.structuralDiagrams && figuresEnabled && (
+              <Field label={
+                figureRegistry.get('structuralDiagrams')
+                  ? `Рис. ${figureRegistry.get('structuralDiagrams').num} — подпись`
+                  : 'Подпись к рисунку'
+              }>
                 <Input
                   value={data.structuralDiagramsTitle ?? 'Структурная схема проекта'}
                   onChange={e => set('structuralDiagramsTitle', e.target.value)}
                   placeholder="Структурная схема проекта"
                   size="small"
+                  prefix={figureRegistry.get('structuralDiagrams')
+                    ? <span style={{ color: '#8c8c8c', fontSize: 11, whiteSpace: 'nowrap' }}>Рис. {figureRegistry.get('structuralDiagrams').num}.</span>
+                    : null}
                 />
               </Field>
             )}
@@ -54,13 +61,20 @@ export default function SectionSelectEquipment({ data, onChange, draftId, compan
               value={data.blockPlacements}
               onChange={val => set('blockPlacements', val)}
             />
-            {data.blockPlacements && (
-              <Field label="Подпись к рисунку">
+            {data.blockPlacements && figuresEnabled && (
+              <Field label={
+                figureRegistry.get('blockPlacements')
+                  ? `Рис. ${figureRegistry.get('blockPlacements').num} — подпись`
+                  : 'Подпись к рисунку'
+              }>
                 <Input
                   value={data.blockPlacementsTitle ?? 'Размещение блоков системы в шкафах'}
                   onChange={e => set('blockPlacementsTitle', e.target.value)}
                   placeholder="Размещение блоков системы в шкафах"
                   size="small"
+                  prefix={figureRegistry.get('blockPlacements')
+                    ? <span style={{ color: '#8c8c8c', fontSize: 11, whiteSpace: 'nowrap' }}>Рис. {figureRegistry.get('blockPlacements').num}.</span>
+                    : null}
                 />
               </Field>
             )}

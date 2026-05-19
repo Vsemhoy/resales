@@ -1,41 +1,41 @@
-import { mm } from './units'
+// Обёртка для обратной совместимости — новый код использует getConfig()
+import { getConfig, mm } from '../pdf_config'
+
+const cfg = getConfig('2', 'v')
 
 export const arstelTheme = {
-  accent:       '#FF5903',
-  black:        '#1A1A1A',
-  gray:         '#6B7280',
-  grayLight:    '#F3F4F6',
-  border:       '#E5E7EB',
-  white:        '#FFFFFF',
+  accent:       cfg.color.accent,
+  black:        cfg.color.textPrimary,
+  gray:         cfg.color.textSecondary,
+  grayLight:    cfg.color.bgMuted,
+  border:       cfg.color.divider,
+  white:        cfg.color.bgPage,
 
-  tableHeader:  '#FF5903',
-  tableRowEven: '#FFF8F5',
-  tableTotal:   '#FF5903',
+  tableHeader:  cfg.color.tableHeader,
+  tableRowEven: cfg.color.tableRowEven,
+  tableTotal:   cfg.color.tableTotal,
 
   page: {
-    size:        'A4',
-    orientation: 'portrait',
-    marginTop:    mm(20),
-    marginBottom: mm(24),
-    marginLeft:   mm(20),
-    marginRight:  mm(20),
+    size:         cfg.layout.size,
+    orientation:  cfg.layout.orientation,
+    marginTop:    cfg.layout.marginTop,
+    marginBottom: cfg.layout.marginBottom,
+    marginLeft:   cfg.layout.marginLeft,
+    marginRight:  cfg.layout.marginRight,
   },
 
-  header: { height: mm(12) },
-  footer: { height: mm(14) },
+  header: { height: cfg.layout.headerH },
+  footer: { height: cfg.layout.footerH },
 
-  fonts: {
-    regular: 'Montserrat',
-    bold:    'Montserrat',
-  },
+  fonts: { regular: cfg.font.regular, bold: cfg.font.bold },
 
   fontSize: {
-    xs:   mm(2.8),
-    sm:   mm(3.2),
-    base: mm(3.6),
-    md:   mm(4),
-    lg:   mm(5),
-    xl:   mm(6),
-    xxl:  mm(8),
+    xs:   cfg.text.xs,
+    sm:   cfg.text.sm,
+    base: cfg.text.base,
+    md:   cfg.text.md,
+    lg:   cfg.text.lg,
+    xl:   cfg.text.xl,
+    xxl:  cfg.text.xxl,
   },
 }

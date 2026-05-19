@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Spin, Input, Button, Checkbox } from 'antd'
+import { Spin, Input, Button, Checkbox, Image } from 'antd'
 import { DownOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons'
 import { getBidModels } from '../api'
 import { HTTP_HOST } from '../../../config/config'
@@ -230,27 +230,40 @@ function CoverPicker({ value, onChange, accent }) {
         <div key={i} style={{ width: 80, height: 60, borderRadius: 6, background: '#f0f0f0' }} />
       ))}
 
-      {!loading && covers.map(cover => (
-        <div
-          key={cover.filename}
-          onClick={() => onChange(value === cover.url ? null : cover.url)}
-          title={cover.filename}
-          style={{
-            width: 80, height: 60,
-            border: `2px solid ${value === cover.url ? accent : '#d9d9d9'}`,
-            borderRadius: 6, overflow: 'hidden', cursor: 'pointer', position: 'relative',
-          }}
-        >
-          <img src={cover.url} alt={cover.filename} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          {value === cover.url && (
-            <div style={{ position: 'absolute', top: 2, right: 2, background: accent, borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" width="10" height="10">
-                <polyline points="2,6 5,9 10,3" />
-              </svg>
+      {!loading && covers.map(cover => {
+        const isSelected = value === cover.url
+        return (
+          <div
+            key={cover.filename}
+            title={cover.filename}
+            style={{
+              width: 80, height: 60,
+              border: `2px solid ${isSelected ? accent : '#d9d9d9'}`,
+              borderRadius: 6, overflow: 'hidden', position: 'relative',
+              backgroundImage: 'linear-gradient(45deg, #dbdbdb 25%, #F6F0CF 25%, #F6F0CF 50%, #dbdbdb 50%, #dbdbdb 75%, #F6F0CF 75%, #F6F0CF 100%)',
+              backgroundSize: '15px 15px',
+            }}
+          >
+            <Image
+              src={cover.url}
+              alt={cover.filename}
+              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+              preview={{ mask: <span style={{ fontSize: 14 }}>🔍</span> }}
+            />
+            <div
+              onClick={() => onChange(isSelected ? null : cover.url)}
+              style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                background: isSelected ? accent : 'rgba(0,0,0,0.45)',
+                color: '#fff', fontSize: 10, fontWeight: 600,
+                textAlign: 'center', padding: '2px 0', cursor: 'pointer',
+              }}
+            >
+              {isSelected ? '✓ Выбрано' : 'Выбрать'}
             </div>
-          )}
-        </div>
-      ))}
+          </div>
+        )
+      })}
     </div>
   )
 }

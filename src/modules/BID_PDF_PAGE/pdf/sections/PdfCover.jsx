@@ -3,17 +3,14 @@ import { View, Text, Image } from '@react-pdf/renderer'
 import { mm } from '../theme/units'
 
 function absUrl(src) {
-  if (!src) return null
-  if (typeof src === 'object' && src.filename) return null // восстановим из api отдельно
-  if (src.startsWith('http')) return src
+  if (!src || typeof src !== 'string') return null
+  if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('blob:')) return src
   return `${window.location.origin}${src}`
 }
 
 // ─── Режим: Обложка (полная страница) ─────────────────────────────────────────
 function CoverFull({ theme, data, draft }) {
-  const coverUrl = data?.coverBlock
-    ? (data.coverBlock.startsWith('http') ? data.coverBlock : `${window.location.origin}${data.coverBlock}`)
-    : null
+  const coverUrl = absUrl(data?.coverBlock)
 
   return (
     <View style={{ flexDirection: 'row', minHeight: mm(240) }}>
@@ -71,10 +68,7 @@ function CoverFull({ theme, data, draft }) {
 // ─── Режим: Шапка (баннер + реквизиты) ───────────────────────────────────────
 function CoverHat({ theme, data, draft }) {
   // Картинка без полей — растягиваем через отрицательные отступы
-  const hatSrc = data?.hatImage
-  const hatUrl = hatSrc && typeof hatSrc === 'string'
-    ? (hatSrc.startsWith('http') ? hatSrc : `${window.location.origin}${hatSrc}`)
-    : null
+  const hatUrl = absUrl(data?.hatImage)
 
   const p = theme.page
 
