@@ -10,6 +10,7 @@ import {
   CURRENCY_OPTIONS, COMPANY_OPTIONS, ORIENTATION_OPTIONS, TARGET_OPTIONS,
   getVisibleSections, DEFAULT_SECTION_ORDER, DEFAULT_ENABLED,
   CUSTOM_PREFIX, isCustomKey, customKey, customId, makeCustomSection,
+  PAGEBREAK_PREFIX, isPageBreakKey, makePageBreakSection,
 } from './sectionConfig'
 import classes from './BidPdfEditor.module.css'
 import { CoversDrawer } from './components/CoversDrawer'
@@ -31,6 +32,7 @@ import SectionSpecials        from './sections/SectionSpecials'
 import SectionSpecifications from './sections/SectionSpecifications'
 import SectionRondoDelivery   from './sections/SectionRondoDelivery'
 import SectionCustomBlock     from './sections/SectionCustomBlock'
+import SectionPageBreak      from './sections/SectionPageBreak'
 
 const SECTION_COMPONENTS = {
   cover:           SectionCover,
@@ -42,6 +44,7 @@ const SECTION_COMPONENTS = {
   specials:        SectionSpecials,
   specifications:  SectionSpecifications,
   rondoDelivery:   SectionRondoDelivery,
+  pageBreak:       SectionPageBreak,
 }
 
 const COMPANY_ACCENT = { '2': '#FF5903', '3': '#269435' }
@@ -156,6 +159,21 @@ export default function BidPdfEditor() {
     setFormData(fd => ({ ...fd, _figuresEnabled: v }))
   }
 
+  const addPageBreak = useCallback(() => {
+    const id  = uuid()
+    const key = `${PAGEBREAK_PREFIX}${id}`
+    setSectionOrder(prev => {
+      const tocIdx = prev.indexOf('toc')
+      const next   = [...prev]
+      if (tocIdx >= 0) next.splice(tocIdx, 0, key)
+      else next.push(key)
+      setFormData(fd => ({ ...fd, _sectionOrder: next }))
+      return next
+    })
+    setEnabledSections(prev => ({ ...prev, [key]: true }))
+    setActiveSection(key)
+  }, [])
+
   const addCustomBlock = useCallback(() => {
     const id  = uuid()
     const key = customKey(id)
@@ -228,6 +246,7 @@ export default function BidPdfEditor() {
   // Видимые секции по targetSystem и в нужном порядке (включая кастомные)
   const visible        = getVisibleSections(targetSystem)
   const orderedVisible = sectionOrder.map(k => {
+    if (isPageBreakKey(k)) return makePageBreakSection(k)
     if (isCustomKey(k)) {
       const id = customId(k)
       return customSections[id]
@@ -401,16 +420,26 @@ export default function BidPdfEditor() {
             </DragDropContext>
 
             {/* Кнопка добавить блок */}
-            <div style={{ padding: '6px 8px', borderTop: '1px solid #f0f0f0' }}>
+            <div style={{ padding: '6px 8px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: 4 }}>
               <button
                 onClick={addCustomBlock}
                 style={{
-                  width: '100%', border: `1px dashed ${accent}66`, background: accent + '08',
+                  flex: 1, border: `1px dashed ${accent}66`, background: accent + '08',
                   borderRadius: 5, padding: '5px 0', cursor: 'pointer',
                   fontSize: 12, color: accent, fontWeight: 600,
                 }}
               >
                 + Блок
+              </button>
+              <button
+                onClick={addPageBreak}
+                style={{
+                  flex: 1, border: '1px dashed #d9d9d9', background: '#fafafa',
+                  borderRadius: 5, padding: '5px 0', cursor: 'pointer',
+                  fontSize: 12, color: '#8c8c8c', fontWeight: 600,
+                }}
+              >
+                ↕ Разрыв
               </button>
             </div>
 
@@ -434,7 +463,9 @@ export default function BidPdfEditor() {
                     ? (customSections[activeSecDef.customId]?.title || 'Блок')
                     : activeSecDef.label}
                 </div>
-                {activeSecDef?.isCustom
+                {activeSecDef?.isPageBreak
+                  ? <SectionPageBreak />
+                  : activeSecDef?.isCustom
                   ? <SectionCustomBlock
                       data={{ id: activeSecDef.customId, ...(customSections[activeSecDef.customId] || {}) }}
                       onChange={blockData => updateCustomBlock(activeSecDef.customId, blockData)}

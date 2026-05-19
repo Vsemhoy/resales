@@ -8,6 +8,7 @@ export const ALL_SECTIONS = [
   { key: 'specifications',  label: 'Спецификация',          draggable: true,  target: null, required: false },
   { key: 'specials',        label: 'Описание оборудования', draggable: true,  target: null, required: false },
   { key: 'rondoDelivery',   label: 'Условия поставки',      draggable: true,  target: null, required: false },
+  { key: 'pageBreak',       label: 'Разрыв страницы',       draggable: true,  target: null, required: false },
 ]
 
 export const CURRENCY_OPTIONS = [
@@ -47,6 +48,7 @@ export const DEFAULT_ENABLED = {
   specifications:  true,
   specials:        false,
   rondoDelivery:   false,
+  pageBreak:       false,
 }
 
 // ─── Кастомные блоки ──────────────────────────────────────────────────────────
@@ -64,5 +66,20 @@ export function makeCustomSection(id) {
     required:  false,
     isCustom:  true,
     customId:  id,
+  }
+}
+
+// ─── Разрывы страниц ──────────────────────────────────────────────────────────
+export const PAGEBREAK_PREFIX = 'pageBreak_'
+export const isPageBreakKey   = (key) => key.startsWith(PAGEBREAK_PREFIX)
+
+export function makePageBreakSection(key) {
+  return {
+    key,
+    label:      '--- Разрыв страницы ---',
+    draggable:  true,
+    target:     null,
+    required:   false,
+    isPageBreak: true,
   }
 }

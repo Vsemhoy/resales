@@ -184,6 +184,16 @@ function PreviewDefault() {
   )
 }
 
+function PreviewPageBreak() {
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 4 }}>
+      <div style={{ width: '80%', height: 1, background: 'currentColor', opacity: 0.4 }} />
+      <div style={{ fontSize: 8, opacity: 0.5, margin: '2px 0' }}>↕</div>
+      <div style={{ width: '80%', height: 1, background: 'currentColor', opacity: 0.4 }} />
+    </div>
+  )
+}
+
 const PREVIEW_MAP = {
   cover:           PreviewCover,
   toc:             PreviewToc,
@@ -194,6 +204,7 @@ const PREVIEW_MAP = {
   recommendations: PreviewRecommendations,
   specials:        PreviewSpecials,
   rondoDelivery:   PreviewRondoDelivery,
+  pageBreak:        PreviewPageBreak,
 }
 
 // ─── Экспортируемый компонент ─────────────────────────────────────────────────
