@@ -16,7 +16,9 @@ import { CoversDrawer } from './components/CoversDrawer'
 import { pdf } from '@react-pdf/renderer'
 import { registerFonts }       from './pdf/components/PdfFonts'
 import { buildFigureRegistry } from './pdf/components/buildFigureRegistry'
-import { PdfDocument } from './pdf/PdfDocument'
+import { preloadImages }      from './pdf/preloadImages'
+import { PdfDocument }   from './pdf/PdfDocument'
+import { PdfDocumentV2 } from './pdf/PdfDocumentV2'
 import { SectionMiniPreview } from './components/SectionMiniPreview'
 
 import SectionCover           from './sections/SectionCover'
@@ -80,12 +82,14 @@ export default function BidPdfEditor() {
     registerFonts()
     setPrinting(true)
     try {
+      const readyFormData = await preloadImages(formData)
       const blob = await pdf(
-        <PdfDocument
-          formData={formData}
+        <PdfDocumentV2
+          formData={readyFormData}
           draft={draft}
           currency={currency}
           companyId={companyId}
+          orientation={orientation}
           enabledSections={enabledSections}
           sectionOrder={sectionOrder}
           models={models}
