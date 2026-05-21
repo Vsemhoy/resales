@@ -23,6 +23,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
         const shortNote= model.info_model?.short_note_new || model.info_model?.short_note || ''
         const desc     = ov?.description_kp ?? model.info_model?.description_kp ?? ''
         const specials = ov?.specials ?? (model.model_specials || []).map(s => s.special_name)
+        // desc.textAlign = 'justify'
 
         return (
           <View key={id} style={{ marginBottom: space.xl }} wrap={false}>
@@ -32,7 +33,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
               borderBottomWidth: 0.5, borderBottomColor: color.divider,
               paddingBottom: space.xs, marginBottom: space.sm,
             }}>
-              <View style={{ width: 3, height: text.lg * 1.4, backgroundColor: color.accent, marginRight: space.sm }} />
+              {/* <View style={{ width: 3, height: text.lg * 1.4, backgroundColor: color.accent, marginRight: space.sm }} /> */}
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: text.md, fontFamily: font.bold, fontWeight: weight.bold, color: color.textPrimary }}>
                   {name}
@@ -56,7 +57,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
               ) : null}
 
               {/* Буллеты */}
-              {specials.length > 0 && (
+              {specials.length > 110 && (
                 <View style={{ flex: 2 }}>
                   {specials.map((sp, si) => (
                     <View key={si} style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: space.xs }}>
@@ -73,6 +74,10 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
                   ))}
                 </View>
               )}
+
+              <View style={{width: 160 , backgroundColor: '#aca7a7', height: 100}}>
+                dfasd
+                </View>
             </View>
           </View>
         )
