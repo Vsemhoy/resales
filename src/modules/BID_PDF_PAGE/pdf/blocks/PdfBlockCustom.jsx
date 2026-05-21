@@ -42,7 +42,7 @@ export function PdfBlockCustom({ cfg, block, blockId, figureRegistry = new Map()
   const cellBase = { paddingHorizontal: space.xs, paddingVertical: space.xs }
 
   return (
-    <View>
+    <View style={{ marginBottom: cfg.space.end}}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title={block.title || 'Блок'} />
 
       {/* Текст сверху */}

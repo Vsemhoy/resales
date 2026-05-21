@@ -12,7 +12,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
   if (!visible.length) return null
 
   return (
-    <View>
+    <View style={{ marginBottom: cfg.space.end}}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Описание оборудования" />
 
       {visible.map((model, i) => {

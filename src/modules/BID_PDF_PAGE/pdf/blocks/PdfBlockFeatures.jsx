@@ -7,7 +7,7 @@ export function PdfBlockFeatures({ cfg, data, sectionNumber }) {
   if (!data?.featuresContent) return null
 
   return (
-    <View>
+    <View style={{ marginBottom: cfg.space.end}}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Особенности системы и требования заказчика" />
       <HtmlToPdfV2 html={wrapJustify(data.featuresContent)} cfg={cfg} />
     </View>

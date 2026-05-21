@@ -141,6 +141,7 @@ export const SPACE = {
   lg:  U * 3,     // 6mm
   xl:  U * 5,     // 10mm
   xxl: U * 8,     // 16mm
+  end: U * 3.6,
 }
 
 // ─── Радиусы ─────────────────────────────────────────────────────────────────
@@ -157,7 +158,7 @@ const ARSTEL_COLORS = {
   accentLight:    '#FF590322',
   accentMid:      '#FF590366',
   textPrimary:    '#1A1A1A',
-  textSecondary:  '#6B7280',
+  textSecondary:  '#474a50',
   textMuted:      '#9CA3AF',
   textOnAccent:   '#FFFFFF',
   bgPage:         '#FFFFFF',
@@ -166,7 +167,7 @@ const ARSTEL_COLORS = {
   tableHeader:    '#4F5153',
   tableHeaderText:'#FFFFFF',
   tableRowEven:   '#E6E4E4',
-  tableRowOdd:    '#FFFFFF',
+  tableRowOdd:    '#f7f7f7',
   tableTotal:     '#c5c9cc',
   tableTotalText: '#FFFFFF',
   tableBorder:    '#E5E7EB',
