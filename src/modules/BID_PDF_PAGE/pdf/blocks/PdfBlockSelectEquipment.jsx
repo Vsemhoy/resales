@@ -36,7 +36,7 @@ export function PdfBlockSelectEquipment({ cfg, data, sectionNumber, figureRegist
   const { color, font: f, text: t, space } = cfg
 
   return (
-    <View>
+    <View style={{ marginBottom: cfg.space.end}}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Выбор оборудования" />
       {<HtmlToPdfV2 html={wrapJustify(data.selectionOfEquipment)} cfg={cfg} />}
       <FigureBlock cfg={cfg} src={data?.structuralDiagrams} figInfo={figuresEnabled ? figureRegistry.get('structuralDiagrams') : null} />

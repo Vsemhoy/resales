@@ -141,6 +141,7 @@ export const SPACE = {
   lg:  U * 3,     // 6mm
   xl:  U * 5,     // 10mm
   xxl: U * 8,     // 16mm
+  end: U * 3.6,
 }
 
 // ─── Радиусы ─────────────────────────────────────────────────────────────────
@@ -153,36 +154,26 @@ export const RADIUS = {
 // ─── Цвета компаний ───────────────────────────────────────────────────────────
 const ARSTEL_COLORS = {
   // Бренд
-  accent:         '#FF5903',
+  accent:         '#F47923',
   accentLight:    '#FF590322',
   accentMid:      '#FF590366',
-
-  // Текст
   textPrimary:    '#1A1A1A',
-  textSecondary:  '#6B7280',
+  textSecondary:  '#474a50',
   textMuted:      '#9CA3AF',
   textOnAccent:   '#FFFFFF',
-
-  // Фон
   bgPage:         '#FFFFFF',
   bgSubtle:       '#F9FAFB',
   bgMuted:        '#F3F4F6',
-
-  // Таблица
-  tableHeader:    '#FF5903',
+  tableHeader:    '#4F5153',
   tableHeaderText:'#FFFFFF',
-  tableRowEven:   '#FFF8F5',
-  tableRowOdd:    '#FFFFFF',
-  tableTotal:     '#FF5903',
+  tableRowEven:   '#E6E4E4',
+  tableRowOdd:    '#f7f7f7',
+  tableTotal:     '#c5c9cc',
   tableTotalText: '#FFFFFF',
   tableBorder:    '#E5E7EB',
-
-  // Разделители
   divider:        '#E5E7EB',
   dividerLight:   '#F3F4F6',
-
-  // Акцент-полоска секции
-  sectionBar:     '#FF5903',
+  sectionBar:     '#F47923',
 }
 
 const RONDO_COLORS = {

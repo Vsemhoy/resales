@@ -99,7 +99,7 @@ export function PdfDocumentV2({
             const id    = key.replace(CUSTOM_PREFIX, '')
             const block = formData?._customSections?.[id]
             return block
-              ? <PdfBlockCustom key={key} cfg={cfg} block={block} blockId={id} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} />
+              ? <PdfBlockCustom key={key} cfg={cfg} block={block} blockId={id} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} sectionNumber={sectionNumbers[key]} />
               : null
           }
 

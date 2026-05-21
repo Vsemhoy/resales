@@ -1,43 +1,78 @@
-import React from 'react'
+﻿import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
-import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
 
-export function PdfBlockRecommendations({ cfg, data, currency, sectionNumber }) {
+function stripHtml(html) {
+  return (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+}
+
+export function PdfBlockRecommendations({ cfg, data, sectionNumber }) {
   const recs = (data?.recommendations || []).filter(r => r['recommendation-model'])
   if (!recs.length) return null
 
-  const { color, text, font, weight, space } = cfg
-  const sym = { '1': '$', '2': '€', '3': '₽' }[currency?.value] || '₽'
+  const { color, text, font, weight, space, layout } = cfg
+  const cW = layout.contentW
+  const W = {
+    num: layout.tableColNumW,
+    qty: layout.tableColQtyW,
+  }
+  const nameW = cW - W.num - W.qty - layout.tableColPriceW - layout.tableColTotalW - layout.tableColPresenceW
+  const noteW = cW - W.num - nameW - W.qty
+
+  const cellBase = { paddingHorizontal: space.xs, paddingVertical: space.xs }
+
+  const headerStyle = {
+    ...cellBase,
+    fontSize: text.xs,
+    fontFamily: font.bold,
+    fontWeight: weight.bold,
+    color: color.tableHeaderText,
+    backgroundColor: color.tableHeader,
+  }
+
+  const rowText = (align = 'left') => ({
+    ...cellBase,
+    fontSize: text.sm,
+    fontFamily: font.regular,
+    color: color.textPrimary,
+    textAlign: align,
+  })
 
   return (
-    <View>
+    <View style={{ marginBottom: cfg.space.end}}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Рекомендации" />
-      {recs.map((rec, i) => (
-        <View key={i} style={{
-          borderLeftWidth: 2, borderLeftColor: color.accent,
-          paddingLeft: space.md, marginBottom: space.lg,
-        }} wrap={false}>
-          <View style={{ flexDirection: 'row', alignItems: 'baseline', marginBottom: space.xs }}>
-            <Text style={{ fontSize: text.base, fontFamily: font.bold, fontWeight: weight.bold, color: color.textPrimary, flex: 1 }}>
-              {rec['recommendation-model']}
-            </Text>
-            {rec['recommendation-count'] > 1 && (
-              <Text style={{ fontSize: text.sm, color: color.textSecondary, fontFamily: font.regular }}>
-                {rec['recommendation-count']} шт.
+
+      <View style={{ flexDirection: 'row' }} wrap={false}>
+        <Text style={[headerStyle, { width: W.num, textAlign: 'center' }]}>№</Text>
+        <Text style={[headerStyle, { width: nameW, textAlign: 'left' }]}>Наименование</Text>
+        <Text style={[headerStyle, { width: W.qty, textAlign: 'center' }]}>Кол-во</Text>
+        <Text style={[headerStyle, { width: noteW, textAlign: 'left' }]}>Примечание</Text>
+      </View>
+
+      {recs.map((rec, i) => {
+        const bg = i % 2 === 1 ? color.tableRowEven : color.tableRowOdd
+        const desc = stripHtml(rec['recommendation-text'])
+
+        return (
+          <View key={i} style={{ flexDirection: 'row', backgroundColor: bg }} wrap={false}>
+            <Text style={[rowText('center'), { width: W.num, color: color.textSecondary }]}>{i + 1}</Text>
+
+            <View style={{ width: nameW, ...cellBase }}>
+              <Text style={{ fontSize: text.sm, fontFamily: font.bold, fontWeight: weight.semibold, color: color.textPrimary }}>
+                {rec['recommendation-model']}
               </Text>
-            )}
+              {desc ? (
+                <Text style={{ fontSize: text.xs, fontFamily: font.regular, color: color.textSecondary, marginTop: 1 }}>
+                  {desc}
+                </Text>
+              ) : null}
+            </View>
+
+            <Text style={[rowText('center'), { width: W.qty }]}>{rec['recommendation-count'] || 0}</Text>
+            <Text style={[rowText('left'), { width: noteW, color: color.textSecondary }]}>{rec['recommendation-note'] || ''}</Text>
           </View>
-          {rec['recommendation-text'] ? (
-            <HtmlToPdfV2 html={wrapJustify(rec['recommendation-text'])} cfg={cfg} />
-          ) : null}
-          {rec['recommendation-note'] ? (
-            <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>
-              {rec['recommendation-note']}
-            </Text>
-          ) : null}
-        </View>
-      ))}
+        )
+      })}
     </View>
   )
 }

@@ -52,7 +52,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
   })
 
   return (
-    <View>
+    <View style={{ marginBottom: cfg.space.end}}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Спецификация" />
 
       {/* Шапка */}
@@ -103,9 +103,16 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
         <Text style={[headerStyle, { width: W.presence }]} />
       </View>
 
+
       {/* Сноска */}
       {tableFootnote ? (
-        <HtmlToPdfV2 html={wrapJustify(tableFootnote)} cfg={cfg} />
+        <View>
+          <View style={{ height: space.sm }}></View>
+            <View style={{padding: space.sm, backgroundColor: color.tableRowEven, fontSize: '0.5rem'}}>
+              <HtmlToPdfV2 html={wrapJustify(tableFootnote)} cfg={cfg} />
+            </View>
+
+        </View>
       ) : null}
     </View>
   )

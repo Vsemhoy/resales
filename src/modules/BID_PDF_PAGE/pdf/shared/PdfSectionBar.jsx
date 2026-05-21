@@ -1,22 +1,46 @@
 import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
+import { mm } from '../theme/units'
 
-// Заголовок секции: цветная полоска слева + номер + название
 export function PdfSectionBar({ cfg, number, title }) {
   const { color, text, font, weight, space } = cfg
+
+  const numStr    = number !== undefined ? `${number}.` : null
+  const numDigits = numStr ? String(number).length : 0
+  const numWidth  = numDigits >= 2 ? mm(12) : mm(8)
+
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: space.md, marginTop: space.md }} wrap={false}>
-      <View style={{ width: 1.5, height: text.lg * 1.8, backgroundColor: color.sectionBar, marginRight: space.sm }} />
-      <View>
-        {number !== undefined && (
-          <Text style={{ fontSize: text.xs, color: color.accent, fontFamily: font.regular, fontWeight: weight.semibold, letterSpacing: 0.8 }}>
-            РАЗДЕЛ {number}
+    <View style={{ marginTop: space.md * 0.7, marginBottom: space.lg }} wrap={false}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        {numStr && (
+          <Text style={{
+            fontFamily:  font.bold,
+            fontWeight:  weight.bold,
+            fontSize:    text.lg * 1.15,
+            color:       color.accent,
+            width:       numWidth,
+            flexShrink:  0,
+            lineHeight:  1.2,
+          }}>
+            {numStr}
           </Text>
         )}
-        <Text style={{ fontSize: text.lg, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, lineHeight: 1.2 }}>
+        <Text style={{
+          fontFamily:  font.bold,
+          fontWeight:  weight.bold,
+          fontSize:    text.lg,
+          color:       color.textPrimary,
+          flex:        1,
+          lineHeight:  1.2,
+        }}>
           {title}
         </Text>
       </View>
+      <View style={{
+        height:          mm(0.3),
+        backgroundColor: color.accent,
+        marginTop:       mm(1.5),
+      }} />
     </View>
   )
 }
