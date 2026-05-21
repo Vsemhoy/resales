@@ -26,7 +26,7 @@ function colSum(rows, colId) {
 
 const fmt = (n) => Number(n).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-export function PdfBlockCustom({ cfg, block, blockId, figureRegistry = new Map(), figuresEnabled = true }) {
+export function PdfBlockCustom({ cfg, block, blockId, figureRegistry = new Map(), figuresEnabled = true, sectionNumber }) {
   if (!block) return null
 
   const { color, text, font, weight, space, layout } = cfg
@@ -43,7 +43,7 @@ export function PdfBlockCustom({ cfg, block, blockId, figureRegistry = new Map()
 
   return (
     <View>
-      <PdfSectionBar cfg={cfg} title={block.title || 'Блок'} />
+      <PdfSectionBar cfg={cfg} number={sectionNumber} title={block.title || 'Блок'} />
 
       {/* Текст сверху */}
       {<HtmlToPdfV2 html={wrapJustify(block.textAbove)} cfg={cfg} />}
