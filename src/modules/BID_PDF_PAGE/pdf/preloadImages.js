@@ -34,7 +34,7 @@ function urlToBase64(url) {
 
   const proxyUrl = toProxyUrl(url)
   if (!proxyUrl) return Promise.resolve(null)
-  if (DEBUG) console.log('[pdf-img] proxy url:', proxyUrl)
+
 
   return new Promise((resolve) => {
     const img = new Image()
@@ -46,7 +46,6 @@ function urlToBase64(url) {
         canvas.height = img.naturalHeight || 600
         canvas.getContext('2d').drawImage(img, 0, 0)
         const b64 = canvas.toDataURL('image/png')
-        if (DEBUG) console.log('[pdf-img] base64 ready, len:', b64?.length, 'src:', url)
         resolve(b64)
       } catch(e) {
         console.warn('canvas error:', proxyUrl, e)
@@ -64,7 +63,6 @@ function urlToBase64(url) {
 export async function preloadImages(formData, { draftId } = {}) {
   const p = (label, src) => {
     const resolved = resolveImageInput(src, draftId)
-    if (DEBUG) console.log('[pdf-img] input:', label, src, 'resolved:', resolved)
     return urlToBase64(resolved)
   }
 

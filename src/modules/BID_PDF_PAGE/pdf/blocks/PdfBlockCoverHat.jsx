@@ -2,7 +2,6 @@ import React from 'react'
 import { View, Text, Image } from '@react-pdf/renderer'
 
 function absUrl(src) {
-  console.log('[pdf-hat] raw src:', src)
   if (!src || typeof src !== 'string') return null
   if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('blob:')) return src
   return `${window.location.origin}${src}`
@@ -11,7 +10,6 @@ function absUrl(src) {
 export function PdfBlockCoverHat({ cfg, data, draft }) {
   const { color, layout, text, font, weight, space, cover } = cfg
   const hatUrl = absUrl(data?.hatImage)
-  console.log('[pdf-hat] final src for Image:', hatUrl?.slice?.(0, 120), 'len:', hatUrl?.length)
 
   return (
     <View>

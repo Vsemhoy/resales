@@ -49,6 +49,8 @@ export function PdfDocumentV2({
 
   const contentSections = sectionOrder.filter(k => k !== 'cover' && k !== 'toc')
 
+
+
   return (
     <Document>
       <Page
@@ -81,7 +83,7 @@ export function PdfDocumentV2({
             return <PdfBlockFeatures key={key} cfg={cfg} data={formData} sectionNumber={n} />
 
           if (key === 'selectEquipment')
-            return <PdfBlockSelectEquipment key={key} cfg={cfg} data={formData} sectionNumber={n} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} />
+            return <PdfBlockSelectEquipment key={key} cfg={cfg} data={formData} sectionNumber={n} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} draft={draft} />
 
           if (key === 'recommendations')
             return <PdfBlockRecommendations key={key} cfg={cfg} data={formData} currency={currency} sectionNumber={n} />
