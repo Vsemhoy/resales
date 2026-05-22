@@ -112,9 +112,15 @@ export function PdfBlockSpecials({
   const ignored = data?.specialsIgnore ?? []
   const overrides = data?.specialsOverrides ?? {}
 
-  const visible = models.filter(
-    m => !ignored.includes(m.model_id ?? m.id)
-  )
+  const seen = new Set()
+  const visible = models
+    .filter(m => !ignored.includes(m.model_id ?? m.id))
+    .filter(m => {
+      const id = m.model_id ?? m.id
+      if (seen.has(id)) return false
+      seen.add(id)
+      return true
+    })
 
   if (!visible.length) return null
 

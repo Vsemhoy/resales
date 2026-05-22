@@ -13,6 +13,8 @@ import { PdfBlockSelectEquipment }   from './blocks/PdfBlockSelectEquipment'
 import { PdfBlockRecommendations }   from './blocks/PdfBlockRecommendations'
 import { PdfBlockCustom }            from './blocks/PdfBlockCustom'
 import { PdfBlockPageBreak }         from './blocks/PdfBlockPageBreak'
+import { PdfBlockRondoDelivery }     from './blocks/PdfBlockRondoDelivery'
+import { PdfBlockSystemChars }       from './blocks/PdfBlockSystemChars'
 
 registerFonts()
 
@@ -28,6 +30,7 @@ export function PdfDocumentV2({
   enabledSections = {},
   sectionOrder    = [],
   models          = [],
+  modelsData      = null,
   figuresEnabled  = true,
 }) {
   const cfg = getConfig(companyId, orientation)
@@ -89,10 +92,16 @@ export function PdfDocumentV2({
             return <PdfBlockRecommendations key={key} cfg={cfg} data={formData} currency={currency} sectionNumber={n} />
 
           if (key === 'specifications')
-            return <PdfBlockSpecifications key={key} cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} sectionNumber={n} />
+            return <PdfBlockSpecifications key={key} cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} tableStyle={formData.tableStyle} sectionNumber={n} />
 
           if (key === 'specials')
             return <PdfBlockSpecials key={key} cfg={cfg} data={formData} models={models} sectionNumber={n} />
+
+          if (key === 'rondoDelivery')
+            return <PdfBlockRondoDelivery key={key} cfg={cfg} data={formData} sectionNumber={n} />
+
+          if (key === 'systemChars')
+            return <PdfBlockSystemChars key={key} cfg={cfg} modelsData={modelsData} sectionNumber={n} />
 
           if (key.startsWith(PAGEBREAK_PREFIX))
             return <PdfBlockPageBreak key={key} />

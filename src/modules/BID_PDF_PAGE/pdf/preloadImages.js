@@ -60,8 +60,19 @@ function urlToBase64(url) {
   })
 }
 
+// File объект → data URL через FileReader (blob URL не работает в воркере react-pdf)
+function fileToBase64(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onload  = () => resolve(reader.result)
+    reader.onerror = () => resolve(null)
+    reader.readAsDataURL(file)
+  })
+}
+
 export async function preloadImages(formData, { draftId } = {}) {
   const p = (label, src) => {
+    if (src instanceof File) return fileToBase64(src)
     const resolved = resolveImageInput(src, draftId)
     return urlToBase64(resolved)
   }

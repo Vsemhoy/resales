@@ -4,13 +4,23 @@ import { PdfSectionBar } from '../shared/PdfSectionBar'
 import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
 import { HTTP_ROOT } from '../../../../config/config'
 
-function absUrl(src, id) {
-  let rt = HTTP_ROOT + "/api/soma/pdf/files/" + id + "/" + src;
-  console.log('rt ----------------------------', rt)
-  if (!rt.startsWith("http")){
-    rt = "http://" + rt;
+function resolveUrl(src, draftId) {
+  if (!src) return null
+  // base64 или готовый http — используем напрямую (preloadImages уже обработал)
+  if (typeof src === 'string') {
+    if (src.startsWith('data:') || src.startsWith('http')) return src
+    // legacy: просто имя файла
+    let rt = HTTP_ROOT + '/api/soma/pdf/files/' + draftId + '/' + src
+    if (!rt.startsWith('http')) rt = 'http://' + rt
+    return rt
   }
-  return rt;
+  // { filename, mime } объект (не конвертированный preloadImages)
+  if (src?.filename) {
+    let rt = HTTP_ROOT + '/api/soma/pdf/files/' + draftId + '/' + src.filename
+    if (!rt.startsWith('http')) rt = 'http://' + rt
+    return rt
+  }
+  return null
 }
 
 function stripHtml(html) {
@@ -18,8 +28,7 @@ function stripHtml(html) {
 }
 
 function FigureBlock({ cfg, src, figInfo, draft }) {
-  const raw = typeof src === 'string' ? src : src?.filename
-  const url = absUrl(raw, draft?.id)
+  const url = resolveUrl(src, draft?.id)
   if (!url) return null
   const { color, text, font, space, layout } = cfg
   return (

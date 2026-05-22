@@ -24,27 +24,27 @@ const PORTRAIT = {
   pageH:       mm(297),
 
   // Поля страницы
-  marginTop:   mm(20),
-  marginBottom:mm(20),
-  marginLeft:  mm(20),
-  marginRight: mm(20),
+  marginTop:   mm(12),
+  marginBottom:mm(22),
+  marginLeft:  mm(12),
+  marginRight: mm(12),
 
   // Рабочая область
-  contentW:    mm(170),   // 210 - 20 - 20
-  contentH:    mm(257),   // 297 - 20 - 20
+  contentW:    mm(186),   // 210 - 12 - 12
+  contentH:    mm(263),   // 297 - 12 - 22
 
   // Шапка и подвал
-  headerH:     mm(12),
+  headerH:     mm(10),
   footerH:     mm(8),
 
-  // Верхний отступ контента: ровно 20мм (2см)
-  paddingTop:    mm(20),
-  paddingBottom: mm(20) + mm(8),
+  // Верхний отступ контента
+  paddingTop:    mm(12),
+  paddingBottom: mm(22) + mm(8),
 
   // Фото-блоки
-  imgMaxW:     mm(170),       // на всю ширину
+  imgMaxW:     mm(186),       // на всю ширину
   imgMaxH:     mm(120),       // половина страницы примерно
-  imgHalfW:    mm(82),        // в две колонки (с зазором 6mm)
+  imgHalfW:    mm(90),        // в две колонки (с зазором 6mm)
   imgColGap:   mm(6),
 
   // Таблицы
@@ -53,6 +53,7 @@ const PORTRAIT = {
   tableColPriceW:    mm(24),
   tableColTotalW:    mm(24),
   tableColPresenceW: mm(20),
+  tableColPhotoW:    mm(52),
 
   // Акустика
   stiTextColW:       mm(72),  // ~42% от 170
@@ -66,23 +67,23 @@ const LANDSCAPE = {
   pageW:       mm(297),
   pageH:       mm(210),
 
-  marginTop:   mm(15),
-  marginBottom:mm(20),
-  marginLeft:  mm(20),
-  marginRight: mm(20),
+  marginTop:   mm(12),
+  marginBottom:mm(22),
+  marginLeft:  mm(12),
+  marginRight: mm(12),
 
-  contentW:    mm(257),   // 297 - 20 - 20
-  contentH:    mm(175),   // 210 - 15 - 20
+  contentW:    mm(273),   // 297 - 12 - 12
+  contentH:    mm(176),   // 210 - 12 - 22
 
   headerH:     mm(10),
   footerH:     mm(8),
 
-  paddingTop:    mm(15) + mm(10),
-  paddingBottom: mm(20) + mm(8),
+  paddingTop:    mm(12) + mm(10),
+  paddingBottom: mm(22) + mm(8),
 
-  imgMaxW:     mm(257),
+  imgMaxW:     mm(273),
   imgMaxH:     mm(100),
-  imgHalfW:    mm(124),
+  imgHalfW:    mm(132),
   imgColGap:   mm(9),
 
   tableColNumW:      mm(8),
@@ -90,9 +91,10 @@ const LANDSCAPE = {
   tableColPriceW:    mm(28),
   tableColTotalW:    mm(28),
   tableColPresenceW: mm(22),
+  tableColPhotoW:    mm(60),
 
-  stiTextColW:       mm(108),  // ~42% от 257
-  stiImgColW:        mm(141),  // ~55% от 257
+  stiTextColW:       mm(114),  // ~42% от 273
+  stiImgColW:        mm(150),  // ~55% от 273
 }
 
 export const LAYOUT = {

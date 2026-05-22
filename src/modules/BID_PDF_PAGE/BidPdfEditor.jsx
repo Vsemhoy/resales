@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import { getDraft, getBidModels } from './api'
+import { getDraft, getBidModels, getDraftModels } from './api'
 import { restoreFilesIntoFormData } from './api/files'
 import { useAutoSave } from './useAutoSave'
 import {
@@ -31,6 +31,7 @@ import SectionRecommendations from './sections/SectionRecommendations'
 import SectionSpecials        from './sections/SectionSpecials'
 import SectionSpecifications from './sections/SectionSpecifications'
 import SectionRondoDelivery   from './sections/SectionRondoDelivery'
+import SectionSystemChars    from './sections/SectionSystemChars'
 import SectionCustomBlock     from './sections/SectionCustomBlock'
 import SectionPageBreak      from './sections/SectionPageBreak'
 
@@ -44,6 +45,7 @@ const SECTION_COMPONENTS = {
   specials:        SectionSpecials,
   specifications:  SectionSpecifications,
   rondoDelivery:   SectionRondoDelivery,
+  systemChars:     SectionSystemChars,
   pageBreak:       SectionPageBreak,
 }
 
@@ -79,6 +81,7 @@ export default function BidPdfEditor() {
   const [figuresEnabled, setFiguresEnabled] = useState(true)
   const [customSections, setCustomSections] = useState({})
   const [models,         setModels]         = useState([])
+  const [modelsData,     setModelsData]     = useState(null)
   const [printing,       setPrinting]       = useState(false)
 
   const handlePrint = async () => {
@@ -86,9 +89,10 @@ export default function BidPdfEditor() {
     setPrinting(true)
     try {
       const readyFormData = await preloadImages(formData, { draftId })
-      const blob = await pdf(
+
+      const makePdfElement = (fd) => (
         <PdfDocumentV2
-          formData={readyFormData}
+          formData={fd}
           draft={draft}
           currency={currency}
           companyId={companyId}
@@ -96,9 +100,21 @@ export default function BidPdfEditor() {
           enabledSections={enabledSections}
           sectionOrder={sectionOrder}
           models={models}
+          modelsData={modelsData}
           figuresEnabled={figuresEnabled}
         />
-      ).toBlob()
+      )
+
+      // Font.register() не грузит шрифты сразу — они качаются лениво при первом pdf().
+      // Если первая попытка падает (шрифты ещё не готовы) — ждём и повторяем.
+      let blob
+      try {
+        blob = await pdf(makePdfElement(readyFormData)).toBlob()
+      } catch {
+        await new Promise(r => setTimeout(r, 400))
+        blob = await pdf(makePdfElement(readyFormData)).toBlob()
+      }
+
       const url = URL.createObjectURL(blob)
       window.open(url, '_blank')
     } catch (e) {
@@ -112,6 +128,7 @@ export default function BidPdfEditor() {
 
   useEffect(() => {
     getBidModels(bidId).then(data => setModels(Array.isArray(data) ? data : (data?.models ?? []))).catch(() => {})
+    getDraftModels(draftId).then(data => setModelsData(data?.modelsData ?? null)).catch(() => {})
     getDraft(draftId)
       .then(data => {
         setDraft(data)
@@ -122,7 +139,14 @@ export default function BidPdfEditor() {
         setOrientation( meta.orientation  ?? 'v')
         setTargetSystem(meta.targetSystem ?? (data.kp_type === 2 ? 'p' : 't'))
         if (fd._enabledSections) setEnabledSections(prev => ({ ...prev, ...fd._enabledSections }))
-        if (fd._sectionOrder)    setSectionOrder(fd._sectionOrder)
+        if (fd._sectionOrder) {
+          // Добавляем в конец новые секции, которых ещё нет в сохранённом порядке
+          const merged = [
+            ...fd._sectionOrder,
+            ...DEFAULT_SECTION_ORDER.filter(k => !fd._sectionOrder.includes(k)),
+          ]
+          setSectionOrder(merged)
+        }
         if (fd._customSections)  setCustomSections(fd._customSections)
         if (fd._figuresEnabled !== undefined) setFiguresEnabled(fd._figuresEnabled)
         setFormData(fd)
