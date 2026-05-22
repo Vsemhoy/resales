@@ -4,6 +4,22 @@ import { HTTP_HOST } from '../../../config/config'
 // Прямой fetch и прямой img без crossOrigin — не работают из-за CORS
 
 const PROXY = `${HTTP_HOST}/api/soma/pdf/proxy-image`
+const FILES_BASE = `${HTTP_HOST}/api/soma/pdf/files`
+const DEBUG = true
+
+function resolveImageInput(src, draftId) {
+  if (!src) return null
+
+  if (typeof src === 'object' && src.filename) {
+    return draftId ? `${FILES_BASE}/${draftId}/${src.filename}` : null
+  }
+
+  if (typeof src !== 'string') return null
+  if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('blob:') || src.startsWith('/')) return src
+
+  // Legacy value: filename without path
+  return draftId ? `${FILES_BASE}/${draftId}/${src}` : null
+}
 
 function toProxyUrl(url) {
   if (!url || typeof url !== 'string') return null
@@ -19,6 +35,7 @@ function urlToBase64(url) {
   const proxyUrl = toProxyUrl(url)
   if (!proxyUrl) return Promise.resolve(null)
 
+
   return new Promise((resolve) => {
     const img = new Image()
     img.crossOrigin = 'anonymous'   // ← ключ успеха из TEST 6
@@ -28,7 +45,8 @@ function urlToBase64(url) {
         canvas.width  = img.naturalWidth  || 800
         canvas.height = img.naturalHeight || 600
         canvas.getContext('2d').drawImage(img, 0, 0)
-        resolve(canvas.toDataURL('image/png'))
+        const b64 = canvas.toDataURL('image/png')
+        resolve(b64)
       } catch(e) {
         console.warn('canvas error:', proxyUrl, e)
         resolve(null)
@@ -42,8 +60,11 @@ function urlToBase64(url) {
   })
 }
 
-export async function preloadImages(formData) {
-  const p = urlToBase64
+export async function preloadImages(formData, { draftId } = {}) {
+  const p = (label, src) => {
+    const resolved = resolveImageInput(src, draftId)
+    return urlToBase64(resolved)
+  }
 
   const [
     coverBlock,
@@ -52,11 +73,11 @@ export async function preloadImages(formData) {
     blockPlacements,
     specialsCoverBlock,
   ] = await Promise.all([
-    p(formData.coverBlock),
-    p(formData.hatImage),
-    p(typeof formData.structuralDiagrams === 'string' ? formData.structuralDiagrams : null),
-    p(typeof formData.blockPlacements    === 'string' ? formData.blockPlacements    : null),
-    p(formData.specialsCoverBlock),
+    p('coverBlock', formData.coverBlock),
+    p('hatImage', formData.hatImage),
+    p('structuralDiagrams', formData.structuralDiagrams),
+    p('blockPlacements', formData.blockPlacements),
+    p('specialsCoverBlock', formData.specialsCoverBlock),
   ])
 
   // Кастомные блоки
@@ -64,7 +85,7 @@ export async function preloadImages(formData) {
   if (formData._customSections) {
     const entries = Object.entries(formData._customSections)
     const images  = await Promise.all(
-      entries.map(([, block]) => p(typeof block.image === 'string' ? block.image : null))
+      entries.map(([id, block]) => p(`custom:${id}`, block.image))
     )
     patchedSections = Object.fromEntries(
       entries.map(([id, block], i) => [

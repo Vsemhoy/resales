@@ -37,8 +37,8 @@ const PORTRAIT = {
   headerH:     mm(12),
   footerH:     mm(8),
 
-  // Паддинг контента с учётом шапки/подвала
-  paddingTop:    mm(20) + mm(12),
+  // Верхний отступ контента: ровно 20мм (2см)
+  paddingTop:    mm(20),
   paddingBottom: mm(20) + mm(8),
 
   // Фото-блоки

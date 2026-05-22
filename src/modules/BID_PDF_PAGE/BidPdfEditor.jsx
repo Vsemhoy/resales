@@ -85,7 +85,7 @@ export default function BidPdfEditor() {
     registerFonts()
     setPrinting(true)
     try {
-      const readyFormData = await preloadImages(formData)
+      const readyFormData = await preloadImages(formData, { draftId })
       const blob = await pdf(
         <PdfDocumentV2
           formData={readyFormData}

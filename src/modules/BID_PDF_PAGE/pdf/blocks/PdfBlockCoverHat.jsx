@@ -15,7 +15,7 @@ export function PdfBlockCoverHat({ cfg, data, draft }) {
     <View>
       {/* Баннер — за поля через отрицательные отступы */}
       <View style={{
-        marginTop:    -layout.paddingTop,
+        marginTop:    -layout.marginTop,
         marginLeft:   -layout.marginLeft,
         marginRight:  -layout.marginRight,
         marginBottom:  space.lg,
@@ -74,8 +74,11 @@ export function PdfBlockCoverHat({ cfg, data, draft }) {
       </View>
 
       {/* Тема */}
-      <Text style={{ fontSize: text.xl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, marginBottom: space.lg }}>
+      {/* <Text style={{ fontSize: text.xl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, marginBottom: space.lg }}>
         {draft?.object || 'Коммерческое предложение'}
+      </Text> */}
+            <Text style={{ fontSize: text.xl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, marginBottom: space.lg }}>
+        {'Коммерческое предложение'}
       </Text>
     </View>
   )
