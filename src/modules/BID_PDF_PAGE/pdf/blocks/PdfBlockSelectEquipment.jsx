@@ -2,11 +2,14 @@ import React from 'react'
 import { View, Text, Image } from '@react-pdf/renderer'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
+import { HTTP_ROOT } from '../../../../config/config'
 
 function absUrl(src) {
-  if (!src || typeof src !== 'string') return null
-  if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('blob:')) return src
-  return `${window.location.origin}${src}`
+  let rt = HTTP_ROOT + "/api/soma/pdf/files/24/" + src;
+  if (!rt.startsWith("http")){
+    rt = "http://" + rt;
+  }
+  return rt;
 }
 
 function stripHtml(html) {
@@ -14,7 +17,8 @@ function stripHtml(html) {
 }
 
 function FigureBlock({ cfg, src, figInfo }) {
-  const url = absUrl(src)
+  const raw = typeof src === 'string' ? src : src?.filename
+  const url = absUrl(raw)
   if (!url) return null
   const { color, text, font, space, layout } = cfg
   return (

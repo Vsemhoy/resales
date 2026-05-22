@@ -76,7 +76,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
               )}
 
               <View style={{width: 160 , backgroundColor: '#aca7a7', height: 100}}>
-                dfasd
+                
                 </View>
             </View>
           </View>

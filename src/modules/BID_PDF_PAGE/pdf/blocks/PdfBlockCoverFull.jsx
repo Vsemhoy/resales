@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, Image } from '@react-pdf/renderer'
 
 function absUrl(src) {
+  console.log('PROXY', src)
   if (!src || typeof src !== 'string') return null
   if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('blob:')) return src
   return `${window.location.origin}${src}`
