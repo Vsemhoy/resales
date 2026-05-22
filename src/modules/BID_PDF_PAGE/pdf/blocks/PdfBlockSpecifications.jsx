@@ -1,34 +1,39 @@
 import React from 'react'
-import { View, Text } from '@react-pdf/renderer'
+import { View, Text, Image } from '@react-pdf/renderer'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
+import { HTTP_ROOT } from '../../../../config/config'
+import { cleanAlphaNumeric } from '../../utils/splitText'
 
 const CURRENCY_SYMBOLS = { '1': '$', '2': '€', '3': '₽' }
 
 const fmt = (n) => Number(parseFloat(n) || 0)
   .toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-function stripHtml(html) {
-  return (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+function modelPhotoUrl(name) {
+  let rt = HTTP_ROOT + '/api/soma/pdf/modfilesautocut/' + cleanAlphaNumeric(name)
+  if (!rt.startsWith('http')) rt = 'http://' + rt
+  return rt
 }
 
-export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber }) {
+export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact' }) {
   const { color, text, font, weight, space, layout } = cfg
   if (!models.length) return null
+
+  const withPhotos = tableStyle === 'default'
+  const photoW     = layout.tableColPhotoW
 
   const sym  = CURRENCY_SYMBOLS[currency?.value] || '₽'
   const cW   = layout.contentW
 
-  // Ширины колонок (в пунктах)
   const W = {
     num:      layout.tableColNumW,
     qty:      layout.tableColQtyW,
     price:    layout.tableColPriceW,
     total:    layout.tableColTotalW,
     presence: layout.tableColPresenceW,
-    // name — остаток
   }
-  const nameW = cW - W.num - W.qty - W.price - W.total - W.presence
+  const nameW = cW - W.num - W.qty - W.price - W.total - W.presence - (withPhotos ? photoW : 0)
 
   const totalSum = models.reduce((s, m) => s + (parseFloat(m.price) || 0) * (m.model_count || 0), 0)
 
@@ -63,6 +68,9 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
         <Text style={[headerStyle, { width: W.price,    textAlign: 'right'  }]}>Цена, {sym}</Text>
         <Text style={[headerStyle, { width: W.total,    textAlign: 'right'  }]}>Сумма, {sym}</Text>
         <Text style={[headerStyle, { width: W.presence, textAlign: 'center' }]}>Наличие</Text>
+        {withPhotos && (
+          <Text style={[headerStyle, { width: photoW, textAlign: 'center' }]}>Фото</Text>
+        )}
       </View>
 
       {/* Строки */}
@@ -92,6 +100,14 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
             <Text style={[rowText('center'), { width: W.presence, color: color.textSecondary }]}>
               {m.presence > 0 ? 'В нал.' : 'Заказ'}
             </Text>
+            {withPhotos && (
+              <View style={{ width: photoW, ...cellBase, alignItems: 'center', justifyContent: 'center' }}>
+                <Image
+                  src={modelPhotoUrl(name)}
+                  style={{ width: photoW - space.sm * 2, height: space.xxl * 2, objectFit: 'contain' }}
+                />
+              </View>
+            )}
           </View>
         )
       })}
@@ -101,6 +117,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
         <Text style={[headerStyle, { width: W.num + nameW + W.qty + W.price }]}>ИТОГО</Text>
         <Text style={[headerStyle, { width: W.total, textAlign: 'right' }]}>{fmt(totalSum)} {sym}</Text>
         <Text style={[headerStyle, { width: W.presence }]} />
+        {withPhotos && <Text style={[headerStyle, { width: photoW }]} />}
       </View>
 
 
