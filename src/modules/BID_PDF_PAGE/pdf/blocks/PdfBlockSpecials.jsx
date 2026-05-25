@@ -173,9 +173,7 @@ export function PdfBlockSpecials({
         const col1 = chars.slice(0, half)
         const col2 = chars.slice(half)
 
-        const imgUrl = absUrl(
-          cleanAlphaNumeric(name)
-        )
+        const imgUrl = absUrl(cleanAlphaNumeric(name))
 
         return (
           <View

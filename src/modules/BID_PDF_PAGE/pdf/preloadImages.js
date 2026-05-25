@@ -1,10 +1,12 @@
 import { HTTP_HOST } from '../../../config/config'
+import { cleanAlphaNumeric } from '../utils/splitText'
 
 // TEST 6 победил: img + proxy + crossOrigin='anonymous' → canvas → base64
 // Прямой fetch и прямой img без crossOrigin — не работают из-за CORS
 
-const PROXY = `${HTTP_HOST}/api/soma/pdf/proxy-image`
+const PROXY      = `${HTTP_HOST}/api/soma/pdf/proxy-image`
 const FILES_BASE = `${HTTP_HOST}/api/soma/pdf/files`
+const MOD_FILES  = `${HTTP_HOST}/api/soma/pdf/modfiles`
 const DEBUG = true
 
 function resolveImageInput(src, draftId) {
@@ -44,7 +46,9 @@ function urlToBase64(url) {
         const canvas = document.createElement('canvas')
         canvas.width  = img.naturalWidth  || 800
         canvas.height = img.naturalHeight || 600
-        canvas.getContext('2d').drawImage(img, 0, 0)
+        const ctx = canvas.getContext('2d')
+        ctx.clearRect(0, 0, canvas.width, canvas.height) // явно прозрачный фон — alpha сохраняется
+        ctx.drawImage(img, 0, 0)
         const b64 = canvas.toDataURL('image/png')
         resolve(b64)
       } catch(e) {
@@ -70,7 +74,7 @@ function fileToBase64(file) {
   })
 }
 
-export async function preloadImages(formData, { draftId } = {}) {
+export async function preloadImages(formData, { draftId, models = [] } = {}) {
   const p = (label, src) => {
     if (src instanceof File) return fileToBase64(src)
     const resolved = resolveImageInput(src, draftId)
@@ -106,6 +110,20 @@ export async function preloadImages(formData, { draftId } = {}) {
     )
   }
 
+  // Фото моделей: proxy → canvas с clearRect → base64 (alpha сохраняется)
+  const modelImageEntries = await Promise.all(
+    models.map(async (m) => {
+      const id   = m.model_id ?? m.id
+      const name = m.name || m.info_model?.name
+      if (!name) return [id, null]
+      const b64 = await urlToBase64(`${MOD_FILES}/${cleanAlphaNumeric(name)}`)
+      return [id, b64]
+    })
+  )
+  const _modelImages = Object.fromEntries(
+    modelImageEntries.filter(([, b64]) => b64)
+  )
+
   return {
     ...formData,
     ...(coverBlock         && { coverBlock }),
@@ -114,5 +132,6 @@ export async function preloadImages(formData, { draftId } = {}) {
     ...(blockPlacements    && { blockPlacements }),
     ...(specialsCoverBlock && { specialsCoverBlock }),
     ...(patchedSections    && { _customSections: patchedSections }),
+    ...(Object.keys(_modelImages).length > 0 && { _modelImages }),
   }
 }

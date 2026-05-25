@@ -53,7 +53,7 @@ const PORTRAIT = {
   tableColPriceW:    mm(24),
   tableColTotalW:    mm(24),
   tableColPresenceW: mm(20),
-  tableColPhotoW:    mm(52),
+  tableColPhotoW:    mm(35),
 
   // Акустика
   stiTextColW:       mm(72),  // ~42% от 170
@@ -91,7 +91,7 @@ const LANDSCAPE = {
   tableColPriceW:    mm(28),
   tableColTotalW:    mm(28),
   tableColPresenceW: mm(22),
-  tableColPhotoW:    mm(60),
+  tableColPhotoW:    mm(40),
 
   stiTextColW:       mm(114),  // ~42% от 273
   stiImgColW:        mm(150),  // ~55% от 273
