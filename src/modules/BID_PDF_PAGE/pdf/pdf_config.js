@@ -213,7 +213,7 @@ export const COLORS = {
 
 // ─── Высота секций-обложек ────────────────────────────────────────────────────
 export const COVER = {
-  hatHeight:     mm(55),   // баннер-шапка
+  hatHeight:     mm(40.1), // = 210mm × (474/2481) — portrait pageW × соотношение ArstelHat
   fullRightColW: mm(70),   // правая колонка обложки
 }
 

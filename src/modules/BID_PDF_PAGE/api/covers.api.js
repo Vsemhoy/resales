@@ -1,20 +1,15 @@
 import { api } from './http'
 
-// Список обложек
-export async function getCovers() {
-  const res = await api.get('/soma/pdf/covers')
-  return res.data // [{ filename, url, size, created_at }]
-}
+export const getCovers = (companyId = 2) =>
+  api.get('/soma/pdf/covers', { params: { company_id: companyId } }).then(r => r.data)
 
-// Загрузить новую обложку
-export async function putCover(file) {
+export const putCover = (file, companyId = 2, type = 'cover') => {
   const fd = new FormData()
   fd.append('file', file)
-  const res = await api.post('/soma/pdf/covers', fd)
-  return res.data // { filename, url }
+  fd.append('company_id', companyId)
+  fd.append('type', type)
+  return api.post('/soma/pdf/covers', fd).then(r => r.data)
 }
 
-// Удалить обложку
-export async function deleteCover(filename) {
-  await api.delete(`/soma/pdf/covers/${filename}`)
-}
+export const deleteCover = (filename, companyId = 2) =>
+  api.delete(`/soma/pdf/covers/${filename}`, { params: { company_id: companyId } })
