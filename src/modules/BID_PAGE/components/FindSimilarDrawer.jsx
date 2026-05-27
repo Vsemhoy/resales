@@ -51,10 +51,10 @@ const FindSimilarDrawer = (props) => {
             ? model.count_match
             : (typeof sourceCount === 'number' ? Number(model?.model_count) === sourceCount : model?.count_spb === 1);
 
-        if (hasSpecMatchFlag && !isSpecMatch) return "red";
+        if (hasSpecMatchFlag && !isSpecMatch) return "magenta";
         if (hasExactCountFlag && !isExactCount) return "volcano";
         if (isSpecMatch) return "green";
-        return "red";
+        return "magenta";
     };
 
     const getCountDeltaTitle = (model, sourceCount) => {
@@ -64,6 +64,13 @@ const FindSimilarDrawer = (props) => {
         const diff = targetCount - sourceCount;
         if (diff === 0) return null;
         return `${diff > 0 ? `+${diff}` : `${diff}`}`;
+    };
+
+    const hasCountMismatch = (model, sourceCount) => {
+        if (typeof sourceCount !== 'number') return false;
+        const targetCount = Number(model?.model_count);
+        if (!Number.isFinite(targetCount)) return false;
+        return targetCount !== sourceCount;
     };
 
     const [similarData, setSimilarData] = useState([]);
@@ -565,7 +572,7 @@ const FindSimilarDrawer = (props) => {
                 .map((el, idx) => {
                     const sourceCount = getSourceCount(el);
                     const badgeColor = getModelBadgeColor(el, sourceCount);
-                    const deltaTitle = badgeColor === 'volcano' ? getCountDeltaTitle(el, sourceCount) : null;
+                    const deltaTitle = hasCountMismatch(el, sourceCount) ? getCountDeltaTitle(el, sourceCount) : null;
                     return (
                         <div key={el.bid_model_id || `${el.model_id}-${el.an_models_name}-${idx}`} style={{ margin: "0 5px" }}>
                             <Tag
