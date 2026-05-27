@@ -10,13 +10,13 @@ const CURRENCY_SYMBOLS = { '1': '$', '2': '€', '3': '₽' }
 const fmt = (n) => Number(parseFloat(n) || 0)
   .toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-function modelPhotoUrl(name) {
-  let rt = HTTP_ROOT + '/api/soma/pdf/modfilesautocut/' + cleanAlphaNumeric(name)
+function absUrl(name) {
+  let rt = HTTP_ROOT + '/api/soma/pdf/modfiles/' + cleanAlphaNumeric(name)
   if (!rt.startsWith('http')) rt = 'http://' + rt
   return rt
 }
 
-export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact' }) {
+export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact', modelImages = {} }) {
   const { color, text, font, weight, space, layout } = cfg
   if (!models.length) return null
 
@@ -78,7 +78,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
         const price = parseFloat(m.price) || 0
         const total = price * (m.model_count || 0)
         const bg    = i % 2 === 1 ? color.tableRowEven : color.tableRowOdd
-        const name  = m.info_model?.name || `Позиция ${i + 1}`
+        const name  = m.name || m.info_model?.name || `Позиция ${i + 1}`
         const note  = m.info_model?.short_note_new || m.info_model?.short_note || ''
 
         return (
@@ -103,8 +103,8 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
             {withPhotos && (
               <View style={{ width: photoW, ...cellBase, alignItems: 'center', justifyContent: 'center' }}>
                 <Image
-                  src={modelPhotoUrl(name)}
-                  style={{ width: photoW - space.sm * 2, height: space.xxl * 2, objectFit: 'contain' }}
+                  src={modelImages[m.model_id ?? m.id] ?? absUrl(name)}
+                  style={{ width: photoW - space.sm * 2, height: 'auto', objectFit: 'contain'}}
                 />
               </View>
             )}

@@ -1,20 +1,7 @@
-export const PRODMODE = !(
-	window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-);
+export const PRODMODE = true;
 // Websocket backend-for-frontend PORT
 export const BFF_PORT = 5003;
 
-// Старое
-// export const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
-// 	? document.querySelector('meta[name="csrf-token"]').content
-// 	: 'http://localhost/';
-// export const HTTP_HOST = document.querySelector('meta[name="host"]')
-// 	? document.querySelector('meta[name="host"]').content
-// 	: null;
-// export const HTTP_ROOT = HTTP_HOST ? HTTP_HOST.replace('resales', '') : '';
-// export const BASE_NAME = PRODMODE ? '/resales' : '/';
-// export const BASE_ROUTE = PRODMODE ? '/resales' : '';
-// export const HOST_COMPONENT_ROOT = !PRODMODE ? '' : '/com/resales';
 
 // Новое
 export const HTTP_ROOT = window.location.hostname; // только IP или домен, без порта

@@ -61,6 +61,7 @@ const OrgPage = ({ userdata }) => {
   const [projectsForm] = Form.useForm();
   const [notesForm] = Form.useForm();
   const [callsForm] = Form.useForm();
+  const [callsReloadNonce, setCallsReloadNonce] = useState(0);
 
 
   const [notesCompat,    setNotesCompat]    = useState(null);
@@ -235,6 +236,11 @@ const OrgPage = ({ userdata }) => {
         
         if (response.status === 200) {
           message.success('Данные успешно сохранены');
+
+          // Важно: очищаем новые звонки и принудительно перечитываем список с бэка,
+          // чтобы повторное сохранение не отправило те же create еще раз.
+          callsForm.setFieldValue('newCalls', []);
+          setCallsReloadNonce(prev => prev + 1);
           
           // Сбрасываем индикаторы изменений
           setChangedTabs({ m: false, p: false, c: false, n: false });
@@ -469,6 +475,7 @@ const OrgPage = ({ userdata }) => {
               orgId={orgId}
               editMode={editMode}
               isActive={activeTab === 'c'}
+              reloadNonce={callsReloadNonce}
               userdata={userdata}
               onDataChange={handleDataChange}
               _selects={selects}

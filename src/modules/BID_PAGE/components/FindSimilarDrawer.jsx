@@ -37,6 +37,34 @@ export const globalBuddhistLocale = {
 
 const FindSimilarDrawer = (props) => {
     const { RangePicker } = DatePicker;
+    const getModelBadgeColor = (model, sourceCount) => {
+        const hasSpecMatchFlag = typeof model?.model_match === 'boolean' || typeof model?.coincidence === 'boolean';
+        const isSpecMatch = typeof model?.model_match === 'boolean'
+            ? model.model_match
+            : Boolean(model?.coincidence);
+
+        const hasExactCountFlag =
+            typeof sourceCount === 'number' ||
+            typeof model?.count_match === 'boolean' ||
+            typeof model?.count_spb === 'number';
+        const isExactCount = typeof model?.count_match === 'boolean'
+            ? model.count_match
+            : (typeof sourceCount === 'number' ? Number(model?.model_count) === sourceCount : model?.count_spb === 1);
+
+        if (hasSpecMatchFlag && !isSpecMatch) return "red";
+        if (hasExactCountFlag && !isExactCount) return "volcano";
+        if (isSpecMatch) return "green";
+        return "red";
+    };
+
+    const getCountDeltaTitle = (model, sourceCount) => {
+        if (typeof sourceCount !== 'number') return null;
+        const targetCount = Number(model?.model_count);
+        if (!Number.isFinite(targetCount)) return null;
+        const diff = targetCount - sourceCount;
+        if (diff === 0) return null;
+        return `${diff > 0 ? `+${diff}` : `${diff}`}`;
+    };
 
     const [similarData, setSimilarData] = useState([]);
     const [type, setType] = useState("КП и СЧЕТ");
@@ -304,6 +332,7 @@ const FindSimilarDrawer = (props) => {
         const searchModels = props?.bid_models
             ? props.bid_models.map((el, index) => {
                 return {
+                    bid_model_id: el.id,
                     model_id: el.model_id,
                     count: el.model_count,
                     mandatory_by_model: false,
@@ -496,19 +525,60 @@ const FindSimilarDrawer = (props) => {
     };
     const S = ({ models }) => {
         console.log(models)
+        const makeSourceMatcher = () => {
+            const used = new Set();
+            return (model) => {
+                const targetCount = Number(model?.model_count);
+                const modelId = Number(model?.model_id);
+                const modelName = (model?.an_models_name || model?.model_name || '').trim().toLowerCase();
+
+                const candidates = similarData
+                    .map((src, idx) => ({ src, idx }))
+                    .filter(({ src, idx }) => {
+                        if (used.has(idx)) return false;
+                        if (Number(src?.model_id) === modelId) return true;
+                        if (!modelName) return false;
+                        return (src?.name || '').trim().toLowerCase() === modelName;
+                    });
+
+                if (!candidates.length) return null;
+
+                candidates.sort((a, b) => {
+                    const aDiff = Math.abs(Number(a.src?.count) - targetCount);
+                    const bDiff = Math.abs(Number(b.src?.count) - targetCount);
+                    return aDiff - bDiff;
+                });
+
+                const picked = candidates[0];
+                used.add(picked.idx);
+                const pickedCount = Number(picked.src?.count);
+                return Number.isFinite(pickedCount) ? pickedCount : null;
+            };
+        };
+
+        const getSourceCount = makeSourceMatcher();
         const modelsPrepared = models
             ? models
                 /*.sort(function (a, b) {
                     return b.model_match - a.model_match;
                 })*/
                 .map((el, idx) => {
+                    const sourceCount = getSourceCount(el);
+                    const badgeColor = getModelBadgeColor(el, sourceCount);
+                    const deltaTitle = badgeColor === 'volcano' ? getCountDeltaTitle(el, sourceCount) : null;
                     return (
-                        <div key={Math.random()} style={{ margin: "0 5px" }}>
+                        <div key={el.bid_model_id || `${el.model_id}-${el.an_models_name}-${idx}`} style={{ margin: "0 5px" }}>
                             <Tag
                                 icon={
-                                    <Tag className={'sa-similar__tag'}>{el.model_count}</Tag>
+                                    <Tag
+                                        className={'sa-similar__tag'}
+                                        title={deltaTitle}
+                                    >
+                                        {el.model_count}
+                                    </Tag>
                                 }
-                                color={el.model_match ? "green" : "blue"}
+                                color={badgeColor}
+                                title={deltaTitle}
                             >
                                 {el.an_models_name}
                             </Tag>

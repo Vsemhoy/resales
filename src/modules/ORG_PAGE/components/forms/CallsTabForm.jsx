@@ -51,6 +51,7 @@ const CallsTabForm = ({
   orgId,          // ID организации
   editMode,       // Режим редактирования
   isActive,       // Активна ли вкладка
+  reloadNonce,    // Триггер принудительной перезагрузки после save
   userdata,       // Данные пользователя
   onDataChange,   // Callback при изменении данных
   _selects,
@@ -156,6 +157,12 @@ const CallsTabForm = ({
       return () => clearTimeout(timer);
     }
   }, [orgId, currentPage, pageSize, loadCalls]);
+
+  // Принудительное обновление данных после успешного сохранения в родителе.
+  useEffect(() => {
+    if (!orgId) return;
+    loadCalls();
+  }, [reloadNonce, orgId, loadCalls]);
 
   // Сброс при смене организации
   useEffect(() => {

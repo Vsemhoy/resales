@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Input, Segmented } from 'antd'
-import dayjs from 'dayjs'
+import { PlusOutlined, PictureOutlined } from '@ant-design/icons'
 import { Image } from 'antd'
-import { FileOutlined, PictureOutlined } from '@ant-design/icons'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
-import { useCovers } from '../components/CoversDrawer'
+import { useCovers, CoversDrawer } from '../components/CoversDrawer'
 
 export default function SectionCover({ data, onChange, draftId, companyId }) {
   const accent    = companyId === '3' ? '#269435' : '#FF5903'
@@ -71,7 +70,7 @@ export default function SectionCover({ data, onChange, draftId, companyId }) {
             </Grid2>
           </Section>
           <Section title="Картинка на обложку" description="Правая часть титульного листа">
-            <CoverBlockPicker value={data.coverBlock ?? null} onChange={url => set('coverBlock', url)} accent={accent} />
+            <CoverBlockPicker value={data.coverBlock ?? null} onChange={url => set('coverBlock', url)} accent={accent} companyId={companyId} type="cover" />
           </Section>
         </>
       )}
@@ -80,7 +79,7 @@ export default function SectionCover({ data, onChange, draftId, companyId }) {
       {coverMode === 'hat' && (
         <>
           <Section title="Картинка-баннер" description="Растягивается на всю ширину страницы без полей (~1/4 высоты)">
-            <CoverBlockPicker value={data.hatImage ?? null} onChange={url => set('hatImage', url)} accent={accent} />
+            <CoverBlockPicker value={data.hatImage ?? null} onChange={url => set('hatImage', url)} accent={accent} companyId={companyId} type="hat" />
           </Section>
 
           <Section title="Реквизиты" description="Строка под баннером">
@@ -123,64 +122,100 @@ export default function SectionCover({ data, onChange, draftId, companyId }) {
 }
 
 // ─── Пикер обложек ────────────────────────────────────────────────────────────
-function CoverBlockPicker({ value, onChange, accent }) {
-  const { covers, loading } = useCovers()
+// ─── Пикер обложек ────────────────────────────────────────────────────────────
+function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }) {
+  const { covers, loading, reload } = useCovers(companyId)  // единственный инстанс
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const filtered = covers.filter(c => c.filename.startsWith(type + '_'))
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-      <div
-        onClick={() => onChange(null)}
-        style={{
-          width: 80, height: 60,
-          border: `2px solid ${!value ? accent : '#d9d9d9'}`,
-          borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', fontSize: 11, color: '#8c8c8c', background: '#fafafa',
-        }}
-      >Без картинки</div>
+    <>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {/* Без картинки */}
+        <div
+          onClick={() => onChange(null)}
+          style={{
+            width: 80, height: 60, borderRadius: 6, flexShrink: 0,
+            border: `2px solid ${!value ? accent : '#d9d9d9'}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', fontSize: 11, color: '#8c8c8c', background: '#fafafa',
+          }}
+        >Без картинки</div>
 
-      {loading && [1,2,3].map(i => (
-        <div key={i} style={{ width: 80, height: 60, borderRadius: 6, background: '#f0f0f0' }} />
-      ))}
+        {/* Скелетоны */}
+        {loading && [1,2,3].map(i => (
+          <div key={i} style={{ width: 80, height: 60, borderRadius: 6, background: '#f0f0f0', flexShrink: 0 }} />
+        ))}
 
-      {!loading && covers.map(cover => {
-        const isSelected = value === cover.url
-        return (
-          <div
-            key={cover.filename}
-            title={cover.filename}
-            style={{
-              width: 80, height: 60,
-              border: `2px solid ${isSelected ? accent : '#d9d9d9'}`,
-              borderRadius: 6, overflow: 'hidden', position: 'relative',
-              // Шахматка — видно формат картинки
-              backgroundImage: 'linear-gradient(45deg, #dbdbdb 25%, #F6F0CF 25%, #F6F0CF 50%, #dbdbdb 50%, #dbdbdb 75%, #F6F0CF 75%, #F6F0CF 100%)',
-              backgroundSize: '15px 15px',
-            }}
-          >
-            {/* Картинка с просмотром — не трогает выбор */}
-            <Image
-              src={cover.url}
-              alt={cover.filename}
-              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-              preview={{ mask: <span style={{ fontSize: 14 }}>🔍</span> }}
-            />
-
-            {/* Плашка "Выбрать" внизу */}
+        {/* Тайлы */}
+        {!loading && filtered.map(cover => {
+          const isSelected = value === cover.url
+          return (
             <div
-              onClick={() => onChange(isSelected ? null : cover.url)}
+              key={cover.filename}
+              title={cover.filename.replace(/^(cover|hat)_/, '')}
               style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0,
-                background: isSelected ? accent : 'rgba(0,0,0,0.45)',
-                color: '#fff', fontSize: 10, fontWeight: 600,
-                textAlign: 'center', padding: '2px 0', cursor: 'pointer',
-                letterSpacing: '0.03em',
+                width: 80, height: 60, borderRadius: 6, flexShrink: 0,
+                border: `2px solid ${isSelected ? accent : '#d9d9d9'}`,
+                overflow: 'hidden', position: 'relative', cursor: 'pointer',
+                backgroundImage: 'linear-gradient(45deg, #dbdbdb 25%, #F6F0CF 25%, #F6F0CF 50%, #dbdbdb 50%, #dbdbdb 75%, #F6F0CF 75%, #F6F0CF 100%)',
+                backgroundSize: '15px 15px',
               }}
             >
-              {isSelected ? '✓ Выбрано' : 'Выбрать'}
+              <Image
+                src={cover.url}
+                alt={cover.filename}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                preview={{ mask: <span style={{ fontSize: 14 }}>🔍</span> }}
+              />
+              <div
+                onClick={() => onChange(isSelected ? null : cover.url)}
+                style={{
+                  position: 'absolute', bottom: 0, left: 0, right: 0,
+                  background: isSelected ? accent : 'rgba(0,0,0,0.45)',
+                  color: '#fff', fontSize: 10, fontWeight: 600,
+                  textAlign: 'center', padding: '2px 0', cursor: 'pointer',
+                }}
+              >
+                {isSelected ? '✓ Выбрано' : 'Выбрать'}
+              </div>
             </div>
+          )
+        })}
+
+        {/* + Добавить */}
+        {!loading && (
+          <div
+            onClick={() => setDrawerOpen(true)}
+            style={{
+              width: 80, height: 60, borderRadius: 6, flexShrink: 0,
+              border: '2px dashed #d9d9d9',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: 2,
+              cursor: 'pointer', color: '#8c8c8c', background: '#fafafa',
+              fontSize: 10, transition: 'all 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.color = accent }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#d9d9d9'; e.currentTarget.style.color = '#8c8c8c' }}
+          >
+            <PlusOutlined style={{ fontSize: 16 }} />
+            <span>Добавить</span>
           </div>
-        )
-      })}
-    </div>
+        )}
+      </div>
+
+      {/* Дровер получает covers и reload — своего стейта не держит */}
+      <CoversDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        selectedUrl={value}
+        onSelect={onChange}
+        companyId={companyId}
+        type={type}
+        covers={filtered}
+        onReload={reload}
+      />
+    </>
   )
 }

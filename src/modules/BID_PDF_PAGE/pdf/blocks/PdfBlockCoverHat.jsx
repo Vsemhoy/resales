@@ -21,7 +21,7 @@ export function PdfBlockCoverHat({ cfg, data, draft }) {
         marginBottom:  space.lg,
       }}>
         {hatUrl
-          ? <Image src={hatUrl} style={{ width: layout.pageW, height: cover.hatHeight, objectFit: 'cover' }} />
+          ? <Image src={hatUrl} style={{ width: layout.pageW, height: cover.hatHeight, objectFit: 'fill' }} />
           : <View style={{ width: layout.pageW, height: cover.hatHeight, backgroundColor: color.accentLight }} />
         }
       </View>

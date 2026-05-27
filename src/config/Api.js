@@ -61,5 +61,20 @@ PROD_AXIOS_INSTANCE.interceptors.request.use((config) => {
         config.headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfToken);
     }
 
+    const isLocalhost =
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1';
+
+    if (isLocalhost && typeof config.url === 'string') {
+        const [pathPart, queryPart = ''] = config.url.split('?');
+        const searchParams = new URLSearchParams(queryPart);
+
+        if (!searchParams.has('XDEBUG_SESSION_START')) {
+            searchParams.set('XDEBUG_SESSION_START', 'VSCODE');
+            const nextQuery = searchParams.toString();
+            config.url = nextQuery ? `${pathPart}?${nextQuery}` : pathPart;
+        }
+    }
+
     return config;
 });
