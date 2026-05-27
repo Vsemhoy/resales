@@ -12,16 +12,16 @@
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.3.0",
 		"@testing-library/user-event": "^13.5.0",
-		"@tiptap/extension-color": "^3.23.2",
-		"@tiptap/extension-text-align": "^3.23.5",
-		"@tiptap/extension-text-style": "^3.23.2",
-		"@tiptap/react": "^3.23.2",
-		"@tiptap/starter-kit": "^3.23.2",
+      "@tiptap/extension-color": "3.23.6",
+      "@tiptap/extension-text-align": "3.23.6",
+      "@tiptap/extension-text-style": "3.23.6",
+      "@tiptap/react": "3.23.6",
+      "@tiptap/starter-kit": "3.23.6",
 		"@uiw/react-md-editor": "^4.0.8",
 		"antd": "^5.26.4",
 		"axios": "^1.13.6",
 		"corp-chat-library-antd-react-socket": "^1.2.15",
-		"corp-notificator-library-antd-react-socket": "^0.0.23",
+		"corp-notificator-library-antd-react-socket": "^0.0.27",
 		"dayjs": "^1.11.13",
 		"emoji-picker-react": "^4.13.3",
 		"exceljs": "^4.4.0",
@@ -62,7 +62,7 @@
 		"push-all-bogdan": "git add . && git commit -m\"update\" && git push origin master:bogdan",
 		"fetch-all": "git fetch origin && git merge origin/master",
 		"postinstall": "npm audit --audit-level=high || node -e \"process.exit(0)\"",
-		"update": "git fetch origin && git reset --hard origin/master && npm run build"
+        "update": "git fetch origin && git reset --hard origin/master && npm install && npm run build"
 	},
 	"eslintConfig": {
 		"extends": [
