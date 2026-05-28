@@ -764,16 +764,18 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 								>
 									Всего найдено: {total}
 								</Tag>
-								<Tooltip title={'Компании с ошибкой сохранения без последующего успешного сохранения'}>
-									<Tag
-										color={problemCompanies.length ? 'red' : 'default'}
-										onClick={() => setProblemModalOpen(true)}
-										style={{ cursor: 'pointer', marginTop: '1px', textAlign: 'center', fontSize: '15px', display: 'flex', alignItems: 'center' }}
-										
-									>
-										Проблемные: {problemCompanies.length}
-									</Tag>
-								</Tooltip>
+								{problemCompanies?.length > 0 && (
+									<Tooltip title={'Компании с ошибкой сохранения без последующего успешного сохранения'}>
+										<Tag
+											color={problemCompanies.length ? 'red' : 'default'}
+											onClick={() => setProblemModalOpen(true)}
+											style={{ cursor: 'pointer', marginTop: '1px', textAlign: 'center', fontSize: '15px', display: 'flex', alignItems: 'center' }}
+											
+										>
+											Проблемные: {problemCompanies.length}
+										</Tag>
+									</Tooltip>
+								)}
 							</div>
 							{/*<div style={{display: 'flex', alignItems: 'end'}}>*/}
 							{/*</div>*/}
