@@ -10,11 +10,13 @@ import {
 	Dropdown, Input,
 	// Input,
 	Layout,
+	Modal,
 	Pagination,
 	// Select,
 	Spin,
 	Tag,
 	Tooltip,
+	message,
 } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
@@ -43,6 +45,8 @@ import {
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import { ANTD_PAGINATION_LOCALE } from '../../config/Localization';
 import { useURLParams } from '../../components/helpers/UriHelpers';
+import { formLogger } from '../../components/helpers/FormLogger';
+import { onOrgLogEvent } from '../../components/helpers/crossTabBus';
 import {useWebSocket} from "../../context/ResalesWebSocketContext";
 import {useWebSocketSubscription} from "../../hooks/websockets/useWebSocketSubscription";
 import {PRICE as usr} from "../PRICE/mock/mock";
@@ -96,6 +100,9 @@ const OrgListPage = (props) => {
 	const [SKIPPER, setSKIPPER] = useState(0);
 
 	const [searchValue, setSearchValue] = useState(filterBox.search_all);
+	const [problemCompanies, setProblemCompanies] = useState([]);
+	const [problemModalOpen, setProblemModalOpen] = useState(false);
+	const [problemLoading, setProblemLoading] = useState(false);
 
 	const [socketBusyOrglist, setsocketBusyOrglist] = useState([
 		/*{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", action: 'edit'},
@@ -142,6 +149,29 @@ useWebSocketSubscription('UPDATE_ORG', ({ org_id }) => {
 	useEffect(() => {
 		setUserdata(props.userdata);
 	}, [props.userdata]);
+
+	const loadProblemCompanies = async () => {
+		setProblemLoading(true);
+		try {
+			const items = await formLogger.getUnsavedProblemCompanies({ limit: 20000 });
+			setProblemCompanies(items || []);
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setProblemLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		loadProblemCompanies();
+	}, []);
+
+	useEffect(() => {
+		return onOrgLogEvent((event) => {
+			if (event?.type !== 'ORG_LOG_EVENT') return;
+			loadProblemCompanies();
+		});
+	}, []);
 
 	useEffect(() => {
 		setShowLoader(true);
@@ -449,6 +479,40 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 		}
 	};
 
+	const handleHideProblem = async (item) => {
+		try {
+			await formLogger.hideProblemForOrg({
+				orgId: item.orgId,
+				orgName: item.orgName,
+				sourceErrorId: item.lastFailureLogId,
+			});
+			message.success('Компания скрыта из списка проблемных');
+			loadProblemCompanies();
+		} catch (e) {
+			console.error(e);
+			message.error('Не удалось скрыть компанию');
+		}
+	};
+
+	const getProblemDateView = (timestamp) => {
+		const date = new Date(timestamp);
+		const now = new Date();
+		const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+		const startOfTarget = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+		const diffDays = Math.floor((startOfToday - startOfTarget) / 86400000);
+
+		const dateLabel = date.toLocaleDateString('ru-RU');
+		const timeLabel = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+		if (diffDays === 0) {
+			return { topText: 'Сегодня', topTitle: dateLabel, timeText: timeLabel };
+		}
+		if (diffDays === 1) {
+			return { topText: 'Вчера', topTitle: 'Вчера', timeText: timeLabel };
+		}
+		return { topText: dateLabel, topTitle: dateLabel, timeText: timeLabel };
+	};
+
 	const handlePreviewOpen = (item, state) => {
 		console.log('HAPREOPENEJREK', item);
 		setShowParam(item);
@@ -700,6 +764,16 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 								>
 									Всего найдено: {total}
 								</Tag>
+								<Tooltip title={'Компании с ошибкой сохранения без последующего успешного сохранения'}>
+									<Tag
+										color={problemCompanies.length ? 'red' : 'default'}
+										onClick={() => setProblemModalOpen(true)}
+										style={{ cursor: 'pointer', marginTop: '1px', textAlign: 'center', fontSize: '15px', display: 'flex', alignItems: 'center' }}
+										
+									>
+										Проблемные: {problemCompanies.length}
+									</Tag>
+								</Tooltip>
 							</div>
 							{/*<div style={{display: 'flex', alignItems: 'end'}}>*/}
 							{/*</div>*/}
@@ -860,6 +934,70 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 					</div>
 				</Content>
 			</Layout>
+			<Modal
+				title={`Проблемные компании (${problemCompanies.length})`}
+				open={problemModalOpen}
+				onCancel={() => setProblemModalOpen(false)}
+				footer={null}
+				width={860}
+				
+			>
+				<Spin spinning={problemLoading}>
+					<div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+						{problemCompanies.length === 0 && <div>Нет проблемных компаний</div>}
+						{problemCompanies.map((item) => (
+							<div
+								key={`${item.orgId}_${item.lastFailureAt}`}
+								onDoubleClick={() => window.open(`${BASE_ROUTE}/orgs/${item.orgId}`, '_blank')}
+								style={{
+									display: 'grid',
+									// justifyContent: 'space-between',
+									alignItems: 'center',
+									padding: '8px 0',
+									borderBottom: '1px solid #f0f0f0',
+									cursor: 'pointer',
+									gridTemplateColumns: 'auto 100px 250px 100px'
+								}}
+							>
+								<div>
+									<NavLink target='blank' to={`${BASE_ROUTE}/orgs/${item.orgId}`}>
+									<div>#{item.orgId} <b>{item.orgName}</b></div>
+									</NavLink>
+										
+
+								</div>
+								<div>
+									{(() => {
+										const dateView = getProblemDateView(item.lastFailureAt);
+										return (
+											<>
+												<Tooltip title={dateView.topTitle}>
+													<div style={{ fontSize: '14px', color: '#111111', lineHeight: '16px' }}>
+														{dateView.topText}
+													</div>
+												</Tooltip>
+												<div style={{ fontSize: '12px', color: '#8c8c8c', lineHeight: '16px', marginTop: '2px' }}>
+													{dateView.timeText}
+												</div>
+											</>
+										);
+									})()}
+								</div>
+								<div>
+									<div style={{ fontSize: '14px', color: '#3b3b3b' }}>
+										{item.lastFailureMessage || 'Ошибка сохранения'}
+									</div>
+									<div style={{ fontSize: '12px', color: '#8c8c8c' }}>
+										{item.lastFailureMessage?.includes('501') ? "Не заполнены поля формы" : ''}
+										{item.lastFailureMessage?.includes('Network') ? "Проблемы с сетью" : ''}
+									</div>
+								</div>
+								<Button danger  variant="link" onClick={() => handleHideProblem(item)} style={{border: 'none'}}>Скрыть</Button>
+							</div>
+						))}
+					</div>
+				</Spin>
+			</Modal>
 			<OrgListPreviewModal
 				busy_orgs={socketBusyOrglist}
 				is_open={isPreviewOpen}
@@ -880,3 +1018,5 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 };
 
 export default OrgListPage;
+
+

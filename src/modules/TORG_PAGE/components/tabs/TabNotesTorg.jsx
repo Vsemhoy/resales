@@ -94,6 +94,29 @@ const TabNotesTorg = (props) => {
     }
   }, [props.edit_mode]);
 
+  // Сигнал от TorgPage: восстановить данные из лога
+  // Сигнал восстановления из лога
+  useEffect(() => {
+    if (!props.pending_restore?.length) return;
+
+    const isNew = (item) => String(item?.id ?? '').startsWith('new_');
+
+    // Новые записи (new_xxx) → в tempData (секция "только что добавленных")
+    const newItems = props.pending_restore.filter(isNew);
+    if (newItems.length) setTempData(newItems);
+
+    // Существующие отредактированные (числовые ID) → мёрджим в baseData
+    const updatedItems = props.pending_restore.filter(item => !isNew(item));
+    if (updatedItems.length) {
+      setBaseData(prev => prev.map(item => {
+        const restored = updatedItems.find(u => String(u.id) === String(item.id));
+        return restored ? { ...item, ...restored } : item;
+      }));
+    }
+
+    props.on_pending_restore_done?.();
+  }, [props.pending_restore]);
+
   useEffect(() => {
     if (props.on_save_command && props.on_save_command > 0){
       if (props.on_change_data){
@@ -150,7 +173,6 @@ const TabNotesTorg = (props) => {
           setTotal(response.data.total);
         }
       } catch (e) {
-        console.log(e);
       } finally {
         setTimeout(() => {
           setLoading(false);
