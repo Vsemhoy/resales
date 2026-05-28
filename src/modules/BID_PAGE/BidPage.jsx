@@ -1204,6 +1204,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                         models={modelsSelect}
             />
             <Modal
+				centered
                 title={findSimilarTitle}
                 open={isFindSimilarDrawerOpen}
                 onCancel={() => setIsFindSimilarDrawerOpen(false)}
@@ -1212,10 +1213,10 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                 width={'80%'}
                 styles={{
                     body: {
-                        height: "600px",
-                        overflowY: "auto",
-                        width: '100%',
-                        display: 'flex',
+                        // height: "600px",
+                        // overflowY: "auto",
+                        // width: '100%',
+                        // display: 'flex',
                         alignItems: 'center',
                     }
                 }}

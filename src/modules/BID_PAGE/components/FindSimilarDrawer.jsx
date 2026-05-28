@@ -272,7 +272,7 @@ const FindSimilarDrawer = (props) => {
             key: 7,
             value: (
                 <InputNumber
-                    min={0}
+                    min={-1}
                     size={"small"}
                     max={10}
                     value={range}
