@@ -281,10 +281,10 @@ const FindSimilar = (props) => {
         {
             name: (
                 <div>
-                    {"Количественное отклонение: "}
+                    {"Разброс по кол-ву позиций: "}
                     <Tooltip
                         title={
-                            "Допустимое отклонение количества позиций оборудования в искомой спецификации от количества позиций оборудования в текущей."
+                            "Допустимое отклонение количества позиций оборудования в искомой спецификации от количества позиций оборудования в текущей. (значение -1 отключает фильтр)"
                         }
                     >
                         <QuestionCircleOutlined />
@@ -294,23 +294,24 @@ const FindSimilar = (props) => {
             key: 7,
             value: (
                 <InputNumber
-                    min={0}
+                    min={-1}
                     size={"small"}
                     max={10}
                     value={range}
                     onChange={setRange}
                     changeOnWheel
                     style={{ width: "160px" }}
+                    disabled={mondatoryAll}
                 />
             ),
         },
         {
             name: (
                 <div>
-                    {"Допустимые несовпадения: "}
+                    {"Отклонения кол-ва единиц: "}
                     <Tooltip
                         title={
-                            "Допустимое количество позиций оборудования в искомой спецификации, отсутствующего в текущей."
+                            "Насколько отличается количество единиц товара в совпадающих позициях спецификации (0 - любое отличие, больше нуля - лимит несовпадения)."
                         }
                     >
                         <QuestionCircleOutlined />
@@ -327,6 +328,7 @@ const FindSimilar = (props) => {
                     onChange={setNotMatchLimit}
                     changeOnWheel
                     style={{ width: "160px" }}
+                    disabled={mondatoryAll}
                 />
             ),
         },

@@ -212,11 +212,9 @@ const TabMainTorg = (props) => {
       "date_dealer"
     ]);
 
-    console.log('START --------- ', bdt);
 
     setBaseData(bdt);
 
-    console.log('bdt', bdt, props.base_data)
 
       if (creator){
             setAuthor(ShortName(creator?.surname, creator?.name, creator?.secondname));
@@ -248,7 +246,6 @@ const TabMainTorg = (props) => {
 
   useEffect(() => {
     if (BLUR_FLAG && props.on_change_main_data){
-      console.log('CALLL _----------- TO ___________ save');
       props.on_change_main_data(baseData);
     }
   }, [baseData]);
@@ -264,18 +261,15 @@ const TabMainTorg = (props) => {
 
 
     const triggerCollapse = (itemname) => {
-      console.log(itemname);
       if (collapsed_rows.includes(itemname)){
         setCollapsedRows(collapsed_rows.filter((item)=> item !== itemname));
       } else {
-        console.log('HOHOHO');
         setCollapsedRows([...collapsed_rows, itemname]);
       }
     }
 
 
     useEffect(() => {
-      console.log(collapsed_rows);
     }, [collapsed_rows]);
 
 
@@ -308,7 +302,6 @@ const TabMainTorg = (props) => {
 
   useEffect(() => {
     // эффект
-    console.log("CONTACTS", CONTACTS);
   }, [CONTACTS]);
 
 
@@ -1141,7 +1134,7 @@ const TabMainTorg = (props) => {
             {ORGLEGADDRESSES.map((item)=>(
               <OrgLegalAddressMicroSectionTorg
                 key={'orlega_' + item.id + itemId}
-                allow_delete={false}
+                allow_delete={String(item.id).startsWith('new_')}
                 data={item}
                 org_id={itemId}
                 edit_mode={editMode}
@@ -1155,7 +1148,7 @@ const TabMainTorg = (props) => {
             {ORGADDRESSES.map((item)=>(
               <OrgAddressMicroSectionTorg
                 key={'oraada_' + item.id + itemId}
-                allow_delete={false}
+                allow_delete={String(item.id).startsWith('new_')}
                 data={item}
                 org_id={itemId}
                 edit_mode={editMode}
@@ -1254,7 +1247,6 @@ const TabMainTorg = (props) => {
                   variant="outlined"
                   icon={<PhoneIcon height={'20px'}/>}
                   onClick={(ev) => {
-                    console.log('ALOHA');
                     handleAddPhone();
                   }}
                   >Телефон</Button>
@@ -1503,7 +1495,7 @@ const TabMainTorg = (props) => {
                     selects={selects}
                     id_orgs={itemId}
                     collapse={true}
-                    allow_delete={false}
+                    allow_delete={String(item.id).startsWith('new_')}
                     on_collect={(payload)=>{props.on_change_contact(payload)}}
                     />
 

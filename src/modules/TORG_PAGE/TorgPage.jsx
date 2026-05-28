@@ -7,8 +7,9 @@ import {
 	useParams,
 	useSearchParams,
 } from 'react-router-dom';
-import { Affix, Alert, Button, DatePicker, Input, Layout, Pagination, Select, Tag, Tooltip } from 'antd';
+import { Affix, Alert, Button, DatePicker, Dropdown, Input, Layout, Pagination, Select, Tag, Tooltip, message } from 'antd';
 import { formLogger, LOG_ACTIONS } from '../../components/helpers/FormLogger';
+import { emitOrgLogEvent, onOrgLogEvent } from '../../components/helpers/crossTabBus';
 
 import {  CircleStackIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import {
@@ -118,6 +119,7 @@ const TorgPage = (props) => {
 	const [tempMainData, setTempMainData] = useState(null);
 	const [tempProjectsData, setTempProjectsData] = useState([]);
 	const [tempCallsData, setTempCallsData] = useState([]);
+	const [hasUnsavedProblem, setHasUnsavedProblem] = useState(false);
 	const [tempNotesData, setTempNotesData] = useState([]);
 
 	const [tempMain_contacts, setTempMain_contacts] = useState([]);
@@ -157,6 +159,12 @@ const [socketBusyOrglist, setsocketBusyOrglist] = useState([
 const [curatorRequestSent, setCuratorRequestSent] = useState(false);
 
 const [orgName, setOrgName] = useState('');
+const [isRestoringFromLog, setIsRestoringFromLog] = useState(false);
+const [problemPayloadSections, setProblemPayloadSections] = useState([]);
+const [problemPayloadCache, setProblemPayloadCache] = useState(null);
+	const [pendingRestoreNotes,    setPendingRestoreNotes]    = useState(null);
+	const [pendingRestoreCalls,    setPendingRestoreCalls]    = useState(null);
+	const [pendingRestoreProjects, setPendingRestoreProjects] = useState(null);
 
 	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
 		//
@@ -179,7 +187,6 @@ const [orgName, setOrgName] = useState('');
 
 		// Подписываюсь на открытие орпейджа
 		useEffect(() => {
-				console.log('CONNECTED orgPage', connected)
 				if (connected) {
 						emit('HIGHLIGHT_ORG', {
 								orgId: itemId,
@@ -416,7 +423,6 @@ useEffect(() => {
 		if (rp.includes('frompage=bids')) {
 			rp = rp.replace('frompage=bids&', '');
 			rp = rp.replace('frompage=bids', '');
-			console.log('rp', rp);
 			rp = '/bids?' + rp;
 			setBackeReturnPath(rp);
 		}
@@ -452,7 +458,6 @@ useEffect(() => {
 	}, []);
 
 
-	console.log(userdata?.user?.id)
 
 
 	useEffect(() => {
@@ -658,7 +663,6 @@ useEffect(() => {
 			}
 				
 		} catch (e) {
-			console.log(e);
 		} finally {
 
 		}
@@ -715,7 +719,6 @@ useEffect(() => {
 				setBaseFilterstData(response.data.filters);
 				setBaseCompanies(response.data.filters?.companies);
 			} catch (e) {
-				console.log(e);
 			} finally {
 				// setLoadingOrgs(false)
 			}
@@ -736,7 +739,6 @@ useEffect(() => {
           setDepartList(response.data.content);
         }
 			} catch (e) {
-				console.log(e);
 			} finally {
 				// setLoadingOrgs(false)
 			}
@@ -794,6 +796,7 @@ useEffect(() => {
 					setAlertType('success');
 					setSaveProcess(60);
 					formLogger.logSaveSuccess(response, { orgId: item_id });
+						emitOrgLogEvent({ status: 'success', orgId: item_id, orgName: baseMainData?.name });
         } else {
 					setIsAlertVisible(true);
 					setAlertMessage(`Произошла ошибка!`);
@@ -801,27 +804,28 @@ useEffect(() => {
 					setAlertType('error');
 					setBlockSave(false);
 					setBlockOnSave(false);
-					formLogger.logError('SAVE_FAILED', { 
+					await formLogger.logError('SAVE_FAILED', response, { 
 									payload, // Сохраняем данные которые пытались отправить
 									orgId: item_id,
 									orgName: baseMainData?.name,
 									response: response?.data?.message || response.message || 'Неизвестная ошибка сервера'
 								});
+						emitOrgLogEvent({ status: 'error', orgId: item_id, orgName: baseMainData?.name });
 				}
 			} catch (e) {
-				console.log(e);
 					setIsAlertVisible(true);
 					setAlertMessage(`Ошибка на стороне сервера`);
 					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка сервера');
 					setAlertType('error');
 					setBlockSave(false);
 					setBlockOnSave(false);
-					formLogger.logError('SAVE_FAILED', e, { 
+					await formLogger.logError('SAVE_FAILED', e, { 
 									payload, // Сохраняем данные которые пытались отправить
 									orgId: item_id,
 									orgName: baseMainData?.name,
 									response: e.response?.data?.message || e.message || 'Неизвестная ошибка'
 								});
+					emitOrgLogEvent({ status: 'error', orgId: item_id, orgName: baseMainData?.name });
 			} finally {
 				// setLoadingOrgs(false)
 
@@ -876,7 +880,6 @@ useEffect(() => {
 					
 				}
 			} catch (e) {
-				console.log(e);
 			} finally {
 				// setLoadingOrgs(false)
 
@@ -886,6 +889,304 @@ useEffect(() => {
 
 
 	/** ----------------------- FETCHES -------------------- */
+
+	const refreshUnsavedProblemFlag = useCallback(async () => {
+		if (!itemId || itemId === 'new') {
+			setHasUnsavedProblem(false);
+			return;
+		}
+		try {
+			const items = await formLogger.getUnsavedProblemCompanies({ limit: 20000 });
+			const hasProblem = (items || []).some((x) => String(x.orgId) === String(itemId));
+			setHasUnsavedProblem(hasProblem);
+		} catch (e) {
+			console.error(e);
+			setHasUnsavedProblem(false);
+		}
+	}, [itemId]);
+
+	const applyRestorePayload = useCallback((payload) => {
+		if (!payload || typeof payload !== 'object') {
+			return false;
+		}
+
+		const normalizeArray = (val) => (Array.isArray(val) ? val : []);
+		const clone = (val) => JSON.parse(JSON.stringify(val));
+		const normalizeRestoredItem = (item) => {
+			if (!item || typeof item !== 'object') return item;
+			const restored = { ...item };
+			const idStr = String(restored.id ?? '');
+			const isNew = idStr.startsWith('new_');
+
+			// Ключевой момент: новые элементы должны вернуться как create,
+			// иначе UI воспринимает их как "старые изменённые" и ломается удаление.
+			if (isNew) {
+				restored.command = 'create';
+			} else if (!restored.command) {
+				restored.command = 'update';
+			}
+
+			// Дата могла переформатироваться в DD.MM.YYYY при сборе через on_collect.
+			// dayjs(str) без явного формата не парсит DD.MM.YYYY → Invalid Date.
+			// Конвертируем обратно в YYYY-MM-DD HH:mm:ss перед восстановлением.
+			const fixDate = (val) => {
+				if (!val) return val;
+				const m = String(val).match(/^(\d{2})\.(\d{2})\.(\d{4})(?:[\sT]+(\d{2}:\d{2}:\d{2}))?$/);
+				if (!m) return val;
+				return m[4] ? `${m[3]}-${m[2]}-${m[1]} ${m[4]}` : `${m[3]}-${m[2]}-${m[1]}`;
+			};
+			['date','date_create','date_update','date_start','date_end','date_dealer'].forEach(k => {
+				if (restored[k]) restored[k] = fixDate(restored[k]);
+			});
+
+			return restored;
+		};
+		const normalizeRestoredArray = (val) =>
+			normalizeArray(val).map((item) => normalizeRestoredItem(item));
+
+		// Слияние восстановленных массивов с baseMainData для отрисовки в TabMainTorg.
+		// TabMainTorg читает все под-массивы из props.base_data (поле-маппинг отличается
+		// от payload: org_phones→phones, org_addresses→address и т.д.).
+		// Элементы с числовым ID мёрджатся поверх существующих,
+		// элементы с new_xxx добавляются в конец.
+		const mergeForDisplay = (baseArr = [], restoredArr = []) => {
+			if (!restoredArr.length) return baseArr;
+			const merged = (baseArr || []).map(base => {
+				const r = restoredArr.find(x => String(x.id) === String(base.id));
+				return r ? { ...base, ...r } : base;
+			});
+			// Фильтруем по "нет в merged" вместо new_ префикса —
+			// иначе при повторном ресторе элементы уже есть в baseArr и дублируются
+			const mergedIds = new Set(merged.map(x => String(x.id)));
+			const newItems = restoredArr.filter(x => !mergedIds.has(String(x.id ?? '')));
+			return [...merged, ...newItems];
+		};
+
+		const rContacts    = normalizeRestoredArray(payload.contacts);
+		const rPhones      = normalizeRestoredArray(payload.org_phones);
+		const rEmails      = normalizeRestoredArray(payload.org_emails);
+		const rAddresses   = normalizeRestoredArray(payload.org_addresses);
+		const rLegalAddr   = normalizeRestoredArray(payload.org_legaladdresses);
+		const rRequisites  = normalizeRestoredArray(payload.org_requisites);
+		const rAnLicenses  = normalizeRestoredArray(payload.org_an_licenses);
+		const rAnTol       = normalizeRestoredArray(payload.org_an_tolerances);
+		const rBoLicenses  = normalizeRestoredArray(payload.org_bo_licenses);
+
+		// Коллекторы — готово к отправке
+		setTempMain_contacts(clone(rContacts));
+		setTempMain_phones(clone(rPhones));
+		setTempMain_addresses(clone(rAddresses));
+		setTempMain_legalAddresses(clone(rLegalAddr));
+		setTempMain_emails(clone(rEmails));
+		setTempMain_an_requisites(clone(rRequisites));
+		setTempMain_an_licenses(clone(rAnLicenses));
+		setTempMain_an_tolerances(clone(rAnTol));
+		setTempMain_bo_licenses(clone(rBoLicenses));
+
+		// Отрисовщик: сливаем восстановленные данные в baseMainData.
+		// useEffect([props.base_data]) в TabMainTorg сработает и обновит
+		// setCONTACTS, setORGPHONES, setORGEMAILS и т.д.
+		const mergedBase = clone({
+			...(baseMainData || {}),
+			...(payload.main && typeof payload.main === 'object' ? payload.main : {}),
+			contacts:           mergeForDisplay(baseMainData?.contacts,           rContacts),
+			phones:             mergeForDisplay(baseMainData?.phones,             rPhones),
+			emails:             mergeForDisplay(baseMainData?.emails,             rEmails),
+			address:            mergeForDisplay(baseMainData?.address,            rAddresses),
+			legaladdresses:     mergeForDisplay(baseMainData?.legaladdresses,     rLegalAddr),
+			requisites:         mergeForDisplay(baseMainData?.requisites,         rRequisites),
+			active_licenses:    mergeForDisplay(baseMainData?.active_licenses,    rAnLicenses),
+			active_tolerance:   mergeForDisplay(baseMainData?.active_tolerance,   rAnTol),
+			active_licenses_bo: mergeForDisplay(baseMainData?.active_licenses_bo, rBoLicenses),
+		});
+		setBaseMainData(mergedBase);
+
+		// Коллектор main
+		if (payload.main && typeof payload.main === 'object') {
+			setTempMainData(clone(payload.main));
+		}
+		const restoredProjects = clone(normalizeRestoredArray(payload.projects));
+		const restoredCalls    = clone(normalizeRestoredArray(payload.calls));
+		setTempProjectsData(restoredProjects);
+		setTempCallsData(restoredCalls);
+		if (restoredProjects.length) setPendingRestoreProjects(restoredProjects);
+		if (restoredCalls.length)    setPendingRestoreCalls(restoredCalls);
+		const restoredNotes = clone(normalizeRestoredArray(payload.notes));
+		setTempNotesData(restoredNotes);
+		// Signal TabNotesTorg to show restored notes in its own tempData
+		if (restoredNotes.length) setPendingRestoreNotes(restoredNotes);
+
+		if (!editMode) {
+			setEditMode(true);
+		}
+		setIsSmthChanged(true);
+		return true;
+	}, [editMode]);
+
+	const getSectionsFromPayload = useCallback((payload) => {
+		if (!payload || typeof payload !== 'object') return [];
+		const sections = [];
+		if (payload.main && typeof payload.main === 'object' && Object.keys(payload.main).length > 0) sections.push('Основная');
+		if (Array.isArray(payload.contacts) && payload.contacts.length) sections.push('Контакты');
+		if (Array.isArray(payload.org_phones) && payload.org_phones.length) sections.push('Телефоны');
+		if (Array.isArray(payload.org_emails) && payload.org_emails.length) sections.push('Почта');
+		if (Array.isArray(payload.org_addresses) && payload.org_addresses.length) sections.push('Адреса');
+		if (Array.isArray(payload.org_legaladdresses) && payload.org_legaladdresses.length) sections.push('Юр. адреса');
+		if (Array.isArray(payload.org_requisites) && payload.org_requisites.length) sections.push('Реквизиты');
+		if (Array.isArray(payload.org_an_licenses) && payload.org_an_licenses.length) sections.push('Лицензии АН');
+		if (Array.isArray(payload.org_an_tolerances) && payload.org_an_tolerances.length) sections.push('Допуски АН');
+		if (Array.isArray(payload.org_bo_licenses) && payload.org_bo_licenses.length) sections.push('Лицензии БО');
+		if (Array.isArray(payload.projects) && payload.projects.length) sections.push('Проекты');
+		if (Array.isArray(payload.calls) && payload.calls.length) sections.push('Звонки');
+		if (Array.isArray(payload.notes) && payload.notes.length) sections.push('Заметки');
+		return sections;
+	}, []);
+
+	const getLastRecoverablePayload = useCallback(async () => {
+		const allLogs = await formLogger.getLogs({ limit: 20000 });
+		const orgKey = String(itemId);
+		const matchOrg = (entry) => {
+			const id = entry?.orgSnapshot?.id
+				?? entry?.comState?.id
+				?? entry?.meta?.orgId
+				?? entry?.data?.context?.orgId
+				?? entry?.data?.context?.payload?.main?.id
+				?? entry?.data?.context?.payload?.main?.ID
+				?? entry?.data?.context?.payload?.main?.org_id
+				?? entry?.data?.orgId
+				?? null;
+			return String(id) === orgKey;
+		};
+		const isSaveFailed = (entry) => (
+			entry?.action === 'ERROR' && (
+				entry?.data?.errorType === 'SAVE_FAILED'
+				|| !!entry?.data?.context?.payload
+				|| entry?.meta?.isSaveAttempt === true
+			)
+		);
+
+		const sorted = [...(allLogs || [])]
+			.filter((entry) => matchOrg(entry))
+			.sort((a, b) => (b.timestampMs || 0) - (a.timestampMs || 0));
+
+		const latestFailed = sorted.find((entry) => isSaveFailed(entry));
+		if (latestFailed?.data?.context?.payload) {
+			return latestFailed.data.context.payload;
+		}
+		if (latestFailed) {
+			const beforeForThisFail = sorted.find((entry) =>
+				entry?.action === 'BEFORE_SAVE'
+				&& entry?.data
+				&& (entry.timestampMs || 0) <= (latestFailed.timestampMs || 0)
+			);
+			if (beforeForThisFail?.data) {
+				return beforeForThisFail.data;
+			}
+		}
+		const beforeSave = sorted.find((entry) => entry?.action === 'BEFORE_SAVE' && entry?.data);
+		if (beforeSave?.data) {
+			return beforeSave.data;
+		}
+
+		return null;
+	}, [itemId]);
+
+	const restoreFromLastFailedLog = useCallback(async () => {
+		if (!itemId || itemId === 'new') {
+			message.warning('Для новой карточки восстановление из лога недоступно');
+			return;
+		}
+
+		setIsRestoringFromLog(true);
+		try {
+			const payload = await getLastRecoverablePayload();
+
+			if (!payload) {
+				message.info('Не нашёл подходящий снимок данных в логе');
+				return;
+			}
+
+			const ok = applyRestorePayload(payload);
+			if (ok) {
+				message.success('Изменения восстановлены из лога');
+			} else {
+				message.error('Не удалось применить данные из лога');
+			}
+		} catch (e) {
+			console.error(e);
+			message.error('Ошибка восстановления из лога');
+		} finally {
+			setIsRestoringFromLog(false);
+		}
+	}, [itemId, applyRestorePayload, getLastRecoverablePayload, getSectionsFromPayload]);
+
+	const resetUnsavedProblem = useCallback(async () => {
+		if (!itemId || itemId === 'new') return;
+		try {
+			await formLogger.hideProblemForOrg({
+				orgId: itemId,
+				orgName: baseMainData?.name,
+				reason: 'Сброшено из карточки компании',
+			});
+			setHasUnsavedProblem(false);
+			setProblemPayloadSections([]);
+			setProblemPayloadCache(null);
+			message.success('Проблема скрыта');
+		} catch (e) {
+			console.error(e);
+			message.error('Не удалось сбросить проблему');
+		}
+	}, [itemId, baseMainData?.name]);
+
+	const loadProblemPayloadPreview = useCallback(async () => {
+		if (!hasUnsavedProblem || !itemId || itemId === 'new') return;
+		try {
+			const payload = await getLastRecoverablePayload();
+			setProblemPayloadCache(payload || null);
+			if (!payload || typeof payload !== 'object') {
+				setProblemPayloadSections([]);
+				return;
+			}
+			const sections = [];
+			if (payload.main && typeof payload.main === 'object' && Object.keys(payload.main).length > 0) sections.push({ key: 'main', label: 'Основная (m)', tab: 'm' });
+			if (Array.isArray(payload.contacts) && payload.contacts.length) sections.push({ key: 'contacts', label: 'Контакты (m)', tab: 'm' });
+			if (Array.isArray(payload.org_phones) && payload.org_phones.length) sections.push({ key: 'phones', label: 'Телефоны (m)', tab: 'm' });
+			if (Array.isArray(payload.org_emails) && payload.org_emails.length) sections.push({ key: 'emails', label: 'Почта (m)', tab: 'm' });
+			if (Array.isArray(payload.org_addresses) && payload.org_addresses.length) sections.push({ key: 'addresses', label: 'Адреса (m)', tab: 'm' });
+			if (Array.isArray(payload.org_legaladdresses) && payload.org_legaladdresses.length) sections.push({ key: 'legal_addresses', label: 'Юр. адреса (m)', tab: 'm' });
+			if (Array.isArray(payload.org_requisites) && payload.org_requisites.length) sections.push({ key: 'requisites', label: 'Реквизиты (m)', tab: 'm' });
+			if (Array.isArray(payload.org_an_licenses) && payload.org_an_licenses.length) sections.push({ key: 'an_licenses', label: 'Лицензии АН (m)', tab: 'm' });
+			if (Array.isArray(payload.org_an_tolerances) && payload.org_an_tolerances.length) sections.push({ key: 'an_tolerances', label: 'Допуски АН (m)', tab: 'm' });
+			if (Array.isArray(payload.org_bo_licenses) && payload.org_bo_licenses.length) sections.push({ key: 'bo_licenses', label: 'Лицензии БО (m)', tab: 'm' });
+			if (Array.isArray(payload.projects) && payload.projects.length) sections.push({ key: 'projects', label: 'Проекты (p)', tab: 'p' });
+			if (Array.isArray(payload.calls) && payload.calls.length) sections.push({ key: 'calls', label: 'Звонки (c)', tab: 'c' });
+			if (Array.isArray(payload.notes) && payload.notes.length) sections.push({ key: 'notes', label: 'Заметки (n)', tab: 'n' });
+			setProblemPayloadSections(sections);
+		} catch (e) {
+			console.error(e);
+		}
+	}, [hasUnsavedProblem, itemId, getLastRecoverablePayload]);
+
+	useEffect(() => {
+		refreshUnsavedProblemFlag();
+	}, [refreshUnsavedProblemFlag, baseMainData?.id]);
+
+	useEffect(() => {
+		return onOrgLogEvent((event) => {
+			if (event?.orgId && String(event.orgId) !== String(itemId)) return;
+			refreshUnsavedProblemFlag();
+			loadProblemPayloadPreview();
+		});
+	}, [itemId, refreshUnsavedProblemFlag, loadProblemPayloadPreview]);
+
+	useEffect(() => {
+		if (hasUnsavedProblem) {
+			loadProblemPayloadPreview();
+		} else {
+			setProblemPayloadSections([]);
+			setProblemPayloadCache(null);
+		}
+	}, [hasUnsavedProblem, loadProblemPayloadPreview]);
 
 
 
@@ -904,7 +1205,6 @@ useEffect(() => {
 	};
 
 	useEffect(() => {
-		console.log('COLLECTOR MODIFIED', COLLECTOR);
 		if (isEmptyObject(COLLECTOR)){
 			setTimeout(() => {
 				setIsSmthChanged(false);
@@ -1096,7 +1396,6 @@ useEffect(() => {
 							}
 					}
 				} catch (e) {
-					console.log(e);
 					setIsAlertVisible(true);
 					setAlertMessage(`Ошибка на стороне сервера`);
 					setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
@@ -1116,7 +1415,6 @@ useEffect(() => {
 
 
 	useEffect(() => {
-		console.log('baseMainData', baseMainData);
 	}, [baseMainData]);
 
 
@@ -1499,6 +1797,39 @@ useEffect(() => {
 									</>
 								)}
 
+								{hasUnsavedProblem && (
+									<div style={{marginRight: '12px'}}>
+										<Dropdown
+											style={{marginRight: '12px'}}
+											trigger={['hover']}
+											menu={{
+												items: [
+													{ key: 'restore', label: 'Восстановить' },
+													{ key: 'reset', label: 'Сбросить' },
+													{ type: 'divider' },
+													{ key: 'sections_title', label: 'Несохранённые секции', disabled: true },
+													...(problemPayloadSections.length
+														? problemPayloadSections.map((section, idx) => ({ key: `section_${section.key}`, label: section.label, disabled: false }))
+														: [{ key: 'sections_empty', label: 'Нет данных', disabled: false }]),
+												],
+												onClick: ({ key }) => {
+													if (key === 'restore') restoreFromLastFailedLog();
+													if (key === 'reset') resetUnsavedProblem();
+											if (String(key).startsWith('section_')) {
+												const sectionKey = String(key).replace('section_', '');
+												const targetSection = problemPayloadSections.find((s) => s.key === sectionKey);
+												if (targetSection?.tab) handleChangeTab(targetSection.tab);
+											}
+												},
+											}}
+										>
+											<Tag color="red" style={{ marginRight: '12px', cursor: 'pointer', fontSize: '14px', padding: '6px' }}>
+												Ошибка сохранения
+											</Tag>
+										</Dropdown>
+										</div>
+									)}
+
 
 								{editMode ? (
 									<div>
@@ -1618,6 +1949,8 @@ useEffect(() => {
 							departaments={departList}
 							main_data={baseMainData}
 							on_change_section={sectionUpdateHandler}
+							pending_restore={pendingRestoreCalls}
+							on_pending_restore_done={() => setPendingRestoreCalls(null)}
 						/>
 
 
@@ -1628,6 +1961,8 @@ useEffect(() => {
 								userdata={userdata}
 								on_change_section={sectionUpdateHandler}
 								on_delete_section={sectionDeleteHandler}
+								pending_restore={pendingRestoreProjects}
+								on_pending_restore_done={() => setPendingRestoreProjects(null)}
 
 								call_to_save={callToSaveAction}
 
@@ -1650,6 +1985,8 @@ useEffect(() => {
               userdata={userdata}
 							on_change_section={sectionUpdateHandler}
 							on_delete_section={sectionDeleteHandler}
+							pending_restore={pendingRestoreNotes}
+							on_pending_restore_done={() => setPendingRestoreNotes(null)}
 
 							call_to_save={callToSaveAction}
 							base_data={baseNotesData}
@@ -1703,3 +2040,9 @@ useEffect(() => {
 };
 
 export default TorgPage;
+
+
+
+
+
+

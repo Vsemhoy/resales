@@ -440,6 +440,8 @@ async _initDB() {
 
     try {
       const now = new Date();
+      const orgIdResolved = meta?.orgId ?? this.com_id ?? null;
+      const orgNameResolved = meta?.orgName ?? this.com_name ?? '';
       
       const logEntry = {
         id: this._generateId(),
@@ -458,6 +460,10 @@ async _initDB() {
           id_company: this.com_idcom,
           name: this.com_name
         },
+        orgSnapshot: {
+          id: orgIdResolved,
+          name: orgNameResolved,
+        },
         action,
         data: this._sanitizeData(data),
         meta: {
@@ -470,7 +476,7 @@ async _initDB() {
       return this._withStore('readwrite', (store, resolve, reject) => {
         const request = store.add(logEntry);
         
-        request.onsuccess = () => resolve(logEntry.id);
+        request.onsuccess = () => { this._invalidateCache(); resolve(logEntry.id); };
         request.onerror = () => {
           logError('Write error:', request.error);
           reject(request.error);
@@ -539,6 +545,121 @@ async _initDB() {
       responseData: error?.response?.data,
       context,
     }, { isError: true, ...context });
+  }
+
+  async hideProblemForOrg({ orgId, orgName = null, sourceErrorId = null, reason = 'Скрыто пользователем' } = {}) {
+    if (!orgId) return null;
+    return this.log('PROBLEM_HIDDEN', {
+      sourceErrorId,
+      reason,
+    }, {
+      orgId,
+      orgName,
+      isProblemHidden: true,
+    });
+  }
+
+  async getUnsavedProblemCompanies({ limit = 20000 } = {}) {
+    const logs = await this.getLogs({ limit });
+    if (!logs?.length) return [];
+
+    const byOrg = new Map();
+    const ascLogs = [...logs].sort((a, b) => (a.timestampMs || 0) - (b.timestampMs || 0));
+
+    // Важно: id и name должны извлекаться из одного источника,
+    // иначе на смешанных логах можно получить "чужое" имя для orgId.
+    const extractOrg = (entry) => {
+      if (entry?.orgSnapshot?.id !== undefined && entry?.orgSnapshot?.id !== null && entry?.orgSnapshot?.id !== '') {
+        return { orgId: entry.orgSnapshot.id, orgName: entry.orgSnapshot?.name || '' };
+      }
+      if (entry?.comState?.id !== undefined && entry?.comState?.id !== null && entry?.comState?.id !== '') {
+        return { orgId: entry.comState.id, orgName: entry.comState?.name || '' };
+      }
+      if (entry?.meta?.orgId !== undefined && entry?.meta?.orgId !== null && entry?.meta?.orgId !== '') {
+        return { orgId: entry.meta.orgId, orgName: entry.meta?.orgName || '' };
+      }
+      if (entry?.data?.context?.orgId !== undefined && entry?.data?.context?.orgId !== null && entry?.data?.context?.orgId !== '') {
+        return { orgId: entry.data.context.orgId, orgName: entry.data.context?.orgName || '' };
+      }
+      if (entry?.data?.context?.payload?.main?.id !== undefined && entry?.data?.context?.payload?.main?.id !== null && entry?.data?.context?.payload?.main?.id !== '') {
+        return {
+          orgId: entry.data.context.payload.main.id,
+          orgName: entry.data.context.payload.main?.name || entry?.data?.context?.orgName || '',
+        };
+      }
+      if (entry?.data?.context?.payload?.main?.ID !== undefined && entry?.data?.context?.payload?.main?.ID !== null && entry?.data?.context?.payload?.main?.ID !== '') {
+        return {
+          orgId: entry.data.context.payload.main.ID,
+          orgName: entry.data.context.payload.main?.name || entry?.data?.context?.orgName || '',
+        };
+      }
+      if (entry?.data?.context?.payload?.main?.org_id !== undefined && entry?.data?.context?.payload?.main?.org_id !== null && entry?.data?.context?.payload?.main?.org_id !== '') {
+        return {
+          orgId: entry.data.context.payload.main.org_id,
+          orgName: entry.data.context.payload.main?.name || entry?.data?.context?.orgName || '',
+        };
+      }
+      if (entry?.data?.orgId !== undefined && entry?.data?.orgId !== null && entry?.data?.orgId !== '') {
+        return { orgId: entry.data.orgId, orgName: '' };
+      }
+      return { orgId: null, orgName: '' };
+    };
+
+    ascLogs.forEach((entry) => {
+      const { orgId, orgName } = extractOrg(entry);
+      if (!orgId) return;
+
+      const key = String(orgId);
+      if (!byOrg.has(key)) {
+        byOrg.set(key, {
+          orgId: key,
+          orgName: orgName || `Компания #${key}`,
+          hasProblem: false,
+          hiddenAt: 0,
+          resolvedAt: 0,
+          lastFailureAt: 0,
+          lastFailureMessage: '',
+          lastFailureLogId: null,
+        });
+      }
+
+      const state = byOrg.get(key);
+      if ((!state.orgName || state.orgName.startsWith('Компания #')) && orgName) {
+        state.orgName = orgName;
+      }
+
+      const ts = entry.timestampMs || 0;
+      const isSaveFailed = entry.action === 'ERROR' && (
+        entry?.data?.errorType === 'SAVE_FAILED'
+        || !!entry?.data?.context?.payload
+        || entry?.meta?.isSaveAttempt === true
+      );
+
+      if (isSaveFailed) {
+        state.hasProblem = true;
+        state.lastFailureAt = ts;
+        state.lastFailureMessage = entry?.data?.message || 'Ошибка сохранения';
+        state.lastFailureLogId = entry?.id || null;
+        // Имя из ERROR-записи самое надёжное: там orgName = baseMainData?.name
+        // Перезаписываем всегда, т.к. более ранние записи (PAGE_OPEN и т.п.)
+        // могли подхватить com_name от предыдущей открытой карточки (синглтон).
+        if (orgName) state.orgName = orgName;
+      }
+
+      if (entry.action === 'SAVE_SUCCESS') {
+        state.hasProblem = false;
+        state.resolvedAt = ts;
+      }
+
+      if (entry.action === 'PROBLEM_HIDDEN') {
+        state.hasProblem = false;
+        state.hiddenAt = ts;
+      }
+    });
+
+    return Array.from(byOrg.values())
+      .filter((item) => item.hasProblem && item.lastFailureAt > Math.max(item.hiddenAt || 0, item.resolvedAt || 0))
+      .sort((a, b) => (b.lastFailureAt || 0) - (a.lastFailureAt || 0));
   }
 
   // ===================== ПОЛУЧЕНИЕ ЛОГОВ =====================

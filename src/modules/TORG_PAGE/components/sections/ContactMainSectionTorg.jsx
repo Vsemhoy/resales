@@ -196,9 +196,9 @@ useEffect(() => {
   }
 }, [props.data]);
 
-useEffect(() => {
-  console.log(lastName);
-}, [lastName]);
+// useEffect(() => {
+//   console.log(lastName);
+// }, [lastName]);
 
   useEffect(() => {
     setSelects(props.selects)
@@ -339,7 +339,7 @@ useEffect(() => {
 
 
 const CollectAndSend = (stackName, data) => {
-  console.log('stackName, data', stackName, data);
+  // console.log('stackName, data', stackName, data);
 
   if (!props.on_collect || !baseData) return;
 
