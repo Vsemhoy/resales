@@ -716,7 +716,9 @@
 }
 
 .calendar-month-more-popover .event-badge {
+  flex: 0 0 auto;
   max-width: 100%;
+  min-height: 24px;
   width: calc(100% - 8px);
 }
 
