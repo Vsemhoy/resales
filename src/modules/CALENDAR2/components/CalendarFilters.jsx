@@ -138,6 +138,7 @@ const CalendarFilters = ({
             loading={usersLoading}
             placeholder="Выберите сотрудников"
             style={{ minWidth: 250, maxWidth: 400 }}
+            allowClear={isAdmin}
             maxTagCount={2}
             maxTagPlaceholder={(omittedValues) => `+${omittedValues.length}`}
             filterOption={(input, option) => {
