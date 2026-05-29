@@ -4,6 +4,7 @@
  * НАСТРОЙКИ (localStorage 'formlogger_settings'):
  * - enabled: включено ли логирование
  * - saveSnapshots: сохранять ли снимки форм
+ * - showStarResolver: показывать ли кнопки Star-Resolver в интерфейсе
  * - maxAgeDays: максимальный возраст логов в днях (5-90)
  * - maxSizeMB: максимальный размер БД в МБ (5-100)
  */
@@ -17,6 +18,7 @@ const SETTINGS_KEY = 'formlogger_settings';
 const DEFAULT_SETTINGS = {
   enabled: true,
   saveSnapshots: false,
+  showStarResolver: false,
   maxAgeDays: 30,
   maxSizeMB: 20,
 };
