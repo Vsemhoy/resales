@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TorgPageSectionRow from '../TorgPageSectionRow';
-import { AutoComplete, Button, Checkbox, DatePicker, Input, Select, TimePicker, Tooltip } from 'antd';
+import { AutoComplete, Button, Checkbox, DatePicker, Input, Select, Tag, TimePicker, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { BriefcaseIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -518,7 +518,7 @@ const CallTabSectionTorg = (props) => {
         //handleChangeNumbers(phoneStr);
     };
 
-    const splicePhone = (phoneStr) => {
+  const splicePhone = (phoneStr) => {
         const res = {
             number: '',
             add: '',
@@ -534,6 +534,25 @@ const CallTabSectionTorg = (props) => {
         }
         return res;
     };
+
+  const getDateTagColor = (value) => {
+    if (!value || !dayjs(value).isValid()) {
+      return 'default';
+    }
+
+    const currentDate = dayjs(value).startOf('day');
+    const today = dayjs().startOf('day');
+
+    if (currentDate.isBefore(today)) {
+      return 'default';
+    }
+
+    if (currentDate.isSame(today)) {
+      return 'red';
+    }
+
+    return 'gold';
+  };
 
 
   return (
@@ -626,7 +645,12 @@ const CallTabSectionTorg = (props) => {
           </div>
 
         </div>
-        <div className={'sa-flex'}>
+        <div className={'sa-flex'} style={{ alignItems: 'center', marginRight: 16 }}>
+          {date && dayjs(date).isValid() && (
+            <Tag color={getDateTagColor(date)}>
+              {dayjs(date).format('DD.MM.YYYY')}
+            </Tag>
+          )}
           {allowDelete && editMode && (
             <span className={'sa-pa-3 sa-org-remove-button'}
               
