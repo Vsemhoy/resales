@@ -69,6 +69,7 @@ function CoverFull({ theme, data, draft }) {
 function CoverHat({ theme, data, draft }) {
   // Картинка без полей — растягиваем через отрицательные отступы
   const hatUrl = absUrl(data?.hatImage)
+  const hatHeaderText = typeof data?.hatHeaderText === 'string' ? data.hatHeaderText.trim() : ''
 
   const p = theme.page
 
@@ -77,6 +78,7 @@ function CoverHat({ theme, data, draft }) {
       {/* Баннер — на всю ширину без полей */}
       {hatUrl && (
         <View style={{
+          position: 'relative',
           marginTop:    -p.marginTop,
           marginLeft:   -p.marginLeft,
           marginRight:  -p.marginRight,
@@ -86,14 +88,39 @@ function CoverHat({ theme, data, draft }) {
             src={hatUrl}
             style={{ width: mm(210), height: mm(55), objectFit: 'cover' }}
           />
+          {hatHeaderText ? (
+            <View style={{
+              position: 'absolute',
+              right: mm(12),
+              bottom: mm(4),
+              width: mm(210 / 2),
+            }}>
+              <Text style={{ textAlign: 'right' }}>
+                {hatHeaderText}
+              </Text>
+            </View>
+          ) : null}
         </View>
       )}
       {!hatUrl && (
         <View style={{
+          position: 'relative',
           marginTop: -p.marginTop, marginLeft: -p.marginLeft, marginRight: -p.marginRight,
           marginBottom: mm(8), height: mm(55), backgroundColor: theme.accent + '22',
           alignItems: 'center', justifyContent: 'center',
         }}>
+          {hatHeaderText ? (
+            <View style={{
+              position: 'absolute',
+              right: mm(12),
+              bottom: mm(4),
+              width: mm(210 / 2),
+            }}>
+              <Text style={{ textAlign: 'right' }}>
+                {hatHeaderText}
+              </Text>
+            </View>
+          ) : null}
           <Text style={{ fontSize: theme.fontSize.sm, color: theme.accent, fontFamily: theme.fonts.regular }}>
             Загрузите баннер-шапку
           </Text>

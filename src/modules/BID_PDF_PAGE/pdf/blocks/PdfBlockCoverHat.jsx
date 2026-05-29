@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, Image } from '@react-pdf/renderer'
+import { mm } from '../theme/units'
 
 function absUrl(src) {
   if (!src || typeof src !== 'string') return null
@@ -10,11 +11,13 @@ function absUrl(src) {
 export function PdfBlockCoverHat({ cfg, data, draft }) {
   const { color, layout, text, font, weight, space, cover } = cfg
   const hatUrl = absUrl(data?.hatImage)
+  const hatHeaderText = typeof data?.hatHeaderText === 'string' ? data.hatHeaderText.trim() : ''
 
   return (
     <View>
       {/* Баннер — за поля через отрицательные отступы */}
       <View style={{
+        position: 'relative',
         marginTop:    -layout.marginTop,
         marginLeft:   -layout.marginLeft,
         marginRight:  -layout.marginRight,
@@ -24,6 +27,21 @@ export function PdfBlockCoverHat({ cfg, data, draft }) {
           ? <Image src={hatUrl} style={{ width: layout.pageW, height: cover.hatHeight, objectFit: 'fill' }} />
           : <View style={{ width: layout.pageW, height: cover.hatHeight, backgroundColor: color.accentLight }} />
         }
+        {hatHeaderText ? (
+          <View
+            style={{
+              position: 'absolute',
+              right: mm(12),
+              bottom: mm(4),
+              width: layout.pageW * 0.5,
+              fontSize: text.base, color: color.textPrimary
+            }}
+          >
+            <Text style={{ textAlign: 'right' }}>
+              {hatHeaderText}
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       {/* Строка реквизитов */}
