@@ -402,9 +402,29 @@
    ============================================================================= */
 
 .calendar-day-header {
+  position: relative;
   padding: 16px;
   border-bottom: 1px solid #f0f0f0;
   text-align: center;
+}
+
+.calendar-day-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendar-day-title-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-day-back {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #1890ff;
 }
 
 .calendar-day-name {
@@ -670,6 +690,9 @@
 }
 
 .calendar-month-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 11px;
   color: #1890ff;
   cursor: pointer;
@@ -678,6 +701,23 @@
 
 .calendar-month-more:hover {
   text-decoration: underline;
+}
+
+.calendar-month-more-popover {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  min-width: 220px;
+  max-width: 360px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.calendar-month-more-popover .event-badge {
+  max-width: 100%;
+  width: calc(100% - 8px);
 }
 
 /* =============================================================================

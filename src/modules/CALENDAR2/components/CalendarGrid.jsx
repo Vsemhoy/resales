@@ -11,12 +11,13 @@
  */
 
 import React, { useMemo } from 'react';
-import { Tooltip, Badge } from 'antd';
+import { Tooltip, Badge, Button, Popover } from 'antd';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { VIEW_MODES } from './hooks/UseCalendarFilters';
 import { getEventTypeColor, getEventTypeName } from './mock/CALENDARMOCK';
 import { BriefcaseIcon, DocumentCurrencyDollarIcon, MoonIcon, NewspaperIcon, PencilSquareIcon, PhoneIcon, RocketLaunchIcon, ShieldCheckIcon, StarIcon, TableCellsIcon, UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftOutlined, ExportOutlined } from '@ant-design/icons';
 
 dayjs.extend(isoWeek);
 
@@ -29,9 +30,11 @@ const CalendarGrid = ({
   selectedDate,
   dateRange,
   eventsByDate,
+  returnViewMode,
   onEventClick,
   onDateDoubleClick,
   onDateSelect,
+  onReturnToPreviousView,
 }) => {
   
   // Рендер в зависимости от режима
@@ -41,8 +44,10 @@ const CalendarGrid = ({
         <DayView
           date={selectedDate}
           events={eventsByDate[selectedDate.format('YYYY-MM-DD')] || []}
+          returnViewMode={returnViewMode}
           onEventClick={onEventClick}
           onDoubleClick={onDateDoubleClick}
+          onReturnToPreviousView={onReturnToPreviousView}
         />
       );
       
@@ -86,7 +91,7 @@ const CalendarGrid = ({
 // РЕЖИМ "ДЕНЬ"
 // =============================================================================
 
-const DayView = ({ date, events, onEventClick, onDoubleClick }) => {
+const DayView = ({ date, events, returnViewMode, onEventClick, onDoubleClick, onReturnToPreviousView }) => {
   const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 - 21:00
   
   // Группируем события по часам
@@ -105,8 +110,22 @@ const DayView = ({ date, events, onEventClick, onDoubleClick }) => {
   return (
     <div className="calendar-day-view">
       <div className="calendar-day-header">
-        <span className="calendar-day-name">{WEEK_DAYS_FULL[date.isoWeekday() - 1]}</span>
-        <span className="calendar-day-date">{date.format('D MMMM YYYY')}</span>
+        {returnViewMode && (
+          <Button
+            type="text"
+            icon={<ArrowLeftOutlined />}
+            onClick={onReturnToPreviousView}
+            className="calendar-day-back"
+          >
+            Назад
+          </Button>
+        )}
+        <div className="calendar-day-title">
+          <div className="calendar-day-title-text">
+            <span className="calendar-day-name">{WEEK_DAYS_FULL[date.isoWeekday() - 1]}</span>
+            <span className="calendar-day-date">{date.format('D MMMM YYYY')}</span>
+          </div>
+        </div>
       </div>
       
       <div className="calendar-day-body">
@@ -193,6 +212,7 @@ const WeekView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick,
                 <div
                   key={dateStr}
                   className={`calendar-week-cell ${isWeekend ? 'weekend' : ''} ${day.isSame(today, 'day') ? 'today' : ''}`}
+                  onClick={() => onDateSelect(dateStr)}
                   onDoubleClick={() => onDateDoubleClick(dateStr)}
                 >
                   {hourEvents.map(event => (
@@ -276,8 +296,8 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
           <div key={weekIndex} className="calendar-month-week">
             {week.map(day => {
               const events = eventsByDate[day.dateStr] || [];
-              //const visibleEvents = events.slice(0, 12);
-              //const moreCount = events.length - 12;
+              const visibleEvents = events.slice(0, 3);
+              const moreCount = events.length - visibleEvents.length;
               
               return (
                 <div
@@ -290,14 +310,14 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                     day.isWeekend ? 'weekend' : ''
                   }`}
                   onDoubleClick={() => onDateDoubleClick(day.dateStr)}
-                  // onClick={() => onDateSelect(day.dateStr)}
+                  onClick={() => onDateSelect(day.dateStr)}
                 >
                   <div className={`calendar-month-day-number ${day.isToday ? 'today-number' : ''}`}>
                     {day.date.format('D')}
                   </div>
                   
                   <div className="calendar-month-events">
-                    {events.map(event => (
+                    {visibleEvents.map(event => (
                       <EventBadge
                         key={event.id}
                         event={event}
@@ -305,6 +325,29 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                         compact
                       />
                     ))}
+                    {moreCount > 0 && (
+                      <Popover
+                        trigger="click"
+                        placement="rightTop"
+                        content={(
+                          <div className="calendar-month-more-popover">
+                            {events.map(event => (
+                              <EventBadge
+                                key={event.id}
+                                event={event}
+                                onClick={() => onEventClick(event)}
+                                compact
+                              />
+                            ))}
+                          </div>
+                        )}
+                      >
+                      <div className="calendar-month-more" onClick={(e) => e.stopPropagation()}>
+                        <ExportOutlined />
+                        ещё {moreCount} событий
+                      </div>
+                      </Popover>
+                    )}
                     
                     {/*{moreCount > 0 && (
                       <div className="calendar-month-more">
