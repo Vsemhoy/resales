@@ -10,13 +10,14 @@
  * - Квартал: 3 месяца компактно
  */
 
-import React, { useMemo } from 'react';
-import { Tooltip, Badge } from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Tooltip, Badge, Button, Popover } from 'antd';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { VIEW_MODES } from './hooks/UseCalendarFilters';
 import { getEventTypeColor, getEventTypeName } from './mock/CALENDARMOCK';
-import { DocumentCurrencyDollarIcon, MoonIcon, NewspaperIcon, PencilSquareIcon, PhoneArrowUpRightIcon, RocketLaunchIcon, ShieldCheckIcon, ShoppingCartIcon, StarIcon, TableCellsIcon, UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { BriefcaseIcon, DocumentCurrencyDollarIcon, MoonIcon, NewspaperIcon, PencilSquareIcon, PhoneIcon, RocketLaunchIcon, ShieldCheckIcon, StarIcon, TableCellsIcon, UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftOutlined, ExportOutlined } from '@ant-design/icons';
 
 dayjs.extend(isoWeek);
 
@@ -29,9 +30,11 @@ const CalendarGrid = ({
   selectedDate,
   dateRange,
   eventsByDate,
+  returnViewMode,
   onEventClick,
   onDateDoubleClick,
   onDateSelect,
+  onReturnToPreviousView,
 }) => {
   
   // Рендер в зависимости от режима
@@ -41,8 +44,10 @@ const CalendarGrid = ({
         <DayView
           date={selectedDate}
           events={eventsByDate[selectedDate.format('YYYY-MM-DD')] || []}
+          returnViewMode={returnViewMode}
           onEventClick={onEventClick}
           onDoubleClick={onDateDoubleClick}
+          onReturnToPreviousView={onReturnToPreviousView}
         />
       );
       
@@ -86,7 +91,7 @@ const CalendarGrid = ({
 // РЕЖИМ "ДЕНЬ"
 // =============================================================================
 
-const DayView = ({ date, events, onEventClick, onDoubleClick }) => {
+const DayView = ({ date, events, returnViewMode, onEventClick, onDoubleClick, onReturnToPreviousView }) => {
   const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 - 21:00
   
   // Группируем события по часам
@@ -105,8 +110,22 @@ const DayView = ({ date, events, onEventClick, onDoubleClick }) => {
   return (
     <div className="calendar-day-view">
       <div className="calendar-day-header">
-        <span className="calendar-day-name">{WEEK_DAYS_FULL[date.isoWeekday() - 1]}</span>
-        <span className="calendar-day-date">{date.format('D MMMM YYYY')}</span>
+        {returnViewMode && (
+          <Button
+            type="text"
+            icon={<ArrowLeftOutlined />}
+            onClick={onReturnToPreviousView}
+            className="calendar-day-back"
+          >
+            Назад
+          </Button>
+        )}
+        <div className="calendar-day-title">
+          <div className="calendar-day-title-text">
+            <span className="calendar-day-name">{WEEK_DAYS_FULL[date.isoWeekday() - 1]}</span>
+            <span className="calendar-day-date">{date.format('D MMMM YYYY')}</span>
+          </div>
+        </div>
       </div>
       
       <div className="calendar-day-body">
@@ -193,6 +212,7 @@ const WeekView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick,
                 <div
                   key={dateStr}
                   className={`calendar-week-cell ${isWeekend ? 'weekend' : ''} ${day.isSame(today, 'day') ? 'today' : ''}`}
+                  onClick={() => onDateSelect(dateStr)}
                   onDoubleClick={() => onDateDoubleClick(dateStr)}
                 >
                   {hourEvents.map(event => (
@@ -219,6 +239,44 @@ const WeekView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick,
 
 const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick, onDateSelect }) => {
   const today = dayjs();
+  const [openMoreDate, setOpenMoreDate] = useState(null);
+  const openMoreDateRef = useRef(null);
+  const suppressDateSelectRef = useRef(false);
+
+  useEffect(() => {
+    openMoreDateRef.current = openMoreDate;
+  }, [openMoreDate]);
+
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!openMoreDateRef.current) {
+        return;
+      }
+
+      const target = event.target;
+      const isMoreTrigger = target.closest?.('.calendar-month-more');
+      const isMorePopover = target.closest?.('.calendar-month-more-popover');
+
+      if (!isMoreTrigger && !isMorePopover) {
+        suppressDateSelectRef.current = true;
+        setOpenMoreDate(null);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        suppressDateSelectRef.current = false;
+        setOpenMoreDate(null);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown, true);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown, true);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
   
   // Генерируем дни месяца с padding для начала и конца
   const calendarDays = useMemo(() => {
@@ -276,8 +334,8 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
           <div key={weekIndex} className="calendar-month-week">
             {week.map(day => {
               const events = eventsByDate[day.dateStr] || [];
-              //const visibleEvents = events.slice(0, 12);
-              //const moreCount = events.length - 12;
+              const visibleEvents = events.slice(0, 3);
+              const moreCount = events.length - visibleEvents.length;
               
               return (
                 <div
@@ -290,14 +348,24 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                     day.isWeekend ? 'weekend' : ''
                   }`}
                   onDoubleClick={() => onDateDoubleClick(day.dateStr)}
-                  // onClick={() => onDateSelect(day.dateStr)}
+                  onClick={() => {
+                    if (suppressDateSelectRef.current) {
+                      suppressDateSelectRef.current = false;
+                      return;
+                    }
+                    if (openMoreDate) {
+                      setOpenMoreDate(null);
+                      return;
+                    }
+                    onDateSelect(day.dateStr);
+                  }}
                 >
                   <div className={`calendar-month-day-number ${day.isToday ? 'today-number' : ''}`}>
                     {day.date.format('D')}
                   </div>
                   
                   <div className="calendar-month-events">
-                    {events.map(event => (
+                    {visibleEvents.map(event => (
                       <EventBadge
                         key={event.id}
                         event={event}
@@ -305,6 +373,38 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                         compact
                       />
                     ))}
+                    {moreCount > 0 && (
+                      <Popover
+                        trigger="click"
+                        placement="rightTop"
+                        open={openMoreDate === day.dateStr}
+                        onOpenChange={(open) => {
+                          setOpenMoreDate(open ? day.dateStr : null);
+                        }}
+                        content={(
+                          <div
+                            className="calendar-month-more-popover"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            {events.map(event => (
+                              <EventBadge
+                                key={event.id}
+                                event={event}
+                                onClick={() => onEventClick(event)}
+                                compact
+                              />
+                            ))}
+                          </div>
+                        )}
+                      >
+                      <div className="calendar-month-more" onClick={(e) => e.stopPropagation()}>
+                        <ExportOutlined />
+                        ещё {moreCount} событий
+                      </div>
+                      </Popover>
+                    )}
                     
                     {/*{moreCount > 0 && (
                       <div className="calendar-month-more">
@@ -439,6 +539,7 @@ const QuarterMonth = ({ monthDate, eventsByDate, today, onEventClick, onDateDoub
 const EventBadge = ({ event, onClick, compact = false }) => {
   const color = getEventTypeColor(event.type);
   const typeName = getEventTypeName(event.type);
+  const contactPerson = getContactPerson(event);
   
   const tooltipContent = (
     <div className="event-tooltip">
@@ -446,6 +547,14 @@ const EventBadge = ({ event, onClick, compact = false }) => {
       <div className="event-tooltip-content">{event.content}</div>
       {event.org_name && (
         <div className="event-tooltip-org">{event.org_name}</div>
+      )}
+      {contactPerson?.name && (
+        <div className="event-tooltip-contact">
+          <div>Контактное лицо: {contactPerson.name}</div>
+          {contactPerson.post && (
+            <div className="event-tooltip-contact-post">Должность: {contactPerson.post}</div>
+          )}
+        </div>
       )}
       {event.event_time && (
         <div className="event-tooltip-time">
@@ -481,7 +590,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             >
             {event.type === 1 && (
               <div>
-              <ShoppingCartIcon height={'15px'} />
+              <PhoneIcon height={'15px'} />
                 <span className='event-badge-dot-typename'>
                   {typeName}
                 </span>
@@ -489,7 +598,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             )}
             {event.type === 2 && (
               <div>
-              <DocumentCurrencyDollarIcon height={'15px'} />
+              <BriefcaseIcon height={'15px'} />
                 <span className='event-badge-dot-typename'>
                   {typeName}
                 </span>
@@ -529,7 +638,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             )}
             {event.type === 7 && (
               <div>
-              <PhoneArrowUpRightIcon height={'15px'} />
+              <PhoneIcon height={'15px'} />
                 <span className='event-badge-dot-typename'>
                   {typeName}
                 </span>
@@ -603,14 +712,36 @@ const EventBadge = ({ event, onClick, compact = false }) => {
               {event.org_name && (
                 <div className="event-tooltip-org">{event.org_name}</div>
               )}
+              {contactPerson?.name && (
+                <div className="event-badge-contact">
+                  <span className="event-badge-contact-name">Контактное лицо: {contactPerson.name}</span>
+                  {contactPerson.post && (
+                    <span className="event-badge-contact-post">Должность: {contactPerson.post}</span>
+                  )}
+                </div>
+              )}
             </div>
             </div>
 
           </div>
         ) : (
           <>
+            {(event.type === 1 || event.type === 7) && (
+              <PhoneIcon className="event-badge-icon" height={'15px'} />
+            )}
+            {event.type === 2 && (
+              <BriefcaseIcon className="event-badge-icon" height={'15px'} />
+            )}
             <span className="event-badge-type">{typeName}</span>
             <span className="event-badge-content">{event.content}</span>
+            {contactPerson?.name && (
+              <span className="event-badge-contact">
+                <span className="event-badge-contact-name">Контактное лицо: {contactPerson.name}</span>
+                {contactPerson.post && (
+                  <span className="event-badge-contact-post">Должность: {contactPerson.post}</span>
+                )}
+              </span>
+            )}
             {event.comments_count > 0 && (
               <Badge count={event.comments_count} size="small" />
             )}
@@ -619,6 +750,25 @@ const EventBadge = ({ event, onClick, compact = false }) => {
       </div>
     </Tooltip>
   );
+};
+
+const getContactPerson = (event) => {
+  const name = [
+    event.contact_user,
+    event.contact_name,
+    event.contactperson,
+    event.org_user_name,
+    event.user_name,
+  ].find(value => typeof value === 'string' && value.trim());
+
+  if (!name) {
+    return null;
+  }
+
+  return {
+    name: name.trim(),
+    post: typeof event.event_post === 'string' ? event.event_post.trim() : '',
+  };
 };
 
 export default CalendarGrid;

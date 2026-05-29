@@ -58,7 +58,7 @@ const useCalendarFilters = (userdata) => {
   const usersFromUrl = searchParams.get('users');
   const initialUserIds = usersFromUrl 
     ? usersFromUrl.split(',').map(id => parseInt(id, 10)).filter(Boolean)
-    : currentUserId ? [currentUserId] : [];
+    : isAdmin ? [] : currentUserId ? [currentUserId] : [];
 
   // Типы событий (по умолчанию - все, id=0)
   const typesFromUrl = searchParams.get('types');
@@ -259,12 +259,12 @@ const useCalendarFilters = (userdata) => {
   // Сброс фильтров
   const resetFilters = useCallback(() => {
     setCompanyId(defaultCompanyId);
-    setUserIds(currentUserId ? [currentUserId] : []);
+    setUserIds(isAdmin ? [] : currentUserId ? [currentUserId] : []);
     setTypes([0]);
     setViewMode(VIEW_MODES.MONTH);
     setSelectedDate(dayjs());
     setHasComments(false);
-  }, [defaultCompanyId, currentUserId]);
+  }, [defaultCompanyId, currentUserId, isAdmin]);
 
   // Установка нескольких фильтров сразу
   const setFilters = useCallback((newFilters) => {

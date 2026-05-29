@@ -33,7 +33,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 
 // Хуки
-import useCalendarFilters from './components/hooks/UseCalendarFilters';
+import useCalendarFilters, { VIEW_MODES } from './components/hooks/UseCalendarFilters';
 
 // Компоненты
 import CalendarFilters from './components/CalendarFilters';
@@ -79,6 +79,7 @@ const CalendarPage = ({ userdata }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [createModalDate, setCreateModalDate] = useState(null);
+  const [returnViewMode, setReturnViewMode] = useState(null);
 
   const [baseFilters, setBaseFilters] = useState([]);
   const [baseCompanies, setBaseCompanies] = useState([]);
@@ -229,8 +230,22 @@ const CalendarPage = ({ userdata }) => {
 
   // Клик по дню в heatmap → перейти к дате
   const handleHeatmapClick = useCallback((date) => {
+    setReturnViewMode(null);
     filters.goToDate(date);
   }, [filters]);
+
+  const handleCalendarDateSelect = useCallback((date) => {
+    setReturnViewMode(filters.viewMode);
+    filters.goToDate(date);
+    filters.setViewMode(VIEW_MODES.DAY);
+  }, [filters]);
+
+  const handleReturnToPreviousView = useCallback(() => {
+    if (returnViewMode) {
+      filters.setViewMode(returnViewMode);
+      setReturnViewMode(null);
+    }
+  }, [filters, returnViewMode]);
 
   // Закрытие sidebar
   const handleSidebarClose = useCallback(() => {
@@ -308,6 +323,7 @@ const CalendarPage = ({ userdata }) => {
       </div>
 
       {/* Фильтры */}
+      <div className="calendar-top-row">
       <CalendarFilters
         companyId={filters.companyId}
         userIds={filters.userIds}
@@ -335,10 +351,17 @@ const CalendarPage = ({ userdata }) => {
       />
 
       {/* Навигация */}
+      </div>
+
       <CalendarNavigation
         viewMode={filters.viewMode}
         periodTitle={filters.periodTitle}
-        onViewModeChange={filters.setViewMode}
+        selectedDate={filters.selectedDate}
+        onViewModeChange={(mode) => {
+          setReturnViewMode(null);
+          filters.setViewMode(mode);
+        }}
+        onDateChange={filters.goToDate}
         onPrev={filters.goToPrev}
         onNext={filters.goToNext}
         onToday={filters.goToToday}
@@ -354,9 +377,11 @@ const CalendarPage = ({ userdata }) => {
               selectedDate={filters.selectedDate}
               dateRange={filters.dateRange}
               eventsByDate={eventsByDate}
+              returnViewMode={returnViewMode}
               onEventClick={handleEventClick}
               onDateDoubleClick={handleDateDoubleClick}
-              onDateSelect={filters.goToDate}
+              onDateSelect={handleCalendarDateSelect}
+              onReturnToPreviousView={handleReturnToPreviousView}
             />
           </Spin>
         </div>
