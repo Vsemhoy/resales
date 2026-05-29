@@ -595,10 +595,12 @@
   flex: 0 0 auto;
   min-height: 100px;
   align-items: stretch;
+  width: 100%;
 }
 
 .calendar-month-cell {
   flex: 1;
+  min-width: 0;
   padding: 4px;
   padding-bottom: 22px;
   border-right: 1px solid #c1c1c1;
@@ -615,6 +617,7 @@
     align-content: stretch;
     text-align: left;
     padding: 3px;
+    min-width: 0;
 }
 .calendar-month-cell:last-child {
   border-right: none;
@@ -782,6 +785,7 @@
 .event-badge {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 4px;
   padding: 2px 6px;
   border-radius: 4px;
@@ -816,6 +820,7 @@
   border-radius: 50%;
   background: currentColor; */
   width: 100%;
+  min-width: 0;
 }
 
 .event-badge-type {
@@ -824,6 +829,7 @@
 }
 
 .event-badge-content {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   opacity: 0.9;
@@ -831,11 +837,27 @@
 
 .event-badge-contact {
   color: #555;
+  display: flex;
+  flex-direction: column;
   font-size: 11px;
   font-weight: 500;
+  line-height: 1.2;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.event-badge-contact-name,
+.event-badge-contact-post {
+  display: block;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.event-badge-contact-post {
+  color: #777;
+  font-weight: 400;
 }
 
 /* Tooltip события */
@@ -865,6 +887,10 @@
   color: #555;
   margin-bottom: 2px;
   word-break: break-word;
+}
+
+.event-tooltip-contact-post {
+  color: #777;
 }
 
 .event-tooltip-time {
