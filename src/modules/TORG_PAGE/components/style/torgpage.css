@@ -277,8 +277,9 @@
 }
 
 
-.sa-org-collpase-header {
-      align-items: center;
+.sa-org-collpase-header,
+.sa-org-collpase-header.sa-flex-space {
+	align-items: center;
 }
 
 .sa-org-collapse-item {
