@@ -133,7 +133,8 @@ const TorgPage = (props) => {
 	const [tempMain_an_requisites, setTempMain_an_requisites] = useState([]);
 
 
-const tempMainDataRef = useRef(null);
+const tempMainDataRef    = useRef(null);
+	const baseMainDataRef   = useRef(null);
 const tempProjectsDataRef = useRef(tempProjectsData);
 const tempCallsDataRef = useRef(tempCallsData);
 const tempNotesDataRef = useRef(tempNotesData);
@@ -162,6 +163,7 @@ const [orgName, setOrgName] = useState('');
 const [isRestoringFromLog, setIsRestoringFromLog] = useState(false);
 const [problemPayloadSections, setProblemPayloadSections] = useState([]);
 const [problemPayloadCache, setProblemPayloadCache] = useState(null);
+	const [pendingBaseMerge,       setPendingBaseMerge]       = useState(null);
 	const [pendingRestoreNotes,    setPendingRestoreNotes]    = useState(null);
 	const [pendingRestoreCalls,    setPendingRestoreCalls]    = useState(null);
 	const [pendingRestoreProjects, setPendingRestoreProjects] = useState(null);
@@ -264,7 +266,8 @@ const [problemPayloadCache, setProblemPayloadCache] = useState(null);
 		}
 
 useEffect(() => {
-  tempMainDataRef.current = tempMainData;
+  tempMainDataRef.current  = tempMainData;
+  baseMainDataRef.current  = baseMainData;
   tempProjectsDataRef.current = tempProjectsData;
   tempCallsDataRef.current = tempCallsData;
   tempNotesDataRef.current = tempNotesData;
@@ -279,6 +282,7 @@ useEffect(() => {
   tempMain_an_tolerancesRef.current = tempMain_an_tolerances;
   tempMain_an_requisitesRef.current = tempMain_an_requisites;
 }, [
+  baseMainData,
   tempMainData,
   tempProjectsData,
   tempCallsData,
@@ -639,7 +643,60 @@ useEffect(() => {
 
 
 
-	/** ----------------------- FETCHES -------------------- */
+	// ─── Restore helpers ─────────────────────────────────────────────────────
+	// Вынесено сюда чтобы быть доступным и в applyRestorePayload, и в useEffect.
+
+	// Мёрджим восстановленный массив поверх серверного:
+	// - числовой ID → обновить существующий элемент на месте
+	// - new_xxx → добавить в конец (дедупликация по наличию в merged)
+	const mergeForDisplay = useCallback((baseArr = [], restoredArr = []) => {
+		if (!restoredArr?.length) return baseArr || [];
+		const merged = (baseArr || []).map(base => {
+			const r = restoredArr.find(x => String(x.id) === String(base.id));
+			return r ? { ...base, ...r } : base;
+		});
+		const mergedIds = new Set(merged.map(x => String(x.id)));
+		const newItems  = restoredArr.filter(x => !mergedIds.has(String(x.id ?? '')));
+		return [...merged, ...newItems];
+	}, []);
+
+	// Строим итоговый baseMainData из base + payload + восстановленных массивов
+	const buildRestoredBase = useCallback((base, mainPayload, arrays) => {
+		const clone = (val) => JSON.parse(JSON.stringify(val));
+		const { rContacts, rPhones, rEmails, rAddresses, rLegalAddr, rRequisites, rAnLicenses, rAnTol, rBoLicenses } = arrays;
+		return clone({
+			...(base || {}),
+			...(mainPayload && typeof mainPayload === 'object' ? mainPayload : {}),
+			contacts:           mergeForDisplay(base?.contacts,           rContacts),
+			phones:             mergeForDisplay(base?.phones,             rPhones),
+			emails:             mergeForDisplay(base?.emails,             rEmails),
+			address:            mergeForDisplay(base?.address,            rAddresses),
+			legaladdresses:     mergeForDisplay(base?.legaladdresses,     rLegalAddr),
+			requisites:         mergeForDisplay(base?.requisites,         rRequisites),
+			active_licenses:    mergeForDisplay(base?.active_licenses,    rAnLicenses),
+			active_tolerance:   mergeForDisplay(base?.active_tolerance,   rAnTol),
+			active_licenses_bo: mergeForDisplay(base?.active_licenses_bo, rBoLicenses),
+		});
+	}, [mergeForDisplay]);
+
+	// Deferred merge: применяем когда baseMainData загрузится после restore.
+	// Зависит от ОБОИХ — и от id (загрузка данных) и от pendingBaseMerge (запрос restore).
+	// Иначе если id уже был установлен до клика — useEffect не перезапустится.
+	useEffect(() => {
+		if (!baseMainData?.id || !pendingBaseMerge) return;
+		const { mainPayload, ...arrays } = pendingBaseMerge;
+		setBaseMainData(buildRestoredBase(baseMainData, mainPayload, arrays));
+		setPendingBaseMerge(null);
+	}, [baseMainData?.id, pendingBaseMerge]); // eslint-disable-line react-hooks/exhaustive-deps
+
+	// Сброс pending при смене карточки
+	useEffect(() => {
+		setPendingBaseMerge(null);
+	}, [itemId]);
+
+	// ──────────────────────────────────────────────────────────────────────────
+
+		/** ----------------------- FETCHES -------------------- */
 
 	const get_main_data_action = async (id) => {
 		setLoading(true);
@@ -944,23 +1001,8 @@ useEffect(() => {
 		const normalizeRestoredArray = (val) =>
 			normalizeArray(val).map((item) => normalizeRestoredItem(item));
 
-		// Слияние восстановленных массивов с baseMainData для отрисовки в TabMainTorg.
-		// TabMainTorg читает все под-массивы из props.base_data (поле-маппинг отличается
-		// от payload: org_phones→phones, org_addresses→address и т.д.).
-		// Элементы с числовым ID мёрджатся поверх существующих,
-		// элементы с new_xxx добавляются в конец.
-		const mergeForDisplay = (baseArr = [], restoredArr = []) => {
-			if (!restoredArr.length) return baseArr;
-			const merged = (baseArr || []).map(base => {
-				const r = restoredArr.find(x => String(x.id) === String(base.id));
-				return r ? { ...base, ...r } : base;
-			});
-			// Фильтруем по "нет в merged" вместо new_ префикса —
-			// иначе при повторном ресторе элементы уже есть в baseArr и дублируются
-			const mergedIds = new Set(merged.map(x => String(x.id)));
-			const newItems = restoredArr.filter(x => !mergedIds.has(String(x.id ?? '')));
-			return [...merged, ...newItems];
-		};
+		// mergeForDisplay вынесена на уровень компонента (см. ниже useEffect pendingBaseMerge).
+		// Здесь просто ссылка — функция объявлена как useCallback снаружи.
 
 		const rContacts    = normalizeRestoredArray(payload.contacts);
 		const rPhones      = normalizeRestoredArray(payload.org_phones);
@@ -984,22 +1026,21 @@ useEffect(() => {
 		setTempMain_bo_licenses(clone(rBoLicenses));
 
 		// Отрисовщик: сливаем восстановленные данные в baseMainData.
-		// useEffect([props.base_data]) в TabMainTorg сработает и обновит
-		// setCONTACTS, setORGPHONES, setORGEMAILS и т.д.
-		const mergedBase = clone({
-			...(baseMainData || {}),
-			...(payload.main && typeof payload.main === 'object' ? payload.main : {}),
-			contacts:           mergeForDisplay(baseMainData?.contacts,           rContacts),
-			phones:             mergeForDisplay(baseMainData?.phones,             rPhones),
-			emails:             mergeForDisplay(baseMainData?.emails,             rEmails),
-			address:            mergeForDisplay(baseMainData?.address,            rAddresses),
-			legaladdresses:     mergeForDisplay(baseMainData?.legaladdresses,     rLegalAddr),
-			requisites:         mergeForDisplay(baseMainData?.requisites,         rRequisites),
-			active_licenses:    mergeForDisplay(baseMainData?.active_licenses,    rAnLicenses),
-			active_tolerance:   mergeForDisplay(baseMainData?.active_tolerance,   rAnTol),
-			active_licenses_bo: mergeForDisplay(baseMainData?.active_licenses_bo, rBoLicenses),
-		});
-		setBaseMainData(mergedBase);
+		// Если baseMainData ещё не загружен (null) — сохраняем в pendingBaseMerge
+		// и применяем когда придёт ответ сервера (useEffect ниже).
+		// Это решает race condition на проде: IDB быстрее сети →
+		// кнопка "Восстановить" появляется до окончания загрузки карточки.
+		const restoreArrays = { rContacts, rPhones, rEmails, rAddresses, rLegalAddr, rRequisites, rAnLicenses, rAnTol, rBoLicenses };
+		// Используем ref чтобы не добавлять baseMainData в deps useCallback —
+		// иначе каждый setBaseMainData пересоздаёт applyRestorePayload → restoreFromLastFailedLog → баг.
+		const currentBase = baseMainDataRef.current;
+		if (currentBase?.id) {
+			// baseMainData загружен — применяем немедленно
+			setBaseMainData(buildRestoredBase(currentBase, payload.main, restoreArrays));
+		} else {
+			// baseMainData ещё не пришёл — отложим до его загрузки
+			setPendingBaseMerge({ mainPayload: payload.main, ...restoreArrays });
+		}
 
 		// Коллектор main
 		if (payload.main && typeof payload.main === 'object') {
@@ -1021,7 +1062,7 @@ useEffect(() => {
 		}
 		setIsSmthChanged(true);
 		return true;
-	}, [editMode]);
+	}, [editMode, buildRestoredBase]);
 
 	const getSectionsFromPayload = useCallback((payload) => {
 		if (!payload || typeof payload !== 'object') return [];
@@ -1804,7 +1845,7 @@ useEffect(() => {
 											trigger={['hover']}
 											menu={{
 												items: [
-													{ key: 'restore', label: 'Восстановить' },
+													{ key: 'restore', label: 'Восстановить', disabled: loading || !baseMainData?.id },
 													{ key: 'reset', label: 'Сбросить' },
 													{ type: 'divider' },
 													{ key: 'sections_title', label: 'Несохранённые секции', disabled: true },
