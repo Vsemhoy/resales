@@ -448,8 +448,13 @@ const EventBadge = ({ event, onClick, compact = false }) => {
       {event.org_name && (
         <div className="event-tooltip-org">{event.org_name}</div>
       )}
-      {contactPerson && (
-        <div className="event-tooltip-contact">{contactPerson}</div>
+      {contactPerson?.name && (
+        <div className="event-tooltip-contact">
+          <div>{contactPerson.name}</div>
+          {contactPerson.post && (
+            <div className="event-tooltip-contact-post">{contactPerson.post}</div>
+          )}
+        </div>
       )}
       {event.event_time && (
         <div className="event-tooltip-time">
@@ -607,8 +612,13 @@ const EventBadge = ({ event, onClick, compact = false }) => {
               {event.org_name && (
                 <div className="event-tooltip-org">{event.org_name}</div>
               )}
-              {contactPerson && (
-                <div className="event-badge-contact">{contactPerson}</div>
+              {contactPerson?.name && (
+                <div className="event-badge-contact">
+                  <span className="event-badge-contact-name">{contactPerson.name}</span>
+                  {contactPerson.post && (
+                    <span className="event-badge-contact-post">{contactPerson.post}</span>
+                  )}
+                </div>
               )}
             </div>
             </div>
@@ -618,8 +628,13 @@ const EventBadge = ({ event, onClick, compact = false }) => {
           <>
             <span className="event-badge-type">{typeName}</span>
             <span className="event-badge-content">{event.content}</span>
-            {contactPerson && (
-              <span className="event-badge-contact">{contactPerson}</span>
+            {contactPerson?.name && (
+              <span className="event-badge-contact">
+                <span className="event-badge-contact-name">{contactPerson.name}</span>
+                {contactPerson.post && (
+                  <span className="event-badge-contact-post">{contactPerson.post}</span>
+                )}
+              </span>
             )}
             {event.comments_count > 0 && (
               <Badge count={event.comments_count} size="small" />
@@ -641,12 +656,13 @@ const getContactPerson = (event) => {
   ].find(value => typeof value === 'string' && value.trim());
 
   if (!name) {
-    return '';
+    return null;
   }
 
-  return [name, event.event_post]
-    .filter(value => typeof value === 'string' && value.trim())
-    .join(', ');
+  return {
+    name: name.trim(),
+    post: typeof event.event_post === 'string' ? event.event_post.trim() : '',
+  };
 };
 
 export default CalendarGrid;
