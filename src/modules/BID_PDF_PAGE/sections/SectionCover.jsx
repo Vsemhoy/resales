@@ -1,14 +1,31 @@
 import React, { useState } from 'react'
-import { Input, Segmented } from 'antd'
-import { PlusOutlined, PictureOutlined } from '@ant-design/icons'
+import { Button, Input, Segmented } from 'antd'
+import { PlusOutlined, PictureOutlined, UndoOutlined } from '@ant-design/icons'
 import { Image } from 'antd'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
 import { useCovers, CoversDrawer } from '../components/CoversDrawer'
+
+const HAT_HEADER_TEXT_DEFAULTS = {
+  '2': `ООО "АРСТЕЛ"
++7 (812) 207-50-97
+sales@arstel.com
+www.arstel.com`,
+  '3': `ООО "РОНДО-САУНД"
+196006, Россия, Санкт-Петербург
+Московский проспект, дом 91, литера А
+помещение 11Н, офис 229
+zakaz@rondo-sound.ru
+www.rondo-sound.ru
++7 (812) 339 8972`,
+}
 
 export default function SectionCover({ data, onChange, draftId, companyId }) {
   const accent    = companyId === '3' ? '#269435' : '#FF5903'
   const set       = (key, val) => onChange({ ...data, [key]: val })
   const coverMode = data.coverMode ?? 'cover'   // 'cover' | 'hat'
+  const hatHeaderTextDefault = HAT_HEADER_TEXT_DEFAULTS[String(companyId)] ?? ''
+  const hatHeaderTextValue = data.hatHeaderText ?? hatHeaderTextDefault
+  const hatHeaderTextChanged = data.hatHeaderText !== undefined && data.hatHeaderText !== hatHeaderTextDefault
 
   return (
     <TabWrap>
@@ -80,6 +97,33 @@ export default function SectionCover({ data, onChange, draftId, companyId }) {
         <>
           <Section title="Картинка-баннер" description="Растягивается на всю ширину страницы без полей (~1/4 высоты)">
             <CoverBlockPicker value={data.hatImage ?? null} onChange={url => set('hatImage', url)} accent={accent} companyId={companyId} type="hat" />
+          </Section>
+
+          <Section title="Текст шапки" description="Показывается справа под баннером">
+            <Field label="Текст шапки">
+              <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                <Input.TextArea
+                  value={hatHeaderTextValue}
+                  onChange={e => set('hatHeaderText', e.target.value)}
+                  autoSize={{ minRows: 5 }}
+                  style={{ width: '100%', textAlign: 'right' }}
+                />
+                {hatHeaderTextChanged && (
+                  <Button
+                    size="small"
+                    icon={<UndoOutlined />}
+                    title="Сбросить к дефолтному тексту шапки компании"
+                    onClick={() => set('hatHeaderText', hatHeaderTextDefault)}
+                    style={{ flexShrink: 0 }}
+                  />
+                )}
+              </div>
+              {!data.hatHeaderText && hatHeaderTextDefault && (
+                <div style={{ fontSize: 11, color: '#bfbfbf', marginTop: 3 }}>
+                  Подставлен дефолт для компании
+                </div>
+              )}
+            </Field>
           </Section>
 
           <Section title="Реквизиты" description="Строка под баннером">
