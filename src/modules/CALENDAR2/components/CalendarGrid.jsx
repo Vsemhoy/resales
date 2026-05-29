@@ -10,7 +10,7 @@
  * - Квартал: 3 месяца компактно
  */
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Tooltip, Badge, Button, Popover } from 'antd';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
@@ -239,6 +239,44 @@ const WeekView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick,
 
 const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick, onDateSelect }) => {
   const today = dayjs();
+  const [openMoreDate, setOpenMoreDate] = useState(null);
+  const openMoreDateRef = useRef(null);
+  const suppressDateSelectRef = useRef(false);
+
+  useEffect(() => {
+    openMoreDateRef.current = openMoreDate;
+  }, [openMoreDate]);
+
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!openMoreDateRef.current) {
+        return;
+      }
+
+      const target = event.target;
+      const isMoreTrigger = target.closest?.('.calendar-month-more');
+      const isMorePopover = target.closest?.('.calendar-month-more-popover');
+
+      if (!isMoreTrigger && !isMorePopover) {
+        suppressDateSelectRef.current = true;
+        setOpenMoreDate(null);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        suppressDateSelectRef.current = false;
+        setOpenMoreDate(null);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown, true);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown, true);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
   
   // Генерируем дни месяца с padding для начала и конца
   const calendarDays = useMemo(() => {
@@ -310,7 +348,17 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                     day.isWeekend ? 'weekend' : ''
                   }`}
                   onDoubleClick={() => onDateDoubleClick(day.dateStr)}
-                  onClick={() => onDateSelect(day.dateStr)}
+                  onClick={() => {
+                    if (suppressDateSelectRef.current) {
+                      suppressDateSelectRef.current = false;
+                      return;
+                    }
+                    if (openMoreDate) {
+                      setOpenMoreDate(null);
+                      return;
+                    }
+                    onDateSelect(day.dateStr);
+                  }}
                 >
                   <div className={`calendar-month-day-number ${day.isToday ? 'today-number' : ''}`}>
                     {day.date.format('D')}
@@ -329,8 +377,17 @@ const MonthView = ({ selectedDate, eventsByDate, onEventClick, onDateDoubleClick
                       <Popover
                         trigger="click"
                         placement="rightTop"
+                        open={openMoreDate === day.dateStr}
+                        onOpenChange={(open) => {
+                          setOpenMoreDate(open ? day.dateStr : null);
+                        }}
                         content={(
-                          <div className="calendar-month-more-popover">
+                          <div
+                            className="calendar-month-more-popover"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
                             {events.map(event => (
                               <EventBadge
                                 key={event.id}
