@@ -486,6 +486,7 @@
 
 .calendar-week-day-header {
   flex: 1;
+  min-width: 0;
   padding: 8px 4px;
   text-align: center;
   border-left: 1px solid #dadada;
@@ -554,6 +555,7 @@
 }
 
 .calendar-week-cell {
+  min-width: 0;
   padding: 2px;
   padding-bottom:12px;
   border-left: 1px solid #c1c1c1;
@@ -577,6 +579,11 @@
 
 .calendar-week-cell.weekend {
   background: #fafafa;
+}
+
+.calendar-week-cell .event-badge {
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* =============================================================================
@@ -870,6 +877,14 @@
   flex-shrink: 0;
 }
 
+.event-badge:not(.compact) .event-badge-type {
+  margin-right: 8px;
+}
+
+.event-badge-icon {
+  flex-shrink: 0;
+}
+
 .event-badge-content {
   min-width: 0;
   overflow: hidden;
@@ -878,6 +893,7 @@
 }
 
 .event-badge-contact {
+  align-items: flex-start;
   color: #555;
   display: flex;
   flex-direction: column;

@@ -493,9 +493,9 @@ const EventBadge = ({ event, onClick, compact = false }) => {
       )}
       {contactPerson?.name && (
         <div className="event-tooltip-contact">
-          <div>{contactPerson.name}</div>
+          <div>Контактное лицо: {contactPerson.name}</div>
           {contactPerson.post && (
-            <div className="event-tooltip-contact-post">{contactPerson.post}</div>
+            <div className="event-tooltip-contact-post">Должность: {contactPerson.post}</div>
           )}
         </div>
       )}
@@ -657,9 +657,9 @@ const EventBadge = ({ event, onClick, compact = false }) => {
               )}
               {contactPerson?.name && (
                 <div className="event-badge-contact">
-                  <span className="event-badge-contact-name">{contactPerson.name}</span>
+                  <span className="event-badge-contact-name">Контактное лицо: {contactPerson.name}</span>
                   {contactPerson.post && (
-                    <span className="event-badge-contact-post">{contactPerson.post}</span>
+                    <span className="event-badge-contact-post">Должность: {contactPerson.post}</span>
                   )}
                 </div>
               )}
@@ -669,13 +669,19 @@ const EventBadge = ({ event, onClick, compact = false }) => {
           </div>
         ) : (
           <>
+            {(event.type === 1 || event.type === 7) && (
+              <PhoneIcon className="event-badge-icon" height={'15px'} />
+            )}
+            {event.type === 2 && (
+              <BriefcaseIcon className="event-badge-icon" height={'15px'} />
+            )}
             <span className="event-badge-type">{typeName}</span>
             <span className="event-badge-content">{event.content}</span>
             {contactPerson?.name && (
               <span className="event-badge-contact">
-                <span className="event-badge-contact-name">{contactPerson.name}</span>
+                <span className="event-badge-contact-name">Контактное лицо: {contactPerson.name}</span>
                 {contactPerson.post && (
-                  <span className="event-badge-contact-post">{contactPerson.post}</span>
+                  <span className="event-badge-contact-post">Должность: {contactPerson.post}</span>
                 )}
               </span>
             )}
