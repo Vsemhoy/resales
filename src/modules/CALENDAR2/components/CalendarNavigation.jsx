@@ -7,14 +7,16 @@
  */
 
 import React from 'react';
-import { Button, Segmented } from 'antd';
+import { Button, DatePicker, Segmented } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { VIEW_MODES, VIEW_MODE_LABELS } from './hooks/UseCalendarFilters';
 
 const CalendarNavigation = ({
   viewMode,
   periodTitle,
+  selectedDate,
   onViewModeChange,
+  onDateChange,
   onPrev,
   onNext,
   onToday,
@@ -27,6 +29,19 @@ const CalendarNavigation = ({
     { value: VIEW_MODES.MONTH, label: VIEW_MODE_LABELS[VIEW_MODES.MONTH] },
     // { value: VIEW_MODES.QUARTER, label: VIEW_MODE_LABELS[VIEW_MODES.QUARTER] },
   ];
+
+  const pickerByViewMode = {
+    [VIEW_MODES.DAY]: 'date',
+    [VIEW_MODES.WEEK]: 'week',
+    [VIEW_MODES.MONTH]: 'month',
+    [VIEW_MODES.QUARTER]: 'quarter',
+  };
+
+  const handleDateChange = (date) => {
+    if (date) {
+      onDateChange(date);
+    }
+  };
 
   return (
     <div className="calendar-navigation">
@@ -48,9 +63,17 @@ const CalendarNavigation = ({
           className="calendar-nav-arrow"
         />
         
-        <span className="calendar-nav-title">
-          {periodTitle}
-        </span>
+        <DatePicker
+          key={viewMode}
+          className="calendar-nav-datepicker"
+          value={selectedDate}
+          picker={pickerByViewMode[viewMode]}
+          format={() => periodTitle}
+          allowClear={false}
+          inputReadOnly
+          placeholder={periodTitle}
+          onChange={handleDateChange}
+        />
         
         <Button
           type="text"

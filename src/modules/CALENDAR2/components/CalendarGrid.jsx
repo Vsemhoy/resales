@@ -16,7 +16,7 @@ import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { VIEW_MODES } from './hooks/UseCalendarFilters';
 import { getEventTypeColor, getEventTypeName } from './mock/CALENDARMOCK';
-import { DocumentCurrencyDollarIcon, MoonIcon, NewspaperIcon, PencilSquareIcon, PhoneArrowUpRightIcon, RocketLaunchIcon, ShieldCheckIcon, ShoppingCartIcon, StarIcon, TableCellsIcon, UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { BriefcaseIcon, DocumentCurrencyDollarIcon, MoonIcon, NewspaperIcon, PencilSquareIcon, PhoneIcon, RocketLaunchIcon, ShieldCheckIcon, StarIcon, TableCellsIcon, UserIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 
 dayjs.extend(isoWeek);
 
@@ -439,6 +439,7 @@ const QuarterMonth = ({ monthDate, eventsByDate, today, onEventClick, onDateDoub
 const EventBadge = ({ event, onClick, compact = false }) => {
   const color = getEventTypeColor(event.type);
   const typeName = getEventTypeName(event.type);
+  const contactPerson = getContactPerson(event);
   
   const tooltipContent = (
     <div className="event-tooltip">
@@ -446,6 +447,9 @@ const EventBadge = ({ event, onClick, compact = false }) => {
       <div className="event-tooltip-content">{event.content}</div>
       {event.org_name && (
         <div className="event-tooltip-org">{event.org_name}</div>
+      )}
+      {contactPerson && (
+        <div className="event-tooltip-contact">{contactPerson}</div>
       )}
       {event.event_time && (
         <div className="event-tooltip-time">
@@ -481,7 +485,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             >
             {event.type === 1 && (
               <div>
-              <ShoppingCartIcon height={'15px'} />
+              <PhoneIcon height={'15px'} />
                 <span className='event-badge-dot-typename'>
                   {typeName}
                 </span>
@@ -489,7 +493,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             )}
             {event.type === 2 && (
               <div>
-              <DocumentCurrencyDollarIcon height={'15px'} />
+              <BriefcaseIcon height={'15px'} />
                 <span className='event-badge-dot-typename'>
                   {typeName}
                 </span>
@@ -529,7 +533,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             )}
             {event.type === 7 && (
               <div>
-              <PhoneArrowUpRightIcon height={'15px'} />
+              <PhoneIcon height={'15px'} />
                 <span className='event-badge-dot-typename'>
                   {typeName}
                 </span>
@@ -603,6 +607,9 @@ const EventBadge = ({ event, onClick, compact = false }) => {
               {event.org_name && (
                 <div className="event-tooltip-org">{event.org_name}</div>
               )}
+              {contactPerson && (
+                <div className="event-badge-contact">{contactPerson}</div>
+              )}
             </div>
             </div>
 
@@ -611,6 +618,9 @@ const EventBadge = ({ event, onClick, compact = false }) => {
           <>
             <span className="event-badge-type">{typeName}</span>
             <span className="event-badge-content">{event.content}</span>
+            {contactPerson && (
+              <span className="event-badge-contact">{contactPerson}</span>
+            )}
             {event.comments_count > 0 && (
               <Badge count={event.comments_count} size="small" />
             )}
@@ -619,6 +629,24 @@ const EventBadge = ({ event, onClick, compact = false }) => {
       </div>
     </Tooltip>
   );
+};
+
+const getContactPerson = (event) => {
+  const name = [
+    event.contact_user,
+    event.contact_name,
+    event.contactperson,
+    event.org_user_name,
+    event.user_name,
+  ].find(value => typeof value === 'string' && value.trim());
+
+  if (!name) {
+    return '';
+  }
+
+  return [name, event.event_post]
+    .filter(value => typeof value === 'string' && value.trim())
+    .join(', ');
 };
 
 export default CalendarGrid;

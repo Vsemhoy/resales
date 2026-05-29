@@ -308,6 +308,7 @@ const CalendarPage = ({ userdata }) => {
       </div>
 
       {/* Фильтры */}
+      <div className="calendar-top-row">
       <CalendarFilters
         companyId={filters.companyId}
         userIds={filters.userIds}
@@ -335,10 +336,14 @@ const CalendarPage = ({ userdata }) => {
       />
 
       {/* Навигация */}
+      </div>
+
       <CalendarNavigation
         viewMode={filters.viewMode}
         periodTitle={filters.periodTitle}
+        selectedDate={filters.selectedDate}
         onViewModeChange={filters.setViewMode}
+        onDateChange={filters.goToDate}
         onPrev={filters.goToPrev}
         onNext={filters.goToNext}
         onToday={filters.goToToday}
