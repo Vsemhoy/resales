@@ -412,6 +412,18 @@ const SettingsPanel = ({ settings, health, onSettingChange }) => {
               </div>
             </div>
             )}
+            {settings.enabled && (
+            <div className="sa-log-cog-panel-item">
+              <Checkbox
+                checked={!!settings.showStarResolver}
+                disabled={!settings.enabled}
+                onChange={(e) => onSettingChange('showStarResolver', e.target.checked)}
+                className="sa-log-cog-panel-label"
+              >
+                Показывать Star-Resolver
+              </Checkbox>
+            </div>
+            )}
 
 
                 {/* Предупреждение если отключено */}

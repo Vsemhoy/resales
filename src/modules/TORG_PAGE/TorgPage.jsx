@@ -163,6 +163,7 @@ const [orgName, setOrgName] = useState('');
 const [isRestoringFromLog, setIsRestoringFromLog] = useState(false);
 const [problemPayloadSections, setProblemPayloadSections] = useState([]);
 const [problemPayloadCache, setProblemPayloadCache] = useState(null);
+const [showStarResolver, setShowStarResolver] = useState(!!formLogger.getSettings()?.showStarResolver);
 	const [pendingBaseMerge,       setPendingBaseMerge]       = useState(null);
 	const [pendingRestoreNotes,    setPendingRestoreNotes]    = useState(null);
 	const [pendingRestoreCalls,    setPendingRestoreCalls]    = useState(null);
@@ -1221,6 +1222,17 @@ useEffect(() => {
 	}, [itemId, refreshUnsavedProblemFlag, loadProblemPayloadPreview]);
 
 	useEffect(() => {
+		const syncResolverFlag = () => setShowStarResolver(!!formLogger.getSettings()?.showStarResolver);
+		syncResolverFlag();
+		window.addEventListener('storage', syncResolverFlag);
+		window.addEventListener('focus', syncResolverFlag);
+		return () => {
+			window.removeEventListener('storage', syncResolverFlag);
+			window.removeEventListener('focus', syncResolverFlag);
+		};
+	}, []);
+
+	useEffect(() => {
 		if (hasUnsavedProblem) {
 			loadProblemPayloadPreview();
 		} else {
@@ -1838,7 +1850,7 @@ useEffect(() => {
 									</>
 								)}
 
-								{hasUnsavedProblem && (
+								{showStarResolver && hasUnsavedProblem && (
 									<div style={{marginRight: '12px'}}>
 										<Dropdown
 											style={{marginRight: '12px'}}
@@ -2081,7 +2093,6 @@ useEffect(() => {
 };
 
 export default TorgPage;
-
 
 
 

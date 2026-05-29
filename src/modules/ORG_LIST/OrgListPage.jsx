@@ -103,6 +103,7 @@ const OrgListPage = (props) => {
 	const [problemCompanies, setProblemCompanies] = useState([]);
 	const [problemModalOpen, setProblemModalOpen] = useState(false);
 	const [problemLoading, setProblemLoading] = useState(false);
+	const [showStarResolver, setShowStarResolver] = useState(!!formLogger.getSettings()?.showStarResolver);
 
 	const [socketBusyOrglist, setsocketBusyOrglist] = useState([
 		/*{org_id: 14, user_id: 17, username: "Комаров Вениамин Столович", action: 'edit'},
@@ -164,6 +165,17 @@ useWebSocketSubscription('UPDATE_ORG', ({ org_id }) => {
 
 	useEffect(() => {
 		loadProblemCompanies();
+	}, []);
+
+	useEffect(() => {
+		const syncResolverFlag = () => setShowStarResolver(!!formLogger.getSettings()?.showStarResolver);
+		syncResolverFlag();
+		window.addEventListener('storage', syncResolverFlag);
+		window.addEventListener('focus', syncResolverFlag);
+		return () => {
+			window.removeEventListener('storage', syncResolverFlag);
+			window.removeEventListener('focus', syncResolverFlag);
+		};
 	}, []);
 
 	useEffect(() => {
@@ -764,7 +776,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 								>
 									Всего найдено: {total}
 								</Tag>
-								{problemCompanies?.length > 0 && (
+								{showStarResolver && problemCompanies?.length > 0 && (
 									<Tooltip title={'Компании с ошибкой сохранения без последующего успешного сохранения'}>
 										<Tag
 											color={problemCompanies.length ? 'red' : 'default'}
