@@ -717,7 +717,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             )}
             <div>
               {event.org_name && (
-                <div className="event-tooltip-org">{event.org_name}</div>
+                <div className="event-badge-org">{event.org_name}</div>
               )}
               {(contactPerson?.name || eventTown) && (
                 <div className="event-badge-contact">
