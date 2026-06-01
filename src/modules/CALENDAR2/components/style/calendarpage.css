@@ -73,8 +73,30 @@
   display: flex;
   align-items: stretch;
   gap: 16px;
-  margin-bottom: 16px;
   min-width: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.28s ease,
+    margin-bottom 0.28s ease,
+    opacity 0.2s ease,
+    transform 0.28s ease;
+  will-change: max-height, opacity, transform;
+}
+
+.calendar-top-row.is-open {
+  max-height: 220px;
+  margin-bottom: 16px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.calendar-top-row.is-closed {
+  max-height: 0;
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
 }
 
 /* =============================================================================
@@ -381,6 +403,9 @@
 }
 
 .calendar-nav-today {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex-shrink: 0;
 }
 

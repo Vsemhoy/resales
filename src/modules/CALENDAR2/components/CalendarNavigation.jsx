@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { Button, DatePicker, Segmented } from 'antd';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { DownOutlined, LeftOutlined, RightOutlined, UpOutlined } from '@ant-design/icons';
 import { VIEW_MODES, VIEW_MODE_LABELS } from './hooks/UseCalendarFilters';
 
 const CalendarNavigation = ({
@@ -20,6 +20,8 @@ const CalendarNavigation = ({
   onPrev,
   onNext,
   onToday,
+  filtersVisible,
+  onToggleFilters,
 }) => {
   
   // Опции для Segmented
@@ -87,6 +89,10 @@ const CalendarNavigation = ({
       <div className="calendar-nav-today">
         <Button onClick={onToday}>
           Сегодня
+        </Button>
+        <Button onClick={onToggleFilters}>
+          <span>Фильтры</span>
+          {filtersVisible ? <UpOutlined /> : <DownOutlined />}
         </Button>
       </div>
     </div>
