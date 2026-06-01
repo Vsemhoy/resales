@@ -93,6 +93,7 @@ const CalendarGrid = ({
 
 const DayView = ({ date, events, returnViewMode, onEventClick, onDoubleClick, onReturnToPreviousView }) => {
   const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8:00 - 21:00
+  const isWeekend = date.isoWeekday() >= 6;
   
   // Группируем события по часам
   const eventsByHour = useMemo(() => {
@@ -109,7 +110,7 @@ const DayView = ({ date, events, returnViewMode, onEventClick, onDoubleClick, on
 
   return (
     <div className="calendar-day-view">
-      <div className="calendar-day-header">
+      <div className={`calendar-day-header ${isWeekend ? 'weekend' : ''}`}>
         {returnViewMode && (
           <Button
             type="text"

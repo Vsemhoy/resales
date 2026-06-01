@@ -401,6 +401,10 @@
   --calendar-week-scrollbar-width: 17px;
 }
 
+.calendar-month-view {
+  --calendar-month-scrollbar-width: 17px;
+}
+
 /* =============================================================================
    РЕЖИМ "ДЕНЬ"
    ============================================================================= */
@@ -410,6 +414,11 @@
   padding: 16px;
   border-bottom: 1px solid #f0f0f0;
   text-align: center;
+}
+
+.calendar-day-header.weekend .calendar-day-name,
+.calendar-day-header.weekend .calendar-day-date {
+  color: #cf1322;
 }
 
 .calendar-day-title {
@@ -505,6 +514,11 @@
   background: #fafafa;
 }
 
+.calendar-week-day-header.weekend .calendar-week-day-name,
+.calendar-week-day-header.weekend .calendar-week-day-number:not(.today-number) {
+  color: #cf1322;
+}
+
 .calendar-week-day-header.today {
   background: #e6f7ff;
 }
@@ -598,6 +612,8 @@
 .calendar-month-header {
   display: flex;
   border-bottom: 1px solid #f0f0f0;
+  box-sizing: border-box;
+  padding-right: var(--calendar-month-scrollbar-width, 0px);
 }
 
 .calendar-month-weekday {
@@ -619,7 +635,8 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
 }
 
 .calendar-month-week {
