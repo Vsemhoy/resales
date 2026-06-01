@@ -397,6 +397,10 @@
   flex-direction: column;
 }
 
+.calendar-week-view {
+  --calendar-week-scrollbar-width: 17px;
+}
+
 /* =============================================================================
    РЕЖИМ "ДЕНЬ"
    ============================================================================= */
@@ -534,7 +538,7 @@
 
 .calendar-week-body {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
   scrollbar-gutter: stable;
 }
 
