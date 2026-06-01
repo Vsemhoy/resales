@@ -80,6 +80,7 @@ const CalendarPage = ({ userdata }) => {
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [createModalDate, setCreateModalDate] = useState(null);
   const [returnViewMode, setReturnViewMode] = useState(null);
+  const [filtersVisible, setFiltersVisible] = useState(false);
 
   const [baseFilters, setBaseFilters] = useState([]);
   const [baseCompanies, setBaseCompanies] = useState([]);
@@ -323,34 +324,32 @@ const CalendarPage = ({ userdata }) => {
       </div>
 
       {/* Фильтры */}
-      <div className="calendar-top-row">
-      <CalendarFilters
-        companyId={filters.companyId}
-        userIds={filters.userIds}
-        types={filters.types}
-        hasComments={filters.hasComments}
-        onCompanyChange={filters.setCompanyId}
-        onUsersChange={filters.setUserIds}
-        onTypesChange={filters.setTypes}
-        onHasCommentsChange={filters.setHasComments}
-        companies={companies}
-        users={users}
-        usersLoading={usersLoading}
-        currentUserId={filters.currentUserId}
-        isAdmin={filters.isAdmin}
-        event_types={eventsTypes}
-        // myCompanyId={userdata.user.id_company}
-      />
+      <div className={`calendar-top-row ${filtersVisible ? 'is-open' : 'is-closed'}`}>
+        <CalendarFilters
+          companyId={filters.companyId}
+          userIds={filters.userIds}
+          types={filters.types}
+          hasComments={filters.hasComments}
+          onCompanyChange={filters.setCompanyId}
+          onUsersChange={filters.setUserIds}
+          onTypesChange={filters.setTypes}
+          onHasCommentsChange={filters.setHasComments}
+          companies={companies}
+          users={users}
+          usersLoading={usersLoading}
+          currentUserId={filters.currentUserId}
+          isAdmin={filters.isAdmin}
+          event_types={eventsTypes}
+          // myCompanyId={userdata.user.id_company}
+        />
 
-      {/* Минимап (Heatmap) */}
-      <CalendarHeatmap
-        data={heatmapData}
-        year={dayjs().year()}
-        selectedDate={filters.selectedDate}
-        onDateClick={handleHeatmapClick}
-      />
-
-      {/* Навигация */}
+        {/* Минимап (Heatmap) */}
+        <CalendarHeatmap
+          data={heatmapData}
+          year={dayjs().year()}
+          selectedDate={filters.selectedDate}
+          onDateClick={handleHeatmapClick}
+        />
       </div>
 
       <CalendarNavigation
@@ -365,6 +364,8 @@ const CalendarPage = ({ userdata }) => {
         onPrev={filters.goToPrev}
         onNext={filters.goToNext}
         onToday={filters.goToToday}
+        filtersVisible={filtersVisible}
+        onToggleFilters={() => setFiltersVisible((visible) => !visible)}
       />
 
       {/* Основной контент */}
