@@ -38,7 +38,9 @@ const CalendarFilters = ({
   const availableTypes = useMemo(() => {
     console.log("event_types:" + event_types)
     const list = Array.isArray(event_types) ? event_types : [];
-    return list.filter(t => t?.real === 1 || t?.id === 0);
+    return list
+      .map(t => ({ ...t, id: Number(t.id), real: Number(t.real) }))
+      .filter(t => t?.real === 1 || t?.id === 0);
   }, [event_types]);
 
   // Опции пользователей
@@ -55,7 +57,7 @@ const CalendarFilters = ({
   // Рендер тега типа события
   const tagRender = (props) => {
     const { label, value, closable, onClose } = props;
-    const type = event_types.find(t => t.id === value);
+    const type = event_types.find(t => Number(t.id) === Number(value));
     
     return (
       <Tag
@@ -85,25 +87,27 @@ const CalendarFilters = ({
 
   // Обработчик изменения типов
   const handleTypesChange = (values) => {
+    const normalizedValues = values.map(value => Number(value));
+
     // Если выбрали "Все" (id=0), сбрасываем остальные
-    if (values.includes(0) && !types.includes(0)) {
+    if (normalizedValues.includes(0) && !types.includes(0)) {
       onTypesChange([0]);
       return;
     }
     
     // Если выбрали что-то другое, убираем "Все"
-    if (values.length > 1 && values.includes(0)) {
-      onTypesChange(values.filter(v => v !== 0));
+    if (normalizedValues.length > 1 && normalizedValues.includes(0)) {
+      onTypesChange(normalizedValues.filter(v => v !== 0));
       return;
     }
     
     // Если ничего не выбрано, ставим "Все"
-    if (values.length === 0) {
+    if (normalizedValues.length === 0) {
       onTypesChange([0]);
       return;
     }
     
-    onTypesChange(values);
+    onTypesChange(normalizedValues);
   };
 
   return (
