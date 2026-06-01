@@ -204,6 +204,9 @@ const CalendarSidebar = ({
               <div className="sidebar-detail-label">Контактное лицо</div>
               <div className="sidebar-detail-value">
                 <div>{event.user_name}</div>
+                {event.event_post && (
+                  <div className="sidebar-detail-subvalue">{event.event_post}</div>
+                )}
               </div>
             </div>
           </div>

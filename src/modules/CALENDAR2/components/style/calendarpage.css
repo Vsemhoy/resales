@@ -943,6 +943,7 @@
 /* Tooltip события */
 .event-tooltip {
   max-width: 250px;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .event-tooltip-type {
@@ -957,30 +958,30 @@
 
 .event-tooltip-org {
   font-size: 11px;
-  color: #1890ff;
+  color: #cfe8ff;
   margin-bottom: 2px;
   word-break: break-word;
 }
 
 .event-tooltip-contact {
   font-size: 11px;
-  color: #555;
+  color: rgba(255, 255, 255, 0.88);
   margin-bottom: 2px;
   word-break: break-word;
 }
 
 .event-tooltip-contact-post {
-  color: #777;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .event-tooltip-time {
   font-size: 11px;
-  color: #999;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .event-tooltip-comments {
   font-size: 11px;
-  color: #999;
+  color: rgba(255, 255, 255, 0.72);
   margin-top: 4px;
 }
 
