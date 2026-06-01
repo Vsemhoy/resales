@@ -13,7 +13,7 @@
 import React, { useMemo } from 'react';
 import { Select, Checkbox, Tag, Space } from 'antd';
 import { UserOutlined, FilterOutlined } from '@ant-design/icons';
-import { EVENT_TYPES } from './mock/CALENDARMOCK';
+import { getEventTypeById } from './mock/CALENDARMOCK';
 
 const { Option } = Select;
 
@@ -39,7 +39,11 @@ const CalendarFilters = ({
     console.log("event_types:" + event_types)
     const list = Array.isArray(event_types) ? event_types : [];
     return list
-      .map(t => ({ ...t, id: Number(t.id), real: Number(t.real) }))
+      .map(t => {
+        const normalizedType = { ...t, id: Number(t.id), real: Number(t.real) };
+        const typeOverride = getEventTypeById(normalizedType.id);
+        return typeOverride ? { ...normalizedType, ...typeOverride, id: normalizedType.id, real: normalizedType.real } : normalizedType;
+      })
       .filter(t => t?.real === 1 || t?.id === 0);
   }, [event_types]);
 
@@ -57,7 +61,7 @@ const CalendarFilters = ({
   // Рендер тега типа события
   const tagRender = (props) => {
     const { label, value, closable, onClose } = props;
-    const type = event_types.find(t => Number(t.id) === Number(value));
+    const type = availableTypes.find(t => Number(t.id) === Number(value));
     
     return (
       <Tag
