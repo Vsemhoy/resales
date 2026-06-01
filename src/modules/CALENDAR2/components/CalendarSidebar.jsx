@@ -17,6 +17,7 @@ import {
 } from 'antd';
 import {
   CloseOutlined,
+  ArrowRightOutlined,
   SendOutlined,
   CommentOutlined,
   UserOutlined,
@@ -151,12 +152,14 @@ const CalendarSidebar = ({
               </Tag>
               <Tag color={'#d9d9d9'}> {event.id}</Tag>
             </div>
+            <div className="sidebar-header-actions">
               <Button
                 type="text"
                 icon={<CloseOutlined />}
                 onClick={onClose}
                 className="sidebar-close-btn"
               />
+            </div>
           </div>
           
           <h3 className="sidebar-title">
@@ -258,6 +261,16 @@ const CalendarSidebar = ({
                   </div>
                 </div>
               </div>
+          )}
+
+          {event.org_id && (
+            <div className="sidebar-detail-actions">
+              <NavLink to={`/orgs/${event.org_id}?tab=c`} target="_blank">
+                <Button type="primary" icon={<ArrowRightOutlined />}>
+                  Встречи/Звонки
+                </Button>
+              </NavLink>
+            </div>
           )}
 
           {/* Сумма (для КП/счетов) */}

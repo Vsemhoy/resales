@@ -1052,6 +1052,12 @@
   font-weight: 600;
 }
 
+.sidebar-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .sidebar-close-btn {
   margin: -8px -8px 0 0;
 }
@@ -1089,6 +1095,12 @@
 
 .sidebar-detail-row:last-child {
   margin-bottom: 0;
+}
+
+.sidebar-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
 }
 
 .sidebar-detail-icon {
