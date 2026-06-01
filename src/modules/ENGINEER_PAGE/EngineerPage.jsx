@@ -127,10 +127,10 @@ const EngineerPage = (props) => {
 
   useEffect(() => {
     if (bidType) {
-      document.title = `${+bidType === 1 ? 'КП' : +bidType === 2 ? 'Счет' : ''} | ${bidId}`;
+      document.title = `${+bidType === 1 ? '🧾 КП' : +bidType === 2 ? '💳 Счет' : ''} | ${bidId}`;
     }
     return () => (document.title = 'Отдел продаж');
-  }, [bidType]);
+  }, [bidId, bidType]);
   useEffect(() => {
     if (props.userdata) {
       setUserData(props.userdata);

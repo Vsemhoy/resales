@@ -57,6 +57,7 @@ const MainTabForm = ({
   userdata,       // Данные пользователя
   selects,        // Справочники для Select'ов
   onDataChange,   // Callback при изменении данных
+  onOrgLoaded,    // Callback при загрузке организации
 }) => {
   // Состояния
   const [loading, setLoading] = useState(false);
@@ -86,6 +87,7 @@ const MainTabForm = ({
       
       if (data) {
         setOriginalData(JSON.parse(JSON.stringify(data)));
+        onOrgLoaded?.(data);
         
         // Преобразуем данные для формы
         const formData = transformDataForForm(data);
@@ -97,7 +99,7 @@ const MainTabForm = ({
     } finally {
       setLoading(false);
     }
-  }, [orgId, form]);
+  }, [orgId, form, onOrgLoaded]);
 
   // Загрузка при изменении orgId
   useEffect(() => {
