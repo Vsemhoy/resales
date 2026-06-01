@@ -590,7 +590,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             >
             {event.type === 1 && (
               <div>
-              <PhoneIcon height={'15px'} />
+              <BriefcaseIcon height={'15px'} />
                 <span className='event-badge-dot-typename'>
                   {typeName}
                 </span>
@@ -598,7 +598,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             )}
             {event.type === 2 && (
               <div>
-              <BriefcaseIcon height={'15px'} />
+              <PhoneIcon height={'15px'} />
                 <span className='event-badge-dot-typename'>
                   {typeName}
                 </span>
@@ -726,10 +726,10 @@ const EventBadge = ({ event, onClick, compact = false }) => {
           </div>
         ) : (
           <>
-            {(event.type === 1 || event.type === 7) && (
+            {(event.type === 2 || event.type === 7) && (
               <PhoneIcon className="event-badge-icon" height={'15px'} />
             )}
-            {event.type === 2 && (
+            {event.type === 1 && (
               <BriefcaseIcon className="event-badge-icon" height={'15px'} />
             )}
             <span className="event-badge-type">{typeName}</span>
