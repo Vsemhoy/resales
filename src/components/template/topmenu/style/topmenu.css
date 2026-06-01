@@ -50,6 +50,47 @@ div.sa-topmenu-button {
     transition: background-color 0.2s;
 }
 
+.sa-calendar-event-row {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 260px;
+	max-width: 360px;
+}
+
+.sa-calendar-event-type {
+	font-weight: 600;
+	color: var(--app-text-color);
+}
+
+.sa-calendar-event-meta {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 12px;
+	color: #5f6b7a;
+}
+
+.sa-calendar-event-meta span:first-child {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sa-calendar-event-town {
+	flex-shrink: 0;
+	color: #8c8c8c;
+}
+
+.sa-calendar-event-contact {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 12px;
+	color: #8c8c8c;
+}
+
 .gold {
     background-color: #ffbf00 !important;
     color: white !important

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import './style/topmenu.css';
 import ChatBtn from '../../../modules/CHAT/components/ChatBtn';
+import dayjs from 'dayjs';
 
 import { Chat, ChatSocketProvider } from 'corp-chat-library-antd-react-socket';
 //import 'corp-chat-library-antd-react-socket/dist/style.css';
@@ -18,7 +19,7 @@ import {
 } from '@ant-design/icons';
 import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
 import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
-import {Avatar, Badge, Button, Dropdown} from 'antd';
+import {Avatar, Button, Dropdown} from 'antd';
 import { ShortName } from '../../helpers/TextHelpers';
 import {
 	ArrowTopRightOnSquareIcon,
@@ -33,8 +34,43 @@ import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import NotiBtn from "../../../modules/NOTIFIER/NotiBtn";
 import Notificator from "corp-notificator-library-antd-react-socket";
 import BugModal from '../../../modules/EXT/BUGMODAL/BugModal';
+import { EVENT_TYPES, fetchCalendarEvents } from '../../../modules/CALENDAR2/components/mock/CALENDARMOCK';
 
+const CALENDAR_EVENT_TYPE_LABELS = {
+	1: 'Встреча',
+	2: 'Звонок',
+};
 
+const getCalendarEventTypeName = (event) => {
+	const typeId = Number(event?.type ?? event?.type_id);
+
+	return (
+		event?.type_name ||
+		event?.event_type_name ||
+		EVENT_TYPES.find((item) => Number(item.id) === typeId)?.name ||
+		CALENDAR_EVENT_TYPE_LABELS[typeId] ||
+		'Событие'
+	);
+};
+
+const getCalendarFilterUserId = (user) => (
+	user?.id8staff_list ||
+	user?.staff_id ||
+	user?.id_staff ||
+	user?.staffListId ||
+	user?.id
+);
+
+const getCalendarEventContactName = (event) => (
+	[
+		event?.contact_user,
+		event?.contact_name,
+		event?.contactperson,
+		event?.org_user_name,
+		event?.orgUserName,
+		event?.event_user_name,
+	].find((value) => typeof value === 'string' && value.trim()) || ''
+);
 
 const TopMenu = (props) => {
 		const [userdata, setUserdata] = useState(props.userdata);
@@ -49,6 +85,8 @@ const TopMenu = (props) => {
 	const [openBugModal, setopenBugModal] = useState(false);
 
 	const [bugMultiCounter, setBugMultiCounter] = useState([0,0,0,0]);
+	const [todayEvents, setTodayEvents] = useState([]);
+	const [calendarEventsLoading, setCalendarEventsLoading] = useState(false);
 
 	const requestBrowserNotificationPermission = useCallback(async () => {
 		if (!('Notification' in window) || Notification.permission !== 'default') {
@@ -228,6 +266,69 @@ const TopMenu = (props) => {
 		setRoleMenu(roles);
 	}, [userdata]);
 
+	useEffect(() => {
+		const user = userdata?.user;
+
+		if (!user?.id) {
+			setTodayEvents([]);
+			return;
+		}
+
+		const today = dayjs().format('YYYY-MM-DD');
+		const calendarUserId = getCalendarFilterUserId(user);
+		const eventFilters = {
+			companyId: user.active_company || 2,
+			userIds: calendarUserId ? [calendarUserId] : [],
+			types: [],
+			dateFrom: today,
+			dateTo: today,
+			hasComments: false,
+			currentUserId: user.id,
+		};
+
+		let isActual = true;
+		setCalendarEventsLoading(true);
+
+		const loadTodayEvents = async () => {
+			try {
+				if (PRODMODE) {
+					const response = await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/calendar/events`, {
+						data: {
+							filters: eventFilters,
+						},
+						_token: CSRF_TOKEN,
+					});
+
+					if (isActual) {
+						setTodayEvents(response.data?.content || []);
+					}
+				} else {
+					const events = await fetchCalendarEvents(eventFilters);
+
+					if (isActual) {
+						setTodayEvents(events);
+					}
+				}
+			} catch (e) {
+				console.log(e);
+
+				if (isActual) {
+					setTodayEvents([]);
+				}
+			} finally {
+				if (isActual) {
+					setCalendarEventsLoading(false);
+				}
+			}
+		};
+
+		loadTodayEvents();
+
+		return () => {
+			isActual = false;
+		};
+	}, [userdata?.user?.active_company, userdata?.user?.id]);
+
 	const userMenuItems = [
 		{
 			key: 'status',
@@ -244,6 +345,42 @@ const TopMenu = (props) => {
 			icon: <LoginOutlined />,
 		},
 	];
+
+	const calendarMenuItems =
+		todayEvents.length > 0
+			? todayEvents.map((event, index) => {
+				const eventTypeName = getCalendarEventTypeName(event);
+				const orgName = event?.org_name || event?.organization_name || 'Без организации';
+				const townName = event?.org_town_name || event?.town_name || event?.city_name || '';
+				const contactName = getCalendarEventContactName(event);
+
+				return {
+					key: `calendar_today_${event?.id || index}`,
+					label: (
+						<div className="sa-calendar-event-row">
+							<div className="sa-calendar-event-type">
+								{eventTypeName}
+							</div>
+							<div className="sa-calendar-event-meta">
+								<span>{orgName}</span>
+								{townName && <span className="sa-calendar-event-town">{townName}</span>}
+							</div>
+							{contactName && (
+								<div className="sa-calendar-event-contact">
+									{contactName}
+								</div>
+							)}
+						</div>
+					),
+				};
+			})
+			: [
+				{
+					key: 'calendar_today_empty',
+					disabled: true,
+					label: calendarEventsLoading ? 'Загружаем события...' : 'Сегодня событий нет',
+				},
+			];
 
 	/** ------------------ FETCHES ---------------- */
 	const set_user_company = async (newcom) => {
@@ -330,12 +467,24 @@ const TopMenu = (props) => {
                         </Button>
                     </div>
 
-                    <Button color={'primary'}
-                            variant={'solid'}
-                            onClick={()=>{window.open('/calendar')}}
+                    <Dropdown
+                        menu={{
+                            items: calendarMenuItems,
+                            onClick: () => window.open('/calendar'),
+                        }}
+                        trigger={['hover']}
+                        placement="bottomRight"
                     >
-                        <CalendarOutlined height={'16px'} />
-                    </Button>
+                        <Button color={'primary'}
+                                variant={'solid'}
+                                onClick={()=>{window.open('/calendar')}}
+                        >
+                            <CalendarOutlined height={'16px'} />
+                            {todayEvents.length > 0 && (
+                                <span className={'notification-badge'}>{todayEvents.length}</span>
+                            )}
+                        </Button>
+                    </Dropdown>
 
                     <Chat userdata={userdata}
                           httpParams={{
