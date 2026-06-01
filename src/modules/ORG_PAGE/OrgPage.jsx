@@ -115,6 +115,18 @@ const OrgPage = ({ userdata }) => {
   // ===================== COMPUTED =====================
   const hasChanges = Object.values(changedTabs).some(Boolean);
 
+  useEffect(() => {
+    const titleOrgName = String(orgName || '').trim();
+
+    if (titleOrgName) {
+      document.title = `🏢 ${titleOrgName} | Отдел продаж`;
+    }
+
+    return () => {
+      document.title = 'Отдел продаж';
+    };
+  }, [orgName]);
+
   // ===================== ОБРАБОТЧИКИ ИЗМЕНЕНИЙ =====================
   
   /**
@@ -134,6 +146,11 @@ const OrgPage = ({ userdata }) => {
       ...prev,
       [tabKey]: hasChanges
     }));
+  }, []);
+
+  const handleOrgLoaded = useCallback((data) => {
+    setOrgData(data);
+    setOrgName(data?.name || '');
   }, []);
 
   useEffect(() => {
@@ -452,6 +469,7 @@ const OrgPage = ({ userdata }) => {
               userdata={userdata}
               selects={selects}   // Объект со справочниками
               onDataChange={handleDataChange}
+              onOrgLoaded={handleOrgLoaded}
             />
           )}
 
