@@ -541,6 +541,7 @@ const EventBadge = ({ event, onClick, compact = false }) => {
   const color = getEventTypeColor(event.type);
   const typeName = getEventTypeName(event.type);
   const contactPerson = getContactPerson(event);
+  const eventTown = getEventTown(event);
   
   const tooltipContent = (
     <div className="event-tooltip">
@@ -552,9 +553,14 @@ const EventBadge = ({ event, onClick, compact = false }) => {
       {contactPerson?.name && (
         <div className="event-tooltip-contact">
           <div>Контактное лицо: {contactPerson.name}</div>
-          {contactPerson.post && (
-            <div className="event-tooltip-contact-post">Должность: {contactPerson.post}</div>
+          {eventTown && (
+            <div className="event-tooltip-contact-post">Город: {eventTown}</div>
           )}
+        </div>
+      )}
+      {!contactPerson?.name && eventTown && (
+        <div className="event-tooltip-contact">
+          <div className="event-tooltip-contact-post">Город: {eventTown}</div>
         </div>
       )}
       {event.event_time && (
@@ -713,11 +719,13 @@ const EventBadge = ({ event, onClick, compact = false }) => {
               {event.org_name && (
                 <div className="event-tooltip-org">{event.org_name}</div>
               )}
-              {contactPerson?.name && (
+              {(contactPerson?.name || eventTown) && (
                 <div className="event-badge-contact">
-                  <span className="event-badge-contact-name">Контактное лицо: {contactPerson.name}</span>
-                  {contactPerson.post && (
-                    <span className="event-badge-contact-post">Должность: {contactPerson.post}</span>
+                  {contactPerson?.name && (
+                    <span className="event-badge-contact-name">Контактное лицо: {contactPerson.name}</span>
+                  )}
+                  {eventTown && (
+                    <span className="event-badge-contact-post">Город: {eventTown}</span>
                   )}
                 </div>
               )}
@@ -735,11 +743,13 @@ const EventBadge = ({ event, onClick, compact = false }) => {
             )}
             <span className="event-badge-type">{typeName}</span>
             <span className="event-badge-content">{event.content}</span>
-            {contactPerson?.name && (
+            {(contactPerson?.name || eventTown) && (
               <span className="event-badge-contact">
-                <span className="event-badge-contact-name">Контактное лицо: {contactPerson.name}</span>
-                {contactPerson.post && (
-                  <span className="event-badge-contact-post">Должность: {contactPerson.post}</span>
+                {contactPerson?.name && (
+                  <span className="event-badge-contact-name">Контактное лицо: {contactPerson.name}</span>
+                )}
+                {eventTown && (
+                  <span className="event-badge-contact-post">Город: {eventTown}</span>
                 )}
               </span>
             )}
@@ -768,8 +778,11 @@ const getContactPerson = (event) => {
 
   return {
     name: name.trim(),
-    post: typeof event.event_post === 'string' ? event.event_post.trim() : '',
   };
 };
+
+const getEventTown = (event) => (
+  typeof event.org_town_name === 'string' ? event.org_town_name.trim() : ''
+);
 
 export default CalendarGrid;

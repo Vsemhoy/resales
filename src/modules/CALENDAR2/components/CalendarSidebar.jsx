@@ -22,6 +22,7 @@ import {
   UserOutlined,
   CalendarOutlined,
   BankOutlined,
+  EnvironmentOutlined,
   ClockCircleOutlined, PhoneOutlined, WechatWorkOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -203,14 +204,21 @@ const CalendarSidebar = ({
               <div className="sidebar-detail-label">Контактное лицо</div>
               <div className="sidebar-detail-value">
                 <div>{event.user_name}</div>
-                {event.event_post && (
-                  <div className="sidebar-detail-subvalue">{event.event_post}</div>
-                )}
               </div>
             </div>
           </div>
 
           {/* Телефон для связи */}
+          {event.org_town_name && (
+            <div className="sidebar-detail-row">
+              <EnvironmentOutlined className="sidebar-detail-icon" />
+              <div className="sidebar-detail-content">
+                <div className="sidebar-detail-label">Город</div>
+                <div className="sidebar-detail-value">{event.org_town_name}</div>
+              </div>
+            </div>
+          )}
+
           {event.event_phone && (
             <div className="sidebar-detail-row">
               <PhoneOutlined className="sidebar-detail-icon" />
