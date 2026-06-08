@@ -169,6 +169,18 @@ const [showStarResolver, setShowStarResolver] = useState(!!formLogger.getSetting
 	const [pendingRestoreCalls,    setPendingRestoreCalls]    = useState(null);
 	const [pendingRestoreProjects, setPendingRestoreProjects] = useState(null);
 
+	useEffect(() => {
+		const titleOrgName = String(baseMainData?.name || orgName || '').trim();
+
+		if (titleOrgName) {
+			document.title = `🏢 ${titleOrgName} | Отдел продаж`;
+		}
+
+		return () => {
+			document.title = 'Отдел продаж';
+		};
+	}, [baseMainData?.name, orgName]);
+
 	// /*const [socketBusyOrgIds, setSocketBusyOrgIds] = useState([14, 16, 22, 40]);*/
 		//
 		useWebSocketSubscription('ACTIVE_HIGHLIGHTS_LIST_ORGS', ({ activeUsers }) => setsocketBusyOrglist(prev => {

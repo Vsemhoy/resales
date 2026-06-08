@@ -73,8 +73,30 @@
   display: flex;
   align-items: stretch;
   gap: 16px;
-  margin-bottom: 16px;
   min-width: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.28s ease,
+    margin-bottom 0.28s ease,
+    opacity 0.2s ease,
+    transform 0.28s ease;
+  will-change: max-height, opacity, transform;
+}
+
+.calendar-top-row.is-open {
+  max-height: 220px;
+  margin-bottom: 16px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.calendar-top-row.is-closed {
+  max-height: 0;
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
 }
 
 /* =============================================================================
@@ -381,6 +403,9 @@
 }
 
 .calendar-nav-today {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -397,6 +422,14 @@
   flex-direction: column;
 }
 
+.calendar-week-view {
+  --calendar-week-scrollbar-width: 17px;
+}
+
+.calendar-month-view {
+  --calendar-month-scrollbar-width: 17px;
+}
+
 /* =============================================================================
    РЕЖИМ "ДЕНЬ"
    ============================================================================= */
@@ -406,6 +439,11 @@
   padding: 16px;
   border-bottom: 1px solid #f0f0f0;
   text-align: center;
+}
+
+.calendar-day-header.weekend .calendar-day-name,
+.calendar-day-header.weekend .calendar-day-date {
+  color: #cf1322;
 }
 
 .calendar-day-title {
@@ -475,17 +513,17 @@
    ============================================================================= */
 
 .calendar-week-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 60px repeat(7, minmax(0, 1fr));
   border-bottom: 1px solid #c1c1c1;
+  padding-right: var(--calendar-week-scrollbar-width, 0px);
 }
 
 .calendar-week-time-header {
-  width: 60px;
-  flex-shrink: 0;
+  min-width: 0;
 }
 
 .calendar-week-day-header {
-  flex: 1;
   min-width: 0;
   padding: 8px 4px;
   text-align: center;
@@ -499,6 +537,11 @@
 
 .calendar-week-day-header.weekend {
   background: #fafafa;
+}
+
+.calendar-week-day-header.weekend .calendar-week-day-name,
+.calendar-week-day-header.weekend .calendar-week-day-number:not(.today-number) {
+  color: #cf1322;
 }
 
 .calendar-week-day-header.today {
@@ -534,14 +577,15 @@
 
 .calendar-week-body {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
 }
 
 .calendar-week-hour-row {
   display: grid;
   min-height: 50px;
   border-bottom: 1px solid #dbdbdb;
-  grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 60px repeat(7, minmax(0, 1fr));
 }
 
 .calendar-week-time-label {
@@ -593,6 +637,8 @@
 .calendar-month-header {
   display: flex;
   border-bottom: 1px solid #f0f0f0;
+  box-sizing: border-box;
+  padding-right: var(--calendar-month-scrollbar-width, 0px);
 }
 
 .calendar-month-weekday {
@@ -614,7 +660,8 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
 }
 
 .calendar-month-week {
@@ -892,6 +939,16 @@
   opacity: 0.9;
 }
 
+.event-badge-org {
+  color: #1677ff;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .event-badge-contact {
   align-items: flex-start;
   color: #555;
@@ -921,6 +978,7 @@
 /* Tooltip события */
 .event-tooltip {
   max-width: 250px;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .event-tooltip-type {
@@ -935,30 +993,30 @@
 
 .event-tooltip-org {
   font-size: 11px;
-  color: #1890ff;
+  color: #cfe8ff;
   margin-bottom: 2px;
   word-break: break-word;
 }
 
 .event-tooltip-contact {
   font-size: 11px;
-  color: #555;
+  color: rgba(255, 255, 255, 0.88);
   margin-bottom: 2px;
   word-break: break-word;
 }
 
 .event-tooltip-contact-post {
-  color: #777;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .event-tooltip-time {
   font-size: 11px;
-  color: #999;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .event-tooltip-comments {
   font-size: 11px;
-  color: #999;
+  color: rgba(255, 255, 255, 0.72);
   margin-top: 4px;
 }
 
@@ -992,6 +1050,12 @@
 .sidebar-type-tag {
   font-size: 12px;
   font-weight: 600;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .sidebar-close-btn {
@@ -1033,6 +1097,12 @@
   margin-bottom: 0;
 }
 
+.sidebar-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
 .sidebar-detail-icon {
   font-size: 16px;
   color: #999;
@@ -1054,6 +1124,12 @@
   color: #333;
 }
 
+.sidebar-detail-subvalue {
+  color: #666;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
 .sidebar-phone {
   font-weight: 600;
   color: red;
@@ -1062,6 +1138,7 @@
 .sidebar-note {
   font-weight: 600;
   color: black;
+  white-space: pre-wrap;
 }
 
 .sidebar-curator-tag {

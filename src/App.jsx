@@ -1,7 +1,7 @@
 import './App.css';
 
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import {BASE_NAME, BASE_ROUTE, CSRF_TOKEN, PRODMODE, BFF_PORT, HTTP_HOST, ROUTE_PREFIX} from './config/config';
 import './assets/theme.css';
 import './assets/layout.css';
@@ -45,6 +45,41 @@ import CalendarPage from './modules/CALENDAR2/CalendarPage';
 import ReportsPage from './modules/REPORTS2/ReportsPage';
 
 import BidPdfEditor from './modules/BID_PDF_PAGE/BidPdfEditor';
+
+const DEFAULT_PAGE_TITLE = 'Отдел продаж';
+
+const PAGE_TITLE_RULES = [
+	{ path: /^\/orgs$/, title: '🏢 Организации' },
+	{ path: /^\/orgs\/[^/]+$/, title: '🏢 Организация' },
+	{ path: /^\/torgs\/[^/]+$/, title: '🏢 Организация' },
+	{ path: /^\/bids$/, title: '🧾 Заявки' },
+	{ path: /^\/bids\/[^/]+$/, title: '🧾 Заявка' },
+	{ path: /^\/bidsPDF\/[^/]+(?:\/[^/]+)?$/, title: '📄 КП PDF' },
+	{ path: /^\/price$/, title: '💰 Прайс' },
+	{ path: /^\/curator(?:_new)?$/, title: '🛡️ Кураторство' },
+	{ path: /^\/regtown$/, title: '🗺️ Города и регионы' },
+	{ path: /^\/engineer$/, title: '🛠️ Инженеры' },
+	{ path: /^\/files_buh$/, title: '📤 Выгрузка счетов' },
+	{ path: /^\/calendar$/, title: '📅 Календарь' },
+	{ path: /^\/reports$/, title: '📊 Отчеты' },
+	{ path: /^\/loclog$/, title: '📋 Локальные логи' },
+	{ path: /^\/dev\/icons\/antdicons$/, title: '🎨 Antd Icons' },
+	{ path: /^\/dev\/icons\/heroicons24$/, title: '🎨 Hero Icons' },
+	{ path: /^\/dev\/icons\/customicons$/, title: '🎨 Custom Icons' },
+];
+
+const PageTitle = () => {
+	const location = useLocation();
+
+	useEffect(() => {
+		const pathname = location.pathname.replace(/\/+$/, '') || '/';
+		const pageTitle = PAGE_TITLE_RULES.find((item) => item.path.test(pathname))?.title;
+
+		document.title = pageTitle ? `${pageTitle} | ${DEFAULT_PAGE_TITLE}` : DEFAULT_PAGE_TITLE;
+	}, [location.pathname]);
+
+	return null;
+};
 
 export const App = () => {
 	const [userdata, setUserdata] = useState({});
@@ -126,6 +161,7 @@ export const App = () => {
             <ResalesWebSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
                 <ChatSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
                     <BrowserRouter basename={BASE_NAME}>
+                        <PageTitle />
                         <div className={'app'}>
                             <TopMenu changed_user_data={() => get_userdata()}
                                      onNewAlert={updateAlert}

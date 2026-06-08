@@ -34,18 +34,18 @@ export const EVENT_TYPES = [
   },
   {
     id: 1,
-    name: 'Звонок',
-    color: '#faa781',
-    title: 'Звонки клиентам',
+    name: 'Встреча',
+    color: '#f7ed59',
+    title: 'Встреча с представителями компании',
     sort_order: 1,
     real: 1,
     disabled: 0,
   },
   {
     id: 2,
-    name: 'Встреча',
-    color: '#f7ed59',
-    title: 'Встреча с представителями компании',
+    name: 'Звонок',
+    color: '#faa781',
+    title: 'Звонки клиентам',
     sort_order: 2,
     real: 1,
     disabled: 0,
@@ -613,7 +613,25 @@ export const MOCK_EVENT_COMMENTS = [
 /**
  * Получить тип события по ID
  */
-export const getEventTypeById = (id) => EVENT_TYPES.find(t => t.id === id);
+const EVENT_TYPE_OVERRIDES = {
+  1: {
+    name: '\u0412\u0441\u0442\u0440\u0435\u0447\u0430',
+    color: '#f7ed59',
+    title: '\u0412\u0441\u0442\u0440\u0435\u0447\u0430 \u0441 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044f\u043c\u0438 \u043a\u043e\u043c\u043f\u0430\u043d\u0438\u0438',
+  },
+  2: {
+    name: '\u0417\u0432\u043e\u043d\u043e\u043a',
+    color: '#faa781',
+    title: '\u0417\u0432\u043e\u043d\u043a\u0438 \u043a\u043b\u0438\u0435\u043d\u0442\u0430\u043c',
+  },
+};
+
+export const getEventTypeById = (id) => {
+  const numericId = Number(id);
+  const type = EVENT_TYPES.find(t => Number(t.id) === numericId);
+  const override = EVENT_TYPE_OVERRIDES[numericId];
+  return type ? { ...type, ...override } : override;
+};
 
 /**
  * Получить цвет типа события

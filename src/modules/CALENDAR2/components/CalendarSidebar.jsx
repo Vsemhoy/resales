@@ -17,11 +17,13 @@ import {
 } from 'antd';
 import {
   CloseOutlined,
+  ArrowRightOutlined,
   SendOutlined,
   CommentOutlined,
   UserOutlined,
   CalendarOutlined,
   BankOutlined,
+  EnvironmentOutlined,
   ClockCircleOutlined, PhoneOutlined, WechatWorkOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -150,12 +152,14 @@ const CalendarSidebar = ({
               </Tag>
               <Tag color={'#d9d9d9'}> {event.id}</Tag>
             </div>
+            <div className="sidebar-header-actions">
               <Button
                 type="text"
                 icon={<CloseOutlined />}
                 onClick={onClose}
                 className="sidebar-close-btn"
               />
+            </div>
           </div>
           
           <h3 className="sidebar-title">
@@ -201,11 +205,26 @@ const CalendarSidebar = ({
             <UserOutlined className="sidebar-detail-icon" />
             <div className="sidebar-detail-content">
               <div className="sidebar-detail-label">Контактное лицо</div>
-              <div className="sidebar-detail-value">{event.user_name} {event.event_post}</div>
+              <div className="sidebar-detail-value">
+                <div>{event.user_name}</div>
+                {event.event_post && (
+                  <div className="sidebar-detail-subvalue">{event.event_post}</div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Телефон для связи */}
+          {event.org_town_name && (
+            <div className="sidebar-detail-row">
+              <EnvironmentOutlined className="sidebar-detail-icon" />
+              <div className="sidebar-detail-content">
+                <div className="sidebar-detail-label">Город</div>
+                <div className="sidebar-detail-value">{event.org_town_name}</div>
+              </div>
+            </div>
+          )}
+
           {event.event_phone && (
             <div className="sidebar-detail-row">
               <PhoneOutlined className="sidebar-detail-icon" />
@@ -242,6 +261,16 @@ const CalendarSidebar = ({
                   </div>
                 </div>
               </div>
+          )}
+
+          {event.org_id && (
+            <div className="sidebar-detail-actions">
+              <NavLink to={`/orgs/${event.org_id}?tab=c`} target="_blank">
+                <Button type="primary" icon={<ArrowRightOutlined />}>
+                  Встречи/Звонки
+                </Button>
+              </NavLink>
+            </div>
           )}
 
           {/* Сумма (для КП/счетов) */}
