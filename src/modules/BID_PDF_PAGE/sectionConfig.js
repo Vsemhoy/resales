@@ -7,7 +7,7 @@ export const ALL_SECTIONS = [
   { key: 'recommendations', label: 'Рекомендации',          draggable: true,  target: null, required: false },
   { key: 'specifications',  label: 'Спецификация',          draggable: true,  target: null, required: false },
   { key: 'specials',        label: 'Описание оборудования', draggable: true,  target: null, required: false },
-  { key: 'rondoDelivery',   label: 'Условия поставки',         draggable: true,  target: null, required: false },
+  { key: 'rondoDelivery',   label: 'Условия оплаты и поставки',         draggable: true,  target: null, required: false },
   { key: 'systemChars',    label: 'Характеристики системы',   draggable: true,  target: null, required: false },
   { key: 'pageBreak',       label: '--- Разрыв страницы ---',       draggable: true,  target: null, required: false },
 ]

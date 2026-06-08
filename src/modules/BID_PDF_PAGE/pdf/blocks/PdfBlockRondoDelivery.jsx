@@ -1,133 +1,172 @@
 import React from 'react'
-import { View, Text, Image } from '@react-pdf/renderer'
+import { View, Text } from '@react-pdf/renderer'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 
-const DELIVERY_DEFAULTS = [
-  'Коммерческое предложение действительно при условии изменения курсов валют не более 3% от курсов, установленных ЦБ РФ на дату выставления КП.',
-  'Срок поставки оборудования под заказ — 3 месяца с момента оплаты счета.',
-  'Гарантийный срок на оборудование составляет 12 месяцев.',
-  'По условиям договора поставка осуществляется при 100% предоплате со склада в Санкт-Петербурге. Цены указаны с учётом НДС 22%.',
+const DEFAULT_BULLETS = [
+  { id: 'b1', title: 'Срок поставки',     text: 'Срок поставки оборудования под заказ — 3 месяца с момента оплаты счета.', decorated: true  },
+  { id: 'b2', title: 'НДС',              text: 'Цены указаны с учётом НДС 22%.', decorated: true  },
+  { id: 'b3', title: 'Гарантия',         text: 'Гарантийный срок на оборудование составляет 12 месяцев.', decorated: true  },
+  { id: 'b4', title: 'Срок действия КП', text: 'Коммерческое предложение действительно при условии изменения курсов валют не более 3% от курсов, установленных ЦБ РФ на дату выставления КП.', decorated: true  },
+  { id: 'b5', title: 'Доставка',         text: 'Доставка в регионы осуществляется транспортной компанией.', decorated: false },
 ]
 
-const ARROW_IMG = `${window.location.origin}/brands/rondo/p14_arrows.png`
-const TRUCK_IMG = `${window.location.origin}/brands/rondo/p14_delivery.png`
+// ─── Один буллет ─────────────────────────────────────────────────────────────
+function Bullet({ bullet, cfg, isLast }) {
+  const { color, text, font, weight, space } = cfg
+  const DOT_SIZE = 5
 
-function Card({ text, cfg }) {
-  const { color, text: t, font, weight, space } = cfg
   return (
-    <View style={{
-      backgroundColor: color.bgMuted,
-      borderRadius:    space.xs,
-      padding:         space.md,
-      flexDirection:   'row',
-      alignItems:      'center',
-      gap:             space.sm,
-    }}>
-      <Image
-        src={ARROW_IMG}
-        style={{ width: space.xl, height: space.xl, flexShrink: 0 }}
-      />
-      <Text style={{
-        flex:       1,
-        fontSize:   t.sm,
-        fontFamily: font.regular,
-        fontWeight: weight.regular,
-        color:      color.textSecondary,
-        lineHeight: 1.5,
-      }}>
-        {text}
-      </Text>
+    <View style={{ flexDirection: 'row', marginBottom: isLast ? 0 : space.xxxs }} wrap={false}>
+
+      {/* Точка-буллет */}
+      <View style={{
+        width:           DOT_SIZE,
+        height:          DOT_SIZE,
+        borderRadius:    DOT_SIZE / 2,
+        backgroundColor: color.accent,
+        marginTop:       text.sm * 0.45, // визуально по центру первой строки
+        marginRight:     space.sm,
+        flexShrink:      0,
+      }} />
+
+      {/* Контент */}
+      {bullet.decorated ? (
+        // С фоном
+        <View style={{
+          flex:            1,
+          backgroundColor: color.bgMuted,
+          borderRadius:    space.xxxs,
+          paddingHorizontal: space.sm,
+          paddingVertical:   space.xs,
+        }}>
+          {bullet.title ? (
+            <Text style={{
+              fontSize:     text.base,
+              fontFamily:   font.bold,
+              fontWeight:   weight.semibold,
+              color:        color.textPrimary,
+              marginBottom: 2,
+            }}>
+              {bullet.title}
+            </Text>
+          ) : null}
+          <Text style={{
+            fontSize:   text.sm,
+            fontFamily: font.regular,
+            fontWeight: weight.regular,
+            color:      color.textSecondary,
+            paddingTop: space.xxxs,
+            lineHeight: 1.5,
+          }}>
+            {bullet.text}
+          </Text>
+        </View>
+      ) : (
+        // Без фона
+        <View style={{ flex: 1 }}>
+          {bullet.title ? (
+            <Text style={{
+              fontSize:     text.base,
+              fontFamily:   font.bold,
+              fontWeight:   weight.semibold,
+              color:        color.textPrimary,
+              marginBottom: 2,
+            }}>
+              {bullet.title}
+            </Text>
+          ) : null}
+          <Text style={{
+            paddingTop: space.xxxs,
+            fontSize:   text.sm,
+            fontFamily: font.regular,
+            fontWeight: weight.regular,
+            color:      color.textSecondary,
+            lineHeight: 1.5,
+          }}>
+            {bullet.text}
+          </Text>
+        </View>
+      )}
     </View>
   )
 }
 
-export function PdfBlockRondoDelivery({ cfg, data, sectionNumber }) {
+// ─── Блок менеджера ───────────────────────────────────────────────────────────
+function ManagerBlock({ cfg, data }) {
   const { color, text, font, weight, space } = cfg
-
-  const rd      = data?.rondoDelivery || {}
-  const items   = rd.deliveryItems || DELIVERY_DEFAULTS
+  const rd          = data?.rondoDelivery || {}
   const byeLabel    = rd.byeLabel    || 'Ваш менеджер'
   const byeName     = rd.byeName     || data?.manager_name || ''
   const byeContacts = rd.byeContacts || [data?.tel, data?.email].filter(Boolean).join('\n')
 
-  const [card0, card1, card2, card3] = items
+  if (!byeName && !byeContacts) return null
 
   return (
-    <View style={{ marginBottom: cfg.space.end }}>
-      <PdfSectionBar cfg={cfg} number={sectionNumber} title="Условия поставки" />
-
-      {/* Первая карточка — во всю ширину */}
-      {card0 ? <Card text={card0} cfg={cfg} /> : null}
-
-      {/* Средний ряд: две карточки + грузовик */}
-      <View style={{ flexDirection: 'row', gap: space.lg, marginTop: space.sm }}>
-        <View style={{ flex: 1, gap: space.sm }}>
-          {card1 ? <Card text={card1} cfg={cfg} /> : null}
-          {card2 ? <Card text={card2} cfg={cfg} /> : null}
-        </View>
-        <View style={{ width: space.xxl * 6, alignItems: 'center', justifyContent: 'center' }}>
-          <Image
-            src={TRUCK_IMG}
-            style={{ width: space.xxl * 6, height: space.xxl * 4, objectFit: 'contain' }}
-          />
-        </View>
-      </View>
-
-      {/* Нижний текст (4-й пункт) */}
-      {card3 ? (
+    <View style={{
+      marginTop:         space.xl,
+      paddingLeft:       space.md,
+      borderLeftWidth:   1,
+      borderLeftColor:   color.tableTotal,
+      // backgroundColor:   color.bgSubtle,
+    }}>
+      <Text style={{
+        fontSize:     text.xs,
+        fontFamily:   font.bold,
+        fontWeight:   weight.semibold,
+        color:        color.accent,
+        marginBottom: space.xxs,
+        textTransform: 'uppercase',
+      }}>
+        {byeLabel}
+      </Text>
+      {byeName ? (
         <Text style={{
-          fontSize:   text.xs,
-          fontFamily: font.regular,
-          color:      color.textMuted,
-          lineHeight: 1.5,
-          marginTop:  space.md,
+          fontSize:     text.base,
+          fontFamily:   font.bold,
+          fontWeight:   weight.bold,
+          color:        color.textPrimary,
+          marginBottom: space.xs,
         }}>
-          {card3}
+          {byeName}
         </Text>
       ) : null}
-
-      {/* Блок с контактами менеджера */}
-      {(byeName || byeContacts) ? (
-        <View style={{
-          marginTop:       space.xl,
-          padding:         space.md,
-          borderLeftWidth: 3,
-          borderLeftColor: color.accent,
-          backgroundColor: color.bgSubtle,
+      {byeContacts ? (
+        <Text style={{
+          fontSize:   text.sm,
+          fontFamily: font.regular,
+          color:      color.textSecondary,
+          lineHeight: 1.6,
         }}>
-          <Text style={{
-            fontSize:   text.xs,
-            fontFamily: font.bold,
-            fontWeight: weight.semibold,
-            color:      color.accent,
-            marginBottom: space.xxs,
-            textTransform: 'uppercase',
-          }}>
-            {byeLabel}
-          </Text>
-          {byeName ? (
-            <Text style={{
-              fontSize:   text.base,
-              fontFamily: font.bold,
-              fontWeight: weight.bold,
-              color:      color.textPrimary,
-              marginBottom: space.xs,
-            }}>
-              {byeName}
-            </Text>
-          ) : null}
-          {byeContacts ? (
-            <Text style={{
-              fontSize:   text.sm,
-              fontFamily: font.regular,
-              color:      color.textSecondary,
-              lineHeight: 1.6,
-            }}>
-              {byeContacts}
-            </Text>
-          ) : null}
-        </View>
+          {byeContacts}
+        </Text>
       ) : null}
+    </View>
+  )
+}
+
+// ─── Главный блок ─────────────────────────────────────────────────────────────
+export function PdfBlockRondoDelivery({ cfg, data, sectionNumber }) {
+  const { space } = cfg
+  const rd      = data?.rondoDelivery || {}
+  const bullets = (rd.bullets?.length ? rd.bullets : DEFAULT_BULLETS)
+    .filter(b => b.text || b.title)
+
+  return (
+    <View style={{ marginBottom: space.end }}>
+      <PdfSectionBar cfg={cfg} number={sectionNumber} title="Условия оплаты и поставки" />
+
+      <View style={{ gap: space.sm }}>
+        {bullets.map((bullet, i) => (
+          <Bullet
+            key={bullet.id ?? i}
+            bullet={bullet}
+            cfg={cfg}
+            isLast={i === bullets.length - 1}
+          />
+        ))}
+      </View>
+
+      <ManagerBlock cfg={cfg} data={data} />
     </View>
   )
 }
