@@ -117,7 +117,6 @@ export const WEIGHT = {
 
 // ─── Размеры текста ───────────────────────────────────────────────────────────
 export const TEXT = {
-  xxxs: mm(1.1),   // микро-отступы
   xxs:  mm(2.4),   // метки, подсказки
   xs:   mm(2.8),   // мелкий текст, подписи рисунков
   sm:   mm(3.2),   // таблица, второстепенный текст
@@ -137,13 +136,14 @@ export const LINE = {
 
 // ─── Отступы ─────────────────────────────────────────────────────────────────
 export const SPACE = {
-  xxs: U * 0.5,   // 1mm
-  xs:  U,         // 2mm
-  sm:  U * 1.5,   // 3mm
-  md:  U * 2,     // 4mm
-  lg:  U * 3,     // 6mm
-  xl:  U * 5,     // 10mm
-  xxl: U * 8,     // 16mm
+  xxxs: mm(1.1), // микро-отступы
+  xxs: U * 0.5,  // 1mm
+  xs:  U,        // 2mm
+  sm:  U * 1.5,  // 3mm
+  md:  U * 2,    // 4mm
+  lg:  U * 3,    // 6mm
+  xl:  U * 5,    // 10mm
+  xxl: U * 8,    // 16mm
   end: U * 3.6,
 }
 
@@ -176,6 +176,7 @@ const ARSTEL_COLORS = {
   tableBorder:    '#E5E7EB',
   divider:        '#E5E7EB',
   dividerLight:   '#F3F4F6',
+  dividerDark:    '#a5a8af',
   sectionBar:     '#F47923',
 }
 

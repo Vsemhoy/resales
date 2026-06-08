@@ -1,14 +1,30 @@
 import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
+import {applyNonBreakingSpacesPro} from '../../utils/splitText'
 
 const DEFAULT_BULLETS = [
-  { id: 'b1', title: 'Срок поставки',     text: 'Срок поставки оборудования под заказ — 3 месяца с момента оплаты счета.', decorated: true  },
-  { id: 'b2', title: 'НДС',              text: 'Цены указаны с учётом НДС 22%.', decorated: true  },
-  { id: 'b3', title: 'Гарантия',         text: 'Гарантийный срок на оборудование составляет 12 месяцев.', decorated: true  },
-  { id: 'b4', title: 'Срок действия КП', text: 'Коммерческое предложение действительно при условии изменения курсов валют не более 3% от курсов, установленных ЦБ РФ на дату выставления КП.', decorated: true  },
-  { id: 'b5', title: 'Доставка',         text: 'Доставка в регионы осуществляется транспортной компанией.', decorated: false },
+  { id: 'b1', title: 'Срок поставки',     text: 'Срок поставки оборудования под заказ — 3 месяца с момента оплаты счета.', decorated: true,  color: 'default' },
+  { id: 'b2', title: 'НДС',              text: 'Цены указаны с учётом НДС 22%.', decorated: true,  color: 'default' },
+  { id: 'b3', title: 'Гарантия',         text: 'Гарантийный срок на оборудование составляет 12 месяцев.', decorated: true,  color: 'default' },
+  { id: 'b4', title: 'Срок действия КП', text: 'Коммерческое предложение действительно при условии изменения курсов валют не более 3% от курсов, установленных ЦБ РФ на дату выставления КП.', decorated: true, color: 'default' },
+  { id: 'b5', title: 'Доставка',         text: 'Доставка в регионы осуществляется транспортной компанией.', decorated: false, color: 'default' },
 ]
+
+// Карта цветов фона — 'accent' берёт из cfg, остальные фиксированные
+const BG_COLORS = {
+  default: null,        // → cfg.color.bgMuted
+  accent:  null,        // → cfg.color.accentLight (задаётся в рантайме)
+  cold:    '#dbeafe',
+  warn:    '#fef9c3',
+  danger:  '#fee2e2',
+}
+
+function getBg(colorKey, cfg) {
+  if (!colorKey || colorKey === 'default') return cfg.color.bgMuted
+  if (colorKey === 'accent') return cfg.color.accentLight ?? '#fff3e8'
+  return BG_COLORS[colorKey] ?? cfg.color.bgMuted
+}
 
 // ─── Один буллет ─────────────────────────────────────────────────────────────
 function Bullet({ bullet, cfg, isLast }) {
@@ -18,24 +34,23 @@ function Bullet({ bullet, cfg, isLast }) {
   return (
     <View style={{ flexDirection: 'row', marginBottom: isLast ? 0 : space.xxxs }} wrap={false}>
 
-      {/* Точка-буллет */}
+      {/* Точка */}
       <View style={{
         width:           DOT_SIZE,
         height:          DOT_SIZE,
         borderRadius:    DOT_SIZE / 2,
         backgroundColor: color.accent,
-        marginTop:       text.sm * 0.45, // визуально по центру первой строки
+        marginTop:       text.sm * 0.45,
         marginRight:     space.sm,
         flexShrink:      0,
       }} />
 
       {/* Контент */}
       {bullet.decorated ? (
-        // С фоном
         <View style={{
-          flex:            1,
-          backgroundColor: color.bgMuted,
-          borderRadius:    space.xxxs,
+          flex:              1,
+          backgroundColor:   getBg(bullet.color, cfg),
+          borderRadius:      space.xxxs,
           paddingHorizontal: space.sm,
           paddingVertical:   space.xs,
         }}>
@@ -58,11 +73,10 @@ function Bullet({ bullet, cfg, isLast }) {
             paddingTop: space.xxxs,
             lineHeight: 1.5,
           }}>
-            {bullet.text}
+            {applyNonBreakingSpacesPro(bullet.text)}
           </Text>
         </View>
       ) : (
-        // Без фона
         <View style={{ flex: 1 }}>
           {bullet.title ? (
             <Text style={{
@@ -83,7 +97,7 @@ function Bullet({ bullet, cfg, isLast }) {
             color:      color.textSecondary,
             lineHeight: 1.5,
           }}>
-            {bullet.text}
+            {applyNonBreakingSpacesPro(bullet.text)}
           </Text>
         </View>
       )}
@@ -91,7 +105,7 @@ function Bullet({ bullet, cfg, isLast }) {
   )
 }
 
-// ─── Блок менеджера ───────────────────────────────────────────────────────────
+// ─── Менеджер ─────────────────────────────────────────────────────────────────
 function ManagerBlock({ cfg, data }) {
   const { color, text, font, weight, space } = cfg
   const rd          = data?.rondoDelivery || {}
@@ -103,18 +117,17 @@ function ManagerBlock({ cfg, data }) {
 
   return (
     <View style={{
-      marginTop:         space.xl,
-      paddingLeft:       space.md,
-      borderLeftWidth:   1,
-      borderLeftColor:   color.tableTotal,
-      // backgroundColor:   color.bgSubtle,
+      marginTop:       space.xl,
+      paddingLeft:     space.md,
+      borderLeftWidth: 1,
+      borderLeftColor: color.tableTotal,
     }}>
       <Text style={{
-        fontSize:     text.xs,
-        fontFamily:   font.bold,
-        fontWeight:   weight.semibold,
-        color:        color.accent,
-        marginBottom: space.xxs,
+        fontSize:      text.xs,
+        fontFamily:    font.bold,
+        fontWeight:    weight.semibold,
+        color:         color.accent,
+        marginBottom:  space.xxs,
         textTransform: 'uppercase',
       }}>
         {byeLabel}

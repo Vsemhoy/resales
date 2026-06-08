@@ -183,47 +183,7 @@ export function PdfBlockSpecials({
             }}
             wrap={false}
           >
-            {/* Шапка */}
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-
-                borderBottomWidth: 0.5,
-                borderBottomColor: color.divider,
-
-                paddingBottom: space.xs,
-                marginBottom: space.sm,
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={{
-                    fontSize: text.md,
-                    fontFamily: font.bold,
-                    fontWeight: weight.bold,
-                    color: color.textPrimary,
-                  }}
-                >
-                  {name}
-                </Text>
-
-                {shortNote ? (
-                  <Text
-                    style={{
-                      fontSize: text.xs,
-                      fontFamily: font.regular,
-                      color: color.textSecondary,
-                      marginTop: 1,
-                    }}
-                  >
-                    {shortNote}
-                  </Text>
-                ) : null}
-              </View>
-            </View>
-
-            {/* Основной блок */}
+            {/* Основной блок — фото сверху справа, заголовок в левой колонке */}
             <View style={{ flexDirection: 'row' }}>
 
               {/* Левая колонка */}
@@ -233,6 +193,39 @@ export function PdfBlockSpecials({
                   paddingRight: space.lg,
                 }}
               >
+                {/* Заголовок карточки с усиленным подчёркиванием */}
+                <View
+                  style={{
+                    borderBottomWidth: 0.5,
+                    borderBottomColor: color.dividerDark,
+                    paddingBottom: space.xs,
+                    marginBottom: space.sm,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: text.md,
+                      fontFamily: font.bold,
+                      fontWeight: weight.bold,
+                      color: color.textPrimary,
+                    }}
+                  >
+                    {name}
+                  </Text>
+
+                  {shortNote ? (
+                    <Text
+                      style={{
+                        fontSize: text.xs,
+                        fontFamily: font.regular,
+                        color: color.textSecondary,
+                        marginTop: 1,
+                      }}
+                    >
+                      {shortNote}
+                    </Text>
+                  ) : null}
+                </View>
                 {/* Описание */}
                 {desc ? (
                   <View>
