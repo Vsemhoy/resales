@@ -198,6 +198,20 @@ export default function BidPdfEditor() {
     setActiveSection(key)
   }, [])
 
+  const removePageBreak = useCallback((key) => {
+    setSectionOrder(prev => {
+      const next = prev.filter(k => k !== key)
+      setFormData(fd => ({ ...fd, _sectionOrder: next }))
+      return next
+    })
+    setEnabledSections(prev => {
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+    setActiveSection(null)
+  }, [])
+
   const addCustomBlock = useCallback(() => {
     const id  = uuid()
     const key = customKey(id)
@@ -285,7 +299,7 @@ export default function BidPdfEditor() {
     const nums = {}
     let n = 1
     for (const section of orderedVisible) {
-      if (!section.draggable) continue   // cover и toc без номера
+      if (!section.draggable || section.isPageBreak) continue   // cover, toc и разрывы без номера
       const enabled = section.required || enabledSections[section.key]
       if (enabled) nums[section.key] = n++
     }
@@ -488,7 +502,7 @@ export default function BidPdfEditor() {
                     : activeSecDef.label}
                 </div>
                 {activeSecDef?.isPageBreak
-                  ? <SectionPageBreak />
+                  ? <SectionPageBreak onRemove={() => removePageBreak(activeSecDef.key)} />
                   : activeSecDef?.isCustom
                   ? <SectionCustomBlock
                       data={{ id: activeSecDef.customId, ...(customSections[activeSecDef.customId] || {}) }}

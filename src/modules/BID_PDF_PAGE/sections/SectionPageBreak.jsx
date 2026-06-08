@@ -1,7 +1,9 @@
 import React from 'react'
+import { Button } from 'antd'
+import { DeleteOutlined } from '@ant-design/icons'
 import { TabWrap } from '../components/FormParts'
 
-export default function SectionPageBreak() {
+export default function SectionPageBreak({ onRemove }) {
   return (
     <TabWrap>
       <div style={{
@@ -14,6 +16,17 @@ export default function SectionPageBreak() {
         <div style={{ fontSize: 12, textAlign: 'center', maxWidth: 280 }}>
           Всё что идёт после этого блока начнётся с новой страницы PDF
         </div>
+        {onRemove && (
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            onClick={onRemove}
+            size="small"
+            style={{ marginTop: 8 }}
+          >
+            Удалить разрыв
+          </Button>
+        )}
       </div>
     </TabWrap>
   )

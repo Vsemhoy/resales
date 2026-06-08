@@ -36,7 +36,7 @@ function shouldExclude(name = '') {
 }
 
 // Нормализация характеристик
-function normalizeChars(chars) {
+function normalizeChars(chars, limit = 10) {
   if (!chars) return []
 
   const arr = Array.isArray(chars)
@@ -45,7 +45,17 @@ function normalizeChars(chars) {
 
   return arr
     .filter(c => c?.property_name && !shouldExclude(c.property_name))
-    .slice(0, 12)
+    .slice(0, limit)
+}
+
+// Фильтр для 2-колоночного режима: если суммарная длина > 55 — убираем
+function filterForColumns(chars, columns) {
+  if (columns !== 2) return chars
+  return chars.filter(c => {
+    const nameLen = (c.property_name || '').length
+    const val     = c.dimension ? `${c.value} ${c.dimension}` : String(c.value || '')
+    return (nameLen + val.length) <= 55
+  })
 }
 
 // Строка характеристики
@@ -112,6 +122,13 @@ export function PdfBlockSpecials({
   const ignored = data?.specialsIgnore ?? []
   const overrides = data?.specialsOverrides ?? {}
 
+  const settings        = data?.specialsSettings ?? {}
+  const showDescription = settings.showDescription ?? true
+  const showSpecials    = settings.showSpecials    ?? true
+  const showChars       = settings.showChars       ?? true
+  const maxChars        = settings.maxChars        ?? 10
+  const charsColumns    = settings.charsColumns    ?? 2
+
   const seen = new Set()
   const visible = models
     .filter(m => !ignored.includes(m.model_id ?? m.id))
@@ -161,10 +178,14 @@ export function PdfBlockSpecials({
           console.log('ov1', model.info_model?.characteristics)
           console.log('ov2', model)
 
-        const chars = normalizeChars(
-          ov?.characteristics ??
-          model.info_model?.characteristics ??
-          model.characteristics
+        const chars = filterForColumns(
+          normalizeChars(
+            ov?.characteristics ??
+            model.info_model?.characteristics ??
+            model.characteristics,
+            maxChars
+          ),
+          charsColumns
         )
 
         // Делим на 2 колонки
@@ -227,7 +248,7 @@ export function PdfBlockSpecials({
                   ) : null}
                 </View>
                 {/* Описание */}
-                {desc ? (
+                {showDescription && desc ? (
                   <View>
                     <HtmlToPdfV2
                       html={wrapJustify(desc)}
@@ -237,7 +258,7 @@ export function PdfBlockSpecials({
                 ) : null}
 
                 {/* Буллеты */}
-                {specials.length > 0 ? (
+                {showSpecials && specials.length > 0 ? (
                   <View
                     style={{
                       marginTop: desc
@@ -312,60 +333,35 @@ export function PdfBlockSpecials({
             </View>
 
             {/* Характеристики */}
-            {chars.length > 0 && (
-              <View
-                style={{
-                  marginTop: space.md,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: text.sm,
-                    fontFamily: font.bold,
-                    fontWeight: weight.bold,
-
-                    color: color.accent,
-
-                    marginBottom: space.sm,
-
-                    textTransform: 'uppercase',
-                  }}
-                >
+            {showChars && chars.length > 0 && (
+              <View style={{ marginTop: space.md }}>
+                <Text style={{
+                  fontSize: text.sm, fontFamily: font.bold, fontWeight: weight.bold,
+                  color: color.accent, marginBottom: space.sm, textTransform: 'uppercase',
+                }}>
                   Технические характеристики
                 </Text>
 
-                <View
-                  style={{
-                    flexDirection: 'row',
-                  }}
-                >
-                  {/* Левая колонка */}
-                  <View
-                    style={{
-                      flex: 1,
-                      paddingRight: space.lg,
-                    }}
-                  >
-                    {col1.map((c, i) => (
-                      <CharRow
-                        key={i}
-                        c={c}
-                        cfg={cfg}
-                      />
-                    ))}
+                {charsColumns === 1 ? (
+                  // Одна колонка
+                  <View>
+                    {chars.map((c, i) => <CharRow key={i} c={c} cfg={cfg} />)}
                   </View>
-
-                  {/* Правая колонка */}
-                  <View style={{ flex: 1 }}>
-                    {col2.map((c, i) => (
-                      <CharRow
-                        key={i}
-                        c={c}
-                        cfg={cfg}
-                      />
-                    ))}
+                ) : (
+                  // Две колонки
+                  <View style={{ flexDirection: 'row' }}>
+                    <View style={{ flex: 1, paddingRight: space.lg }}>
+                      {chars.slice(0, Math.ceil(chars.length / 2)).map((c, i) => (
+                        <CharRow key={i} c={c} cfg={cfg} />
+                      ))}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      {chars.slice(Math.ceil(chars.length / 2)).map((c, i) => (
+                        <CharRow key={i} c={c} cfg={cfg} />
+                      ))}
+                    </View>
                   </View>
-                </View>
+                )}
               </View>
             )}
           </View>

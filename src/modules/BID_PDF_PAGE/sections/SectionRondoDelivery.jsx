@@ -5,10 +5,10 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { Section, Field, TabWrap } from '../components/FormParts'
 
 export const DEFAULT_BULLETS = [
-  { id: 'b1', title: 'Срок поставки',     text: 'Срок поставки оборудования под заказ — 3 месяца с момента оплаты счета.',                                                                              decorated: true,  color: 'default' },
-  { id: 'b2', title: 'НДС',              text: 'Цены указаны с учётом НДС 22%.',                                                                                                                        decorated: true,  color: 'default' },
-  { id: 'b3', title: 'Гарантия',         text: 'Гарантийный срок на оборудование составляет 12 месяцев.',                                                                                               decorated: true,  color: 'default' },
-  { id: 'b4', title: 'Срок действия КП', text: 'Коммерческое предложение действительно при условии изменения курсов валют не более 3% от курсов, установленных ЦБ РФ на дату выставления КП.',       decorated: true,  color: 'default' },
+  { id: 'b1', title: 'Срок поставки',     text: 'Срок поставки оборудования под заказ — 3 месяца с момента оплаты счета.',                                                                              decorated: false, color: 'default' },
+  { id: 'b2', title: 'НДС',              text: 'Цены указаны с учётом НДС 22%.',                                                                                                                        decorated: false, color: 'default' },
+  { id: 'b3', title: 'Гарантия',         text: 'Гарантийный срок на оборудование составляет 12 месяцев.',                                                                                               decorated: false, color: 'default' },
+  { id: 'b4', title: 'Срок действия КП', text: 'Коммерческое предложение действительно при условии изменения курсов валют не более 3% от курсов, установленных ЦБ РФ на дату выставления КП.',       decorated: false, color: 'default' },
   { id: 'b5', title: 'Доставка',         text: 'Доставка в регионы осуществляется транспортной компанией.',                                                                                             decorated: false, color: 'default' },
 ]
 
@@ -151,21 +151,21 @@ export default function SectionRondoDelivery({ data, onChange, companyId }) {
           </Droppable>
         </DragDropContext>
 
-          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginTop: 8 }}>
-                    <Button
-          type="dashed" icon={<PlusOutlined />}
-          onClick={addBullet}
-          style={{ width: '100%' }}
-        >
-          Добавить пункт
-        </Button>
-          {/* Сброс — сбоку, чтобы случайно не нажать */}
-            {contactsChanged && <Button size="small" icon={<UndoOutlined />} onClick={() => set('bullets', DEFAULT_BULLETS)}  title={"Сбросить к дефолтным 5 пунктам"} />}
-          </div>
-
-
- 
-
+        <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginTop: 8 }}>
+          <Button
+            type="dashed" icon={<PlusOutlined />}
+            onClick={addBullet}
+            style={{ flex: 1 }}
+          >
+            Добавить пункт
+          </Button>
+          <Button
+            icon={<UndoOutlined />}
+            onClick={() => set('bullets', DEFAULT_BULLETS)}
+            title="Сбросить к дефолтным 5 пунктам"
+            size="small"
+          />
+        </div>
       </Section>
 
       {/* Менеджер */}
