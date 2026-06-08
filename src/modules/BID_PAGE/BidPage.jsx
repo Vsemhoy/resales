@@ -350,12 +350,7 @@ const BidPage = (props) => {
             setOpenMode(serverData.openmode);
 
             const { bid, bid_models } = serverData;
-            const wordTemplateCompany =
-                bid.typeTitle ??
-                ((bid.base_info?.org?.id_company ??
-                    bid.base_info?.org?.company_id ??
-                    bid.base_info?.org?.company?.id ??
-                    bid.id_company) - 1);
+            const wordTemplateCompany = Number(bid.id_company);
 
             setBidActions(bid.actions);
             setBidIdCompany(bid.id_company);
@@ -532,8 +527,7 @@ const BidPage = (props) => {
 		return {
 			bid: {
 				id: bidId,
-				id_company: bidIdCompany,
-				typeTitle: currentForm.baseInfo.wordTemplateCompany,
+				id_company: currentForm.baseInfo.wordTemplateCompany,
 				place: bidPlace,
 				type: bidType,
 				files_count: bidFilesCount,
@@ -588,7 +582,7 @@ const BidPage = (props) => {
 		if (!select) return [];
 		return select
 			.filter((item) => Number(item.id) !== 1)
-			.map((item) => ({value: Number(item.id) - 1, label: item.name, used: item.used}));
+			.map((item) => ({value: Number(item.id), label: item.name, used: item.used}));
 	};
     const countOfComments = () => {
         return Object.values(form.comments).filter(Boolean).length;
@@ -600,6 +594,9 @@ const BidPage = (props) => {
         }));
     }, []);
     const handleBaseInfoChange = useCallback((field, value) => {
+        if (field === 'wordTemplateCompany') {
+            setBidIdCompany(value);
+        }
         setForm(prev => ({
             ...prev,
             baseInfo: { ...prev.baseInfo, [field]: value },
