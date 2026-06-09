@@ -18,6 +18,7 @@ export function PdfBlockCoverHat({ cfg, data, draft }) {
       {/* Баннер — за поля через отрицательные отступы */}
       <View style={{
         position: 'relative',
+        height:        cover.hatHeight,
         marginTop:    -layout.marginTop,
         marginLeft:   -layout.marginLeft,
         marginRight:  -layout.marginRight,

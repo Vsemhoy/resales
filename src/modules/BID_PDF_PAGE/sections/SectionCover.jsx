@@ -6,11 +6,11 @@ import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
 import { useCovers, CoversDrawer } from '../components/CoversDrawer'
 
 const HAT_HEADER_TEXT_DEFAULTS = {
-  '2': `ООО "АРСТЕЛ"
+  '2': `ООО «АРСТЕЛ»
 +7 (812) 207-50-97
 sales@arstel.com
 www.arstel.com`,
-  '3': `ООО "РОНДО-САУНД"
+  '3': `ООО «РОНДО-САУНД»
 196006, Россия, Санкт-Петербург
 Московский проспект, дом 91, литера А
 помещение 11Н, офис 229

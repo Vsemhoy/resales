@@ -11,41 +11,32 @@ const DEFAULT_BULLETS = [
   { id: 'b5', title: 'Доставка',         text: 'Доставка в регионы осуществляется транспортной компанией.', decorated: false, color: 'default' },
 ]
 
-// Карта цветов фона — 'accent' берёт из cfg, остальные фиксированные
-const BG_COLORS = {
-  default: null,        // → cfg.color.bgMuted
-  accent:  null,        // → cfg.color.accentLight (задаётся в рантайме)
-  cold:    '#dbeafe',
-  warn:    '#fef9c3',
-  danger:  '#fee2e2',
-}
 
 function getBg(colorKey, cfg) {
   if (!colorKey || colorKey === 'default') return cfg.color.bgMuted
   if (colorKey === 'accent') return cfg.color.accentLight ?? '#fff3e8'
-  return BG_COLORS[colorKey] ?? cfg.color.bgMuted
+  if (colorKey === 'cold')   return cfg.color.bulletCold
+  if (colorKey === 'warn')   return cfg.color.bulletWarn
+  if (colorKey === 'danger') return cfg.color.bulletDanger
+  return cfg.color.bgMuted
 }
 
-// ─── Один буллет ─────────────────────────────────────────────────────────────
 function Bullet({ bullet, cfg, isLast }) {
   const { color, text, font, weight, space } = cfg
   const DOT_SIZE = 5
 
   return (
     <View style={{ flexDirection: 'row', marginBottom: isLast ? 0 : space.xxxs }} wrap={false}>
-
-      {/* Точка */}
       <View style={{
         width:           DOT_SIZE,
         height:          DOT_SIZE,
         borderRadius:    DOT_SIZE / 2,
         backgroundColor: color.accent,
-        marginTop:       text.sm * 0.45,
+        marginTop:       text.xxs * 0.45,
         marginRight:     space.sm,
         flexShrink:      0,
       }} />
 
-      {/* Контент */}
       {bullet.decorated ? (
         <View style={{
           flex:              1,
@@ -65,16 +56,18 @@ function Bullet({ bullet, cfg, isLast }) {
               {bullet.title}
             </Text>
           ) : null}
-          <Text style={{
-            fontSize:   text.sm,
-            fontFamily: font.regular,
-            fontWeight: weight.regular,
-            color:      color.textSecondary,
-            paddingTop: space.xxxs,
-            lineHeight: 1.5,
-          }}>
-            {applyNonBreakingSpacesPro(bullet.text)}
-          </Text>
+          {bullet.text ? (
+            <Text style={{
+              fontSize:   text.sm,
+              fontFamily: font.regular,
+              fontWeight: weight.regular,
+              color:      color.textSecondary,
+              paddingTop: space.xxxs,
+              lineHeight: 1.5,
+            }}>
+              {applyNonBreakingSpacesPro(bullet.text)}
+            </Text>
+          ) : null}
         </View>
       ) : (
         <View style={{ flex: 1 }}>
@@ -89,23 +82,24 @@ function Bullet({ bullet, cfg, isLast }) {
               {bullet.title}
             </Text>
           ) : null}
-          <Text style={{
-            paddingTop: space.xxxs,
-            fontSize:   text.sm,
-            fontFamily: font.regular,
-            fontWeight: weight.regular,
-            color:      color.textSecondary,
-            lineHeight: 1.5,
-          }}>
-            {applyNonBreakingSpacesPro(bullet.text)}
-          </Text>
+          {bullet.text ? (
+            <Text style={{
+              paddingTop: space.xxxs,
+              fontSize:   text.sm,
+              fontFamily: font.regular,
+              fontWeight: weight.regular,
+              color:      color.textSecondary,
+              lineHeight: 1.5,
+            }}>
+              {applyNonBreakingSpacesPro(bullet.text)}
+            </Text>
+          ) : null}
         </View>
       )}
     </View>
   )
 }
 
-// ─── Менеджер ─────────────────────────────────────────────────────────────────
 function ManagerBlock({ cfg, data }) {
   const { color, text, font, weight, space } = cfg
   const rd          = data?.rondoDelivery || {}
@@ -113,6 +107,7 @@ function ManagerBlock({ cfg, data }) {
   const byeName     = rd.byeName     || data?.manager_name || ''
   const byeContacts = rd.byeContacts || [data?.tel, data?.email].filter(Boolean).join('\n')
 
+  if (!(rd.showManager ?? true)) return null
   if (!byeName && !byeContacts) return null
 
   return (
@@ -157,7 +152,6 @@ function ManagerBlock({ cfg, data }) {
   )
 }
 
-// ─── Главный блок ─────────────────────────────────────────────────────────────
 export function PdfBlockRondoDelivery({ cfg, data, sectionNumber }) {
   const { space } = cfg
   const rd      = data?.rondoDelivery || {}

@@ -13,11 +13,11 @@ export const DEFAULT_BULLETS = [
 ]
 
 export const COLOR_OPTIONS = [
-  { key: 'default', label: 'Обычный',   bg: '#f0f0f0', fg: '#595959' },
+  { key: 'default', label: 'Обычный',   bg: '#f3f4f6', fg: '#595959' },
   { key: 'accent',  label: 'Акцент',    bg: '#fff3e8', fg: '#c45d0e' },
-  { key: 'cold',    label: 'Холодный',  bg: '#dbeafe', fg: '#1e40af' },
-  { key: 'warn',    label: 'Внимание',  bg: '#fef9c3', fg: '#854d0e' },
-  { key: 'danger',  label: 'Опасность', bg: '#fee2e2', fg: '#991b1b' },
+  { key: 'cold',    label: 'Холодный',  bg: '#dde8f4', fg: '#2c5f8a' },
+  { key: 'warn',    label: 'Внимание',  bg: '#fdf0cc', fg: '#7a5c00' },
+  { key: 'danger',  label: 'Опасность', bg: '#fce6e0', fg: '#a03020' },
 ]
 
 const SITE_BY_COMPANY = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
@@ -170,21 +170,34 @@ export default function SectionRondoDelivery({ data, onChange, companyId }) {
 
       {/* Менеджер */}
       <Section title="Блок менеджера" description="Контакты внизу раздела">
-        <Field label="Заголовок">
-          <Input value={rd.byeLabel || 'Ваш менеджер'} onChange={e => set('byeLabel', e.target.value)} />
-        </Field>
-        <Field label="Имя">
-          <div style={{ display: 'flex', gap: 6 }}>
-            <Input value={nameValue} placeholder="Петр Петров" onChange={e => set('byeName', e.target.value)} />
-            {nameChanged && <Button size="small" icon={<UndoOutlined />} onClick={() => set('byeName', defaultName)} />}
-          </div>
-        </Field>
-        <Field label="Контакты">
-          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-            <Input.TextArea autoSize={{ minRows: 3 }} value={contactsValue} onChange={e => set('byeContacts', e.target.value)} />
-            {contactsChanged && <Button size="small" icon={<UndoOutlined />} onClick={() => set('byeContacts', defaultContacts)} style={{ flexShrink: 0 }} />}
-          </div>
-        </Field>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <Switch
+            size="small"
+            checked={rd.showManager ?? true}
+            onChange={val => set('showManager', val)}
+          />
+          <span style={{ fontSize: 12, color: '#595959' }}>
+            {(rd.showManager ?? true) ? 'Блок включён' : 'Блок отключён'}
+          </span>
+        </div>
+
+        {(rd.showManager ?? true) && (<>
+          <Field label="Заголовок">
+            <Input value={rd.byeLabel || 'Ваш менеджер'} onChange={e => set('byeLabel', e.target.value)} />
+          </Field>
+          <Field label="Имя">
+            <div style={{ display: 'flex', gap: 6 }}>
+              <Input value={nameValue} placeholder="Петр Петров" onChange={e => set('byeName', e.target.value)} />
+              {nameChanged && <Button size="small" icon={<UndoOutlined />} onClick={() => set('byeName', defaultName)} />}
+            </div>
+          </Field>
+          <Field label="Контакты">
+            <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+              <Input.TextArea autoSize={{ minRows: 3 }} value={contactsValue} onChange={e => set('byeContacts', e.target.value)} />
+              {contactsChanged && <Button size="small" icon={<UndoOutlined />} onClick={() => set('byeContacts', defaultContacts)} style={{ flexShrink: 0 }} />}
+            </div>
+          </Field>
+        </>)}
       </Section>
     </TabWrap>
   )

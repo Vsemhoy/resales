@@ -136,7 +136,7 @@ export const LINE = {
 
 // ─── Отступы ─────────────────────────────────────────────────────────────────
 export const SPACE = {
-  xxxs: mm(1.1), // микро-отступы
+  xxxs: mm(0.8), // микро-отступы
   xxs: U * 0.5,  // 1mm
   xs:  U,        // 2mm
   sm:  U * 1.5,  // 3mm
@@ -161,8 +161,8 @@ const ARSTEL_COLORS = {
   accentLight:    '#FF590322',
   accentMid:      '#FF590366',
   textPrimary:    '#1A1A1A',
-  textSecondary:  '#474a50',
-  textMuted:      '#9CA3AF',
+  textSecondary:  '#3a3c41',
+  textMuted:      '#767b85',
   textOnAccent:   '#FFFFFF',
   bgPage:         '#FFFFFF',
   bgSubtle:       '#F9FAFB',
@@ -175,8 +175,13 @@ const ARSTEL_COLORS = {
   tableTotalText: '#FFFFFF',
   tableBorder:    '#E5E7EB',
   divider:        '#E5E7EB',
-  dividerLight:   '#F3F4F6',
   dividerDark:    '#a5a8af',
+
+  // Семантические цвета буллетов
+  bulletCold:     '#dde8f4',   // приглушённый серо-голубой
+  bulletWarn:     '#fdf0cc',   // тёплый кремово-жёлтый
+  bulletDanger:   '#fce6e0',   // тёплый розово-красный
+  dividerLight:   '#F3F4F6',
   sectionBar:     '#F47923',
 }
 
@@ -186,8 +191,8 @@ const RONDO_COLORS = {
   accentMid:      '#26943566',
 
   textPrimary:    '#1A1A1A',
-  textSecondary:  '#6B7280',
-  textMuted:      '#9CA3AF',
+  textSecondary:  '#3a3c41',
+  textMuted:      '#767b85',
   textOnAccent:   '#FFFFFF',
 
   bgPage:         '#FFFFFF',
@@ -203,6 +208,12 @@ const RONDO_COLORS = {
   tableBorder:    '#D4D5C8',
 
   divider:        '#D4D5C8',
+  dividerDark:    '#a5a8af',
+
+  // Семантические цвета буллетов
+  bulletCold:     '#d8e8f0',   // приглушённый зелёно-синий
+  bulletWarn:     '#f5ecca',   // земляной тёплый жёлтый
+  bulletDanger:   '#f5deda',   // приглушённый розовый
   dividerLight:   '#EDEEE0',
 
   sectionBar:     '#269435',

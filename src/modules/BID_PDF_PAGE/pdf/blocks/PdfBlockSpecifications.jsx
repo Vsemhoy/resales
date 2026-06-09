@@ -121,14 +121,13 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
       </View>
 
 
-      {/* Сноска */}
-      {tableFootnote ? (
+      {/* Сноска — не рендерим если текст пустой или стёрт */}
+      {tableFootnote && tableFootnote.replace(/<[^>]*>/g, '').trim() ? (
         <View>
           <View style={{ height: space.sm }}></View>
             <View style={{padding: space.sm, backgroundColor: color.tableRowEven, fontSize: '0.5rem'}}>
               <HtmlToPdfV2 html={wrapJustify(tableFootnote)} cfg={cfg} />
             </View>
-
         </View>
       ) : null}
     </View>
