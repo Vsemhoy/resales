@@ -111,12 +111,7 @@ function CharRow({ c, cfg }) {
   )
 }
 
-export function PdfBlockSpecials({
-  cfg,
-  data,
-  models = [],
-  sectionNumber,
-}) {
+export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceBreak = false }) {
   const { color, text, font, weight, space } = cfg
 
   const ignored = data?.specialsIgnore ?? []
@@ -142,7 +137,7 @@ export function PdfBlockSpecials({
   if (!visible.length) return null
 
   return (
-    <View style={{ marginBottom: cfg.space.end }}>
+    <View break={forceBreak} style={{ marginBottom: cfg.space.end }}>
       <PdfSectionBar
         cfg={cfg}
         number={sectionNumber}

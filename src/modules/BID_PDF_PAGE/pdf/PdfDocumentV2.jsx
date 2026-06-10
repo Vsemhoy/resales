@@ -1,5 +1,5 @@
 import React from 'react'
-import { Document, Page } from '@react-pdf/renderer'
+import { Document, Page, View, Text } from '@react-pdf/renderer'
 import { getConfig } from './pdf_config'
 import { registerFonts } from './components/PdfFonts'
 import { buildFigureRegistry } from './components/buildFigureRegistry'
@@ -12,6 +12,7 @@ import { PdfBlockSpecials }          from './blocks/PdfBlockSpecials'
 import { PdfBlockSelectEquipment }   from './blocks/PdfBlockSelectEquipment'
 import { PdfBlockRecommendations }   from './blocks/PdfBlockRecommendations'
 import { PdfBlockCustom }            from './blocks/PdfBlockCustom'
+import { PdfBlockToc }               from './blocks/PdfBlockToc'
 import { PdfBlockPageBreak }         from './blocks/PdfBlockPageBreak'
 import { PdfBlockRondoDelivery }     from './blocks/PdfBlockRondoDelivery'
 import { PdfBlockSystemChars }       from './blocks/PdfBlockSystemChars'
@@ -32,6 +33,8 @@ export function PdfDocumentV2({
   models          = [],
   modelsData      = null,
   figuresEnabled  = true,
+  capturePageNumber  = null,   // (key, pageNum) => void — первый проход
+  sectionPageNumbers = {},     // { key: pageNum } — второй проход
 }) {
   const cfg = getConfig(companyId, orientation)
   const { layout, color, font: f } = cfg
@@ -47,10 +50,32 @@ export function PdfDocumentV2({
   let num = 1
   for (const key of sectionOrder) {
     if (key === 'cover' || key === 'toc') continue
+    if (key === 'pageBreak' || key.startsWith('pageBreak_')) continue   // разрывы не нумеруем
     if (enabledSections[key]) sectionNumbers[key] = num++
   }
 
-  const contentSections = sectionOrder.filter(k => k !== 'cover' && k !== 'toc')
+  const contentSections = sectionOrder.filter(k =>
+    k !== 'cover' && k !== 'toc' && k !== 'pageBreak'
+  )
+
+  // Метки разделов для оглавления
+  const SECTION_LABELS = {
+    features:        'Особенности системы',
+    selectEquipment: 'Выбор оборудования',
+    acoustic:        'Акустический расчёт',
+    specifications:  'Спецификация',
+    recommendations: 'Рекомендации',
+    systemChars:     'Характеристики системы',
+    rondoDelivery:   'Условия оплаты и поставки',
+    specials:        'Описание оборудования',
+  }
+  const getLabel = (key) => {
+    if (key.startsWith('custom_')) {
+      const id = key.replace('custom_', '')
+      return formData?._customSections?.[id]?.title || 'Блок'
+    }
+    return SECTION_LABELS[key] || key
+  }
 
 
 
@@ -78,44 +103,94 @@ export function PdfDocumentV2({
         )}
 
         {/* Секции по порядку */}
-        {contentSections.map(key => {
+        {contentSections.map((key, idx) => {
           if (!enabledSections[key]) return null
           const n = sectionNumbers[key]
 
+          if (key === 'pageBreak' || key.startsWith(PAGEBREAK_PREFIX)) return null
+
+          // Ищем назад пропуская отключённые секции:
+          // если встретили pageBreak — break нужен, если включённую секцию — нет
+          const forceBreak = (() => {
+            for (let i = idx - 1; i >= 0; i--) {
+              const k = contentSections[i]
+              if (k === 'pageBreak' || k.startsWith(PAGEBREAK_PREFIX)) {
+                return enabledSections[k] !== false
+              }
+              if (enabledSections[k]) return false  // включённая секция — стоп
+              // отключённая — продолжаем смотреть назад
+            }
+            return false
+          })()
+
+          // Phantom Text — захватывает номер страницы секции в первом проходе
+          const phantom = capturePageNumber
+            ? <Text render={({ pageNumber }) => { capturePageNumber(key, pageNumber); return '' }}
+                    style={{ fontSize: 0.01, lineHeight: 0 }} />
+            : null
+
+          // Когда разрыв нужен — View break, иначе Fragment (без лишнего враппера)
+          const wrap = (block) => forceBreak
+            ? <View key={key} break>{phantom}{block}</View>
+            : <React.Fragment key={key}>{phantom}{block}</React.Fragment>
+
           if (key === 'features')
-            return <PdfBlockFeatures key={key} cfg={cfg} data={formData} sectionNumber={n} />
+            return wrap(<PdfBlockFeatures cfg={cfg} data={formData} sectionNumber={n} />)
 
           if (key === 'selectEquipment')
-            return <PdfBlockSelectEquipment key={key} cfg={cfg} data={formData} sectionNumber={n} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} draft={draft} />
+            return wrap(<PdfBlockSelectEquipment cfg={cfg} data={formData} sectionNumber={n} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} draft={draft} />)
 
           if (key === 'recommendations')
-            return <PdfBlockRecommendations key={key} cfg={cfg} data={formData} currency={currency} sectionNumber={n} />
+            return wrap(<PdfBlockRecommendations cfg={cfg} data={formData} currency={currency} sectionNumber={n} />)
 
           if (key === 'specifications')
-            return <PdfBlockSpecifications key={key} cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} tableStyle={formData.tableStyle} sectionNumber={n} />
+            return wrap(<PdfBlockSpecifications cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} tableStyle={formData.tableStyle} modelImages={formData._modelImages ?? {}} sectionNumber={n} />)
 
           if (key === 'specials')
-            return <PdfBlockSpecials key={key} cfg={cfg} data={formData} models={models} sectionNumber={n} />
+            return wrap(<PdfBlockSpecials cfg={cfg} data={formData} models={models} sectionNumber={n} />)
 
           if (key === 'rondoDelivery')
-            return <PdfBlockRondoDelivery key={key} cfg={cfg} data={formData} sectionNumber={n} />
+            return wrap(<PdfBlockRondoDelivery cfg={cfg} data={formData} sectionNumber={n} />)
 
           if (key === 'systemChars')
-            return <PdfBlockSystemChars key={key} cfg={cfg} modelsData={modelsData} sectionNumber={n} />
-
-          if (key.startsWith(PAGEBREAK_PREFIX))
-            return <PdfBlockPageBreak key={key} />
+            return wrap(<PdfBlockSystemChars cfg={cfg} modelsData={modelsData} sectionNumber={n} />)
 
           if (key.startsWith(CUSTOM_PREFIX)) {
             const id    = key.replace(CUSTOM_PREFIX, '')
             const block = formData?._customSections?.[id]
             return block
-              ? <PdfBlockCustom key={key} cfg={cfg} block={block} blockId={id} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} sectionNumber={sectionNumbers[key]} />
+              ? wrap(<PdfBlockCustom cfg={cfg} block={block} blockId={id} figureRegistry={figureRegistry} figuresEnabled={figuresEnabled} sectionNumber={sectionNumbers[key]} />)
               : null
           }
 
           return null
         })}
+
+        {/* Оглавление — в конце документа, только так можно получить страницы */}
+        {enabledSections.toc !== false && (() => {
+          // Ищем назад от конца, пропуская отключённые секции
+          const tocBreak = (() => {
+            for (let i = contentSections.length - 1; i >= 0; i--) {
+              const k = contentSections[i]
+              if (k === 'pageBreak' || k.startsWith(PAGEBREAK_PREFIX)) {
+                return enabledSections[k] !== false
+              }
+              if (enabledSections[k]) return false
+            }
+            return false
+          })()
+          return (
+            <PdfBlockToc
+              cfg={cfg}
+              sectionNumbers={sectionNumbers}
+              enabledSections={enabledSections}
+              sectionOrder={sectionOrder}
+              getLabel={getLabel}
+              sectionPageNumbers={sectionPageNumbers}
+              forceBreak={tocBreak}
+            />
+          )
+        })()}
 
       </Page>
     </Document>

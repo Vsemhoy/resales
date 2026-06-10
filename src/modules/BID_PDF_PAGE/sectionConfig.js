@@ -1,15 +1,15 @@
 export const ALL_SECTIONS = [
-  { key: 'cover',           label: 'Обложка',               draggable: false, target: null, required: false },
-  { key: 'toc',             label: 'Оглавление',            draggable: false, target: null, required: false },
-  { key: 'features',        label: 'Особенности системы',   draggable: true,  target: null, required: false },
-  { key: 'selectEquipment', label: 'Выбор оборудования',    draggable: true,  target: null,  required: false },
-  { key: 'acoustic',        label: 'Акустический расчёт',   draggable: true,  target: 'p',  required: false },
-  { key: 'recommendations', label: 'Рекомендации',          draggable: true,  target: null, required: false },
-  { key: 'specifications',  label: 'Спецификация',          draggable: true,  target: null, required: false },
-  { key: 'specials',        label: 'Описание оборудования', draggable: true,  target: null, required: false },
-  { key: 'rondoDelivery',   label: 'Условия оплаты и поставки',         draggable: true,  target: null, required: false },
-  { key: 'systemChars',    label: 'Характеристики системы',   draggable: true,  target: null, required: false },
-  { key: 'pageBreak',       label: '--- Разрыв страницы ---',       draggable: true,  target: null, required: false },
+  { key: 'cover',           label: 'Обложка',                   draggable: false, target: null, required: false },
+  { key: 'toc',             label: 'Оглавление',                draggable: false, target: null, required: false },
+  { key: 'features',        label: 'Особенности системы',       draggable: true,  target: null, required: false },
+  { key: 'selectEquipment', label: 'Выбор оборудования',        draggable: true,  target: null, required: false },
+  { key: 'acoustic',        label: 'Акустический расчёт',       draggable: true,  target: 'p',  required: false },
+  { key: 'specifications',  label: 'Спецификация',              draggable: true,  target: null, required: false },
+  { key: 'recommendations', label: 'Рекомендации',              draggable: true,  target: null, required: false },
+  { key: 'systemChars',     label: 'Характеристики системы',    draggable: true,  target: null, required: false },
+  { key: 'rondoDelivery',   label: 'Условия оплаты и поставки', draggable: true,  target: null, required: false },
+  { key: 'specials',        label: 'Описание оборудования',     draggable: true,  target: null, required: false },
+  { key: 'pageBreak',       label: '--- Разрыв страницы ---',   draggable: true,  target: null, required: false },
 ]
 
 export const CURRENCY_OPTIONS = [
@@ -37,7 +37,9 @@ export function getVisibleSections(targetSystem) {
   return ALL_SECTIONS.filter(s => s.target === null || s.target === targetSystem)
 }
 
-export const DEFAULT_SECTION_ORDER = ALL_SECTIONS.map(s => s.key)
+export const DEFAULT_SECTION_ORDER = ALL_SECTIONS
+  .filter(s => s.key !== 'pageBreak')   // шаблон, не реальная секция
+  .map(s => s.key)
 
 export const DEFAULT_ENABLED = {
   cover:           true,
@@ -45,11 +47,11 @@ export const DEFAULT_ENABLED = {
   features:        false,
   selectEquipment: false,
   acoustic:        false,
-  recommendations: false,
   specifications:  true,
-  specials:        false,
+  recommendations: false,
+  systemChars:     true,
   rondoDelivery:   false,
-  systemChars:     false,
+  specials:        false,
   pageBreak:       false,
 }
 

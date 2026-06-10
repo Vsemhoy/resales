@@ -199,13 +199,13 @@ const RONDO_COLORS = {
   bgSubtle:       '#F5F7F0',
   bgMuted:        '#EDEEE0',
 
-  tableHeader:    '#8C7968',
+  tableHeader:    '#4F5153',
   tableHeaderText:'#FFFFFF',
-  tableRowEven:   '#EDEEE0',
-  tableRowOdd:    '#FFFFFF',
-  tableTotal:     '#289538',
+  tableRowEven:   '#E6E4E4',
+  tableRowOdd:    '#f7f7f7',
+  tableTotal:     '#c5c9cc',
   tableTotalText: '#FFFFFF',
-  tableBorder:    '#D4D5C8',
+  tableBorder:    '#cfd4dd',
 
   divider:        '#D4D5C8',
   dividerDark:    '#a5a8af',

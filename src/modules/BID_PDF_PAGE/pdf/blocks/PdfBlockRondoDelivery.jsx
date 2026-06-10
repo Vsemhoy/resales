@@ -152,14 +152,14 @@ function ManagerBlock({ cfg, data }) {
   )
 }
 
-export function PdfBlockRondoDelivery({ cfg, data, sectionNumber }) {
+export function PdfBlockRondoDelivery({ cfg, data, sectionNumber, forceBreak = false }) {
   const { space } = cfg
   const rd      = data?.rondoDelivery || {}
   const bullets = (rd.bullets?.length ? rd.bullets : DEFAULT_BULLETS)
     .filter(b => b.text || b.title)
 
   return (
-    <View style={{ marginBottom: space.end }}>
+    <View break={forceBreak} style={{ marginBottom: space.end }}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Условия оплаты и поставки" />
 
       <View style={{ gap: space.sm }}>

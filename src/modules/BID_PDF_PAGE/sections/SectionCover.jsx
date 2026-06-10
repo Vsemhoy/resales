@@ -34,59 +34,60 @@ function formatToday() {
   return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`
 }
 
-export default function SectionCover({ data, onChange, draftId, companyId }) {
+// ─── ResetField — вне компонента, иначе пересоздаётся на каждый ввод ──────────
+function ResetField({ label, fieldKey, placeholder, textarea, data, set, defaults }) {
+  const current = data[fieldKey] ?? defaults[fieldKey]
+  const changed  = current !== defaults[fieldKey]
+  const InputEl  = textarea ? Input.TextArea : Input
+  return (
+    <Field label={label}>
+      <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+        <InputEl
+          placeholder={placeholder}
+          value={current}
+          onChange={e => set(fieldKey, e.target.value)}
+          autoSize={textarea ? { minRows: 2 } : undefined}
+          style={{ flex: 1 }}
+        />
+        {changed && (
+          <Button size="small" icon={<UndoOutlined />}
+            title="Сбросить к исходному значению"
+            onClick={() => set(fieldKey, defaults[fieldKey])}
+            style={{ flexShrink: 0 }}
+          />
+        )}
+      </div>
+    </Field>
+  )
+}
+
+export default function SectionCover({ data, onChange, draftId, companyId, coverDefaults }) {
   const accent    = companyId === '3' ? '#269435' : '#FF5903'
   const set       = (key, val) => onChange({ ...data, [key]: val })
-  const coverMode = data.coverMode ?? 'hat'   // дефолт — шапка
+  const coverMode = data.coverMode ?? 'hat'
 
-  // Снимок первоначальных значений с бэка (только при первом рендере)
+  // Дефолты: из coverDefaults (данные БИДа) или фолбэк на текущие значения при первом рендере
   const initRef = useRef(null)
   if (!initRef.current) {
     initRef.current = {
-      date:          formatToday(),
-      ext_number:    data.ext_number    || '',
-      target_name:   data.target_name   || '',
-      target_occupy: data.target_occupy || '',  // уже собран в BidPdfEditor (роль + название орг.)
-      manager_name:  data.manager_name  || '',
-      manager_occupy:data.manager_occupy|| '',
-      tel:           data.tel           || '',
-      email:         data.email         || '',
+      date:           formatToday(),
+      ext_number:     data.ext_number    || '',
+      target_name:    data.target_name   || '',
+      target_occupy:  data.target_occupy || '',
+      manager_name:   data.manager_name  || '',
+      manager_occupy: data.manager_occupy|| '',
+      tel:            data.tel           || '',
+      email:          data.email         || '',
     }
   }
-  const D = initRef.current
+  // Приоритет: coverDefaults из БИДа > initRef (снапшот при монтировании)
+  const D = coverDefaults || initRef.current
 
   const companyName = data.client_company?.name || ''
 
   const hatHeaderTextDefault = HAT_HEADER_TEXT_DEFAULTS[String(companyId)] ?? ''
   const hatHeaderTextValue   = data.hatHeaderText ?? hatHeaderTextDefault
   const hatHeaderTextChanged = data.hatHeaderText !== undefined && data.hatHeaderText !== hatHeaderTextDefault
-
-  // Хелпер: поле с кнопкой сброса к дефолту
-  const ResetField = ({ label, fieldKey, placeholder, textarea }) => {
-    const current  = data[fieldKey] ?? D[fieldKey]
-    const changed  = current !== D[fieldKey]
-    const InputEl  = textarea ? Input.TextArea : Input
-    return (
-      <Field label={label}>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-          <InputEl
-            placeholder={placeholder}
-            value={current}
-            onChange={e => set(fieldKey, e.target.value)}
-            autoSize={textarea ? { minRows: 2 } : undefined}
-            style={{ flex: 1 }}
-          />
-          {changed && (
-            <Button size="small" icon={<UndoOutlined />}
-              title="Сбросить к исходному значению"
-              onClick={() => set(fieldKey, D[fieldKey])}
-              style={{ flexShrink: 0 }}
-            />
-          )}
-        </div>
-      </Field>
-    )
-  }
 
   return (
     <TabWrap>
@@ -150,16 +151,14 @@ export default function SectionCover({ data, onChange, draftId, companyId }) {
             </div>
           </Field>
 
-          <ResetField label="Исходящий номер" fieldKey="ext_number" placeholder="129874" />
+          <ResetField data={data} set={set} defaults={D} label="Исходящий номер" fieldKey="ext_number" placeholder="129874" />
 
           {/* Кому: должность+компания сверху, имя снизу */}
-          <ResetField
-            label="Кому — должность и организация"
+          <ResetField data={data} set={set} defaults={D} label="Кому — должность и организация"
             fieldKey="target_occupy"
             placeholder={companyName ? `Директору ${companyName}` : 'Менеджеру ООО «Кабель Контракт Юг»'}
           />
-          <ResetField
-            label="Кому — имя"
+          <ResetField data={data} set={set} defaults={D} label="Кому — имя"
             fieldKey="target_name"
             placeholder="Ромашнику Гиви Рашидову"
           />
@@ -186,10 +185,10 @@ export default function SectionCover({ data, onChange, draftId, companyId }) {
 
       <Section title="Менеджер">
         <Grid2>
-          <ResetField label="Имя"       fieldKey="manager_name"   placeholder="Кошелев Александр" />
-          <ResetField label="Должность" fieldKey="manager_occupy" placeholder="Коммерческий директор" />
-          <ResetField label="Телефон"   fieldKey="tel"            placeholder="+7 (812) 123-45-67" />
-          <ResetField label="Email"     fieldKey="email"          placeholder="sales@arstel.com" />
+          <ResetField data={data} set={set} defaults={D} label="Имя"       fieldKey="manager_name"   placeholder="Кошелев Александр" />
+          <ResetField data={data} set={set} defaults={D} label="Должность" fieldKey="manager_occupy" placeholder="Коммерческий директор" />
+          <ResetField data={data} set={set} defaults={D} label="Телефон"   fieldKey="tel"            placeholder="+7 (812) 123-45-67" />
+          <ResetField data={data} set={set} defaults={D} label="Email"     fieldKey="email"          placeholder="sales@arstel.com" />
         </Grid2>
       </Section>
 

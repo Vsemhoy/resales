@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import { getDraft, getBidModels, getDraftModels } from './api'
+import { getDraft, getBidModels, getDraftModels, getCovers } from './api'
 import { restoreFilesIntoFormData } from './api/files'
 import { useAutoSave } from './useAutoSave'
 import {
@@ -82,6 +82,7 @@ export default function BidPdfEditor() {
   const [customSections, setCustomSections] = useState({})
   const [models,         setModels]         = useState([])
   const [modelsData,     setModelsData]     = useState(null)
+  const [coverDefaults,  setCoverDefaults]  = useState(null)
   const [printing,       setPrinting]       = useState(false)
 
   const handlePrint = async () => {
@@ -90,7 +91,7 @@ export default function BidPdfEditor() {
     try {
       const readyFormData = await preloadImages(formData, { draftId })
 
-      const makePdfElement = (fd) => (
+      const makePdfElement = (fd, capturePageNumber = null, sectionPageNumbers = {}) => (
         <PdfDocumentV2
           formData={fd}
           draft={draft}
@@ -102,15 +103,21 @@ export default function BidPdfEditor() {
           models={models}
           modelsData={modelsData}
           figuresEnabled={figuresEnabled}
+          capturePageNumber={capturePageNumber}
+          sectionPageNumbers={sectionPageNumbers}
         />
       )
 
-      // Font.register() не грузит шрифты сразу — они качаются лениво при первом pdf().
-      // Если первая попытка падает (шрифты ещё не готовы) — ждём и повторяем.
       let blob
       try {
-        blob = await pdf(makePdfElement(readyFormData)).toBlob()
+        // Проход 1: захватываем номера страниц секций
+        const capturedPages = {}
+        await pdf(makePdfElement(readyFormData, (key, pageNum) => { capturedPages[key] = pageNum })).toBlob()
+
+        // Проход 2: финальный PDF с реальными номерами в TOC
+        blob = await pdf(makePdfElement(readyFormData, null, capturedPages)).toBlob()
       } catch {
+        // Если двухпроход упал — пробуем однопроход без номеров страниц
         await new Promise(r => setTimeout(r, 400))
         blob = await pdf(makePdfElement(readyFormData)).toBlob()
       }
@@ -139,14 +146,8 @@ export default function BidPdfEditor() {
         // Подтягиваем название организации из client_company и собираем target_occupy
         const clientCompany = data.client_company || null
         const companyName   = clientCompany?.name || ''
-        const rawOccupy     = fd.target_occupy || ''
-        const assembled     = (companyName && !rawOccupy.includes(companyName))
-          ? [rawOccupy, companyName].filter(Boolean).join(' ')
-          : rawOccupy
-        const assembledOccupy = assembled
-          ? assembled.charAt(0).toUpperCase() + assembled.slice(1)
-          : assembled
-        setCompanyId(   meta.companyId    ?? String(data.id_company ?? '2'))
+        const compId = meta.companyId ?? String(data.id_company ?? '2')
+        setCompanyId(compId)
         setOrientation( meta.orientation  ?? 'v')
         setTargetSystem(meta.targetSystem ?? (data.kp_type === 2 ? 'p' : 't'))
         if (fd._enabledSections) setEnabledSections(prev => ({ ...prev, ...fd._enabledSections }))
@@ -165,12 +166,55 @@ export default function BidPdfEditor() {
           return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`
         })()
 
+        const FOOTNOTE_DEFAULT = 'По условиям договора поставка осуществляется при 100% предоплате со склада в Санкт-Петербурге. Цены указаны с учетом НДС 22%. Срок поставки оборудования под заказ - 3 месяца с момента оплаты счета.'
+
+        // Имя менеджера и должность из source_bid.manager
+        const srcManager     = data.source_bid?.manager
+        const bidManagerName = srcManager
+          ? [srcManager.surname, srcManager.name].filter(Boolean).join(' ')
+          : (fd.manager_name || '')
+        const bidManagerOccupy = srcManager?.occupy || fd.manager_occupy || ''
+
+        // Контакт организации (может быть null)
+        const orgUser = data.org_user || null
+        const bidTargetName = orgUser
+          ? [orgUser.lastname, orgUser.name, orgUser.middlename].filter(Boolean).join(' ')
+          : (fd.target_name || '')
+        const bidTargetOccupy = orgUser
+          ? [orgUser.occupy, clientCompany?.name].filter(Boolean).join(' ')
+          : assembledOccupy
+
+        // Настоящие дефолты из БИДа — сохраняются один раз при первом создании
+        const computedDefaults = {
+          date:           today,
+          ext_number:     String(data.bid_id || fd.ext_number || ''),
+          target_name:    bidTargetName,
+          target_occupy:  bidTargetOccupy,
+          manager_name:   bidManagerName,
+          manager_occupy: bidManagerOccupy,
+          tel:            fd.tel   || '',
+          email:          fd.email || '',
+        }
+        setCoverDefaults(computedDefaults)
+
         setFormData({
           ...fd,
-          date:           fd.date           || today,
-          target_occupy:  assembledOccupy,
+          date:           fd.date          || today,
+          tableFootnote:  fd.tableFootnote || FOOTNOTE_DEFAULT,
+          target_occupy:  fd.target_occupy || bidTargetOccupy,
           client_company: clientCompany,
+          _coverDefaults: computedDefaults,  // всегда перезаписываем из актуальных данных БИДа
         })
+
+        // Автовыбор последней картинки шапки если не задана
+        if (!fd.hatImage) {
+          getCovers(compId).then(covers => {
+            const hats = covers.filter(c => c.filename?.startsWith('hat_'))
+            if (hats.length > 0) {
+              setFormData(prev => ({ ...prev, hatImage: hats[hats.length - 1].url }))
+            }
+          }).catch(() => {})
+        }
         setTimeout(() => setIsReady(true), 100)
       })
       .catch(e => console.error('Ошибка загрузки драфта:', e))
@@ -548,6 +592,7 @@ export default function BidPdfEditor() {
                         bidId={bidId}
                         figureRegistry={figureRegistry}
                         figuresEnabled={figuresEnabled}
+                        coverDefaults={coverDefaults}
                       />
                     : <div className={classes.sectionPlaceholder}>— секция в разработке —</div>
                 }

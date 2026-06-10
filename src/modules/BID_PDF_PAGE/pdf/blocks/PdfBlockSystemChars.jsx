@@ -46,13 +46,13 @@ function GroupTitle({ children, cfg }) {
   )
 }
 
-export function PdfBlockSystemChars({ cfg, modelsData, sectionNumber }) {
+export function PdfBlockSystemChars({ cfg, modelsData, sectionNumber, forceBreak = false }) {
   if (!modelsData) return null
 
   const md = modelsData
 
   return (
-    <View style={{ marginBottom: cfg.space.end }}>
+    <View break={forceBreak} style={{ marginBottom: cfg.space.end }}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Характеристики системы" />
 
       <GroupTitle cfg={cfg}>Мощностные характеристики системы</GroupTitle>
