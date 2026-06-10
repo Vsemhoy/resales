@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input, Select, Tag } from 'antd';
-import { MinusOutlined } from '@ant-design/icons';
+import { Input, Select, Tag, Tooltip } from 'antd';
+import { InfoCircleOutlined, MinusOutlined } from '@ant-design/icons';
 
 export const BidBaseInfoSection = ({
     values,
@@ -17,7 +17,12 @@ export const BidBaseInfoSection = ({
     <div className={'sa-info-list-hide-wrapper'}>
         <div className={'sa-info-list-row'}>
             <div className={'sa-list-row-label'}>
-                <p>Шаблон word</p>
+                <p style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    Шаблон
+                    <Tooltip title="Шаблон отвечает за то, от какой компании создаются документы в форматах Word и PDF. Также счёт появится в 1С выбранной компании.">
+                        <InfoCircleOutlined style={{ color: '#8c8c8c' }} />
+                    </Tooltip>
+                </p>
             </div>
             <Select
                 style={{ width: '100%', textAlign: 'left' }}
