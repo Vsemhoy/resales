@@ -35,7 +35,7 @@ const PORTRAIT = {
 
   // Шапка и подвал
   headerH:     mm(10),
-  footerH:     mm(8),
+  footerH:     mm(12),
 
   // Верхний отступ контента
   paddingTop:    mm(12),
@@ -122,8 +122,8 @@ export const TEXT = {
   sm:   mm(3.2),   // таблица, второстепенный текст
   base: mm(3.6),   // основной текст
   md:   mm(4.0),   // подзаголовки
-  lg:   mm(5.0),   // заголовки секций
-  xl:   mm(6.5),   // крупные заголовки
+  lg:   mm(4.6),   // заголовки секций
+  xl:   mm(5.4),   // крупные заголовки
   xxl:  mm(9.0),   // обложка
 }
 
@@ -173,8 +173,8 @@ const ARSTEL_COLORS = {
   tableRowOdd:    '#f7f7f7',
   tableTotal:     '#c5c9cc',
   tableTotalText: '#FFFFFF',
-  tableBorder:    '#E5E7EB',
-  divider:        '#E5E7EB',
+  tableBorder:    '#cfd4dd',
+  divider:        '#c2c6ce',
   dividerDark:    '#a5a8af',
 
   // Семантические цвета буллетов

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Spin, Input, Button, Checkbox, Image, InputNumber, Segmented } from 'antd'
+import { Spin, Input, Button, Checkbox, Image } from 'antd'
 import { DownOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons'
 import { getBidModels } from '../api'
 import { HTTP_HOST } from '../../../config/config'
@@ -61,67 +61,8 @@ export default function SectionSpecials({ data, onChange, bidId, companyId }) {
 
   const imgBase = `${HTTP_HOST}/api/soma/pdf/modfiles/`
 
-  const settings    = data.specialsSettings ?? {}
-  const setSetting  = (key, val) => onChange({ ...data, specialsSettings: { ...settings, [key]: val } })
-
   return (
     <TabWrap>
-      {/* ── Глобальные настройки вывода ──────────────────────────────────────── */}
-      <Section title="Настройки вывода карточек">
-        <Field label="Блоки">
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-            <Checkbox
-              checked={settings.showDescription ?? true}
-              onChange={e => setSetting('showDescription', e.target.checked)}
-            >Описание</Checkbox>
-            <Checkbox
-              checked={settings.showSpecials ?? true}
-              onChange={e => setSetting('showSpecials', e.target.checked)}
-            >Особенности</Checkbox>
-            <Checkbox
-              checked={settings.showChars ?? true}
-              onChange={e => setSetting('showChars', e.target.checked)}
-            >Характеристики</Checkbox>
-          </div>
-        </Field>
-        <Field label="Характеристики">
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontSize: 12, color: '#595959' }}>Макс. штук:</span>
-              <InputNumber
-                min={1} max={30}
-                value={settings.maxChars ?? 10}
-                onChange={val => setSetting('maxChars', val)}
-                style={{ width: 64 }}
-                size="small"
-              />
-            </div>
-            <Segmented
-              size="small"
-              value={settings.charsColumns ?? 2}
-              onChange={val => setSetting('charsColumns', val)}
-              options={[
-                { label: '1 колонка', value: 1 },
-                { label: '2 колонки', value: 2 },
-              ]}
-            />
-          </div>
-          {(settings.charsColumns ?? 2) === 2 && (
-            <div style={{ fontSize: 11, color: '#bfbfbf', marginTop: 4 }}>
-              При 2 колонках пункты длиннее 55 символов скрываются автоматически
-            </div>
-          )}
-        </Field>
-      </Section>
-      {/* ── Обложка раздела ─────────────────────────────────────────────────── */}
-      <Section title="Картинка на обложку раздела" description="Страница-заголовок раздела">
-        <CoverPicker
-          value={data.specialsCoverBlock}
-          onChange={url => onChange({ ...data, specialsCoverBlock: url })}
-          accent={accent}
-        />
-      </Section>
-
       {/* ── Список моделей ───────────────────────────────────────────────────── */}
       <Section title="Модели" description="Снимите галочку чтобы исключить модель. Раскройте карточку чтобы отредактировать тексты.">
         {loading && <div style={{ padding: 16, textAlign: 'center' }}><Spin size="small" /></div>}

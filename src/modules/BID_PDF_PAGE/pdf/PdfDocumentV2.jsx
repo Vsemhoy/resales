@@ -36,7 +36,7 @@ export function PdfDocumentV2({
   const cfg = getConfig(companyId, orientation)
   const { layout, color, font: f } = cfg
 
-  const coverMode = formData?.coverMode ?? 'cover'
+  const coverMode = formData?.coverMode ?? 'hat'
 
   const figureRegistry = buildFigureRegistry({
     sectionOrder, enabledSections, formData, figuresEnabled,
@@ -68,12 +68,12 @@ export function PdfDocumentV2({
           backgroundColor: color.bgPage,
         }}
       >
-        <PdfPageFrame cfg={cfg} draft={draft} companyId={companyId} />
+        <PdfPageFrame cfg={cfg} draft={draft} companyId={companyId} formData={formData} />
 
         {/* Обложка */}
         {enabledSections.cover !== false && (
           coverMode === 'hat'
-            ? <PdfBlockCoverHat  cfg={cfg} data={formData} draft={draft} />
+            ? <PdfBlockCoverHat  cfg={cfg} data={formData} draft={draft} companyId={companyId} />
             : <PdfBlockCoverFull cfg={cfg} data={formData} draft={draft} />
         )}
 

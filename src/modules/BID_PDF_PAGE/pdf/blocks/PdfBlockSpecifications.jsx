@@ -125,7 +125,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
       {tableFootnote && tableFootnote.replace(/<[^>]*>/g, '').trim() ? (
         <View>
           <View style={{ height: space.sm }}></View>
-            <View style={{padding: space.sm, backgroundColor: color.tableRowEven, fontSize: '0.5rem'}}>
+            <View style={{padding: space.sm, backgroundColor: color.tableRowOdd, fontSize: '0.5rem', borderBottom: '1px solid ' + color.tableRowEven }}>
               <HtmlToPdfV2 html={wrapJustify(tableFootnote)} cfg={cfg} />
             </View>
         </View>

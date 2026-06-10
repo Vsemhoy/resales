@@ -133,8 +133,19 @@ export default function BidPdfEditor() {
       .then(data => {
         setDraft(data)
         if (data.currency) setCurrency(data.currency)
-        const fd = restoreFilesIntoFormData(data.form_data || {})
+        const fd   = restoreFilesIntoFormData(data.form_data || {})
         const meta = fd._meta || {}
+
+        // Подтягиваем название организации из client_company и собираем target_occupy
+        const clientCompany = data.client_company || null
+        const companyName   = clientCompany?.name || ''
+        const rawOccupy     = fd.target_occupy || ''
+        const assembled     = (companyName && !rawOccupy.includes(companyName))
+          ? [rawOccupy, companyName].filter(Boolean).join(' ')
+          : rawOccupy
+        const assembledOccupy = assembled
+          ? assembled.charAt(0).toUpperCase() + assembled.slice(1)
+          : assembled
         setCompanyId(   meta.companyId    ?? String(data.id_company ?? '2'))
         setOrientation( meta.orientation  ?? 'v')
         setTargetSystem(meta.targetSystem ?? (data.kp_type === 2 ? 'p' : 't'))
@@ -149,7 +160,17 @@ export default function BidPdfEditor() {
         }
         if (fd._customSections)  setCustomSections(fd._customSections)
         if (fd._figuresEnabled !== undefined) setFiguresEnabled(fd._figuresEnabled)
-        setFormData(fd)
+        const today = (() => {
+          const d = new Date()
+          return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`
+        })()
+
+        setFormData({
+          ...fd,
+          date:           fd.date           || today,
+          target_occupy:  assembledOccupy,
+          client_company: clientCompany,
+        })
         setTimeout(() => setIsReady(true), 100)
       })
       .catch(e => console.error('Ошибка загрузки драфта:', e))
