@@ -1,16 +1,26 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Button, Input, Segmented } from 'antd'
-import { PlusOutlined, PictureOutlined, UndoOutlined } from '@ant-design/icons'
+import { PlusOutlined, UndoOutlined } from '@ant-design/icons'
 import { Image } from 'antd'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
 import { useCovers, CoversDrawer } from '../components/CoversDrawer'
 
+const SITE_DEFAULTS = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
+
+const FOOTER_LOGO_OPTIONS = [
+  { key: 'arstel',  label: 'Arstel',  src: '/brands/footer/logo_arstel.png'  },
+  { key: 'rondo',   label: 'Rondo',   src: '/brands/footer/logo_rondo.png'   },
+  { key: 'interm',  label: 'Inter-M', src: '/brands/footer/logo_interm.png'  },
+  { key: 'affa',    label: 'AFFA',    src: '/brands/footer/logo_affa.png'    },
+  { key: 'lda',     label: 'LDA',     src: '/brands/footer/logo_lda.png'     },
+]
+
 const HAT_HEADER_TEXT_DEFAULTS = {
-  '2': `ООО "АРСТЕЛ"
+  '2': `ООО «АРСТЕЛ»
 +7 (812) 207-50-97
 sales@arstel.com
 www.arstel.com`,
-  '3': `ООО "РОНДО-САУНД"
+  '3': `ООО «РОНДО-САУНД»
 196006, Россия, Санкт-Петербург
 Московский проспект, дом 91, литера А
 помещение 11Н, офис 229
@@ -19,12 +29,64 @@ www.rondo-sound.ru
 +7 (812) 339 8972`,
 }
 
-export default function SectionCover({ data, onChange, draftId, companyId }) {
+function formatToday() {
+  const d = new Date()
+  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`
+}
+
+// ─── ResetField — вне компонента, иначе пересоздаётся на каждый ввод ──────────
+function ResetField({ label, fieldKey, placeholder, textarea, data, set, defaults }) {
+  const current = data[fieldKey] ?? defaults[fieldKey]
+  const changed  = current !== defaults[fieldKey]
+  const InputEl  = textarea ? Input.TextArea : Input
+  return (
+    <Field label={label}>
+      <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+        <InputEl
+          placeholder={placeholder}
+          value={current}
+          onChange={e => set(fieldKey, e.target.value)}
+          autoSize={textarea ? { minRows: 2 } : undefined}
+          style={{ flex: 1 }}
+        />
+        {changed && (
+          <Button size="small" icon={<UndoOutlined />}
+            title="Сбросить к исходному значению"
+            onClick={() => set(fieldKey, defaults[fieldKey])}
+            style={{ flexShrink: 0 }}
+          />
+        )}
+      </div>
+    </Field>
+  )
+}
+
+export default function SectionCover({ data, onChange, draftId, companyId, coverDefaults }) {
   const accent    = companyId === '3' ? '#269435' : '#FF5903'
   const set       = (key, val) => onChange({ ...data, [key]: val })
-  const coverMode = data.coverMode ?? 'cover'   // 'cover' | 'hat'
+  const coverMode = data.coverMode ?? 'hat'
+
+  // Дефолты: из coverDefaults (данные БИДа) или фолбэк на текущие значения при первом рендере
+  const initRef = useRef(null)
+  if (!initRef.current) {
+    initRef.current = {
+      date:           formatToday(),
+      ext_number:     data.ext_number    || '',
+      target_name:    data.target_name   || '',
+      target_occupy:  data.target_occupy || '',
+      manager_name:   data.manager_name  || '',
+      manager_occupy: data.manager_occupy|| '',
+      tel:            data.tel           || '',
+      email:          data.email         || '',
+    }
+  }
+  // Приоритет: coverDefaults из БИДа > initRef (снапшот при монтировании)
+  const D = coverDefaults || initRef.current
+
+  const companyName = data.client_company?.name || ''
+
   const hatHeaderTextDefault = HAT_HEADER_TEXT_DEFAULTS[String(companyId)] ?? ''
-  const hatHeaderTextValue = data.hatHeaderText ?? hatHeaderTextDefault
+  const hatHeaderTextValue   = data.hatHeaderText ?? hatHeaderTextDefault
   const hatHeaderTextChanged = data.hatHeaderText !== undefined && data.hatHeaderText !== hatHeaderTextDefault
 
   return (
@@ -35,148 +97,117 @@ export default function SectionCover({ data, onChange, draftId, companyId }) {
           value={coverMode}
           onChange={v => set('coverMode', v)}
           options={[
-            { label: <span>📄 Обложка</span>,  value: 'cover' },
-            { label: <span>🖼 Шапка</span>,    value: 'hat'   },
+            { label: '📄 Обложка', value: 'cover', disabled: true },
+            { label: '🖼 Шапка',   value: 'hat' },
           ]}
           style={{ marginBottom: 8 }}
         />
         <div style={{ fontSize: 12, color: '#8c8c8c' }}>
-          {coverMode === 'cover'
-            ? 'Полная страница обложки — с картинкой справа и реквизитами'
-            : 'Баннер во всю ширину без полей — потом строка с реквизитами'}
+          Баннер во всю ширину без полей — потом строка с реквизитами
         </div>
       </Section>
 
-      {/* РЕЖИМ: ОБЛОЖКА */}
-      {coverMode === 'cover' && (
-        <>
-          <Section title="Данные на обложку" description="Предзаполнено из КП — отредактируй если нужно">
-            <Grid2>
-              <Field label="Исходящий номер">
-                <Input placeholder="81740" value={data.ext_number || ''} onChange={e => set('ext_number', e.target.value)} />
-              </Field>
-              <div />
-              <Field label="Кому — имя (в дательном падеже)">
-                <Input placeholder="Иванову Ивану" value={data.target_name || ''} onChange={e => set('target_name', e.target.value)} />
-              </Field>
-              <Field label="Кому — должность и организация">
-                <Input placeholder="Директору ООО «Ромашка»" value={data.target_occupy || ''} onChange={e => set('target_occupy', e.target.value)} />
-              </Field>
-              <Field label="Адрес объекта">
-                <Input placeholder="г. Санкт-Петербург, ул. Примерная, 1" value={data.object_address || ''} onChange={e => set('object_address', e.target.value)} />
-              </Field>
-              <Field label="Название объекта">
-                <Input placeholder="АО Полиметалл" value={data.object_name || ''} onChange={e => set('object_name', e.target.value)} />
-              </Field>
-              <Field label="Выполнил — имя">
-                <Input placeholder="Кошелев Александр" value={data.manager_name || ''} onChange={e => set('manager_name', e.target.value)} />
-              </Field>
-              <Field label="Выполнил — должность">
-                <Input placeholder="Коммерческий директор" value={data.manager_occupy || ''} onChange={e => set('manager_occupy', e.target.value)} />
-              </Field>
-            </Grid2>
-          </Section>
-          <Section title="Контактные данные">
-            <Grid2>
-              <Field label="Телефон">
-                <Input placeholder="+7 (812) 123-45-67" value={data.tel || ''} onChange={e => set('tel', e.target.value)} />
-              </Field>
-              <Field label="Email">
-                <Input placeholder="sales@arstel.com" value={data.email || ''} onChange={e => set('email', e.target.value)} />
-              </Field>
-            </Grid2>
-          </Section>
-          <Section title="Картинка на обложку" description="Правая часть титульного листа">
-            <CoverBlockPicker value={data.coverBlock ?? null} onChange={url => set('coverBlock', url)} accent={accent} companyId={companyId} type="cover" />
-          </Section>
-        </>
-      )}
-
       {/* РЕЖИМ: ШАПКА */}
-      {coverMode === 'hat' && (
-        <>
-          <Section title="Картинка-баннер" description="Растягивается на всю ширину страницы без полей (~1/4 высоты)">
-            <CoverBlockPicker value={data.hatImage ?? null} onChange={url => set('hatImage', url)} accent={accent} companyId={companyId} type="hat" />
-          </Section>
+      <Section title="Картинка-баннер" description="Растягивается на всю ширину страницы без полей">
+        <CoverBlockPicker value={data.hatImage ?? null} onChange={url => set('hatImage', url)} accent={accent} companyId={companyId} type="hat" />
+      </Section>
 
-          <Section title="Текст шапки" description="Показывается справа под баннером">
-            <Field label="Текст шапки">
-              <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-                <Input.TextArea
-                  value={hatHeaderTextValue}
-                  onChange={e => set('hatHeaderText', e.target.value)}
-                  autoSize={{ minRows: 5 }}
-                  style={{ width: '100%', textAlign: 'right' }}
+      <Section title="Текст шапки" description="Показывается справа снизу на баннере">
+        <Field label="Текст шапки">
+          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+            <Input.TextArea
+              value={hatHeaderTextValue}
+              onChange={e => set('hatHeaderText', e.target.value)}
+              autoSize={{ minRows: 5 }}
+              style={{ width: '100%', textAlign: 'right' }}
+            />
+            {hatHeaderTextChanged && (
+              <Button size="small" icon={<UndoOutlined />}
+                title="Сбросить к дефолтному тексту шапки компании"
+                onClick={() => set('hatHeaderText', hatHeaderTextDefault)}
+                style={{ flexShrink: 0 }}
+              />
+            )}
+          </div>
+        </Field>
+      </Section>
+
+      <Section title="Реквизиты" description="Строка под баннером">
+        <Grid2>
+          {/* Дата — дефолт сегодня */}
+          <Field label="Дата">
+            <div style={{ display: 'flex', gap: 6 }}>
+              <Input
+                placeholder={formatToday()}
+                value={data.date ?? D.date}
+                onChange={e => set('date', e.target.value)}
+              />
+              {(data.date ?? D.date) !== D.date && (
+                <Button size="small" icon={<UndoOutlined />}
+                  title="Сбросить к сегодняшней дате"
+                  onClick={() => set('date', D.date)}
                 />
-                {hatHeaderTextChanged && (
-                  <Button
-                    size="small"
-                    icon={<UndoOutlined />}
-                    title="Сбросить к дефолтному тексту шапки компании"
-                    onClick={() => set('hatHeaderText', hatHeaderTextDefault)}
-                    style={{ flexShrink: 0 }}
-                  />
-                )}
-              </div>
-              {!data.hatHeaderText && hatHeaderTextDefault && (
-                <div style={{ fontSize: 11, color: '#bfbfbf', marginTop: 3 }}>
-                  Подставлен дефолт для компании
-                </div>
               )}
-            </Field>
-          </Section>
+            </div>
+          </Field>
 
-          <Section title="Реквизиты" description="Строка под баннером">
-            <Grid2>
-              <Field label="Исходящий номер">
-                <Input placeholder="81740" value={data.ext_number || ''} onChange={e => set('ext_number', e.target.value)} />
-              </Field>
-              <Field label="Дата">
-                <Input placeholder="15.01.2025" value={data.date || ''} onChange={e => set('date', e.target.value)} />
-              </Field>
-              <Field label="Кому — организация">
-                <Input placeholder="ООО «Кабель Контракт Юг»" value={data.target_occupy || ''} onChange={e => set('target_occupy', e.target.value)} />
-              </Field>
-              <Field label="Кому — имя">
-                <Input placeholder="Ромашнику Гиви Рашидову" value={data.target_name || ''} onChange={e => set('target_name', e.target.value)} />
-              </Field>
-            </Grid2>
-          </Section>
+          <ResetField data={data} set={set} defaults={D} label="Исходящий номер" fieldKey="ext_number" placeholder="129874" />
 
-          <Section title="Менеджер">
-            <Grid2>
-              <Field label="Имя">
-                <Input placeholder="Кошелев Александр" value={data.manager_name || ''} onChange={e => set('manager_name', e.target.value)} />
-              </Field>
-              <Field label="Должность">
-                <Input placeholder="Коммерческий директор" value={data.manager_occupy || ''} onChange={e => set('manager_occupy', e.target.value)} />
-              </Field>
-              <Field label="Телефон">
-                <Input placeholder="+7 (812) 123-45-67" value={data.tel || ''} onChange={e => set('tel', e.target.value)} />
-              </Field>
-              <Field label="Email">
-                <Input placeholder="sales@arstel.com" value={data.email || ''} onChange={e => set('email', e.target.value)} />
-              </Field>
-            </Grid2>
-          </Section>
-        </>
-      )}
+          {/* Кому: должность+компания сверху, имя снизу */}
+          <ResetField data={data} set={set} defaults={D} label="Кому — должность и организация"
+            fieldKey="target_occupy"
+            placeholder={companyName ? `Директору ${companyName}` : 'Менеджеру ООО «Кабель Контракт Юг»'}
+          />
+          <ResetField data={data} set={set} defaults={D} label="Кому — имя"
+            fieldKey="target_name"
+            placeholder="Ромашнику Гиви Рашидову"
+          />
+        </Grid2>
+      </Section>
+
+      <Section title="Заголовок КП" description="По центру под реквизитами">
+        <Field>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <Input
+              value={data.coverTitle ?? 'Коммерческое предложение'}
+              onChange={e => set('coverTitle', e.target.value)}
+              placeholder="Коммерческое предложение"
+            />
+            {data.coverTitle && data.coverTitle !== 'Коммерческое предложение' && (
+              <Button size="small" icon={<UndoOutlined />}
+                title="Сбросить к стандартному"
+                onClick={() => set('coverTitle', 'Коммерческое предложение')}
+              />
+            )}
+          </div>
+        </Field>
+      </Section>
+
+      <Section title="Менеджер">
+        <Grid2>
+          <ResetField data={data} set={set} defaults={D} label="Имя"       fieldKey="manager_name"   placeholder="Кошелев Александр" />
+          <ResetField data={data} set={set} defaults={D} label="Должность" fieldKey="manager_occupy" placeholder="Коммерческий директор" />
+          <ResetField data={data} set={set} defaults={D} label="Телефон"   fieldKey="tel"            placeholder="+7 (812) 123-45-67" />
+          <ResetField data={data} set={set} defaults={D} label="Email"     fieldKey="email"          placeholder="sales@arstel.com" />
+        </Grid2>
+      </Section>
+
+      {/* ─── Конструктор подвала ──────────────────────────────────────────── */}
+      <FooterSection data={data} set={set} companyId={companyId} />
+
     </TabWrap>
   )
 }
 
 // ─── Пикер обложек ────────────────────────────────────────────────────────────
-// ─── Пикер обложек ────────────────────────────────────────────────────────────
 function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }) {
-  const { covers, loading, reload } = useCovers(companyId)  // единственный инстанс
+  const { covers, loading, reload } = useCovers(companyId)
   const [drawerOpen, setDrawerOpen] = useState(false)
-
   const filtered = covers.filter(c => c.filename.startsWith(type + '_'))
 
   return (
     <>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-        {/* Без картинки */}
         <div
           onClick={() => onChange(null)}
           style={{
@@ -187,12 +218,10 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
           }}
         >Без картинки</div>
 
-        {/* Скелетоны */}
         {loading && [1,2,3].map(i => (
           <div key={i} style={{ width: 80, height: 60, borderRadius: 6, background: '#f0f0f0', flexShrink: 0 }} />
         ))}
 
-        {/* Тайлы */}
         {!loading && filtered.map(cover => {
           const isSelected = value === cover.url
           return (
@@ -208,8 +237,7 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
               }}
             >
               <Image
-                src={cover.url}
-                alt={cover.filename}
+                src={cover.url} alt={cover.filename}
                 style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                 preview={{ mask: <span style={{ fontSize: 14 }}>🔍</span> }}
               />
@@ -228,7 +256,6 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
           )
         })}
 
-        {/* + Добавить */}
         {!loading && (
           <div
             onClick={() => setDrawerOpen(true)}
@@ -248,8 +275,6 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
           </div>
         )}
       </div>
-
-      {/* Дровер получает covers и reload — своего стейта не держит */}
       <CoversDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
@@ -261,5 +286,100 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
         onReload={reload}
       />
     </>
+  )
+}
+
+// ─── Конструктор подвала ──────────────────────────────────────────────────────
+function FooterSection({ data, set, companyId }) {
+  const fs        = data.footerSettings || {}
+  const setFs     = (key, val) => set('footerSettings', { ...fs, [key]: val })
+  const mode      = fs.mode     || 'text'
+  const siteText  = fs.siteText ?? SITE_DEFAULTS[String(companyId)] ?? ''
+  const logos     = fs.logos    || []
+  const siteDefault = SITE_DEFAULTS[String(companyId)] ?? ''
+
+  const toggleLogo = (key) => {
+    if (logos.includes(key)) {
+      setFs('logos', logos.filter(k => k !== key))
+    } else if (logos.length < 2) {
+      setFs('logos', [...logos, key])
+    }
+  }
+
+  return (
+    <div style={{ outline: '14px solid rgb(252 250 241)', boxShadow: 'rgba(0, 0, 0, 0.29) 1px -3px 0px 13px', marginTop: '32px' }}>
+    <div style={{ background: '#f6f0cf4d', outline: '4px dashed rgb(252 250 241)', boxShadow: '0px -8px 0px #0000004a', marginTop: '32px', paddingTop: '12px' }}>
+    <Section title="Подвал" description="Отображается на каждой странице PDF">
+      <Field label="Режим">
+        <Segmented
+          size="small"
+          value={mode}
+          onChange={v => setFs('mode', v)}
+          options={[
+            { label: 'Текст сайта', value: 'text'  },
+            { label: 'Логотипы',   value: 'logos' },
+          ]}
+        />
+      </Field>
+
+      {mode === 'text' && (
+        <Field label="Текст">
+          <div style={{ display: 'flex', gap: 6 }}>
+            <Input
+              value={siteText}
+              onChange={e => setFs('siteText', e.target.value)}
+              placeholder={siteDefault}
+            />
+            {siteText !== siteDefault && (
+              <Button size="small" icon={<UndoOutlined />}
+                title="Сбросить к дефолту компании"
+                onClick={() => setFs('siteText', siteDefault)}
+              />
+            )}
+          </div>
+        </Field>
+      )}
+
+      {mode === 'logos' && (
+        <Field label={`Логотипы (макс. 2, выбрано ${logos.length})`}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {FOOTER_LOGO_OPTIONS.map(opt => {
+              const selected = logos.includes(opt.key)
+              const disabled = !selected && logos.length >= 2
+              return (
+                <div
+                  key={opt.key}
+                  onClick={() => !disabled && toggleLogo(opt.key)}
+                  style={{
+                    border:       `2px solid ${selected ? '#1677ff' : '#d9d9d9'}`,
+                    borderRadius:  6,
+                    padding:      '6px 10px',
+                    cursor:        disabled ? 'not-allowed' : 'pointer',
+                    opacity:       disabled ? 0.4 : 1,
+                    background:    selected ? '#e6f4ff' : '#fafafa',
+                    display:      'flex',
+                    alignItems:   'center',
+                    gap:           6,
+                    transition:   'all 0.15s',
+                  }}
+                >
+                  <img src={opt.src} alt={opt.label} style={{ height: 18, objectFit: 'contain' }} />
+                  <span style={{ fontSize: 11, color: selected ? '#1677ff' : '#595959', fontWeight: selected ? 600 : 400 }}>
+                    {opt.label}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+          {logos.length === 2 && (
+            <div style={{ fontSize: 11, color: '#8c8c8c', marginTop: 4 }}>
+              Максимум 2 логотипа. Снимите выбор чтобы добавить другой.
+            </div>
+          )}
+        </Field>
+      )}
+    </Section>
+    </div>
+    </div>
   )
 }

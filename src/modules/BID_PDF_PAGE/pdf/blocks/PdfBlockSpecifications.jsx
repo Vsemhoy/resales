@@ -16,7 +16,7 @@ function absUrl(name) {
   return rt
 }
 
-export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact', modelImages = {} }) {
+export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact', modelImages = {}, forceBreak = false }) {
   const { color, text, font, weight, space, layout } = cfg
   if (!models.length) return null
 
@@ -57,7 +57,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
   })
 
   return (
-    <View style={{ marginBottom: cfg.space.end}}>
+    <View break={forceBreak} style={{ marginBottom: cfg.space.end}}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Спецификация" />
 
       {/* Шапка */}
@@ -121,14 +121,13 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
       </View>
 
 
-      {/* Сноска */}
-      {tableFootnote ? (
+      {/* Сноска — не рендерим если текст пустой или стёрт */}
+      {tableFootnote && tableFootnote.replace(/<[^>]*>/g, '').trim() ? (
         <View>
           <View style={{ height: space.sm }}></View>
             <View style={{padding: space.sm, backgroundColor: color.tableRowEven, fontSize: '0.5rem'}}>
               <HtmlToPdfV2 html={wrapJustify(tableFootnote)} cfg={cfg} />
             </View>
-
         </View>
       ) : null}
     </View>

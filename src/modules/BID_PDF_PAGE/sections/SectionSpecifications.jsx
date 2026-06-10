@@ -1,6 +1,10 @@
 import React from 'react'
+import { Button } from 'antd'
+import { UndoOutlined } from '@ant-design/icons'
 import { RichTextEditor } from '../components/RichTextEditor'
 import { Section, Field, TabWrap } from '../components/FormParts'
+
+const FOOTNOTE_DEFAULT = 'По условиям договора поставка осуществляется при 100% предоплате со склада в Санкт-Петербурге. Цены указаны с учетом НДС 22%. Срок поставки оборудования под заказ - 3 месяца с момента оплаты счета.'
 
 // Визуальный скелетон-превью таблицы
 function TableSkeletonPreview({ style }) {
@@ -70,12 +74,24 @@ export default function SectionSpecifications({ data, onChange, companyId }) {
 
       <Section title="Текст под таблицей" description="Выводится мелким шрифтом после итоговой строки">
         <Field>
-          <RichTextEditor
-            value={data.tableFootnote || ''}
-            onChange={val => set('tableFootnote', val)}
-            accent={accent}
-            placeholder="Например: цены указаны с учётом НДС 20%, действительны до..."
-          />
+          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+            <div style={{ flex: 1 }}>
+              <RichTextEditor
+                value={data.tableFootnote || ''}
+                onChange={val => set('tableFootnote', val)}
+                accent={accent}
+                placeholder="Например: цены указаны с учётом НДС 20%, действительны до..."
+              />
+            </div>
+            {(data.tableFootnote ?? '') !== FOOTNOTE_DEFAULT && (
+              <Button
+                size="small"
+                icon={<UndoOutlined />}
+                onClick={() => set('tableFootnote', FOOTNOTE_DEFAULT)}
+                title="Сбросить к дефолтному тексту"
+              />
+            )}
+          </div>
         </Field>
       </Section>
     </TabWrap>

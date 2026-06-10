@@ -11,12 +11,12 @@ export function PdfSectionBar({ cfg, number, title }) {
 
   return (
     <View style={{ marginTop: space.md * 0.7, marginBottom: space.lg }} wrap={false}>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
         {numStr && (
           <Text style={{
             fontFamily:  font.bold,
             fontWeight:  weight.bold,
-            fontSize:    text.lg * 1.15,
+            fontSize:    text.lg,
             color:       color.accent,
             width:       numWidth,
             flexShrink:  0,

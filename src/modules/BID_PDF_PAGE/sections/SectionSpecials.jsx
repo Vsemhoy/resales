@@ -63,15 +63,6 @@ export default function SectionSpecials({ data, onChange, bidId, companyId }) {
 
   return (
     <TabWrap>
-      {/* ── Обложка раздела ─────────────────────────────────────────────────── */}
-      <Section title="Картинка на обложку раздела" description="Страница-заголовок раздела">
-        <CoverPicker
-          value={data.specialsCoverBlock}
-          onChange={url => onChange({ ...data, specialsCoverBlock: url })}
-          accent={accent}
-        />
-      </Section>
-
       {/* ── Список моделей ───────────────────────────────────────────────────── */}
       <Section title="Модели" description="Снимите галочку чтобы исключить модель. Раскройте карточку чтобы отредактировать тексты.">
         {loading && <div style={{ padding: 16, textAlign: 'center' }}><Spin size="small" /></div>}

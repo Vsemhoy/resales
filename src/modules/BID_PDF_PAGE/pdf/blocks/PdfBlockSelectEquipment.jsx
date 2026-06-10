@@ -43,14 +43,14 @@ function FigureBlock({ cfg, src, figInfo, draft }) {
   )
 }
 
-export function PdfBlockSelectEquipment({ cfg, data, sectionNumber, figureRegistry = new Map(), figuresEnabled = true, draft }) {
+export function PdfBlockSelectEquipment({ cfg, data, sectionNumber, figureRegistry, figuresEnabled, draft, forceBreak = false }) {
   const hasContent = data?.selectionOfEquipment || data?.structuralDiagrams || data?.blockPlacements
   if (!hasContent) return null
 
   const { color, font: f, text: t, space } = cfg
 
   return (
-    <View style={{ marginBottom: cfg.space.end}}>
+    <View break={forceBreak} style={{ marginBottom: cfg.space.end}}>
       <PdfSectionBar cfg={cfg} number={sectionNumber} title="Выбор оборудования" />
       {<HtmlToPdfV2 html={wrapJustify(data.selectionOfEquipment)} cfg={cfg} />}
       <FigureBlock cfg={cfg} draft={draft} src={data?.structuralDiagrams} figInfo={figuresEnabled ? figureRegistry.get('structuralDiagrams') : null} />
