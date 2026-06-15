@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Spin, Input, Button, Checkbox, Image } from 'antd'
+import { Spin, Input, Button, Checkbox, InputNumber, Segmented } from 'antd'
 import { DownOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons'
 import { getBidModels } from '../api'
 import { HTTP_HOST } from '../../../config/config'
 import { Section, Field, TabWrap } from '../components/FormParts'
-import { useCovers } from '../components/CoversDrawer'
 import { SectionNotes } from '../components/SectionNotes'
 
 export default function SectionSpecials({ data, onChange, bidId, companyId, userRole }) {
@@ -61,16 +60,57 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
   }
 
   const imgBase = `${HTTP_HOST}/api/soma/pdf/modfiles/`
+  const settings = data.specialsSettings ?? {}
+  const setSetting = (key, val) => onChange({ ...data, specialsSettings: { ...settings, [key]: val } })
 
   return (
     <TabWrap>
-      {/* ── Обложка раздела ─────────────────────────────────────────────────── */}
-      <Section title="Картинка на обложку раздела" description="Страница-заголовок раздела">
-        <CoverPicker
-          value={data.specialsCoverBlock}
-          onChange={url => onChange({ ...data, specialsCoverBlock: url })}
-          accent={accent}
-        />
+      <Section title="Настройки вывода карточек">
+        <Field label="Блоки">
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            <Checkbox
+              checked={settings.showDescription ?? true}
+              onChange={e => setSetting('showDescription', e.target.checked)}
+            >Описание</Checkbox>
+            <Checkbox
+              checked={settings.showSpecials ?? true}
+              onChange={e => setSetting('showSpecials', e.target.checked)}
+            >Особенности</Checkbox>
+            <Checkbox
+              checked={settings.showChars ?? true}
+              onChange={e => setSetting('showChars', e.target.checked)}
+            >Характеристики</Checkbox>
+          </div>
+        </Field>
+        <Field label="Характеристики">
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: 12, color: '#595959' }}>Макс. штук:</span>
+              <InputNumber
+                min={1}
+                max={30}
+                value={settings.maxChars ?? 10}
+                onChange={val => setSetting('maxChars', val)}
+                style={{ width: 64 }}
+                size="small"
+              />
+            </div>
+            <Segmented
+              size="small"
+              value={settings.charsColumns ?? 2}
+              onChange={val => setSetting('charsColumns', val)}
+              options={[
+                { label: '1 колонка', value: 1 },
+                { label: '2 колонки', value: 2 },
+              ]}
+            />
+          </div>
+          {(settings.charsColumns ?? 2) === 2 && (
+            <div style={{ fontSize: 11, color: '#bfbfbf', marginTop: 4 }}>
+              При 2 колонках пункты длиннее 55 символов скрываются автоматически
+            </div>
+          )}
+        </Field>
       </Section>
 
       {/* ── Список моделей ───────────────────────────────────────────────────── */}
@@ -216,62 +256,5 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
         userRole={userRole}
       />
     </TabWrap>
-  )
-}
-
-// ─── Пикер обложек — тянет с апи как в SectionCover ─────────────────────────
-function CoverPicker({ value, onChange, accent }) {
-  const { covers, loading } = useCovers()
-
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-      <div
-        onClick={() => onChange(null)}
-        style={{
-          width: 80, height: 60, border: `2px solid ${!value ? accent : '#d9d9d9'}`,
-          borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', fontSize: 11, color: '#8c8c8c', background: '#fafafa',
-        }}
-      >Без картинки</div>
-
-      {loading && [1,2,3].map(i => (
-        <div key={i} style={{ width: 80, height: 60, borderRadius: 6, background: '#f0f0f0' }} />
-      ))}
-
-      {!loading && covers.map(cover => {
-        const isSelected = value === cover.url
-        return (
-          <div
-            key={cover.filename}
-            title={cover.filename}
-            style={{
-              width: 80, height: 60,
-              border: `2px solid ${isSelected ? accent : '#d9d9d9'}`,
-              borderRadius: 6, overflow: 'hidden', position: 'relative',
-              backgroundImage: 'linear-gradient(45deg, #dbdbdb 25%, #F6F0CF 25%, #F6F0CF 50%, #dbdbdb 50%, #dbdbdb 75%, #F6F0CF 75%, #F6F0CF 100%)',
-              backgroundSize: '15px 15px',
-            }}
-          >
-            <Image
-              src={cover.url}
-              alt={cover.filename}
-              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-              preview={{ mask: <span style={{ fontSize: 14 }}>🔍</span> }}
-            />
-            <div
-              onClick={() => onChange(isSelected ? null : cover.url)}
-              style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0,
-                background: isSelected ? accent : 'rgba(0,0,0,0.45)',
-                color: '#fff', fontSize: 10, fontWeight: 600,
-                textAlign: 'center', padding: '2px 0', cursor: 'pointer',
-              }}
-            >
-              {isSelected ? '✓ Выбрано' : 'Выбрать'}
-            </div>
-          </div>
-        )
-      })}
-    </div>
   )
 }
