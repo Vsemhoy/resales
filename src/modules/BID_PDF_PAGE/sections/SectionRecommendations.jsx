@@ -1,10 +1,11 @@
 import React from 'react'
 import { Input, Button, InputNumber } from 'antd'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
+import { SectionNotes } from '../components/SectionNotes'
 
 const EMPTY_REC = { 'recommendation-model': '', 'recommendation-count': 1, 'recommendation-text': '', 'recommendation-note': '' }
 
-export default function SectionRecommendations({ data, onChange }) {
+export default function SectionRecommendations({ data, onChange, companyId, userRole }) {
   const recs    = data.recommendations || [{ ...EMPTY_REC }]
   const setRec  = (i, key, val) => { const n = [...recs]; n[i] = { ...n[i], [key]: val }; onChange({ ...data, recommendations: n }) }
   const addRec  = () => onChange({ ...data, recommendations: [...recs, { ...EMPTY_REC }] })
@@ -39,6 +40,13 @@ export default function SectionRecommendations({ data, onChange }) {
           <Button size="small" onClick={addRec} style={{ alignSelf: 'flex-start' }}>+ Добавить позицию</Button>
         </div>
       </Section>
+
+      <SectionNotes
+        notes={data._sectionNotes?.recommendations}
+        onChange={notes => onChange({ ...data, _sectionNotes: { ...data._sectionNotes, recommendations: notes } })}
+        backcolor={companyId === '3' ? '#269435' : '#FF5903'}
+        userRole={userRole}
+      />
     </TabWrap>
   )
 }

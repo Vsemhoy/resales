@@ -5,8 +5,9 @@ import { getBidModels } from '../api'
 import { HTTP_HOST } from '../../../config/config'
 import { Section, Field, TabWrap } from '../components/FormParts'
 import { useCovers } from '../components/CoversDrawer'
+import { SectionNotes } from '../components/SectionNotes'
 
-export default function SectionSpecials({ data, onChange, bidId, companyId }) {
+export default function SectionSpecials({ data, onChange, bidId, companyId, userRole }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
 
   const [models,   setModels]   = useState([])
@@ -63,6 +64,15 @@ export default function SectionSpecials({ data, onChange, bidId, companyId }) {
 
   return (
     <TabWrap>
+      {/* ── Обложка раздела ─────────────────────────────────────────────────── */}
+      <Section title="Картинка на обложку раздела" description="Страница-заголовок раздела">
+        <CoverPicker
+          value={data.specialsCoverBlock}
+          onChange={url => onChange({ ...data, specialsCoverBlock: url })}
+          accent={accent}
+        />
+      </Section>
+
       {/* ── Список моделей ───────────────────────────────────────────────────── */}
       <Section title="Модели" description="Снимите галочку чтобы исключить модель. Раскройте карточку чтобы отредактировать тексты.">
         {loading && <div style={{ padding: 16, textAlign: 'center' }}><Spin size="small" /></div>}
@@ -198,6 +208,13 @@ export default function SectionSpecials({ data, onChange, bidId, companyId }) {
           )
         })}
       </Section>
+
+      <SectionNotes
+        notes={data._sectionNotes?.specials}
+        onChange={notes => onChange({ ...data, _sectionNotes: { ...data._sectionNotes, specials: notes } })}
+        backcolor={companyId === '3' ? '#269435' : '#FF5903'}
+        userRole={userRole}
+      />
     </TabWrap>
   )
 }

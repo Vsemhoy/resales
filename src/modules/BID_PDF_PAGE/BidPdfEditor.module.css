@@ -146,6 +146,11 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  transition: width 0.2s ease;
+}
+
+.minimapWide {
+  width: 210px;
 }
 
 .minimapTitle {

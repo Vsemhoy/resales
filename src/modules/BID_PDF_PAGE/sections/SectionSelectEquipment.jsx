@@ -3,8 +3,9 @@ import { Input } from 'antd'
 import { Section, Field, TabWrap } from '../components/FormParts'
 import { FileUploadField } from '../components/FileUploadField'
 import { RichTextEditor } from '../components/RichTextEditor'
+import { SectionNotes } from '../components/SectionNotes'
 
-export default function SectionSelectEquipment({ data, onChange, draftId, companyId, figureRegistry = new Map(), figuresEnabled = true }) {
+export default function SectionSelectEquipment({ data, onChange, draftId, companyId, figureRegistry = new Map(), figuresEnabled = true, userRole }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
   const set = (key, val) => onChange({ ...data, [key]: val })
 
@@ -82,6 +83,13 @@ export default function SectionSelectEquipment({ data, onChange, draftId, compan
 
         </div>
       </Section>
+
+      <SectionNotes
+        notes={data._sectionNotes?.selectEquipment}
+        onChange={notes => onChange({ ...data, _sectionNotes: { ...data._sectionNotes, selectEquipment: notes } })}
+        backcolor={companyId === '3' ? '#269435' : '#FF5903'}
+        userRole={userRole}
+      />
     </TabWrap>
   )
 }

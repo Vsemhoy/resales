@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch } from 'antd'
-import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined } from '@ant-design/icons'
+import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown } from 'antd'
+import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import { getDraft, getBidModels, getDraftModels, getCovers } from './api'
+import { getDraft, getBidModels, getDraftModels, getCovers, getUser } from './api'
 import { restoreFilesIntoFormData } from './api/files'
+import { useDraftStatus, STATUS_META } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
 import {
   CURRENCY_OPTIONS, COMPANY_OPTIONS, ORIENTATION_OPTIONS, TARGET_OPTIONS,
@@ -83,7 +84,21 @@ export default function BidPdfEditor() {
   const [models,         setModels]         = useState([])
   const [modelsData,     setModelsData]     = useState(null)
   const [coverDefaults,  setCoverDefaults]  = useState(null)
+  const [userRole,       setUserRole]       = useState(null)
+  const [wideLayout,     setWideLayout]     = useState(() => window.innerWidth > 1500)
   const [printing,       setPrinting]       = useState(false)
+
+  // Роль текущего пользователя — для статусной системы
+  useEffect(() => {
+    getUser().then(data => setUserRole(data?.user?.sales_role ?? null)).catch(() => {})
+  }, [])
+
+  // Адаптивная ширина минимапа
+  useEffect(() => {
+    const handler = () => setWideLayout(window.innerWidth > 1500)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   const handlePrint = async () => {
     registerFonts()
@@ -182,7 +197,7 @@ export default function BidPdfEditor() {
           : (fd.target_name || '')
         const bidTargetOccupy = orgUser
           ? [orgUser.occupy, clientCompany?.name].filter(Boolean).join(' ')
-          : assembledOccupy
+          : (fd.target_occupy || (companyName ? `Директору ${companyName}` : ''))
 
         // Настоящие дефолты из БИДа — сохраняются один раз при первом создании
         const computedDefaults = {
@@ -346,7 +361,24 @@ export default function BidPdfEditor() {
     setFormData(fd => ({ ...fd, _sectionOrder: newOrder }))
   }
 
-  // Видимые секции по targetSystem и в нужном порядке (включая кастомные)
+  // Engineer assignment
+  const engineerRequired = useMemo(() =>
+    new Set(formData._engineerRequired || []),
+  [formData._engineerRequired])
+
+  const toggleEngineerRequired = useCallback((key) => {
+    setFormData(fd => {
+      const current = new Set(fd._engineerRequired || [])
+      current.has(key) ? current.delete(key) : current.add(key)
+      return { ...fd, _engineerRequired: [...current] }
+    })
+  }, [])
+
+  // Статусная система
+  const { status: draftStatus, available: statusTransitions, transition: transitionStatus, loading: statusLoading } =
+    useDraftStatus(draftId, draft?.status, userRole, (res) => {
+      setDraft(d => d ? { ...d, status: res.status, engineer_id: res.engineer_id } : d)
+    })
   const visible        = getVisibleSections(targetSystem)
   const orderedVisible = sectionOrder.map(k => {
     if (isPageBreakKey(k)) return makePageBreakSection(k)
@@ -468,8 +500,13 @@ export default function BidPdfEditor() {
           </div>
           <div className={classes.topbarRight}>
             <SaveIndicator status={saveStatus} errMsg={saveErr} />
-            <Button danger icon={<CodepenOutlined />} size="small">Инженер работает!</Button>
-<Button type="primary" icon={<PrinterOutlined />} size="small"
+            <StatusControl
+              status={draftStatus}
+              available={statusTransitions}
+              loading={statusLoading}
+              onTransition={transitionStatus}
+            />
+            <Button type="primary" icon={<PrinterOutlined />} size="default"
               loading={printing}
               onClick={handlePrint}
               style={{ background: accent, borderColor: accent }}>В печать!</Button>
@@ -579,6 +616,7 @@ export default function BidPdfEditor() {
                       companyId={companyId}
                       figureRegistry={figureRegistry}
                       figuresEnabled={figuresEnabled}
+                      userRole={userRole}
                     />
                   : ActiveSection
                     ? <ActiveSection
@@ -593,6 +631,7 @@ export default function BidPdfEditor() {
                         figureRegistry={figureRegistry}
                         figuresEnabled={figuresEnabled}
                         coverDefaults={coverDefaults}
+                        userRole={userRole}
                       />
                     : <div className={classes.sectionPlaceholder}>— секция в разработке —</div>
                 }
@@ -601,8 +640,10 @@ export default function BidPdfEditor() {
           </div>
 
           {/* Правая: минимап */}
-          <div className={classes.minimap}>
-            <div className={classes.minimapTitle}>Навигация</div>
+          <div className={`${classes.minimap} ${wideLayout ? classes.minimapWide : ''}`}>
+            <div className={classes.minimapTitle}>
+              {wideLayout ? 'Навигация по разделам' : 'Навигация'}
+            </div>
 
             {coverSection && (
               <MiniCard
@@ -610,12 +651,15 @@ export default function BidPdfEditor() {
                 isActive={activeSection === 'cover'}
                 isEnabled={enabledSections.cover ?? true}
                 accent={accent}
+                wide={wideLayout}
                 onClick={() => setActiveSection('cover')}
               />
             )}
 
             {orderedDraggable.map(section => {
               const isEnabled = section.required || enabledSections[section.key]
+              const isEngReq  = engineerRequired.has(section.key)
+              const notes     = formData._sectionNotes?.[section.key] || {}
               return (
                 <MiniCard
                   key={section.key}
@@ -623,7 +667,12 @@ export default function BidPdfEditor() {
                   isActive={activeSection === section.key}
                   isEnabled={isEnabled}
                   accent={accent}
+                  wide={wideLayout}
+                  isEngineerRequired={isEngReq}
+                  hasEngineerNote={!!notes.noteEngineer}
+                  hasManagerNote={!!notes.noteManager}
                   onClick={() => isEnabled && setActiveSection(section.key)}
+                  onDoubleClick={() => isEnabled && section.engineerCapable && toggleEngineerRequired(section.key)}
                 />
               )
             })}
@@ -636,6 +685,7 @@ export default function BidPdfEditor() {
                   isActive={activeSection === 'toc'}
                   isEnabled={!!enabledSections.toc}
                   accent={accent}
+                  wide={wideLayout}
                   onClick={() => enabledSections.toc && setActiveSection('toc')}
                 />
               </>
@@ -655,44 +705,128 @@ export default function BidPdfEditor() {
 }
 
 // ─── MiniCard — плашка минимапа ───────────────────────────────────────────────
-function MiniCard({ section, isActive, isEnabled, accent, onClick }) {
+function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequired, hasEngineerNote, hasManagerNote, onClick, onDoubleClick }) {
+  const isEngCapable = section.engineerCapable && isEnabled
+
+  // Цвет фона: активная → акцент, инженер назначен → жёлтый, способна к инженеру → светло-жёлтый
+  const getBg = () => {
+    if (isActive)             return accent + '0d'
+    if (isEngineerRequired)   return '#ffff8c'
+    if (isEngCapable)         return '#fffde7'
+    return '#fafafa'
+  }
+
+  const tooltip = isEngCapable
+    ? `${section.label}${isEngineerRequired ? ' · 2×клик снять с инженера' : ' · 2×клик передать инженеру'}`
+    : section.label
+
   return (
-    <Tooltip title={section.label} placement="left">
+    <Tooltip title={tooltip} placement="left">
       <div
         onClick={onClick}
+        onDoubleClick={onDoubleClick}
         style={{
           width: '100%',
-          height: 52,
+          height: wide ? 44 : 52,
           borderRadius: 5,
-          border: `1.5px solid ${isActive ? accent : '#e8e8e8'}`,
-          background: isActive ? accent + '0d' : '#fafafa',
+          border: `1.5px solid ${isActive ? accent : isEngineerRequired ? '#e6b800' : '#e8e8e8'}`,
+          background: getBg(),
           cursor: isEnabled ? 'pointer' : 'default',
           opacity: isEnabled ? 1 : 0.3,
           overflow: 'hidden',
           flexShrink: 0,
           transition: 'all 0.15s',
           position: 'relative',
+          userSelect: 'none',
         }}
       >
-        <SectionMiniPreview
-          sectionKey={section.key}
-          accent={accent}
-          isActive={isActive}
-        />
-        {/* Лейбл снизу */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          fontSize: 8, fontWeight: 600, textAlign: 'center',
-          color: isActive ? accent : '#94a3b8',
-          background: isActive ? accent + '15' : 'rgba(255,255,255,0.85)',
-          padding: '1px 2px',
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-          textTransform: 'uppercase', letterSpacing: '0.03em',
-        }}>
-          {section.label}
-        </div>
+        {wide ? (
+          // Широкий вид — текст
+          <div style={{ padding: '4px 6px', display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center' }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: isActive ? accent : '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2 }}>
+              {section.label}
+            </div>
+          </div>
+        ) : (
+          // Компактный вид — превью
+          <>
+            <SectionMiniPreview sectionKey={section.key} accent={accent} isActive={isActive} />
+            <div style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0,
+              fontSize: 8, fontWeight: 600, textAlign: 'center',
+              color: isActive ? accent : '#94a3b8',
+              background: isActive ? accent + '15' : 'rgba(255,255,255,0.85)',
+              padding: '1px 2px',
+              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+              textTransform: 'uppercase', letterSpacing: '0.03em',
+            }}>
+              {section.label}
+            </div>
+          </>
+        )}
+
+        {/* Бейдж инженера */}
+        {isEngineerRequired && (
+          <div style={{
+            position: 'absolute', top: 2, right: 2,
+            fontSize: 20, lineHeight: 1,
+          }}>
+            👷
+          </div>
+        )}
+
+        {/* Индикаторы служебных заметок */}
+        {(hasEngineerNote || hasManagerNote) && (
+          <div style={{
+            position: 'absolute', bottom: wide ? 2 : 14, left: 2,
+            display: 'flex', gap: 2,
+          }}>
+            {hasEngineerNote && (
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ff7b00', display: 'inline-block', border: '1px solid #fff' }} />
+            )}
+            {hasManagerNote && (
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#147ffa', display: 'inline-block', border: '1px solid #fff' }} />
+            )}
+          </div>
+        )}
       </div>
     </Tooltip>
+  )
+}
+
+// ─── StatusControl — тег статуса + меню переходов ─────────────────────────────
+function StatusControl({ status, available, loading, onTransition }) {
+  const meta = STATUS_META[status] ?? { label: status, color: 'default' }
+
+  if (!available.length) {
+    return (
+      <Tag color={meta.color} style={{ padding: '4px 12px', fontSize: 14, lineHeight: '22px', borderRadius: 6 }}>
+        {meta.label}
+      </Tag>
+    )
+  }
+
+  const items = available.map(s => ({
+    key:   s,
+    label: `→ ${STATUS_META[s]?.label ?? s}`,
+  }))
+
+  return (
+    <Dropdown
+      menu={{ items, onClick: ({ key }) => onTransition(key) }}
+      trigger={['click']}
+      disabled={loading}
+      style={{background: 'transparent'}}
+    >
+      <Button size="default"
+        style={{ background: 'transparent !important'}}
+        loading={loading} icon={!loading && <DownOutlined style={{ fontSize: 10 }} />}
+        color={ meta.color ? meta.color : 'danger'}
+        variant="solid"
+        iconPosition="end">
+          {meta.label}
+      </Button>
+    </Dropdown>
   )
 }
 

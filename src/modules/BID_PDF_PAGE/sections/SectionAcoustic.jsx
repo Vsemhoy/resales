@@ -6,6 +6,7 @@ import { AccalcFileUpload, collectRoomFilenames } from '../components/AccalcFile
 import { wasteAccalcFiles, SECTION_PREFIXES } from '../api/accalcs'
 import { ACOUSTIC_TEMPLATES } from '../components/acousticTemplates'
 import { buildFigureMap } from '../utils/figureNumbers'
+import { SectionNotes } from '../components/SectionNotes'
 import { Section, Field } from '../components/FormParts'
 
 // ─── Утилиты (на уровне модуля) ───────────────────────────────────────────────
@@ -63,7 +64,7 @@ const MAX_ROOMS  = 30
 const MAX_IMAGES = 10
 
 // ─── Главный компонент ────────────────────────────────────────────────────────
-export default function SectionAcoustic({ data, onChange, draftId, companyId }) {
+export default function SectionAcoustic({ data, onChange, draftId, companyId, userRole }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
 
   const ac = data.acousticCalculation || {
@@ -215,6 +216,14 @@ export default function SectionAcoustic({ data, onChange, draftId, companyId }) 
           />
         </div>
       </div>
+
+      <SectionNotes
+        notes={data._sectionNotes?.acoustic}
+        onChange={notes => onChange({ ...data, _sectionNotes: { ...data._sectionNotes, acoustic: notes } })}
+        backcolor={accent}
+        userRole={userRole}
+        flush={false}
+      />
 
     </div>
   )
