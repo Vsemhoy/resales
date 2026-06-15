@@ -1,8 +1,9 @@
 import React from 'react'
 import { Section, TabWrap } from '../components/FormParts'
 import { RichTextEditor } from '../components/RichTextEditor'
+import { SectionNotes } from '../components/SectionNotes'
 
-export default function SectionFeatures({ data, onChange, companyId }) {
+export default function SectionFeatures({ data, onChange, companyId, userRole }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
 
   return (
@@ -18,6 +19,13 @@ export default function SectionFeatures({ data, onChange, companyId }) {
           placeholder="1. Система озвучивания на 100В...&#10;2. Резервирование питания..."
         />
       </Section>
+
+      <SectionNotes
+        notes={data._sectionNotes?.features}
+        onChange={notes => onChange({ ...data, _sectionNotes: { ...data._sectionNotes, features: notes } })}
+        backcolor={companyId === '3' ? '#269435' : '#FF5903'}
+        userRole={userRole}
+      />
     </TabWrap>
   )
 }

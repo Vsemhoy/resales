@@ -39,7 +39,7 @@ import BidPdfPage from "./modules/BID_PDF_PAGE/BidPdfPage";
 import OrgPage from './modules/ORG_PAGE/OrgPage';
 import LocalLogger from './modules/EXT/LOCAL_LOGGER/LocalLoggerPage';
 import CuratorPageNEW from "./modules/CURATOR/CuratorPage";
-
+import SomaPdfListPage from "./modules/SOMA_PDF_LIST/SomaPdfListPage"
 
 import CalendarPage from './modules/CALENDAR2/CalendarPage';
 import ReportsPage from './modules/REPORTS2/ReportsPage';
@@ -59,6 +59,7 @@ const PAGE_TITLE_RULES = [
 	{ path: /^\/curator(?:_new)?$/, title: '🛡️ Кураторство' },
 	{ path: /^\/regtown$/, title: '🗺️ Города и регионы' },
 	{ path: /^\/engineer$/, title: '🛠️ Инженеры' },
+	{ path: /^\/pdflist$/, title: '🛠️ PDF шаблоны' },
 	{ path: /^\/files_buh$/, title: '📤 Выгрузка счетов' },
 	{ path: /^\/calendar$/, title: '📅 Календарь' },
 	{ path: /^\/reports$/, title: '📊 Отчеты' },
@@ -226,6 +227,8 @@ export const App = () => {
                                         element={<BidPdfPage userdata={userdata} changed_user_data={setUserdata} />}
                                     />
 
+                                    <Route path="/engine/pdflist" element={<SomaPdfListPage />} />
+
 								{/*<Route*/}
 								{/*	path={'/files_buh'}*/}
 								{/*	element={<FilesBuhPage userdata={userdata} changed_user_data={setUserdata} />}*/}
@@ -252,7 +255,7 @@ export const App = () => {
                                     <Route path="/regtown" element={<Regtown userdata={userdata} />} />
 
                                     <Route
-                                        path={'/engineer'}
+                                        path={'/engine/specs'}
                                         element={<EngineerListPage userdata={userdata} />}
                                     />
                                     <Route path="/engineer" element={<EngineerListPage userdata={userdata} />} />

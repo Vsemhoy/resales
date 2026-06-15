@@ -11,6 +11,7 @@ import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, PRODMODE, ROUTE_PREFIX} fro
 import {
 	CalendarOutlined,
 	CloseCircleOutlined,
+	DownOutlined,
 	HomeFilled,
 	LoginOutlined,
 	NotificationOutlined,
@@ -443,9 +444,19 @@ const TopMenu = (props) => {
 						<div className={'sa-topmenu-button'}>Города и регионы</div>
 					</NavLink>
 
-					<NavLink to="/engineer">
-						<div className={'sa-topmenu-button'}>Инженеры</div>
-					</NavLink>
+					<Dropdown
+						menu={{
+							items: [
+								{ key: 'specs',   label: <NavLink to="/engine/specs">Спецификации</NavLink> },
+								{ key: 'pdflist', label: <NavLink to="/engine/pdflist">PDF</NavLink> },
+							],
+						}}
+						trigger={['hover']}
+					>
+						<div className={'sa-topmenu-button'}>
+							Инженеры <DownOutlined style={{ fontSize: 10, marginLeft: 4 }} />
+						</div>
+					</Dropdown>
 
 					{topRole === 3 && (
 						<NavLink to="/files_buh">

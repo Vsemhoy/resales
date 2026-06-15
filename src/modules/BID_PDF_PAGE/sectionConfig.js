@@ -1,15 +1,15 @@
 export const ALL_SECTIONS = [
-  { key: 'cover',           label: 'Обложка',                   draggable: false, target: null, required: false },
-  { key: 'toc',             label: 'Оглавление',                draggable: false, target: null, required: false },
-  { key: 'features',        label: 'Особенности системы',       draggable: true,  target: null, required: false },
-  { key: 'selectEquipment', label: 'Выбор оборудования',        draggable: true,  target: null, required: false },
-  { key: 'acoustic',        label: 'Акустический расчёт',       draggable: true,  target: 'p',  required: false },
-  { key: 'specifications',  label: 'Спецификация',              draggable: true,  target: null, required: false },
-  { key: 'recommendations', label: 'Рекомендации',              draggable: true,  target: null, required: false },
-  { key: 'systemChars',     label: 'Характеристики системы',    draggable: true,  target: null, required: false },
-  { key: 'rondoDelivery',   label: 'Условия оплаты и поставки', draggable: true,  target: null, required: false },
-  { key: 'specials',        label: 'Описание оборудования',     draggable: true,  target: null, required: false },
-  { key: 'pageBreak',       label: '--- Разрыв страницы ---',   draggable: true,  target: null, required: false },
+  { key: 'cover',           label: 'Обложка',                   draggable: false, target: null, required: false, engineerCapable: false },
+  { key: 'toc',             label: 'Оглавление',                draggable: false, target: null, required: false, engineerCapable: false },
+  { key: 'features',        label: 'Особенности системы',       draggable: true,  target: null, required: false, engineerCapable: true  },
+  { key: 'selectEquipment', label: 'Выбор оборудования',        draggable: true,  target: null, required: false, engineerCapable: true  },
+  { key: 'acoustic',        label: 'Акустический расчёт',       draggable: true,  target: 'p',  required: false, engineerCapable: true  },
+  { key: 'specifications',  label: 'Спецификация',              draggable: true,  target: null, required: false, engineerCapable: false },
+  { key: 'recommendations', label: 'Рекомендации',              draggable: true,  target: null, required: false, engineerCapable: true  },
+  { key: 'systemChars',     label: 'Характеристики системы',    draggable: true,  target: null, required: false, engineerCapable: false },
+  { key: 'rondoDelivery',   label: 'Условия оплаты и поставки', draggable: true,  target: null, required: false, engineerCapable: false },
+  { key: 'specials',        label: 'Описание оборудования',     draggable: true,  target: null, required: false, engineerCapable: true  },
+  { key: 'pageBreak',       label: '--- Разрыв страницы ---',   draggable: true,  target: null, required: false, engineerCapable: false },
 ]
 
 export const CURRENCY_OPTIONS = [

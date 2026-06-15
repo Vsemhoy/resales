@@ -4,6 +4,7 @@ import { PlusOutlined, HolderOutlined } from '@ant-design/icons'
 import { RichTextEditor } from '../components/RichTextEditor'
 import { FileUploadField } from '../components/FileUploadField'
 import { Field, Section, TabWrap } from '../components/FormParts'
+import { SectionNotes } from '../components/SectionNotes'
 
 const COL_TYPES = [
   { value: 'text',     label: 'Текст'   },
@@ -36,7 +37,7 @@ const fmt = (n) => Number(n).toLocaleString('ru-RU', { minimumFractionDigits: 2,
 
 export default function SectionCustomBlock({
   data, onChange, onRemove, draftId, companyId, sectionNumber, blockIndex,
-  figureRegistry = new Map(), figuresEnabled = true
+  figureRegistry = new Map(), figuresEnabled = true, userRole
 }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
   const block  = data || {}
@@ -274,42 +275,22 @@ export default function SectionCustomBlock({
         />
       </Section>
 
-      <NoteFields data={block} onChange={onChange} />
+      <SectionNotes
+        notes={{
+          noteEngineer:   block.noteEngineer,
+          noteManager:    block.noteManager,
+          noteEngineerAt: block.noteEngineerAt,
+          noteManagerAt:  block.noteManagerAt,
+        }}
+        onChange={notes => onChange({ ...block, ...notes })}
+        backcolor={accent}
+        userRole={userRole}
+      />
       {onRemove && <DeleteBlockButton onRemove={onRemove} title={block.title} />}
     </TabWrap>
   )
 }
 
-export function NoteFields({ data, onChange }) {
-  const [open, setOpen] = useState(false)
-  const set = (key, val) => onChange({ ...data, [key]: val })
-  return (
-    <div style={{ marginTop: 16 }}>
-      <button
-        onClick={() => setOpen(v => !v)}
-        style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: 12, color: '#8c8c8c', padding: 0, display: 'flex', alignItems: 'center', gap: 4 }}
-      >
-        <span>{open ? '▾' : '▸'}</span>
-        Служебные заметки
-        {(data?.noteEngineer || data?.noteManager) && (
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#faad14', display: 'inline-block', marginLeft: 4 }} />
-        )}
-      </button>
-      {open && (
-        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <div style={{ background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 6, padding: 10 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#d48806', marginBottom: 6 }}>🔧 Сообщение инженеру</div>
-            <Input.TextArea autoSize={{ minRows: 2 }} value={data?.noteEngineer || ''} onChange={e => set('noteEngineer', e.target.value)} placeholder="Что сделать инженеру..." style={{ background: 'transparent', border: '1px solid #ffe58f' }} />
-          </div>
-          <div style={{ background: '#e6f4ff', border: '1px solid #91caff', borderRadius: 6, padding: 10 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#0958d9', marginBottom: 6 }}>📋 Сообщение менеджеру</div>
-            <Input.TextArea autoSize={{ minRows: 2 }} value={data?.noteManager || ''} onChange={e => set('noteManager', e.target.value)} placeholder="Что учесть менеджеру..." style={{ background: 'transparent', border: '1px solid #91caff' }} />
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
 
 function DeleteBlockButton({ onRemove, title }) {
   const [confirm, setConfirm] = useState(false)
