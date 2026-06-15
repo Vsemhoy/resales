@@ -1,0 +1,25 @@
+/* Наследуем стиль шапки таблицы и пагинации из раздела "Заявки" (table.css)
+   через те же CSS-переменные темы */
+
+.tableWrap :global(.ant-table-thead > tr > th) {
+  background-color: var(--table-header-row-color);
+  font-weight: 600;
+  font-size: small;
+  border-bottom: 1px solid var(--table-second-row-color);
+}
+
+.tableWrap :global(.ant-table-tbody > tr:nth-child(even) > td) {
+  background-color: var(--table-second-row-color);
+}
+
+.tableWrap :global(.ant-table-tbody > tr:hover > td) {
+  background-color: var(--table-hovered-row-color) !important;
+}
+
+.tableWrap :global(.ant-table-tbody > tr) {
+  cursor: default;
+}
+
+.tableWrap :global(.ant-table-tbody > tr:hover) {
+  cursor: pointer;
+}

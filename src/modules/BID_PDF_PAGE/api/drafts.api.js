@@ -21,6 +21,11 @@ export const backendToKpType = (id_company, kp_type) => {
 export const getDrafts = (params = {}) =>
   api.get('/soma/pdf/drafts', { params }).then(r => r.data)
 
+// Серверный список с пагинацией/сортировкой/фильтрами для SOMA_PDF_LIST
+// params: { page, limit, sort_by, sort_order, id, bid_id, status, id_company, org, manager, engineer, mine }
+export const getDraftsList = (params = {}) =>
+  api.get('/soma/pdf/drafts', { params }).then(r => r.data)
+
 export const getDraft = (id) =>
   api.get(`/soma/pdf/drafts/${id}`).then(r => r.data)
 
