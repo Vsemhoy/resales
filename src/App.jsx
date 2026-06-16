@@ -227,7 +227,7 @@ export const App = () => {
                                         element={<BidPdfPage userdata={userdata} changed_user_data={setUserdata} />}
                                     />
 
-                                    <Route path="/engine/pdflist" element={<SomaPdfListPage />} />
+                                    <Route path="/engine/pdflist" element={<SomaPdfListPage userdata={userdata} new_changed_user_data={() => get_userdata()} />} />
 
 								{/*<Route*/}
 								{/*	path={'/files_buh'}*/}

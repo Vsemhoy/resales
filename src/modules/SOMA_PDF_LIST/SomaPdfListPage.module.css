@@ -1,25 +1,188 @@
-/* Наследуем стиль шапки таблицы и пагинации из раздела "Заявки" (table.css)
-   через те же CSS-переменные темы */
-
-.tableWrap :global(.ant-table-thead > tr > th) {
-  background-color: var(--table-header-row-color);
-  font-weight: 600;
-  font-size: small;
-  border-bottom: 1px solid var(--table-second-row-color);
+.page {
+  min-width: 0;
 }
 
-.tableWrap :global(.ant-table-tbody > tr:nth-child(even) > td) {
-  background-color: var(--table-second-row-color);
+.page :global(.sa-list-header) {
+  background-color: var(--sa-list-header);
+  outline: 9px solid var(--app-background);
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: end;
 }
 
-.tableWrap :global(.ant-table-tbody > tr:hover > td) {
-  background-color: var(--table-hovered-row-color) !important;
+.page :global(.sa-header-label-container) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  gap: 10px;
 }
 
-.tableWrap :global(.ant-table-tbody > tr) {
-  cursor: default;
+.page :global(.sa-header-label-container-small) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.tableWrap :global(.ant-table-tbody > tr:hover) {
-  cursor: pointer;
+.page :global(.sa-header-label) {
+  display: block;
+  width: 230px;
+  margin: 0;
+  height: 100%;
+}
+
+.page :global(.sa-tag-custom) {
+  display: block;
+  width: 150px;
+  height: 32px;
+  line-height: 28px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.page :global(.sa-select-custom-manager),
+.page :global(.sa-select-custom-manager .ant-select-selector) {
+  color: #0958d9 !important;
+  background-color: #e6f4ff !important;
+  border-color: #91caff !important;
+}
+
+.page :global(.sa-select-custom-admin),
+.page :global(.sa-select-custom-admin .ant-select-selector) {
+  color: #d4380d !important;
+  background-color: #fff2e8 !important;
+  border-color: #ffbb96 !important;
+}
+
+.page :global(.sa-select-custom-bugh),
+.page :global(.sa-select-custom-bugh .ant-select-selector) {
+  color: #c41d7f !important;
+  background-color: #fff0f6 !important;
+  border-color: #ffadd2 !important;
+}
+
+.page :global(.sa-select-custom-engineer),
+.page :global(.sa-select-custom-engineer .ant-select-selector) {
+  color: #08979c !important;
+  background-color: #e6fffb !important;
+  border-color: #87e8de !important;
+}
+
+.tableWrap {
+  width: max-content;
+  min-width: 0;
+  overflow: visible;
+  padding-top: 0;
+}
+
+.pdfTable {
+  min-width: 1320px;
+}
+
+.pdfTableRow {
+  display: grid;
+  grid-template-columns:
+    minmax(60px, 70px)
+    minmax(70px, 80px)
+    minmax(92px, 102px)
+    minmax(50px, 60px)
+    minmax(100px, 2fr)
+    minmax(90px, 120px)
+    minmax(90px, 120px)
+    minmax(50px, 60px)
+    minmax(90px, 120px)
+    minmax(80px, 100px)
+    minmax(80px, 100px);
+}
+
+.companyMarkedRow {
+  /* border-left: 6px solid var(--company-color, #bfbfbf); */
+}
+
+.pdfTableRow:hover {
+  box-shadow: -10px 0 0 -1px;
+}
+
+.pdfTableRow > :global(.sa-table-box-cell) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  transition: all 0.3s;
+}
+
+.pdfTableRow > :global(.text-align-left) {
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.pdfTableRow > .orgNameCell {
+  align-items: flex-start;
+  line-height: 1.25;
+  overflow: visible;
+  text-overflow: initial;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.pdfTableRow:global(.sa-table-box-row-header) > :global(.sa-table-box-cell) {
+  padding: 0;
+  align-items: stretch;
+  min-height: 58px;
+}
+
+.pdfTableRow:global(.sa-table-box-row-header) :global(.sa-table-head-on) {
+  width: 100%;
+}
+
+.pdfTableRow:global(.sa-table-box-row-header) :global(.sa-pa-3) {
+  padding: 1px 2px 3px !important;
+}
+
+.pdfTableRow:global(.sa-table-box-row-header) :global(.ant-input),
+.pdfTableRow:global(.sa-table-box-row-header) :global(.ant-select) {
+  width: 100% !important;
+}
+
+.pdfTableRow:global(.sa-table-box-row-header) :global(.ant-input-sm) {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.pdfTableRow:global(.sa-table-box-row-header) :global(.ant-select-selector) {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+.roleBox {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.emptyFilter {
+  display: block;
+  width: 100%;
+  height: 24px;
+  line-height: 24px;
+  color: #bfbfbf;
+  font-size: 12px;
+  text-align: center;
+}
+
+.muted {
+  color: #bfbfbf;
+}
+
+.ellipsisText {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
