@@ -28,7 +28,7 @@ export const STATUS_META = {
 
 // Переходы: { текущий: { 'manager' | 'engineer': [доступные следующие статусы] } }
 const TRANSITIONS = {
-  man_edited:    { manager: ['sent_engineer', 'dropped'],     engineer: [] },
+  man_edited:    { manager: ['sent_engineer', 'done', 'dropped'],     engineer: [] },
   sent_engineer: { manager: ['done', 'dropped'],              engineer: ['on_engineer'] },
   on_engineer:   { manager: [],                               engineer: ['sent_manager'] },
   sent_manager:  { manager: ['man_check'],                    engineer: [] },

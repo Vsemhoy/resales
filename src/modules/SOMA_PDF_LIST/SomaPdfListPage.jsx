@@ -170,6 +170,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
   const [loading, setLoading] = useState(true)
   const [isOpenedFilters, setIsOpenedFilters] = useState(false)
   const activeRole = userdata?.user?.sales_role ?? 0
+  const meId = userdata?.user?.id ?? null
   const availableRoles = ROLE_OPTIONS.filter(role => userdata?.acls?.includes(role.acl))
   const isOneRole = availableRoles.length === 1
 
@@ -459,15 +460,28 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
               const engineerName = getPersonName(row.engineer) || '—'
               const creatorName = getPersonName(row.creator) || '—'
 
+              const isMyEngineerRow = activeRole === 4 && row.engineer_id === meId
+              const isMyManagerRow  = (activeRole === 1 || activeRole === 2) && row.manager_id === meId
+
               return (
                 <div
                   key={row.id}
                   className={`${classes.pdfTableRow} ${classes.companyMarkedRow} sa-table-box-row`}
-                  style={{ '--company-color': getCompanyColor(row.id_company) }}
+                  style={{
+                    '--company-color': getCompanyColor(row.id_company),
+                    '--row-highlight': isMyEngineerRow ? '#ffe58f52' : isMyManagerRow ? '#8fd6ff14' : 'transparent',
+                  }}
                   onDoubleClick={() => window.open(editorUrl(row.bid_id, row.id), '_blank')}
                 >
                   <div className="sa-table-box-cell">
-                    <a onClick={e => { e.stopPropagation(); navigate(editorUrl(row.bid_id, row.id)) }}>{row.id}</a>
+                    <a
+                      onClick={e => { e.stopPropagation(); navigate(editorUrl(row.bid_id, row.id)) }}
+                      style={
+                        (row.manager_id === meId || row.engineer_id === meId)
+                          ? { fontWeight: 500, color: '#007bff' }
+                          : undefined
+                      }
+                    >{row.id}</a>
                   </div>
                   <div className="sa-table-box-cell">
                     <a onClick={e => { e.stopPropagation(); navigate(bidUrl(row.bid_id)) }}>{row.bid_id}</a>
