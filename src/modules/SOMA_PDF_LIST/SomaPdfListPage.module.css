@@ -86,7 +86,8 @@
     minmax(70px, 80px)
     minmax(92px, 102px)
     minmax(50px, 60px)
-    minmax(100px, 2fr)
+    minmax(100px, 0.5fr)
+    minmax(100px, 0.5fr)
     minmax(90px, 120px)
     minmax(90px, 120px)
     minmax(50px, 60px)
@@ -96,11 +97,10 @@
 }
 
 .companyMarkedRow {
-  /* border-left: 6px solid var(--company-color, #bfbfbf); */
+  box-shadow: -4px 0 0 -1px var(--company-color, #bfbfbf);
 }
-
-.pdfTableRow:hover {
-  box-shadow: -10px 0 0 -1px;
+.companyMarkedRow:hover {
+  box-shadow: -10px 0 0 -1px var(--company-color, #bfbfbf);
 }
 
 .pdfTableRow > :global(.sa-table-box-cell) {

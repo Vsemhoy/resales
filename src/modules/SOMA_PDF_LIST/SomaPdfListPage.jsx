@@ -11,7 +11,7 @@ import classes from './SomaPdfListPage.module.css'
 import { AlertOutlined, CustomerServiceOutlined, FilterOutlined } from '@ant-design/icons'
 
 const COMPANY_LABELS = { 2: 'Arstel', 3: 'Rondo', 1: 'FreeCompany' }
-const COMPANY_COLORS = { 2: '#2f80ed', 3: '#eb5757', 1: '#8c8c8c' }
+const COMPANY_COLORS = { 1: '#8d8d8d', 2: '#ff7700', 3: '#229922' }
 const KP_TYPE_LABELS = { 1: <AlertOutlined  title="Трансляционная"/>, 2: <CustomerServiceOutlined title='Профессиональная' /> }
 const DEFAULT_PAGE_SIZE = 30
 const { Content, Sider } = Layout
@@ -425,6 +425,9 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
                   <HeaderCell label="Организация" sortKey="org" orderBox={orderBox} onSortChange={handleSortChange}>
                     <TextFilter value={filters.org} onChange={value => setFilter('org', value)} />
                   </HeaderCell>
+                  <HeaderCell label="Объект" sortKey="object" orderBox={orderBox} onSortChange={handleSortChange}>
+                    <TextFilter value={filters.object} onChange={value => setFilter('object', value)} />
+                  </HeaderCell>
                   <HeaderCell label="Менеджер" sortKey="manager" orderBox={orderBox} onSortChange={handleSortChange}>
                     <TextFilter value={filters.manager} onChange={value => setFilter('manager', value)} />
                   </HeaderCell>
@@ -450,7 +453,8 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
             {data.length === 0 && !loading ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             ) : data.map(row => {
-              const orgName = row.form_data?.client_company?.name || row.form_data?.target_occupy || '—'
+              const orgName     = row.form_data?.client_company?.name || row.form_data?.target_occupy || '—'
+              const objectName  = row.object || row.bid_object || null
               const managerName = getPersonName(row.manager) || row.form_data?.manager_name || '—'
               const engineerName = getPersonName(row.engineer) || '—'
               const creatorName = getPersonName(row.creator) || '—'
@@ -471,6 +475,12 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
                   <div className="sa-table-box-cell">{renderStatus(row.status)}</div>
                   <div className="sa-table-box-cell">{KP_TYPE_LABELS[row.kp_type] || row.kp_type || '—'}</div>
                   <div className={`sa-table-box-cell text-align-left ${classes.orgNameCell}`}>{orgName}</div>
+                  <div className={`sa-table-box-cell text-align-left ${classes.orgNameCell}`}>
+                    {objectName
+                      ? <EllipsisText>{objectName}</EllipsisText>
+                      : <span className={classes.muted}>—</span>
+                    }
+                  </div>
                   <div className="sa-table-box-cell text-align-left">
                     <EllipsisText>{managerName}</EllipsisText>
                   </div>
