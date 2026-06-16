@@ -29,9 +29,13 @@ export const getDraftsList = (params = {}) =>
 export const getDraft = (id) =>
   api.get(`/soma/pdf/drafts/${id}`).then(r => r.data)
 
-// Модели КП для модалки спецификации
+// Сырые модели КП без валютного расчёта (для справки/отладки)
 export const getBidModels = (bidId) =>
   api.get(`/soma/pdf/draft_bid_models/${bidId}`).then(r => r.data)
+
+// Модели с пересчётом цен по валюте драфта — основной источник для PDF
+export const getDraftModelsWithPrices = (draftId) =>
+  api.get(`/soma/pdf/drafts/${draftId}/models`).then(r => r.data)
 
 export const createDraft = ({ kpType, bidId, object, currency }) => {
   const { kp_type, id_company } = kpTypeToBackend(kpType)

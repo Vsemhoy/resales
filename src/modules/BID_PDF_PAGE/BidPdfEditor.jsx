@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import { getDraft, getBidModels, getDraftModels, getCovers, getUser } from './api'
+import { getDraft, getBidModels, getDraftModels, getDraftModelsWithPrices, getCovers, getUser } from './api'
 import { restoreFilesIntoFormData } from './api/files'
 import { useDraftStatus, STATUS_META } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
@@ -149,7 +149,10 @@ export default function BidPdfEditor() {
   const { status: saveStatus, errMsg: saveErr } = useAutoSave(draftId, formData, currency, 2000, isReady)
 
   useEffect(() => {
-    getBidModels(bidId).then(data => setModels(Array.isArray(data) ? data : (data?.models ?? []))).catch(() => {})
+    getDraftModelsWithPrices(draftId).then(data => setModels(Array.isArray(data) ? data : (data?.models ?? []))).catch(() => {
+      // фолбэк на сырые модели без конвертации
+      getBidModels(bidId).then(data => setModels(Array.isArray(data) ? data : (data?.models ?? []))).catch(() => {})
+    })
     getDraftModels(draftId).then(data => setModelsData(data?.modelsData ?? null)).catch(() => {})
     getDraft(draftId)
       .then(data => {

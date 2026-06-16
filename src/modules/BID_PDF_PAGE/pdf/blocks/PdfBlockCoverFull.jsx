@@ -21,7 +21,7 @@ export function PdfBlockCoverFull({ cfg, data, draft }) {
         {/* Верх: КП + название */}
         <View>
           <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular, marginBottom: space.md, letterSpacing: 0.5 }}>
-            Коммерческое предложение{data?.ext_number ? `  № ${data.ext_number}` : ''}
+            Коммерческое предложение{data?.ext_number ? `  № ${String(data.ext_number || '').trim()}` : ''}
           </Text>
 
           <Text style={{ fontSize: text.xxl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, lineHeight: 1.2, marginBottom: space.sm }}>
@@ -30,7 +30,7 @@ export function PdfBlockCoverFull({ cfg, data, draft }) {
 
           {data?.object_address ? (
             <Text style={{ fontSize: text.sm, color: color.textSecondary, fontFamily: font.regular, marginBottom: space.xl }}>
-              {data.object_address}
+              {String(data.object_address || '').trim()}
             </Text>
           ) : <View style={{ marginBottom: space.xl }} />}
 
@@ -45,12 +45,12 @@ export function PdfBlockCoverFull({ cfg, data, draft }) {
               </Text>
               {data.target_name && (
                 <Text style={{ fontSize: text.base, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold }}>
-                  {data.target_name}
+                  {String(data.target_name || '').trim()}
                 </Text>
               )}
               {data.target_occupy && (
                 <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular, marginTop: space.xxs }}>
-                  {data.target_occupy}
+                  {String(data.target_occupy || '').trim()}
                 </Text>
               )}
             </View>
@@ -61,18 +61,18 @@ export function PdfBlockCoverFull({ cfg, data, draft }) {
         <View style={{ paddingBottom: space.lg }}>
           {data?.manager_name && (
             <Text style={{ fontSize: text.sm, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold }}>
-              {data.manager_name}
+              {String(data.manager_name || '').trim()}
             </Text>
           )}
           {data?.manager_occupy && (
             <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>
-              {data.manager_occupy}
+              {String(data.manager_occupy || '').trim()}
             </Text>
           )}
           {(data?.tel || data?.email) && (
             <View style={{ marginTop: space.sm }}>
-              {data.tel   && <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>{data.tel}</Text>}
-              {data.email && <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>{data.email}</Text>}
+              {data.tel   && <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>{String(data.tel || '').trim()}</Text>}
+              {data.email && <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>{String(data.email || '').trim()}</Text>}
             </View>
           )}
         </View>

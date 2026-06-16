@@ -62,12 +62,12 @@ export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
         <View style={{ flex: 1 }}>
           {data?.ext_number ? (
             <Text style={{ fontSize: text.sm, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold, marginBottom: 2 }}>
-              {'Исх. № '}{data.ext_number}
+              {'Исх. № '}{String(data.ext_number || '').trim()}
             </Text>
           ) : null}
           {data?.date ? (
             <Text style={{ fontSize: text.sm, color: color.textSecondary, fontFamily: font.regular }}>
-              {data.date}
+              {String(data.date || '').trim()}
             </Text>
           ) : null}
         </View>
@@ -76,12 +76,12 @@ export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
         <View style={{ flex: 1, alignItems: 'flex-end' }}>
           {data?.target_occupy ? (
             <Text style={{ fontSize: text.sm, color: color.textSecondary, fontFamily: font.regular }}>
-              {data.target_occupy}
+              {String(data.target_occupy || '').trim()}
             </Text>
           ) : null}
           {data?.target_name ? (
             <Text style={{ fontSize: text.sm, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold }}>
-              {data.target_name}
+              {String(data.target_name || '').trim()}
             </Text>
           ) : null}
         </View>
