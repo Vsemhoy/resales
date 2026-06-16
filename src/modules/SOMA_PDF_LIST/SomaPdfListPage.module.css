@@ -76,7 +76,7 @@
 }
 
 .pdfTable {
-  min-width: 1320px;
+  width: 100%;
 }
 
 .pdfTableRow {

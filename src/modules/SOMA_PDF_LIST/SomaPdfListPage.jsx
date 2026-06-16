@@ -405,7 +405,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
         </div>
       </div>
 
-      <div className={`sa-pa-12 sa-table ${classes.tableWrap}`} style={{minWidth: '100%'}}>
+      <div className={`sa-pa-12 sa-table ${classes.tableWrap}`} style={{width: '100%'}}>
         <Spin spinning={loading}>
           <div className={`sa-table-box ${classes.pdfTable}`}>
             <Affix offsetTop={46}>
