@@ -173,14 +173,21 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
               onChange={e => set('coverTitle', e.target.value)}
               placeholder="Коммерческое предложение"
             />
-            {data.coverTitle && data.coverTitle !== 'Коммерческое предложение' && (
+            {data.coverTitle && data.coverTitle !== (D?.coverTitle ?? 'Коммерческое предложение') && (
               <Button size="small" icon={<UndoOutlined />}
                 title="Сбросить к стандартному"
-                onClick={() => set('coverTitle', 'Коммерческое предложение')}
+                onClick={() => set('coverTitle', D?.coverTitle ?? 'Коммерческое предложение')}
               />
             )}
           </div>
         </Field>
+      </Section>
+
+      <Section title="Название объекта" description="Выводится под заголовком КП">
+        <ResetField data={data} set={set} defaults={D} label=""
+          fieldKey="object_name"
+          placeholder="АО Полиметалл, объект г. Санкт-Петербург"
+        />
       </Section>
 
       <Section title="Менеджер">

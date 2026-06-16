@@ -50,6 +50,7 @@ export const saveDraft = (id, formData, currency) =>
   api.put(`/soma/pdf/drafts/${id}`, {
     form_data: formData,
     ...(currency ? { currency } : {}),
+    ...(formData.object_name !== undefined ? { object: formData.object_name } : {}),
   }).then(r => r.data)
 
 export const saveDraftWithFiles = (id, formData, currency, files = {}) => {
@@ -57,6 +58,7 @@ export const saveDraftWithFiles = (id, formData, currency, files = {}) => {
   fd.append('_method', 'PUT')  // Laravel method spoofing — PUT не поддерживает файлы
   fd.append('form_data', JSON.stringify(formData))
   if (currency) fd.append('currency', JSON.stringify(currency))
+  if (formData.object_name !== undefined) fd.append('object', formData.object_name)
   Object.entries(files).forEach(([role, file]) => {
     if (file instanceof File) fd.append(role, file)
   })

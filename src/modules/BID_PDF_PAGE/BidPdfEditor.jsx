@@ -199,6 +199,14 @@ export default function BidPdfEditor() {
           ? [orgUser.occupy, clientCompany?.name].filter(Boolean).join(' ')
           : (fd.target_occupy || (companyName ? `Директору ${companyName}` : ''))
 
+        // Название объекта из source_bid
+        const bidObjectName = data.source_bid?.object || ''
+
+        // Заголовок КП: если есть объект — добавляем уточнение
+        const defaultCoverTitle = bidObjectName
+          ? 'Коммерческое предложение для объекта:'
+          : 'Коммерческое предложение'
+
         // Настоящие дефолты из БИДа — сохраняются один раз при первом создании
         const computedDefaults = {
           date:           today,
@@ -209,6 +217,8 @@ export default function BidPdfEditor() {
           manager_occupy: bidManagerOccupy,
           tel:            fd.tel   || '',
           email:          fd.email || '',
+          object_name:    bidObjectName,
+          coverTitle:     defaultCoverTitle,
         }
         setCoverDefaults(computedDefaults)
 
@@ -217,6 +227,8 @@ export default function BidPdfEditor() {
           date:           fd.date          || today,
           tableFootnote:  fd.tableFootnote || FOOTNOTE_DEFAULT,
           target_occupy:  fd.target_occupy || bidTargetOccupy,
+          object_name:    fd.object_name   ?? bidObjectName,
+          coverTitle:     fd.coverTitle    ?? defaultCoverTitle,
           client_company: clientCompany,
           _coverDefaults: computedDefaults,  // всегда перезаписываем из актуальных данных БИДа
         })
