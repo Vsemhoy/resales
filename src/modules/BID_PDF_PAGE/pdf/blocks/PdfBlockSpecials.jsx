@@ -5,7 +5,7 @@ import { PdfSectionBar } from '../shared/PdfSectionBar'
 import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
 
 import { HTTP_ROOT } from '../../../../config/config'
-import { cleanAlphaNumeric } from '../../utils/splitText'
+import { cleanAlphaNumeric, cleanModelName } from '../../utils/splitText'
 
 function absUrl(name) {
   let rt = HTTP_ROOT + '/api/soma/pdf/modfilesautocut/' + name
@@ -149,8 +149,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
 
         const ov = overrides[id]
 
-        const name =
-          model.info_model?.name || ''
+        const name = cleanModelName(model.info_model?.name || '')
 
         const shortNote =
           model.info_model?.short_note_new ||

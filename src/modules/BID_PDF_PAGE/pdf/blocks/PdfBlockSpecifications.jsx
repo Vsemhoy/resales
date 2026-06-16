@@ -3,7 +3,7 @@ import { View, Text, Image } from '@react-pdf/renderer'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
 import { HTTP_ROOT } from '../../../../config/config'
-import { cleanAlphaNumeric } from '../../utils/splitText'
+import { cleanAlphaNumeric, cleanModelName } from '../../utils/splitText'
 
 const CURRENCY_SYMBOLS = { '1': '$', '2': '€', '3': '₽' }
 
@@ -35,7 +35,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
   }
   const nameW = cW - W.num - W.qty - W.price - W.total - W.presence - (withPhotos ? photoW : 0)
 
-  const totalSum = models.reduce((s, m) => s + (parseFloat(m.price) || 0) * (m.model_count || 0), 0)
+  const totalSum = models.reduce((s, m) => s + (parseFloat(m.price) || 0) / 100 * (m.model_count || 0), 0)
 
   const cellBase = { paddingHorizontal: space.xs, paddingVertical: space.xs }
 
@@ -75,10 +75,10 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
 
       {/* Строки */}
       {models.map((m, i) => {
-        const price = parseFloat(m.price) || 0
+        const price = (parseFloat(m.price) || 0) / 100
         const total = price * (m.model_count || 0)
         const bg    = i % 2 === 1 ? color.tableRowEven : color.tableRowOdd
-        const name  = m.name || m.info_model?.name || `Позиция ${i + 1}`
+        const name  = cleanModelName(m.name || m.info_model?.name || `Позиция ${i + 1}`)
         const note  = m.info_model?.short_note_new || m.info_model?.short_note || ''
 
         return (
@@ -98,7 +98,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
             <Text style={[rowText('right'),  { width: W.price}]}>{fmt(price)}</Text>
             <Text style={[rowText('right'),  { width: W.total, fontFamily: font.bold, fontWeight: weight.semibold }]}>{fmt(total)}</Text>
             <Text style={[rowText('center'), { width: W.presence, color: color.textSecondary }]}>
-              {m.presence > 0 ? 'В нал.' : 'Заказ'}
+              {m.presence > 0 ? 'В нал.' : '+'}
             </Text>
             {withPhotos && (
               <View style={{ width: photoW, ...cellBase, alignItems: 'center', justifyContent: 'center' }}>

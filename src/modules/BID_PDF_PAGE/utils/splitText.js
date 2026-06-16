@@ -423,8 +423,20 @@ export function paginateTwoColumns(
 
 export function cleanAlphaNumeric(text) {
   if (!text) return "";
-
   return text.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, "");
+}
+
+// Очистка названия модели для отображения в PDF:
+// — trim пробелов
+// — замена тире/минуса с пробелами на дефис: " - " → "-", " -" → "-", "- " → "-"
+// — замена длинного тире (—, –) на дефис
+export function cleanModelName(text) {
+  if (!text) return ''
+  return text
+    .trim()
+    .replace(/\s*[—–]\s*/g, '-')  // длинное/среднее тире → дефис
+    .replace(/\s+-\s*/g,   '-')   // "пробел-" → "-"  (напр. "PF -6302" → "PF-6302")
+    .replace(/\s*-\s+/g,   '-')   // "-пробел" → "-"  (напр. "PF- 6302" → "PF-6302")
 }
 
 // ─── Высотная пагинация рекомендаций ─────────────────────────────────────────
