@@ -5,7 +5,7 @@ import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutli
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { getDraft, getBidModels, getDraftModels, getDraftModelsWithPrices, getCovers, getUser } from './api'
 import { restoreFilesIntoFormData } from './api/files'
-import { useDraftStatus, STATUS_META } from './useDraftStatus'
+import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
 import {
   CURRENCY_OPTIONS, COMPANY_OPTIONS, ORIENTATION_OPTIONS, TARGET_OPTIONS,
@@ -427,8 +427,14 @@ export default function BidPdfEditor() {
   const orderedDraggable  = orderedVisible.filter(s => s.key !== 'cover' && s.key !== 'toc')
 
   const accent        = COMPANY_ACCENT[companyId] ?? '#FF5903'
+  const isEngineer    = ENGINEER_ROLES.includes(userRole)
   const activeSecDef  = orderedVisible.find(s => s.key === activeSection)
   const ActiveSection = activeSecDef ? SECTION_COMPONENTS[activeSecDef.key] : null
+
+  // Секция readonly если: инженер И (секция не engineerCapable ИЛИ не назначена ему)
+  const isSectionReadonly = isEngineer && (
+    !activeSecDef?.engineerCapable || !engineerRequired.has(activeSection)
+  )
 
   if (loading) {
     return (
@@ -477,7 +483,7 @@ export default function BidPdfEditor() {
             : section.label
           }
         </span>
-        {!section.required && (
+        {!section.required && !isEngineer && (
           <Checkbox
             checked={!!enabledSections[section.key]}
             onChange={() => toggleSection(section.key)}
@@ -495,8 +501,8 @@ export default function BidPdfEditor() {
         {/* ── Топбар ────────────────────────────────────────────────────────── */}
         <div className={classes.topbar}>
           <div className={classes.topbarLeft}>
-            <Select value={companyId}      onChange={handleCompany}     options={COMPANY_OPTIONS}     style={{ width: 90  }} />
-            <Select value={orientation}    onChange={handleOrientation}  options={ORIENTATION_OPTIONS} style={{ width: 148 }}
+            <Select value={companyId}      onChange={handleCompany}     options={COMPANY_OPTIONS}     style={{ width: 90  }} disabled={isEngineer} />
+            <Select value={orientation}    onChange={handleOrientation}  options={ORIENTATION_OPTIONS} style={{ width: 148 }} disabled={isEngineer}
               optionRender={opt => (
                 <span>
                   <FileOutlined style={{ marginRight: 4, transform: `rotate(${opt.value === 'h' ? 90 : 0}deg)`, display: 'inline-block' }} />
@@ -504,20 +510,26 @@ export default function BidPdfEditor() {
                 </span>
               )}
             />
-            <Select value={targetSystem}   onChange={handleTarget}       options={TARGET_OPTIONS}      style={{ width: 150 }} />
-            <Select value={currency.value} onChange={handleCurrency}     options={CURRENCY_OPTIONS}    style={{ width: 64  }} />
+            <Select value={targetSystem}   onChange={handleTarget}       options={TARGET_OPTIONS}      style={{ width: 150 }} disabled={isEngineer} />
+            <Select value={currency.value} onChange={handleCurrency}     options={CURRENCY_OPTIONS}    style={{ width: 64  }} disabled={isEngineer} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginLeft: 4 }}>
-              <Switch size="small" checked={figuresEnabled} onChange={handleFiguresToggle} />
+              <Switch size="small" checked={figuresEnabled} onChange={handleFiguresToggle} disabled={isEngineer} />
               <span style={{ fontSize: 12, color: '#595959', whiteSpace: 'nowrap' }}>Нумерация рис.</span>
             </div>
           </div>
           <div className={classes.topbarRight}>
             <SaveIndicator status={saveStatus} errMsg={saveErr} />
+            {userRole !== null && (
+              <Tag color={isEngineer ? 'orange' : 'blue'} style={{ margin: 0 }}>
+                {isEngineer ? '🔧 Инженер' : '💼 Менеджер'}
+              </Tag>
+            )}
             <StatusControl
               status={draftStatus}
               available={statusTransitions}
               loading={statusLoading}
               onTransition={transitionStatus}
+              engineerRequiredCount={engineerRequired.size}
             />
             <Button type="primary" icon={<PrinterOutlined />} size="default"
               loading={printing}
@@ -570,28 +582,30 @@ export default function BidPdfEditor() {
               </Droppable>
             </DragDropContext>
 
-            <div style={{ padding: '6px 8px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: 4 }}>
-              <button
-                onClick={addCustomBlock}
-                style={{
-                  flex: 1, border: `1px dashed ${accent}66`, background: accent + '08',
-                  borderRadius: 5, padding: '5px 0', cursor: 'pointer',
-                  fontSize: 12, color: accent, fontWeight: 600,
-                }}
-              >
-                + Блок
-              </button>
-              <button
-                onClick={addPageBreak}
-                style={{
-                  flex: 1, border: '1px dashed #d9d9d9', background: '#fafafa',
-                  borderRadius: 5, padding: '5px 0', cursor: 'pointer',
-                  fontSize: 12, color: '#8c8c8c', fontWeight: 600,
-                }}
-              >
-                ↕ Разрыв
-              </button>
-            </div>
+            {!isEngineer && (
+              <div style={{ padding: '6px 8px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: 4 }}>
+                <button
+                  onClick={addCustomBlock}
+                  style={{
+                    flex: 1, border: `1px dashed ${accent}66`, background: accent + '08',
+                    borderRadius: 5, padding: '5px 0', cursor: 'pointer',
+                    fontSize: 12, color: accent, fontWeight: 600,
+                  }}
+                >
+                  + Блок
+                </button>
+                <button
+                  onClick={addPageBreak}
+                  style={{
+                    flex: 1, border: '1px dashed #d9d9d9', background: '#fafafa',
+                    borderRadius: 5, padding: '5px 0', cursor: 'pointer',
+                    fontSize: 12, color: '#8c8c8c', fontWeight: 600,
+                  }}
+                >
+                  ↕ Разрыв
+                </button>
+              </div>
+            )}
 
             {tocSection && (
               <div className={classes.tocDivider} />
@@ -628,20 +642,27 @@ export default function BidPdfEditor() {
                       userRole={userRole}
                     />
                   : ActiveSection
-                    ? <ActiveSection
-                        data={formData}
-                        onChange={handleFormChange}
-                        currency={currency}
-                        companyId={companyId}
-                        orientation={orientation}
-                        targetSystem={targetSystem}
-                        draftId={draftId}
-                        bidId={bidId}
-                        figureRegistry={figureRegistry}
-                        figuresEnabled={figuresEnabled}
-                        coverDefaults={coverDefaults}
-                        userRole={userRole}
-                      />
+                    ? <div className={isSectionReadonly ? classes.readonlyForm : undefined}>
+                        {isSectionReadonly && (
+                          <div className={classes.readonlyBanner}>
+                            🔒 Этот раздел доступен только для чтения
+                          </div>
+                        )}
+                        <ActiveSection
+                          data={formData}
+                          onChange={handleFormChange}
+                          currency={currency}
+                          companyId={companyId}
+                          orientation={orientation}
+                          targetSystem={targetSystem}
+                          draftId={draftId}
+                          bidId={bidId}
+                          figureRegistry={figureRegistry}
+                          figuresEnabled={figuresEnabled}
+                          coverDefaults={coverDefaults}
+                          userRole={userRole}
+                        />
+                      </div>
                     : <div className={classes.sectionPlaceholder}>— секция в разработке —</div>
                 }
               </div>
@@ -681,7 +702,7 @@ export default function BidPdfEditor() {
                   hasEngineerNote={!!notes.noteEngineer}
                   hasManagerNote={!!notes.noteManager}
                   onClick={() => isEnabled && setActiveSection(section.key)}
-                  onDoubleClick={() => isEnabled && section.engineerCapable && toggleEngineerRequired(section.key)}
+                  onDoubleClick={() => !isEngineer && isEnabled && section.engineerCapable && toggleEngineerRequired(section.key)}
                 />
               )
             })}
@@ -736,8 +757,8 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
         style={{
           width: '100%',
           height: wide ? 44 : 52,
-          borderRadius: 5,
-          border: `1.5px solid ${isActive ? "#0084ff" : isEngineerRequired ? '#e6b800' : '#e8e8e8'}`,
+          borderRadius: 0,
+          borderBottom: `1px dashed ${isActive ? "#0084ff" : isEngineerRequired ? '#353535' : '#919191'}`,
           background: getBg(),
           cursor: isEnabled ? 'pointer' : 'default',
           opacity: isEnabled ? 1 : 0.3,
@@ -746,6 +767,8 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
           transition: 'all 0.15s',
           position: 'relative',
           userSelect: 'none',
+          marginBottom: '-5px',
+          boxShadow: 'inset 0px 0px 10px #00000012',
         }}
       >
         {wide ? (
@@ -760,7 +783,7 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
             <div style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
               fontSize: 8, fontWeight: 600, textAlign: 'center',
-              color: isActive ? "#02488a" : '#94a3b8',
+              color: isActive ? "#02488a" : '#505761',
               background: isActive ? "#0084ff" + '15' : 'rgba(255,255,255,0.85)',
               padding: '1px 2px',
               whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
@@ -797,7 +820,7 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
 }
 
 // ─── StatusControl — тег статуса + меню переходов ─────────────────────────────
-function StatusControl({ status, available, loading, onTransition }) {
+function StatusControl({ status, available, loading, onTransition, engineerRequiredCount = 0 }) {
   const meta = STATUS_META[status] ?? { label: status, color: 'default' }
 
   if (!available.length) {
@@ -808,10 +831,15 @@ function StatusControl({ status, available, loading, onTransition }) {
     )
   }
 
-  const items = available.map(s => ({
-    key:   s,
-    label: `→ ${STATUS_META[s]?.label ?? s}`,
-  }))
+  const items = available.map(s => {
+    const isBlocked = s === 'sent_engineer' && engineerRequiredCount === 0
+    return {
+      key:      s,
+      label:    `→ ${STATUS_META[s]?.label ?? s}`,
+      disabled: isBlocked,
+      title:    isBlocked ? 'Сначала назначьте секции инженеру (двойной клик на минимапе)' : undefined,
+    }
+  })
 
   return (
     <Dropdown
