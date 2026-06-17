@@ -65,3 +65,13 @@ export const getProjectInfo = (bidProject) =>
         _token: CSRF_TOKEN
     }).then(r => r.data);
 
+export const getOrgProjects = (orgId, params = {}) =>
+    PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/orglist/${orgId}/p`, {
+        data: {
+            page: 1,
+            limit: 10000,
+            ...params,
+        },
+        _token: CSRF_TOKEN,
+    }).then(r => r.data);
+

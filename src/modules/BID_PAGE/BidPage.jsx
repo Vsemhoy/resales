@@ -50,7 +50,7 @@ import OrgProjectEditorSectionBox from "../TORG_PAGE/components/sections/ext/Org
 import FindSimilar from "./components/FindSimilar";
 import {
     calcModels, changePlace,
-    getModels, getNewBid, getProjectInfo,
+    getModels, getNewBid, getOrgProjects, getProjectInfo,
     getWordFile, toSent1C,
 } from "./api/bids.api";
 import {useBidSelects} from "./hooks/useBidSelects";
@@ -87,10 +87,11 @@ const BidPage = (props) => {
 	const [form, setForm] = useState({
 		baseInfo: {
 			wordTemplateCompany: null,
-			orgUser: null,
+            orgUser: null,
             protectionProject: null,
             object: null,
-            sellBy: null
+            sellBy: null,
+            project: null
         },
         bill: {
             requisite: null,
@@ -146,6 +147,8 @@ const BidPage = (props) => {
 
 	/* ПРОЕКТ */
 	const [bidProject, setBidProject] = useState(null); // проект из карточки организации
+	const [orgProjects, setOrgProjects] = useState([]);
+	const [isOrgProjectsLoading, setIsOrgProjectsLoading] = useState(false);
 
     /* СЕЛЕКТЫ */
     const selects = useBidSelects(bidOrg?.id, form.baseInfo.orgUser);
@@ -269,10 +272,13 @@ const BidPage = (props) => {
         }
     }, [form.baseInfo.object]);
 	useEffect(() => {
-		if (bidProject) {
-			fetchProjectInfo().then();
+		if (bidOrg?.id) {
+			fetchOrgProjects().then();
+		} else {
+			setOrgProjects([]);
+			setIsOrgProjectsLoading(false);
 		}
-	}, [bidProject]);
+	}, [bidOrg?.id]);
 	useEffect(() => {
 		if (bidType) {
 			document.title = `${+bidType === 1 ? '🧾 КП' : +bidType === 2 ? '💳 Счет' : ''} | ${bidId}`;
@@ -359,7 +365,7 @@ const BidPage = (props) => {
             setBidFilesCount(bid.files_count);
             setBidOrg(bid.base_info.org);
             setBidCurator(bid.base_info.curator);
-            setBidProject(bid.base_info.project);
+            setBidProject(bid.base_info.project ? Number(bid.base_info.project) : null);
             setIsSend1c(bid.bill?.send1c);
 
             setForm({
@@ -369,6 +375,7 @@ const BidPage = (props) => {
                     protectionProject: bid.base_info.protection,
                     object: bid.base_info.object,
                     sellBy: bid.base_info.sellby,
+                    project: bid.base_info.project ? Number(bid.base_info.project) : null,
                 },
                 bill: {
                     requisite: bid.bill?.requisite,
@@ -496,10 +503,11 @@ const BidPage = (props) => {
 			}
 		//}
 	};
-	const fetchProjectInfo = async () => {
+	const fetchProjectInfo = async (projectId = bidProject) => {
+		if (!projectId) return;
 		//if (PRODMODE) {
 			try {
-                const response = await getProjectInfo(bidProject);
+                const response = await getProjectInfo(projectId);
 				if (response?.content) {
 					setProjectInfo(response?.content?.project);
 				}
@@ -509,6 +517,18 @@ const BidPage = (props) => {
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
 		//}
+	};
+	const fetchOrgProjects = async () => {
+		setIsOrgProjectsLoading(true);
+		try {
+            const response = await getOrgProjects(bidOrg.id);
+			setOrgProjects(response?.content?.projects || []);
+		} catch (e) {
+			console.log(e);
+			showError(`РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°! ${e.response?.data?.message || e.message || 'РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°'}`);
+		} finally {
+			setIsOrgProjectsLoading(false);
+		}
 	};
 
     const handleSave = () => {
@@ -538,6 +558,7 @@ const BidPage = (props) => {
 					protection: currentForm.baseInfo.protectionProject,
 					object: currentForm.baseInfo.object,
 					sellby: currentForm.baseInfo.sellBy,
+					project: currentForm.baseInfo.project,
 				},
 				bill:
 					+bidType === 2
@@ -584,6 +605,15 @@ const BidPage = (props) => {
 			.filter((item) => Number(item.id) !== 1)
 			.map((item) => ({value: Number(item.id), label: item.name, used: item.used}));
 	};
+	const prepareProjectSelect = (projects) => {
+		if (!projects) return [];
+		return projects
+			.filter((item) => Number(item.deleted) !== 1)
+			.map((item) => ({
+				value: Number(item.id),
+				label: `${item.name || 'Project'} (${item.id})`,
+			}));
+	};
     const countOfComments = () => {
         return Object.values(form.comments).filter(Boolean).length;
 	};
@@ -597,6 +627,9 @@ const BidPage = (props) => {
         if (field === 'wordTemplateCompany') {
             setBidIdCompany(value);
         }
+        if (field === 'project') {
+            setBidProject(value);
+        }
         setForm(prev => ({
             ...prev,
             baseInfo: { ...prev.baseInfo, [field]: value },
@@ -608,12 +641,17 @@ const BidPage = (props) => {
             bill: { ...prev.bill, [field]: value },
         }));
     }, []);
-    const handleFinanceChange = useCallback((field, value) => {
+	const handleFinanceChange = useCallback((field, value) => {
         setForm(prev => ({
             ...prev,
             finance: { ...prev.finance, [field]: value },
         }));
     }, []);
+	const handleOpenProjectInfo = useCallback(async () => {
+		if (!bidProject) return;
+		await fetchProjectInfo(bidProject);
+		setIsProjectDataModalOpen(true);
+	}, [bidProject]);
     const handleToAdminClick = () => {
         setIsLoadingChangePlaceBtn('toAdmin');
         if (isDirty) {
@@ -915,11 +953,12 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                     templateWordCompanyOptions={prepareCompanySelect(selects.companies)}
                     orgUsersOptions={prepareSelect(selects.orgUsers)}
                     protectionOptions={prepareSelect(selects.protection)}
+                    projectOptions={prepareProjectSelect(orgProjects)}
+                    isProjectsLoading={isOrgProjectsLoading}
                     orgUsersDefaultValue={(selects.orgUsers && selects.orgUsers.length > 0) ? selects.orgUsers[selects.orgUsers.length - 1].id : null}
                     onChange={handleBaseInfoChange}
                     isDisabled={isDisabledInputManager()}
-                    bidProjectId={bidProject}
-                    onOpenProject={() => setIsProjectDataModalOpen(true)}
+                    onOpenProject={handleOpenProjectInfo}
                     createdAtLabel={bidActions.create?.date ? dayjs(bidActions.create?.date * 1000).format("DD.MM.YYYY HH:mm:ss") : ''}
                 />
 			),
