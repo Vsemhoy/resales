@@ -188,3 +188,22 @@
   min-width: 0;
   max-width: 100%;
 }
+
+.creatorCell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.deleteIcon {
+  flex-shrink: 0;
+  color: #bfbfbf;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.deleteIcon:hover {
+  color: #ff4d4f;
+}
