@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown } from 'antd'
-import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined } from '@ant-design/icons'
+import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { getDraft, getBidModels, getDraftModels, getDraftModelsWithPrices, getCovers, getUser } from './api'
 import { restoreFilesIntoFormData } from './api/files'
@@ -200,7 +200,7 @@ export default function BidPdfEditor() {
           : (fd.target_name || '')
         const bidTargetOccupy = orgUser
           ? [orgUser.occupy, clientCompany?.name].filter(Boolean).join(' ')
-          : (fd.target_occupy || (companyName ? `Директору ${companyName}` : ''))
+          : (fd.target_occupy || '')
 
         // Название объекта из source_bid
         const bidObjectName = data.source_bid?.object || ''
@@ -725,9 +725,9 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
 
   // Цвет фона: активная → акцент, инженер назначен → жёлтый, способна к инженеру → светло-жёлтый
   const getBg = () => {
+    if (isEngineerRequired)   return '#fa905f4d'
+    if (isEngCapable)         return '#f3e7797c'
     if (isActive)             return accent + '0d'
-    if (isEngineerRequired)   return '#ffff8c'
-    if (isEngCapable)         return '#fffde7'
     return '#fafafa'
   }
 
@@ -758,7 +758,7 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
         {wide ? (
           // Широкий вид — текст
           <div style={{ padding: '4px 6px', display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center' }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: isActive ? accent : '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: isActive ? accent : '#191a1b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2 }}>
               {section.label}
             </div>
           </div>
@@ -781,13 +781,24 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
         )}
 
         {/* Бейдж инженера */}
-        {isEngineerRequired && (
+        {isEngineerRequired ? (
           <div style={{
-            position: 'absolute', top: 2, right: 2,
+            position: 'absolute', top: 12, right: 5,
             fontSize: 20, lineHeight: 1,
           }}>
-            👷
+            <RobotOutlined size={'large'} />
           </div>
+        ) : (
+          <>
+          {isEngCapable ? (
+          <div style={{
+            position: 'absolute', top: 12, right: 5,
+            fontSize: 20, lineHeight: 1,
+            opacity: '0.25'
+          }}>
+            <RobotOutlined size={'large'} />
+          </div>
+          ) : null}</>
         )}
 
         {/* Индикаторы служебных заметок */}

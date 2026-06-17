@@ -23,6 +23,16 @@ export function PdfBlockCoverFull({ cfg, data, draft }) {
           <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular, marginBottom: space.md, letterSpacing: 0.5 }}>
             Коммерческое предложение{data?.ext_number ? `  № ${String(data.ext_number || '').trim()}` : ''}
           </Text>
+          {data?.coverTitle && data.coverTitle !== 'Коммерческое предложение' ? (
+            <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular, marginBottom: space.xs, letterSpacing: 0.5 }}>
+              {String(data.coverTitle || '').trim()}
+            </Text>
+          ) : null}
+          {data?.object_name ? (
+            <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular, marginBottom: space.xs, letterSpacing: 0.5 }}>
+              {String(data.object_name || '').trim()}
+            </Text>
+          ) : null}
 
           <Text style={{ fontSize: text.xxl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, lineHeight: 1.2, marginBottom: space.sm }}>
             {draft?.object || 'Система звукового оповещения'}

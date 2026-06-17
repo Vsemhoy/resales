@@ -88,9 +88,14 @@ export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
       </View>
 
       {/* Заголовок КП — редактируемый, по центру */}
-      <Text style={{ fontSize: text.xl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, marginBottom: space.lg, textAlign: 'center' }}>
+      <Text style={{ fontSize: text.xl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, marginBottom: data?.object_name ? space.xs : space.lg, textAlign: 'center' }}>
         {data?.coverTitle || 'Коммерческое предложение'}
       </Text>
+      {data?.object_name ? (
+        <Text style={{ fontSize: text.xl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, marginBottom: space.lg, textAlign: 'center', marginTop: '-' + space.xs }}>
+          {String(data.object_name || '').trim()}
+        </Text>
+      ) : null}
     </View>
   )
 }
