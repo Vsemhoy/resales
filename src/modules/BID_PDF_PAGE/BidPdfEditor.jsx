@@ -9,7 +9,7 @@ import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
 import {
   CURRENCY_OPTIONS, COMPANY_OPTIONS, ORIENTATION_OPTIONS, TARGET_OPTIONS,
-  getVisibleSections, DEFAULT_SECTION_ORDER, DEFAULT_ENABLED,
+  getVisibleSections, DEFAULT_SECTION_ORDER, DEFAULT_ENABLED, ALL_SECTIONS,
   CUSTOM_PREFIX, isCustomKey, customKey, customId, makeCustomSection,
   PAGEBREAK_PREFIX, isPageBreakKey, makePageBreakSection,
 } from './sectionConfig'
@@ -265,13 +265,32 @@ export default function BidPdfEditor() {
     setIsDirty(true)
   }
 
+  const isEngineer = ENGINEER_ROLES.includes(userRole)
+
   const toggleSection = useCallback((key) => {
+    const sectionDef = ALL_SECTIONS.find(s => s.key === key)
     setEnabledSections(prev => {
       const next = { ...prev, [key]: !prev[key] }
-      dirtySet(fd => ({ ...fd, _enabledSections: next }))
+      const nowEnabled = next[key]
+      dirtySet(fd => {
+        const updated = { ...fd, _enabledSections: next }
+        // Если менеджер включает engineerCapable секцию — сразу назначаем инженеру
+        if (nowEnabled && sectionDef?.engineerCapable && !isEngineer) {
+          const current = new Set(fd._engineerRequired || [])
+          current.add(key)
+          updated._engineerRequired = [...current]
+        }
+        // Если выключает — снимаем назначение
+        if (!nowEnabled && sectionDef?.engineerCapable) {
+          const current = new Set(fd._engineerRequired || [])
+          current.delete(key)
+          updated._engineerRequired = [...current]
+        }
+        return updated
+      })
       return next
     })
-  }, [dirtySet])
+  }, [dirtySet, isEngineer])
 
   const handleFormChange = useCallback((newData) => dirtySet(newData), [dirtySet])
 
@@ -427,7 +446,6 @@ export default function BidPdfEditor() {
   const orderedDraggable  = orderedVisible.filter(s => s.key !== 'cover' && s.key !== 'toc')
 
   const accent        = COMPANY_ACCENT[companyId] ?? '#FF5903'
-  const isEngineer    = ENGINEER_ROLES.includes(userRole)
   const activeSecDef  = orderedVisible.find(s => s.key === activeSection)
   const ActiveSection = activeSecDef ? SECTION_COMPONENTS[activeSecDef.key] : null
 

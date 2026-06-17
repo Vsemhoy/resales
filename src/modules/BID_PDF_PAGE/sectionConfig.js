@@ -43,7 +43,7 @@ export const DEFAULT_SECTION_ORDER = ALL_SECTIONS
 
 export const DEFAULT_ENABLED = {
   cover:           true,
-  toc:             true,
+  toc:             false,
   features:        false,
   selectEquipment: false,
   acoustic:        false,
