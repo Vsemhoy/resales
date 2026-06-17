@@ -42,7 +42,7 @@ const TABLE_STYLES = [
 
 export default function SectionSpecifications({ data, onChange, companyId }) {
   const accent     = companyId === '3' ? '#269435' : '#FF5903'
-  const tableStyle = data.tableStyle ?? 'default'
+  const tableStyle = data.tableStyle ?? 'compact'
   const set        = (key, val) => onChange({ ...data, [key]: val })
 
   return (
