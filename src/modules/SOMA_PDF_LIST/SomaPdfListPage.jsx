@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Affix, Button, Empty, Input, Layout, Pagination, Popconfirm, Select, Spin, Switch, Tag, Typography } from 'antd'
+import { Affix, Button, Empty, Input, Layout, Pagination, Popconfirm, Select, Spin, Tag, Typography } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { getDraftsList, deleteDraft } from '../BID_PDF_PAGE/api/drafts.api'
 import { STATUS_META } from '../BID_PDF_PAGE/useDraftStatus'
@@ -173,6 +173,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
   const activeRole = userdata?.user?.sales_role ?? 0
   const meId = userdata?.user?.id ?? null
   const isAdmin = userdata?.user?.is_admin === 1 || userdata?.user?.super === 1
+  const isEngineer = activeRole === 3 || activeRole === 4
   const availableRoles = ROLE_OPTIONS.filter(role => userdata?.acls?.includes(role.acl))
   const isOneRole = availableRoles.length === 1
 
@@ -247,9 +248,12 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
     setPagination(prev => ({ ...prev, current: 1 }))
   }
 
-  const handleMineChange = (value) => {
-    setMineOnly(value)
-    setPagination(prev => ({ ...prev, current: 1 }))
+  const handleMineChange = () => {
+    setMineOnly(prev => {
+      const next = !prev
+      setPagination(p => ({ ...p, current: 1 }))
+      return next
+    })
   }
 
   const getCompanyColor = (idCompany) =>
@@ -399,10 +403,49 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
               }}
             />
           </div>
-          <div />
-          <div className="sa-flex-gap" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Switch checked={mineOnly} onChange={handleMineChange} />
-            <span style={{ fontSize: 13 }}>Мои PDF</span>
+          <div className="sa-flex-gap" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {/* Быстрые фильтры по статусу — зависят от роли */}
+            {isEngineer ? (
+              <>
+                {[
+                  { status: 'sent_engineer', label: 'Ждёт инженера' },
+                  { status: 'on_engineer',   label: 'В работе' },
+                  { status: 'man_rejected',  label: 'На доработку' },
+                ].map(({ status, label }) => {
+                  const active = filters.status === status
+                  return (
+                    <Button key={status} size="small"
+                      color="default"
+                      variant={active ? 'solid' : 'filled'}
+                      onClick={() => setFilter('status', active ? null : status)}
+                    >{label}</Button>
+                  )
+                })}
+              </>
+            ) : (
+              <>
+                {[
+                  { status: 'man_edited',    label: 'У менеджера' },
+                  { status: 'sent_manager',  label: 'Закончено инж.' },
+                  { status: 'man_approved',  label: 'Принято' },
+                ].map(({ status, label }) => {
+                  const active = filters.status === status
+                  return (
+                    <Button key={status} size="small"
+                      color="default"
+                      variant={active ? 'solid' : 'filled'}
+                      onClick={() => setFilter('status', active ? null : status)}
+                    >{label}</Button>
+                  )
+                })}
+              </>
+            )}
+            {/* Мои PDF */}
+            <Button size="small"
+              color="default"
+              variant={mineOnly ? 'solid' : 'filled'}
+              onClick={handleMineChange}
+            >Мои PDF</Button>
           </div>
         </div>
       </div>
@@ -515,6 +558,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
                           okText="Удалить"
                           okType="danger"
                           cancelText="Отмена"
+                          placement="left"
                           onConfirm={() => deleteDraft(row.id).then(() => load()).catch(() => {})}
                           onPopupClick={e => e.stopPropagation()}
                         >
