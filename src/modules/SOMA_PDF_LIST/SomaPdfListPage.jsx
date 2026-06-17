@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Affix, Button, Empty, Input, Layout, Pagination, Select, Spin, Switch, Tag, Typography } from 'antd'
-import { getDraftsList } from '../BID_PDF_PAGE/api/drafts.api'
+import { Affix, Button, Empty, Input, Layout, Pagination, Popconfirm, Select, Spin, Switch, Tag, Typography } from 'antd'
+import { DeleteOutlined } from '@ant-design/icons'
+import { getDraftsList, deleteDraft } from '../BID_PDF_PAGE/api/drafts.api'
 import { STATUS_META } from '../BID_PDF_PAGE/useDraftStatus'
 import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort'
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar'
@@ -171,6 +172,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
   const [isOpenedFilters, setIsOpenedFilters] = useState(false)
   const activeRole = userdata?.user?.sales_role ?? 0
   const meId = userdata?.user?.id ?? null
+  const isAdmin = userdata?.user?.is_admin === 1 || userdata?.user?.super === 1
   const availableRoles = ROLE_OPTIONS.filter(role => userdata?.acls?.includes(role.acl))
   const isOneRole = availableRoles.length === 1
 
@@ -438,13 +440,13 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
                   <HeaderCell label="Моделей" sortKey="model_count" orderBox={orderBox} onSortChange={handleSortChange}>
                     <span className={classes.emptyFilter}>—</span>
                   </HeaderCell>
-                  <HeaderCell label="Автор" sortKey="creator" orderBox={orderBox} onSortChange={handleSortChange}>
-                    <span className={classes.emptyFilter}>—</span>
-                  </HeaderCell>
                   <HeaderCell label="Создан" sortKey="created_at" orderBox={orderBox} onSortChange={handleSortChange}>
                     <span className={classes.emptyFilter}>—</span>
                   </HeaderCell>
                   <HeaderCell label="Изменён" sortKey="updated_at" orderBox={orderBox} onSortChange={handleSortChange}>
+                    <span className={classes.emptyFilter}>—</span>
+                  </HeaderCell>
+                  <HeaderCell label="Автор" sortKey="creator" orderBox={orderBox} onSortChange={handleSortChange}>
                     <span className={classes.emptyFilter}>—</span>
                   </HeaderCell>
                 </div>
@@ -461,7 +463,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
               const creatorName = getPersonName(row.creator) || '—'
 
               const isMyEngineerRow = activeRole === 4 && row.engineer_id === meId
-              const isMyManagerRow  = (activeRole === 1 || activeRole === 2) && row.manager_id === meId
+              const isMyManagerRow  = (activeRole === 1 || activeRole === 2) && row.creator?.id === meId
 
               return (
                 <div
@@ -477,7 +479,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
                     <a
                       onClick={e => { e.stopPropagation(); navigate(editorUrl(row.bid_id, row.id)) }}
                       style={
-                        (row.manager_id === meId || row.engineer_id === meId)
+                        (row.engineer_id === meId || row.creator?.id === meId)
                           ? { fontWeight: 500, color: '#007bff' }
                           : undefined
                       }
@@ -491,7 +493,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
                   <div className={`sa-table-box-cell text-align-left ${classes.orgNameCell}`}>{orgName}</div>
                   <div className={`sa-table-box-cell text-align-left ${classes.orgNameCell}`}>
                     {objectName
-                      ? <EllipsisText>{objectName}</EllipsisText>
+                      ? objectName
                       : <span className={classes.muted}>—</span>
                     }
                   </div>
@@ -502,11 +504,28 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
                     {engineerName === '—' ? <span className={classes.muted}>—</span> : <EllipsisText>{engineerName}</EllipsisText>}
                   </div>
                   <div className="sa-table-box-cell">{row.bid_model_count}</div>
-                  <div className="sa-table-box-cell text-align-left">
-                    <EllipsisText>{creatorName}</EllipsisText>
-                  </div>
                   <div className="sa-table-box-cell">{formatDate(row.created_at)}</div>
                   <div className="sa-table-box-cell">{formatDate(row.updated_at)}</div>
+                  <div className={`sa-table-box-cell text-align-left ${classes.creatorCell}`}>
+                    <EllipsisText>{creatorName}</EllipsisText>
+                    {isAdmin && (
+                      <Popconfirm
+                          title="Удалить черновик?"
+                          description={`#${row.id} — ${orgName}`}
+                          okText="Удалить"
+                          okType="danger"
+                          cancelText="Отмена"
+                          onConfirm={() => deleteDraft(row.id).then(() => load()).catch(() => {})}
+                          onPopupClick={e => e.stopPropagation()}
+                        >
+                          <DeleteOutlined
+                            className={classes.deleteIcon}
+                            onClick={e => { e.stopPropagation(); e.preventDefault() }}
+                            onDoubleClick={e => { e.stopPropagation(); e.preventDefault() }}
+                          />
+                        </Popconfirm>
+                    )}
+                  </div>
                 </div>
               )
             })}
