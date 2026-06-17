@@ -3,7 +3,7 @@ import { saveDraft, saveDraftWithFiles } from './api'
 import { extractFiles } from './api/files'
 
 // status: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
-export function useAutoSave(draftId, formData, currency, delay = 2000, isReady = false) {
+export function useAutoSave(draftId, formData, currency, delay = 2000, isReady = false, isDirty = false) {
   const [status,  setStatus]  = useState('idle')
   const [errMsg,  setErrMsg]  = useState('')
   const timerRef    = useRef(null)
@@ -23,6 +23,7 @@ export function useAutoSave(draftId, formData, currency, delay = 2000, isReady =
   useEffect(() => {
     if (!draftId || !formData) return
     if (!readyRef.current) return  // данные ещё не загружены — не сохраняем
+    if (!isDirty) return           // пользователь ничего не менял — не сохраняем
 
     setStatus('pending')
     setErrMsg('')
@@ -53,7 +54,7 @@ export function useAutoSave(draftId, formData, currency, delay = 2000, isReady =
     }, delay)
 
     return () => clearTimeout(timerRef.current)
-  }, [draftId, formData, currency, delay])
+  }, [draftId, formData, currency, delay, isDirty])
 
   return { status, errMsg }
 }

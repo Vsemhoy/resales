@@ -69,6 +69,7 @@ export default function BidPdfEditor() {
   const [formData, setFormData] = useState({})
   const [loading,  setLoading]  = useState(true)
   const [isReady,  setIsReady]  = useState(false)
+  const [isDirty,  setIsDirty]  = useState(false)
 
   const [companyId,    setCompanyId]    = useState('2')
   const [orientation,  setOrientation]  = useState('v')
@@ -146,7 +147,13 @@ export default function BidPdfEditor() {
     }
   }
 
-  const { status: saveStatus, errMsg: saveErr } = useAutoSave(draftId, formData, currency, 2000, isReady)
+  const { status: saveStatus, errMsg: saveErr } = useAutoSave(draftId, formData, currency, 2000, isReady, isDirty)
+
+  // Обёртка для пользовательских изменений — помечает форму как изменённую
+  const dirtySet = useCallback((updater) => {
+    setFormData(updater)
+    setIsDirty(true)
+  }, [])
 
   useEffect(() => {
     getDraftModelsWithPrices(draftId).then(data => setModels(Array.isArray(data) ? data : (data?.models ?? []))).catch(() => {
@@ -170,7 +177,6 @@ export default function BidPdfEditor() {
         setTargetSystem(meta.targetSystem ?? (data.kp_type === 2 ? 'p' : 't'))
         if (fd._enabledSections) setEnabledSections(prev => ({ ...prev, ...fd._enabledSections }))
         if (fd._sectionOrder) {
-          // Добавляем в конец новые секции, которых ещё нет в сохранённом порядке
           const merged = [
             ...fd._sectionOrder,
             ...DEFAULT_SECTION_ORDER.filter(k => !fd._sectionOrder.includes(k)),
@@ -186,14 +192,12 @@ export default function BidPdfEditor() {
 
         const FOOTNOTE_DEFAULT = 'По условиям договора поставка осуществляется при 100% предоплате со склада в Санкт-Петербурге. Цены указаны с учетом НДС 22%. Срок поставки оборудования под заказ - 3 месяца с момента оплаты счета.'
 
-        // Имя менеджера и должность из source_bid.manager
         const srcManager     = data.source_bid?.manager
         const bidManagerName = srcManager
           ? [srcManager.surname, srcManager.name].filter(Boolean).join(' ')
           : (fd.manager_name || '')
         const bidManagerOccupy = srcManager?.occupy || fd.manager_occupy || ''
 
-        // Контакт организации (может быть null)
         const orgUser = data.org_user || null
         const bidTargetName = orgUser
           ? [orgUser.lastname, orgUser.name, orgUser.middlename].filter(Boolean).join(' ')
@@ -202,15 +206,11 @@ export default function BidPdfEditor() {
           ? [orgUser.occupy, clientCompany?.name].filter(Boolean).join(' ')
           : (fd.target_occupy || '')
 
-        // Название объекта из source_bid
         const bidObjectName = data.source_bid?.object || ''
-
-        // Заголовок КП: если есть объект — добавляем уточнение
         const defaultCoverTitle = bidObjectName
           ? 'Коммерческое предложение для объекта:'
           : 'Коммерческое предложение'
 
-        // Настоящие дефолты из БИДа — сохраняются один раз при первом создании
         const computedDefaults = {
           date:           today,
           ext_number:     String(data.bid_id || fd.ext_number || ''),
@@ -225,6 +225,7 @@ export default function BidPdfEditor() {
         }
         setCoverDefaults(computedDefaults)
 
+        // Загрузка — не считается правкой пользователя
         setFormData({
           ...fd,
           date:           fd.date          || today,
@@ -233,10 +234,10 @@ export default function BidPdfEditor() {
           object_name:    fd.object_name   ?? bidObjectName,
           coverTitle:     fd.coverTitle    ?? defaultCoverTitle,
           client_company: clientCompany,
-          _coverDefaults: computedDefaults,  // всегда перезаписываем из актуальных данных БИДа
+          _coverDefaults: computedDefaults,
         })
+        setIsDirty(false)
 
-        // Автовыбор последней картинки шапки если не задана
         if (!fd.hatImage) {
           getCovers(compId).then(covers => {
             const hats = covers.filter(c => c.filename?.startsWith('hat_'))
@@ -252,8 +253,8 @@ export default function BidPdfEditor() {
   }, [draftId])
 
   const syncMeta = useCallback((patch) => {
-    setFormData(fd => ({ ...fd, _meta: { ...(fd._meta || {}), ...patch } }))
-  }, [])
+    dirtySet(fd => ({ ...fd, _meta: { ...(fd._meta || {}), ...patch } }))
+  }, [dirtySet])
 
   const handleCompany     = (v) => { setCompanyId(v);    syncMeta({ companyId: v }) }
   const handleOrientation = (v) => { setOrientation(v);  syncMeta({ orientation: v }) }
@@ -261,21 +262,22 @@ export default function BidPdfEditor() {
   const handleCurrency    = (v) => {
     const opt = CURRENCY_OPTIONS.find(o => o.value === v)
     setCurrency({ value: v, label: opt?.label ?? '₽' })
+    setIsDirty(true)
   }
 
   const toggleSection = useCallback((key) => {
     setEnabledSections(prev => {
       const next = { ...prev, [key]: !prev[key] }
-      setFormData(fd => ({ ...fd, _enabledSections: next }))
+      dirtySet(fd => ({ ...fd, _enabledSections: next }))
       return next
     })
-  }, [])
+  }, [dirtySet])
 
-  const handleFormChange = useCallback((newData) => setFormData(newData), [])
+  const handleFormChange = useCallback((newData) => dirtySet(newData), [dirtySet])
 
   const handleFiguresToggle = (v) => {
     setFiguresEnabled(v)
-    setFormData(fd => ({ ...fd, _figuresEnabled: v }))
+    dirtySet(fd => ({ ...fd, _figuresEnabled: v }))
   }
 
   const addPageBreak = useCallback(() => {
@@ -286,17 +288,17 @@ export default function BidPdfEditor() {
       const next   = [...prev]
       if (tocIdx >= 0) next.splice(tocIdx, 0, key)
       else next.push(key)
-      setFormData(fd => ({ ...fd, _sectionOrder: next }))
+      dirtySet(fd => ({ ...fd, _sectionOrder: next }))
       return next
     })
     setEnabledSections(prev => ({ ...prev, [key]: true }))
     setActiveSection(key)
-  }, [])
+  }, [dirtySet])
 
   const removePageBreak = useCallback((key) => {
     setSectionOrder(prev => {
       const next = prev.filter(k => k !== key)
-      setFormData(fd => ({ ...fd, _sectionOrder: next }))
+      dirtySet(fd => ({ ...fd, _sectionOrder: next }))
       return next
     })
     setEnabledSections(prev => {
@@ -305,7 +307,7 @@ export default function BidPdfEditor() {
       return next
     })
     setActiveSection(null)
-  }, [])
+  }, [dirtySet])
 
   const addCustomBlock = useCallback(() => {
     const id  = uuid()
@@ -313,7 +315,7 @@ export default function BidPdfEditor() {
     const newSection = { title: 'Новый блок', columns: [], rows: [], textAbove: '', textBelow: '', image: null }
     setCustomSections(prev => {
       const next = { ...prev, [id]: newSection }
-      setFormData(fd => ({ ...fd, _customSections: next }))
+      dirtySet(fd => ({ ...fd, _customSections: next }))
       return next
     })
     setSectionOrder(prev => {
@@ -321,24 +323,24 @@ export default function BidPdfEditor() {
       const next = [...prev]
       if (tocIdx >= 0) next.splice(tocIdx, 0, key)
       else next.push(key)
-      setFormData(fd => ({ ...fd, _sectionOrder: next }))
+      dirtySet(fd => ({ ...fd, _sectionOrder: next }))
       return next
     })
     setEnabledSections(prev => ({ ...prev, [key]: true }))
     setActiveSection(key)
-  }, [])
+  }, [dirtySet])
 
   const removeCustomBlock = useCallback((key) => {
     const id = customId(key)
     setCustomSections(prev => {
       const next = { ...prev }
       delete next[id]
-      setFormData(fd => ({ ...fd, _customSections: next }))
+      dirtySet(fd => ({ ...fd, _customSections: next }))
       return next
     })
     setSectionOrder(prev => {
       const next = prev.filter(k => k !== key)
-      setFormData(fd => ({ ...fd, _sectionOrder: next }))
+      dirtySet(fd => ({ ...fd, _sectionOrder: next }))
       return next
     })
     setEnabledSections(prev => {
@@ -347,15 +349,15 @@ export default function BidPdfEditor() {
       return next
     })
     setActiveSection('cover')
-  }, [])
+  }, [dirtySet])
 
   const updateCustomBlock = useCallback((id, blockData) => {
     setCustomSections(prev => {
       const next = { ...prev, [id]: blockData }
-      setFormData(fd => ({ ...fd, _customSections: next }))
+      dirtySet(fd => ({ ...fd, _customSections: next }))
       return next
     })
-  }, [])
+  }, [dirtySet])
 
   const handleDragEnd = ({ source, destination }) => {
     if (!destination || source.index === destination.index) return
@@ -365,7 +367,6 @@ export default function BidPdfEditor() {
     const [moved]       = newKeys.splice(source.index, 1)
     newKeys.splice(destination.index, 0, moved)
 
-    // Вставляем новый порядок драггабельных обратно в полный sectionOrder
     const newOrder = [...sectionOrder]
     let vi = 0
     for (let i = 0; i < newOrder.length; i++) {
@@ -373,7 +374,7 @@ export default function BidPdfEditor() {
     }
 
     setSectionOrder(newOrder)
-    setFormData(fd => ({ ...fd, _sectionOrder: newOrder }))
+    dirtySet(fd => ({ ...fd, _sectionOrder: newOrder }))
   }
 
   // Engineer assignment
@@ -382,12 +383,12 @@ export default function BidPdfEditor() {
   [formData._engineerRequired])
 
   const toggleEngineerRequired = useCallback((key) => {
-    setFormData(fd => {
+    dirtySet(fd => {
       const current = new Set(fd._engineerRequired || [])
       current.has(key) ? current.delete(key) : current.add(key)
       return { ...fd, _engineerRequired: [...current] }
     })
-  }, [])
+  }, [dirtySet])
 
   // Статусная система
   const { status: draftStatus, available: statusTransitions, transition: transitionStatus, loading: statusLoading } =
@@ -406,24 +407,21 @@ export default function BidPdfEditor() {
     return visible.find(s => s.key === k) || null
   }).filter(Boolean)
 
-  // Сквозная нумерация — только включённые драггабельные секции
   const sectionNumbers = useMemo(() => {
     const nums = {}
     let n = 1
     for (const section of orderedVisible) {
-      if (!section.draggable || section.isPageBreak) continue   // cover, toc и разрывы без номера
+      if (!section.draggable || section.isPageBreak) continue
       const enabled = section.required || enabledSections[section.key]
       if (enabled) nums[section.key] = n++
     }
     return nums
   }, [orderedVisible, enabledSections])
 
-  // Реестр рисунков для отображения номеров в формах
   const figureRegistry = useMemo(() => buildFigureRegistry({
     sectionOrder, enabledSections, formData, figuresEnabled,
   }), [sectionOrder, enabledSections, formData, figuresEnabled])
 
-  // Обложка — первая, TOC — последняя, всё остальное — драгабельная зона
   const coverSection      = orderedVisible.find(s => s.key === 'cover')
   const tocSection        = orderedVisible.find(s => s.key === 'toc')
   const orderedDraggable  = orderedVisible.filter(s => s.key !== 'cover' && s.key !== 'toc')
@@ -551,10 +549,8 @@ export default function BidPdfEditor() {
           {/* Левая: список секций */}
           <div className={classes.sectionList}>
 
-            {/* Обложка — фиксированная вверху, вне Droppable */}
             {coverSection && renderSectionRow(coverSection)}
 
-            {/* Драгабельная зона */}
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="sections">
                 {(provided) => (
@@ -574,7 +570,6 @@ export default function BidPdfEditor() {
               </Droppable>
             </DragDropContext>
 
-            {/* Кнопка добавить блок */}
             <div style={{ padding: '6px 8px', borderTop: '1px solid #f0f0f0', display: 'flex', gap: 4 }}>
               <button
                 onClick={addCustomBlock}
@@ -598,7 +593,6 @@ export default function BidPdfEditor() {
               </button>
             </div>
 
-          {/* Оглавление — фиксированное внизу, вне Droppable */}
             {tocSection && (
               <div className={classes.tocDivider} />
             )}
@@ -713,7 +707,7 @@ export default function BidPdfEditor() {
         open={coversOpen}
         onClose={() => setCoversOpen(false)}
         selectedUrl={formData.coverBlock ?? null}
-        onSelect={url => setFormData(fd => ({ ...fd, coverBlock: url }))}
+        onSelect={url => dirtySet(fd => ({ ...fd, coverBlock: url }))}
       />
     </ConfigProvider>
   )
@@ -723,7 +717,6 @@ export default function BidPdfEditor() {
 function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequired, hasEngineerNote, hasManagerNote, onClick, onDoubleClick }) {
   const isEngCapable = section.engineerCapable && isEnabled
 
-  // Цвет фона: активная → акцент, инженер назначен → жёлтый, способна к инженеру → светло-жёлтый
   const getBg = () => {
     if (isEngineerRequired)   return '#fa905f4d'
     if (isEngCapable)         return '#f3e7797c'
@@ -744,7 +737,7 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
           width: '100%',
           height: wide ? 44 : 52,
           borderRadius: 5,
-          border: `1.5px solid ${isActive ? accent : isEngineerRequired ? '#e6b800' : '#e8e8e8'}`,
+          border: `1.5px solid ${isActive ? "#0084ff" : isEngineerRequired ? '#e6b800' : '#e8e8e8'}`,
           background: getBg(),
           cursor: isEnabled ? 'pointer' : 'default',
           opacity: isEnabled ? 1 : 0.3,
@@ -756,21 +749,19 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
         }}
       >
         {wide ? (
-          // Широкий вид — текст
           <div style={{ padding: '4px 6px', display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: isActive ? accent : '#191a1b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: isActive ? "#0084ff" : '#191a1b', textTransform: 'uppercase', letterSpacing: '0.04em', lineHeight: 1.2 }}>
               {section.label}
             </div>
           </div>
         ) : (
-          // Компактный вид — превью
           <>
-            <SectionMiniPreview sectionKey={section.key} accent={accent} isActive={isActive} />
+            <SectionMiniPreview sectionKey={section.key} accent={"#0084ff"} isActive={isActive} />
             <div style={{
               position: 'absolute', bottom: 0, left: 0, right: 0,
               fontSize: 8, fontWeight: 600, textAlign: 'center',
-              color: isActive ? accent : '#94a3b8',
-              background: isActive ? accent + '15' : 'rgba(255,255,255,0.85)',
+              color: isActive ? "#02488a" : '#94a3b8',
+              background: isActive ? "#0084ff" + '15' : 'rgba(255,255,255,0.85)',
               padding: '1px 2px',
               whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
               textTransform: 'uppercase', letterSpacing: '0.03em',
@@ -780,33 +771,18 @@ function MiniCard({ section, isActive, isEnabled, accent, wide, isEngineerRequir
           </>
         )}
 
-        {/* Бейдж инженера */}
         {isEngineerRequired ? (
-          <div style={{
-            position: 'absolute', top: 12, right: 5,
-            fontSize: 20, lineHeight: 1,
-          }}>
+          <div style={{ position: 'absolute', top: 12, right: 5, fontSize: 20, lineHeight: 1 }}>
             <RobotOutlined size={'large'} />
           </div>
-        ) : (
-          <>
-          {isEngCapable ? (
-          <div style={{
-            position: 'absolute', top: 12, right: 5,
-            fontSize: 20, lineHeight: 1,
-            opacity: '0.25'
-          }}>
+        ) : isEngCapable ? (
+          <div style={{ position: 'absolute', top: 12, right: 5, fontSize: 20, lineHeight: 1, opacity: 0.25 }}>
             <RobotOutlined size={'large'} />
           </div>
-          ) : null}</>
-        )}
+        ) : null}
 
-        {/* Индикаторы служебных заметок */}
         {(hasEngineerNote || hasManagerNote) && (
-          <div style={{
-            position: 'absolute', bottom: wide ? 2 : 14, left: 2,
-            display: 'flex', gap: 2,
-          }}>
+          <div style={{ position: 'absolute', bottom: wide ? 2 : 14, left: 2, display: 'flex', gap: 2 }}>
             {hasEngineerNote && (
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ff7b00', display: 'inline-block', border: '1px solid #fff' }} />
             )}
