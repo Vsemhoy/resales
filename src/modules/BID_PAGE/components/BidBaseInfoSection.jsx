@@ -7,10 +7,11 @@ export const BidBaseInfoSection = ({
     templateWordCompanyOptions,
     orgUsersOptions,
     protectionOptions,
+    projectOptions,
+    isProjectsLoading,
     orgUsersDefaultValue,
     onChange,
     isDisabled,
-    bidProjectId,
     onOpenProject,
     createdAtLabel,
 }) => (
@@ -93,23 +94,43 @@ export const BidBaseInfoSection = ({
             <div className={'sa-list-row-label'}>
                 <p>Связанный проект</p>
             </div>
-            {bidProjectId ? (
-                <Tag
-                    style={{
-                        width: '35px',
-                        height: '35px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                    }}
-                    color={'cyan'}
-                    onClick={onOpenProject}
-                >
-                    {+bidProjectId}
-                </Tag>
+            {isDisabled ? (
+                values.project ? (
+                    <Tag
+                        style={{
+                            minWidth: '35px',
+                            height: '32px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            marginInlineEnd: 0,
+                        }}
+                        color={'cyan'}
+                        onClick={onOpenProject}
+                    >
+                        {+values.project}
+                    </Tag>
+                ) : (
+                    <MinusOutlined />
+                )
             ) : (
-                <MinusOutlined />
+                <Select
+                    style={{ width: '100%', textAlign: 'left' }}
+                    value={values.project}
+                    showSearch
+                    allowClear
+                    placeholder="Выберите проект"
+                    optionFilterProp="label"
+                    filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                    }
+                    options={projectOptions}
+                    loading={isProjectsLoading}
+                    onChange={(val) => onChange('project', val ?? null)}
+                    disabled={isDisabled}
+                    notFoundContent={isProjectsLoading ? 'Загрузка...' : 'Проекты не найдены'}
+                />
             )}
         </div>
         <div className={'sa-info-list-row'}>

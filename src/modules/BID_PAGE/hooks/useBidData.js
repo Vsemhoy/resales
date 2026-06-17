@@ -45,6 +45,7 @@ export const useBidData = (bidId, form) => {
         if (bid.base_info.protection !== form.baseInfo.protectionProject) return true;
         if (bid.base_info.object !== form.baseInfo.object) return true;
         if (bid.base_info.sellby !== form.baseInfo.sellBy) return true;
+        if ((bid.base_info.project ? Number(bid.base_info.project) : null) !== (form.baseInfo.project ? Number(form.baseInfo.project) : null)) return true;
 
         if (bid.bill) {
             if (bid.bill.requisite !== form.bill.requisite) return true;
