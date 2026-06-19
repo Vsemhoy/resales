@@ -1,8 +1,9 @@
-import { useState } from 'react';
 import { Typography, Image } from 'antd';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { HELP_CONTENT, HELP_SECTIONS } from './helpContent';
 
-const { Title, Paragraph, Text } = Typography;
+const { Title, Text } = Typography;
 
 export default function HelpSectionContent({ sectionId }) {
   const section = HELP_SECTIONS.find((s) => s.id === sectionId);
@@ -29,17 +30,41 @@ export default function HelpSectionContent({ sectionId }) {
           <Title level={4} className="help-block__title">
             {item.title}
           </Title>
-          <TextBlock text={item.text} />
-          {item.images && item.images.length > 0 && (
-            <HelpImages images={item.images} />
-          )}
+          <HelpBlockContent content={item.content} />
         </div>
       ))}
     </div>
   );
 }
 
+/**
+ * Рендерит content[] блока — упорядоченную последовательность
+ * текстовых и графических кусков в любом количестве и порядке.
+ */
+function HelpBlockContent({ content }) {
+  if (!content || content.length === 0) return null;
+
+  return (
+    <>
+      {content.map((piece, i) => {
+        if (piece.type === 'text') {
+          return (
+            <div key={i} className="help-text-block">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{piece.text}</ReactMarkdown>
+            </div>
+          );
+        }
+        if (piece.type === 'images') {
+          return <HelpImages key={i} images={piece.items} />;
+        }
+        return null;
+      })}
+    </>
+  );
+}
+
 function HelpImages({ images }) {
+  if (!images || images.length === 0) return null;
   return (
     <div className="help-images">
       <Image.PreviewGroup>
@@ -59,72 +84,4 @@ function HelpImages({ images }) {
       </Image.PreviewGroup>
     </div>
   );
-}
-
-/**
- * Рендерит текст с поддержкой:
- * - Нумерованных списков (строки вида "1. ...")
- * - Маркированных списков (строки вида "- ...")
- * - Обычных абзацев
- */
-function TextBlock({ text }) {
-  const lines = text.split('\n').map((l) => l.trimEnd());
-
-  const result = [];
-  let buffer = [];
-  let listType = null; // 'ul' | 'ol' | null
-
-  const flushList = () => {
-    if (!buffer.length) return;
-    if (listType === 'ol') {
-      result.push(
-        <ol key={result.length} className="help-list">
-          {buffer.map((item, i) => (
-            <li key={i}>{item}</li>
-          ))}
-        </ol>
-      );
-    } else {
-      result.push(
-        <ul key={result.length} className="help-list">
-          {buffer.map((item, i) => (
-            <li key={i}>{item}</li>
-          ))}
-        </ul>
-      );
-    }
-    buffer = [];
-    listType = null;
-  };
-
-  lines.forEach((line, idx) => {
-    if (!line) {
-      flushList();
-      return;
-    }
-
-    const olMatch = line.match(/^(\d+)\.\s+(.+)/);
-    const ulMatch = line.match(/^[-●•]\s+(.+)/);
-
-    if (olMatch) {
-      if (listType && listType !== 'ol') flushList();
-      listType = 'ol';
-      buffer.push(olMatch[2]);
-    } else if (ulMatch) {
-      if (listType && listType !== 'ul') flushList();
-      listType = 'ul';
-      buffer.push(ulMatch[1]);
-    } else {
-      flushList();
-      result.push(
-        <Paragraph key={idx} className="help-paragraph">
-          {line}
-        </Paragraph>
-      );
-    }
-  });
-
-  flushList();
-
-  return <div className="help-text-block">{result}</div>;
 }

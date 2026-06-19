@@ -148,14 +148,20 @@
   text-align: left;
 }
 
-.help-paragraph {
-  margin-bottom: 8px !important;
-  font-size: 13.5px !important;
-  color: #333 !important;
-  text-align: left !important;
+/* ── ТИПОГРАФИКА MARKDOWN (react-markdown рендерит нативные теги) ── */
+.help-text-block p {
+  margin: 0 0 8px 0;
+  font-size: 13.5px;
+  color: #333;
+  text-align: left;
 }
 
-.help-list {
+.help-text-block p:last-child {
+  margin-bottom: 0;
+}
+
+.help-text-block ul,
+.help-text-block ol {
   margin: 4px 0 8px 0;
   padding-left: 22px;
   font-size: 13.5px;
@@ -163,18 +169,122 @@
   text-align: left;
 }
 
-ul.help-list {
-  list-style: disc outside !important;
+.help-text-block ul {
+  list-style: disc outside;
 }
 
-ol.help-list {
-  list-style: decimal outside !important;
+.help-text-block ol {
+  list-style: decimal outside;
 }
 
-.help-list li {
-  display: list-item !important;
+.help-text-block li {
+  display: list-item;
   margin-bottom: 4px;
   line-height: 1.6;
+}
+
+.help-text-block li > ul,
+.help-text-block li > ol {
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.help-text-block h1,
+.help-text-block h2,
+.help-text-block h3,
+.help-text-block h4 {
+  margin: 16px 0 8px 0;
+  color: #222;
+  font-weight: 600;
+}
+.help-text-block h1:first-child,
+.help-text-block h2:first-child,
+.help-text-block h3:first-child,
+.help-text-block h4:first-child {
+  margin-top: 0;
+}
+
+.help-text-block blockquote {
+  margin: 8px 0;
+  padding: 8px 14px;
+  border-left: 3px solid #d9d9d9;
+  background: #fafafa;
+  color: #555;
+  font-style: italic;
+}
+
+.help-text-block hr {
+  border: none;
+  border-top: 1px solid #e8e8e8;
+  margin: 16px 0;
+}
+
+/* ── ТАБЛИЦЫ (GFM) ──────────────────────────────────────────── */
+.help-text-block table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 12px 0;
+  font-size: 13px;
+}
+
+.help-text-block th,
+.help-text-block td {
+  border: 1px solid #e8e8e8;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.help-text-block th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #222;
+}
+
+.help-text-block tr:nth-child(even) td {
+  background: #fcfcfc;
+}
+
+/* ── ИНЛАЙН-РАЗМЕТКА (bold/italic/code/link) ───────────────── */
+.help-text-block strong {
+  font-weight: 600;
+  color: #111;
+}
+
+.help-text-block a {
+  color: #1677ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(22, 119, 255, 0.35);
+  transition: border-color 0.15s;
+}
+
+.help-text-block a:hover {
+  border-bottom-color: #1677ff;
+}
+
+.help-text-block code {
+  background: #f0f0f0;
+  border: 1px solid #e4e4e4;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.92em;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  color: #c2410c;
+}
+
+.help-text-block pre {
+  background: #f5f5f5;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 8px 0 12px 0;
+}
+
+.help-text-block pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #333;
 }
 
 /* ── ПОИСК ──────────────────────────────────────────────── */
