@@ -139,6 +139,7 @@
   font-size: 15px !important;
   color: #222 !important;
   text-align: left !important;
+  border-bottom: 2px solid #1677ff5c;
 }
 
 .help-text-block {
@@ -146,6 +147,7 @@
   line-height: 1.7;
   color: #333;
   text-align: left;
+  padding-top: 16px;
 }
 
 /* ── ТИПОГРАФИКА MARKDOWN (react-markdown рендерит нативные теги) ── */
