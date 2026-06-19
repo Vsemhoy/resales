@@ -45,6 +45,7 @@ import CalendarPage from './modules/CALENDAR2/CalendarPage';
 import ReportsPage from './modules/REPORTS2/ReportsPage';
 
 import BidPdfEditor from './modules/BID_PDF_PAGE/BidPdfEditor';
+import HelpPage from './modules/HELP/HelpPage';
 
 const DEFAULT_PAGE_TITLE = 'Отдел продаж';
 
@@ -171,6 +172,8 @@ export const App = () => {
                             <div>
                                 <Routes>
                                     <Route path="/" element={<Navigate to={topRole} replace />} />
+
+                                    <Route path={'/help'} element={<HelpPage userdata={userdata} />} />
                                     <Route
                                         path={'/'}
                                         element={<Navigate userdata={userdata} to={topRole} replace />}
