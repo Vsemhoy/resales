@@ -14,6 +14,7 @@ import {
 	DownOutlined,
 	HomeFilled,
 	LoginOutlined,
+	MediumOutlined,
 	NotificationOutlined,
 	UserOutlined,
 	WechatWorkOutlined
@@ -334,6 +335,11 @@ const TopMenu = (props) => {
 		{
 			key: 'status',
 			label: 'Статус: Онлайн',
+		},
+		{
+			key: 'help',
+			label: <NavLink to="/help"><div>Инструкция на модуль</div></NavLink>,
+			icon: <MediumOutlined height={'28px'} />,
 		},
 		{
 			key: 'loclog',
