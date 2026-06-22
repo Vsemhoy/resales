@@ -68,6 +68,7 @@ export function makeCustomSection(id) {
     draggable: true,
     target:    null,
     required:  false,
+    engineerCapable: true,
     isCustom:  true,
     customId:  id,
   }

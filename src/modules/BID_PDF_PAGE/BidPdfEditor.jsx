@@ -14,7 +14,7 @@ import {
   PAGEBREAK_PREFIX, isPageBreakKey, makePageBreakSection,
 } from './sectionConfig'
 import classes from './BidPdfEditor.module.css'
-import { CoversDrawer } from './components/CoversDrawer'
+import { CoversDrawer, useCovers } from './components/CoversDrawer'
 import { pdf } from '@react-pdf/renderer'
 import { registerFonts }       from './pdf/components/PdfFonts'
 import { buildFigureRegistry } from './pdf/components/buildFigureRegistry'
@@ -88,6 +88,9 @@ export default function BidPdfEditor() {
   const [userRole,       setUserRole]       = useState(null)
   const [wideLayout,     setWideLayout]     = useState(() => window.innerWidth > 1500)
   const [printing,       setPrinting]       = useState(false)
+
+  const { covers, reload: reloadCovers } = useCovers(companyId)
+  const coverBlocks = useMemo(() => covers.filter((cover) => cover.filename?.startsWith('cover_')), [covers])
 
   // Роль текущего пользователя — для статусной системы
   useEffect(() => {
@@ -345,7 +348,15 @@ export default function BidPdfEditor() {
       dirtySet(fd => ({ ...fd, _sectionOrder: next }))
       return next
     })
-    setEnabledSections(prev => ({ ...prev, [key]: true }))
+    setEnabledSections(prev => {
+      const next = { ...prev, [key]: true }
+      dirtySet(fd => {
+        const current = new Set(fd._engineerRequired || [])
+        current.add(key)
+        return { ...fd, _enabledSections: next, _engineerRequired: [...current] }
+      })
+      return next
+    })
     setActiveSection(key)
   }, [dirtySet])
 
@@ -365,6 +376,11 @@ export default function BidPdfEditor() {
     setEnabledSections(prev => {
       const next = { ...prev }
       delete next[key]
+      dirtySet(fd => {
+        const current = new Set(fd._engineerRequired || [])
+        current.delete(key)
+        return { ...fd, _enabledSections: next, _engineerRequired: [...current] }
+      })
       return next
     })
     setActiveSection('cover')
@@ -747,6 +763,10 @@ export default function BidPdfEditor() {
         onClose={() => setCoversOpen(false)}
         selectedUrl={formData.coverBlock ?? null}
         onSelect={url => dirtySet(fd => ({ ...fd, coverBlock: url }))}
+        companyId={companyId}
+        type="cover"
+        covers={coverBlocks}
+        onReload={reloadCovers}
       />
     </ConfigProvider>
   )
