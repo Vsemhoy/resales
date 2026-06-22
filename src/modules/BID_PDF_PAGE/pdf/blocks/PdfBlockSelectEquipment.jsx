@@ -33,7 +33,7 @@ function FigureBlock({ cfg, src, figInfo, draft }) {
   const { color, text, font, space, layout } = cfg
   return (
     <View style={{ marginVertical: space.sm }}>
-      <Image src={url} style={{ width: layout.contentW, maxHeight: layout.imgMaxH, objectFit: 'contain' }} />
+      <Image src={url} style={{ width: layout.contentW * 0.74, maxHeight: layout.imgMaxH, objectFit: 'contain', marginLeft: 'auto', marginRight: 'auto' }} />
       {figInfo && (
         <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular, textAlign: 'center', marginTop: space.xs }}>
           Рисунок {figInfo.num}. {figInfo.title}
