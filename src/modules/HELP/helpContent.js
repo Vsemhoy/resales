@@ -35,6 +35,7 @@ const PDF_ENGINEER_SECTION_LINKS = PDF_EDITOR_SUBSECTIONS.filter((section) => [
   'kp_pdf_equipment_description',
 ].includes(section.id))
 
+// A subsection may export one page object or an array of page objects.
 const PDF_EDITOR_SUBSECTION_CONTENT = [
   kp_pdf_cover,
   kp_pdf_features,
@@ -47,7 +48,7 @@ const PDF_EDITOR_SUBSECTION_CONTENT = [
   kp_pdf_equipment_description,
   kp_pdf_custom,
   kp_pdf_divider,
-]
+].flatMap((pages) => Array.isArray(pages) ? pages : [pages])
 
 export const HELP_SECTIONS = [
   { id: 'overview',        label: 'Обзор и навигация' },
