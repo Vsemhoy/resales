@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Typography, Image } from 'antd';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -5,9 +6,14 @@ import { HELP_CONTENT, HELP_SECTIONS } from './helpContent';
 
 const { Title, Text } = Typography;
 
-export default function HelpSectionContent({ sectionId, onSectionClick }) {
+export default function HelpSectionContent({ sectionId, onSectionClick, onBlocksChange, activeBlockId }) {
   const section = HELP_SECTIONS.find((s) => s.id === sectionId);
   const items = HELP_CONTENT.filter((c) => c.sectionId === sectionId);
+
+  // сообщаем наверх список блоков при смене секции
+  useEffect(() => {
+    onBlocksChange?.(items.map((item) => ({ id: item.id, title: item.title })));
+  }, [sectionId]);
 
   if (!section || items.length === 0) {
     return (
@@ -26,7 +32,11 @@ export default function HelpSectionContent({ sectionId, onSectionClick }) {
       </Title>
 
       {items.map((item) => (
-        <div key={item.id} className="help-block">
+        <div
+          key={item.id}
+          id={item.id}
+          className={['help-block', activeBlockId === item.id ? 'help-block--toc-active' : ''].join(' ')}
+        >
           <Title level={4} className="help-block__title">
             {item.title}
           </Title>
@@ -37,10 +47,6 @@ export default function HelpSectionContent({ sectionId, onSectionClick }) {
   );
 }
 
-/**
- * Рендерит content[] блока — упорядоченную последовательность
- * текстовых и графических кусков в любом количестве и порядке.
- */
 function HelpBlockContent({ content, onSectionClick }) {
   if (!content || content.length === 0) return null;
 
@@ -83,7 +89,7 @@ function HelpSectionLinks({ items, onSectionClick }) {
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 function HelpSectionTable({ items, onSectionClick }) {
@@ -114,7 +120,7 @@ function HelpSectionTable({ items, onSectionClick }) {
         </tbody>
       </table>
     </div>
-  )
+  );
 }
 
 function HelpImages({ images }) {
