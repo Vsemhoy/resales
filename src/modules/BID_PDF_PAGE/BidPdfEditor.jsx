@@ -90,7 +90,12 @@ export default function BidPdfEditor() {
   const [printing,       setPrinting]       = useState(false)
 
   const { covers, reload: reloadCovers } = useCovers(companyId)
-  const coverBlocks = useMemo(() => covers.filter((cover) => cover.filename?.startsWith('cover_')), [covers])
+  const coverAssetType = formData.coverMode === 'cover' ? 'cover' : 'hat'
+  const coverAssetField = coverAssetType === 'cover' ? 'coverBlock' : 'hatImage'
+  const coverAssets = useMemo(
+    () => covers.filter((cover) => cover.filename?.startsWith(coverAssetType + '_')),
+    [covers, coverAssetType],
+  )
 
   // Роль текущего пользователя — для статусной системы
   useEffect(() => {
@@ -585,7 +590,7 @@ export default function BidPdfEditor() {
               whiteSpace: 'nowrap', flexShrink: 0,
             }}
           >
-            🖼 Обложки
+            🖼 {coverAssetType === 'hat' ? 'Шапки' : 'Обложки'}
           </button>
         </div>
 
@@ -761,11 +766,11 @@ export default function BidPdfEditor() {
       <CoversDrawer
         open={coversOpen}
         onClose={() => setCoversOpen(false)}
-        selectedUrl={formData.coverBlock ?? null}
-        onSelect={url => dirtySet(fd => ({ ...fd, coverBlock: url }))}
+        selectedUrl={formData[coverAssetField] ?? null}
+        onSelect={url => dirtySet((fd) => ({ ...fd, [coverAssetField]: url }))}
         companyId={companyId}
-        type="cover"
-        covers={coverBlocks}
+        type={coverAssetType}
+        covers={coverAssets}
         onReload={reloadCovers}
       />
     </ConfigProvider>
