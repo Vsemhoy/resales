@@ -172,6 +172,14 @@ export default function SectionAcoustic({ data, onChange, draftId, companyId, us
             )}
           </Section>
         </div>
+
+        <SectionNotes
+          notes={data._sectionNotes?.acoustic}
+          onChange={notes => onChange({ ...data, _sectionNotes: { ...data._sectionNotes, acoustic: notes } })}
+          backcolor={accent}
+          userRole={userRole}
+          flush={false}
+        />
       </div>
 
       {/* ── Правая: навигатор (fixed — единственное что работает) ────────────── */}
@@ -190,7 +198,7 @@ export default function SectionAcoustic({ data, onChange, draftId, companyId, us
 
           <NavItem label="Введение" sub onClick={() => scrollTo(introRef.current)} />
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '2px 6px' }}>
+          <div style={{  overflowY: 'auto', padding: '2px 6px' }}>
             {(ac.rooms || []).map((room, idx) => (
               <NavItem
                 key={room.id}
@@ -216,14 +224,6 @@ export default function SectionAcoustic({ data, onChange, draftId, companyId, us
           />
         </div>
       </div>
-
-      <SectionNotes
-        notes={data._sectionNotes?.acoustic}
-        onChange={notes => onChange({ ...data, _sectionNotes: { ...data._sectionNotes, acoustic: notes } })}
-        backcolor={accent}
-        userRole={userRole}
-        flush={false}
-      />
 
     </div>
   )
