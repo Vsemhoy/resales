@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Input, Typography, Badge } from 'antd';
 import { SearchOutlined, CloseOutlined } from '@ant-design/icons';
 import { HELP_SECTIONS, HELP_CONTENT } from './helpContent';
@@ -6,9 +7,22 @@ import HelpSectionContent from './HelpSectionContent';
 import './HelpPage.css';
 
 const { Text } = Typography;
+const DEFAULT_SECTION_ID = HELP_SECTIONS[0].id;
+
+const isKnownSection = (id) => HELP_SECTIONS.some((section) => section.id === id);
+
+const getHelpItemText = (item) =>
+  item.content
+    ?.filter((piece) => piece.type === 'text')
+    .map((piece) => piece.text)
+    .join(' ') || '';
 
 export default function HelpPage() {
-  const [activeSection, setActiveSection] = useState(HELP_SECTIONS[0].id);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sectionFromUrl = searchParams.get('section');
+  const [activeSection, setActiveSection] = useState(() =>
+    isKnownSection(sectionFromUrl) ? sectionFromUrl : DEFAULT_SECTION_ID
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const contentRef = useRef(null);
 
@@ -18,7 +32,7 @@ export default function HelpPage() {
     return HELP_CONTENT.filter(
       (item) =>
         item.title.toLowerCase().includes(q) ||
-        item.text.toLowerCase().includes(q)
+        getHelpItemText(item).toLowerCase().includes(q)
     );
   }, [searchQuery]);
 
@@ -34,10 +48,22 @@ export default function HelpPage() {
   }, [searchResults]);
 
   const handleSectionClick = (id) => {
+    if (!isKnownSection(id)) return;
+
     setSearchQuery('');
     setActiveSection(id);
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+      next.set('section', id);
+      return next;
+    });
     contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    const nextSection = isKnownSection(sectionFromUrl) ? sectionFromUrl : DEFAULT_SECTION_ID;
+    setActiveSection((current) => current === nextSection ? current : nextSection);
+  }, [sectionFromUrl]);
 
   // при смене секции скроллим в топ
   useEffect(() => {
@@ -72,7 +98,8 @@ export default function HelpPage() {
               ? (resultsBySectionId[section.id] || []).length
               : 0;
             const isActive = !searchQuery && activeSection === section.id;
-            const isIndented = section.label.startsWith('—');
+            const isIndented = section.label.startsWith('—') || Boolean(section.parentId);
+            const isNested = Boolean(section.parentId);
 
             return (
               <button
@@ -81,12 +108,13 @@ export default function HelpPage() {
                   'help-nav-item',
                   isActive ? 'help-nav-item--active' : '',
                   isIndented ? 'help-nav-item--sub' : '',
+                  isNested ? 'help-nav-item--nested' : '',
                   searchQuery && hitCount === 0 ? 'help-nav-item--dim' : '',
                 ].join(' ')}
                 onClick={() => handleSectionClick(section.id)}
               >
                 <span className="help-nav-item__label">
-                  {isIndented ? section.label.slice(2) : section.label}
+                  {section.label.replace(/^—\s*/, '')}
                 </span>
                 {searchQuery && hitCount > 0 && (
                   <Badge count={hitCount} size="small" color="#1677ff" />
@@ -106,7 +134,7 @@ export default function HelpPage() {
             onSectionClick={handleSectionClick}
           />
         ) : (
-          <HelpSectionContent sectionId={activeSection} />
+          <HelpSectionContent sectionId={activeSection} onSectionClick={handleSectionClick} />
         )}
       </main>
     </div>
@@ -175,13 +203,14 @@ function SearchResultItem({ item, query }) {
 
   // показываем только часть текста вокруг найденного слова
   const snippet = useMemo(() => {
+    const itemText = getHelpItemText(item);
     const q = query.trim().toLowerCase();
-    const idx = item.text.toLowerCase().indexOf(q);
-    if (idx === -1) return item.text.slice(0, 200) + '…';
+    const idx = itemText.toLowerCase().indexOf(q);
+    if (idx === -1) return itemText.slice(0, 200) + '…';
     const start = Math.max(0, idx - 80);
-    const end = Math.min(item.text.length, idx + 200);
-    return (start > 0 ? '…' : '') + item.text.slice(start, end) + (end < item.text.length ? '…' : '');
-  }, [item.text, query]);
+    const end = Math.min(itemText.length, idx + 200);
+    return (start > 0 ? '…' : '') + itemText.slice(start, end) + (end < itemText.length ? '…' : '');
+  }, [item, query]);
 
   return (
     <div className="help-search-item">

@@ -345,7 +345,15 @@ export default function BidPdfEditor() {
       dirtySet(fd => ({ ...fd, _sectionOrder: next }))
       return next
     })
-    setEnabledSections(prev => ({ ...prev, [key]: true }))
+    setEnabledSections(prev => {
+      const next = { ...prev, [key]: true }
+      dirtySet(fd => {
+        const current = new Set(fd._engineerRequired || [])
+        current.add(key)
+        return { ...fd, _enabledSections: next, _engineerRequired: [...current] }
+      })
+      return next
+    })
     setActiveSection(key)
   }, [dirtySet])
 
@@ -365,6 +373,11 @@ export default function BidPdfEditor() {
     setEnabledSections(prev => {
       const next = { ...prev }
       delete next[key]
+      dirtySet(fd => {
+        const current = new Set(fd._engineerRequired || [])
+        current.delete(key)
+        return { ...fd, _enabledSections: next, _engineerRequired: [...current] }
+      })
       return next
     })
     setActiveSection('cover')
