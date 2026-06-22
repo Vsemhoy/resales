@@ -68,24 +68,25 @@ export const kp_pdf_cover = [{
   <thead>
     <tr>
       <th>Поле</th>
+      <th>Цель</th>
       <th>Описание</th>
       <th>Значение по-умолчанию</th>
       <th>Источник данных</th>
     </tr>
   </thead>
   <tbody>
-    <tr><td>Текст шапки</td><td>Многострочный текст поверх баннера, выравнивается справа.</td><td>Реквизиты выбранной компании.</td><td>Константа для Арстел или Рондо.</td></tr>
-    <tr><td>Дата</td><td>Дата на первой странице КП.</td><td>Текущая дата.</td><td>Формируется при открытии редактора или сбросе поля.</td></tr>
-    <tr><td>Исходящий номер</td><td>Номер после «Исх. №».</td><td>ID заявки.</td><td><code>bid_id</code> текущей заявки.</td></tr>
-    <tr><td>Кому — должность и организация</td><td>Верхняя строка адресата.</td><td>Должность контактного лица и организация.</td><td><code>org_user.occupy</code> и <code>client_company.name</code>.</td></tr>
-    <tr><td>Кому — имя</td><td>ФИО адресата.</td><td>ФИО контактного лица.</td><td>Данные <code>org_user</code>.</td></tr>
-    <tr><td>Заголовок КП</td><td>Центральный заголовок документа.</td><td>«Коммерческое предложение для объекта:» или «Коммерческое предложение».</td><td>Наличие объекта в заявке.</td></tr>
-    <tr><td>Название объекта</td><td>Подзаголовок под заголовком КП.</td><td>Название объекта из заявки.</td><td><code>source_bid.object</code>.</td></tr>
-    <tr><td>Менеджер — имя</td><td>Имя менеджера в подписи.</td><td>Фамилия и имя менеджера.</td><td><code>source_bid.manager</code>.</td></tr>
-    <tr><td>Менеджер — должность</td><td>Должность менеджера в подписи.</td><td>Должность менеджера.</td><td><code>source_bid.manager.occupy</code>.</td></tr>
-    <tr><td>Менеджер — телефон</td><td>Контактный телефон менеджера.</td><td>Пусто или ранее сохранённое значение.</td><td><code>form_data.tel</code>.</td></tr>
-    <tr><td>Менеджер — Email</td><td>E-mail менеджера.</td><td>Пусто или ранее сохранённое значение.</td><td><code>form_data.email</code>.</td></tr>
-    <tr><td>Подвал — текст</td><td>Текстовый вариант подвала на каждой странице PDF.</td><td><code>arstel.com</code> или <code>rondo-sound.ru</code>.</td><td>Константа выбранной компании.</td></tr>
+    <tr><td>Текст шапки</td><td><a href="#kp_pdf_cover-5">Обложка</a></td><td>Многострочный текст поверх баннера, выравнивается справа.</td><td>Реквизиты выбранной компании.</td><td>Константа для Арстел или Рондо.</td></tr>
+    <tr><td>Дата</td><td><a href="#kp_pdf_cover-5">Обложка</a></td><td>Дата на первой странице КП.</td><td>Текущая дата.</td><td>Формируется при открытии редактора или сбросе поля.</td></tr>
+    <tr><td>Исходящий номер</td><td><a href="#kp_pdf_cover-5">Обложка</a></td><td>Номер после «Исх. №».</td><td>ID заявки.</td><td><code>bid_id</code> текущей заявки.</td></tr>
+    <tr><td>Кому — должность и организация</td><td><a href="#kp_pdf_cover-5">Обложка</a></td><td>Верхняя строка адресата.</td><td>Должность контактного лица и организация.</td><td><code>org_user.occupy</code> и <code>client_company.name</code>.</td></tr>
+    <tr><td>Кому — имя</td><td><a href="#kp_pdf_cover-5">Обложка</a></td><td>ФИО адресата.</td><td>ФИО контактного лица.</td><td>Данные <code>org_user</code>.</td></tr>
+    <tr><td>Заголовок КП</td><td><a href="#kp_pdf_cover-5">Обложка</a></td><td>Центральный заголовок документа.</td><td>«Коммерческое предложение для объекта:» или «Коммерческое предложение».</td><td>Наличие объекта в заявке.</td></tr>
+    <tr><td>Название объекта</td><td><a href="#kp_pdf_cover-5">Обложка</a></td><td>Подзаголовок под заголовком КП.</td><td>Название объекта из заявки.</td><td><code>source_bid.object</code>.</td></tr>
+    <tr><td>Менеджер — имя</td><td><a href="#kp_pdf_cover-5">Обложка</a></td><td>Имя менеджера в подписи.</td><td>Фамилия и имя менеджера.</td><td><code>source_bid.manager</code>.</td></tr>
+    <tr><td>Менеджер — должность</td><td><a href="#kp_pdf_cover-5">Обложка</a>, <a href="/help?section=kp_pdf_delivery&block=kp_pdf_delivery-2" title='Условия оплаты и доставки'>Условия...</a></td><td>Должность менеджера в подписи.</td><td>Должность менеджера.</td><td><code>source_bid.manager.occupy</code>.</td></tr>
+    <tr><td>Менеджер — телефон</td><td><a href="/help?section=kp_pdf_delivery&block=kp_pdf_delivery-2" title='Условия оплаты и доставки'>Условия...</a></td><td>Контактный телефон менеджера.</td><td>Пусто или ранее сохранённое значение.</td><td><code>form_data.tel</code>.</td></tr>
+    <tr><td>Менеджер — Email</td><td><a href="/help?section=kp_pdf_delivery&block=kp_pdf_delivery-2" title='Условия оплаты и доставки'>Условия...</a></td><td>E-mail менеджера.</td><td>Пусто или ранее сохранённое значение.</td><td><code>form_data.email</code>.</td></tr>
+    <tr><td>Подвал — текст</td><td><a href="#kp_pdf_cover-4">Подвал</a></td><td>Текстовый вариант подвала на каждой странице PDF.</td><td><code>arstel.com</code> или <code>rondo-sound.ru</code>.</td><td>Константа выбранной компании.</td></tr>
   </tbody>
 </table>` },
     ],
@@ -93,20 +94,29 @@ export const kp_pdf_cover = [{
     {
     id: 'kp_pdf_cover-4',
     sectionId: 'kp_pdf_cover',
-    title: 'Основные поля формы',
+    title: 'Подвал footer',
     content: [
-  { type: 'html', html: `<table class="help-doc-table">
-  <thead><tr><th>Группа полей</th><th>Что настраивается</th><th>Дефолт</th></tr></thead>
-  <tbody>
-    <tr><td>Первая страница</td><td>Режим (Обложка / Шапка), баннер-изображение, текст шапки (выводится поверх баннера справа снизу).</td><td>Режим — Шапка. Изображение и текст — пустые.</td></tr>
-    <tr><td>Реквизиты</td><td>Дата, исходящий номер, адресат (организация), заголовок КП, объект.</td><td>Дата — текущая. Адресат и объект берутся из данных заявки.</td></tr>
-    <tr><td>Контакты менеджера</td><td>Имя, должность, телефон, e-mail.</td><td>Подставляются из профиля пользователя. Изменённые поля можно сбросить к дефолту кнопкой ↺.</td></tr>
-    <tr><td>Подвал</td><td>Режим подвала, произвольный текст или до двух логотипов.</td><td>Режим — Текст. Выводится на каждой странице PDF.</td></tr>
-  </tbody>
-</table>` },
+      { type: 'text', text: `Подвал - это повторяющийся на каждой странице блок с нумерацией страниц и произвольным текстом или выбранным логотипом.` },
+      { type: 'images', items: [{ src: '/help/sec_main_form_footer_text.png', caption: 'Рис. Футер заполняется текстом с названием сайта' }] },
+      { type: 'images', items: [{ src: '/help/sec_main_form_footer_images.png', caption: 'Рис. Футер заполняется логотипами главных производителей оборудования (можно выбрать до двух логотипов в ряд).' }] },
+
 
     ],
   },
+
+ {
+    id: 'kp_pdf_cover-5',
+    sectionId: 'kp_pdf_cover',
+    title: 'Результат в PDF',
+    content: [
+      { type: 'text', text: `В итоге получается стандартный документ следующего вида:` },
+      { type: 'images', items: [{ src: '/help/page-first.png', caption: 'Рис. Первая страница КП со спецификацией' }] },
+      { type: 'text', text: `После шапки может быть вставлен любой блок. Номерация блоков автоматическая.` },
+      { type: 'html', html: `<br><a href="/help?section=kp_pdf_features" title='Условия оплаты и доставки'><button>Следующая</button></a>` },
+   
+    ],
+  },
+
 ];
 
 // Выберите один из двух режимов:
@@ -114,7 +124,7 @@ export const kp_pdf_cover = [{
 // - ~~**Обложка** — полноформатная страница с баннером-изображением на всю высоту. Подходит для КП с ярким визуальным брендингом.~~
 
 // ── 2. ОСОБЕННОСТИ СИСТЕМЫ ──────────────────────────────────────
-export const kp_pdf_features = {
+export const kp_pdf_features = [{
   id: 'kp_pdf_features-1', sectionId: 'kp_pdf_features', title: 'Особенности системы',
   content: [
     { type: 'html', html: BADGE_OPTIONAL_BOTH },
@@ -128,23 +138,37 @@ export const kp_pdf_features = {
 
 **Назначение инженеру**
 
-Блок можно назначить инженеру двойным кликом по его мини-карте в левой колонке. После назначения инженер видит задачу в своём интерфейсе. Менеджер может оставить пояснение через поле «Задача» рядом с блоком.` },
-    { type: 'html', html: `<table class="help-doc-table">
-  <thead><tr><th>Поле</th><th>Что писать</th></tr></thead>
-  <tbody>
-    <tr><td>Особенности и требования</td><td>Требования заказчика, зоны покрытия, сценарии эксплуатации, ограничения монтажа, требования к интеграции.</td></tr>
-  </tbody>
-</table>` },
+Блок можно назначить инженеру двойным кликом по его мини-карте в левой колонке. После назначения инженер видит задачу в своём интерфейсе. Менеджер может оставить в блоке "Служебные заметки".
+
+**Что писать:**
+
+Требования заказчика, зоны покрытия, сценарии эксплуатации, ограничения монтажа, требования к интеграции.
+` },
+   
   ],
-};
+},
+ {
+    id: 'kp_pdf_features-2',
+    sectionId: 'kp_pdf_features',
+    title: 'Результат в PDF',
+    content: [
+      { type: 'text', text: `В итоге получается стандартный документ следующего вида:` },
+      { type: 'images', items: [{ src: '/help/page-features.png', caption: 'Рис. Первая страница КП со спецификацией' }] },
+      { type: 'text', text: `После шапки может быть вставлен любой блок. Номерация блоков автоматическая.` },
+      { type: 'html', html: `<br><a href="/help?section=kp_pdf_features"><button>Следующая</button></a>` },
+   
+    ],
+  },
+]
+;
 
 // ── 3. ВЫБОР ОБОРУДОВАНИЯ ───────────────────────────────────────
-export const kp_pdf_equipment = {
+export const kp_pdf_equipment = [{
   id: 'kp_pdf_equipment-1', sectionId: 'kp_pdf_equipment', title: 'Выбор оборудования',
   content: [
     { type: 'html', html: BADGE_OPTIONAL_BOTH },
     { type: 'text', text: `Раздел фиксирует логику подбора: почему выбраны именно эти модели и как они образуют систему. Особенно полезен для сложных объектов, многозонных систем и КП, где важно обосновать стоимость перед заказчиком.` },
-    { type: 'images', items: [{ src: '/help/pdf-equipment.png', caption: 'Рис. Редактор блока «Выбор оборудования»' }] },
+    { type: 'images', items: [{ src: '/help/sec-vibor-obor.png', caption: 'Рис. Редактор блока «Выбор оборудования»' }] },
     { type: 'text', text: `**Текстовое обоснование**
 
 Опишите логику подбора: классификация объекта, применяемые нормы (ГОСТы, СП), принципиальные технические решения — тип системы, топология, резервирование.
@@ -167,7 +191,19 @@ export const kp_pdf_equipment = {
 </table>` },
     { type: 'text', text: `> Не включайте пустой раздел: если обоснование и схемы не нужны — оставьте блок выключенным.` },
   ],
-};
+},
+
+ {
+    id: 'kp_pdf_equipment-2',
+    sectionId: 'kp_pdf_equipment',
+    title: 'Результат в PDF',
+    content: [
+      { type: 'text', text: `В итоге получается стандартный документ следующего вида:` },
+      { type: 'images', items: [{ src: '/help/page-vibor-obor.png', caption: 'Рис. Первая страница КП со спецификацией' }] },
+      { type: 'html', html: `<br><a href="/help?kp_pdf_acoustic"><button>Следующая</button></a>` },
+   
+    ],
+  },];
 
 // ── 4. АКУСТИЧЕСКИЙ РАСЧЁТ ──────────────────────────────────────
 export const kp_pdf_acoustic = {
@@ -281,7 +317,7 @@ export const kp_pdf_system_features = {
 };
 
 // ── 8. УСЛОВИЯ ОПЛАТЫ И ПОСТАВКИ ────────────────────────────────
-export const kp_pdf_delivery = {
+export const kp_pdf_delivery = [{
   id: 'kp_pdf_delivery-1', sectionId: 'kp_pdf_delivery', title: 'Условия оплаты и поставки',
   content: [
     { type: 'html', html: BADGE_OPTIONAL_MGR },
@@ -307,7 +343,20 @@ export const kp_pdf_delivery = {
   </tbody>
 </table>` },
   ],
-};
+}, 
+ {
+    id: 'kp_pdf_delivery-2',
+    sectionId: 'kp_pdf_delivery',
+    title: 'Печать PDF',
+    content: [
+      { type: 'text', text: `В итоге получается стандартный документ следующего вида:` },
+      { type: 'images', items: [{ src: '/help/page-uslovia-oplatty.png', caption: 'Рис. Вызов окна менеджера обложек' }] },
+      { type: 'text', text: `Открыть менеджер картинок шапки можно нажав плюс или кнопку \`Обложки\` из верхней части редактора.` },
+   
+    ],
+  },
+]
+;
 
 // ── 9. ОПИСАНИЕ ОБОРУДОВАНИЯ ────────────────────────────────────
 export const kp_pdf_equipment_description = {
