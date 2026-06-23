@@ -7,6 +7,15 @@ import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
 import { HTTP_ROOT } from '../../../../config/config'
 import { cleanAlphaNumeric, cleanModelName } from '../../utils/splitText'
 
+function getModelKey(model, index) {
+  const rowId = model.bid_model_id ?? model.id
+  return rowId != null ? `bid_model_${rowId}` : `model_${model.model_id ?? 'unknown'}_${index}`
+}
+
+function getLegacyModelKey(model) {
+  return model.model_id ?? model.id
+}
+
 function absUrl(name) {
   let rt = HTTP_ROOT + '/api/soma/pdf/modfilesautocut/' + name
 
@@ -126,11 +135,12 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
 
   const seen = new Set()
   const visible = models
-    .filter(m => !ignored.includes(m.model_id ?? m.id))
-    .filter(m => {
-      const id = m.model_id ?? m.id
-      if (seen.has(id)) return false
-      seen.add(id)
+    .map((model, index) => ({ model, index }))
+    .filter(({ model, index }) => !ignored.includes(getModelKey(model, index)) && !ignored.includes(getLegacyModelKey(model)))
+    .filter(({ model }) => {
+      const productId = model.model_id ?? model.id
+      if (seen.has(productId)) return false
+      seen.add(productId)
       return true
     })
 
@@ -144,10 +154,9 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
         title="Описание оборудования"
       />
 
-      {visible.map((model) => {
-        const id = model.model_id ?? model.id
-
-        const ov = overrides[id]
+      {visible.map(({ model, index }) => {
+        const id = getModelKey(model, index)
+        const ov = overrides[id] ?? overrides[getLegacyModelKey(model)]
 
         const name = cleanModelName(model.info_model?.name || '')
 

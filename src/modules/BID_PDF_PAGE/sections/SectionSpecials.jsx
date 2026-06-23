@@ -6,6 +6,15 @@ import { HTTP_HOST } from '../../../config/config'
 import { Section, Field, TabWrap } from '../components/FormParts'
 import { SectionNotes } from '../components/SectionNotes'
 
+function getModelKey(model, index) {
+  const rowId = model.bid_model_id ?? model.id
+  return rowId != null ? `bid_model_${rowId}` : `model_${model.model_id ?? 'unknown'}_${index}`
+}
+
+function getLegacyModelKey(model) {
+  return model.model_id ?? model.id
+}
+
 export default function SectionSpecials({ data, onChange, bidId, companyId, userRole }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
 
@@ -25,37 +34,53 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
   const ignored   = data.specialsIgnore    ?? []
   const overrides = data.specialsOverrides ?? {}
 
-  const toggleIgnore = (id) => {
-    const next = ignored.includes(id) ? ignored.filter(x => x !== id) : [...ignored, id]
+  const modelEntries = models.map((model, index) => ({
+    id: getModelKey(model, index),
+    legacyId: getLegacyModelKey(model),
+  }))
+
+  const toggleIgnore = (id, legacyId, shiftKey) => {
+    const isIgnored = ignored.includes(id) || ignored.includes(legacyId)
+    const shouldIgnore = !isIgnored
+    const keys = new Set(modelEntries.flatMap((entry) => [entry.id, entry.legacyId]))
+    const next = shiftKey
+      ? (shouldIgnore ? [...new Set([...ignored, ...modelEntries.map((entry) => entry.id)])] : ignored.filter((key) => !keys.has(key)))
+      : (shouldIgnore ? [...ignored, id] : ignored.filter((key) => key !== id && key !== legacyId))
     onChange({ ...data, specialsIgnore: next })
   }
 
-  const toggleExpand = (id) =>
-    setExpanded(prev => ({ ...prev, [id]: !prev[id] }))
+  const toggleExpand = (id, shiftKey) => {
+    const shouldExpand = !expanded[id]
+    setExpanded(prev => shiftKey
+      ? Object.fromEntries(modelEntries.map((entry) => [entry.id, shouldExpand]))
+      : { ...prev, [id]: shouldExpand })
+  }
 
   // Получить актуальный override для модели (или создать из оригинала)
-  const getOverride = (model) => {
-    const id = model.model_id ?? model.id
-    if (overrides[id]) return overrides[id]
+  const getOverride = (model, index) => {
+    const id = getModelKey(model, index)
+    const legacyId = getLegacyModelKey(model)
+    if (overrides[id] || overrides[legacyId]) return overrides[id] ?? overrides[legacyId]
     return {
       description_kp: model.info_model?.description_kp ?? '',
       specials: (model.model_specials ?? []).map(s => s.special_name),
     }
   }
 
-  const setOverride = (id, patch) => {
+  const setOverride = (model, index, patch) => {
+    const id = getModelKey(model, index)
     onChange({
       ...data,
       specialsOverrides: {
         ...overrides,
-        [id]: { ...getOverride({ model_id: id, info_model: models.find(m => (m.model_id ?? m.id) === id)?.info_model, model_specials: models.find(m => (m.model_id ?? m.id) === id)?.model_specials }), ...patch },
+        [id]: { ...getOverride(model, index), ...patch },
       },
     })
   }
 
-  const resetOverride = (id) => {
+  const resetOverride = (model, index) => {
     const next = { ...overrides }
-    delete next[id]
+    delete next[getModelKey(model, index)]
     onChange({ ...data, specialsOverrides: next })
   }
 
@@ -122,13 +147,14 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
         )}
 
         {!loading && models.map((model, idx) => {
-          const id         = model.model_id ?? model.id
-          const isIgnored  = ignored.includes(id)
+          const id         = getModelKey(model, idx)
+          const legacyId   = getLegacyModelKey(model)
+          const isIgnored  = ignored.includes(id) || ignored.includes(legacyId)
           const isExpanded = !!expanded[id]
-          const hasOverride= !!overrides[id]
-          const name       = model.info_model?.name ?? `Модель #${id}`
+          const hasOverride= !!(overrides[id] || overrides[legacyId])
+          const name       = model.info_model?.name ?? `Модель #${model.model_id ?? model.id ?? idx + 1}`
           const shortNote  = model.info_model?.short_note ?? ''
-          const ov         = getOverride(model)
+          const ov         = getOverride(model, idx)
 
           return (
             <div
@@ -147,7 +173,7 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
                   background: isExpanded ? accent + '0d' : '#fafafa',
                   cursor: 'pointer', userSelect: 'none',
                 }}
-                onClick={() => !isIgnored && toggleExpand(id)}
+                onClick={event => !isIgnored && toggleExpand(id, event.shiftKey)}
               >
                 {/* Номер */}
                 <span style={{ color: accent, fontSize: 12, fontWeight: 700, width: 22, textAlign: 'right', flexShrink: 0 }}>
@@ -157,7 +183,7 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
                 {/* Чекбокс включения */}
                 <Checkbox
                   checked={!isIgnored}
-                  onChange={e => { e.stopPropagation(); toggleIgnore(id) }}
+                  onChange={e => { e.stopPropagation(); toggleIgnore(id, legacyId, e.nativeEvent?.shiftKey) }}
                   onClick={e => e.stopPropagation()}
                 />
 
@@ -198,7 +224,7 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
                     <Input.TextArea
                       autoSize={{ minRows: 3, maxRows: 8 }}
                       value={ov.description_kp}
-                      onChange={e => setOverride(id, { ...ov, description_kp: e.target.value })}
+                      onChange={e => setOverride(model, idx, { ...ov, description_kp: e.target.value })}
                       placeholder={model.info_model?.description_kp ?? 'Описание...'}
                     />
                   </Field>
@@ -213,19 +239,19 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
                             onChange={e => {
                               const next = [...ov.specials]
                               next[si] = e.target.value
-                              setOverride(id, { ...ov, specials: next })
+                              setOverride(model, idx, { ...ov, specials: next })
                             }}
                             placeholder={`Тезис ${si + 1}`}
                           />
                           <button
-                            onClick={() => setOverride(id, { ...ov, specials: ov.specials.filter((_, i) => i !== si) })}
+                            onClick={() => setOverride(model, idx, { ...ov, specials: ov.specials.filter((_, i) => i !== si) })}
                             style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#ff4d4f', fontSize: 16, flexShrink: 0 }}
                           >×</button>
                         </div>
                       ))}
                       <Button
                         size="small"
-                        onClick={() => setOverride(id, { ...ov, specials: [...ov.specials, ''] })}
+                        onClick={() => setOverride(model, idx, { ...ov, specials: [...ov.specials, ''] })}
                         style={{ alignSelf: 'flex-start', marginTop: 2 }}
                       >+ Тезис</Button>
                     </div>
@@ -237,7 +263,7 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
                       <Button
                         size="small"
                         icon={<UndoOutlined />}
-                        onClick={() => resetOverride(id)}
+                        onClick={() => resetOverride(model, idx)}
                         style={{ color: '#8c8c8c' }}
                       >Сбросить к оригиналу</Button>
                     </div>
