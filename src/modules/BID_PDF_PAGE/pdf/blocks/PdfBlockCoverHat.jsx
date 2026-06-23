@@ -75,12 +75,12 @@ export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
         {/* Правый блок — кому */}
         <View style={{ flex: 1, alignItems: 'flex-end' }}>
           {data?.target_occupy ? (
-            <Text style={{ fontSize: text.sm, color: color.textSecondary, fontFamily: font.regular }}>
+            <Text style={{ width: '100%', fontSize: text.sm, color: color.textSecondary, fontFamily: font.regular, textAlign: 'right' }}>
               {String(data.target_occupy || '').trim()}
             </Text>
           ) : null}
           {data?.target_name ? (
-            <Text style={{ fontSize: text.sm, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold }}>
+            <Text style={{ width: '100%', fontSize: text.sm, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold, textAlign: 'right' }}>
               {String(data.target_name || '').trim()}
             </Text>
           ) : null}

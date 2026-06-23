@@ -19,6 +19,11 @@ const BADGE_OPTIONAL_MGR = `<div class="help-doc-meta">
   <span class="help-doc-badge help-doc-badge--role">Редактирует: менеджер</span>
 </div>`;
 
+const BADGE_OPTIONAL_NOP = `<div class="help-doc-meta">
+  <span class="help-doc-badge help-doc-badge--optional">Необязательный блок</span>
+  <span class="help-doc-badge help-doc-badge--optional">не редактируется</span>
+</div>`;
+
 // ── 1. ОБЛОЖКА ──────────────────────────────────────────────────
 export const kp_pdf_cover = [{
   id: 'kp_pdf_cover-1', sectionId: 'kp_pdf_cover', title: 'Обложка',
@@ -210,6 +215,7 @@ export const kp_pdf_acoustic = {
   id: 'kp_pdf_acoustic-1', sectionId: 'kp_pdf_acoustic', title: 'Акустический расчёт',
   content: [
     { type: 'html', html: BADGE_OPTIONAL_BOTH },
+    { type: 'html', html: `<div style="background: red; padding: 6px; color: white;">Раздел будет доделан по требованию</div>` },
     { type: 'text', text: `Раздел доступен только для **профессионального типа КП**. Он оформляет результаты акустического моделирования отдельным инженерным разделом — с показателями по каждому помещению, графиками и выводами.` },
     { type: 'images', items: [{ src: '/help/pdf-acoustic.png', caption: 'Рис. Редактор блока «Акустический расчёт»' }] },
     { type: 'text', text: `**Структура раздела**
@@ -244,7 +250,7 @@ export const kp_pdf_acoustic = {
 };
 
 // ── 5. СПЕЦИФИКАЦИЯ ─────────────────────────────────────────────
-export const kp_pdf_specification = {
+export const kp_pdf_specification = [{
   id: 'kp_pdf_specification-1', sectionId: 'kp_pdf_specification', title: 'Спецификация',
   content: [
     { type: 'html', html: BADGE_REQUIRED },
@@ -253,7 +259,7 @@ export const kp_pdf_specification = {
 **Что редактируется здесь**
 
 Состав строк задаётся в спецификации самой заявки, а не в PDF-редакторе. Здесь настраивается только **способ представления** таблицы и **примечание под итогом**.` },
-    { type: 'images', items: [{ src: '/help/pdf-specification.png', caption: 'Рис. Настройки блока «Спецификация»' }] },
+    { type: 'images', items: [{ src: '/help/sec_spec_edit.png', caption: 'Рис. Настройки блока «Спецификация»' }] },
     { type: 'html', html: `<table class="help-doc-table">
   <thead><tr><th>Настройка</th><th>Описание</th><th>Когда использовать</th></tr></thead>
   <tbody>
@@ -264,21 +270,36 @@ export const kp_pdf_specification = {
 </table>` },
     { type: 'text', text: `**Дефолт текста под таблицей**
 
-По умолчанию подставляется стандартный текст об НДС, сроке поставки и гарантии. Его можно свободно редактировать; кнопка ↺ рядом с полем восстанавливает исходное значение.
+По умолчанию подставляется стандартный текст об НДС, сроке поставки и гарантии. Его можно свободно редактировать; кнопка \`↺\` рядом с полем восстанавливает исходное значение.
 
 > Если нужно изменить состав оборудования или количество — вернитесь в **заявку** и отредактируйте спецификацию там, затем обновите шаблон.` },
   ],
-};
+},
+{
+    id: 'kp_pdf_specification-2',
+    sectionId: 'kp_pdf_specification',
+    title: 'Результат в PDF',
+    content: [
+      { type: 'text', text: `Спецификация без картинок по умолчанию:` },
+      { type: 'images', items: [{ src: '/help/page-spec-no-pics.png', caption: 'Рис. Спецификация без картинок с оборудованием' }] },
+      { type: 'text', text: `Спецификация с картинками занимает немного больше места:` },
+      { type: 'images', items: [{ src: '/help/page-spec-has-pix.png', caption: 'Рис. Спецификация с картинками с оборудованием' }] },
+      { type: 'text', text: `Если текст в сером блоке не влезает полностью на остаток страницы, то весь блок будет перенесён.` },
+      { type: 'html', html: `<br><a href="/help?section=kp_pdf_recommendations"><button>Следующая</button></a>` },
+   
+    ],
+  },
+];
 
 // ── 6. РЕКОМЕНДАЦИИ ─────────────────────────────────────────────
-export const kp_pdf_recommendations = {
+export const kp_pdf_recommendations = [{
   id: 'kp_pdf_recommendations-1', sectionId: 'kp_pdf_recommendations', title: 'Рекомендации',
   content: [
     { type: 'html', html: BADGE_OPTIONAL_BOTH },
     { type: 'text', text: `Раздел показывает оборудование вне основной спецификации — полезные опции, расширения системы и позиции, которые стоит предусмотреть отдельно, не включая в стоимость КП. Хорошо работает для «мягкой допродажи»: заказчик видит, что о нём подумали.
 
 Типичные примеры: кабель и монтажные материалы, аксессуары для стоек, ЗИП, дополнительные зоны расширения.` },
-    { type: 'images', items: [{ src: '/help/pdf-recommendations.png', caption: 'Рис. Редактор блока «Рекомендации»' }] },
+    { type: 'images', items: [{ src: '/help/sec-recomends.png', caption: 'Рис. Редактор блока «Рекомендации»' }] },
     { type: 'html', html: `<table class="help-doc-table">
   <thead><tr><th>Поле строки</th><th>Что указывать</th><th>Дефолт</th></tr></thead>
   <tbody>
@@ -290,17 +311,29 @@ export const kp_pdf_recommendations = {
 </table>` },
     { type: 'text', text: `> Раздел **не влияет** на итоговую стоимость КП и общую сумму спецификации — это информационный блок.` },
   ],
-};
+},
+{
+    id: 'kp_pdf_recommendations-2',
+    sectionId: 'kp_pdf_recommendations',
+    title: 'Результат в PDF',
+    content: [
+      { type: 'text', text: `В результате получается расширенная спецификация на доп. оборудование:` },
+      { type: 'images', items: [{ src: '/help/page-recomends.png', caption: 'Рис. Спецификация без картинок с оборудованием' }] },
+      { type: 'html', html: `<br><a href="/help?section=kp_pdf_system_features"><button>Следующая</button></a>` },
+   
+    ],
+  },
+];
 
 // ── 7. ХАРАКТЕРИСТИКИ СИСТЕМЫ ───────────────────────────────────
-export const kp_pdf_system_features = {
+export const kp_pdf_system_features = [{
   id: 'kp_pdf_system_features-1', sectionId: 'kp_pdf_system_features', title: 'Характеристики системы',
   content: [
-    { type: 'html', html: BADGE_REQUIRED },
+    { type: 'html', html: BADGE_OPTIONAL_NOP },
     { type: 'text', text: `Блок сводит ключевые технические показатели всего комплекта оборудования и помогает быстро оценить масштаб системы — без необходимости читать всю спецификацию.
 
 **Ручных полей нет.** Все данные рассчитываются автоматически по позициям спецификации заявки.` },
-    { type: 'images', items: [{ src: '/help/pdf-system-features.png', caption: 'Рис. Блок «Характеристики системы» в PDF' }] },
+    { type: 'images', items: [{ src: '/help/sec-characts.png', caption: 'Рис. Блок «Характеристики системы» в PDF' }] },
     { type: 'html', html: `<table class="help-doc-table">
   <thead><tr><th>Показатель</th><th>Откуда берётся</th></tr></thead>
   <tbody>
@@ -314,7 +347,19 @@ export const kp_pdf_system_features = {
 </table>` },
     { type: 'text', text: `> Если цифры выглядят неверно — редактировать нужно **характеристики моделей** в базе и **количество** в спецификации заявки, а не этот блок.` },
   ],
-};
+},
+{
+    id: 'kp_pdf_system_features-2',
+    sectionId: 'kp_pdf_system_features',
+    title: 'Результат в PDF',
+    content: [
+      { type: 'text', text: `В результате получается расширенная спецификация на доп. оборудование:` },
+      { type: 'images', items: [{ src: '/help/page-characts-sis.png', caption: 'Рис. Спецификация без картинок с оборудованием' }] },
+      { type: 'html', html: `<br><a href="/help?section=kp_pdf_delivery"><button>Следующая</button></a>` },
+   
+    ],
+  },
+];
 
 // ── 8. УСЛОВИЯ ОПЛАТЫ И ПОСТАВКИ ────────────────────────────────
 export const kp_pdf_delivery = [{
