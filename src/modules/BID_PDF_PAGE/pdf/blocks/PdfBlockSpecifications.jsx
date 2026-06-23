@@ -30,7 +30,8 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
     num:      layout.tableColNumW,
     qty:      layout.tableColQtyW,
     price:    layout.tableColPriceW,
-    total:    layout.tableColTotalW,
+    // Keep one character of breathing room for the currency symbol in large totals.
+    total:    layout.tableColTotalW + text.sm,
     presence: layout.tableColPresenceW,
   }
   const nameW = cW - W.num - W.qty - W.price - W.total - W.presence - (withPhotos ? photoW : 0)
@@ -123,11 +124,11 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
 
       {/* Сноска — не рендерим если текст пустой или стёрт */}
       {tableFootnote && tableFootnote.replace(/<[^>]*>/g, '').trim() ? (
-        <View>
-          <View style={{ height: space.sm }}></View>
-            <View style={{padding: space.sm, backgroundColor: color.tableRowEven, fontSize: '0.5rem'}}>
-              <HtmlToPdfV2 html={wrapJustify(tableFootnote)} cfg={cfg} />
-            </View>
+        <View wrap={false}>
+          <View style={{ height: space.sm }} />
+          <View style={{ padding: space.sm, backgroundColor: color.tableRowEven, fontSize: '0.5rem' }}>
+            <HtmlToPdfV2 html={wrapJustify(tableFootnote)} cfg={cfg} />
+          </View>
         </View>
       ) : null}
     </View>
