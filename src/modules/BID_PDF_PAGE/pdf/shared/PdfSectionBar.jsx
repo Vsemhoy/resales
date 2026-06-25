@@ -15,7 +15,7 @@ export function PdfSectionBar({ cfg, number, title }) {
         {numStr && (
           <Text style={{
             fontFamily:  font.bold,
-            fontWeight:  weight.bold,
+            fontWeight:  weight.semibold,
             fontSize:    text.lg,
             color:       color.accent,
             width:       numWidth,
@@ -27,7 +27,7 @@ export function PdfSectionBar({ cfg, number, title }) {
         )}
         <Text style={{
           fontFamily:  font.bold,
-          fontWeight:  weight.bold,
+          fontWeight:  weight.semibold,
           fontSize:    text.lg,
           color:       color.textPrimary,
           flex:        1,
