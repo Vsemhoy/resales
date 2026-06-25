@@ -16,6 +16,13 @@ function absUrl(name) {
   return rt
 }
 
+function getPresenceLabel(model) {
+  const presenceName = model.precence?.name || model.presence_data?.name || model.presenceInfo?.name || model.presence?.name
+  if (presenceName) return presenceName
+
+  return Number(model.presence) > 0 ? '\u0412 \u043d\u0430\u043b.' : '+'
+}
+
 export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact', modelImages = {}, forceBreak = false }) {
   const { color, text, font, weight, space, layout } = cfg
   if (!models.length) return null
@@ -99,7 +106,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
             <Text style={[rowText('right'),  { width: W.price}]}>{fmt(price)}</Text>
             <Text style={[rowText('right'),  { width: W.total, fontFamily: font.bold, fontWeight: weight.semibold }]}>{fmt(total)}</Text>
             <Text style={[rowText('center'), { width: W.presence, color: color.textSecondary }]}>
-              {m.presence > 0 ? 'В нал.' : '+'}
+              {getPresenceLabel(m)}
             </Text>
             {withPhotos && (
               <View style={{ width: photoW, ...cellBase, alignItems: 'center', justifyContent: 'center' }}>

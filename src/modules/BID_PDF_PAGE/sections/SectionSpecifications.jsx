@@ -43,6 +43,7 @@ const TABLE_STYLES = [
 export default function SectionSpecifications({ data, onChange, companyId }) {
   const accent     = companyId === '3' ? '#269435' : '#FF5903'
   const tableStyle = data.tableStyle ?? 'compact'
+  const tableFootnoteDefault = data._tableFootnoteDefault || FOOTNOTE_DEFAULT
   const set        = (key, val) => onChange({ ...data, [key]: val })
 
   return (
@@ -83,11 +84,11 @@ export default function SectionSpecifications({ data, onChange, companyId }) {
                 placeholder="Например: цены указаны с учётом НДС 20%, действительны до..."
               />
             </div>
-            {(data.tableFootnote ?? '') !== FOOTNOTE_DEFAULT && (
+            {(data.tableFootnote ?? '') !== tableFootnoteDefault && (
               <Button
                 size="small"
                 icon={<UndoOutlined />}
-                onClick={() => set('tableFootnote', FOOTNOTE_DEFAULT)}
+                onClick={() => set('tableFootnote', tableFootnoteDefault)}
                 title="Сбросить к дефолтному тексту"
               />
             )}

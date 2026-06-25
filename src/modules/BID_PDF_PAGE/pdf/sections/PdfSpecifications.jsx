@@ -26,6 +26,13 @@ function stripHtml(html) {
   return (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
 }
 
+function getPresenceLabel(model) {
+  const presenceName = model.precence?.name || model.presence_data?.name || model.presenceInfo?.name || model.presence?.name
+  if (presenceName) return presenceName
+
+  return Number(model.presence) > 0 ? '\u0412 \u043d\u0430\u043b.' : '+'
+}
+
 export function PdfSpecifications({ theme, models, currency, tableFootnote, sectionNumber }) {
   const sym  = CURRENCY_SYMBOLS[currency?.value] || '₽'
   const rows = models || []
@@ -80,7 +87,7 @@ export function PdfSpecifications({ theme, models, currency, tableFootnote, sect
             <Text style={[cell, { width: W.price, textAlign: 'right' }]}>{fmt(price)}</Text>
             <Text style={[cell, { width: W.total, textAlign: 'right', fontFamily: theme.fonts.bold, fontWeight: 600 }]}>{fmt(total)}</Text>
             <Text style={[cell, { width: W.presence, textAlign: 'center', color: theme.gray }]}>
-              {m.presence > 0 ? 'В наличии' : 'Под заказ'}
+              {getPresenceLabel(m)}
             </Text>
           </View>
         )
