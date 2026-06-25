@@ -92,7 +92,7 @@ export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
         {data?.coverTitle || 'Коммерческое предложение'}
       </Text>
       {data?.object_name ? (
-        <Text style={{ fontSize: text.xl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, marginBottom: space.lg, textAlign: 'center', marginTop: '-' + space.xs }}>
+        <Text style={{ fontSize: text.lg, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.medium, marginBottom: space.lg, textAlign: 'center', marginTop: '-' + space.xs }}>
           {String(data.object_name || '').trim()}
         </Text>
       ) : null}
