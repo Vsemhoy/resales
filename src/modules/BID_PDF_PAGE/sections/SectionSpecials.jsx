@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Spin, Input, Button, Checkbox, InputNumber, Segmented } from 'antd'
-import { DownOutlined, RightOutlined, UndoOutlined } from '@ant-design/icons'
+import { Spin, Input, Button, Checkbox, InputNumber, Segmented, Tooltip } from 'antd'
+import { DownOutlined, RightOutlined, UndoOutlined, WarningOutlined } from '@ant-design/icons'
 import { getBidModels } from '../api'
 import { HTTP_HOST } from '../../../config/config'
 import { Section, Field, TabWrap } from '../components/FormParts'
@@ -15,12 +15,46 @@ function getLegacyModelKey(model) {
   return model.model_id ?? model.id
 }
 
+function hasText(value) {
+  return String(value ?? '').replace(/<[^>]*>/g, ' ').trim().length > 0
+}
+
+function getModelProperties(model) {
+  return model.model_properties ?? model.properties ?? model.characteristics ?? []
+}
+
+function getModelIssues(model, override, hasMissingImage = false) {
+  const specials = override?.specials ?? []
+  return {
+    noDescription: !hasText(override?.description_kp),
+    noSpecials: !specials.some(hasText),
+    noProperties: getModelProperties(model).length === 0,
+    noImage: hasMissingImage,
+  }
+}
+
+const MODEL_ISSUE_FILTERS = [
+  { value: 'noDescription', label: '\u041d\u0435\u0442 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u044f' },
+  { value: 'noSpecials', label: '\u041d\u0435\u0442 \u0442\u0435\u0437\u0438\u0441\u043e\u0432' },
+  { value: 'noProperties', label: '\u041d\u0435\u0442 \u0441\u0432\u043e\u0439\u0441\u0442\u0432' },
+  { value: 'noImage', label: '\u041d\u0435\u0442 \u0444\u043e\u0442\u043e' },
+]
+
+const MODEL_ISSUE_LABELS = {
+  noDescription: '\u043d\u0435\u0442 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u044f',
+  noSpecials: '\u043d\u0435\u0442 \u0442\u0435\u0437\u0438\u0441\u043e\u0432',
+  noProperties: '\u043d\u0435\u0442 \u0441\u0432\u043e\u0439\u0441\u0442\u0432',
+  noImage: '\u043d\u0435\u0442 \u0444\u043e\u0442\u043e',
+}
+
 export default function SectionSpecials({ data, onChange, bidId, companyId, userRole }) {
   const accent = companyId === '3' ? '#269435' : '#FF5903'
 
   const [models,   setModels]   = useState([])
   const [loading,  setLoading]  = useState(false)
   const [expanded, setExpanded] = useState({})   // { [model_id]: bool }
+  const [issueFilters, setIssueFilters] = useState([])
+  const [missingImages, setMissingImages] = useState({})
 
   useEffect(() => {
     if (!bidId) return
@@ -85,8 +119,56 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
   }
 
   const imgBase = `${HTTP_HOST}/api/soma/pdf/modfiles/`
+
+  const setImageMissing = (id, isMissing) => {
+    setMissingImages(prev => prev[id] === isMissing ? prev : { ...prev, [id]: isMissing })
+  }
+
+  const getModelImageSrc = (model, index) => {
+    const modelName = model.info_model?.name ?? `\u041c\u043e\u0434\u0435\u043b\u044c #${model.model_id ?? model.id ?? index + 1}`
+    return `${imgBase}${(model.info_model?.nameS ?? modelName).toLowerCase()}?size=xs`
+  }
+
+  useEffect(() => {
+    if (!models.length) return undefined
+
+    let cancelled = false
+    models.forEach((model, index) => {
+      const id = getModelKey(model, index)
+      const img = new Image()
+      img.onload = () => { if (!cancelled) setImageMissing(id, false) }
+      img.onerror = () => { if (!cancelled) setImageMissing(id, true) }
+      img.src = getModelImageSrc(model, index)
+    })
+
+    return () => { cancelled = true }
+  }, [models, imgBase])
+
   const settings = data.specialsSettings ?? {}
   const setSetting = (key, val) => onChange({ ...data, specialsSettings: { ...settings, [key]: val } })
+
+  const visibleModels = issueFilters.length === 0
+    ? models
+    : models.filter((model, index) => {
+      const id = getModelKey(model, index)
+      const issues = getModelIssues(model, getOverride(model, index), !!missingImages[id])
+      return issueFilters.some(filter => issues[filter])
+    })
+
+  const issueCounts = models.reduce((acc, model, index) => {
+    const id = getModelKey(model, index)
+    const issues = getModelIssues(model, getOverride(model, index), !!missingImages[id])
+    Object.entries(issues).forEach(([key, hasIssue]) => {
+      if (hasIssue) acc[key] = (acc[key] ?? 0) + 1
+    })
+    return acc
+  }, {})
+
+  const toggleIssueFilter = (filter) => {
+    setIssueFilters(prev => prev.includes(filter)
+      ? prev.filter(item => item !== filter)
+      : [...prev, filter])
+  }
 
   return (
     <TabWrap>
@@ -142,11 +224,69 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
       <Section title="Модели" description="Снимите галочку чтобы исключить модель. Раскройте карточку чтобы отредактировать тексты.">
         {loading && <div style={{ padding: 16, textAlign: 'center' }}><Spin size="small" /></div>}
 
+        {!loading && models.length > 0 && (
+          <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 12, color: '#8c8c8c' }}>{'\u0424\u0438\u043b\u044c\u0442\u0440:'}</span>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {MODEL_ISSUE_FILTERS.map(filter => {
+                const isActive = issueFilters.includes(filter.value)
+                const count = issueCounts[filter.value] ?? 0
+                return (
+                  <button
+                    key={filter.value}
+                    type="button"
+                    onClick={() => toggleIssueFilter(filter.value)}
+                    style={{
+                      border: `1px solid ${isActive ? accent : '#d9d9d9'}`,
+                      background: isActive ? accent + '14' : '#fafafa',
+                      color: isActive ? accent : '#595959',
+                      borderRadius: 999,
+                      padding: '3px 9px',
+                      fontSize: 12,
+                      lineHeight: '18px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                    }}
+                  >
+                    <span>{filter.label}</span>
+                    <span style={{
+                      minWidth: 18,
+                      height: 18,
+                      padding: '0 5px',
+                      borderRadius: 999,
+                      background: isActive ? accent : '#e8e8e8',
+                      color: isActive ? '#fff' : '#8c8c8c',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textAlign: 'center',
+                    }}>
+                      {count}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+            {issueFilters.length > 0 && (
+              <span style={{ fontSize: 12, color: '#bfbfbf' }}>
+                {visibleModels.length} / {models.length}
+              </span>
+            )}
+          </div>
+        )}
         {!loading && models.length === 0 && (
           <div style={{ color: '#bfbfbf', fontSize: 12 }}>Модели не найдены</div>
         )}
 
-        {!loading && models.map((model, idx) => {
+        {!loading && models.length > 0 && visibleModels.length === 0 && (
+          <div style={{ color: '#bfbfbf', fontSize: 12 }}>
+            {'\u041f\u043e \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u044b\u043c \u0444\u0438\u043b\u044c\u0442\u0440\u0430\u043c \u043c\u043e\u0434\u0435\u043b\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b'}
+          </div>
+        )}
+
+        {!loading && visibleModels.map((model) => {
+          const idx        = models.indexOf(model)
           const id         = getModelKey(model, idx)
           const legacyId   = getLegacyModelKey(model)
           const isIgnored  = ignored.includes(id) || ignored.includes(legacyId)
@@ -155,6 +295,11 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
           const name       = model.info_model?.name ?? `Модель #${model.model_id ?? model.id ?? idx + 1}`
           const shortNote  = model.info_model?.short_note ?? ''
           const ov         = getOverride(model, idx)
+          const issues     = getModelIssues(model, ov, !!missingImages[id])
+          const issueNames = Object.entries(issues)
+            .filter(([, hasIssue]) => hasIssue)
+            .map(([key]) => MODEL_ISSUE_LABELS[key])
+          const hasIssue   = issueNames.length > 0
 
           return (
             <div
@@ -189,15 +334,23 @@ export default function SectionSpecials({ data, onChange, bidId, companyId, user
 
                 {/* Миниатюра */}
                 <img
-                  src={`${imgBase}${(model.info_model?.nameS ?? name).toLowerCase()}?size=xs`}
+                  src={getModelImageSrc(model, idx)}
                   alt=""
                   style={{ height: 32, width: 48, objectFit: 'contain', flexShrink: 0 }}
-                  onError={e => { e.target.style.display = 'none' }}
+                  onLoad={e => { e.currentTarget.style.display = ''; setImageMissing(id, false) }}
+                  onError={e => { e.currentTarget.style.display = 'none'; setImageMissing(id, true) }}
                 />
 
                 {/* Название + краткое описание */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#262626' }}>{name}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600, color: '#262626' }}>
+                    <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</span>
+                    {hasIssue && (
+                      <Tooltip title={`\u041d\u0443\u0436\u043d\u043e \u043f\u0440\u0438\u0447\u0435\u0441\u0430\u0442\u044c: ${issueNames.join(', ')}`}>
+                        <WarningOutlined style={{ color: '#faad14', flexShrink: 0 }} />
+                      </Tooltip>
+                    )}
+                  </div>
                   {shortNote && <div style={{ fontSize: 11, color: '#8c8c8c', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{shortNote}</div>}
                 </div>
 

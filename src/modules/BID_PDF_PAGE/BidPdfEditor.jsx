@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { NavLink, useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown } from 'antd'
-import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined } from '@ant-design/icons'
+import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { getDraft, getBidModels, getDraftModels, getDraftModelsWithPrices, getCovers, getUser } from './api'
 import { restoreFilesIntoFormData } from './api/files'
@@ -61,7 +61,49 @@ const COMPACT_THEME = {
 }
 
 const uuid = () => Math.random().toString(36).slice(2, 8)
+const DEFAULT_NDS_PERCENT = 22
+const FOOTNOTE_PREFIX = '\u041f\u043e \u0443\u0441\u043b\u043e\u0432\u0438\u044f\u043c \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u0430 \u043f\u043e\u0441\u0442\u0430\u0432\u043a\u0430 \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u0435\u0442\u0441\u044f \u043f\u0440\u0438 100% \u043f\u0440\u0435\u0434\u043e\u043f\u043b\u0430\u0442\u0435 \u0441\u043e \u0441\u043a\u043b\u0430\u0434\u0430 \u0432 \u0421\u0430\u043d\u043a\u0442-\u041f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433\u0435.'
+const FOOTNOTE_SUFFIX = '\u0421\u0440\u043e\u043a \u043f\u043e\u0441\u0442\u0430\u0432\u043a\u0438 \u043e\u0431\u043e\u0440\u0443\u0434\u043e\u0432\u0430\u043d\u0438\u044f \u043f\u043e\u0434 \u0437\u0430\u043a\u0430\u0437 - 3 \u043c\u0435\u0441\u044f\u0446\u0430 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430 \u043e\u043f\u043b\u0430\u0442\u044b \u0441\u0447\u0435\u0442\u0430.'
+const FOOTNOTE_PRICE_PREFIX = '\u0426\u0435\u043d\u044b \u0443\u043a\u0430\u0437\u0430\u043d\u044b'
 
+function isWithoutNdsFlag(value) {
+  if (value === true || value === 'yes' || value === 'true') return true
+  if (value === false || value === null || value === undefined || value === '') return false
+
+  const numericValue = Number(value)
+  return Number.isFinite(numericValue) && numericValue > 0
+}
+
+function buildTableFootnoteDefault({ withoutNds = false, ndsPercent = DEFAULT_NDS_PERCENT } = {}) {
+  const ndsValue = ndsPercent === null || ndsPercent === undefined || ndsPercent === ''
+    ? DEFAULT_NDS_PERCENT
+    : ndsPercent
+  const priceText = withoutNds
+    ? '\u0426\u0435\u043d\u044b \u0443\u043a\u0430\u0437\u0430\u043d\u044b \u0431\u0435\u0437 \u0443\u0447\u0451\u0442\u0430 \u041d\u0414\u0421.'
+    : `\u0426\u0435\u043d\u044b \u0443\u043a\u0430\u0437\u0430\u043d\u044b \u0441 \u0443\u0447\u0435\u0442\u043e\u043c \u041d\u0414\u0421 ${ndsValue}%.`
+
+  return `${FOOTNOTE_PREFIX} ${priceText} ${FOOTNOTE_SUFFIX}`
+}
+
+function stripFootnoteHtml(value = '') {
+  return String(value)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function isGeneratedTableFootnote(value) {
+  const text = stripFootnoteHtml(value)
+  if (!text) return true
+
+  const normalizedSuffix = FOOTNOTE_SUFFIX.replace(/\.$/, '')
+  return text.startsWith(FOOTNOTE_PREFIX)
+    && text.includes(FOOTNOTE_PRICE_PREFIX)
+    && text.includes('\u041d\u0414\u0421')
+    && (text.endsWith(FOOTNOTE_SUFFIX) || text.endsWith(normalizedSuffix))
+}
 export default function BidPdfEditor() {
   const { bidId, draftId } = useParams()
 
@@ -198,7 +240,11 @@ export default function BidPdfEditor() {
           return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`
         })()
 
-        const FOOTNOTE_DEFAULT = 'По условиям договора поставка осуществляется при 100% предоплате со склада в Санкт-Петербурге. Цены указаны с учетом НДС 22%. Срок поставки оборудования под заказ - 3 месяца с момента оплаты счета.'
+        const ndsPercent = data.NDS ?? data.nds ?? DEFAULT_NDS_PERCENT
+        const tableFootnoteDefault = buildTableFootnoteDefault({
+          withoutNds: isWithoutNdsFlag(data.source_bid?.woNDS),
+          ndsPercent,
+        })
 
         const srcManager     = data.source_bid?.manager
         const bidManagerName = srcManager
@@ -237,7 +283,8 @@ export default function BidPdfEditor() {
         setFormData({
           ...fd,
           date:           fd.date          || today,
-          tableFootnote:  fd.tableFootnote || FOOTNOTE_DEFAULT,
+          tableFootnote:  isGeneratedTableFootnote(fd.tableFootnote) ? tableFootnoteDefault : fd.tableFootnote,
+          _tableFootnoteDefault: tableFootnoteDefault,
           target_occupy:  fd.target_occupy || bidTargetOccupy,
           object_name:    fd.object_name   ?? bidObjectName,
           coverTitle:     fd.coverTitle    ?? defaultCoverTitle,
@@ -540,6 +587,19 @@ export default function BidPdfEditor() {
         {/* ── Топбар ────────────────────────────────────────────────────────── */}
         <div className={classes.topbar}>
           <div className={classes.topbarLeft}>
+            <NavLink to={'/engine/pdflist'}>
+              <Button
+                default
+                title='Вернуться в список шаблонов'
+              size='default' icon={<OrderedListOutlined ></OrderedListOutlined>}></Button>
+            </NavLink>
+            <NavLink to={`/bids/${bidId}`}>
+              <Button
+                default
+                title='Вернуться в кп'
+              size='default' icon={<FileTextOutlined ></FileTextOutlined>}></Button>
+            </NavLink>
+            <div></div>
             <Select value={companyId}      onChange={handleCompany}     options={COMPANY_OPTIONS}     style={{ width: 90  }} disabled={isEngineer} />
             <Select value={orientation}    onChange={handleOrientation}  options={ORIENTATION_OPTIONS} style={{ width: 148 }} disabled={isEngineer}
               optionRender={opt => (
