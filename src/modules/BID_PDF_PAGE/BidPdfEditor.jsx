@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown } from 'antd'
-import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined } from '@ant-design/icons'
+import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined, DownloadOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { getDraft, getBidModels, getDraftModels, getDraftModelsWithPrices, getCovers, getUser } from './api'
 import { restoreFilesIntoFormData } from './api/files'
@@ -130,7 +130,87 @@ export default function BidPdfEditor() {
   const [userRole,       setUserRole]       = useState(null)
   const [wideLayout,     setWideLayout]     = useState(() => window.innerWidth > 1500)
   const [printing,       setPrinting]       = useState(false)
+  const [downloading,    setDownloading]    = useState(false)
 
+  // ── Имя файла по маске Word ──────────────────────────────────────────────────
+  const getPdfFileName = () => {
+    const orgName = formData?.client_company?.name || formData?.coverTitle || ''
+    const date    = formData?.date || (() => {
+      const d = new Date()
+      return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`
+    })()
+    const name = orgName
+      ? `Коммерческое предложение для ${orgName} от ${date}`
+      : `Коммерческое предложение от ${date}`
+    return `${name}.pdf`
+  }
+
+  // ── Общий билдер blob ────────────────────────────────────────────────────────
+  const buildBlob = async () => {
+    const readyFormData = await preloadImages(formData, { draftId })
+
+    const makePdfElement = (fd, capturePageNumber = null, sectionPageNumbers = {}) => (
+      <PdfDocumentV2
+        formData={fd}
+        draft={draft}
+        currency={currency}
+        companyId={companyId}
+        orientation={orientation}
+        enabledSections={enabledSections}
+        sectionOrder={sectionOrder}
+        models={models}
+        modelsData={modelsData}
+        figuresEnabled={figuresEnabled}
+        capturePageNumber={capturePageNumber}
+        sectionPageNumbers={sectionPageNumbers}
+      />
+    )
+
+    try {
+      const capturedPages = {}
+      await pdf(makePdfElement(readyFormData, (key, pageNum) => { capturedPages[key] = pageNum })).toBlob()
+      return await pdf(makePdfElement(readyFormData, null, capturedPages)).toBlob()
+    } catch {
+      await new Promise(r => setTimeout(r, 400))
+      return await pdf(makePdfElement(readyFormData)).toBlob()
+    }
+  }
+
+  // ── Открыть превью в новой вкладке ──────────────────────────────────────────
+  const handlePrint = async () => {
+    registerFonts()
+    setPrinting(true)
+    try {
+      const blob = await buildBlob()
+      const url  = URL.createObjectURL(blob)
+      window.open(url, '_blank')
+    } catch (e) {
+      console.error('PDF preview error:', e)
+    } finally {
+      setPrinting(false)
+    }
+  }
+
+  // ── Скачать с именем по маске ────────────────────────────────────────────────
+  const handleDownload = async () => {
+    registerFonts()
+    setDownloading(true)
+    try {
+      const blob = await buildBlob()
+      const url  = URL.createObjectURL(blob)
+      const a    = document.createElement('a')
+      a.href     = url
+      a.download = getPdfFileName()
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      console.error('PDF download error:', e)
+    } finally {
+      setDownloading(false)
+    }
+  }
   const { covers, reload: reloadCovers } = useCovers(companyId)
   const coverAssetType = formData.coverMode === 'cover' ? 'cover' : 'hat'
   const coverAssetField = coverAssetType === 'cover' ? 'coverBlock' : 'hatImage'
@@ -151,51 +231,6 @@ export default function BidPdfEditor() {
     return () => window.removeEventListener('resize', handler)
   }, [])
 
-  const handlePrint = async () => {
-    registerFonts()
-    setPrinting(true)
-    try {
-      const readyFormData = await preloadImages(formData, { draftId })
-
-      const makePdfElement = (fd, capturePageNumber = null, sectionPageNumbers = {}) => (
-        <PdfDocumentV2
-          formData={fd}
-          draft={draft}
-          currency={currency}
-          companyId={companyId}
-          orientation={orientation}
-          enabledSections={enabledSections}
-          sectionOrder={sectionOrder}
-          models={models}
-          modelsData={modelsData}
-          figuresEnabled={figuresEnabled}
-          capturePageNumber={capturePageNumber}
-          sectionPageNumbers={sectionPageNumbers}
-        />
-      )
-
-      let blob
-      try {
-        // Проход 1: захватываем номера страниц секций
-        const capturedPages = {}
-        await pdf(makePdfElement(readyFormData, (key, pageNum) => { capturedPages[key] = pageNum })).toBlob()
-
-        // Проход 2: финальный PDF с реальными номерами в TOC
-        blob = await pdf(makePdfElement(readyFormData, null, capturedPages)).toBlob()
-      } catch {
-        // Если двухпроход упал — пробуем однопроход без номеров страниц
-        await new Promise(r => setTimeout(r, 400))
-        blob = await pdf(makePdfElement(readyFormData)).toBlob()
-      }
-
-      const url = URL.createObjectURL(blob)
-      window.open(url, '_blank')
-    } catch (e) {
-      console.error('PDF error:', e)
-    } finally {
-      setPrinting(false)
-    }
-  }
 
   const { status: saveStatus, errMsg: saveErr } = useAutoSave(draftId, formData, currency, 2000, isReady, isDirty)
 
@@ -634,6 +669,10 @@ export default function BidPdfEditor() {
               loading={printing}
               onClick={handlePrint}
               style={{ background: accent, borderColor: accent }}>В печать!</Button>
+            <Button icon={<DownloadOutlined />} size="default"
+              loading={downloading}
+              onClick={handleDownload}
+              title={getPdfFileName()}>Скачать PDF</Button>
           </div>
         </div>
 
