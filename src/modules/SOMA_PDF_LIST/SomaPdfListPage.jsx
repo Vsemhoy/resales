@@ -183,16 +183,17 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
     total: 0,
   })
   const [orderBox, setOrderBox] = useState(() => parseSort(searchParams.get('sort')))
-  const [filters, setFilters] = useState(() => compactFilters({
-    id: searchParams.get('id'),
-    bid_id: searchParams.get('bid_id'),
-    status: searchParams.get('status'),
-    kp_type: toNumberOrNull(searchParams.get('kp_type')),
-    org: searchParams.get('org'),
-    manager: searchParams.get('manager'),
-    engineer: searchParams.get('engineer'),
-    id_company: toNumberOrNull(searchParams.get('id_company')),
-  }))
+const [filters, setFilters] = useState(() => compactFilters({
+  id: searchParams.get('id'),
+  bid_id: searchParams.get('bid_id'),
+  status: searchParams.get('status'),
+  kp_type: toNumberOrNull(searchParams.get('kp_type')),
+  org: searchParams.get('org'),
+  manager: searchParams.get('manager'),
+  engineer: searchParams.get('engineer'),
+  id_company: toNumberOrNull(searchParams.get('id_company')),
+  model: searchParams.get('model'),   // ← добавить
+}))
   const [mineOnly, setMineOnly] = useState(searchParams.get('mine') === '1')
 
   const load = useCallback(() => {
@@ -481,7 +482,7 @@ export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
                     <TextFilter value={filters.engineer} onChange={value => setFilter('engineer', value)} />
                   </HeaderCell>
                   <HeaderCell label="Моделей" sortKey="model_count" orderBox={orderBox} onSortChange={handleSortChange}>
-                    <span className={classes.emptyFilter}>—</span>
+                    <TextFilter value={filters.model} onChange={value => setFilter('model', value)} />
                   </HeaderCell>
                   <HeaderCell label="Создан" sortKey="created_at" orderBox={orderBox} onSortChange={handleSortChange}>
                     <span className={classes.emptyFilter}>—</span>
