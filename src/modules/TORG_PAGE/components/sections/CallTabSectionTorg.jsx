@@ -4,7 +4,7 @@ import { AutoComplete, Button, Checkbox, DatePicker, Input, Select, Tag, TimePic
 import TextArea from 'antd/es/input/TextArea';
 import { TORG_CHEVRON_SIZE, TORG_MAX_ROWS_TEXTAREA, TORG_MIN_ROWS_TEXTAREA } from '../TorgConfig';
 import { BriefcaseIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { FullNameText, getMonthName, ShortName } from '../../../../components/helpers/TextHelpers';
 import { LockFilled } from '@ant-design/icons';
 
@@ -1013,7 +1013,13 @@ const CallTabSectionTorg = (props) => {
                       disabled={!editMode}
                       format={'DD-MM-YYYY'}
                       onChange={(val) => {
-                        setNextCallDate(val ? val.format('YYYY-MM-DD') : null);
+                        const prenext  = val;
+                        if (!val) { setNextCallDate(null)}
+                        if (val.isBefore(dayjs())) {
+                          { setNextCallDate(dayjs().format('YYYY-MM-DD'))}
+                        } else {
+                          setNextCallDate(val ? val.format('YYYY-MM-DD') : null);
+                        }
                         setACTION_FLAG(1);
                       setBLUR_FLAG(dayjs().unix());
                       }}
