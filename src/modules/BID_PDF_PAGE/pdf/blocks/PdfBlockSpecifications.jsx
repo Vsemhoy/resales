@@ -23,7 +23,18 @@ function getPresenceLabel(model) {
   return Number(model.presence) > 0 ? '\u0412 \u043d\u0430\u043b.' : '+'
 }
 
-export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact', modelImages = {}, forceBreak = false }) {
+function normalizeNdsPercent(value) {
+  const numericValue = Number(value)
+  return Number.isFinite(numericValue) && numericValue > 0 ? numericValue : 0
+}
+
+function withoutNdsPrice(price, ndsPercent) {
+  const numericPrice = Number.parseFloat(price) || 0
+  const normalizedNds = normalizeNdsPercent(ndsPercent)
+  return normalizedNds > 0 ? numericPrice / (1 + normalizedNds / 100) : numericPrice
+}
+
+export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact', modelImages = {}, withoutNds = false, ndsPercent = 0, forceBreak = false }) {
   const { color, text, font, weight, space, layout } = cfg
   if (!models.length) return null
 
@@ -43,7 +54,7 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
   }
   const nameW = cW - W.num - W.qty - W.price - W.total - W.presence - (withPhotos ? photoW : 0)
 
-  const totalSum = models.reduce((s, m) => s + (parseFloat(m.price) || 0) / 100 * (m.model_count || 0), 0)
+  const totalSum = models.reduce((s, m) => s + (withoutNds ? withoutNdsPrice(m.price, ndsPercent) : (parseFloat(m.price) || 0)) / 100 * (m.model_count || 0), 0)
 
   const cellBase = { paddingHorizontal: space.xs, paddingVertical: space.xs }
 
@@ -83,7 +94,8 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
 
       {/* Строки */}
       {models.map((m, i) => {
-        const price = (parseFloat(m.price) || 0) / 100
+        const rawPrice = withoutNds ? withoutNdsPrice(m.price, ndsPercent) : (parseFloat(m.price) || 0)
+        const price = rawPrice / 100
         const total = price * (m.model_count || 0)
         const bg    = i % 2 === 1 ? color.tableRowEven : color.tableRowOdd
         const name  = cleanModelName(m.name || m.info_model?.name || `Позиция ${i + 1}`)

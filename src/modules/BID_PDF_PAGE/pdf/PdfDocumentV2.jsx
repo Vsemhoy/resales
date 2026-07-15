@@ -144,7 +144,7 @@ export function PdfDocumentV2({
             return wrap(<PdfBlockRecommendations cfg={cfg} data={formData} currency={currency} sectionNumber={n} />)
 
           if (key === 'specifications')
-            return wrap(<PdfBlockSpecifications cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} tableStyle={formData.tableStyle} modelImages={formData._modelImages ?? {}} sectionNumber={n} />)
+            return wrap(<PdfBlockSpecifications cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} tableStyle={formData.tableStyle} modelImages={formData._modelImages ?? {}} withoutNds={formData._withoutNds} ndsPercent={formData._ndsPercent} sectionNumber={n} />)
 
           if (key === 'specials')
             return wrap(<PdfBlockSpecials cfg={cfg} data={formData} models={models} sectionNumber={n} />)

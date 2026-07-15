@@ -276,8 +276,9 @@ export default function BidPdfEditor() {
         })()
 
         const ndsPercent = data.NDS ?? data.nds ?? DEFAULT_NDS_PERCENT
+        const withoutNds = isWithoutNdsFlag(data.source_bid?.woNDS)
         const tableFootnoteDefault = buildTableFootnoteDefault({
-          withoutNds: isWithoutNdsFlag(data.source_bid?.woNDS),
+          withoutNds,
           ndsPercent,
         })
 
@@ -320,6 +321,8 @@ export default function BidPdfEditor() {
           date:           fd.date          || today,
           tableFootnote:  isGeneratedTableFootnote(fd.tableFootnote) ? tableFootnoteDefault : fd.tableFootnote,
           _tableFootnoteDefault: tableFootnoteDefault,
+          _withoutNds: withoutNds,
+          _ndsPercent: ndsPercent,
           target_occupy:  fd.target_occupy || bidTargetOccupy,
           object_name:    fd.object_name   ?? bidObjectName,
           coverTitle:     fd.coverTitle    ?? defaultCoverTitle,
