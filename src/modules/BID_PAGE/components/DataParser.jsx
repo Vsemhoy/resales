@@ -82,6 +82,22 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         });
     }
 
+    const getModelCount = (line) => {
+        const countPatterns = [
+            /(?:^|[\s\-–—])(\d+)\s*(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)(?=\s|$|[,;:)])/iu,
+            /(?:^|[\s\-–—])(?:x|х|\*)\s*(\d+)\b/iu,
+            /(?:^|[\s\-–—])(\d+)\s*(?:x|х|\*)(?=\s|$)/iu,
+            /(?:^|\s)(\d+)\s*$/u,
+        ];
+
+        for (const pattern of countPatterns) {
+            const match = line.match(pattern);
+            if (match) return parseInt(match[1], 10);
+        }
+
+        return 1;
+    };
+
     // Парсим строку
     const findModel = (line, index) => {
         const cleaned = line.trim().replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
@@ -95,17 +111,12 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
             key: generateUUID(),
             num: index + 1,
             name: "",
-            count: 1,
+            count: getModelCount(line),
             id: 0,
             currency: 0,
         };
 
-        parts.forEach((value, i) => {
-
-            if (i > 0 && !isNaN(parseInt(value))) {
-                mod.count = parseInt(value);
-            }
-
+        parts.forEach((value) => {
             const model = getModelName(value);
 
             if (model) {

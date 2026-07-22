@@ -275,14 +275,8 @@ export const useBidModels = ({
                 return acc;
             }, []);
 
-            let sort = 0;
-            if (formModels && formModels.length > 0) {
-                const sorted = [...formModels].sort((a, b) => a.sort - b.sort);
-                sort = sorted[sorted.length - 1].sort;
-            }
-
             const arr = aggregatedData
-                .filter((newModel) => modelsSelect.some((model) => !model.used && model.id === newModel.id))
+                .filter((newModel) => modelsSelect.some((model) => model.id === newModel.id))
                 .map((newModel, idx) => {
                     const model = modelsSelect.find((m) => m.id === newModel.id);
                     return {
@@ -294,7 +288,7 @@ export const useBidModels = ({
                         not_available: 0,
                         percent: 0,
                         presence: -2,
-                        sort: sort + idx + 1,
+                        sort: idx + 1,
                         type_model: model.type_model,
                         currency: model.currency,
                     };
@@ -304,8 +298,16 @@ export const useBidModels = ({
                 ...prev,
                 models: arr,
             }));
+
+            const parsedModelIds = new Set(arr.map((model) => model.model_id));
+            setModelsSelect((prev) =>
+                prev.map((model) => ({
+                    ...model,
+                    used: parsedModelIds.has(model.id),
+                })),
+            );
         },
-        [bidId, formModels, modelsSelect, setForm],
+        [bidId, modelsSelect, setForm, setModelsSelect],
     );
 
     return {
