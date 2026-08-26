@@ -7,6 +7,17 @@ import { useCovers, CoversDrawer } from '../components/CoversDrawer'
 
 const SITE_DEFAULTS = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
 
+const REQUISITES_DEFAULTS = {
+  '2': `ООО «Арстел», ИНН 7810346024, КПП 781001001, ОГРН 1157847127767
+Р/с 40702810690080000773 в ПАО «Банк «Санкт-Петербург»
+к/с 30101810900000000790, БИК 044030790`,
+  '3': `ООО «РОНДО-САУНД», ИНН: 7810914647, КПП: 781001001, ОГРН: 1217800034462
+Р/с: 40702810190080001269 в ПАО БАНК «САНКТ-ПЕТЕРБУРГ»
+К/с: 30101810900000000790, БИК: 044030790`,
+}
+
+const limitToThreeLines = (value = '') => value.split(/\r?\n/).slice(0, 3).join('\n')
+
 const FOOTER_LOGO_OPTIONS = [
   { key: 'arstel',  label: 'Arstel',  src: '/brands/footer/logo_arstel.png'  },
   { key: 'rondo',   label: 'Rondo',   src: '/brands/footer/logo_rondo.png'   },
@@ -300,10 +311,13 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
 function FooterSection({ data, set, companyId }) {
   const fs        = data.footerSettings || {}
   const setFs     = (key, val) => set('footerSettings', { ...fs, [key]: val })
+  const variant   = fs.variant  || 'simple'
   const mode      = fs.mode     || 'text'
   const siteText  = fs.siteText ?? SITE_DEFAULTS[String(companyId)] ?? ''
   const logos     = fs.logos    || []
   const siteDefault = SITE_DEFAULTS[String(companyId)] ?? ''
+  const requisitesDefault = REQUISITES_DEFAULTS[String(companyId)] ?? ''
+  const requisitesText = fs.requisitesText ?? requisitesDefault
 
   const toggleLogo = (key) => {
     if (logos.includes(key)) {
@@ -317,7 +331,19 @@ function FooterSection({ data, set, companyId }) {
     <div style={{ outline: '14px solid rgb(252 250 241)', boxShadow: 'rgba(0, 0, 0, 0.29) 1px -3px 0px 13px', marginTop: '32px' }}>
     <div style={{ background: '#f6f0cf4d', outline: '4px dashed rgb(252 250 241)', boxShadow: '0px -8px 0px #0000004a', marginTop: '32px', paddingTop: '12px' }}>
     <Section title="Подвал" description="Отображается на каждой странице PDF">
-      <Field label="Режим">
+      <Field label="Форма">
+        <Segmented
+          size="small"
+          value={variant}
+          onChange={v => setFs('variant', v)}
+          options={[
+            { label: 'Простой',   value: 'simple'     },
+            { label: 'Реквизиты', value: 'requisites' },
+          ]}
+        />
+      </Field>
+
+      {variant === 'simple' && <Field label="Режим">
         <Segmented
           size="small"
           value={mode}
@@ -327,9 +353,9 @@ function FooterSection({ data, set, companyId }) {
             { label: 'Логотипы',   value: 'logos' },
           ]}
         />
-      </Field>
+      </Field>}
 
-      {mode === 'text' && (
+      {variant === 'simple' && mode === 'text' && (
         <Field label="Текст">
           <div style={{ display: 'flex', gap: 6 }}>
             <Input
@@ -347,7 +373,7 @@ function FooterSection({ data, set, companyId }) {
         </Field>
       )}
 
-      {mode === 'logos' && (
+      {variant === 'simple' && mode === 'logos' && (
         <Field label={`Логотипы (макс. 2, выбрано ${logos.length})`}>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {FOOTER_LOGO_OPTIONS.map(opt => {
@@ -383,6 +409,25 @@ function FooterSection({ data, set, companyId }) {
               Максимум 2 логотипа. Снимите выбор чтобы добавить другой.
             </div>
           )}
+        </Field>
+      )}
+
+      {variant === 'requisites' && (
+        <Field label="Реквизиты (не больше 3 строк)">
+          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+            <Input.TextArea
+              value={requisitesText}
+              onChange={e => setFs('requisitesText', limitToThreeLines(e.target.value))}
+              autoSize={{ minRows: 3, maxRows: 3 }}
+              placeholder={requisitesDefault}
+            />
+            {requisitesText !== requisitesDefault && (
+              <Button size="small" icon={<UndoOutlined />}
+                title="Сбросить к реквизитам компании"
+                onClick={() => setFs('requisitesText', requisitesDefault)}
+              />
+            )}
+          </div>
         </Field>
       )}
     </Section>
