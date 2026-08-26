@@ -18,6 +18,17 @@ const REQUISITES_DEFAULTS = {
 
 const limitToThreeLines = (value = '') => value.split(/\r?\n/).slice(0, 3).join('\n')
 
+const REQUISITES_DEFAULTS = {
+  '2': `ООО «Арстел», ИНН 7810346024, КПП 781001001, ОГРН 1157847127767
+Р/с 40702810690080000773 в ПАО «Банк «Санкт-Петербург»
+к/с 30101810900000000790, БИК 044030790`,
+  '3': `ООО «РОНДО-САУНД», ИНН: 7810914647, КПП: 781001001, ОГРН: 1217800034462
+Р/с: 40702810190080001269 в ПАО БАНК «САНКТ-ПЕТЕРБУРГ»
+К/с: 30101810900000000790, БИК: 044030790`,
+}
+
+const limitToThreeLines = (value = '') => value.split(/\r?\n/).slice(0, 3).join('\n')
+
 const FOOTER_LOGO_OPTIONS = [
   { key: 'arstel',  label: 'Arstel',  src: '/brands/footer/logo_arstel.png'  },
   { key: 'rondo',   label: 'Rondo',   src: '/brands/footer/logo_rondo.png'   },
@@ -312,10 +323,13 @@ function FooterSection({ data, set, companyId }) {
   const fs        = data.footerSettings || {}
   const setFs     = (key, val) => set('footerSettings', { ...fs, [key]: val })
   const variant   = fs.variant  || 'simple'
+  const variant   = fs.variant  || 'simple'
   const mode      = fs.mode     || 'text'
   const siteText  = fs.siteText ?? SITE_DEFAULTS[String(companyId)] ?? ''
   const logos     = fs.logos    || []
   const siteDefault = SITE_DEFAULTS[String(companyId)] ?? ''
+  const requisitesDefault = REQUISITES_DEFAULTS[String(companyId)] ?? ''
+  const requisitesText = fs.requisitesText ?? requisitesDefault
   const requisitesDefault = REQUISITES_DEFAULTS[String(companyId)] ?? ''
   const requisitesText = fs.requisitesText ?? requisitesDefault
 
@@ -354,7 +368,9 @@ function FooterSection({ data, set, companyId }) {
           ]}
         />
       </Field>}
+      </Field>}
 
+      {variant === 'simple' && mode === 'text' && (
       {variant === 'simple' && mode === 'text' && (
         <Field label="Текст">
           <div style={{ display: 'flex', gap: 6 }}>
@@ -373,6 +389,7 @@ function FooterSection({ data, set, companyId }) {
         </Field>
       )}
 
+      {variant === 'simple' && mode === 'logos' && (
       {variant === 'simple' && mode === 'logos' && (
         <Field label={`Логотипы (макс. 2, выбрано ${logos.length})`}>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -409,6 +426,25 @@ function FooterSection({ data, set, companyId }) {
               Максимум 2 логотипа. Снимите выбор чтобы добавить другой.
             </div>
           )}
+        </Field>
+      )}
+
+      {variant === 'requisites' && (
+        <Field label="Реквизиты (не больше 3 строк)">
+          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+            <Input.TextArea
+              value={requisitesText}
+              onChange={e => setFs('requisitesText', limitToThreeLines(e.target.value))}
+              autoSize={{ minRows: 3, maxRows: 3 }}
+              placeholder={requisitesDefault}
+            />
+            {requisitesText !== requisitesDefault && (
+              <Button size="small" icon={<UndoOutlined />}
+                title="Сбросить к реквизитам компании"
+                onClick={() => setFs('requisitesText', requisitesDefault)}
+              />
+            )}
+          </div>
         </Field>
       )}
 
