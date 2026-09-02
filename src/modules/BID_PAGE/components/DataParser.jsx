@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 import { Modal, Table } from "antd";
 
 const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
     const [value, setValue] = useState("");
-    const [hashModels, setHashModels] = useState({});
     const [addition, setAddition] = useState([]);
 
     const translitHomoglyphs = (str) => {
@@ -28,19 +27,25 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         return str.replace(/[авсдеhкмопртхуёАВСДЕHКМОПРТХУЁ]/g, char => replace_alphabet[char] || char);
     };
 
-    // Создаем быстрый поиск моделей
-    useEffect(() => {
-        if (models && models.length > 0) {
-            const map = {};
-            models.forEach(model => {
-                if (!model.name) return;
-                // 1. удаляем пробелы → 2. lowercase → 3. транслит омографов
-                const cleanName = model.name.replace(/\s+/g, '').toLowerCase();
-                const seoName = translitHomoglyphs(cleanName);
-                map[seoName] = model.id;
-            });
-            setHashModels(map);
-        }
+    const normalizeModelName = (name) => translitHomoglyphs(
+        name.toString().replace(/&(?:#x20|nbsp);/giu, ' ').replace(/\s+/g, '').toLowerCase(),
+    );
+
+    // Индекс хранит и точные ключи, и список для поиска модели внутри строки с количеством.
+    const modelIndex = useMemo(() => {
+        const exact = new Map();
+        const searchable = [];
+
+        (models ?? []).forEach((model) => {
+            if (!model.name) return;
+            const key = normalizeModelName(model.name);
+            if (!key || /^\d+$/u.test(key)) return;
+            exact.set(key, model);
+            searchable.push({ key, model });
+        });
+
+        searchable.sort((a, b) => b.key.length - a.key.length);
+        return { exact, searchable };
     }, [models]);
 
     // Поиск модели по названию
@@ -54,20 +59,15 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         name = name.toString().trim();
         if (name.length <= 1) return null;
 
-        let cleanName = name.toLowerCase().replace(/\s+/g, '');
-        let trname = translitHomoglyphs(cleanName);
+        return modelIndex.exact.get(normalizeModelName(name)) ?? null;
+    };
 
-        if (hashModels[trname]) {
-            const id = hashModels[trname];
-            return models.find(m => m.id === id) ?? null;
-        }
+    const getModelFromLine = (line) => {
+        const normalizedLine = normalizeModelName(line);
+        const exactModel = modelIndex.exact.get(normalizedLine);
+        if (exactModel) return exactModel;
 
-        if (hashModels[cleanName]) {
-            const id = hashModels[cleanName];
-            return models.find(m => m.id === id) ?? null;
-        }
-
-        return null;
+        return modelIndex.searchable.find(({ key }) => normalizedLine.includes(key))?.model ?? null;
     };
 
     function generateUUID() {
@@ -82,13 +82,18 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         });
     }
 
-    const getModelCount = (line) => {
+    const getModelCount = (line, hasModel = false) => {
         const countPatterns = [
-            /(?:^|[\s\-–—])(\d+)\s*(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)(?=\s|$|[,;:)])/iu,
+            /(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)\s*[:=]?\s*(\d+)\b/iu,
+            /(?:^|\s)(\d+)\s*(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)(?=\s|$|[,;:)])/iu,
             /(?:^|[\s\-–—])(?:x|х|\*)\s*(\d+)\b/iu,
-            /(?:^|[\s\-–—])(\d+)\s*(?:x|х|\*)(?=\s|$)/iu,
-            /(?:^|\s)(\d+)\s*$/u,
+            /(?:^|\s)(\d+)\s*(?:x|х|\*)(?=\s|$)/iu,
         ];
+
+        // Голое число в конце допустимо только в строке, где уже найдена модель.
+        // Так мощность из описания не станет количеством, а цифры после дефиса
+        // в EP-6216/HS-50 и без этого не подходят под шаблон.
+        if (hasModel) countPatterns.push(/(?:^|\s)(\d+)\s*$/u);
 
         for (const pattern of countPatterns) {
             const match = line.match(pattern);
@@ -99,22 +104,31 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
     };
 
     // Парсим строку
-    const findModel = (line, index) => {
+    const findModel = (line, index, forcedCount = null) => {
         const cleaned = line.trim().replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
 
         if (!cleaned) return null;
 
-        const parts = cleaned.split(" ");
+        const parts = cleaned.split(/\s+/u);
+        const matchedModel = getModelFromLine(cleaned);
 
         const mod = {
             errorname: true,
             key: generateUUID(),
             num: index + 1,
             name: "",
-            count: getModelCount(line),
+            count: forcedCount ?? getModelCount(line, Boolean(matchedModel)),
             id: 0,
             currency: 0,
         };
+
+        if (matchedModel) {
+            mod.name = matchedModel.name;
+            mod.errorname = false;
+            mod.id = matchedModel.id;
+            mod.currency = matchedModel.currency;
+            return mod;
+        }
 
         parts.forEach((value) => {
             const model = getModelName(value);
@@ -132,23 +146,79 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         return mod;
     };
 
+    const isUnit = (line) => /^(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)$/iu.test(line.trim());
+    const isNumber = (line) => /^\d+$/u.test(line.trim());
+    const looksLikeModelCode = (line) => /[A-Za-zА-Яа-яЁё]/u.test(line) && /\d/u.test(line);
+
+    const getMeaningfulLines = (rawValue) => rawValue
+        .split(/\r?\n/u)
+        .flatMap((rawLine) => {
+            const decodedLine = rawLine.replace(/&(?:#x20|nbsp);/giu, ' ').trim();
+            if (!decodedLine) return [];
+
+            if (decodedLine.includes('|')) {
+                return decodedLine
+                    .split('|')
+                    .map((cell) => cell.trim())
+                    .filter((cell) => cell && !/^:?-{3,}:?$/u.test(cell));
+            }
+
+            return [decodedLine];
+        });
+
+    const parseRawValue = (rawValue) => {
+        const lines = getMeaningfulLines(rawValue);
+        const parsed = [];
+        let pending = [];
+
+        const append = (line, count = null) => {
+            const item = findModel(line, parsed.length, count);
+            if (item) parsed.push(item);
+        };
+
+        for (let index = 0; index < lines.length; index += 1) {
+            const line = lines[index];
+            const nextLine = lines[index + 1];
+
+            if (isUnit(line) && nextLine && isNumber(nextLine)) {
+                const modelLine = [...pending].reverse().find((candidate) => getModelFromLine(candidate));
+                // Для неизвестной модели наиболее вероятная ячейка — непосредственно перед единицей.
+                const fallbackLine = pending[pending.length - 1];
+                if (modelLine || fallbackLine) append(modelLine ?? fallbackLine, parseInt(nextLine, 10));
+                pending = [];
+                index += 1;
+                continue;
+            }
+
+            if (isNumber(line)) {
+                const modelLine = [...pending].reverse().find((candidate) => getModelFromLine(candidate));
+                const fallbackLine = pending[pending.length - 1];
+                if (modelLine || (fallbackLine && looksLikeModelCode(fallbackLine))) {
+                    append(modelLine ?? fallbackLine, parseInt(line, 10));
+                    pending = [];
+                    continue;
+                }
+            }
+
+            pending.push(line);
+        }
+
+        // Обычный формат «модель количество» без отдельной ячейки единицы.
+        pending.forEach((line) => {
+            if (getModelFromLine(line)) append(line);
+        });
+
+        return parsed.map((item, index) => ({ ...item, num: index + 1 }));
+    };
+
+    useEffect(() => {
+        setAddition(value ? parseRawValue(value) : []);
+    }, [value, modelIndex, openModal]);
+
     // Обработчик ввода
     const onChange = (e) => {
         const val = e.target.value;
         setValue(val);
-
-        if (!val) {
-            setAddition([]);
-            return;
-        }
-
-        const lines = val.split("\n");
-
-        const parsed = lines
-            .map((line, index) => findModel(line, index))
-            .filter(Boolean);
-
-        setAddition(parsed);
     };
 
     const columns = [
