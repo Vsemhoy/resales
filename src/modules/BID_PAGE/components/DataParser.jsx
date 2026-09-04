@@ -31,13 +31,18 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         name.toString().replace(/&(?:#x20|nbsp);/giu, ' ').replace(/\s+/g, '').toLowerCase(),
     );
 
+    const isOutdatedModel = (model) => Number(model?.type_model) === 2;
+
     // Индекс хранит и точные ключи, и список для поиска модели внутри строки с количеством.
     const modelIndex = useMemo(() => {
         const exact = new Map();
         const searchable = [];
 
         (models ?? []).forEach((model) => {
-            if (!model.name) return;
+            // API: type_model 0 — актуальная, 1 — архивная, 2 — устаревшая.
+            // Устаревшие позиции остаются в общем справочнике, но не должны
+            // автоматически подбираться при разборе сырых данных.
+            if (!model.name || isOutdatedModel(model)) return;
             const key = normalizeModelName(model.name);
             if (!key || /^\d+$/u.test(key)) return;
             exact.set(key, model);
