@@ -1,0 +1,25 @@
+Presentation: «Автоматизация обложек и описаний КП»
+Created: 2026-08-28
+
+Internal sources:
+- User-provided description of four implementation options.
+- User-provided examples of incoming engineering requests and object-name strings.
+- Working estimates supplied in the brief: 2 months for weighted classifier/data markup; 6+ months for designer asset production; at least 100 reference compositions for the generative-cover route.
+
+External technical references used in speaker notes:
+- PaddleOCR-VL: https://www.paddleocr.ai/main/en/version3.x/algorithm/PaddleOCR-VL/PaddleOCR-VL-1.6.html
+- Docling: https://docling-project.github.io/docling/usage/supported_formats/
+- Qwen3-VL: https://github.com/QwenLM/Qwen3-VL
+- BGE-M3: https://github.com/FlagOpen/FlagEmbedding/blob/master/docs/source/bge/bge_m3.rst
+- Grounding DINO: https://github.com/IDEA-Research/GroundingDINO
+- ezdxf: https://ezdxf.readthedocs.io/_/downloads/en/master/pdf/
+- ComfyUI: https://github.com/Comfy-Org/ComfyUI
+- FLUX.1 Kontext workflow: https://docs.comfy.org/tutorials/partner-nodes/black-forest-labs/flux-1-kontext
+- Qwen Image Edit: https://qwenlm.github.io/blog/qwen-image-edit/
+- Qwen3 LoRA training: https://github.com/QwenLM/Qwen3/blob/main/docs/source/training/ms_swift.md
+- NVIDIA RTX 5090: https://marketplace.nvidia.com/en-us/consumer/graphics-cards/geforce-rtx-5090-founders-edition/
+- NVIDIA RTX PRO 6000: https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/rtx-pro-6000/
+- AMD Threadripper PRO 9995WX: https://www.amd.com/en/products/processors/workstations/ryzen-threadripper/9000-wx-series/amd-ryzen-threadripper-pro-9995wx.html
+
+Generated asset:
+- assets/hero.png — generated with OpenAI ImageGen for this presentation; no third-party logos or text.

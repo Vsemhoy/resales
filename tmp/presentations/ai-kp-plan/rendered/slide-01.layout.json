@@ -1,0 +1,589 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/k8m8ww",
+    "id": "k8m8ww",
+    "slide": 1,
+    "layoutId": "068938b1-1c80-44c1-872b-3406d763b545",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "ba44ced3-5563-40fc-aac7-19d096dba5b9",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#FFFFFF",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "+mn-lt"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "068938b1-1c80-44c1-872b-3406d763b545",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "ba44ced3-5563-40fc-aac7-19d096dba5b9",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "ba44ced3-5563-40fc-aac7-19d096dba5b9",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/z29wbm1c",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        720
+      ],
+      "alt": "Поток писем, спецификаций и чертежей преобразуется в коммерческое предложение",
+      "contentType": "image/png",
+      "imageFit": "cover",
+      "asset": {
+        "assetId": "cca034ca-d269-4f63-bccf-3bdc61d5a4c4",
+        "contentType": "image/png",
+        "byteLength": 1639086
+      }
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/pkjm5gzi",
+      "id": "2",
+      "bbox": [
+        0,
+        0,
+        600,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "rgba(255, 255, 255, 0.9098)",
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/oja5wbix",
+      "id": "3",
+      "bbox": [
+        0,
+        0,
+        12,
+        720
+      ],
+      "geometry": "rect",
+      "fillColor": "#3D8DFF",
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/feh4zm1g",
+      "id": "4",
+      "bbox": [
+        64,
+        58,
+        188,
+        30
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#EAF5FF",
+      "lineColor": "#EAF5FF",
+      "lineWidth": 1
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ed83qh0v",
+      "id": "5",
+      "bbox": [
+        74,
+        64,
+        168,
+        17
+      ],
+      "geometry": "rect",
+      "text": "СТРАТЕГИЯ • 2026",
+      "textPreview": "СТРАТЕГИЯ • 2026",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 12,
+        "typeface": "+mn-lt",
+        "color": "#123A68",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "СТРАТЕГИЯ • 2026"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "СТРАТЕГИЯ • 2026",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "color": "#123A68",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "СТРАТЕГИЯ • 2026",
+              "fontSize": 12,
+              "color": "#123A68",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/1gzm1wjm",
+      "id": "6",
+      "bbox": [
+        64,
+        130,
+        505,
+        160
+      ],
+      "geometry": "rect",
+      "text": "Автоматизация\nобложек и описаний КП",
+      "textPreview": "Автоматизация | обложек и описаний КП",
+      "resolvedFontSize": 46,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 46,
+        "typeface": "+mn-lt",
+        "color": "#111827",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Автоматизация"
+          },
+          {
+            "index": 2,
+            "text": "обложек и описаний КП"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Автоматизация",
+          "resolvedTextStyle": {
+            "fontSize": 46,
+            "color": "#111827",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Автоматизация",
+              "fontSize": 46,
+              "color": "#111827",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "обложек и описаний КП",
+          "resolvedTextStyle": {
+            "fontSize": 46,
+            "color": "#111827",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "обложек и описаний КП",
+              "fontSize": 46,
+              "color": "#111827",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/gfq5sri1",
+      "id": "7",
+      "bbox": [
+        64,
+        316,
+        470,
+        88
+      ],
+      "geometry": "rect",
+      "text": "Четыре варианта решения и поэтапный план внедрения AI в рабочий процесс",
+      "textPreview": "Четыре варианта решения и поэтапный план внедрения AI в рабочий процесс",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 21,
+        "typeface": "+mn-lt",
+        "color": "#334155",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Четыре варианта решения и поэтапный план"
+          },
+          {
+            "index": 2,
+            "text": "внедрения AI в рабочий процесс"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Четыре варианта решения и поэтапный план внедрения AI в рабочий процесс",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "color": "#334155",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Четыре варианта решения и поэтапный план внедрения AI в рабочий процесс",
+              "fontSize": 21,
+              "color": "#334155",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/rqh4vm1k",
+      "id": "8",
+      "bbox": [
+        64,
+        438,
+        220,
+        5
+      ],
+      "geometry": "rect",
+      "fillColor": "#3D8DFF",
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6p83mh0z",
+      "id": "9",
+      "bbox": [
+        64,
+        470,
+        180,
+        24
+      ],
+      "geometry": "rect",
+      "text": "Главный принцип",
+      "textPreview": "Главный принцип",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 13,
+        "typeface": "+mn-lt",
+        "color": "#3D8DFF",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Главный принцип"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Главный принцип",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "color": "#3D8DFF",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Главный принцип",
+              "fontSize": 13,
+              "color": "#3D8DFF",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wn65kzq1",
+      "id": "10",
+      "bbox": [
+        64,
+        500,
+        430,
+        64
+      ],
+      "geometry": "rect",
+      "text": "Сначала данные и контроль качества.\nПотом — автоматизация решений.",
+      "textPreview": "Сначала данные и контроль качества. | Потом — автоматизация решений.",
+      "resolvedFontSize": 21,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 21,
+        "typeface": "+mn-lt",
+        "color": "#123A68",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Сначала данные и контроль качества."
+          },
+          {
+            "index": 2,
+            "text": "Потом — автоматизация решений."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Сначала данные и контроль качества.",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "color": "#123A68",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Сначала данные и контроль качества.",
+              "fontSize": 21,
+              "color": "#123A68",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Потом — автоматизация решений.",
+          "resolvedTextStyle": {
+            "fontSize": 21,
+            "color": "#123A68",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Потом — автоматизация решений.",
+              "fontSize": 21,
+              "color": "#123A68",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/hofmd47m",
+      "id": "11",
+      "bbox": [
+        64,
+        650,
+        360,
+        20
+      ],
+      "geometry": "rect",
+      "text": "Рабочая концепция для обсуждения",
+      "textPreview": "Рабочая концепция для обсуждения",
+      "resolvedFontSize": 12,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 12,
+        "typeface": "+mn-lt",
+        "color": "#94A3B8",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Рабочая концепция для обсуждения"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Рабочая концепция для обсуждения",
+          "resolvedTextStyle": {
+            "fontSize": 12,
+            "color": "#94A3B8",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Рабочая концепция для обсуждения",
+              "fontSize": 12,
+              "color": "#94A3B8",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

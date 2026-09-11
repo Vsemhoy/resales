@@ -1,0 +1,623 @@
+{"kind":"deck","id":"pr/ntmkl2","name":"Deck"}
+{"kind":"layout","layoutId":"ba44ced3-5563-40fc-aac7-19d096dba5b9","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"068938b1-1c80-44c1-872b-3406d763b545","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/k8m8ww","slide":1,"title":"СТРАТЕГИЯ • 2026","textShapes":6}
+{"kind":"shape","id":"sh/pkjm5gzi","slide":1,"bbox":[0,0,600,720]}
+{"kind":"shape","id":"sh/oja5wbix","slide":1,"bbox":[0,0,12,720]}
+{"kind":"shape","id":"sh/feh4zm1g","slide":1,"bbox":[64,58,188,30]}
+{"kind":"textbox","id":"sh/ed83qh0v","slide":1,"text":"СТРАТЕГИЯ • 2026","textPreview":"СТРАТЕГИЯ • 2026","textChars":16,"textLines":1,"bbox":[74,64,168,17]}
+{"kind":"textbox","id":"sh/1gzm1wjm","slide":1,"text":"Автоматизация\nобложек и описаний КП","textPreview":"Автоматизация | обложек и описаний КП","textChars":35,"textLines":2,"bbox":[64,130,505,160]}
+{"kind":"textbox","id":"sh/gfq5sri1","slide":1,"text":"Четыре варианта решения и поэтапный план внедрения AI в рабочий процесс","textPreview":"Четыре варианта решения и поэтапный план внедрения AI в рабочий процесс","textChars":71,"textLines":1,"bbox":[64,316,470,88]}
+{"kind":"shape","id":"sh/rqh4vm1k","slide":1,"bbox":[64,438,220,5]}
+{"kind":"textbox","id":"sh/6p83mh0z","slide":1,"text":"Главный принцип","textPreview":"Главный принцип","textChars":15,"textLines":1,"bbox":[64,470,180,24]}
+{"kind":"textbox","id":"sh/wn65kzq1","slide":1,"text":"Сначала данные и контроль качества.\nПотом — автоматизация решений.","textPreview":"Сначала данные и контроль качества. | Потом — автоматизация решений.","textChars":66,"textLines":2,"bbox":[64,500,430,64]}
+{"kind":"textbox","id":"sh/hofmd47m","slide":1,"text":"Рабочая концепция для обсуждения","textPreview":"Рабочая концепция для обсуждения","textChars":32,"textLines":1,"bbox":[64,650,360,20]}
+{"kind":"image","id":"im/z29wbm1c","slide":1,"name":"","alt":"Поток писем, спецификаций и чертежей преобразуется в коммерческое предложение","bbox":[0,0,1280,720]}
+{"kind":"notes","id":"nt/k8m8ww","slide":1,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n- AI-generated visual, OpenAI ImageGen, 2026-08-28.\n[/Sources]"}
+{"kind":"slide","id":"sl/6pyqdm","slide":2,"title":"КОРОТКИЙ ВЫВОД","textShapes":17}
+{"kind":"shape","id":"sh/jyhkn694","slide":2,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/kzq1wbap","slide":2,"text":"КОРОТКИЙ ВЫВОД","textPreview":"КОРОТКИЙ ВЫВОД","textChars":14,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/5kz2pgra","slide":2,"text":"Рекомендация: идти ступенями, а не прыгать сразу в «полный AI»","textPreview":"Рекомендация: идти ступенями, а не прыгать сразу в «полный AI»","textChars":62,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/6l83ylsf","slide":2,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/7mhkrq90","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/snql0vql","slide":2,"bbox":[64,166,1152,104]}
+{"kind":"textbox","id":"sh/toz2t0r6","slide":2,"text":"Надёжная автоматизация возможна только после появления таксономии систем, библиотеки изображений, карточек оборудования и размеченных примеров.","textPreview":"Надёжная автоматизация возможна только после появления таксономии систем, библиотеки изображений, карточек оборудования и размеченных при...","textChars":143,"textLines":1,"bbox":[92,192,1088,54]}
+{"kind":"shape","id":"sh/up832l8r","slide":2,"bbox":[64,306,256,226]}
+{"kind":"shape","id":"sh/fq1kvq9c","slide":2,"bbox":[84,326,42,30]}
+{"kind":"textbox","id":"sh/7a5crmh4","slide":2,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[94,332,22,17]}
+{"kind":"textbox","id":"sh/6pcbih0j","slide":2,"text":"Сейчас","textPreview":"Сейчас","textChars":6,"textLines":1,"bbox":[84,372,216,28]}
+{"kind":"textbox","id":"sh/tcnutcza","slide":2,"text":"Статичная универсальная обложка — без ошибок и ожидания дизайнеров.","textPreview":"Статичная универсальная обложка — без ошибок и ожидания дизайнеров.","textChars":67,"textLines":1,"bbox":[84,414,216,96]}
+{"kind":"shape","id":"sh/8betkrip","slide":2,"bbox":[352,306,256,226]}
+{"kind":"shape","id":"sh/jmlcn2h8","slide":2,"bbox":[372,326,42,30]}
+{"kind":"textbox","id":"sh/ylcbex0n","slide":2,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[382,332,22,17]}
+{"kind":"textbox","id":"sh/lo3upczy","slide":2,"text":"Параллельно","textPreview":"Параллельно","textChars":11,"textLines":1,"bbox":[372,372,216,28]}
+{"kind":"textbox","id":"sh/knutg7it","slide":2,"text":"Собрать источники, роли, словарь назначений и эталонные КП.","textPreview":"Собрать источники, роли, словарь назначений и эталонные КП.","textChars":59,"textLines":1,"bbox":[372,414,216,96]}
+{"kind":"shape","id":"sh/3ipcz6hc","slide":2,"bbox":[640,306,256,226]}
+{"kind":"shape","id":"sh/ihwvq10r","slide":2,"bbox":[660,326,42,30]}
+{"kind":"textbox","id":"sh/epknepob","slide":2,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[670,332,22,17]}
+{"kind":"textbox","id":"sh/zqto7u5w","slide":2,"text":"После данных","textPreview":"После данных","textChars":12,"textLines":1,"bbox":[660,372,216,28]}
+{"kind":"textbox","id":"sh/0b25gz6h","slide":2,"text":"Запустить весовой классификатор и измерить точность на истории.","textPreview":"Запустить весовой классификатор и измерить точность на истории.","textChars":63,"textLines":1,"bbox":[660,414,216,96]}
+{"kind":"shape","id":"sh/1cb694n2","slide":2,"bbox":[928,306,256,226]}
+{"kind":"shape","id":"sh/mdkni9o7","slide":2,"bbox":[948,326,42,30]}
+{"kind":"textbox","id":"sh/nedobe5s","slide":2,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[958,332,22,17]}
+{"kind":"textbox","id":"sh/ofmpkj6d","slide":2,"text":"Затем","textPreview":"Затем","textChars":5,"textLines":1,"bbox":[948,372,216,28]}
+{"kind":"textbox","id":"sh/9gv6d4ny","slide":2,"text":"Подключить AI-анализ писем и файлов, генерацию текста и обложек.","textPreview":"Подключить AI-анализ писем и файлов, генерацию текста и обложек.","textChars":64,"textLines":1,"bbox":[948,414,216,96]}
+{"kind":"textbox","id":"sh/2h0n65o3","slide":2,"text":"Так мы получаем пользу сразу и не превращаем проект в шестимесячное ожидание ресурсов.","textPreview":"Так мы получаем пользу сразу и не превращаем проект в шестимесячное ожидание ресурсов.","textChars":86,"textLines":1,"bbox":[64,578,1152,38]}
+{"kind":"notes","id":"nt/6pyqdm","slide":2,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n[/Sources]"}
+{"kind":"slide","id":"sl/e989vu","slide":3,"title":"ПОЧЕМУ ЗАДАЧА СЛОЖНЕЕ, ЧЕМ ВЫБОР КАРТИНКИ","textShapes":17}
+{"kind":"shape","id":"sh/e5w3qd8j","slide":3,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/187m1sra","slide":3,"text":"ПОЧЕМУ ЗАДАЧА СЛОЖНЕЕ, ЧЕМ ВЫБОР КАРТИНКИ","textPreview":"ПОЧЕМУ ЗАДАЧА СЛОЖНЕЕ, ЧЕМ ВЫБОР КАРТИНКИ","textChars":41,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/07elsnqp","slide":3,"text":"Исходные данные не образуют единого технического задания","textPreview":"Исходные данные не образуют единого технического задания","textChars":56,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/ri54vy9s","slide":3,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/qhw3md87","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/dknmx8ry","slide":3,"bbox":[64,166,544,142]}
+{"kind":"shape","id":"sh/cjelo3qd","slide":3,"bbox":[86,186,46,30]}
+{"kind":"textbox","id":"sh/3el4ry9w","slide":3,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[96,192,26,17]}
+{"kind":"textbox","id":"sh/2dc3it8b","slide":3,"text":"«Дайте подбор!»","textPreview":"«Дайте подбор!»","textChars":15,"textLines":1,"bbox":[150,186,430,28]}
+{"kind":"textbox","id":"sh/s7idkzyp","slide":3,"text":"Одно предложение без назначения, состава и ограничений.","textPreview":"Одно предложение без назначения, состава и ограничений.","textChars":55,"textLines":1,"bbox":[150,224,430,60]}
+{"kind":"shape","id":"sh/d8rud4fa","slide":3,"bbox":[640,166,544,142]}
+{"kind":"shape","id":"sh/ql0vipgj","slide":3,"bbox":[662,186,46,30]}
+{"kind":"textbox","id":"sh/r69cbux4","slide":3,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[672,192,26,17]}
+{"kind":"textbox","id":"sh/4jydgfyd","slide":3,"text":"«Подберите замену»","textPreview":"«Подберите замену»","textChars":18,"textLines":1,"bbox":[726,186,430,28]}
+{"kind":"textbox","id":"sh/5k7u9kfy","slide":3,"text":"Спецификация может быть текстом, сканом или картинкой — иногда без количества.","textPreview":"Спецификация может быть текстом, сканом или картинкой — иногда без количества.","textChars":78,"textLines":1,"bbox":[726,224,430,60]}
+{"kind":"shape","id":"sh/ihgvepgn","slide":3,"bbox":[64,340,544,142]}
+{"kind":"shape","id":"sh/3ipc7ux8","slide":3,"bbox":[86,360,46,30]}
+{"kind":"textbox","id":"sh/of2dsjyx","slide":3,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[96,366,26,17]}
+{"kind":"textbox","id":"sh/pgbelofi","slide":3,"text":"Чертёж с расстановкой","textPreview":"Чертёж с расстановкой","textChars":21,"textLines":1,"bbox":[150,360,430,28]}
+{"kind":"textbox","id":"sh/xw7u5o7m","slide":3,"text":"PDF, JPEG или DWG; обозначения, слои и качество отличаются.","textPreview":"PDF, JPEG или DWG; обозначения, слои и качество отличаются.","textChars":59,"textLines":1,"bbox":[150,398,430,60]}
+{"kind":"shape","id":"sh/wvydwjq1","slide":3,"bbox":[640,340,544,142]}
+{"kind":"shape","id":"sh/bupc3epg","slide":3,"bbox":[662,360,46,30]}
+{"kind":"textbox","id":"sh/atgvu98v","slide":3,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[672,366,26,17]}
+{"kind":"textbox","id":"sh/9s7u147a","slide":3,"text":"Голая спецификация","textPreview":"Голая спецификация","textChars":18,"textLines":1,"bbox":[726,360,430,28]}
+{"kind":"textbox","id":"sh/orydszqp","slide":3,"text":"Перечень позиций ещё не объясняет сценарий использования системы.","textPreview":"Перечень позиций ещё не объясняет сценарий использования системы.","textChars":65,"textLines":1,"bbox":[726,398,430,60]}
+{"kind":"shape","id":"sh/n65czupk","slide":3,"bbox":[64,530,1152,88]}
+{"kind":"textbox","id":"sh/m5wvq98z","slide":3,"text":"Ключевое ограничение","textPreview":"Ключевое ограничение","textChars":20,"textLines":1,"bbox":[88,550,190,20]}
+{"kind":"textbox","id":"sh/14nux47e","slide":3,"text":"AI может извлечь и сопоставить присутствующие факты, но не может восстановить отсутствующие требования без риска выдумать их.","textPreview":"AI может извлечь и сопоставить присутствующие факты, но не может восстановить отсутствующие требования без риска выдумать их.","textChars":125,"textLines":1,"bbox":[286,544,900,48]}
+{"kind":"notes","id":"nt/e989vu","slide":3,"text":"[Sources]\n- Внутренняя выборка типов заявок и файлов, предоставленная заказчиком.\n[/Sources]"}
+{"kind":"slide","id":"sl/rp3abs","slide":4,"title":"КЛАССИФИКАЦИЯ НАЗНАЧЕНИЯ","textShapes":19}
+{"kind":"shape","id":"sh/lcveh83y","slide":4,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/y94fmtk7","slide":4,"text":"КЛАССИФИКАЦИЯ НАЗНАЧЕНИЯ","textPreview":"КЛАССИФИКАЦИЯ НАЗНАЧЕНИЯ","textChars":24,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/zadwfyls","slide":4,"text":"Название объекта отвечает на вопрос «где», но не «что строим»","textPreview":"Название объекта отвечает на вопрос «где», но не «что строим»","textChars":61,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/8fmxs329","slide":4,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/9gfel83u","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/md4fqtkj","slide":4,"bbox":[64,166,560,384]}
+{"kind":"textbox","id":"sh/7edwjylo","slide":4,"text":"Примеры поля «Объект»","textPreview":"Примеры поля «Объект»","textChars":21,"textLines":1,"bbox":[88,190,500,26]}
+{"kind":"shape","id":"sh/oj2dgjm5","slide":4,"bbox":[88,236,488,30]}
+{"kind":"textbox","id":"sh/pkbe943q","slide":4,"text":"Стоматологическая поликлиника №2","textPreview":"Стоматологическая поликлиника №2","textChars":32,"textLines":1,"bbox":[98,242,468,17]}
+{"kind":"shape","id":"sh/pwvi5c7q","slide":4,"bbox":[88,291,488,30]}
+{"kind":"textbox","id":"sh/4vmhw765","slide":4,"text":"Корякская окружная больница","textPreview":"Корякская окружная больница","textChars":27,"textLines":1,"bbox":[98,297,468,17]}
+{"kind":"shape","id":"sh/3ud032pk","slide":4,"bbox":[88,346,488,30]}
+{"kind":"textbox","id":"sh/294zuxoz","slide":4,"text":"Административно-бытовой комплекс","textPreview":"Административно-бытовой комплекс","textChars":32,"textLines":1,"bbox":[98,352,468,17]}
+{"kind":"shape","id":"sh/d0fi9c7m","slide":4,"bbox":[88,401,488,30]}
+{"kind":"textbox","id":"sh/cz6h0761","slide":4,"text":"Фабрика по переработке углей","textPreview":"Фабрика по переработке углей","textChars":28,"textLines":1,"bbox":[98,407,468,17]}
+{"kind":"shape","id":"sh/ryx07mpg","slide":4,"bbox":[88,456,488,30]}
+{"kind":"textbox","id":"sh/qx4zyhob","slide":4,"text":"Капитальный ремонт общежития","textPreview":"Капитальный ремонт общежития","textChars":28,"textLines":1,"bbox":[98,462,468,17]}
+{"kind":"textbox","id":"sh/14fidw7y","slide":4,"text":"Один и тот же объект может требовать СОУЭ, трансляцию, конференц-связь, фоновую музыку или несколько систем одновременно.","textPreview":"Один и тот же объект может требовать СОУЭ, трансляцию, конференц-связь, фоновую музыку или несколько систем одновременно.","textChars":121,"textLines":1,"bbox":[88,520,490,44]}
+{"kind":"textbox","id":"sh/036h4r6d","slide":4,"text":"≠","textPreview":"≠","textChars":1,"textLines":1,"bbox":[650,300,70,80]}
+{"kind":"shape","id":"sh/kjytwzil","slide":4,"bbox":[736,166,480,384]}
+{"kind":"textbox","id":"sh/lk7ap4j6","slide":4,"text":"Назначение системы определяется сочетанием:","textPreview":"Назначение системы определяется сочетанием:","textChars":43,"textLines":1,"bbox":[766,194,420,50]}
+{"kind":"shape","id":"sh/yhgbup0f","slide":4,"bbox":[766,271,5,52]}
+{"kind":"textbox","id":"sh/jipsnu10","slide":4,"text":"Состава оборудования","textPreview":"Состава оборудования","textChars":20,"textLines":1,"bbox":[784,266,392,25]}
+{"kind":"textbox","id":"sh/snit0zix","slide":4,"text":"Модели, категории, количества, бренды и совместимость.","textPreview":"Модели, категории, количества, бренды и совместимость.","textChars":54,"textLines":1,"bbox":[784,293,392,42]}
+{"kind":"shape","id":"sh/t8rut4z2","slide":4,"bbox":[766,353,5,52]}
+{"kind":"textbox","id":"sh/6lgbyp0r","slide":4,"text":"Контекста заявки","textPreview":"Контекста заявки","textChars":16,"textLines":1,"bbox":[784,348,392,25]}
+{"kind":"textbox","id":"sh/7mpsruhc","slide":4,"text":"Формулировки в письмах, ТЗ, схемах, примечаниях.","textPreview":"Формулировки в письмах, ТЗ, схемах, примечаниях.","textChars":48,"textLines":1,"bbox":[784,375,392,42]}
+{"kind":"shape","id":"sh/oretofid","slide":4,"bbox":[766,435,5,52]}
+{"kind":"textbox","id":"sh/9cnahkjy","slide":4,"text":"Инженерных признаков","textPreview":"Инженерных признаков","textChars":20,"textLines":1,"bbox":[784,430,392,25]}
+{"kind":"textbox","id":"sh/r6dwni1g","slide":4,"text":"Топология, зоны, каналы, мощность, резервирование.","textPreview":"Топология, зоны, каналы, мощность, резервирование.","textChars":50,"textLines":1,"bbox":[784,457,392,42]}
+{"kind":"shape","id":"sh/q5kvudkv","slide":4,"bbox":[736,574,480,54]}
+{"kind":"textbox","id":"sh/d8vepsjm","slide":4,"text":"Поле «Объект» — лишь слабый дополнительный сигнал","textPreview":"Поле «Объект» — лишь слабый дополнительный сигнал","textChars":49,"textLines":1,"bbox":[756,590,440,22]}
+{"kind":"notes","id":"nt/rp3abs","slide":4,"text":"[Sources]\n- Внутренняя выборка названий объектов, предоставленная заказчиком.\n[/Sources]"}
+{"kind":"slide","id":"sl/iqx262","slide":5,"title":"КАРТА РЕШЕНИЙ","textShapes":35}
+{"kind":"shape","id":"sh/qtkvetc7","slide":5,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/dwbu98by","slide":5,"text":"КАРТА РЕШЕНИЙ","textPreview":"КАРТА РЕШЕНИЙ","textChars":13,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/sv2dg3ad","slide":5,"text":"Четыре варианта — от мгновенного компромисса до AI-платформы","textPreview":"Четыре варианта — от мгновенного компромисса до AI-платформы","textChars":60,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/fytcbito","slide":5,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/exkvids3","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/10vud8bu","slide":5,"bbox":[64,162,266,46]}
+{"kind":"textbox","id":"sh/0zmdkna9","slide":5,"text":"Вариант","textPreview":"Вариант","textChars":7,"textLines":1,"bbox":[74,175,246,20]}
+{"kind":"shape","id":"sh/n2dcfit0","slide":5,"bbox":[330,162,170,46]}
+{"kind":"textbox","id":"sh/214vmdsf","slide":5,"text":"Запуск","textPreview":"Запуск","textChars":6,"textLines":1,"bbox":[340,175,150,20]}
+{"kind":"shape","id":"sh/ojats365","slide":5,"bbox":[500,162,170,46]}
+{"kind":"textbox","id":"sh/pkja18nq","slide":5,"text":"Автоматизация","textPreview":"Автоматизация","textChars":13,"textLines":1,"bbox":[510,175,150,20]}
+{"kind":"shape","id":"sh/2hsbqtoz","slide":5,"bbox":[670,162,170,46]}
+{"kind":"textbox","id":"sh/3i1szy5k","slide":5,"text":"Точность","textPreview":"Точность","textChars":8,"textLines":1,"bbox":[680,175,150,20]}
+{"kind":"shape","id":"sh/c7atw361","slide":5,"bbox":[840,162,170,46]}
+{"kind":"textbox","id":"sh/d8ja58nm","slide":5,"text":"Зависимость","textPreview":"Зависимость","textChars":11,"textLines":1,"bbox":[850,175,150,20]}
+{"kind":"shape","id":"sh/qlsbutob","slide":5,"bbox":[1010,162,206,46]}
+{"kind":"textbox","id":"sh/b61s3y5g","slide":5,"text":"Вывод","textPreview":"Вывод","textChars":5,"textLines":1,"bbox":[1020,175,186,20]}
+{"kind":"shape","id":"sh/0but0n6d","slide":5,"bbox":[64,208,266,78]}
+{"kind":"shape","id":"sh/lc3u9sny","slide":5,"bbox":[64,285,266,1]}
+{"kind":"textbox","id":"sh/9gf2xobq","slide":5,"text":"1. Ручной выбор","textPreview":"1. Ручной выбор","textChars":15,"textLines":1,"bbox":[74,227,246,42]}
+{"kind":"shape","id":"sh/8v614ja5","slide":5,"bbox":[330,208,170,78]}
+{"kind":"shape","id":"sh/nuxkvetk","slide":5,"bbox":[330,285,170,1]}
+{"kind":"textbox","id":"sh/mtoj29sz","slide":5,"text":"6+ мес.","textPreview":"6+ мес.","textChars":7,"textLines":1,"bbox":[340,227,150,42]}
+{"kind":"shape","id":"sh/xkz21obm","slide":5,"bbox":[500,208,170,78]}
+{"kind":"shape","id":"sh/wjq18ja1","slide":5,"bbox":[500,285,170,1]}
+{"kind":"textbox","id":"sh/vihkzytw","slide":5,"text":"Низкая","textPreview":"Низкая","textChars":6,"textLines":1,"bbox":[510,227,150,42]}
+{"kind":"shape","id":"sh/ahoj6tsb","slide":5,"bbox":[670,208,170,78]}
+{"kind":"shape","id":"sh/dovip4bi","slide":5,"bbox":[670,285,170,1]}
+{"kind":"textbox","id":"sh/cnm1wzux","slide":5,"text":"Высокая*","textPreview":"Высокая*","textChars":8,"textLines":1,"bbox":[680,227,150,42]}
+{"kind":"shape","id":"sh/2tkzq58v","slide":5,"bbox":[840,208,170,78]}
+{"kind":"shape","id":"sh/3utgza9g","slide":5,"bbox":[840,285,170,1]}
+{"kind":"textbox","id":"sh/ov2hsfq1","slide":5,"text":"Дизайнеры","textPreview":"Дизайнеры","textChars":9,"textLines":1,"bbox":[850,227,150,42]}
+{"kind":"shape","id":"sh/pwby10r6","slide":5,"bbox":[1010,208,206,78]}
+{"kind":"shape","id":"sh/qxkzu58r","slide":5,"bbox":[1010,285,206,1]}
+{"kind":"textbox","id":"sh/bytg3a9c","slide":5,"text":"Понятно, но долго","textPreview":"Понятно, но долго","textChars":17,"textLines":1,"bbox":[1020,227,186,42]}
+{"kind":"shape","id":"sh/czmhwfqx","slide":5,"bbox":[64,286,266,78]}
+{"kind":"shape","id":"sh/d0vi5kri","slide":5,"bbox":[64,363,266,1]}
+{"kind":"textbox","id":"sh/610filsn","slide":5,"text":"2. Веса + библиотека","textPreview":"2. Веса + библиотека","textChars":20,"textLines":1,"bbox":[74,305,246,42]}
+{"kind":"shape","id":"sh/r29grq98","slide":5,"bbox":[330,286,170,78]}
+{"kind":"shape","id":"sh/7y1wv21w","slide":5,"bbox":[330,363,170,1]}
+{"kind":"textbox","id":"sh/mxsfmxkb","slide":5,"text":"2 + 6 мес.","textPreview":"2 + 6 мес.","textChars":10,"textLines":1,"bbox":[340,305,150,42]}
+{"kind":"shape","id":"sh/9kjexcj2","slide":5,"bbox":[500,286,170,78]}
+{"kind":"shape","id":"sh/8jaxo72h","slide":5,"bbox":[500,363,170,1]}
+{"kind":"textbox","id":"sh/vm1wzm18","slide":5,"text":"Средняя","textPreview":"Средняя","textChars":7,"textLines":1,"bbox":[510,305,150,42]}
+{"kind":"shape","id":"sh/ulsfqhkn","slide":5,"bbox":[670,286,170,78]}
+{"kind":"shape","id":"sh/ho3e1wjy","slide":5,"bbox":[670,363,170,1]}
+{"kind":"textbox","id":"sh/wnuxsr2d","slide":5,"text":"Низкая–средняя","textPreview":"Низкая–средняя","textChars":14,"textLines":1,"bbox":[680,305,150,42]}
+{"kind":"shape","id":"sh/jqlw3m14","slide":5,"bbox":[840,286,170,78]}
+{"kind":"shape","id":"sh/ipcfuhkj","slide":5,"bbox":[840,363,170,1]}
+{"kind":"textbox","id":"sh/0vedkryx","slide":5,"text":"Данные + дизайн","textPreview":"Данные + дизайн","textChars":15,"textLines":1,"bbox":[850,305,150,42]}
+{"kind":"shape","id":"sh/1wnedwzi","slide":5,"bbox":[1010,286,206,78]}
+{"kind":"shape","id":"sh/etcvi1gr","slide":5,"bbox":[1010,363,206,1]}
+{"kind":"textbox","id":"sh/fu5wr6hc","slide":5,"text":"Проверяемая база","textPreview":"Проверяемая база","textChars":16,"textLines":1,"bbox":[1020,305,186,42]}
+{"kind":"shape","id":"sh/srudgryl","slide":5,"bbox":[64,364,266,78]}
+{"kind":"shape","id":"sh/ds3epwz6","slide":5,"bbox":[64,441,266,1]}
+{"kind":"textbox","id":"sh/6pcvehgv","slide":5,"text":"3. Статичная обложка","textPreview":"3. Статичная обложка","textChars":20,"textLines":1,"bbox":[74,383,246,42]}
+{"kind":"shape","id":"sh/rqlwnmh0","slide":5,"bbox":[330,364,170,78]}
+{"kind":"shape","id":"sh/4nudc7ip","slide":5,"bbox":[330,441,170,1]}
+{"kind":"textbox","id":"sh/5o3ulcza","slide":5,"text":"Сразу","textPreview":"Сразу","textChars":5,"textLines":1,"bbox":[340,383,150,42]}
+{"kind":"shape","id":"sh/l8b2t4nm","slide":5,"bbox":[500,364,170,78]}
+{"kind":"shape","id":"sh/k72l0j61","slide":5,"bbox":[500,441,170,1]}
+{"kind":"textbox","id":"sh/z6tkre5w","slide":5,"text":"Нет","textPreview":"Нет","textChars":3,"textLines":1,"bbox":[510,383,150,42]}
+{"kind":"shape","id":"sh/y50jy9ob","slide":5,"bbox":[670,364,170,78]}
+{"kind":"shape","id":"sh/x4r2p4nq","slide":5,"bbox":[670,441,170,1]}
+{"kind":"textbox","id":"sh/c3i1wz65","slide":5,"text":"Стабильная","textPreview":"Стабильная","textChars":10,"textLines":1,"bbox":[680,383,150,42]}
+{"kind":"shape","id":"sh/bi9knu5k","slide":5,"bbox":[840,364,170,78]}
+{"kind":"shape","id":"sh/ah0jupoz","slide":5,"bbox":[840,441,170,1]}
+{"kind":"textbox","id":"sh/h0v21onu","slide":5,"text":"Нет","textPreview":"Нет","textChars":3,"textLines":1,"bbox":[850,383,150,42]}
+{"kind":"shape","id":"sh/wzml8369","slide":5,"bbox":[1010,364,206,78]}
+{"kind":"shape","id":"sh/elwzml4r","slide":5,"bbox":[1010,441,206,1]}
+{"kind":"textbox","id":"sh/fmp0vqlc","slide":5,"text":"Лучший быстрый шаг","textPreview":"Лучший быстрый шаг","textChars":18,"textLines":1,"bbox":[1020,383,186,42]}
+{"kind":"shape","id":"sh/0nyhovmx","slide":5,"bbox":[64,442,266,78]}
+{"kind":"shape","id":"sh/1o7ix03i","slide":5,"bbox":[64,519,266,1]}
+{"kind":"textbox","id":"sh/qhwzil4v","slide":5,"text":"4. AI-анализатор","textPreview":"4. AI-анализатор","textChars":16,"textLines":1,"bbox":[74,461,246,42]}
+{"kind":"shape","id":"sh/ri5grqlg","slide":5,"bbox":[330,442,170,78]}
+{"kind":"shape","id":"sh/sjehkvml","slide":5,"bbox":[330,519,170,1]}
+{"kind":"textbox","id":"sh/dknit036","slide":5,"text":"После 2","textPreview":"После 2","textChars":7,"textLines":1,"bbox":[340,461,150,42]}
+{"kind":"shape","id":"sh/adgzu54z","slide":5,"bbox":[500,442,170,78]}
+{"kind":"shape","id":"sh/be903alk","slide":5,"bbox":[500,519,170,1]}
+{"kind":"textbox","id":"sh/ju50nado","slide":5,"text":"Высокая","textPreview":"Высокая","textChars":7,"textLines":1,"bbox":[510,461,150,42]}
+{"kind":"shape","id":"sh/ytwze5w3","slide":5,"bbox":[670,442,170,78]}
+{"kind":"shape","id":"sh/lwnipkvu","slide":5,"bbox":[670,519,170,1]}
+{"kind":"textbox","id":"sh/kvehgfe9","slide":5,"text":"Растёт с данными","textPreview":"Растёт с данными","textChars":16,"textLines":1,"bbox":[680,461,150,42]}
+{"kind":"shape","id":"sh/b6lgjads","slide":5,"bbox":[840,442,170,78]}
+{"kind":"shape","id":"sh/a5cza5w7","slide":5,"bbox":[840,519,170,1]}
+{"kind":"textbox","id":"sh/x83yl0vi","slide":5,"text":"ML + разметка","textPreview":"ML + разметка","textChars":13,"textLines":1,"bbox":[850,461,150,42]}
+{"kind":"shape","id":"sh/w7uhcvex","slide":5,"bbox":[1010,442,206,78]}
+{"kind":"shape","id":"sh/n2lgfqdg","slide":5,"bbox":[1010,519,206,1]}
+{"kind":"textbox","id":"sh/m1cz6lwv","slide":5,"text":"Стратегическая цель","textPreview":"Стратегическая цель","textChars":19,"textLines":1,"bbox":[1020,461,186,42]}
+{"kind":"textbox","id":"sh/sv650nqh","slide":5,"text":"* При наличии готовой и правильно выбранной менеджером иллюстрации.","textPreview":"* При наличии готовой и правильно выбранной менеджером иллюстрации.","textChars":67,"textLines":1,"bbox":[64,548,600,22]}
+{"kind":"shape","id":"sh/twz6ts72","slide":5,"bbox":[64,586,1152,52]}
+{"kind":"textbox","id":"sh/6tonyx8r","slide":5,"text":"Вариант 3 закрывает сегодняшний риск. Вариант 4 — отдельная программа цифровизации, а не «ещё одна функция PDF».","textPreview":"Вариант 3 закрывает сегодняшний риск. Вариант 4 — отдельная программа цифровизации, а не «ещё одна функция PDF».","textChars":112,"textLines":1,"bbox":[84,601,1112,24]}
+{"kind":"notes","id":"nt/iqx262","slide":5,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n[/Sources]"}
+{"kind":"slide","id":"sl/d1a0k0","slide":6,"title":"РУЧНОЙ СЦЕНАРИЙ","textShapes":22}
+{"kind":"shape","id":"sh/p47ip4f6","slide":6,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/2hwzepgf","slide":6,"text":"РУЧНОЙ СЦЕНАРИЙ","textPreview":"РУЧНОЙ СЦЕНАРИЙ","textChars":15,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/32p0nux0","slide":6,"text":"Вариант 1. Дизайнерская библиотека + ручной выбор","textPreview":"Вариант 1. Дизайнерская библиотека + ручной выбор","textChars":49,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/c7yhkzyh","slide":6,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/d87it4f2","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/q5gzi9gb","slide":6,"bbox":[64,168,180,30]}
+{"kind":"textbox","id":"sh/b6p0rexw","slide":6,"text":"ДИЗАЙНЕРЫ","textPreview":"ДИЗАЙНЕРЫ","textChars":9,"textLines":1,"bbox":[74,174,160,17]}
+{"kind":"textbox","id":"sh/sbeh8fyd","slide":6,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[258,164,50,38]}
+{"kind":"shape","id":"sh/tcnyhkfy","slide":6,"bbox":[318,168,180,30]}
+{"kind":"textbox","id":"sh/xsr2lcr2","slide":6,"text":"БИБЛИОТЕКА","textPreview":"БИБЛИОТЕКА","textChars":10,"textLines":1,"bbox":[328,174,160,17]}
+{"kind":"textbox","id":"sh/crils7ah","slide":6,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[512,164,50,38]}
+{"kind":"shape","id":"sh/bq9kj29w","slide":6,"bbox":[572,168,180,30]}
+{"kind":"textbox","id":"sh/ap0jqxsr","slide":6,"text":"МЕНЕДЖЕР","textPreview":"МЕНЕДЖЕР","textChars":8,"textLines":1,"bbox":[582,174,160,17]}
+{"kind":"textbox","id":"sh/lgb2pcre","slide":6,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[766,164,50,38]}
+{"kind":"shape","id":"sh/kf2lw7at","slide":6,"bbox":[826,168,120,30]}
+{"kind":"textbox","id":"sh/zetkn298","slide":6,"text":"КП","textPreview":"КП","textChars":2,"textLines":1,"bbox":[836,174,100,17]}
+{"kind":"shape","id":"sh/ytk3uhsn","slide":6,"bbox":[64,240,552,292]}
+{"kind":"textbox","id":"sh/9kv2twra","slide":6,"text":"Что потребуется","textPreview":"Что потребуется","textChars":15,"textLines":1,"bbox":[88,266,500,28]}
+{"kind":"shape","id":"sh/8j2l0rap","slide":6,"bbox":[88,323,5,52]}
+{"kind":"textbox","id":"sh/sna5wvi1","slide":6,"text":"Набор обложек","textPreview":"Набор обложек","textChars":13,"textLines":1,"bbox":[106,318,462,25]}
+{"kind":"textbox","id":"sh/to3mp0zm","slide":6,"text":"По брендам, назначениям и композициям.","textPreview":"По брендам, назначениям и композициям.","textChars":38,"textLines":1,"bbox":[106,345,462,42]}
+{"kind":"shape","id":"sh/6lsnul0v","slide":6,"bbox":[88,403,5,52]}
+{"kind":"textbox","id":"sh/rm14nqhg","slide":6,"text":"Каталог с превью","textPreview":"Каталог с превью","textChars":16,"textLines":1,"bbox":[106,398,462,25]}
+{"kind":"textbox","id":"sh/gru50fix","slide":6,"text":"Понятные имена, фильтры и правила использования.","textPreview":"Понятные имена, фильтры и правила использования.","textChars":48,"textLines":1,"bbox":[106,425,462,42]}
+{"kind":"shape","id":"sh/1s3mt0zi","slide":6,"bbox":[88,483,5,52]}
+{"kind":"textbox","id":"sh/epcny507","slide":6,"text":"Время менеджера","textPreview":"Время менеджера","textChars":15,"textLines":1,"bbox":[106,478,462,25]}
+{"kind":"textbox","id":"sh/fql4rahc","slide":6,"text":"Каждое КП требует осознанного ручного выбора.","textPreview":"Каждое КП требует осознанного ручного выбора.","textChars":45,"textLines":1,"bbox":[106,505,462,42]}
+{"kind":"shape","id":"sh/wvqlobit","slide":6,"bbox":[648,240,568,292]}
+{"kind":"textbox","id":"sh/xwzmhgze","slide":6,"text":"Ограничение ресурса","textPreview":"Ограничение ресурса","textChars":19,"textLines":1,"bbox":[672,266,520,28]}
+{"kind":"textbox","id":"sh/zqp8ne1w","slide":6,"text":"≈ 6+ месяцев","textPreview":"≈ 6+ месяцев","textChars":12,"textLines":1,"bbox":[672,318,230,48]}
+{"kind":"textbox","id":"sh/ypg7u9kb","slide":6,"text":"ожидание доступности дизайнеров и выпуска библиотеки","textPreview":"ожидание доступности дизайнеров и выпуска библиотеки","textChars":52,"textLines":1,"bbox":[672,366,230,42]}
+{"kind":"textbox","id":"sh/lc7qpoj2","slide":6,"text":"Сценарий не зависит от качества AI, но полностью зависит от наличия визуалов и дисциплины выбора.","textPreview":"Сценарий не зависит от качества AI, но полностью зависит от наличия визуалов и дисциплины выбора.","textChars":97,"textLines":1,"bbox":[672,424,500,70]}
+{"kind":"shape","id":"sh/0bypwj2h","slide":6,"bbox":[64,570,1152,62]}
+{"kind":"textbox","id":"sh/bm58je1k","slide":6,"text":"Подходит как контролируемый ручной процесс — но не решает задачу «менеджер не должен думать и выбирать».","textPreview":"Подходит как контролируемый ручной процесс — но не решает задачу «менеджер не должен думать и выбирать».","textChars":104,"textLines":1,"bbox":[88,588,1104,30]}
+{"kind":"notes","id":"nt/d1a0k0","slide":6,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n[/Sources]"}
+{"kind":"slide","id":"sl/nv8yhn","slide":7,"title":"ВАРИАНТ 2 • АЛГОРИТМИЧЕСКАЯ АВТОМАТИЗАЦИЯ","textShapes":31}
+{"kind":"shape","id":"sh/d87u90bm","slide":7,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/q5gbe5cb","slide":7,"text":"ВАРИАНТ 2 • АЛГОРИТМИЧЕСКАЯ АВТОМАТИЗАЦИЯ","textPreview":"ВАРИАНТ 2 • АЛГОРИТМИЧЕСКАЯ АВТОМАТИЗАЦИЯ","textChars":41,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/r6ps7qtg","slide":7,"text":"Весовая классификация по спецификации","textPreview":"Весовая классификация по спецификации","textChars":37,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/43ytcvu5","slide":7,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/p47a50bq","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"textbox","id":"sh/21wbalcz","slide":7,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[310,212,36,42]}
+{"kind":"shape","id":"sh/325s3qtk","slide":7,"bbox":[64,174,244,118]}
+{"kind":"textbox","id":"sh/ozitofu9","slide":7,"text":"Спецификация","textPreview":"Спецификация","textChars":12,"textLines":1,"bbox":[82,194,208,26]}
+{"kind":"textbox","id":"sh/90ruhkbu","slide":7,"text":"Модели • бренды • количество","textPreview":"Модели • бренды • количество","textChars":28,"textLines":1,"bbox":[82,232,208,34]}
+{"kind":"textbox","id":"sh/1ozah0r6","slide":7,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[592,212,36,42]}
+{"kind":"shape","id":"sh/gnq9ofal","slide":7,"bbox":[346,174,244,118]}
+{"kind":"textbox","id":"sh/fmhsfa90","slide":7,"text":"Веса оборудования","textPreview":"Веса оборудования","textChars":17,"textLines":1,"bbox":[364,194,208,26]}
+{"kind":"textbox","id":"sh/el8rm5sf","slide":7,"text":"P(назначение | позиция)","textPreview":"P(назначение | позиция)","textChars":23,"textLines":1,"bbox":[364,232,208,34]}
+{"kind":"textbox","id":"sh/tkzad0ru","slide":7,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[874,212,36,42]}
+{"kind":"shape","id":"sh/sjq9kva9","slide":7,"bbox":[628,174,244,118]}
+{"kind":"textbox","id":"sh/rihsbq94","slide":7,"text":"Сумма и правила","textPreview":"Сумма и правила","textChars":15,"textLines":1,"bbox":[646,194,208,26]}
+{"kind":"textbox","id":"sh/6horilsj","slide":7,"text":"Сигналы + ограничения","textPreview":"Сигналы + ограничения","textChars":21,"textLines":1,"bbox":[646,232,208,34]}
+{"kind":"shape","id":"sh/dgjapkre","slide":7,"bbox":[910,174,244,118]}
+{"kind":"textbox","id":"sh/cfatwzat","slide":7,"text":"Обложка","textPreview":"Обложка","textChars":7,"textLines":1,"bbox":[928,194,208,26]}
+{"kind":"textbox","id":"sh/wv2l8nm1","slide":7,"text":"Бренд × назначение","textPreview":"Бренд × назначение","textChars":18,"textLines":1,"bbox":[928,232,208,34]}
+{"kind":"shape","id":"sh/hwbmhs3m","slide":7,"bbox":[64,330,720,220]}
+{"kind":"textbox","id":"sh/atk36x4b","slide":7,"text":"Минимальная модель данных","textPreview":"Минимальная модель данных","textChars":25,"textLines":1,"bbox":[88,352,680,26]}
+{"kind":"textbox","id":"sh/vut4filg","slide":7,"text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[92,392,18,20]}
+{"kind":"textbox","id":"sh/872l4nm5","slide":7,"text":"Справочник назначений и типов систем","textPreview":"Справочник назначений и типов систем","textChars":36,"textLines":1,"bbox":[116,391,620,22]}
+{"kind":"textbox","id":"sh/9sbmds3q","slide":7,"text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[92,421,18,20]}
+{"kind":"textbox","id":"sh/m5032d4z","slide":7,"text":"Категория, бренд и модель каждой позиции","textPreview":"Категория, бренд и модель каждой позиции","textChars":40,"textLines":1,"bbox":[116,420,620,22]}
+{"kind":"textbox","id":"sh/n69kbilk","slide":7,"text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[92,450,18,20]}
+{"kind":"textbox","id":"sh/03il03mt","slide":7,"text":"Матрица весов: позиция → назначение","textPreview":"Матрица весов: позиция → назначение","textChars":35,"textLines":1,"bbox":[116,449,620,22]}
+{"kind":"textbox","id":"sh/l4r2983e","slide":7,"text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[92,479,18,20]}
+{"kind":"textbox","id":"sh/3yp4jypg","slide":7,"text":"Правила конфликтов, пороги уверенности","textPreview":"Правила конфликтов, пороги уверенности","textChars":38,"textLines":1,"bbox":[116,478,620,22]}
+{"kind":"textbox","id":"sh/2xg3atov","slide":7,"text":"•","textPreview":"•","textChars":1,"textLines":1,"bbox":[92,508,18,20]}
+{"kind":"textbox","id":"sh/p0rml876","slide":7,"text":"Библиотека обложек с такой же разметкой","textPreview":"Библиотека обложек с такой же разметкой","textChars":39,"textLines":1,"bbox":[116,507,620,22]}
+{"kind":"shape","id":"sh/ozy5c361","slide":7,"bbox":[816,330,400,220]}
+{"kind":"textbox","id":"sh/b294ni5c","slide":7,"text":"Оценка","textPreview":"Оценка","textChars":6,"textLines":1,"bbox":[840,352,350,26]}
+{"kind":"textbox","id":"sh/q10nedor","slide":7,"text":"≈ 2 месяца","textPreview":"≈ 2 месяца","textChars":10,"textLines":1,"bbox":[840,394,330,48]}
+{"kind":"textbox","id":"sh/d4rmpsni","slide":7,"text":"алгоритм, интерфейсы разметки и первичная настройка","textPreview":"алгоритм, интерфейсы разметки и первичная настройка","textChars":51,"textLines":1,"bbox":[840,442,330,42]}
+{"kind":"textbox","id":"sh/c3i5gn6x","slide":7,"text":"6+ месяцев","textPreview":"6+ месяцев","textChars":10,"textLines":1,"bbox":[840,474,330,48]}
+{"kind":"textbox","id":"sh/zq94ri5o","slide":7,"text":"создание обложек и коллажей дизайнерами","textPreview":"создание обложек и коллажей дизайнерами","textChars":39,"textLines":1,"bbox":[840,522,330,42]}
+{"kind":"shape","id":"sh/y50nido3","slide":7,"bbox":[64,584,1152,54]}
+{"kind":"textbox","id":"sh/i987e1wz","slide":7,"text":"Точность будет ограниченной: одинаковый состав может использоваться в разных сценариях, а часть ТЗ отсутствует.","textPreview":"Точность будет ограниченной: одинаковый состав может использоваться в разных сценариях, а часть ТЗ отсутствует.","textChars":111,"textLines":1,"bbox":[84,600,1112,22]}
+{"kind":"notes","id":"nt/nv8yhn","slide":7,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n[/Sources]"}
+{"kind":"slide","id":"sl/pjgrkw","slide":8,"title":"БЫСТРОЕ РЕШЕНИЕ","textShapes":13}
+{"kind":"shape","id":"sh/p8jyxkr2","slide":8,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/258fm58b","slide":8,"text":"БЫСТРОЕ РЕШЕНИЕ","textPreview":"БЫСТРОЕ РЕШЕНИЕ","textChars":15,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/n61gva9w","slide":8,"text":"Вариант 3. Одна абстрактная обложка","textPreview":"Вариант 3. Одна абстрактная обложка","textChars":35,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/cbahsfqd","slide":8,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/xcjy1kry","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/a9sfq587","slide":8,"bbox":[64,166,500,404]}
+{"kind":"textbox","id":"sh/ba1gza9s","slide":8,"text":"ОДИН\nВИЗУАЛ","textPreview":"ОДИН | ВИЗУАЛ","textChars":11,"textLines":2,"bbox":[96,204,300,102]}
+{"kind":"shape","id":"sh/kfuhwzqp","slide":8,"bbox":[96,338,372,8]}
+{"kind":"shape","id":"sh/lg3y54ru","slide":8,"bbox":[96,364,290,8]}
+{"kind":"shape","id":"sh/x8judk36","slide":8,"bbox":[96,390,212,8]}
+{"kind":"textbox","id":"sh/w7qtkf2l","slide":8,"text":"Нейтральная композиция без привязки к конкретному оборудованию и назначению.","textPreview":"Нейтральная композиция без привязки к конкретному оборудованию и назначению.","textChars":76,"textLines":1,"bbox":[96,452,400,72]}
+{"kind":"textbox","id":"sh/v6hcbul0","slide":8,"text":"Почему это разумно сейчас","textPreview":"Почему это разумно сейчас","textChars":25,"textLines":1,"bbox":[616,174,560,34]}
+{"kind":"shape","id":"sh/a58bipkv","slide":8,"bbox":[616,243,5,52]}
+{"kind":"textbox","id":"sh/5wjuh4ji","slide":8,"text":"Запуск без ожидания","textPreview":"Запуск без ожидания","textChars":19,"textLines":1,"bbox":[634,238,542,25]}
+{"kind":"textbox","id":"sh/kvadoz2x","slide":8,"text":"Не зависит от дизайнерской очереди и разметки.","textPreview":"Не зависит от дизайнерской очереди и разметки.","textChars":46,"textLines":1,"bbox":[634,265,542,42]}
+{"kind":"shape","id":"sh/ju1cfu1c","slide":8,"bbox":[616,331,5,52]}
+{"kind":"textbox","id":"sh/itsbmpkr","slide":8,"text":"Нулевая ошибка выбора","textPreview":"Нулевая ошибка выбора","textChars":21,"textLines":1,"bbox":[634,326,542,25]}
+{"kind":"textbox","id":"sh/l0zu503y","slide":8,"text":"Нельзя поставить «не ту» систему или чужой бренд.","textPreview":"Нельзя поставить «не ту» систему или чужой бренд.","textChars":49,"textLines":1,"bbox":[634,353,542,42]}
+{"kind":"shape","id":"sh/0z6tcv2d","slide":8,"bbox":[616,419,5,52]}
+{"kind":"textbox","id":"sh/cjatsfa9","slide":8,"text":"Стабильный фирменный стиль","textPreview":"Стабильный фирменный стиль","textChars":26,"textLines":1,"bbox":[634,414,542,25]}
+{"kind":"textbox","id":"sh/dkju1kbu","slide":8,"text":"КП выглядит единообразно на всех сценариях.","textPreview":"КП выглядит единообразно на всех сценариях.","textChars":43,"textLines":1,"bbox":[634,441,542,42]}
+{"kind":"shape","id":"sh/qhsbq5sj","slide":8,"bbox":[616,516,560,72]}
+{"kind":"textbox","id":"sh/ri1czato","slide":8,"text":"Рекомендуемый базовый вариант\nдо готовности данных и библиотеки визуалов","textPreview":"Рекомендуемый базовый вариант | до готовности данных и библиотеки визуалов","textChars":72,"textLines":2,"bbox":[640,530,512,48]}
+{"kind":"notes","id":"nt/pjgrkw","slide":8,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n[/Sources]"}
+{"kind":"slide","id":"sl/c782ah","slide":9,"title":"ВАРИАНТ 4","textShapes":25}
+{"kind":"shape","id":"sh/9sjix0ba","slide":9,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/m5szmlsj","slide":9,"text":"ВАРИАНТ 4","textPreview":"ВАРИАНТ 4","textChars":9,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/7610vqt4","slide":9,"text":"AI-анализатор контекста — отдельная платформа","textPreview":"AI-анализатор контекста — отдельная платформа","textChars":45,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/wva1sval","slide":9,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/hw3il0r6","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/utsjq5sv","slide":9,"bbox":[64,172,206,246]}
+{"kind":"shape","id":"sh/vu10zatg","slide":9,"bbox":[82,190,42,30]}
+{"kind":"textbox","id":"sh/4zu1wfax","slide":9,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[92,196,22,17]}
+{"kind":"textbox","id":"sh/503ipkri","slide":9,"text":"Вход","textPreview":"Вход","textChars":4,"textLines":1,"bbox":[82,240,170,28]}
+{"kind":"textbox","id":"sh/tobu1kni","slide":9,"text":"Письма, PDF, JPEG, DWG, таблицы","textPreview":"Письма, PDF, JPEG, DWG, таблицы","textChars":31,"textLines":1,"bbox":[82,282,170,84]}
+{"kind":"textbox","id":"sh/sn2dsfmx","slide":9,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[270,270,24,40]}
+{"kind":"shape","id":"sh/7mtcza5s","slide":9,"bbox":[294,172,206,246]}
+{"kind":"shape","id":"sh/6lkvqp47","slide":9,"bbox":[312,190,42,30]}
+{"kind":"textbox","id":"sh/hsvu54nu","slide":9,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[322,196,22,17]}
+{"kind":"textbox","id":"sh/grmdwzm9","slide":9,"text":"Понимание","textPreview":"Понимание","textChars":9,"textLines":1,"bbox":[312,240,170,28]}
+{"kind":"textbox","id":"sh/fqdc3u5o","slide":9,"text":"OCR, структура, сущности, схемы","textPreview":"OCR, структура, сущности, схемы","textChars":31,"textLines":1,"bbox":[312,282,170,84]}
+{"kind":"textbox","id":"sh/up4vup43","slide":9,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[500,270,24,40]}
+{"kind":"shape","id":"sh/xwrut0na","slide":9,"bbox":[524,172,206,246]}
+{"kind":"shape","id":"sh/wvitkvm5","slide":9,"bbox":[542,190,42,30]}
+{"kind":"textbox","id":"sh/ozmdgful","slide":9,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[552,196,22,17]}
+{"kind":"textbox","id":"sh/90vu90v6","slide":9,"text":"Классификация","textPreview":"Классификация","textChars":13,"textLines":1,"bbox":[542,240,170,28]}
+{"kind":"textbox","id":"sh/md4ve5cv","slide":9,"text":"Назначение + вероятность + пробелы","textPreview":"Назначение + вероятность + пробелы","textChars":34,"textLines":1,"bbox":[542,282,170,84]}
+{"kind":"textbox","id":"sh/nydc7adg","slide":9,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[730,270,24,40]}
+{"kind":"shape","id":"sh/w36dkfux","slide":9,"bbox":[754,172,206,246]}
+{"kind":"shape","id":"sh/x4fedkvi","slide":9,"bbox":[772,190,42,30]}
+{"kind":"textbox","id":"sh/a14vi5cr","slide":9,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[782,196,22,17]}
+{"kind":"textbox","id":"sh/b2xcbadc","slide":9,"text":"Генерация","textPreview":"Генерация","textChars":9,"textLines":1,"bbox":[772,240,170,28]}
+{"kind":"textbox","id":"sh/k76dozut","slide":9,"text":"Обложка, описание, состав решения","textPreview":"Обложка, описание, состав решения","textChars":33,"textLines":1,"bbox":[772,282,170,84]}
+{"kind":"textbox","id":"sh/l8fehkve","slide":9,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[960,270,24,40]}
+{"kind":"shape","id":"sh/fe1o3i1s","slide":9,"bbox":[984,172,206,246]}
+{"kind":"shape","id":"sh/uds7ud07","slide":9,"bbox":[1002,190,42,30]}
+{"kind":"textbox","id":"sh/h0365sjy","slide":9,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[1012,196,22,17]}
+{"kind":"textbox","id":"sh/gzupwnid","slide":9,"text":"Контроль","textPreview":"Контроль","textChars":8,"textLines":1,"bbox":[1002,240,170,28]}
+{"kind":"textbox","id":"sh/7a1ozi1w","slide":9,"text":"Факты, бренды, уверенность, человек","textPreview":"Факты, бренды, уверенность, человек","textChars":35,"textLines":1,"bbox":[1002,282,170,84]}
+{"kind":"shape","id":"sh/69s7qd0b","slide":9,"bbox":[64,456,1152,98]}
+{"kind":"textbox","id":"sh/tcj618j2","slide":9,"text":"Необходимое правило безопасности","textPreview":"Необходимое правило безопасности","textChars":32,"textLines":1,"bbox":[88,476,300,22]}
+{"kind":"textbox","id":"sh/sbapsnih","slide":9,"text":"Если данных недостаточно или уверенность ниже порога — система не «угадывает», а формирует список вопросов и отправляет заявку инженеру.","textPreview":"Если данных недостаточно или уверенность ниже порога — система не «угадывает», а формирует список вопросов и отправляет заявку инженеру.","textChars":136,"textLines":1,"bbox":[88,506,1080,34]}
+{"kind":"textbox","id":"sh/r658v210","slide":9,"text":"AI снижает ручную работу только там, где факты реально присутствуют в переписке и файлах.","textPreview":"AI снижает ручную работу только там, где факты реально присутствуют в переписке и файлах.","textChars":89,"textLines":1,"bbox":[64,590,1152,30]}
+{"kind":"notes","id":"nt/c782ah","slide":9,"text":"[Sources]\n- PaddleOCR-VL: https://www.paddleocr.ai/main/en/version3.x/algorithm/PaddleOCR-VL/PaddleOCR-VL-1.6.html\n- Docling supported formats: https://docling-project.github.io/docling/usage/supported_formats/\n- Qwen3-VL: https://github.com/QwenLM/Qwen3-VL\n[/Sources]"}
+{"kind":"slide","id":"sl/mctl39","slide":10,"title":"НЕСКОЛЬКО МОДЕЛЕЙ • ЕДИНАЯ ПРОВЕРЯЕМАЯ СХЕМА","textShapes":28}
+{"kind":"shape","id":"sh/e5kfepc3","slide":10,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/1sve94be","slide":10,"text":"НЕСКОЛЬКО МОДЕЛЕЙ • ЕДИНАЯ ПРОВЕРЯЕМАЯ СХЕМА","textPreview":"НЕСКОЛЬКО МОДЕЛЕЙ • ЕДИНАЯ ПРОВЕРЯЕМАЯ СХЕМА","textChars":44,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/grmxgzut","slide":10,"text":"Архитектура AI-конвейера","textPreview":"Архитектура AI-конвейера","textChars":24,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/r2tw3utc","slide":10,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/61kvapcr","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/t4be5kbi","slide":10,"bbox":[64,178,246,116]}
+{"kind":"textbox","id":"sh/s32xczux","slide":10,"text":"Приём данных","textPreview":"Приём данных","textChars":12,"textLines":1,"bbox":[82,198,210,26]}
+{"kind":"textbox","id":"sh/byxwfetg","slide":10,"text":"Почта • CRM • файлы","textPreview":"Почта • CRM • файлы","textChars":19,"textLines":1,"bbox":[82,236,210,30]}
+{"kind":"textbox","id":"sh/qx4fm9cv","slide":10,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[310,217,36,36]}
+{"kind":"shape","id":"sh/sbu1wveh","slide":10,"bbox":[346,178,246,116]}
+{"kind":"textbox","id":"sh/tc3i50f2","slide":10,"text":"Документы","textPreview":"Документы","textChars":9,"textLines":1,"bbox":[364,198,210,26]}
+{"kind":"textbox","id":"sh/6pcju5wb","slide":10,"text":"OCR • таблицы • layout","textPreview":"OCR • таблицы • layout","textChars":22,"textLines":1,"bbox":[364,236,210,30]}
+{"kind":"textbox","id":"sh/rql03qxw","slide":10,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[592,217,36,36]}
+{"kind":"shape","id":"sh/4nu1svel","slide":10,"bbox":[628,178,246,116]}
+{"kind":"textbox","id":"sh/5o3i10fq","slide":10,"text":"CAD / схемы","textPreview":"CAD / схемы","textChars":11,"textLines":1,"bbox":[646,198,210,26]}
+{"kind":"textbox","id":"sh/ilsjqlwf","slide":10,"text":"DWG → DXF • слои • символы","textPreview":"DWG → DXF • слои • символы","textChars":26,"textLines":1,"bbox":[646,236,210,30]}
+{"kind":"textbox","id":"sh/jm10zqx0","slide":10,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[874,217,36,36]}
+{"kind":"shape","id":"sh/wja1obe9","slide":10,"bbox":[910,178,246,116]}
+{"kind":"textbox","id":"sh/hkjixgfu","slide":10,"text":"Нормализация","textPreview":"Нормализация","textChars":12,"textLines":1,"bbox":[928,198,210,26]}
+{"kind":"textbox","id":"sh/xgby1c7i","slide":10,"text":"Единый JSON заявки","textPreview":"Единый JSON заявки","textChars":18,"textLines":1,"bbox":[928,236,210,30]}
+{"kind":"textbox","id":"sh/wf2hs7qx","slide":10,"text":"↓","textPreview":"↓","textChars":1,"textLines":1,"bbox":[600,300,80,38]}
+{"kind":"shape","id":"sh/betgz2ps","slide":10,"bbox":[64,358,246,116]}
+{"kind":"textbox","id":"sh/adkzqx87","slide":10,"text":"Поиск фактов","textPreview":"Поиск фактов","textChars":12,"textLines":1,"bbox":[82,378,210,26]}
+{"kind":"textbox","id":"sh/pcbyxs7m","slide":10,"text":"RAG + каталог","textPreview":"RAG + каталог","textChars":13,"textLines":1,"bbox":[82,416,210,30]}
+{"kind":"textbox","id":"sh/obixonq1","slide":10,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[310,397,36,36]}
+{"kind":"shape","id":"sh/na9gv2pg","slide":10,"bbox":[346,358,246,116]}
+{"kind":"textbox","id":"sh/290fmx8v","slide":10,"text":"Классификатор","textPreview":"Классификатор","textChars":13,"textLines":1,"bbox":[364,378,210,26]}
+{"kind":"textbox","id":"sh/t8vy9w7q","slide":10,"text":"Веса + LLM/VLM","textPreview":"Веса + LLM/VLM","textChars":14,"textLines":1,"bbox":[364,416,210,30]}
+{"kind":"textbox","id":"sh/87mh0rq5","slide":10,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[592,397,36,36]}
+{"kind":"shape","id":"sh/qtgvuton","slide":10,"bbox":[628,358,246,116]}
+{"kind":"textbox","id":"sh/rupw3y58","slide":10,"text":"Генераторы","textPreview":"Генераторы","textChars":10,"textLines":1,"bbox":[646,378,210,26]}
+{"kind":"textbox","id":"sh/sfydw36t","slide":10,"text":"Текст + композиция","textPreview":"Текст + композиция","textChars":18,"textLines":1,"bbox":[646,416,210,30]}
+{"kind":"textbox","id":"sh/dg7e5one","slide":10,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[874,397,36,36]}
+{"kind":"shape","id":"sh/ipwvq9or","slide":10,"bbox":[910,358,246,116]}
+{"kind":"textbox","id":"sh/3q5wze5c","slide":10,"text":"Верификатор","textPreview":"Верификатор","textChars":11,"textLines":1,"bbox":[928,378,210,26]}
+{"kind":"textbox","id":"sh/4redsj6x","slide":10,"text":"Пороги + человек","textPreview":"Пороги + человек","textChars":16,"textLines":1,"bbox":[928,416,210,30]}
+{"kind":"shape","id":"sh/5s7e1on2","slide":10,"bbox":[64,520,1152,94]}
+{"kind":"textbox","id":"sh/2l0v2dov","slide":10,"text":"Кандидаты технологий","textPreview":"Кандидаты технологий","textChars":20,"textLines":1,"bbox":[88,540,220,22]}
+{"kind":"textbox","id":"sh/nm9wbi5g","slide":10,"text":"PaddleOCR-VL / Docling  •  Qwen3-VL  •  BGE-M3  •  Grounding DINO  •  ODA + ezdxf  •  Qwen3  •  ComfyUI + FLUX/Qwen Image","textPreview":"PaddleOCR-VL / Docling  •  Qwen3-VL  •  BGE-M3  •  Grounding DINO  •  ODA + ezdxf  •  Qwen3  •  ComfyUI + FLUX/Qwen Image","textChars":121,"textLines":1,"bbox":[88,570,1080,28]}
+{"kind":"notes","id":"nt/mctl39","slide":10,"text":"[Sources]\n- PaddleOCR-VL: https://www.paddleocr.ai/main/en/version3.x/algorithm/PaddleOCR-VL/PaddleOCR-VL-1.6.html\n- DoclingDocument: https://docling-project.github.io/docling/concepts/docling_document/\n- BGE-M3: https://github.com/FlagOpen/FlagEmbedding/blob/master/docs/source/bge/bge_m3.rst\n- Grounding DINO: https://github.com/IDEA-Research/GroundingDINO\n- ezdxf: https://ezdxf.readthedocs.io/_/downloads/en/master/pdf/\n[/Sources]"}
+{"kind":"slide","id":"sl/64ei40","slide":11,"title":"ВИЗУАЛЬНЫЙ КОНВЕЙЕР","textShapes":28}
+{"kind":"shape","id":"sh/ipg7e94j","slide":11,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/5s7q9o3a","slide":11,"text":"ВИЗУАЛЬНЫЙ КОНВЕЙЕР","textPreview":"ВИЗУАЛЬНЫЙ КОНВЕЙЕР","textChars":19,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/4rypgjmp","slide":11,"text":"Генерация обложки: оборудование должно оставаться настоящим","textPreview":"Генерация обложки: оборудование должно оставаться настоящим","textChars":59,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/rup8byl0","slide":11,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/6tg7it4v","slide":11,"text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/tgrqd836","slide":11,"bbox":[64,166,1152,94]}
+{"kind":"textbox","id":"sh/svypk3ml","slide":11,"text":"Нельзя","textPreview":"Нельзя","textChars":6,"textLines":1,"bbox":[88,185,100,22]}
+{"kind":"textbox","id":"sh/7y5ozulw","slide":11,"text":"Просить модель заново нарисовать оборудование: она меняет логотипы, кнопки, порты, пропорции и создаёт несуществующие изделия.","textPreview":"Просить модель заново нарисовать оборудование: она меняет логотипы, кнопки, порты, пропорции и создаёт несуществующие изделия.","textChars":126,"textLines":1,"bbox":[182,180,1006,54]}
+{"kind":"shape","id":"sh/mxw76p4b","slide":11,"bbox":[64,304,206,144]}
+{"kind":"shape","id":"sh/kzapwzmx","slide":11,"bbox":[82,322,38,30]}
+{"kind":"textbox","id":"sh/50jqp4ni","slide":11,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[92,328,18,17]}
+{"kind":"textbox","id":"sh/ixs7up4r","slide":11,"text":"Фото товара","textPreview":"Фото товара","textChars":11,"textLines":1,"bbox":[82,368,170,24]}
+{"kind":"textbox","id":"sh/jy18nu5c","slide":11,"text":"Оригинал из каталога","textPreview":"Оригинал из каталога","textChars":20,"textLines":1,"bbox":[82,402,170,24]}
+{"kind":"textbox","id":"sh/s3up0jm9","slide":11,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[270,352,24,38]}
+{"kind":"shape","id":"sh/to3qtone","slide":11,"bbox":[294,304,206,144]}
+{"kind":"shape","id":"sh/61c7y943","slide":11,"bbox":[312,322,38,30]}
+{"kind":"textbox","id":"sh/72l8re5o","slide":11,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[322,328,18,17]}
+{"kind":"textbox","id":"sh/87qpofmp","slide":11,"text":"Маска","textPreview":"Маска","textChars":5,"textLines":1,"bbox":[312,368,170,24]}
+{"kind":"textbox","id":"sh/9szqhkna","slide":11,"text":"Удаление фона","textPreview":"Удаление фона","textChars":13,"textLines":1,"bbox":[312,402,170,24]}
+{"kind":"textbox","id":"sh/pc7e5cb2","slide":11,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[500,352,24,38]}
+{"kind":"shape","id":"sh/obyxw7ah","slide":11,"bbox":[524,304,206,144]}
+{"kind":"shape","id":"sh/3apw32tw","slide":11,"bbox":[542,322,38,30]}
+{"kind":"textbox","id":"sh/2pgfuhsb","slide":11,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[552,328,18,17]}
+{"kind":"textbox","id":"sh/dgre9wby","slide":11,"text":"Коллаж","textPreview":"Коллаж","textChars":6,"textLines":1,"bbox":[542,368,170,24]}
+{"kind":"textbox","id":"sh/cfix0rad","slide":11,"text":"Шаблон + композиция","textPreview":"Шаблон + композиция","textChars":19,"textLines":1,"bbox":[542,402,170,24]}
+{"kind":"textbox","id":"sh/be9w7mts","slide":11,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[730,352,24,38]}
+{"kind":"shape","id":"sh/qd0fyhs7","slide":11,"bbox":[754,304,206,144]}
+{"kind":"shape","id":"sh/lkbedwba","slide":11,"bbox":[772,322,38,30]}
+{"kind":"textbox","id":"sh/0jix4rap","slide":11,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[782,328,18,17]}
+{"kind":"textbox","id":"sh/ipcbyts7","slide":11,"text":"AI-слой","textPreview":"AI-слой","textChars":7,"textLines":1,"bbox":[772,368,170,24]}
+{"kind":"textbox","id":"sh/jqlc7y9c","slide":11,"text":"Фон, свет, тени","textPreview":"Фон, свет, тени","textChars":15,"textLines":1,"bbox":[772,402,170,24]}
+{"kind":"textbox","id":"sh/krut03qx","slide":11,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[960,352,24,38]}
+{"kind":"shape","id":"sh/5s3u98ri","slide":11,"bbox":[984,304,206,144]}
+{"kind":"shape","id":"sh/6twb2d83","slide":11,"bbox":[1002,322,38,30]}
+{"kind":"textbox","id":"sh/7u5cbi9o","slide":11,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[1012,328,18,17]}
+{"kind":"textbox","id":"sh/svet43q9","slide":11,"text":"Финал","textPreview":"Финал","textChars":5,"textLines":1,"bbox":[1002,368,170,24]}
+{"kind":"textbox","id":"sh/tgnud8ru","slide":11,"text":"Лого и текст поверх","textPreview":"Лого и текст поверх","textChars":19,"textLines":1,"bbox":[1002,402,170,24]}
+{"kind":"shape","id":"sh/ehwb6d8z","slide":11,"bbox":[64,492,560,112]}
+{"kind":"textbox","id":"sh/fi5cfi9k","slide":11,"text":"Материалы для пилота","textPreview":"Материалы для пилота","textChars":20,"textLines":1,"bbox":[88,514,510,22]}
+{"kind":"textbox","id":"sh/ne1czi1o","slide":11,"text":"Фото каждого блока оборудования + не менее 100 эталонных готовых композиций.","textPreview":"Фото каждого блока оборудования + не менее 100 эталонных готовых композиций.","textChars":76,"textLines":1,"bbox":[88,550,500,38]}
+{"kind":"shape","id":"sh/2dsbqd0j","slide":11,"bbox":[656,492,560,112]}
+{"kind":"textbox","id":"sh/p03u1sju","slide":11,"text":"Что обучаем","textPreview":"Что обучаем","textChars":11,"textLines":1,"bbox":[680,514,510,22]}
+{"kind":"textbox","id":"sh/ofatsni9","slide":11,"text":"Несколько стилевых LoRA и правила композиции — не отдельную модель на каждую систему.","textPreview":"Несколько стилевых LoRA и правила композиции — не отдельную модель на каждую систему.","textChars":85,"textLines":1,"bbox":[680,550,500,38]}
+{"kind":"notes","id":"nt/64ei40","slide":11,"text":"[Sources]\n- ComfyUI: https://github.com/Comfy-Org/ComfyUI\n- FLUX.1 Kontext workflow: https://docs.comfy.org/tutorials/partner-nodes/black-forest-labs/flux-1-kontext\n- Qwen Image Edit: https://qwenlm.github.io/blog/qwen-image-edit/\n- Hugging Face Diffusers LoRA: https://huggingface.co/docs/diffusers/training/lora\n[/Sources]"}
+{"kind":"slide","id":"sl/4as6zh","slide":12,"title":"ГЕНЕРАЦИЯ ТЕКСТА","textShapes":24}
+{"kind":"shape","id":"sh/i5kzexsn","slide":12,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/58vi9cre","slide":12,"text":"ГЕНЕРАЦИЯ ТЕКСТА","textPreview":"ГЕНЕРАЦИЯ ТЕКСТА","textChars":16,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/k7mhg7at","slide":12,"text":"Описание системы: факты из базы, смысл и стиль — от модели","textPreview":"Описание системы: факты из базы, смысл и стиль — от модели","textChars":58,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/v2t032tc","slide":12,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/a1kzaxsr","slide":12,"text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/x4bi5cb2","slide":12,"bbox":[64,174,330,86]}
+{"kind":"textbox","id":"sh/w32hc7ah","slide":12,"text":"Каталог и БД","textPreview":"Каталог и БД","textChars":12,"textLines":1,"bbox":[84,190,290,23]}
+{"kind":"textbox","id":"sh/ny9gzit0","slide":12,"text":"Характеристики, совместимость, бренды","textPreview":"Характеристики, совместимость, бренды","textChars":37,"textLines":1,"bbox":[84,220,290,25]}
+{"kind":"shape","id":"sh/md0z6dsf","slide":12,"bbox":[64,286,330,86]}
+{"kind":"textbox","id":"sh/sn6t0v2l","slide":12,"text":"Заявка","textPreview":"Заявка","textChars":6,"textLines":1,"bbox":[84,302,290,23]}
+{"kind":"textbox","id":"sh/dofa90j6","slide":12,"text":"Назначение, ограничения, объект","textPreview":"Назначение, ограничения, объект","textChars":31,"textLines":1,"bbox":[84,332,290,25]}
+{"kind":"shape","id":"sh/ql4bylkf","slide":12,"bbox":[64,398,330,86]}
+{"kind":"textbox","id":"sh/rmxs7ql0","slide":12,"text":"RAG","textPreview":"RAG","textChars":3,"textLines":1,"bbox":[84,414,290,23]}
+{"kind":"textbox","id":"sh/4zmtwv29","slide":12,"text":"Только найденные подтверждённые факты","textPreview":"Только найденные подтверждённые факты","textChars":37,"textLines":1,"bbox":[84,444,290,25]}
+{"kind":"textbox","id":"sh/50va5g3u","slide":12,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[420,298,70,48]}
+{"kind":"shape","id":"sh/ix4bulkj","slide":12,"bbox":[502,204,300,282]}
+{"kind":"textbox","id":"sh/3yds3ql4","slide":12,"text":"Языковая модель","textPreview":"Языковая модель","textChars":15,"textLines":1,"bbox":[530,232,244,28]}
+{"kind":"shape","id":"sh/ovqt8f2t","slide":12,"bbox":[548,292,208,30]}
+{"kind":"textbox","id":"sh/pwzuhkje","slide":12,"text":"СТРУКТУРА","textPreview":"СТРУКТУРА","textChars":9,"textLines":1,"bbox":[558,298,188,17]}
+{"kind":"shape","id":"sh/x0b25g76","slide":12,"bbox":[548,338,208,30]}
+{"kind":"textbox","id":"sh/cz21cbql","slide":12,"text":"КОРПОРАТИВНЫЙ СТИЛЬ","textPreview":"КОРПОРАТИВНЫЙ СТИЛЬ","textChars":19,"textLines":1,"bbox":[558,344,188,17]}
+{"kind":"shape","id":"sh/bytk36p0","slide":12,"bbox":[548,384,208,30]}
+{"kind":"textbox","id":"sh/axkjal8f","slide":12,"text":"3–5 ВАРИАНТОВ","textPreview":"3–5 ВАРИАНТОВ","textChars":13,"textLines":1,"bbox":[558,390,188,17]}
+{"kind":"textbox","id":"sh/pwb21g7a","slide":12,"text":"LoRA учит манере письма.\nФакты не «зашиваются» в LoRA.","textPreview":"LoRA учит манере письма. | Факты не «зашиваются» в LoRA.","textChars":54,"textLines":2,"bbox":[530,432,244,42]}
+{"kind":"textbox","id":"sh/ov218bqp","slide":12,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[828,298,70,48]}
+{"kind":"shape","id":"sh/nu9kz6p4","slide":12,"bbox":[910,174,306,344]}
+{"kind":"textbox","id":"sh/290j618j","slide":12,"text":"Проверенный результат","textPreview":"Проверенный результат","textChars":21,"textLines":1,"bbox":[934,198,258,28]}
+{"kind":"shape","id":"sh/18r2xw7y","slide":12,"bbox":[934,259,5,52]}
+{"kind":"textbox","id":"sh/07i14rqd","slide":12,"text":"Описание назначения","textPreview":"Описание назначения","textChars":19,"textLines":1,"bbox":[952,254,232,25]}
+{"kind":"textbox","id":"sh/qdgzexob","slide":12,"text":"Без выдуманных характеристик.","textPreview":"Без выдуманных характеристик.","textChars":29,"textLines":1,"bbox":[952,281,232,42]}
+{"kind":"shape","id":"sh/repg725w","slide":12,"bbox":[934,339,5,52]}
+{"kind":"textbox","id":"sh/sfyhg76h","slide":12,"text":"Состав решения","textPreview":"Состав решения","textChars":14,"textLines":1,"bbox":[952,334,232,25]}
+{"kind":"textbox","id":"sh/d07i9cn2","slide":12,"text":"Ссылки на позиции и источники.","textPreview":"Ссылки на позиции и источники.","textChars":30,"textLines":1,"bbox":[952,361,232,42]}
+{"kind":"shape","id":"sh/i9wzaxof","slide":12,"bbox":[934,419,5,52]}
+{"kind":"textbox","id":"sh/3a5g3i5k","slide":12,"text":"Стоп-сигналы","textPreview":"Стоп-сигналы","textChars":12,"textLines":1,"bbox":[952,414,232,25]}
+{"kind":"textbox","id":"sh/4behcn65","slide":12,"text":"Недостающие данные и вопросы.","textPreview":"Недостающие данные и вопросы.","textChars":29,"textLines":1,"bbox":[952,441,232,42]}
+{"kind":"shape","id":"sh/5c7y5snq","slide":12,"bbox":[64,566,1152,60]}
+{"kind":"textbox","id":"sh/u5wz6do3","slide":12,"text":"Данные обучения: 100–200 примеров — концепт; 500–1000 — стабильный стиль; тысячи — широкое покрытие сценариев.","textPreview":"Данные обучения: 100–200 примеров — концепт; 500–1000 — стабильный стиль; тысячи — широкое покрытие сценариев.","textChars":110,"textLines":1,"bbox":[84,584,1112,28]}
+{"kind":"notes","id":"nt/4as6zh","slide":12,"text":"[Sources]\n- Qwen3 training / LoRA: https://github.com/QwenLM/Qwen3/blob/main/docs/source/training/ms_swift.md\n[/Sources]"}
+{"kind":"slide","id":"sl/7h42cz","slide":13,"title":"ОРГАНИЗАЦИОННАЯ МОДЕЛЬ","textShapes":23}
+{"kind":"shape","id":"sh/21wjqtsv","slide":13,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/p4n218b6","slide":13,"text":"ОРГАНИЗАЦИОННАЯ МОДЕЛЬ","textPreview":"ОРГАНИЗАЦИОННАЯ МОДЕЛЬ","textChars":22,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/o3e1s3a1","slide":13,"text":"Работа не исчезает — она переносится в данные и контроль","textPreview":"Работа не исчезает — она переносится в данные и контроль","textChars":56,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/fyl0vet4","slide":13,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/excjmtsj","slide":13,"text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/1032xoba","slide":13,"bbox":[64,166,352,140]}
+{"kind":"shape","id":"sh/gzu1ojap","slide":13,"bbox":[84,184,42,30]}
+{"kind":"textbox","id":"sh/zupk7ito","slide":13,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[94,190,22,17]}
+{"kind":"textbox","id":"sh/ytgjyds3","slide":13,"text":"Владелец продукта","textPreview":"Владелец продукта","textChars":17,"textLines":1,"bbox":[142,184,250,26]}
+{"kind":"textbox","id":"sh/8bmx8jet","slide":13,"text":"Определяет сценарии, метрики и допустимый риск.","textPreview":"Определяет сценарии, метрики и допустимый риск.","textChars":47,"textLines":1,"bbox":[84,228,310,58]}
+{"kind":"shape","id":"sh/tcfyhovy","slide":13,"bbox":[448,166,352,140]}
+{"kind":"shape","id":"sh/694f69wn","slide":13,"bbox":[468,184,42,30]}
+{"kind":"textbox","id":"sh/7adgfed8","slide":13,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[478,190,22,17]}
+{"kind":"textbox","id":"sh/k7mx4jeh","slide":13,"text":"Инженеры","textPreview":"Инженеры","textChars":8,"textLines":1,"bbox":[526,184,250,26]}
+{"kind":"textbox","id":"sh/l8vydov2","slide":13,"text":"Утверждают таксономию, веса, правила и эталоны.","textPreview":"Утверждают таксономию, веса, правила и эталоны.","textChars":47,"textLines":1,"bbox":[468,228,310,58]}
+{"kind":"shape","id":"sh/yl4f29wb","slide":13,"bbox":[832,166,352,140]}
+{"kind":"shape","id":"sh/j6dgbedw","slide":13,"bbox":[852,184,42,30]}
+{"kind":"textbox","id":"sh/wj2x0zel","slide":13,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[862,190,22,17]}
+{"kind":"textbox","id":"sh/xkve94v6","slide":13,"text":"Data / контент","textPreview":"Data / контент","textChars":14,"textLines":1,"bbox":[910,184,250,26]}
+{"kind":"textbox","id":"sh/do3mhw3i","slide":13,"text":"Размечает историю, изображения, модели и назначения.","textPreview":"Размечает историю, изображения, модели и назначения.","textChars":52,"textLines":1,"bbox":[852,228,310,58]}
+{"kind":"shape","id":"sh/c3u5or2x","slide":13,"bbox":[64,334,352,140]}
+{"kind":"shape","id":"sh/r214fmlc","slide":13,"bbox":[84,352,42,30]}
+{"kind":"textbox","id":"sh/q1s3m1kr","slide":13,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[94,358,22,17]}
+{"kind":"textbox","id":"sh/p0jmdw3m","slide":13,"text":"Дизайнеры","textPreview":"Дизайнеры","textChars":9,"textLines":1,"bbox":[142,352,250,26]}
+{"kind":"textbox","id":"sh/4zalkr21","slide":13,"text":"Создают эталонные композиции и визуальные правила.","textPreview":"Создают эталонные композиции и визуальные правила.","textChars":50,"textLines":1,"bbox":[84,396,310,58]}
+{"kind":"shape","id":"sh/3y14bmlg","slide":13,"bbox":[448,334,352,140]}
+{"kind":"shape","id":"sh/2xs3ihkv","slide":13,"bbox":[468,352,42,30]}
+{"kind":"textbox","id":"sh/9wnmpg3q","slide":13,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[478,358,22,17]}
+{"kind":"textbox","id":"sh/ove5wb25","slide":13,"text":"ML / разработка","textPreview":"ML / разработка","textChars":15,"textLines":1,"bbox":[526,352,250,26]}
+{"kind":"textbox","id":"sh/61ojqd0n","slide":13,"text":"Строит конвейер, модели, мониторинг и интерфейсы.","textPreview":"Строит конвейер, модели, мониторинг и интерфейсы.","textChars":49,"textLines":1,"bbox":[468,396,310,58]}
+{"kind":"shape","id":"sh/72xkji18","slide":13,"bbox":[832,334,352,140]}
+{"kind":"shape","id":"sh/8361snit","slide":13,"bbox":[852,352,42,30]}
+{"kind":"textbox","id":"sh/t4z2lsje","slide":13,"text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[862,358,22,17]}
+{"kind":"textbox","id":"sh/ydojmd0r","slide":13,"text":"Менеджеры","textPreview":"Менеджеры","textChars":9,"textLines":1,"bbox":[910,352,250,26]}
+{"kind":"textbox","id":"sh/jyx0fi1w","slide":13,"text":"Исправляют ошибки и тем самым создают обратную связь.","textPreview":"Исправляют ошибки и тем самым создают обратную связь.","textChars":53,"textLines":1,"bbox":[852,396,310,58]}
+{"kind":"shape","id":"sh/kz61o3ih","slide":13,"bbox":[64,526,1152,100]}
+{"kind":"textbox","id":"sh/l0f2h8j2","slide":13,"text":"Скрытая стоимость проекта","textPreview":"Скрытая стоимость проекта","textChars":25,"textLines":1,"bbox":[88,548,240,22]}
+{"kind":"textbox","id":"sh/i98jyx0v","slide":13,"text":"Разметка и поддержание справочников — постоянный бизнес-процесс. Без ответственных владельцев точность будет деградировать даже при хороших моделях.","textPreview":"Разметка и поддержание справочников — постоянный бизнес-процесс. Без ответственных владельцев точность будет деградировать даже при хорош...","textChars":148,"textLines":1,"bbox":[330,542,850,54]}
+{"kind":"notes","id":"nt/7h42cz","slide":13,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n[/Sources]"}
+{"kind":"slide","id":"sl/wi3x64","slide":14,"title":"МОДЕЛИ И ЖЕЛЕЗО","textShapes":16}
+{"kind":"shape","id":"sh/943uh0jq","slide":14,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/m1sb650z","slide":14,"text":"МОДЕЛИ И ЖЕЛЕЗО","textPreview":"МОДЕЛИ И ЖЕЛЕЗО","textChars":15,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/n21cfa1k","slide":14,"text":"Инфраструктура: от пилота до производственного контура","textPreview":"Инфраструктура: от пилота до производственного контура","textChars":54,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/w7udcfi1","slide":14,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/x83ulkjm","slide":14,"text":"14","textPreview":"14","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/a5cva50b","slide":14,"bbox":[64,166,352,356]}
+{"kind":"shape","id":"sh/b6lcja1w","slide":14,"bbox":[88,190,180,30]}
+{"kind":"textbox","id":"sh/cbqtgv2x","slide":14,"text":"ПИЛОТ","textPreview":"ПИЛОТ","textChars":5,"textLines":1,"bbox":[98,196,160,17]}
+{"kind":"textbox","id":"sh/dcju9gji","slide":14,"text":"RTX 5090 • 32 GB VRAM","textPreview":"RTX 5090 • 32 GB VRAM","textChars":21,"textLines":1,"bbox":[88,250,304,54]}
+{"kind":"textbox","id":"sh/9w3e1s7i","slide":14,"text":"128 GB RAM • 4 TB NVMe","textPreview":"128 GB RAM • 4 TB NVMe","textChars":22,"textLines":1,"bbox":[88,316,304,30]}
+{"kind":"shape","id":"sh/8vux876d","slide":14,"bbox":[88,364,304,1]}
+{"kind":"textbox","id":"sh/nu1wz2ps","slide":14,"text":"OCR, embeddings, 8B VLM/LLM, LoRA и изображения — последовательно.","textPreview":"OCR, embeddings, 8B VLM/LLM, LoRA и изображения — последовательно.","textChars":66,"textLines":1,"bbox":[88,390,304,96]}
+{"kind":"shape","id":"sh/mtsf6xo7","slide":14,"bbox":[448,166,352,356]}
+{"kind":"shape","id":"sh/x03e5c7u","slide":14,"bbox":[472,190,180,30]}
+{"kind":"textbox","id":"sh/wzuxc769","slide":14,"text":"СЕРЬЁЗНАЯ СТАНЦИЯ","textPreview":"СЕРЬЁЗНАЯ СТАНЦИЯ","textChars":17,"textLines":1,"bbox":[482,196,160,17]}
+{"kind":"textbox","id":"sh/vylw32po","slide":14,"text":"RTX PRO 6000 • 96 GB","textPreview":"RTX PRO 6000 • 96 GB","textChars":20,"textLines":1,"bbox":[472,250,304,54]}
+{"kind":"textbox","id":"sh/axcfaxo3","slide":14,"text":"256 GB ECC RAM","textPreview":"256 GB ECC RAM","textChars":14,"textLines":1,"bbox":[472,316,304,30]}
+{"kind":"shape","id":"sh/5ony9w7q","slide":14,"bbox":[472,364,304,1]}
+{"kind":"textbox","id":"sh/k3exgr65","slide":14,"text":"Крупнее модели, больше контекста, стабильная локальная эксплуатация.","textPreview":"Крупнее модели, больше контекста, стабильная локальная эксплуатация.","textChars":68,"textLines":1,"bbox":[472,390,304,96]}
+{"kind":"shape","id":"sh/47mhcveh","slide":14,"bbox":[832,166,352,356]}
+{"kind":"shape","id":"sh/58vyl0v2","slide":14,"bbox":[856,190,180,30]}
+{"kind":"textbox","id":"sh/i5kzalwb","slide":14,"text":"МАСШТАБ","textPreview":"МАСШТАБ","textChars":7,"textLines":1,"bbox":[866,196,160,17]}
+{"kind":"textbox","id":"sh/36dgjqdw","slide":14,"text":"2× RTX PRO 6000 • 192 GB","textPreview":"2× RTX PRO 6000 • 192 GB","textChars":24,"textLines":1,"bbox":[856,250,304,54]}
+{"kind":"textbox","id":"sh/svmhgvet","slide":14,"text":"512 GB RAM • Threadripper Pro","textPreview":"512 GB RAM • Threadripper Pro","textChars":29,"textLines":1,"bbox":[856,316,304,30]}
+{"kind":"shape","id":"sh/dwvip0vy","slide":14,"bbox":[856,364,304,1]}
+{"kind":"textbox","id":"sh/q94ze5wn","slide":14,"text":"Параллельные сервисы, обучение и высокая пропускная способность.","textPreview":"Параллельные сервисы, обучение и высокая пропускная способность.","textChars":64,"textLines":1,"bbox":[856,390,304,96]}
+{"kind":"shape","id":"sh/rad0nad8","slide":14,"bbox":[64,562,1152,66]}
+{"kind":"textbox","id":"sh/8z2h4be9","slide":14,"text":"Для проверки идеи достаточно пилотной машины. Покупать масштаб до подтверждения качества классификации — преждевременно.","textPreview":"Для проверки идеи достаточно пилотной машины. Покупать масштаб до подтверждения качества классификации — преждевременно.","textChars":120,"textLines":1,"bbox":[84,580,1112,30]}
+{"kind":"notes","id":"nt/wi3x64","slide":14,"text":"[Sources]\n- NVIDIA GeForce RTX 5090: https://marketplace.nvidia.com/en-us/consumer/graphics-cards/geforce-rtx-5090-founders-edition/\n- NVIDIA RTX PRO 6000: https://www.nvidia.com/en-us/products/workstations/professional-desktop-gpus/rtx-pro-6000/\n- AMD Threadripper PRO 9995WX: https://www.amd.com/en/products/processors/workstations/ryzen-threadripper/9000-wx-series/amd-ryzen-threadripper-pro-9995wx.html\n- AI Toolkit FLUX LoRA FAQ: https://github.com/ostris/ai-toolkit/blob/main/FAQ.md\n[/Sources]"}
+{"kind":"slide","id":"sl/3wie7z","slide":15,"title":"ДОРОЖНАЯ КАРТА","textShapes":30}
+{"kind":"shape","id":"sh/h4f2tonm","slide":15,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/u143i94b","slide":15,"text":"ДОРОЖНАЯ КАРТА","textPreview":"ДОРОЖНАЯ КАРТА","textChars":14,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/v2dkre5w","slide":15,"text":"План внедрения: каждая стадия должна доказать ценность следующей","textPreview":"План внедрения: каждая стадия должна доказать ценность следующей","textChars":64,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/8zmlgzm5","slide":15,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/90v2p4nq","slide":15,"text":"15","textPreview":"15","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/mx43ep4z","slide":15,"bbox":[112,244,1040,6]}
+{"kind":"shape","id":"sh/7ydknu5k","slide":15,"bbox":[64,178,206,276]}
+{"kind":"shape","id":"sh/svqls3m9","slide":15,"bbox":[64,178,206,8]}
+{"kind":"shape","id":"sh/twzm183u","slide":15,"bbox":[82,200,38,30]}
+{"kind":"textbox","id":"sh/dwjeh0j2","slide":15,"text":"0","textPreview":"0","textChars":1,"textLines":1,"bbox":[92,206,18,17]}
+{"kind":"textbox","id":"sh/cvadovih","slide":15,"text":"Сейчас","textPreview":"Сейчас","textChars":6,"textLines":1,"bbox":[134,205,112,20]}
+{"kind":"textbox","id":"sh/ru1wfq1c","slide":15,"text":"Статичная обложка","textPreview":"Статичная обложка","textChars":17,"textLines":1,"bbox":[82,266,170,54]}
+{"kind":"textbox","id":"sh/qtsvml0r","slide":15,"text":"1–5 дней","textPreview":"1–5 дней","textChars":8,"textLines":1,"bbox":[82,338,170,54]}
+{"kind":"textbox","id":"sh/p8jedgj6","slide":15,"text":"ЗАПУСК","textPreview":"ЗАПУСК","textChars":6,"textLines":1,"bbox":[82,408,170,18]}
+{"kind":"shape","id":"sh/47adkbil","slide":15,"bbox":[294,178,206,276]}
+{"kind":"shape","id":"sh/361wbq10","slide":15,"bbox":[294,178,206,8]}
+{"kind":"shape","id":"sh/25svil0f","slide":15,"bbox":[312,200,38,30]}
+{"kind":"textbox","id":"sh/9onepkza","slide":15,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[322,206,18,17]}
+{"kind":"textbox","id":"sh/o3uxgfip","slide":15,"text":"0–1 мес.","textPreview":"0–1 мес.","textChars":8,"textLines":1,"bbox":[364,205,112,20]}
+{"kind":"textbox","id":"sh/872xsjq1","slide":15,"text":"Инвентаризация данных","textPreview":"Инвентаризация данных","textChars":21,"textLines":1,"bbox":[312,266,170,54]}
+{"kind":"textbox","id":"sh/t8vylo7m","slide":15,"text":"Роли • таксономия • метрики","textPreview":"Роли • таксономия • метрики","textChars":27,"textLines":1,"bbox":[312,338,170,54]}
+{"kind":"textbox","id":"sh/65kfq98v","slide":15,"text":"GATE","textPreview":"GATE","textChars":4,"textLines":1,"bbox":[312,408,170,18]}
+{"kind":"shape","id":"sh/76tgjepg","slide":15,"bbox":[524,178,206,276]}
+{"kind":"shape","id":"sh/k32xojqp","slide":15,"bbox":[524,178,206,8]}
+{"kind":"shape","id":"sh/l4byho7a","slide":15,"bbox":[542,200,38,30]}
+{"kind":"textbox","id":"sh/y1kfm98z","slide":15,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[552,206,18,17]}
+{"kind":"textbox","id":"sh/j2tgfepk","slide":15,"text":"1–3 мес.","textPreview":"1–3 мес.","textChars":8,"textLines":1,"bbox":[594,205,112,20]}
+{"kind":"textbox","id":"sh/wfixkzqt","slide":15,"text":"Весовой классификатор","textPreview":"Весовой классификатор","textChars":21,"textLines":1,"bbox":[542,266,170,54]}
+{"kind":"textbox","id":"sh/x0ryd47e","slide":15,"text":"История • веса • offline-тест","textPreview":"История • веса • offline-тест","textChars":29,"textLines":1,"bbox":[542,338,170,54]}
+{"kind":"textbox","id":"sh/fa9gnut0","slide":15,"text":"GATE","textPreview":"GATE","textChars":4,"textLines":1,"bbox":[542,408,170,18]}
+{"kind":"shape","id":"sh/e90zupsv","slide":15,"bbox":[754,178,206,276]}
+{"kind":"shape","id":"sh/1cryp4b6","slide":15,"bbox":[754,178,206,8]}
+{"kind":"shape","id":"sh/0bihwzal","slide":15,"bbox":[772,200,38,30]}
+{"kind":"textbox","id":"sh/ny9gretc","slide":15,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[782,206,18,17]}
+{"kind":"textbox","id":"sh/2d0zy9sr","slide":15,"text":"3–5 мес.","textPreview":"3–5 мес.","textChars":8,"textLines":1,"bbox":[824,205,112,20]}
+{"kind":"textbox","id":"sh/p0rit4bi","slide":15,"text":"AI-пилот","textPreview":"AI-пилот","textChars":8,"textLines":1,"bbox":[772,266,170,54]}
+{"kind":"textbox","id":"sh/ozih0jax","slide":15,"text":"Почта • OCR • файлы • confidence","textPreview":"Почта • OCR • файлы • confidence","textChars":32,"textLines":1,"bbox":[772,338,170,54]}
+{"kind":"textbox","id":"sh/b2t0vet8","slide":15,"text":"GATE","textPreview":"GATE","textChars":4,"textLines":1,"bbox":[772,408,170,18]}
+{"kind":"shape","id":"sh/a1kz29sn","slide":15,"bbox":[984,178,206,276]}
+{"kind":"shape","id":"sh/uhsreh4b","slide":15,"bbox":[984,178,206,8]}
+{"kind":"shape","id":"sh/vilsnmlw","slide":15,"bbox":[1002,200,38,30]}
+{"kind":"textbox","id":"sh/gjutgrmh","slide":15,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[1012,206,18,17]}
+{"kind":"textbox","id":"sh/hk3apw3m","slide":15,"text":"5–9+ мес.","textPreview":"5–9+ мес.","textChars":9,"textLines":1,"bbox":[1054,205,112,20]}
+{"kind":"textbox","id":"sh/ilcbi147","slide":15,"text":"Контент и генерация","textPreview":"Контент и генерация","textChars":19,"textLines":1,"bbox":[1002,266,170,54]}
+{"kind":"textbox","id":"sh/3mlsrmls","slide":15,"text":"100+ композиций • тексты • A/B","textPreview":"100+ композиций • тексты • A/B","textChars":30,"textLines":1,"bbox":[1002,338,170,54]}
+{"kind":"textbox","id":"sh/4nutkrmd","slide":15,"text":"GATE","textPreview":"GATE","textChars":4,"textLines":1,"bbox":[1002,408,170,18]}
+{"kind":"shape","id":"sh/5o3atw3y","slide":15,"bbox":[64,500,1152,112]}
+{"kind":"textbox","id":"sh/yp8r6x43","slide":15,"text":"Условия перехода к следующей стадии","textPreview":"Условия перехода к следующей стадии","textChars":35,"textLines":1,"bbox":[88,522,340,26]}
+{"kind":"textbox","id":"sh/jqhsf25o","slide":15,"text":"✓ Есть владелец данных   ✓ Согласована таксономия   ✓ Измерена точность   ✓ Определён порог ручной проверки   ✓ Подтверждена экономия времени","textPreview":"✓ Есть владелец данных   ✓ Согласована таксономия   ✓ Измерена точность   ✓ Определён порог ручной проверки   ✓ Подтверждена экономия вре...","textChars":141,"textLines":1,"bbox":[88,566,1080,28]}
+{"kind":"notes","id":"nt/3wie7z","slide":15,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n[/Sources]"}
+{"kind":"slide","id":"sl/3m6gzn","slide":16,"title":"РЕШЕНИЕ","textShapes":18}
+{"kind":"shape","id":"sh/7q94fe9w","slide":16,"bbox":[0,0,12,720]}
+{"kind":"textbox","id":"sh/sril8jqh","slide":16,"text":"РЕШЕНИЕ","textPreview":"РЕШЕНИЕ","textChars":7,"textLines":1,"bbox":[64,38,760,20]}
+{"kind":"textbox","id":"sh/tsrmhor2","slide":16,"text":"Что предлагается утвердить","textPreview":"Что предлагается утвердить","textChars":26,"textLines":1,"bbox":[64,66,1120,58]}
+{"kind":"shape","id":"sh/ut03at8n","slide":16,"bbox":[64,132,1152,1]}
+{"kind":"textbox","id":"sh/fu94jy98","slide":16,"text":"16","textPreview":"16","textChars":2,"textLines":1,"bbox":[1160,676,54,18]}
+{"kind":"shape","id":"sh/gvilc3qt","slide":16,"bbox":[64,166,736,424]}
+{"kind":"textbox","id":"sh/hwbml87e","slide":16,"text":"РЕШЕНИЕ НА СЕЙЧАС","textPreview":"РЕШЕНИЕ НА СЕЙЧАС","textChars":17,"textLines":1,"bbox":[92,194,300,22]}
+{"kind":"textbox","id":"sh/axg3yp8j","slide":16,"text":"Запустить статичную обложку\nи подготовку данных для пилота","textPreview":"Запустить статичную обложку | и подготовку данных для пилота","textChars":58,"textLines":2,"bbox":[92,236,640,94]}
+{"kind":"shape","id":"sh/bypk7u94","slide":16,"bbox":[92,362,36,30]}
+{"kind":"textbox","id":"sh/z2d0f2d0","slide":16,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[102,368,16,17]}
+{"kind":"textbox","id":"sh/y1kz6hcf","slide":16,"text":"Назначить владельца таксономии систем","textPreview":"Назначить владельца таксономии систем","textChars":37,"textLines":1,"bbox":[144,367,620,28]}
+{"kind":"shape","id":"sh/l4vihcv6","slide":16,"bbox":[92,410,36,30]}
+{"kind":"textbox","id":"sh/k3mh87ul","slide":16,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[102,416,16,17]}
+{"kind":"textbox","id":"sh/byt0b2do","slide":16,"text":"Выделить исторические заявки и итоговые КП","textPreview":"Выделить исторические заявки и итоговые КП","textChars":42,"textLines":1,"bbox":[144,415,620,28]}
+{"kind":"shape","id":"sh/axkzixcj","slide":16,"bbox":[92,458,36,30]}
+{"kind":"textbox","id":"sh/x0bidcvu","slide":16,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[102,464,16,17]}
+{"kind":"textbox","id":"sh/cz2h47u9","slide":16,"text":"Согласовать метрики: точность, время, доля ручной проверки","textPreview":"Согласовать метрики: точность, время, доля ручной проверки","textChars":58,"textLines":1,"bbox":[144,463,620,28]}
+{"kind":"shape","id":"sh/nat07ids","slide":16,"bbox":[92,506,36,30]}
+{"kind":"textbox","id":"sh/290zedc7","slide":16,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[102,512,16,17]}
+{"kind":"textbox","id":"sh/q50jqdgz","slide":16,"text":"Не заказывать массовый дизайн до проверки классификации","textPreview":"Не заказывать массовый дизайн до проверки классификации","textChars":55,"textLines":1,"bbox":[144,511,620,28]}
+{"kind":"shape","id":"sh/r690jixk","slide":16,"bbox":[832,166,384,196]}
+{"kind":"textbox","id":"sh/s7i1sny5","slide":16,"text":"Быстрый эффект","textPreview":"Быстрый эффект","textChars":14,"textLines":1,"bbox":[858,190,330,22]}
+{"kind":"textbox","id":"sh/d8rilsfq","slide":16,"text":"Единый вид КП\nбез ошибок выбора","textPreview":"Единый вид КП | без ошибок выбора","textChars":31,"textLines":2,"bbox":[858,232,330,68]}
+{"kind":"shape","id":"sh/e90juxgb","slide":16,"bbox":[832,394,384,196]}
+{"kind":"textbox","id":"sh/fat0n2xw","slide":16,"text":"Стратегический эффект","textPreview":"Стратегический эффект","textChars":21,"textLines":1,"bbox":[858,418,330,22]}
+{"kind":"textbox","id":"sh/0v21w7yh","slide":16,"text":"Платформа, которая понимает заявку, объясняет решение и знает предел своей уверенности.","textPreview":"Платформа, которая понимает заявку, объясняет решение и знает предел своей уверенности.","textChars":87,"textLines":1,"bbox":[858,460,330,84]}
+{"kind":"textbox","id":"sh/1wbipsfm","slide":16,"text":"Следующий шаг: 2-недельный аудит данных и дизайн пилота.","textPreview":"Следующий шаг: 2-недельный аудит данных и дизайн пилота.","textChars":56,"textLines":1,"bbox":[64,626,1152,28]}
+{"kind":"notes","id":"nt/3m6gzn","slide":16,"text":"[Sources]\n- Внутренняя постановка задачи и рабочие примеры заказчика.\n[/Sources]"}
