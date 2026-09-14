@@ -175,8 +175,6 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
   // Приоритет: coverDefaults из БИДа > initRef (снапшот при монтировании)
   const D = coverDefaults || initRef.current
 
-  const companyName = data.client_company?.name || ''
-
   const hatHeaderTextDefault = HAT_HEADER_TEXT_DEFAULTS[String(companyId)] ?? ''
   const hatHeaderTextValue   = data.hatHeaderText ?? hatHeaderTextDefault
   const hatHeaderTextChanged = data.hatHeaderText !== undefined && data.hatHeaderText !== hatHeaderTextDefault
@@ -255,7 +253,7 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
           </div>
           <ResetField data={data} set={set} defaults={D} label="Кому — организация"
             fieldKey="target_company"
-            placeholder={companyName || 'ООО «Кабель Контракт Юг»'}
+            placeholder="Организация адресата"
           />
           <div>
             <ResetField data={data} set={set} defaults={D} label="Кому — имя"

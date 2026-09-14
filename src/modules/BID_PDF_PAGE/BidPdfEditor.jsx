@@ -89,6 +89,34 @@ function buildTableFootnoteDefault({ withoutNds = false, ndsPercent = DEFAULT_ND
   return `${FOOTNOTE_PREFIX} ${priceText} ${FOOTNOTE_SUFFIX}`
 }
 
+function normalizeCompanyPart(value = '') {
+  return String(value)
+    .trim()
+    .toLocaleUpperCase('ru-RU')
+    .replace(/Ё/g, 'Е')
+    .replace(/[^A-ZА-Я0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function getCompanyOwnershipForm(company) {
+  const form = company?.an_fs
+  if (typeof form === 'string') return form.trim()
+  return String(form?.name ?? form?.shortname ?? '').trim()
+}
+
+function formatRecipientCompany(company) {
+  const name = String(company?.name ?? '').trim()
+  const ownershipForm = getCompanyOwnershipForm(company)
+  if (!name || !ownershipForm) return name
+
+  const normalizedName = ` ${normalizeCompanyPart(name)} `
+  const normalizedForm = normalizeCompanyPart(ownershipForm)
+  if (!normalizedForm || normalizedName.includes(` ${normalizedForm} `)) return name
+
+  return `${ownershipForm} ${name}`
+}
+
 function phraseIsFullyVerified(result, source) {
   const indexes = getMorpherWordIndexes(source)
   const matches = Array.isArray(result?.matches) ? result.matches : []
@@ -381,7 +409,8 @@ export default function BidPdfEditor() {
           ? [orgUser.lastname, orgUser.name, orgUser.middlename].filter(Boolean).join(' ')
           : (fd.target_name || '')
         const bidTargetPosition = orgUser?.occupy || ''
-        const bidTargetCompany = clientCompany?.name || ''
+        const rawBidTargetCompany = String(clientCompany?.name || '').trim()
+        const bidTargetCompany = formatRecipientCompany(clientCompany)
         const legacyBidTargetOccupy = orgUser
           ? [bidTargetPosition, bidTargetCompany].filter(Boolean).join(' ')
           : ''
@@ -410,7 +439,11 @@ export default function BidPdfEditor() {
         const resolvedTargetOccupy = canApplyMorphedPosition
           ? (recipientMorpher.target_occupy || bidTargetOccupy)
           : fd.target_occupy
-        const resolvedTargetCompany = fd.target_company ?? bidTargetCompany
+        const canApplyTargetCompany = fd.target_company == null
+          || fd.target_company === rawBidTargetCompany
+        const resolvedTargetCompany = canApplyTargetCompany
+          ? bidTargetCompany
+          : fd.target_company
         const shouldPersistRecipient = (
           recipientMorpher.hasResponse
           && JSON.stringify(fd._morpher ?? null) !== JSON.stringify(morpherMetadata)
