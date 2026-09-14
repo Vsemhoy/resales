@@ -194,10 +194,10 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
         </Field>
       </Section>
 
-      <Section title="Название объекта" description="Выводится под заголовком КП">
+      <Section title="Адрес объекта" description="По умолчанию берётся из связанного проекта">
         <ResetField data={data} set={set} defaults={D} label=""
-          fieldKey="object_name"
-          placeholder="АО Полиметалл, объект г. Санкт-Петербург"
+          fieldKey="object_address"
+          placeholder={D?.object_address_placeholder ?? 'нет связанных проектов'}
         />
       </Section>
 

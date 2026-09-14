@@ -3,7 +3,7 @@ import { NavLink, useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined, DownloadOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import { getDraft, getBidModels, getDraftModels, getDraftModelsWithPrices, getCovers, getUser } from './api'
+import { getDraft, getBidInfo, getProjectInfo, getBidModels, getDraftModels, getDraftModelsWithPrices, getCovers, getUser } from './api'
 import { restoreFilesIntoFormData } from './api/files'
 import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
@@ -247,7 +247,7 @@ export default function BidPdfEditor() {
     })
     getDraftModels(draftId).then(data => setModelsData(data?.modelsData ?? null)).catch(() => {})
     getDraft(draftId)
-      .then(data => {
+      .then(async data => {
         setDraft(data)
         if (data.currency) setCurrency(data.currency)
         const fd   = restoreFilesIntoFormData(data.form_data || {})
@@ -297,9 +297,54 @@ export default function BidPdfEditor() {
           : (fd.target_occupy || '')
 
         const bidObjectName = data.source_bid?.object || ''
+
+        // Адрес объекта живёт в связанном проекте, а не в самой заявке.
+        // В разных версиях API ссылка на проект встречается как ID или объект,
+        // поэтому сначала используем данные драфта, затем полную карточку заявки.
+        let projectRef = data.source_bid?.project
+          ?? data.source_bid?.base_info?.project
+          ?? data.project
+          ?? null
+        let projectId = typeof projectRef === 'object' ? projectRef?.id : projectRef
+        let projectAddress = typeof projectRef === 'object'
+          ? String(projectRef?.address || '').trim()
+          : ''
+
+        if (!projectId && data.bid_id) {
+          try {
+            const sourceBid = await getBidInfo(data.bid_id)
+            const bidRecord = sourceBid?.bid ?? sourceBid
+            projectRef = bidRecord?.base_info?.project ?? bidRecord?.project ?? null
+            projectId = typeof projectRef === 'object' ? projectRef?.id : projectRef
+            if (typeof projectRef === 'object') {
+              projectAddress = String(projectRef?.address || '').trim()
+            }
+          } catch (e) {
+            console.warn('Не удалось получить связанный проект заявки:', e)
+          }
+        }
+
+        if (projectId && !projectAddress) {
+          try {
+            const project = await getProjectInfo(projectId)
+            projectAddress = String(project?.address || '').trim()
+          } catch (e) {
+            console.warn('Не удалось получить адрес связанного проекта:', e)
+          }
+        }
+
         const defaultCoverTitle = bidObjectName
-          ? 'Коммерческое предложение для объекта:'
+          ? `Коммерческое предложение для объекта: ${bidObjectName}`
           : 'Коммерческое предложение'
+        const storedCoverTitle = String(fd.coverTitle ?? '').trim()
+        const legacyAutoTitles = [
+          '',
+          'Коммерческое предложение',
+          'Коммерческое предложение для объекта:',
+        ]
+        const resolvedCoverTitle = legacyAutoTitles.includes(storedCoverTitle)
+          ? defaultCoverTitle
+          : fd.coverTitle
 
         const computedDefaults = {
           date:           today,
@@ -311,6 +356,8 @@ export default function BidPdfEditor() {
           tel:            fd.tel   || '',
           email:          fd.email || '',
           object_name:    bidObjectName,
+          object_address: projectAddress,
+          object_address_placeholder: projectAddress ? 'Адрес объекта' : 'нет связанных проектов',
           coverTitle:     defaultCoverTitle,
         }
         setCoverDefaults(computedDefaults)
@@ -325,7 +372,8 @@ export default function BidPdfEditor() {
           _ndsPercent: ndsPercent,
           target_occupy:  fd.target_occupy || bidTargetOccupy,
           object_name:    fd.object_name   ?? bidObjectName,
-          coverTitle:     fd.coverTitle    ?? defaultCoverTitle,
+          object_address: fd.object_address ?? projectAddress,
+          coverTitle:     resolvedCoverTitle,
           client_company: clientCompany,
           _coverDefaults: computedDefaults,
         })
