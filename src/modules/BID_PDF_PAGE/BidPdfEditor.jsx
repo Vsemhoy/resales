@@ -115,7 +115,13 @@ function formatRecipientCompany(company, ownershipFormOverride = '') {
   const normalizedForm = normalizeCompanyPart(ownershipForm)
   if (!normalizedForm || normalizedName.includes(` ${normalizedForm} `)) return name
 
-  return `${ownershipForm} ${name}`
+  const hasOuterQuotes = (
+    (name.startsWith('«') && name.endsWith('»'))
+    || (name.startsWith('"') && name.endsWith('"'))
+    || (name.startsWith('“') && name.endsWith('”'))
+    || (name.startsWith('„') && name.endsWith('“'))
+  )
+  return `${ownershipForm} ${hasOuterQuotes ? name : `«${name}»`}`
 }
 
 function phraseIsFullyVerified(result, source) {
