@@ -1,7 +1,7 @@
 export const ALL_SECTIONS = [
   { key: 'cover',           label: 'Обложка',                   draggable: false, target: null, required: false, engineerCapable: false },
   { key: 'toc',             label: 'Оглавление',                draggable: false, target: null, required: false, engineerCapable: false },
-  { key: 'features',        label: 'Особенности системы',       draggable: true,  target: null, required: false, engineerCapable: true  },
+  { key: 'features',        label: 'Особенности системы',       draggable: true,  target: null, required: false, engineerCapable: true, hidden: true },
   { key: 'selectEquipment', label: 'Выбор оборудования',        draggable: true,  target: null, required: false, engineerCapable: true  },
   { key: 'acoustic',        label: 'Акустический расчёт',       draggable: true,  target: 'p',  required: false, engineerCapable: true  },
   { key: 'specifications',  label: 'Спецификация',              draggable: true,  target: null, required: false, engineerCapable: false },
@@ -33,8 +33,11 @@ export const TARGET_OPTIONS = [
   { value: 'p', label: 'Профессиональная' },
 ]
 
-export function getVisibleSections(targetSystem) {
-  return ALL_SECTIONS.filter(s => s.target === null || s.target === targetSystem)
+export function getVisibleSections(targetSystem, enabledSections = {}) {
+  return ALL_SECTIONS.filter(section => (
+    (!section.hidden || enabledSections[section.key])
+    && (section.target === null || section.target === targetSystem)
+  ))
 }
 
 export const DEFAULT_SECTION_ORDER = ALL_SECTIONS

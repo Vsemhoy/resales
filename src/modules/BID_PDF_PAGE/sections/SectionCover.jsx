@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Button, Input, Segmented } from 'antd'
+import { Button, Input, Popover, Segmented, Tag } from 'antd'
 import { PlusOutlined, UndoOutlined } from '@ant-design/icons'
 import { Image } from 'antd'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
@@ -72,6 +72,86 @@ function ResetField({ label, fieldKey, placeholder, textarea, data, set, default
   )
 }
 
+const MORPHER_CASE_LABELS = {
+  nominative: 'Именительный',
+  genitive: 'Родительный',
+  dative: 'Дательный',
+  accusative: 'Винительный',
+  instrumental: 'Творительный',
+  prepositional: 'Предложный',
+}
+
+function MorpherMeta({ meta }) {
+  if (!meta) return null
+
+  const matches = Array.isArray(meta.matches) ? meta.matches : []
+  const unmatched = Array.isArray(meta.unmatched) ? meta.unmatched : []
+  const ids = [...new Set([
+    meta.entry_id,
+    ...matches.map(item => item.lexeme_id),
+  ].filter(Boolean))]
+  const status = meta.status || 'unavailable'
+  const statusView = {
+    verified:  { color: 'green',  label: 'подтверждено' },
+    partial:   { color: 'gold',   label: 'частичное совпадение' },
+    not_found: { color: 'red',    label: 'запись не найдена' },
+    empty:     { color: 'default', label: 'нет исходного текста' },
+    unavailable: { color: 'default', label: 'API недоступно' },
+  }[status] || { color: 'default', label: status }
+
+  const content = (
+    <div style={{ width: 440, maxWidth: '70vw', fontSize: 12 }}>
+      <div style={{ fontWeight: 600, marginBottom: 8 }}>RES-MORPHER</div>
+      {meta.contact_id ? <div><b>ID контакта:</b> {meta.contact_id}</div> : null}
+      {meta.entry_id ? <div><b>ID записи должности:</b> {meta.entry_id}</div> : null}
+      {matches.length ? (
+        <div style={{ marginTop: 6 }}>
+          <b>Найденные лексемы:</b>
+          {matches.map(item => (
+            <div key={`${item.index}-${item.lexeme_id}`} style={{ marginTop: 3 }}>
+              #{item.lexeme_id} · {item.source} · {item.type} · {item.gender}
+              {' · '}{item.is_verified ? 'проверено' : 'не проверено'}
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {unmatched.length ? (
+        <div style={{ marginTop: 6, color: '#cf1322' }}>
+          <b>Не найдены:</b> {unmatched.map(item => item.source).join(', ')}
+        </div>
+      ) : null}
+      {meta.forms && Object.keys(meta.forms).length ? (
+        <div style={{ marginTop: 10 }}>
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>
+            Падежи{meta.forms_verified ? '' : ' (редакторский разбор)'}
+          </div>
+          {Object.entries(MORPHER_CASE_LABELS).map(([key, label]) => (
+            <div key={key} style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: 8, marginTop: 2 }}>
+              <span style={{ color: '#8c8c8c' }}>{label}</span>
+              <span>{meta.forms[key] || '—'}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      {meta.verified_form ? (
+        <div style={{ marginTop: 10 }}>
+          <b>Применённая проверенная форма:</b> {meta.verified_form.value}
+        </div>
+      ) : null}
+    </div>
+  )
+
+  return (
+    <div style={{ marginTop: -8, marginBottom: 10 }}>
+      <Popover content={content} trigger="click" placement="bottomLeft">
+        <Tag color={statusView.color} style={{ cursor: 'pointer', marginInlineEnd: 0 }}>
+          RES-MORPHER · {statusView.label}{ids.length ? ` · ID ${ids.join(', ')}` : ''}
+        </Tag>
+      </Popover>
+    </div>
+  )
+}
+
 export default function SectionCover({ data, onChange, draftId, companyId, coverDefaults }) {
   const accent    = companyId === '3' ? '#269435' : '#FF5903'
   const set       = (key, val) => onChange({ ...data, [key]: val })
@@ -85,6 +165,7 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
       ext_number:     data.ext_number    || '',
       target_name:    data.target_name   || '',
       target_occupy:  data.target_occupy || '',
+      target_company: data.target_company || '',
       manager_name:   data.manager_name  || '',
       manager_occupy: data.manager_occupy|| '',
       tel:            data.tel           || '',
@@ -164,19 +245,29 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
 
           <ResetField data={data} set={set} defaults={D} label="Исходящий номер" fieldKey="ext_number" placeholder="129874" />
 
-          {/* Кому: должность+компания сверху, имя снизу */}
-          <ResetField data={data} set={set} defaults={D} label="Кому — должность и организация"
-            fieldKey="target_occupy"
-            placeholder={companyName ? `Директору ${companyName}` : 'Менеджеру ООО «Кабель Контракт Юг»'}
+          {/* Кому: должность, организация и имя отдельными строками */}
+          <div>
+            <ResetField data={data} set={set} defaults={D} label="Кому — должность"
+              fieldKey="target_occupy"
+              placeholder="Генеральному директору"
+            />
+            <MorpherMeta meta={data?._morpher?.target_occupy} />
+          </div>
+          <ResetField data={data} set={set} defaults={D} label="Кому — организация"
+            fieldKey="target_company"
+            placeholder={companyName || 'ООО «Кабель Контракт Юг»'}
           />
-          <ResetField data={data} set={set} defaults={D} label="Кому — имя"
-            fieldKey="target_name"
-            placeholder="Ромашнику Гиви Рашидову"
-          />
+          <div>
+            <ResetField data={data} set={set} defaults={D} label="Кому — имя"
+              fieldKey="target_name"
+              placeholder="Ромашнику Гиви Рашидову"
+            />
+            <MorpherMeta meta={data?._morpher?.target_name} />
+          </div>
         </Grid2>
       </Section>
 
-      <Section title="Заголовок КП" description="По центру под реквизитами">
+      <Section title="Заголовок КП" description="Символ + создаёт принудительный перенос строки в PDF">
         <Field>
           <div style={{ display: 'flex', gap: 6 }}>
             <Input

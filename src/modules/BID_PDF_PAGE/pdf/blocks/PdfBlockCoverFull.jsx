@@ -37,19 +37,24 @@ export function PdfBlockCoverFull({ cfg, data, draft }) {
           <View style={{ height: 2.5, width: space.xxl * 1.5, backgroundColor: color.accent, marginBottom: space.xl }} />
 
           {/* Кому */}
-          {(data?.target_name || data?.target_occupy) && (
+          {(data?.target_name || data?.target_occupy || data?.target_company) && (
             <View>
               <Text style={{ fontSize: text.xs, color: color.textMuted, fontFamily: font.regular, marginBottom: space.xxs }}>
                 Кому
               </Text>
-              {data.target_name && (
-                <Text style={{ fontSize: text.base, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold }}>
-                  {String(data.target_name || '').trim()}
+              {data.target_occupy && (
+                <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>
+                  {String(data.target_occupy || '').trim()}
                 </Text>
               )}
-              {data.target_occupy && (
-                <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular, marginTop: space.xxs }}>
-                  {String(data.target_occupy || '').trim()}
+              {data.target_company && (
+                <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular, fontWeight: weight.medium, marginTop: space.xxs }}>
+                  {String(data.target_company || '').trim()}
+                </Text>
+              )}
+              {data.target_name && (
+                <Text style={{ fontSize: text.base, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold, marginTop: space.xxs }}>
+                  {String(data.target_name || '').trim()}
                 </Text>
               )}
             </View>

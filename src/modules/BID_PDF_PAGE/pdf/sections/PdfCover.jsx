@@ -29,12 +29,17 @@ function CoverFull({ theme, data, draft }) {
 
         <View style={{ height: 2, width: mm(20), backgroundColor: theme.accent, marginBottom: mm(8) }} />
 
-        {data?.target_name ? (
+        {(data?.target_name || data?.target_occupy || data?.target_company) ? (
           <View style={{ marginBottom: mm(8) }}>
             <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginBottom: mm(1) }}>Кому</Text>
-            <Text style={{ fontSize: theme.fontSize.base, color: theme.black, fontFamily: theme.fonts.bold, fontWeight: 600 }}>{data.target_name}</Text>
             {data?.target_occupy ? (
-              <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginTop: mm(1) }}>{data.target_occupy}</Text>
+              <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular }}>{data.target_occupy}</Text>
+            ) : null}
+            {data?.target_company ? (
+              <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, fontWeight: 500, marginTop: mm(1) }}>{data.target_company}</Text>
+            ) : null}
+            {data?.target_name ? (
+              <Text style={{ fontSize: theme.fontSize.base, color: theme.black, fontFamily: theme.fonts.bold, fontWeight: 600, marginTop: mm(1) }}>{data.target_name}</Text>
             ) : null}
           </View>
         ) : null}
@@ -152,6 +157,11 @@ function CoverHat({ theme, data, draft }) {
           {data?.target_occupy ? (
             <Text style={{ fontSize: theme.fontSize.sm, color: theme.gray, fontFamily: theme.fonts.regular }}>
               {data.target_occupy}
+            </Text>
+          ) : null}
+          {data?.target_company ? (
+            <Text style={{ fontSize: theme.fontSize.sm, color: theme.gray, fontFamily: theme.fonts.regular, fontWeight: 500 }}>
+              {data.target_company}
             </Text>
           ) : null}
           {data?.target_name ? (

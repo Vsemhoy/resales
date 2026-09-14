@@ -13,6 +13,10 @@ function absUrl(src) {
   return `${window.location.origin}${src}`
 }
 
+function withForcedLineBreaks(value) {
+  return String(value || '').replace(/[ \t]*\+[ \t]*/g, '\n')
+}
+
 export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
   const { color, layout, text, font, weight, space, cover } = cfg
   const hatUrl = absUrl(data?.hatImage)
@@ -79,6 +83,11 @@ export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
               {String(data.target_occupy || '').trim()}
             </Text>
           ) : null}
+          {data?.target_company ? (
+            <Text style={{ width: '100%', fontSize: text.sm, color: color.textSecondary, fontFamily: font.regular, fontWeight: weight.medium, textAlign: 'right' }}>
+              {String(data.target_company || '').trim()}
+            </Text>
+          ) : null}
           {data?.target_name ? (
             <Text style={{ width: '100%', fontSize: text.sm, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold, textAlign: 'right' }}>
               {String(data.target_name || '').trim()}
@@ -88,8 +97,8 @@ export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
       </View>
 
       {/* Заголовок КП — редактируемый, по центру */}
-      <Text style={{ fontSize: text.xl, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, marginBottom: data?.object_address ? space.xs : space.lg, textAlign: 'center' }}>
-        {data?.coverTitle || 'Коммерческое предложение'}
+      <Text style={{ fontSize: text.lg, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.bold, lineHeight: 1.25, marginBottom: data?.object_address ? space.xs : space.lg, textAlign: 'center' }}>
+        {withForcedLineBreaks(data?.coverTitle || 'Коммерческое предложение')}
       </Text>
       {data?.object_address ? (
         <Text style={{ fontSize: text.sm, color: color.textSecondary, fontFamily: font.regular, marginBottom: space.lg, textAlign: 'center' }}>

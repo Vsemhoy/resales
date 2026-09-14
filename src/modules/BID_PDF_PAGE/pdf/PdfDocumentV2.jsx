@@ -38,11 +38,12 @@ export function PdfDocumentV2({
 }) {
   const cfg = getConfig(companyId, orientation)
   const { layout, color, font: f } = cfg
+  const renderableEnabledSections = enabledSections
 
   const coverMode = formData?.coverMode ?? 'hat'
 
   const figureRegistry = buildFigureRegistry({
-    sectionOrder, enabledSections, formData, figuresEnabled,
+    sectionOrder, enabledSections: renderableEnabledSections, formData, figuresEnabled,
   })
 
   // Нумерация разделов
@@ -51,7 +52,7 @@ export function PdfDocumentV2({
   for (const key of sectionOrder) {
     if (key === 'cover' || key === 'toc') continue
     if (key === 'pageBreak' || key.startsWith('pageBreak_')) continue   // разрывы не нумеруем
-    if (enabledSections[key]) sectionNumbers[key] = num++
+    if (renderableEnabledSections[key]) sectionNumbers[key] = num++
   }
 
   const contentSections = sectionOrder.filter(k =>
@@ -96,7 +97,7 @@ export function PdfDocumentV2({
         <PdfPageFrame cfg={cfg} draft={draft} companyId={companyId} formData={formData} />
 
         {/* Обложка */}
-        {enabledSections.cover !== false && (
+        {renderableEnabledSections.cover !== false && (
           coverMode === 'hat'
             ? <PdfBlockCoverHat  cfg={cfg} data={formData} draft={draft} companyId={companyId} />
             : <PdfBlockCoverFull cfg={cfg} data={formData} draft={draft} />
@@ -104,7 +105,7 @@ export function PdfDocumentV2({
 
         {/* Секции по порядку */}
         {contentSections.map((key, idx) => {
-          if (!enabledSections[key]) return null
+          if (!renderableEnabledSections[key]) return null
           const n = sectionNumbers[key]
 
           if (key === 'pageBreak' || key.startsWith(PAGEBREAK_PREFIX)) return null
@@ -115,9 +116,9 @@ export function PdfDocumentV2({
             for (let i = idx - 1; i >= 0; i--) {
               const k = contentSections[i]
               if (k === 'pageBreak' || k.startsWith(PAGEBREAK_PREFIX)) {
-                return enabledSections[k] !== false
+                return renderableEnabledSections[k] !== false
               }
-              if (enabledSections[k]) return false  // включённая секция — стоп
+              if (renderableEnabledSections[k]) return false  // включённая секция — стоп
               // отключённая — продолжаем смотреть назад
             }
             return false
@@ -167,15 +168,15 @@ export function PdfDocumentV2({
         })}
 
         {/* Оглавление — в конце документа, только так можно получить страницы */}
-        {enabledSections.toc !== false && (() => {
+        {renderableEnabledSections.toc !== false && (() => {
           // Ищем назад от конца, пропуская отключённые секции
           const tocBreak = (() => {
             for (let i = contentSections.length - 1; i >= 0; i--) {
               const k = contentSections[i]
               if (k === 'pageBreak' || k.startsWith(PAGEBREAK_PREFIX)) {
-                return enabledSections[k] !== false
+                return renderableEnabledSections[k] !== false
               }
-              if (enabledSections[k]) return false
+              if (renderableEnabledSections[k]) return false
             }
             return false
           })()
@@ -183,7 +184,7 @@ export function PdfDocumentV2({
             <PdfBlockToc
               cfg={cfg}
               sectionNumbers={sectionNumbers}
-              enabledSections={enabledSections}
+              enabledSections={renderableEnabledSections}
               sectionOrder={sectionOrder}
               getLabel={getLabel}
               sectionPageNumbers={sectionPageNumbers}

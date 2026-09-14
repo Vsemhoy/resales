@@ -3,7 +3,11 @@ import { NavLink, useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined, DownloadOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import { getDraft, getBidInfo, getProjectInfo, getBidModels, getDraftModels, getDraftModelsWithPrices, getCovers, getUser } from './api'
+import {
+  getDraft, getBidInfo, getProjectInfo, getBidModels, getDraftModels,
+  getDraftModelsWithPrices, getCovers, getUser, declineMorpherPhrase,
+  declineMorpherVerified, getMorpherWordIndexes,
+} from './api'
 import { restoreFilesIntoFormData } from './api/files'
 import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
@@ -83,6 +87,90 @@ function buildTableFootnoteDefault({ withoutNds = false, ndsPercent = DEFAULT_ND
     : `\u0426\u0435\u043d\u044b \u0443\u043a\u0430\u0437\u0430\u043d\u044b \u0441 \u0443\u0447\u0435\u0442\u043e\u043c \u041d\u0414\u0421 ${ndsValue}%.`
 
   return `${FOOTNOTE_PREFIX} ${priceText} ${FOOTNOTE_SUFFIX}`
+}
+
+function phraseIsFullyVerified(result, source) {
+  const indexes = getMorpherWordIndexes(source)
+  const matches = Array.isArray(result?.matches) ? result.matches : []
+  const unmatched = Array.isArray(result?.unmatched) ? result.unmatched : []
+  const matchedIndexes = new Set(matches.map(item => item.index))
+  return Boolean(result?.forms?.dative)
+    && unmatched.length === 0
+    && indexes.every(index => matchedIndexes.has(index))
+    && matches.every(item => item.is_verified === true)
+}
+
+function phraseMeta(source, result, contactId = null) {
+  if (!source) return { status: 'empty', source: '', contact_id: contactId }
+  if (!result) return { status: 'unavailable', source, contact_id: contactId }
+
+  const isVerified = phraseIsFullyVerified(result, source)
+  const matches = Array.isArray(result.matches) ? result.matches : []
+  const unmatched = Array.isArray(result.unmatched) ? result.unmatched : []
+  return {
+    status: isVerified ? 'verified' : (matches.length ? 'partial' : 'not_found'),
+    source,
+    contact_id: contactId,
+    requested_case: 'dative',
+    applied_value: isVerified ? result.forms.dative : source,
+    is_verified: isVerified,
+    forms_verified: isVerified,
+    forms: result.forms || {},
+    matches,
+    unmatched,
+  }
+}
+
+async function resolveRecipientMorpher({ name, position, contactId }) {
+  const nameRequest = name
+    ? declineMorpherPhrase(name).catch(() => null)
+    : Promise.resolve(null)
+  const positionPhraseRequest = position
+    ? declineMorpherPhrase(position).catch(() => null)
+    : Promise.resolve(null)
+  const positionVerifiedRequest = position
+    ? declineMorpherVerified('position', position, 'dative').catch(() => null)
+    : Promise.resolve(null)
+
+  const [nameResult, positionPhraseResult, positionVerifiedResult] = await Promise.all([
+    nameRequest,
+    positionPhraseRequest,
+    positionVerifiedRequest,
+  ])
+
+  const nameMetadata = phraseMeta(name, nameResult, contactId)
+  const positionPhraseMetadata = phraseMeta(position, positionPhraseResult, contactId)
+  const positionIsVerified = positionVerifiedResult?.is_verified === true
+    && Boolean(positionVerifiedResult?.value)
+  const resolvedPosition = positionIsVerified ? positionVerifiedResult.value : position
+  const positionMetadata = {
+    ...positionPhraseMetadata,
+    status: positionIsVerified
+      ? 'verified'
+      : positionPhraseMetadata.status,
+    entry_id: positionVerifiedResult?.lexeme_id ?? null,
+    requested_case: 'dative',
+    applied_value: resolvedPosition,
+    display_value: resolvedPosition,
+    is_verified: positionIsVerified,
+    forms_verified: positionPhraseMetadata.is_verified,
+    verified_form: positionIsVerified ? {
+      case: positionVerifiedResult.case,
+      value: positionVerifiedResult.value,
+      source: positionVerifiedResult.lemma,
+    } : null,
+  }
+
+  return {
+    target_name: nameMetadata.is_verified ? nameMetadata.applied_value : name,
+    target_occupy: resolvedPosition,
+    metadata: {
+      version: 1,
+      target_name: nameMetadata,
+      target_occupy: positionMetadata,
+    },
+    hasResponse: Boolean(nameResult || positionPhraseResult || positionVerifiedResult),
+  }
 }
 
 function stripFootnoteHtml(value = '') {
@@ -292,9 +380,44 @@ export default function BidPdfEditor() {
         const bidTargetName = orgUser
           ? [orgUser.lastname, orgUser.name, orgUser.middlename].filter(Boolean).join(' ')
           : (fd.target_name || '')
+        const bidTargetPosition = orgUser?.occupy || ''
+        const bidTargetCompany = clientCompany?.name || ''
+        const legacyBidTargetOccupy = orgUser
+          ? [bidTargetPosition, bidTargetCompany].filter(Boolean).join(' ')
+          : ''
         const bidTargetOccupy = orgUser
-          ? [orgUser.occupy, clientCompany?.name].filter(Boolean).join(' ')
+          ? bidTargetPosition
           : (fd.target_occupy || '')
+        const recipientMorpher = await resolveRecipientMorpher({
+          name: bidTargetName,
+          position: bidTargetPosition,
+          contactId: orgUser?.id ?? null,
+        })
+        const morpherMetadata = recipientMorpher.hasResponse
+          ? recipientMorpher.metadata
+          : (fd._morpher ?? recipientMorpher.metadata)
+        const canApplyMorphedName = fd.target_name == null
+          || fd.target_name === bidTargetName
+          || fd.target_name === fd._morpher?.target_name?.applied_value
+        const canApplyMorphedPosition = fd.target_occupy == null
+          || fd.target_occupy === bidTargetOccupy
+          || fd.target_occupy === legacyBidTargetOccupy
+          || fd.target_occupy === fd._morpher?.target_occupy?.applied_value
+          || fd.target_occupy === fd._morpher?.target_occupy?.display_value
+        const resolvedTargetName = canApplyMorphedName
+          ? (recipientMorpher.target_name || bidTargetName)
+          : fd.target_name
+        const resolvedTargetOccupy = canApplyMorphedPosition
+          ? (recipientMorpher.target_occupy || bidTargetOccupy)
+          : fd.target_occupy
+        const resolvedTargetCompany = fd.target_company ?? bidTargetCompany
+        const shouldPersistRecipient = (
+          recipientMorpher.hasResponse
+          && JSON.stringify(fd._morpher ?? null) !== JSON.stringify(morpherMetadata)
+        )
+          || fd.target_name !== resolvedTargetName
+          || fd.target_occupy !== resolvedTargetOccupy
+          || fd.target_company !== resolvedTargetCompany
 
         const bidObjectName = data.source_bid?.object || ''
 
@@ -349,8 +472,9 @@ export default function BidPdfEditor() {
         const computedDefaults = {
           date:           today,
           ext_number:     String(data.bid_id || fd.ext_number || ''),
-          target_name:    bidTargetName,
-          target_occupy:  bidTargetOccupy,
+          target_name:    recipientMorpher.target_name || bidTargetName,
+          target_occupy:  recipientMorpher.target_occupy || bidTargetOccupy,
+          target_company: bidTargetCompany,
           manager_name:   bidManagerName,
           manager_occupy: bidManagerOccupy,
           tel:            fd.tel   || '',
@@ -370,11 +494,14 @@ export default function BidPdfEditor() {
           _tableFootnoteDefault: tableFootnoteDefault,
           _withoutNds: withoutNds,
           _ndsPercent: ndsPercent,
-          target_occupy:  fd.target_occupy || bidTargetOccupy,
+          target_name:    resolvedTargetName,
+          target_occupy:  resolvedTargetOccupy,
+          target_company: resolvedTargetCompany,
           object_name:    fd.object_name   ?? bidObjectName,
           object_address: fd.object_address ?? projectAddress,
           coverTitle:     resolvedCoverTitle,
           client_company: clientCompany,
+          _morpher: morpherMetadata,
           _coverDefaults: computedDefaults,
         })
         setIsDirty(false)
@@ -387,7 +514,10 @@ export default function BidPdfEditor() {
             }
           }).catch(() => {})
         }
-        setTimeout(() => setIsReady(true), 100)
+        setTimeout(() => {
+          setIsReady(true)
+          if (shouldPersistRecipient) setIsDirty(true)
+        }, 100)
       })
       .catch(e => console.error('Ошибка загрузки драфта:', e))
       .finally(() => setLoading(false))
@@ -568,7 +698,7 @@ export default function BidPdfEditor() {
     useDraftStatus(draftId, draft?.status, userRole, (res) => {
       setDraft(d => d ? { ...d, status: res.status, engineer_id: res.engineer_id } : d)
     })
-  const visible        = getVisibleSections(targetSystem)
+  const visible        = getVisibleSections(targetSystem, enabledSections)
   const orderedVisible = sectionOrder.map(k => {
     if (isPageBreakKey(k)) return makePageBreakSection(k)
     if (isCustomKey(k)) {
