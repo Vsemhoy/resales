@@ -410,13 +410,28 @@ export default function BidPdfEditor() {
           ? [orgUser.lastname, orgUser.name, orgUser.middlename].filter(Boolean).join(' ')
           : (fd.target_name || '')
         const bidTargetPosition = orgUser?.occupy || ''
-        let recipientCompany = clientCompany
+        const sourceCompany = data.source_bid?.organization
+          ?? data.source_bid?.org
+          ?? data.organization
+          ?? null
+        let recipientCompany = {
+          ...(sourceCompany && typeof sourceCompany === 'object' ? sourceCompany : {}),
+          ...(clientCompany && typeof clientCompany === 'object' ? clientCompany : {}),
+        }
+        const recipientCompanyId = recipientCompany?.id
+          ?? recipientCompany?.org_id
+          ?? recipientCompany?.id_orgs
+          ?? data.source_bid?.org_id
+          ?? data.source_bid?.id_orgs
+          ?? orgUser?.id_orgs
+          ?? data.org_id
+          ?? null
         let ownershipForm = getCompanyOwnershipForm(recipientCompany)
         let ownershipFormId = recipientCompany?.id8an_fs ?? recipientCompany?.fs_id ?? null
 
-        if (recipientCompany?.id && !ownershipForm && !ownershipFormId) {
+        if (recipientCompanyId && (!recipientCompany?.name || (!ownershipForm && !ownershipFormId))) {
           try {
-            const organizationInfo = await getOrganizationInfo(recipientCompany.id)
+            const organizationInfo = await getOrganizationInfo(recipientCompanyId)
             recipientCompany = { ...recipientCompany, ...organizationInfo }
             ownershipForm = getCompanyOwnershipForm(recipientCompany)
             ownershipFormId = recipientCompany?.id8an_fs ?? recipientCompany?.fs_id ?? null
