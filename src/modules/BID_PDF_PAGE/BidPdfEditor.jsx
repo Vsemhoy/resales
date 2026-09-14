@@ -6,7 +6,8 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import {
   getDraft, getBidInfo, getProjectInfo, getBidModels, getDraftModels,
   getDraftModelsWithPrices, getCovers, getUser, declineMorpherPhrase,
-  declineMorpherVerified, getMorpherWordIndexes,
+  declineMorpherVerified, getMorpherWordIndexes, getOrganizationInfo,
+  getOrganizationOwnershipForms,
 } from './api'
 import { restoreFilesIntoFormData } from './api/files'
 import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
@@ -102,12 +103,12 @@ function normalizeCompanyPart(value = '') {
 function getCompanyOwnershipForm(company) {
   const form = company?.an_fs
   if (typeof form === 'string') return form.trim()
-  return String(form?.name ?? form?.shortname ?? '').trim()
+  return String(form?.fs ?? form?.name ?? form?.shortname ?? company?.fs_name ?? '').trim()
 }
 
-function formatRecipientCompany(company) {
+function formatRecipientCompany(company, ownershipFormOverride = '') {
   const name = String(company?.name ?? '').trim()
-  const ownershipForm = getCompanyOwnershipForm(company)
+  const ownershipForm = String(ownershipFormOverride || getCompanyOwnershipForm(company)).trim()
   if (!name || !ownershipForm) return name
 
   const normalizedName = ` ${normalizeCompanyPart(name)} `
@@ -409,8 +410,33 @@ export default function BidPdfEditor() {
           ? [orgUser.lastname, orgUser.name, orgUser.middlename].filter(Boolean).join(' ')
           : (fd.target_name || '')
         const bidTargetPosition = orgUser?.occupy || ''
-        const rawBidTargetCompany = String(clientCompany?.name || '').trim()
-        const bidTargetCompany = formatRecipientCompany(clientCompany)
+        let recipientCompany = clientCompany
+        let ownershipForm = getCompanyOwnershipForm(recipientCompany)
+        let ownershipFormId = recipientCompany?.id8an_fs ?? recipientCompany?.fs_id ?? null
+
+        if (recipientCompany?.id && !ownershipForm && !ownershipFormId) {
+          try {
+            const organizationInfo = await getOrganizationInfo(recipientCompany.id)
+            recipientCompany = { ...recipientCompany, ...organizationInfo }
+            ownershipForm = getCompanyOwnershipForm(recipientCompany)
+            ownershipFormId = recipientCompany?.id8an_fs ?? recipientCompany?.fs_id ?? null
+          } catch (e) {
+            console.warn('Не удалось получить карточку организации адресата:', e)
+          }
+        }
+
+        if (!ownershipForm && ownershipFormId) {
+          try {
+            const ownershipForms = await getOrganizationOwnershipForms()
+            const matchedForm = ownershipForms.find(item => String(item.id) === String(ownershipFormId))
+            ownershipForm = String(matchedForm?.fs ?? matchedForm?.name ?? '').trim()
+          } catch (e) {
+            console.warn('Не удалось получить форму собственности организации:', e)
+          }
+        }
+
+        const rawBidTargetCompany = String(recipientCompany?.name || '').trim()
+        const bidTargetCompany = formatRecipientCompany(recipientCompany, ownershipForm)
         const legacyBidTargetOccupy = orgUser
           ? [bidTargetPosition, bidTargetCompany].filter(Boolean).join(' ')
           : ''
