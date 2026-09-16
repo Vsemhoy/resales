@@ -27,6 +27,8 @@ import ModelInfoExtraDrawer from "./components/ModelInfoExtraDrawer";
 import ProjectInfo from "./components/ProjectInfo";
 import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
 import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
+import BidRopHistoryModal from "./components/BidRopHistoryModal";
+import { getMockBidRopHistory } from "./mock/ropHistory";
 import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
 import DataParser from "./components/DataParser";
 import FindSimilarDrawer from "./components/FindSimilarDrawer";
@@ -70,6 +72,8 @@ const BidPage = (props) => {
 	const [isSend1c, setIsSend1c] = useState(0);
 	const [isOpenBaseInfo, setIsOpenBaseInfo] = useState(false);
 	const [userData, setUserData] = useState(null);
+    const canViewRopHistory = props.userdata?.acls?.includes(137) === true;
+    const [ropHistoryBidId, setRopHistoryBidId] = useState(null);
 	const [bidActions, setBidActions] = useState({
 		'create': null,
 		'update': null,
@@ -1110,6 +1114,8 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                             onToggleBaseInfo={() => setIsOpenBaseInfo(!isOpenBaseInfo)}
                             onOpenFiles={() => setIsBidFilesDrawerOpen(true)}
                             onOpenHistory={() => setIsBidHistoryDrawerOpen(true)}
+                            canViewRopHistory={canViewRopHistory}
+                            onOpenRopHistory={() => setRopHistoryBidId(bidId)}
                             onOpenDuplicate={() => setIsBidDuplicateDrawerOpen(true)}
                             onFetchWordFile={() => fetchWordFile().then()}
                             onNavigatePdf={() => navigate(`/bidsPDF/${bidId}`)}
@@ -1277,6 +1283,14 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                                       showError(`Произошла ошибка! ${path} ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
                                   }}
 			/>
+            {canViewRopHistory && ropHistoryBidId === bidId && (
+                <BidRopHistoryModal
+                    key={bidId}
+                    bidId={bidId}
+                    onClose={() => setRopHistoryBidId(null)}
+                    loadHistory={getMockBidRopHistory}
+                />
+            )}
 			<BidHistoryDrawer isOpenDrawer={isBidHistoryDrawerOpen}
 							  closeDrawer={() => setIsBidHistoryDrawerOpen(false)}
 							  bidId={bidId}

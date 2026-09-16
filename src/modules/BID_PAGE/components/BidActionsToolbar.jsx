@@ -30,6 +30,8 @@ export const BidActionsToolbar = ({
     onToggleBaseInfo,
     onOpenFiles,
     onOpenHistory,
+    onOpenRopHistory,
+    canViewRopHistory,
     onOpenDuplicate,
     onFetchWordFile,
     onNavigatePdf,
@@ -151,6 +153,23 @@ export const BidActionsToolbar = ({
                     onClick={onOpenHistory}
                 />
             </Tooltip>
+
+            {canViewRopHistory && (
+                <Tooltip title="История РОП" placement="right">
+                    <Button
+                        className="sa-bid-page-btn"
+                        color="primary"
+                        variant="outlined"
+                        aria-label="История РОП"
+                        onClick={onOpenRopHistory}
+                    >
+                        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, fontSize: 10, lineHeight: 1 }}>
+                            <HistoryOutlined style={{ fontSize: 22 }} />
+                            РОП
+                        </span>
+                    </Button>
+                </Tooltip>
+            )}
 
             {canDuplicate && <div className={'divider'} />}
             {canDuplicate && (
