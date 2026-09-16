@@ -53,7 +53,7 @@ import FindSimilar from "./components/FindSimilar";
 import {
     calcModels, changePlace,
     getModels, getNewBid, getOrgProjects, getProjectInfo,
-    getWordFile, toSent1C,
+    getWordFile, syncBidToWms, toSent1C,
 } from "./api/bids.api";
 import {useBidSelects} from "./hooks/useBidSelects";
 import {areObjectsEqual, areArraysEqual} from "./utils/areEqual";
@@ -70,6 +70,7 @@ const BidPage = (props) => {
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
 	const [isSend1c, setIsSend1c] = useState(0);
+	const [isSyncingWms, setIsSyncingWms] = useState(false);
 	const [isOpenBaseInfo, setIsOpenBaseInfo] = useState(false);
 	const [userData, setUserData] = useState(null);
     const canViewRopHistory = props.userdata?.acls?.includes(137) === true;
@@ -482,7 +483,10 @@ const BidPage = (props) => {
 				if (response) {
                     queryClient.invalidateQueries({ queryKey: ['bid', bidId] });
 
-					showSuccess(response.message.message);
+					showSuccess(response.message?.message || response.message || 'Этап заявки изменён');
+					if (response.wms_sync && response.wms_sync.success !== true) {
+						showWarning(`Заявка передана администратору, но склад не синхронизирован: ${response.wms_sync.message}`);
+					}
 				}
 			} catch (e) {
 				console.log(e);
@@ -506,6 +510,21 @@ const BidPage = (props) => {
 				setTimeout(() => setIsLoading1c(false), 500);
 			}
 		//}
+	};
+	const fetchWmsSync = async () => {
+		try {
+			setIsSyncingWms(true);
+			const response = await syncBidToWms(bidId);
+			if (response?.status === 0) {
+				showSuccess(response.message || 'Заявка синхронизирована со складом');
+			} else {
+				showWarning(response?.message || 'Склад отклонил синхронизацию');
+			}
+		} catch (e) {
+			showError(`Не удалось синхронизировать заявку со складом: ${e.response?.data?.message || e.message || 'Неизвестная ошибка'}`);
+		} finally {
+			setIsSyncingWms(false);
+		}
 	};
 	const fetchProjectInfo = async (projectId = bidProject) => {
 		if (!projectId) return;
@@ -1121,6 +1140,9 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                             onNavigatePdf={() => navigate(`/bidsPDF/${bidId}`)}
                             onFetchSend1c={() => fetchSend1c().then()}
                             onFetchNewBid={() => fetchNewBid().then()}
+                            onSyncWms={() => fetchWmsSync().then()}
+                            canSyncWms={serverData?.features?.wms_manual_sync === true && userData?.user?.sales_role === 2 && +bidPlace === 2}
+                            isSyncingWms={isSyncingWms}
                             openCustomModal={openCustomModal}
                             baseButtons={baseButtons}
                             buttons1C={buttons1C}
@@ -1321,8 +1343,6 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 };
 
 export default BidPage;
-
-
 
 
 

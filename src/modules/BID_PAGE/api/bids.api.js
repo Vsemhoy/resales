@@ -60,6 +60,11 @@ export const toSent1C = (bidId) =>
         _token: CSRF_TOKEN
     }).then(r => r.data);
 
+export const syncBidToWms = (bidId) =>
+    PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/bids/${bidId}/wms-sync`, {
+        _token: CSRF_TOKEN
+    }).then(r => r.data);
+
 export const getProjectInfo = (bidProject) =>
     PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/offers/project/${bidProject}`, {
         _token: CSRF_TOKEN
@@ -74,4 +79,3 @@ export const getOrgProjects = (orgId, params = {}) =>
         },
         _token: CSRF_TOKEN,
     }).then(r => r.data);
-

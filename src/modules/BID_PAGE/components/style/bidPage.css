@@ -339,6 +339,19 @@
 	font-size: 25px !important;
 }
 
+.sa-bid-page-wms-sync-btn {
+	margin-top: auto;
+	color: #fff !important;
+	background: #fa8c16 !important;
+	border-color: #fa8c16 !important;
+}
+
+.sa-bid-page-wms-sync-btn:not(:disabled):hover {
+	color: #fff !important;
+	background: #ff9c2e !important;
+	border-color: #ff9c2e !important;
+}
+
 .sa-info-models-header {
 	font-size: 16px;
 	font-weight: 600;

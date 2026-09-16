@@ -9,6 +9,7 @@ import {
     LayoutOutlined,
     PlusOutlined,
     FileTextOutlined,
+    SyncOutlined,
 } from '@ant-design/icons';
 import { BidFilesSection } from './BidFilesSection';
 import { HTTP_HOST } from '../../../config/config';
@@ -37,6 +38,9 @@ export const BidActionsToolbar = ({
     onNavigatePdf,
     onFetchSend1c,
     onFetchNewBid,
+    onSyncWms,
+    canSyncWms,
+    isSyncingWms,
     openCustomModal,
     baseButtons,
     buttons1C,
@@ -204,6 +208,19 @@ export const BidActionsToolbar = ({
                                 onFetchNewBid();
                             }
                         }}
+                    />
+                </Tooltip>
+            )}
+
+            {canSyncWms && (
+                <Tooltip title={isDirty ? 'Сначала сохраните изменения в заявке' : 'Выгрузить / обновить заявку на складе'} placement="right">
+                    <Button
+                        className="sa-bid-page-btn sa-bid-page-wms-sync-btn"
+                        aria-label="Синхронизировать со складом"
+                        icon={<SyncOutlined className="sa-bid-page-btn-icon" />}
+                        loading={isSyncingWms}
+                        disabled={isDirty || isSyncingWms}
+                        onClick={onSyncWms}
                     />
                 </Tooltip>
             )}
