@@ -9,7 +9,7 @@ import {
     LayoutOutlined,
     PlusOutlined,
     FileTextOutlined,
-    SyncOutlined,
+    DeliveredProcedureOutlined,
 } from '@ant-design/icons';
 import { BidFilesSection } from './BidFilesSection';
 import { HTTP_HOST } from '../../../config/config';
@@ -217,7 +217,7 @@ export const BidActionsToolbar = ({
                     <Button
                         className="sa-bid-page-btn sa-bid-page-wms-sync-btn"
                         aria-label="Синхронизировать со складом"
-                        icon={<SyncOutlined className="sa-bid-page-btn-icon" />}
+                        icon={<DeliveredProcedureOutlined className="sa-bid-page-btn-icon" />}
                         loading={isSyncingWms}
                         disabled={isDirty || isSyncingWms}
                         onClick={onSyncWms}
