@@ -1,6 +1,12 @@
 import {CSRF_TOKEN, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 
+export const getBidRopHistory = (bidId, { page = 1, per_page = 20 }, signal) =>
+    PROD_AXIOS_INSTANCE.get(`${ROUTE_PREFIX}/sales/bids/${bidId}/rop-history`, {
+        params: { page, per_page },
+        signal,
+    }).then(r => r.data);
+
 export const getBidInfo = (bidId) =>
     PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/sales/v2/offers/${bidId}`, {
         _token: CSRF_TOKEN

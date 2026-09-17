@@ -28,7 +28,7 @@ import ProjectInfo from "./components/ProjectInfo";
 import BidDuplicationDrawer from "./components/BidDuplicationDrawer";
 import BidHistoryDrawer from "../BID_LIST/components/BidHistoryDrawer";
 import BidRopHistoryModal from "./components/BidRopHistoryModal";
-import { getMockBidRopHistory } from "./mock/ropHistory";
+import { getBidRopHistory } from "./api/bids.api";
 import BidFilesDrawer from "../BID_LIST/components/BidFilesDrawer";
 import DataParser from "./components/DataParser";
 import FindSimilarDrawer from "./components/FindSimilarDrawer";
@@ -1310,7 +1310,8 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                     key={bidId}
                     bidId={bidId}
                     onClose={() => setRopHistoryBidId(null)}
-                    loadHistory={getMockBidRopHistory}
+                    loadHistory={getBidRopHistory}
+                    selects={{ ...selects, projects: prepareProjectSelect(orgProjects) }}
                 />
             )}
 			<BidHistoryDrawer isOpenDrawer={isBidHistoryDrawerOpen}
