@@ -37,7 +37,7 @@ const bidFields = {
 };
 
 const modelFields = {
-    id: 'ID позиции', bid_id: 'ID бида', model_id: 'ID оборудования',
+    id: 'ID позиции', bid_id: 'ID бида', model_id: 'Название модели',
     model_count: 'Кол-во', percent: 'Процент', presence: 'Наличие', sort: 'Порядок',
 };
 
@@ -65,7 +65,7 @@ const bidSelectFields = {
 export const getRopHistoryValue = (value, column, entity, selects = {}) => {
     if (value === null || value === undefined || value === '') return value;
     const selectName = entity === 'model'
-        ? (column === 'presence' ? 'presence' : undefined)
+        ? ({ presence: 'presence', model_id: 'models' }[column])
         : bidSelectFields[column];
     if (!selectName) return value;
     const option = (selects[selectName] || []).find(item =>

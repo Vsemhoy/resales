@@ -1311,7 +1311,7 @@ const openCustomModal = (type, title, text, filling, buttons) => {
                     bidId={bidId}
                     onClose={() => setRopHistoryBidId(null)}
                     loadHistory={getBidRopHistory}
-                    selects={{ ...selects, projects: prepareProjectSelect(orgProjects) }}
+                    selects={{ ...selects, projects: prepareProjectSelect(orgProjects), models: modelsSelect }}
                 />
             )}
 			<BidHistoryDrawer isOpenDrawer={isBidHistoryDrawerOpen}
