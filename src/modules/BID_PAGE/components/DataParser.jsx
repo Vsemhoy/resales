@@ -72,7 +72,52 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         const exactModel = modelIndex.exact.get(normalizedLine);
         if (exactModel) return exactModel;
 
-        return modelIndex.searchable.find(({ key }) => normalizedLine.includes(key))?.model ?? null;
+        return modelIndex.searchable.find(({ key }) => {
+            const pattern = [...key].map((char) => char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s*');
+            // Не принимать часть другого артикула за точное совпадение.
+            return new RegExp(`(?:^|[^a-zа-яё0-9-])${pattern}(?=$|[^a-zа-яё0-9-])`, 'iu')
+                .test(translitHomoglyphs(line.toLowerCase()));
+        })?.model ?? null;
+    };
+
+    const getClosestModel = (line) => {
+        const candidates = line.match(/[A-Za-zА-Яа-яЁё][A-Za-zА-Яа-яЁё0-9_/-]*/gu) ?? [];
+        let closest = null;
+        let bestScore = Infinity;
+        candidates.forEach((candidate) => {
+            const input = normalizeModelName(candidate);
+            if (input.length < 3 || !/\d/u.test(input)) return;
+            modelIndex.searchable.forEach(({ key, model }) => {
+                // Отсутствующий суффикс исполнения — предполагаемое совпадение,
+                // даже когда он длиннее допустимого количества опечаток.
+                const baseKey = key.replace(/(?:\([^()]+\))+$/u, '');
+                if (baseKey !== key && input === baseKey) {
+                    if (bestScore > 0) {
+                        closest = model;
+                        bestScore = 0;
+                    }
+                    return;
+                }
+                const limit = input.length >= 7 ? 2 : 1;
+                if (Math.abs(key.length - input.length) > limit) return;
+                let previous = Array.from({ length: key.length + 1 }, (_, index) => index);
+                for (let i = 1; i <= input.length; i += 1) {
+                    const current = [i];
+                    for (let j = 1; j <= key.length; j += 1) {
+                        current[j] = Math.min(current[j - 1] + 1, previous[j] + 1,
+                            previous[j - 1] + (input[i - 1] === key[j - 1] ? 0 : 1));
+                    }
+                    previous = current;
+                }
+                const distance = previous[key.length];
+                const score = distance / Math.max(input.length, key.length);
+                if (distance <= limit && score <= 0.3 && score < bestScore) {
+                    closest = model;
+                    bestScore = score;
+                }
+            });
+        });
+        return closest;
     };
 
     function generateUUID() {
@@ -87,42 +132,46 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         });
     }
 
-    const getModelCount = (line, hasModel = false) => {
+    const splitModelAndCount = (line) => {
         const countPatterns = [
             /(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)\s*[:=]?\s*(\d+)\b/iu,
             /(?:^|\s)(\d+)\s*(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)(?=\s|$|[,;:)])/iu,
             /(?:^|[\s\-–—])(?:x|х|\*)\s*(\d+)\b/iu,
             /(?:^|\s)(\d+)\s*(?:x|х|\*)(?=\s|$)/iu,
+            /(?:^|\s)(\d+)\s*$/u,
         ];
 
-        // Голое число в конце допустимо только в строке, где уже найдена модель.
-        // Так мощность из описания не станет количеством, а цифры после дефиса
-        // в EP-6216/HS-50 и без этого не подходят под шаблон.
-        if (hasModel) countPatterns.push(/(?:^|\s)(\d+)\s*$/u);
-
+        // Удаляем из наименования только тот фрагмент, из которого взяли количество.
+        // Цифры в самом артикуле (например, SWS-03) сохраняются.
         for (const pattern of countPatterns) {
             const match = line.match(pattern);
-            if (match) return parseInt(match[1], 10);
+            if (match) return {
+                name: `${line.slice(0, match.index)} ${line.slice(match.index + match[0].length)}`.trim(),
+                count: parseInt(match[1], 10),
+            };
         }
 
-        return 1;
+        return { name: line.trim(), count: 1 };
     };
 
     // Парсим строку
     const findModel = (line, index, forcedCount = null) => {
         const cleaned = line.trim().replace(/[^A-Za-zА-Яа-я0-9Ёё_\-*\(\),.]/g, " ");
 
-        if (!cleaned) return null;
+        if (!line.trim()) return null;
 
         const parts = cleaned.split(/\s+/u);
         const matchedModel = getModelFromLine(cleaned);
+        const parsedLine = splitModelAndCount(line);
 
         const mod = {
             errorname: true,
             key: generateUUID(),
             num: index + 1,
-            name: "",
-            count: forcedCount ?? getModelCount(line, Boolean(matchedModel)),
+            name: parsedLine.name || line.trim(),
+            source: line.trim(),
+            matchStatus: 'unknown',
+            count: forcedCount ?? parsedLine.count,
             id: 0,
             currency: 0,
         };
@@ -132,7 +181,14 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
             mod.errorname = false;
             mod.id = matchedModel.id;
             mod.currency = matchedModel.currency;
+            mod.matchStatus = 'exact';
             return mod;
+        }
+
+        const suggestion = getClosestModel(cleaned);
+        if (suggestion) {
+            return { ...mod, name: suggestion.name, id: suggestion.id,
+                currency: suggestion.currency, errorname: false, matchStatus: 'suggested' };
         }
 
         parts.forEach((value) => {
@@ -143,6 +199,7 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
                 mod.errorname = false;
                 mod.id = model.id;
                 mod.currency = model.currency;
+                mod.matchStatus = 'exact';
             } else if (!mod.name) {
                 mod.name = value;
             }
@@ -210,7 +267,7 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
 
         // Обычный формат «модель количество» без отдельной ячейки единицы.
         pending.forEach((line) => {
-            if (getModelFromLine(line)) append(line);
+            append(line);
         });
 
         return parsed.map((item, index) => ({ ...item, num: index + 1 }));
@@ -235,14 +292,22 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         {
             title: "Наименование",
             dataIndex: "name",
-            render: (name, record) =>
-                record.id ? (
-                    <span>{name}</span>
-                ) : (
-                    <span style={{ background: "red", color: "white", padding: "0 4px" }}>
-                        {name}
-                    </span>
-                ),
+            render: (name, record) => (
+                <div>
+                    <span style={record.matchStatus === 'exact' ? undefined : {
+                        background: record.matchStatus === 'suggested' ? '#fff7e6' : '#fff1f0',
+                        color: record.matchStatus === 'suggested' ? '#ad4e00' : '#cf1322',
+                        padding: '0 4px',
+                    }}>{name}</span>
+                    {record.matchStatus !== 'exact' && (
+                        <div style={{ fontSize: 12, color: '#666' }}>
+                            {record.matchStatus === 'suggested'
+                                ? `Предполагаемая модель. Исходная строка: ${record.source}`
+                                : 'Не распознано'}
+                        </div>
+                    )}
+                </div>
+            ),
         },
         {
             title: "Количество",
