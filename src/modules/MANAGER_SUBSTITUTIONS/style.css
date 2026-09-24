@@ -1,0 +1,7 @@
+.manager-substitutions { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.manager-substitutions-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.manager-substitutions-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) {
+    .manager-substitutions { padding: 16px 12px; }
+    .manager-substitutions-dates { grid-template-columns: 1fr; gap: 0; }
+}

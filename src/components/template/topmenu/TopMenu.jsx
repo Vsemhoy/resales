@@ -446,7 +446,8 @@ const TopMenu = (props) => {
 						</NavLink>
 					)}
 
-					<NavLink to="/regtown">
+					<NavLink to="/manager-substitutions"><div className="sa-topmenu-button">Замещения</div></NavLink>
+                    <NavLink to="/regtown">
 						<div className={'sa-topmenu-button'}>Города и регионы</div>
 					</NavLink>
 

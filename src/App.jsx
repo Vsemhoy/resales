@@ -47,9 +47,12 @@ import ReportsPage from './modules/REPORTS2/ReportsPage';
 import BidPdfEditor from './modules/BID_PDF_PAGE/BidPdfEditor';
 import HelpPage from './modules/HELP/HelpPage';
 
+import ManagerSubstitutionsPage from './modules/MANAGER_SUBSTITUTIONS/ManagerSubstitutionsPage';
+
 const DEFAULT_PAGE_TITLE = 'Отдел продаж';
 
 const PAGE_TITLE_RULES = [
+    { path: /^\/manager-substitutions$/, title: 'Замещения менеджеров' },
 	{ path: /^\/orgs$/, title: '🏢 Организации' },
 	{ path: /^\/orgs\/[^/]+$/, title: '🏢 Организация' },
 	{ path: /^\/torgs\/[^/]+$/, title: '🏢 Организация' },
@@ -171,6 +174,7 @@ export const App = () => {
                             />
                             <div>
                                 <Routes>
+                                    <Route path="/manager-substitutions" element={<ManagerSubstitutionsPage userdata={userdata} />} />
                                     <Route path="/" element={<Navigate to={topRole} replace />} />
 
                                     <Route path={'/help'} element={<HelpPage userdata={userdata} />} />
