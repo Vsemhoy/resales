@@ -37,12 +37,12 @@ const handleAuthError = (status) => {
 PROD_AXIOS_INSTANCE.interceptors.response.use(
     (response) => {
         // 👇 если вдруг 403 прошёл как success
-        handleAuthError(response.status);
+        if (!(response.status === 403 && response.config?.handleForbiddenLocally)) handleAuthError(response.status);
         return response;
     },
     (error) => {
         if (error.response) {
-            handleAuthError(error.response.status);
+            if (!(error.response.status === 403 && error.config?.handleForbiddenLocally)) handleAuthError(error.response.status);
         } else {
             console.log('Network / CORS error', error);
         }
