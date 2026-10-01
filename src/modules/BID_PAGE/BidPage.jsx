@@ -172,6 +172,7 @@ const BidPage = (props) => {
         handleOpenModelInfoExtra,
         handleCloseDrawerExtra,
         addParseModels,
+        addSingleParseModel,
         modelIdExtra,
         modelNameExtra,
     } = useBidModels({
@@ -186,6 +187,9 @@ const BidPage = (props) => {
         addParseModels(dataToAdd);
         setIsParseModalOpen(false);
     }, [addParseModels]);
+    const handleAddSingleParseModel = useCallback((model) => {
+        addSingleParseModel(model);
+    }, [addSingleParseModel]);
 
 	/* ОСТАЛЬНОЕ */
 	const [isProjectDataModalOpen, setIsProjectDataModalOpen] = useState(false);
@@ -1265,7 +1269,9 @@ const openCustomModal = (type, title, text, filling, buttons) => {
             <DataParser openModal={isParseModalOpen}
                         closeModal={() => setIsParseModalOpen(false)}
                         addParseModels={handleParseModels}
+                        addSingleParseModel={handleAddSingleParseModel}
                         models={modelsSelect}
+                        specificationModels={form.models}
             />
             <Modal
 				centered
@@ -1344,8 +1350,6 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 };
 
 export default BidPage;
-
-
 
 
 

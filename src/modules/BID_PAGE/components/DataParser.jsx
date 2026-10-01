@@ -1,10 +1,28 @@
 import React, { useEffect, useMemo, useState } from "react";
 import TextArea from "antd/es/input/TextArea";
-import { Modal, Table } from "antd";
+import { Button, Modal, Select, Space, Table, Tooltip } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
-const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
+const RECOGNITION_METHODS = {
+    CLASSIC: 'classic',
+    MODERN_26: 'modern-26',
+};
+
+const DataParser = ({
+    openModal,
+    closeModal,
+    addParseModels,
+    addSingleParseModel,
+    models,
+    specificationModels,
+}) => {
     const [value, setValue] = useState("");
     const [addition, setAddition] = useState([]);
+    const [recognitionMethod, setRecognitionMethod] = useState(RECOGNITION_METHODS.CLASSIC);
+    const specificationModelIds = useMemo(
+        () => new Set((specificationModels ?? []).map((model) => Number(model.model_id))),
+        [specificationModels],
+    );
 
     const translitHomoglyphs = (str) => {
         const replace_alphabet = {
@@ -212,10 +230,15 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
     const isNumber = (line) => /^\d+$/u.test(line.trim());
     const looksLikeModelCode = (line) => /[A-Za-zА-Яа-яЁё]/u.test(line) && /\d/u.test(line);
 
+    const decodeClipboardText = (text) => text
+        .replace(/&(?:#x20|nbsp);/giu, ' ')
+        .replace(/&(?:#x9|#9);/giu, '\t')
+        .replace(/\u00a0/gu, ' ');
+
     const getMeaningfulLines = (rawValue) => rawValue
         .split(/\r?\n/u)
         .flatMap((rawLine) => {
-            const decodedLine = rawLine.replace(/&(?:#x20|nbsp);/giu, ' ').trim();
+            const decodedLine = decodeClipboardText(rawLine).trim();
             if (!decodedLine) return [];
 
             if (decodedLine.includes('|')) {
@@ -273,9 +296,72 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
         return parsed.map((item, index) => ({ ...item, num: index + 1 }));
     };
 
+    const getModernRows = (rawValue) => {
+        const physicalLines = decodeClipboardText(rawValue)
+            .replace(/\r\n?|\u2028|\u2029/gu, '\n')
+            .split('\n');
+        const rows = [];
+        let currentRow = null;
+
+        physicalLines.forEach((physicalLine) => {
+            const line = physicalLine.replace(/[ \f\v]+$/gu, '');
+            const start = line.match(/^\s*(\d+)\s*[.)]?\s*(?:\t+| {2,})(.*)$/u);
+            // Одиночное число с табами — это количество в разорванной ячейке,
+            // а не начало новой позиции. У начала позиции справа всегда есть описание.
+            const isPositionStart = start && /[A-Za-zА-Яа-яЁё]/u.test(start[2]);
+
+            if (isPositionStart) {
+                if (currentRow) rows.push(currentRow);
+                currentRow = {
+                    position: parseInt(start[1], 10),
+                    lines: [start[2]],
+                    source: line.trim(),
+                };
+                return;
+            }
+
+            if (currentRow && line.trim()) {
+                currentRow.lines.push(line);
+                currentRow.source += `\n${line.trim()}`;
+            }
+        });
+
+        if (currentRow) rows.push(currentRow);
+        return rows;
+    };
+
+    const parseModernRawValue = (rawValue) => {
+        const rows = getModernRows(rawValue);
+        if (rows.length === 0) return parseRawValue(rawValue);
+
+        return rows.map((row, index) => {
+            const cells = row.lines
+                .flatMap((line) => line.split(/\t+/u))
+                .map((cell) => cell.replace(/\s+/gu, ' ').trim())
+                .filter(Boolean);
+            const unitIndex = cells.findIndex(isUnit);
+            const countIndex = unitIndex >= 0
+                ? cells.findIndex((cell, cellIndex) => cellIndex > unitIndex && isNumber(cell))
+                : -1;
+            const nameCells = unitIndex >= 0 ? cells.slice(0, unitIndex) : cells;
+            const name = nameCells.join(' ').trim();
+            const count = countIndex >= 0 ? parseInt(cells[countIndex], 10) : null;
+            const item = findModel(name || row.source, index, count);
+
+            return item ? { ...item, source: row.source, num: row.position } : null;
+        }).filter(Boolean);
+    };
+
     useEffect(() => {
-        setAddition(value ? parseRawValue(value) : []);
-    }, [value, modelIndex, openModal]);
+        if (!value) {
+            setAddition([]);
+            return;
+        }
+
+        setAddition(recognitionMethod === RECOGNITION_METHODS.MODERN_26
+            ? parseModernRawValue(value)
+            : parseRawValue(value));
+    }, [value, modelIndex, openModal, recognitionMethod]);
 
     // Обработчик ввода
     const onChange = (e) => {
@@ -314,18 +400,67 @@ const DataParser = ({ openModal, closeModal, addParseModels, models }) => {
             dataIndex: "count",
             width: 100,
         },
+        {
+            title: "",
+            key: "add",
+            width: 44,
+            align: "center",
+            render: (_, record) => {
+                const isInSpecification = specificationModelIds.has(Number(record.id));
+                const tooltip = !record.id
+                    ? "Модель не распознана"
+                    : isInSpecification
+                        ? "Заменить количество в спецификации"
+                        : "Добавить в спецификацию";
+
+                return (
+                    <Tooltip title={tooltip}>
+                        <span>
+                            <Button
+                                type="text"
+                                size="small"
+                                icon={<PlusOutlined />}
+                                disabled={!record.id}
+                                style={{
+                                    color: isInSpecification ? '#1677ff' : undefined,
+                                    opacity: isInSpecification ? 1 : 0.4,
+                                }}
+                                onClick={() => addSingleParseModel(record)}
+                            />
+                        </span>
+                    </Tooltip>
+                );
+            },
+        },
     ];
 
     return (
         <Modal
             title="Анализ сырых данных"
             centered
-            width={800}
+            width={1200}
+            className="data-parser-modal"
             open={openModal}
-            onOk={() => addParseModels(addition)}
             onCancel={closeModal}
-            okText="Добавить в спецификацию"
-            cancelText="Отмена"
+            footer={(
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                    <Select
+                        value={recognitionMethod}
+                        onChange={setRecognitionMethod}
+                        style={{ width: 190, textAlign: 'left' }}
+                        options={[
+                            { value: RECOGNITION_METHODS.CLASSIC, label: 'Классический' },
+                            { value: RECOGNITION_METHODS.MODERN_26, label: 'Модерн 26' },
+                        ]}
+                    />
+                    <Space>
+                        <Button onClick={closeModal}>Отмена</Button>
+                        <Button type="primary" onClick={() => addParseModels(addition)}>
+                            Заменить спецификацию
+                        </Button>
+                    </Space>
+                </div>
+            )}
         >
             <div className="dataParser__container">
                 <div className="dataParser__container__text">

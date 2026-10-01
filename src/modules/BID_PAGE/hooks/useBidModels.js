@@ -310,6 +310,52 @@ export const useBidModels = ({
         [bidId, modelsSelect, setForm, setModelsSelect],
     );
 
+    const addSingleParseModel = useCallback(
+        (newModel) => {
+            const model = modelsSelect.find((item) => item.id === newModel?.id);
+            if (!model) return;
+
+            const modelCount = Number(newModel.count) > 0 ? Number(newModel.count) : 1;
+            setForm((prev) => {
+                const existingIndex = prev.models.findIndex((item) => item.model_id === model.id);
+                if (existingIndex >= 0) {
+                    const nextModels = [...prev.models];
+                    nextModels[existingIndex] = {
+                        ...nextModels[existingIndex],
+                        model_count: modelCount,
+                    };
+                    return { ...prev, models: nextModels };
+                }
+
+                const nextSort = prev.models.reduce(
+                    (maxSort, item) => Math.max(maxSort, Number(item.sort) || 0),
+                    0,
+                ) + 1;
+                return {
+                    ...prev,
+                    models: [...prev.models, {
+                        id: 0,
+                        bid_id: bidId,
+                        model_id: model.id,
+                        model_name: model.name,
+                        model_count: modelCount,
+                        not_available: 0,
+                        percent: 0,
+                        presence: -2,
+                        sort: nextSort,
+                        type_model: model.type_model,
+                        currency: model.currency,
+                    }],
+                };
+            });
+
+            setModelsSelect((prev) => prev.map((item) => (
+                item.id === model.id ? { ...item, used: true } : item
+            )));
+        },
+        [bidId, modelsSelect, setForm, setModelsSelect],
+    );
+
     return {
         sortedBidModels,
         handleAddModel,
@@ -322,6 +368,7 @@ export const useBidModels = ({
         handleOpenModelInfoExtra,
         handleCloseDrawerExtra,
         addParseModels,
+        addSingleParseModel,
         modelIdExtra,
         modelNameExtra,
         mergeCalculatedModels,

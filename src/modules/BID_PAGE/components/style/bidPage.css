@@ -628,6 +628,12 @@
 	padding: 5px;
 	width: 50%;
 }
+.data-parser-modal .ant-modal-content {
+	padding: 10px 12px;
+}
+.data-parser-modal .ant-modal-title {
+	padding-bottom: 12px;
+}
 .sa-bid-page-btns-wrapper .divider {
 	width: 50px;
 	margin: 5px 0;
