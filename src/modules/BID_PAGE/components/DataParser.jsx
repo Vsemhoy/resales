@@ -4,8 +4,8 @@ import { Button, Modal, Select, Space, Table, Tooltip } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 const RECOGNITION_METHODS = {
-    CLASSIC: 'classic',
-    MODERN_26: 'modern-26',
+    FROM_TEXT: 'from-text',
+    FROM_TABLE: 'from-table',
 };
 
 const DataParser = ({
@@ -18,7 +18,7 @@ const DataParser = ({
 }) => {
     const [value, setValue] = useState("");
     const [addition, setAddition] = useState([]);
-    const [recognitionMethod, setRecognitionMethod] = useState(RECOGNITION_METHODS.CLASSIC);
+    const [recognitionMethod, setRecognitionMethod] = useState(null);
     const specificationModelIds = useMemo(
         () => new Set((specificationModels ?? []).map((model) => Number(model.model_id))),
         [specificationModels],
@@ -235,10 +235,11 @@ const DataParser = ({
         .replace(/&(?:#x9|#9);/giu, '\t')
         .replace(/\u00a0/gu, ' ');
 
-    const getMeaningfulLines = (rawValue) => rawValue
-        .split(/\r?\n/u)
+    const getMeaningfulLines = (rawValue) => decodeClipboardText(rawValue)
+        .replace(/<br\s*\/?\s*>/giu, '\n')
+        .split(/\r\n?|\n|\u2028|\u2029/u)
         .flatMap((rawLine) => {
-            const decodedLine = decodeClipboardText(rawLine).trim();
+            const decodedLine = rawLine.trim();
             if (!decodedLine) return [];
 
             if (decodedLine.includes('|')) {
@@ -249,7 +250,8 @@ const DataParser = ({
             }
 
             return [decodedLine];
-        });
+        })
+        .filter((line) => !/^:?-{3,}:?$/u.test(line));
 
     const parseRawValue = (rawValue) => {
         const lines = getMeaningfulLines(rawValue);
@@ -296,7 +298,7 @@ const DataParser = ({
         return parsed.map((item, index) => ({ ...item, num: index + 1 }));
     };
 
-    const getModernRows = (rawValue) => {
+    const getNumberedTableRows = (rawValue) => {
         const physicalLines = decodeClipboardText(rawValue)
             .replace(/\r\n?|\u2028|\u2029/gu, '\n')
             .split('\n');
@@ -330,9 +332,51 @@ const DataParser = ({
         return rows;
     };
 
-    const parseModernRawValue = (rawValue) => {
-        const rows = getModernRows(rawValue);
-        if (rows.length === 0) return parseRawValue(rawValue);
+    const parseTableValue = (rawValue) => {
+        const rows = getNumberedTableRows(rawValue);
+        if (rows.length === 0) {
+            const lines = getMeaningfulLines(rawValue);
+            const tableRows = [];
+            let currentRow = [];
+
+            lines.forEach((line) => {
+                const cells = line
+                    .split(/\t+/u)
+                    .map((cell) => cell.replace(/\s+/gu, ' ').trim())
+                    .filter(Boolean);
+                if (cells.length === 0) return;
+
+                const startsNewModel = cells.some((cell) => getModelFromLine(cell))
+                    || cells.some(looksLikeModelCode);
+                if (startsNewModel && currentRow.length > 0) {
+                    tableRows.push(currentRow);
+                    currentRow = [];
+                }
+                if (startsNewModel || currentRow.length > 0) currentRow.push(...cells);
+            });
+            if (currentRow.length > 0) tableRows.push(currentRow);
+
+            const parsed = tableRows.map((cells, index) => {
+                const unitIndex = cells.findIndex(isUnit);
+                const exactModelIndex = cells.findIndex((cell) => getModelFromLine(cell));
+                const modelIndexInRow = exactModelIndex >= 0
+                    ? exactModelIndex
+                    : cells.findIndex(looksLikeModelCode);
+                const searchFrom = modelIndexInRow >= 0 ? modelIndexInRow + 1 : 1;
+                const countIndex = unitIndex >= 0
+                    ? cells.findIndex((cell, cellIndex) => cellIndex > unitIndex && isNumber(cell))
+                    : cells.findIndex((cell, cellIndex) => cellIndex >= searchFrom && isNumber(cell));
+                const nameEndIndex = unitIndex >= 0
+                    ? unitIndex
+                    : countIndex >= 0 ? countIndex : cells.length;
+                const name = cells.slice(0, nameEndIndex).join(' ').trim();
+                const count = countIndex >= 0 ? parseInt(cells[countIndex], 10) : null;
+
+                return findModel(name, index, count);
+            }).filter(Boolean);
+
+            return parsed.map((item, index) => ({ ...item, num: index + 1 }));
+        }
 
         return rows.map((row, index) => {
             const cells = row.lines
@@ -340,10 +384,18 @@ const DataParser = ({
                 .map((cell) => cell.replace(/\s+/gu, ' ').trim())
                 .filter(Boolean);
             const unitIndex = cells.findIndex(isUnit);
+            const exactModelIndex = cells.findIndex((cell) => getModelFromLine(cell));
+            const modelIndexInRow = exactModelIndex >= 0
+                ? exactModelIndex
+                : cells.findIndex(looksLikeModelCode);
+            const searchFrom = modelIndexInRow >= 0 ? modelIndexInRow + 1 : 1;
             const countIndex = unitIndex >= 0
                 ? cells.findIndex((cell, cellIndex) => cellIndex > unitIndex && isNumber(cell))
-                : -1;
-            const nameCells = unitIndex >= 0 ? cells.slice(0, unitIndex) : cells;
+                : cells.findIndex((cell, cellIndex) => cellIndex >= searchFrom && isNumber(cell));
+            const nameEndIndex = unitIndex >= 0
+                ? unitIndex
+                : countIndex >= 0 ? countIndex : cells.length;
+            const nameCells = cells.slice(0, nameEndIndex);
             const name = nameCells.join(' ').trim();
             const count = countIndex >= 0 ? parseInt(cells[countIndex], 10) : null;
             const item = findModel(name || row.source, index, count);
@@ -353,13 +405,13 @@ const DataParser = ({
     };
 
     useEffect(() => {
-        if (!value) {
+        if (!value || !recognitionMethod) {
             setAddition([]);
             return;
         }
 
-        setAddition(recognitionMethod === RECOGNITION_METHODS.MODERN_26
-            ? parseModernRawValue(value)
+        setAddition(recognitionMethod === RECOGNITION_METHODS.FROM_TABLE
+            ? parseTableValue(value)
             : parseRawValue(value));
     }, [value, modelIndex, openModal, recognitionMethod]);
 
@@ -447,15 +499,20 @@ const DataParser = ({
                     <Select
                         value={recognitionMethod}
                         onChange={setRecognitionMethod}
+                        placeholder="Выберите формат"
                         style={{ width: 190, textAlign: 'left' }}
                         options={[
-                            { value: RECOGNITION_METHODS.CLASSIC, label: 'Классический' },
-                            { value: RECOGNITION_METHODS.MODERN_26, label: 'Модерн 26' },
+                            { value: RECOGNITION_METHODS.FROM_TEXT, label: 'Из текста' },
+                            { value: RECOGNITION_METHODS.FROM_TABLE, label: 'Из таблицы' },
                         ]}
                     />
                     <Space>
                         <Button onClick={closeModal}>Отмена</Button>
-                        <Button type="primary" onClick={() => addParseModels(addition)}>
+                        <Button
+                            type="primary"
+                            disabled={!recognitionMethod || addition.length === 0}
+                            onClick={() => addParseModels(addition)}
+                        >
                             Заменить спецификацию
                         </Button>
                     </Space>
@@ -468,7 +525,11 @@ const DataParser = ({
                         rows={32}
                         value={value}
                         onChange={onChange}
-                        placeholder="Вставьте сюда данные из имеющегося документа"
+                        placeholder={!recognitionMethod
+                            ? "Сначала выберите формат данных внизу окна"
+                            : recognitionMethod === RECOGNITION_METHODS.FROM_TABLE
+                                ? "Вставьте сюда скопированные строки или ячейки таблицы"
+                                : "Вставьте сюда текст: одна позиция на строку"}
                     />
                 </div>
                 <div className="dataParser__container__table">
