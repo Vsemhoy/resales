@@ -18,7 +18,7 @@ const DataParser = ({
 }) => {
     const [value, setValue] = useState("");
     const [addition, setAddition] = useState([]);
-    const [recognitionMethod, setRecognitionMethod] = useState(null);
+    const [recognitionMethod, setRecognitionMethod] = useState(RECOGNITION_METHODS.FROM_TEXT);
     const specificationModelIds = useMemo(
         () => new Set((specificationModels ?? []).map((model) => Number(model.model_id))),
         [specificationModels],
