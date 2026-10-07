@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
-import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown } from 'antd'
+import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown, message } from 'antd'
 import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined, DownloadOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import {
@@ -10,6 +10,7 @@ import {
   getOrganizationOwnershipForms,
 } from './api'
 import { restoreFilesIntoFormData } from './api/files'
+import { compressPdf } from './api/compression.api'
 import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
 import {
@@ -56,6 +57,7 @@ const SECTION_COMPONENTS = {
 }
 
 const COMPANY_ACCENT = { '2': '#FF5903', '3': '#269435' }
+const COMPRESSION_DPI_OPTIONS = [150, 300, 600, 1200].map(value => ({ value, label: `${value} DPI` }))
 
 const COMPACT_THEME = {
   token: { borderRadius: 4, fontSize: 13 },
@@ -254,6 +256,7 @@ export default function BidPdfEditor() {
   const [wideLayout,     setWideLayout]     = useState(() => window.innerWidth > 1500)
   const [printing,       setPrinting]       = useState(false)
   const [downloading,    setDownloading]    = useState(false)
+  const [compressionDpi, setCompressionDpi] = useState(() => Number(localStorage.getItem('pdfCompressionDpi')) || 600)
 
   // ── Имя файла по маске Word ──────────────────────────────────────────────────
   const getPdfFileName = () => {
@@ -319,11 +322,34 @@ export default function BidPdfEditor() {
     registerFonts()
     setDownloading(true)
     try {
-      const blob = await buildBlob()
-      const url  = URL.createObjectURL(blob)
+      const sourceBlob = await buildBlob()
+      const fileName = getPdfFileName()
+      let downloadBlob = sourceBlob
+
+      try {
+        const response = await compressPdf(sourceBlob, fileName, compressionDpi)
+        downloadBlob = response.data
+
+        const originalSize = Number(response.headers['x-pdf-original-size'] || sourceBlob.size)
+        const resultSize = Number(response.headers['x-pdf-result-size'] || downloadBlob.size)
+        const savedPercent = originalSize > 0
+          ? Math.max(0, Math.round((1 - resultSize / originalSize) * 100))
+          : 0
+
+        if (savedPercent > 0) {
+          message.success(`PDF сжат на ${savedPercent}%`)
+        } else {
+          message.info('PDF уже оптимален — скачан без потери качества')
+        }
+      } catch (compressionError) {
+        console.error('PDF compression error:', compressionError)
+        message.warning('Сервис сжатия недоступен — скачан исходный PDF')
+      }
+
+      const url  = URL.createObjectURL(downloadBlob)
       const a    = document.createElement('a')
       a.href     = url
-      a.download = getPdfFileName()
+      a.download = fileName
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -934,6 +960,16 @@ export default function BidPdfEditor() {
               loading={downloading}
               onClick={handleDownload}
               title={getPdfFileName()}>Скачать PDF</Button>
+            <Select
+              value={compressionDpi}
+              options={COMPRESSION_DPI_OPTIONS}
+              onChange={(value) => {
+                setCompressionDpi(value)
+                localStorage.setItem('pdfCompressionDpi', String(value))
+              }}
+              style={{ width: 96 }}
+              title="Качество фотографий в скачиваемом PDF"
+            />
           </div>
         </div>
 
