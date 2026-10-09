@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, Image } from '@react-pdf/renderer'
+import { View, Image } from '@react-pdf/renderer'
+import { Text } from '../shared/PdfText'
 
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
@@ -80,7 +81,7 @@ function CharRow({ c, cfg }) {
       style={{
         flexDirection: 'row',
         alignItems: 'flex-end',
-        marginBottom: space.xs,
+        marginBottom: space.xs / 1.5,
       }}
     >
       <Text
@@ -120,7 +121,7 @@ function CharRow({ c, cfg }) {
   )
 }
 
-export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceBreak = false }) {
+export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
   const { color, text, font, weight, space } = cfg
 
   const ignored = data?.specialsIgnore ?? []
@@ -147,7 +148,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
   if (!visible.length) return null
 
   return (
-    <View break={forceBreak} style={{ marginBottom: cfg.space.end }}>
+    <View style={{ marginBottom: cfg.space.end }}>
       <PdfSectionBar
         cfg={cfg}
         number={sectionNumber}
@@ -177,10 +178,6 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
           )
 
         // Характеристики
-          console.log('ov', ov)
-          console.log('ov1', model.info_model?.characteristics)
-          console.log('ov2', model)
-
         const chars = filterForColumns(
           normalizeChars(
             ov?.characteristics ??
@@ -255,7 +252,14 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
                   <View>
                     <HtmlToPdfV2
                       html={wrapJustify(desc)}
-                      cfg={cfg}
+                      cfg={{
+                        ...cfg,
+                        space: {
+                          ...space,
+                          // Компактнее нижний отступ абзаца перед буллетами.
+                          xs: space.xs / 1.5,
+                        },
+                      }}
                     />
                   </View>
                 ) : null}
@@ -265,7 +269,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
                   <View
                     style={{
                       marginTop: desc
-                        ? space.sm
+                        ? space.sm / 1.5
                         : 0,
                     }}
                   >
@@ -275,7 +279,9 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
                         style={{
                           flexDirection: 'row',
                           alignItems: 'flex-start',
-                          marginBottom: space.xs,
+                          marginBottom: si === specials.length - 1
+                            ? 0
+                            : space.xs / 1.5,
                         }}
                       >
                         <View
@@ -340,7 +346,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber, forceB
               <View style={{ marginTop: space.md }}>
                 <Text style={{
                   fontSize: text.sm, fontFamily: font.bold, fontWeight: weight.bold,
-                  color: color.accent, marginBottom: space.sm, textTransform: 'uppercase',
+                  color: color.accent, marginBottom: space.sm / 1.5, textTransform: 'uppercase',
                 }}>
                   Технические характеристики
                 </Text>

@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text } from '@react-pdf/renderer'
+import { View } from '@react-pdf/renderer'
+import { Text } from '../shared/PdfText'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 
 export function PdfBlockToc({ cfg, sectionNumbers, enabledSections, sectionOrder, getLabel, sectionPageNumbers = {}, forceBreak = false }) {

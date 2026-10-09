@@ -1,5 +1,6 @@
 import React from 'react'
-import { Document, Page, View, Text } from '@react-pdf/renderer'
+import { Document, Page, View } from '@react-pdf/renderer'
+import { Text } from './shared/PdfText'
 import { getConfig } from './pdf_config'
 import { registerFonts } from './components/PdfFonts'
 import { buildFigureRegistry } from './components/buildFigureRegistry'
@@ -36,6 +37,9 @@ export function PdfDocumentV2({
   capturePageNumber  = null,   // (key, pageNum) => void — первый проход
   sectionPageNumbers = {},     // { key: pageNum } — второй проход
 }) {
+  // Re-apply the global callback if the renderer store was reset after import.
+  registerFonts()
+
   const cfg = getConfig(companyId, orientation)
   const { layout, color, font: f } = cfg
   const renderableEnabledSections = enabledSections
@@ -147,8 +151,17 @@ export function PdfDocumentV2({
           if (key === 'specifications')
             return wrap(<PdfBlockSpecifications cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} tableStyle={formData.tableStyle} modelImages={formData._modelImages ?? {}} withoutNds={formData._withoutNds} ndsPercent={formData._ndsPercent} sectionNumber={n} />)
 
+          // «Описание оборудования» — самостоятельный блок-книга. Он всегда
+          // начинается с новой страницы независимо от ручных разделителей.
+          // Phantom располагаем внутри того же break-контейнера, чтобы в
+          // оглавлении сохранился номер именно новой страницы.
           if (key === 'specials')
-            return wrap(<PdfBlockSpecials cfg={cfg} data={formData} models={models} sectionNumber={n} />)
+            return (
+              <View key={key} break>
+                {phantom}
+                <PdfBlockSpecials cfg={cfg} data={formData} models={models} sectionNumber={n} />
+              </View>
+            )
 
           if (key === 'rondoDelivery')
             return wrap(<PdfBlockRondoDelivery cfg={cfg} data={formData} sectionNumber={n} />)

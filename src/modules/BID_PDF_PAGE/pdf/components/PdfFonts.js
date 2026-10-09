@@ -1,8 +1,13 @@
 import { Font } from '@react-pdf/renderer'
+import { noPdfHyphenation } from '../shared/PdfText'
 
 let registered = false
 
 export function registerFonts() {
+  // The renderer can reset its font store after this module was evaluated.
+  // Restore the callback for every document render.
+  Font.registerHyphenationCallback(noPdfHyphenation)
+
   if (registered) return
   registered = true
 
@@ -19,6 +24,4 @@ export function registerFonts() {
       { src: `${base}/fonts/Montserrat-Italic.ttf`,   fontWeight: 400, fontStyle: 'italic' },
     ],
   })
-
-  Font.registerHyphenationCallback(word => [word])
 }

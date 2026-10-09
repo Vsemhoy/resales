@@ -1,19 +1,6 @@
 import React from 'react'
-import { Text, View } from '@react-pdf/renderer'
-
-// Прибиваем короткие слова к следующему через неразрывный пробел
-// "в доме" → "в доме"
-const ORPHAN_RE = /(\s)(а|в|во|да|до|за|и|из|из-за|из-под|к|ко|на|не|ни|но|о|об|от|по|под|при|про|с|со|у|я|он|то|же|ли|бы|как|что|это|так|уж|раз)(\s)/gi
-
-function fixOrphans(text) {
-  if (!text) return text
-  // Добавляем ведущий пробел чтобы ловить предлоги в начале строки
-  const padded = ' ' + text
-  const fixed  = padded.replace(ORPHAN_RE, (_, before, word) =>
-    before + word + ' '
-  )
-  return fixed.slice(1) // убираем добавленный пробел
-}
+import { View } from '@react-pdf/renderer'
+import { Text, protectPdfText } from './PdfText'
 
 function getTextAlign(node) {
   const style = node.getAttribute?.('style') || ''
@@ -32,7 +19,7 @@ function renderInline(node, cfg, key) {
   const { color, text: t, font, weight } = cfg
 
   if (node.nodeType === Node.TEXT_NODE) {
-    const content = fixOrphans(node.textContent)
+    const content = protectPdfText(node.textContent)
     if (!content) return null
     return (
       <Text key={key} style={{ fontFamily: font.regular, fontSize: t.base, color: color.textPrimary }}>

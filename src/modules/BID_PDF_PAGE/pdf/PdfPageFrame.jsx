@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, Image } from '@react-pdf/renderer'
+import { View, Image } from '@react-pdf/renderer'
+import { Text } from './shared/PdfText'
 
 const SITE_DEFAULTS = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
 

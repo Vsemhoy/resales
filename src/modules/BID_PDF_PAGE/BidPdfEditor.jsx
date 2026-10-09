@@ -57,6 +57,11 @@ const SECTION_COMPONENTS = {
 }
 
 const COMPANY_ACCENT = { '2': '#FF5903', '3': '#269435' }
+const COMPANY_PHONE = {
+  '2': '+7 (812) 207-50-97',
+  '3': '+7 (812) 339-8972',
+}
+const COMPANY_SITE = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
 const COMPRESSION_DPI_OPTIONS = [150, 300, 600, 1200].map(value => ({ value, label: `${value} DPI` }))
 
 const COMPACT_THEME = {
@@ -431,11 +436,62 @@ export default function BidPdfEditor() {
           ndsPercent,
         })
 
-        const srcManager     = data.source_bid?.manager
+        // По умолчанию блок подписывает создатель PDF-черновика. Для старых
+        // драфтов без creator используем назначенного менеджера или менеджера БИДа.
+        const srcManager = data.creator ?? data.manager ?? data.source_bid?.manager
+        const srcManagerFirstName = srcManager?.first_name
+          ?? (srcManager?.surname ? srcManager?.name : '')
         const bidManagerName = srcManager
-          ? [srcManager.surname, srcManager.name].filter(Boolean).join(' ')
+          ? (
+              [srcManager.surname, srcManagerFirstName, srcManager.secondname]
+                .filter(Boolean)
+                .join(' ')
+              || srcManager.name
+            )
           : (fd.manager_name || '')
         const bidManagerOccupy = srcManager?.occupy || fd.manager_occupy || ''
+        // В КП печатается общий телефон компании, не внутренний номер сотрудника.
+        const bidManagerPhone = COMPANY_PHONE[String(compId)] ?? ''
+        const bidManagerEmail = srcManager?.email || ''
+        const managerWasInitialized = Object.prototype.hasOwnProperty.call(fd, '_manager_id')
+        const resolvedManagerId = managerWasInitialized
+          ? fd._manager_id
+          : (srcManager?.id ?? null)
+        const resolvedManagerName = fd.manager_name || bidManagerName
+        const resolvedManagerOccupy = fd.manager_occupy || bidManagerOccupy
+        // Телефон во всех менеджерских блоках всегда общий для компании.
+        const resolvedManagerPhone = bidManagerPhone
+        const resolvedManagerEmail = managerWasInitialized
+          ? (fd.email ?? '')
+          : (fd.email || bidManagerEmail)
+        const companySite = COMPANY_SITE[String(compId)] ?? ''
+        const savedDelivery = fd.rondoDelivery
+        const savedContactLines = String(savedDelivery?.byeContacts || '')
+          .split(/\r?\n/)
+          .map(line => line.trim())
+          .filter(Boolean)
+        const contactsWereGenerated = savedDelivery?.byeContactsAuto === true
+          || (
+            savedDelivery?.byeContactsAuto === undefined
+            && savedContactLines.length >= 2
+            && savedContactLines.length <= 3
+            && savedContactLines.at(-1) === companySite
+          )
+        const resolvedDelivery = contactsWereGenerated
+          ? {
+              ...savedDelivery,
+              byeContacts: [bidManagerPhone, resolvedManagerEmail, companySite]
+                .filter(Boolean)
+                .join('\n'),
+              byeContactsAuto: true,
+            }
+          : savedDelivery
+        const shouldPersistManager = !managerWasInitialized
+          || fd.manager_name !== resolvedManagerName
+          || fd.manager_occupy !== resolvedManagerOccupy
+          || fd.tel !== resolvedManagerPhone
+          || fd.email !== resolvedManagerEmail
+          || resolvedDelivery !== savedDelivery
 
         const orgUser = data.org_user || null
         const bidTargetName = orgUser
@@ -583,8 +639,8 @@ export default function BidPdfEditor() {
           target_company: bidTargetCompany,
           manager_name:   bidManagerName,
           manager_occupy: bidManagerOccupy,
-          tel:            fd.tel   || '',
-          email:          fd.email || '',
+          tel:            bidManagerPhone,
+          email:          bidManagerEmail,
           object_name:    bidObjectName,
           object_address: projectAddress,
           object_address_placeholder: projectAddress ? 'Адрес объекта' : 'нет связанных проектов',
@@ -603,6 +659,12 @@ export default function BidPdfEditor() {
           target_name:    resolvedTargetName,
           target_occupy:  resolvedTargetOccupy,
           target_company: resolvedTargetCompany,
+          manager_name:   resolvedManagerName,
+          manager_occupy: resolvedManagerOccupy,
+          tel:            resolvedManagerPhone,
+          email:          resolvedManagerEmail,
+          _manager_id:    resolvedManagerId,
+          ...(resolvedDelivery ? { rondoDelivery: resolvedDelivery } : {}),
           object_name:    fd.object_name   ?? bidObjectName,
           object_address: fd.object_address ?? projectAddress,
           coverTitle:     resolvedCoverTitle,
@@ -622,7 +684,7 @@ export default function BidPdfEditor() {
         }
         setTimeout(() => {
           setIsReady(true)
-          if (shouldPersistRecipient) setIsDirty(true)
+          if (shouldPersistRecipient || shouldPersistManager) setIsDirty(true)
         }, 100)
       })
       .catch(e => console.error('Ошибка загрузки драфта:', e))
@@ -633,7 +695,25 @@ export default function BidPdfEditor() {
     dirtySet(fd => ({ ...fd, _meta: { ...(fd._meta || {}), ...patch } }))
   }, [dirtySet])
 
-  const handleCompany     = (v) => { setCompanyId(v);    syncMeta({ companyId: v }) }
+  const handleCompany = (v) => {
+    setCompanyId(v)
+    dirtySet(fd => {
+      const phone = COMPANY_PHONE[String(v)] ?? ''
+      const site = COMPANY_SITE[String(v)] ?? ''
+      const delivery = fd.rondoDelivery
+      return {
+        ...fd,
+        tel: phone,
+        ...(delivery?.byeContactsAuto === true ? {
+          rondoDelivery: {
+            ...delivery,
+            byeContacts: [phone, fd.email, site].filter(Boolean).join('\n'),
+          },
+        } : {}),
+        _meta: { ...(fd._meta || {}), companyId: v },
+      }
+    })
+  }
   const handleOrientation = (v) => { setOrientation(v);  syncMeta({ orientation: v }) }
   const handleTarget      = (v) => { setTargetSystem(v); syncMeta({ targetSystem: v }) }
   const handleCurrency    = (v) => {

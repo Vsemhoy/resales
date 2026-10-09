@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text } from '@react-pdf/renderer'
+import { View } from '@react-pdf/renderer'
+import { Text } from './PdfText'
 import { mm } from '../theme/units'
 
 export function PdfSectionBar({ cfg, number, title }) {

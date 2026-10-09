@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, Image } from '@react-pdf/renderer'
+import { View, Image } from '@react-pdf/renderer'
+import { Text } from '../shared/PdfText'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
 

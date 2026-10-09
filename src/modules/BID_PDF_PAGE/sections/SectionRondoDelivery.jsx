@@ -1,8 +1,9 @@
-import React from 'react'
-import { Input, Button, Switch, Tooltip } from 'antd'
+import React, { useEffect, useMemo, useState } from 'react'
+import { AutoComplete, Input, Button, Switch, Tooltip } from 'antd'
 import { UndoOutlined, PlusOutlined, DeleteOutlined, HolderOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { Section, Field, TabWrap } from '../components/FormParts'
+import { getPdfManagers } from '../api'
 
 export const DEFAULT_BULLETS = [
   { id: 'b1', title: 'Срок поставки',     text: 'Срок поставки оборудования под заказ — 3 месяца с момента оплаты счета.',                                                                              decorated: false, color: 'default' },
@@ -21,11 +22,41 @@ export const COLOR_OPTIONS = [
 ]
 
 const SITE_BY_COMPANY = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
+const PHONE_BY_COMPANY = {
+  '2': '+7 (812) 207-50-97',
+  '3': '+7 (812) 339-8972',
+}
+
+function managerName(manager) {
+  return [manager?.surname, manager?.name, manager?.secondname]
+    .filter(Boolean)
+    .join(' ')
+    .trim()
+}
 
 export default function SectionRondoDelivery({ data, onChange, companyId }) {
   const rd      = data.rondoDelivery || {}
   const set     = (key, val) => onChange({ ...data, rondoDelivery: { ...rd, [key]: val } })
   const bullets = rd.bullets || DEFAULT_BULLETS
+  const [managers, setManagers] = useState([])
+  const [managersLoading, setManagersLoading] = useState(false)
+
+  useEffect(() => {
+    let alive = true
+    setManagersLoading(true)
+    getPdfManagers()
+      .then(items => {
+        if (alive) setManagers(Array.isArray(items) ? items : [])
+      })
+      .catch(() => {
+        if (alive) setManagers([])
+      })
+      .finally(() => {
+        if (alive) setManagersLoading(false)
+      })
+
+    return () => { alive = false }
+  }, [])
 
   const setBullet = (id, field, val) =>
     set('bullets', bullets.map(b => b.id === id ? { ...b, [field]: val } : b))
@@ -46,11 +77,60 @@ export default function SectionRondoDelivery({ data, onChange, companyId }) {
 
   // Менеджер
   const defaultName     = data.manager_name || ''
-  const defaultContacts = [data.tel, data.email, SITE_BY_COMPANY[companyId] ?? ''].filter(Boolean).join('\n')
+  const defaultContacts = [
+    PHONE_BY_COMPANY[companyId] ?? '',
+    data.email,
+    SITE_BY_COMPANY[companyId] ?? '',
+  ].filter(Boolean).join('\n')
   const nameValue       = rd.byeName     ?? defaultName
   const contactsValue   = rd.byeContacts ?? defaultContacts
   const nameChanged     = rd.byeName     !== undefined && rd.byeName     !== defaultName
   const contactsChanged = rd.byeContacts !== undefined && rd.byeContacts !== defaultContacts
+  const managerOptions = useMemo(() => managers.map(manager => {
+    const name = managerName(manager)
+    const details = [manager.occupy, manager.email].filter(Boolean).join(' · ')
+    return {
+      key: String(manager.id),
+      value: name,
+      label: (
+        <div>
+          <div>{name}</div>
+          {details ? <div style={{ color: '#8c8c8c', fontSize: 11 }}>{details}</div> : null}
+        </div>
+      ),
+      search: `${name} ${manager.email || ''} ${manager.occupy || ''}`.toLocaleLowerCase('ru-RU'),
+      managerId: manager.id,
+    }
+  }), [managers])
+
+  const selectManager = (_, option) => {
+    const manager = managers.find(item => String(item.id) === String(option.managerId))
+    if (!manager) return
+
+    const name = managerName(manager)
+    const companyPhone = PHONE_BY_COMPANY[companyId] || ''
+    const contacts = [
+      companyPhone,
+      manager.email,
+      SITE_BY_COMPANY[companyId] ?? '',
+    ].filter(Boolean).join('\n')
+
+    onChange({
+      ...data,
+      manager_name: name,
+      manager_occupy: manager.occupy || '',
+      // Телефон остаётся общим и не зависит от выбранного сотрудника.
+      tel: companyPhone,
+      email: manager.email || '',
+      _manager_id: manager.id,
+      rondoDelivery: {
+        ...rd,
+        byeName: name,
+        byeContacts: contacts,
+        byeContactsAuto: true,
+      },
+    })
+  }
 
   return (
     <TabWrap>
@@ -187,14 +267,34 @@ export default function SectionRondoDelivery({ data, onChange, companyId }) {
           </Field>
           <Field label="Имя">
             <div style={{ display: 'flex', gap: 6 }}>
-              <Input value={nameValue} placeholder="Петр Петров" onChange={e => set('byeName', e.target.value)} />
+              <AutoComplete
+                value={nameValue}
+                options={managerOptions}
+                onChange={value => set('byeName', value)}
+                onSelect={selectManager}
+                filterOption={(input, option) => String(option?.search || option?.value || '')
+                  .includes(input.toLocaleLowerCase('ru-RU'))}
+                placeholder="Выберите менеджера или введите имя"
+                notFoundContent={managersLoading ? 'Загрузка…' : 'Можно ввести имя вручную'}
+                style={{ flex: 1 }}
+              />
               {nameChanged && <Button size="small" icon={<UndoOutlined />} onClick={() => set('byeName', defaultName)} />}
             </div>
           </Field>
           <Field label="Контакты">
             <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-              <Input.TextArea autoSize={{ minRows: 3 }} value={contactsValue} onChange={e => set('byeContacts', e.target.value)} />
-              {contactsChanged && <Button size="small" icon={<UndoOutlined />} onClick={() => set('byeContacts', defaultContacts)} style={{ flexShrink: 0 }} />}
+              <Input.TextArea
+                autoSize={{ minRows: 3 }}
+                value={contactsValue}
+                onChange={e => onChange({
+                  ...data,
+                  rondoDelivery: { ...rd, byeContacts: e.target.value, byeContactsAuto: false },
+                })}
+              />
+              {contactsChanged && <Button size="small" icon={<UndoOutlined />} onClick={() => onChange({
+                ...data,
+                rondoDelivery: { ...rd, byeContacts: defaultContacts, byeContactsAuto: true },
+              })} style={{ flexShrink: 0 }} />}
             </div>
           </Field>
         </>)}
