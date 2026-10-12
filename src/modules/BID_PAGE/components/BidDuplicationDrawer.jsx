@@ -5,6 +5,11 @@ import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {ORG_SUGGESTIONS} from "../mock/mock";
 import {CopyOutlined, FileSyncOutlined, LoadingOutlined} from "@ant-design/icons";
 
+const getOrgDisplayName = (org) =>
+    org.is_other_company && org.company_name
+        ? `${org.name} (${org.company_name})`
+        : org.name;
+
 const BidDuplicationDrawer = (props) => {
    const [selectedOrg, setSelectedOrg] = useState(null);
    const [orgsSuggestions, setOrgsSuggestions] = useState([]);
@@ -99,10 +104,10 @@ const BidDuplicationDrawer = (props) => {
                 <AutoComplete
                     value={searchText}
                     options={isLoadingAutoComplete ? [] : orgsSuggestions.map(org => ({
-                        value: org.name,
+                        value: getOrgDisplayName(org),
                         label: (
                             <div>
-                                <div>{org.name}</div>
+                                <div>{getOrgDisplayName(org)}</div>
                                 <div style={{ fontSize: '12px', color: '#666' }}>
                                     {org.town}
                                 </div>
@@ -132,7 +137,7 @@ const BidDuplicationDrawer = (props) => {
                     <div>
                         <div className={'sa-duplication-header-block'}>
                             <Tag style={{fontSize: "12px"}}>{selectedOrg.orgData.value}</Tag>
-                            <span style={{padding: "0", fontWeight: "500"}}>{selectedOrg.orgData.name}</span>
+                            <span style={{padding: "0", fontWeight: "500"}}>{getOrgDisplayName(selectedOrg.orgData)}</span>
                             <span style={{paddingLeft: "5px", color: "#adadad"}}>{selectedOrg.orgData.town}</span>
                         </div>
                         <div className={'sa-duplication-choose-block-wrapper'}>
