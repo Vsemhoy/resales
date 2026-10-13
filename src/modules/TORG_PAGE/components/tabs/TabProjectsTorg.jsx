@@ -10,6 +10,15 @@ import ProjectTabSectionTorg from '../sections/ProjectTabSectionTorg';
 
 const TabProjectsTorg = (props) => {
 
+  const canEditProject = (item) => {
+    const userId = Number(props.userdata?.user?.id);
+    return userId > 0 && [
+      item.author_id,
+      item.curator?.id ?? item.id8staff_list,
+      props.main_data?.curator?.id ?? props.main_data?.id8staff_list,
+    ].some((id) => Number(id) === userId);
+  };
+
   /**
    * Как только таб становится активным и у нас установлено orgId, мы загружаем в него данные один раз
    */
@@ -311,6 +320,7 @@ const get_projects_data_action = async () => {
                   {tempData.map((item)=>(
                     <ProjectTabSectionTorg
                       edit_mode={editMode}
+                      can_edit_project={true}
                       collapsed={false}
                       org_id={orgId}
                       data={item}
@@ -331,7 +341,8 @@ const get_projects_data_action = async () => {
                   
                   {baseData.map((item)=>(
                     <ProjectTabSectionTorg
-                      edit_mode={editMode && (userdata?.user?.id === item.author_id  || userdata?.user?.id === item?.curator?.id)}
+                      edit_mode={editMode && canEditProject(item)}
+                      can_edit_project={canEditProject(item)}
                       org_id={orgId}
                       data={item}
                       collapsed={true}

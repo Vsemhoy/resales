@@ -488,12 +488,12 @@ const ProjectTabSectionTorg = (props) => {
 						</span>{' '}
 						<span className="sa-author-text">
 							{authorShortName !== null ? authorShortName + ' ' : ''}
-							{(userdata?.user?.id !== data?.curator?.id) && (
+					{!props.can_edit_project && (
 								<Tooltip
 									placement={'right'}
 									title={
 										<div>
-											<div>Этот проект может редактировать только создатель записи</div>
+											<div>Проект могут редактировать автор, куратор проекта и куратор организации</div>
 										</div>
 									}
 									className={'sa-lock-mark'}
@@ -506,7 +506,7 @@ const ProjectTabSectionTorg = (props) => {
 					</div>
 				</div>
 				<div className={'sa-flex'} style={{alignItems: 'center'}}>
-					{(userdata?.user?.id !== data?.curator?.id) && (
+					{!props.can_edit_project && (
 					<Button
 					 size={'small'}
 					 onClick={(ev) => {

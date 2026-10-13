@@ -62,7 +62,7 @@ export function PdfBlockSystemChars({ cfg, modelsData, sectionNumber, forceBreak
       <CharRow cfg={cfg} label="Общая мощность громкоговорителей, Вт" value={fmt(md.rated_power_speaker, 1)} />
 
       <GroupTitle cfg={cfg}>Массогабаритные характеристики оборудования по спецификации</GroupTitle>
-      <CharRow cfg={cfg} label="Общая высота, U"             value={fmt(md.box_size, 0)} />
+      <CharRow cfg={cfg} label="Общая высота, U"             value={fmt(md.unit, 0)} />
       <CharRow cfg={cfg} label="Масса брутто, кг"            value={fmt(md.mass, 1)} />
       <CharRow cfg={cfg} label="Объём с учётом упаковки, м³" value={fmt(md.size, 3)} />
     </View>
