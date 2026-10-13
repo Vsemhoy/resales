@@ -149,13 +149,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
 
   return (
     <View style={{ marginBottom: cfg.space.end }}>
-      <PdfSectionBar
-        cfg={cfg}
-        number={sectionNumber}
-        title="Описание оборудования"
-      />
-
-      {visible.map(({ model, index }) => {
+      {visible.map(({ model, index }, cardIndex) => {
         const id = getModelKey(model, index)
         const ov = overrides[id] ?? overrides[getLegacyModelKey(model)]
 
@@ -188,12 +182,6 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
           charsColumns
         )
 
-        // Делим на 2 колонки
-        const half = Math.ceil(chars.length / 2)
-
-        const col1 = chars.slice(0, half)
-        const col2 = chars.slice(half)
-
         const imgUrl = absUrl(cleanAlphaNumeric(name))
 
         return (
@@ -202,10 +190,18 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
             style={{
               marginBottom: space.xl,
             }}
-            wrap={false}
           >
-            {/* Основной блок — фото сверху справа, заголовок в левой колонке */}
-            <View style={{ flexDirection: 'row' }}>
+            {/* Заголовок, описание и фото остаются одним блоком. */}
+            <View wrap={false}>
+              {cardIndex === 0 && (
+                <PdfSectionBar
+                  cfg={cfg}
+                  number={sectionNumber}
+                  title="Описание оборудования"
+                />
+              )}
+              {/* Основной блок — фото сверху справа, заголовок в левой колонке */}
+              <View style={{ flexDirection: 'row' }}>
 
               {/* Левая колонка */}
               <View
@@ -264,63 +260,6 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
                   </View>
                 ) : null}
 
-                {/* Буллеты */}
-                {showSpecials && specials.length > 0 ? (
-                  <View
-                    style={{
-                      marginTop: desc
-                        ? space.sm / 1.5
-                        : 0,
-                    }}
-                  >
-                    {specials.map((sp, si) => (
-                      <View
-                        key={si}
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'flex-start',
-                          marginBottom: si === specials.length - 1
-                            ? 0
-                            : space.xs / 1.5,
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: 3,
-                            height: 3,
-                            borderRadius: 1.5,
-
-                            backgroundColor:
-                              color.accent,
-
-                            marginRight: space.xs,
-
-                            marginTop:
-                              text.sm * 0.4,
-
-                            flexShrink: 0,
-                          }}
-                        />
-
-                        <Text
-                          style={{
-                            fontSize: text.xs,
-                            fontFamily:
-                              font.regular,
-
-                            color:
-                              color.textPrimary,
-
-                            flex: 1,
-                            lineHeight: 1.5,
-                          }}
-                        >
-                          {sp}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                ) : null}
               </View>
 
               {/* Правая колонка */}
@@ -339,11 +278,54 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
                   }}
                 />
               </View>
+              </View>
             </View>
 
-            {/* Характеристики */}
+            {/* Список может переходить на следующую страницу между пунктами. */}
+            {showSpecials && specials.length > 0 ? (
+              <View
+                style={{ marginTop: desc ? space.sm / 1.5 : 0 }}
+              >
+                {specials.map((sp, si) => (
+                  <View
+                    key={si}
+                    wrap={false}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'flex-start',
+                      marginBottom: si === specials.length - 1 ? 0 : space.xs / 1.5,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 3,
+                        height: 3,
+                        borderRadius: 1.5,
+                        backgroundColor: color.accent,
+                        marginRight: space.xs,
+                        marginTop: text.sm * 0.4,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        fontSize: text.xs,
+                        fontFamily: font.regular,
+                        color: color.textPrimary,
+                        flex: 1,
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {sp}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+
+            {/* Заголовок и строки характеристик тоже не разрываются. */}
             {showChars && chars.length > 0 && (
-              <View style={{ marginTop: space.md }}>
+              <View wrap={false} style={{ marginTop: space.md }}>
                 <Text style={{
                   fontSize: text.sm, fontFamily: font.bold, fontWeight: weight.bold,
                   color: color.accent, marginBottom: space.sm / 1.5, textTransform: 'uppercase',

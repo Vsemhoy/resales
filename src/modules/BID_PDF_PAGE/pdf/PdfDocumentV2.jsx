@@ -1,7 +1,7 @@
 import React from 'react'
 import { Document, Page, View } from '@react-pdf/renderer'
 import { Text } from './shared/PdfText'
-import { getConfig } from './pdf_config'
+import { getConfig, getContentBottomPadding } from './pdf_config'
 import { registerFonts } from './components/PdfFonts'
 import { buildFigureRegistry } from './components/buildFigureRegistry'
 import { PdfPageFrame }              from './PdfPageFrame'
@@ -45,6 +45,7 @@ export function PdfDocumentV2({
   const renderableEnabledSections = enabledSections
 
   const coverMode = formData?.coverMode ?? 'hat'
+  const contentBottomPadding = getContentBottomPadding(layout, formData?.footerSettings?.variant)
 
   const figureRegistry = buildFigureRegistry({
     sectionOrder, enabledSections: renderableEnabledSections, formData, figuresEnabled,
@@ -91,7 +92,7 @@ export function PdfDocumentV2({
         orientation={layout.orientation}
         style={{
           paddingTop:    layout.paddingTop,
-          paddingBottom: layout.paddingBottom,
+          paddingBottom: contentBottomPadding,
           paddingLeft:   layout.marginLeft,
           paddingRight:  layout.marginRight,
           fontFamily:    f.regular,
@@ -205,6 +206,19 @@ export function PdfDocumentV2({
             />
           )
         })()}
+
+        {/* Диагностика: ?pdfDebugBounds=1 показывает реальные границы потока. */}
+        {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('pdfDebugBounds') === '1' && (
+          <View fixed style={{
+            position: 'absolute',
+            top: layout.paddingTop,
+            left: layout.marginLeft,
+            width: layout.pageW - layout.marginLeft - layout.marginRight,
+            height: layout.pageH - layout.paddingTop - contentBottomPadding,
+            borderWidth: 0.75,
+            borderColor: '#FF0000',
+          }} />
+        )}
 
       </Page>
     </Document>

@@ -39,7 +39,6 @@ const PORTRAIT = {
 
   // Верхний отступ контента
   paddingTop:    mm(12),
-  paddingBottom: mm(22) + mm(8),
 
   // Фото-блоки
   imgMaxW:     mm(186),       // на всю ширину
@@ -79,7 +78,6 @@ const LANDSCAPE = {
   footerH:     mm(8),
 
   paddingTop:    mm(12) + mm(10),
-  paddingBottom: mm(22) + mm(8),
 
   imgMaxW:     mm(273),
   imgMaxH:     mm(100),
@@ -100,6 +98,19 @@ const LANDSCAPE = {
 export const LAYOUT = {
   v: PORTRAIT,
   h: LANDSCAPE,
+}
+
+// Нижняя граница контента зависит от выбранного подвала. С реквизитами
+// оставляем 6 мм до линии футера. У простого подвала граница контента
+// опущена дополнительно на 1/3 + 1/5 высоты футера; сам футер не двигаем.
+export const getFooterHeight = (layout, variant) =>
+  layout.marginBottom * (variant === 'requisites' ? 0.9 : 0.55)
+
+export const getContentBottomPadding = (layout, variant) => {
+  const footerHeight = getFooterHeight(layout, variant)
+  return variant === 'requisites'
+    ? footerHeight + mm(6)
+    : footerHeight + mm(6) - footerHeight * (1 / 3 + 1 / 5)
 }
 
 // ─── Шрифты ───────────────────────────────────────────────────────────────────

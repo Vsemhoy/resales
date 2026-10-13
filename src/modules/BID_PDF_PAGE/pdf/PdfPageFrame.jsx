@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Image } from '@react-pdf/renderer'
 import { Text } from './shared/PdfText'
+import { getFooterHeight } from './pdf_config'
 
 const SITE_DEFAULTS = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
 
@@ -37,9 +38,7 @@ export function PdfPageFrame({ cfg, draft, companyId, formData }) {
     .split(/\r?\n/).slice(0, 3).join('\n')
 
   const LOGO_H = layout.marginBottom * 0.25   // ~10mm — вписывается в подвал
-  const footerHeight = variant === 'requisites'
-    ? layout.marginBottom * 0.9
-    : layout.marginBottom * 0.55
+  const footerHeight = getFooterHeight(layout, variant)
 
   return (
     <>

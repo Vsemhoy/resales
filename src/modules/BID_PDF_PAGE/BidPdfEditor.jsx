@@ -10,7 +10,7 @@ import {
   getOrganizationOwnershipForms,
 } from './api'
 import { restoreFilesIntoFormData } from './api/files'
-import { compressPdf } from './api/compression.api'
+import { compressPdf, getCompressionErrorMessage } from './api/compression.api'
 import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
 import {
@@ -348,7 +348,8 @@ export default function BidPdfEditor() {
         }
       } catch (compressionError) {
         console.error('PDF compression error:', compressionError)
-        message.warning('Сервис сжатия недоступен — скачан исходный PDF')
+        const reason = await getCompressionErrorMessage(compressionError)
+        message.warning({ content: `${reason} Скачан исходный PDF.`, duration: 8 })
       }
 
       const url  = URL.createObjectURL(downloadBlob)
