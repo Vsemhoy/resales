@@ -4,9 +4,9 @@ import { mm } from '../theme/units'
 
 const SECTION_TITLES = {
   features:        'Особенности системы',
-  selectEquipment: 'Выбор оборудования',
+  selectEquipment: 'Особенности системы, требования заказчика',
   acoustic:        'Акустический расчёт',
-  recommendations: 'Рекомендации',
+  recommendations: 'Рекомендации по дополнительному оборудованию к системе',
   specifications:  'Спецификация',
   specials:        'Описание оборудования',
   rondoDelivery:   'Условия поставки',

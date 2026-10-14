@@ -22,7 +22,7 @@ export function PdfRecommendations({ theme, data, currency, sectionNumber }) {
 
   return (
     <View>
-      <SectionHeading theme={theme} number={sectionNumber} title="Рекомендации" />
+      <SectionHeading theme={theme} number={sectionNumber} title="Рекомендации по дополнительному оборудованию к системе" />
       {recs.map((rec, i) => (
         <View key={i} style={{ marginBottom: mm(6), borderLeftWidth: 2, borderLeftColor: theme.accent, paddingLeft: mm(4) }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: mm(2) }}>

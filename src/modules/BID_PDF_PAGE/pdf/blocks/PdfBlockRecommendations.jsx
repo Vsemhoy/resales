@@ -39,7 +39,7 @@ export function PdfBlockRecommendations({ cfg, data, currency, sectionNumber, fo
 
   return (
     <View break={forceBreak} style={{ marginBottom: cfg.space.end, borderBottom: '1px solid ' + color.tableRowEven }}>
-      <PdfSectionBar cfg={cfg} number={sectionNumber} title="Рекомендации" />
+      <PdfSectionBar cfg={cfg} number={sectionNumber} title="Рекомендации по дополнительному оборудованию к системе" />
       <View style={{ flexDirection: 'row' }} wrap={false}>
         <Text style={[headerStyle, { width: W.num, textAlign: 'center' }]}>№</Text>
         <Text style={[headerStyle, { width: nameW, textAlign: 'left'   }]}>Наименование</Text>

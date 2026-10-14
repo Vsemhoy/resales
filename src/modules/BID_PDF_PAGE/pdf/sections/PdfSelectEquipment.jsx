@@ -35,7 +35,7 @@ export function PdfSelectEquipment({ theme, data, sectionNumber, figureRegistry 
 
   return (
     <View>
-      <SectionHeading theme={theme} number={sectionNumber} title="Выбор оборудования" />
+      <SectionHeading theme={theme} number={sectionNumber} title="Особенности системы, требования заказчика" />
       {data.selectionOfEquipment && <HtmlToPdf html={data.selectionOfEquipment} theme={theme} />}
       <FigureBlock
         src={data.structuralDiagrams}

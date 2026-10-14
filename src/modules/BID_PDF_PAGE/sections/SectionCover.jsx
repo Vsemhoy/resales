@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react'
-import { Button, Input, Popover, Segmented, Tag } from 'antd'
+import { Button, Image, Input, Modal, Popover, Segmented, Tag } from 'antd'
 import { PlusOutlined, UndoOutlined } from '@ant-design/icons'
-import { Image } from 'antd'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
 import { useCovers, CoversDrawer } from '../components/CoversDrawer'
 
@@ -310,6 +309,7 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
 function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }) {
   const { covers, loading, reload } = useCovers(companyId)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [previewCover, setPreviewCover] = useState(null)
   const filtered = covers.filter(c => c.filename.startsWith(type + '_'))
 
   return (
@@ -335,6 +335,15 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
             <div
               key={cover.filename}
               title={cover.filename.replace(/^(cover|hat)_/, '')}
+              role="button"
+              tabIndex={0}
+              onClick={() => onChange(cover.url)}
+              onKeyDown={e => {
+                if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault()
+                  onChange(cover.url)
+                }
+              }}
               style={{
                 width: 80, height: 60, borderRadius: 6, flexShrink: 0,
                 border: `2px solid ${isSelected ? accent : '#d9d9d9'}`,
@@ -346,19 +355,21 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
               <Image
                 src={cover.url} alt={cover.filename}
                 style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                preview={{ mask: <span style={{ fontSize: 14 }}>🔍</span> }}
+                preview={false}
               />
-              <div
-                onClick={() => onChange(isSelected ? null : cover.url)}
+              <button
+                type="button"
+                onClick={e => { e.stopPropagation(); setPreviewCover(cover) }}
                 style={{
                   position: 'absolute', bottom: 0, left: 0, right: 0,
                   background: isSelected ? accent : 'rgba(0,0,0,0.45)',
                   color: '#fff', fontSize: 10, fontWeight: 600,
                   textAlign: 'center', padding: '2px 0', cursor: 'pointer',
+                  border: 0, width: '100%',
                 }}
               >
-                {isSelected ? '✓ Выбрано' : 'Выбрать'}
-              </div>
+                Просмотр
+              </button>
             </div>
           )
         })}
@@ -382,6 +393,16 @@ function CoverBlockPicker({ value, onChange, accent, companyId, type = 'cover' }
           </div>
         )}
       </div>
+      <Modal
+        open={!!previewCover}
+        title={previewCover?.filename.replace(/^(cover|hat)_/, '')}
+        footer={null}
+        onCancel={() => setPreviewCover(null)}
+        width={900}
+        centered
+      >
+        {previewCover && <img src={previewCover.url} alt={previewCover.filename} style={{ display: 'block', maxWidth: '100%', maxHeight: '75vh', margin: 'auto', objectFit: 'contain' }} />}
+      </Modal>
       <CoversDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}

@@ -649,10 +649,11 @@ export default function BidPdfEditor() {
         }
         setCoverDefaults(computedDefaults)
 
-        // Загрузка — не считается правкой пользователя
+        // При каждом открытии актуализируем дату документа; остальные поля
+        // загружаем как раньше. После загрузки дату можно изменить вручную.
         setFormData({
           ...fd,
-          date:           fd.date          || today,
+          date:           today,
           tableFootnote:  isGeneratedTableFootnote(fd.tableFootnote) ? tableFootnoteDefault : fd.tableFootnote,
           _tableFootnoteDefault: tableFootnoteDefault,
           _withoutNds: withoutNds,
@@ -685,7 +686,7 @@ export default function BidPdfEditor() {
         }
         setTimeout(() => {
           setIsReady(true)
-          if (shouldPersistRecipient || shouldPersistManager) setIsDirty(true)
+          if (shouldPersistRecipient || shouldPersistManager || fd.date !== today) setIsDirty(true)
         }, 100)
       })
       .catch(e => console.error('Ошибка загрузки драфта:', e))

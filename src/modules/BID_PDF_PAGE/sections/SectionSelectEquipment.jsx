@@ -11,7 +11,7 @@ export default function SectionSelectEquipment({ data, onChange, draftId, compan
 
   return (
     <TabWrap>
-      <Section title="Выбор оборудования" description="Текст раздела">
+      <Section title="Особенности системы, требования заказчика" description="Текст раздела">
         <Field label="Описание выбора оборудования">
           <RichTextEditor
             value={data.selectionOfEquipment || ''}

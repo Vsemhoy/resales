@@ -14,15 +14,32 @@ function parseHtml(html) {
   return Array.from(doc.body.firstChild.childNodes)
 }
 
-// Инлайн-ноды: bold, italic, plain text
-function renderInline(node, cfg, key) {
-  const { color, text: t, font, weight } = cfg
+function getTextColor(node) {
+  const value = node.style?.color?.trim()
+  if (!value) return null
+
+  if (/^#[\da-f]{3}(?:[\da-f]{3})?$/i.test(value)) return value
+
+  const rgb = value.match(/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i)
+  if (rgb) {
+    const channels = rgb.slice(1).map(Number)
+    if (channels.every(channel => channel <= 255)) {
+      return `#${channels.map(channel => channel.toString(16).padStart(2, '0')).join('')}`
+    }
+  }
+
+  return null
+}
+
+// Инлайн-ноды: цвет наследуется через span/strong/em и не сбрасывается на тексте.
+function renderInline(node, cfg, key, inheritedColor = cfg.color.textPrimary) {
+  const { color, font, weight } = cfg
 
   if (node.nodeType === Node.TEXT_NODE) {
     const content = protectPdfText(node.textContent)
     if (!content) return null
     return (
-      <Text key={key} style={{ fontFamily: font.regular, fontSize: t.base, color: color.textPrimary }}>
+      <Text key={key} style={{ color: inheritedColor }}>
         {content}
       </Text>
     )
@@ -30,18 +47,19 @@ function renderInline(node, cfg, key) {
   if (node.nodeType !== Node.ELEMENT_NODE) return null
 
   const tag      = node.tagName.toLowerCase()
-  const children = Array.from(node.childNodes).map((c, i) => renderInline(c, cfg, `${key}-${i}`))
+  const textColor = getTextColor(node) || (tag === 'mark' ? color.accent : inheritedColor)
+  const children = Array.from(node.childNodes).map((c, i) => renderInline(c, cfg, `${key}-${i}`, textColor))
 
   if (tag === 'strong' || tag === 'b')
-    return <Text key={key} style={{ fontFamily: font.bold, fontWeight: weight.bold, fontSize: t.base, color: color.textPrimary }}>{children}</Text>
+    return <Text key={key} style={{ fontFamily: font.bold, fontWeight: weight.bold, color: textColor }}>{children}</Text>
   if (tag === 'em' || tag === 'i')
-    return <Text key={key} style={{ fontFamily: font.regular, fontStyle: 'italic', fontSize: t.base, color: color.textPrimary }}>{children}</Text>
+    return <Text key={key} style={{ fontStyle: 'italic', color: textColor }}>{children}</Text>
   if (tag === 'mark')
-    return <Text key={key} style={{ fontFamily: font.regular, fontSize: t.base, color: color.accent }}>{children}</Text>
+    return <Text key={key} style={{ color: textColor }}>{children}</Text>
   if (tag === 'br')
     return <Text key={key}>{'\n'}</Text>
 
-  return <Text key={key} style={{ fontFamily: font.regular, fontSize: t.base, color: color.textPrimary }}>{children}</Text>
+  return <Text key={key} style={{ color: textColor }}>{children}</Text>
 }
 
 // Блочные ноды
@@ -63,9 +81,10 @@ function renderBlock(node, cfg, key) {
 
   if (tag === 'p') {
     const align    = getTextAlign(node) || 'left'
-    const children = Array.from(node.childNodes).map((c, i) => renderInline(c, cfg, `${key}-${i}`))
+    const textColor = getTextColor(node) || color.textPrimary
+    const children = Array.from(node.childNodes).map((c, i) => renderInline(c, cfg, `${key}-${i}`, textColor))
     return (
-      <Text key={key} style={{ fontFamily: font.regular, fontSize: t.base, color: color.textPrimary, lineHeight: 1.6, marginBottom: space.xs, textAlign: align }}>
+      <Text key={key} style={{ fontFamily: font.regular, fontSize: t.base, color: textColor, lineHeight: 1.6, marginBottom: space.xs, textAlign: align }}>
         {children}
       </Text>
     )
@@ -73,9 +92,10 @@ function renderBlock(node, cfg, key) {
 
   if (tag === 'h1' || tag === 'h2' || tag === 'h3') {
     const size = tag === 'h1' ? t.xl : tag === 'h2' ? t.lg : t.md
+    const textColor = getTextColor(node) || color.textPrimary
     return (
-      <Text key={key} style={{ fontFamily: font.bold, fontWeight: weight.bold, fontSize: size, color: color.textPrimary, marginBottom: space.sm, marginTop: space.xs }}>
-        {node.textContent}
+      <Text key={key} style={{ fontFamily: font.bold, fontWeight: weight.bold, fontSize: size, color: textColor, marginBottom: space.sm, marginTop: space.xs }}>
+        {Array.from(node.childNodes).map((c, i) => renderInline(c, cfg, `${key}-${i}`, textColor))}
       </Text>
     )
   }
@@ -88,7 +108,7 @@ function renderBlock(node, cfg, key) {
           <View key={i} wrap={false} style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: space.xs }}>
             <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: color.textSecondary, marginRight: space.sm, marginTop: t.base * 0.45, flexShrink: 0 }} />
             <Text style={{ fontFamily: font.regular, fontSize: t.base, color: color.textPrimary, lineHeight: 1.5, flex: 1 }}>
-              {li.textContent}
+              {Array.from(li.childNodes).map((c, childIndex) => renderInline(c, cfg, `${key}-${i}-${childIndex}`, getTextColor(li) || color.textPrimary))}
             </Text>
           </View>
         ))}
@@ -106,7 +126,7 @@ function renderBlock(node, cfg, key) {
               {i + 1}.
             </Text>
             <Text style={{ fontFamily: font.regular, fontSize: t.base, color: color.textPrimary, lineHeight: 1.5, flex: 1 }}>
-              {li.textContent}
+              {Array.from(li.childNodes).map((c, childIndex) => renderInline(c, cfg, `${key}-${i}-${childIndex}`, getTextColor(li) || color.textPrimary))}
             </Text>
           </View>
         ))}

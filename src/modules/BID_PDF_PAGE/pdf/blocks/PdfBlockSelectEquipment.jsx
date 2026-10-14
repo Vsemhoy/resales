@@ -52,7 +52,7 @@ export function PdfBlockSelectEquipment({ cfg, data, sectionNumber, figureRegist
 
   return (
     <View break={forceBreak} style={{ marginBottom: cfg.space.end}}>
-      <PdfSectionBar cfg={cfg} number={sectionNumber} title="Выбор оборудования" />
+      <PdfSectionBar cfg={cfg} number={sectionNumber} title="Особенности системы, требования заказчика" />
       {<HtmlToPdfV2 html={wrapJustify(data.selectionOfEquipment)} cfg={cfg} />}
       <FigureBlock cfg={cfg} draft={draft} src={data?.structuralDiagrams} figInfo={figuresEnabled ? figureRegistry.get('structuralDiagrams') : null} />
       <FigureBlock cfg={cfg} draft={draft} src={data?.blockPlacements}    figInfo={figuresEnabled ? figureRegistry.get('blockPlacements')    : null} />

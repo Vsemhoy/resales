@@ -67,10 +67,10 @@ export function PdfDocumentV2({
   // Метки разделов для оглавления
   const SECTION_LABELS = {
     features:        'Особенности системы',
-    selectEquipment: 'Выбор оборудования',
+    selectEquipment: 'Особенности системы, требования заказчика',
     acoustic:        'Акустический расчёт',
     specifications:  'Спецификация',
-    recommendations: 'Рекомендации',
+    recommendations: 'Рекомендации по дополнительному оборудованию к системе',
     systemChars:     'Характеристики системы',
     rondoDelivery:   'Условия оплаты и поставки',
     specials:        'Описание оборудования',
