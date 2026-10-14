@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown, message } from 'antd'
-import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined, DownloadOutlined } from '@ant-design/icons'
+import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined, DownloadOutlined, FileExcelOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import {
   getDraft, getBidInfo, getProjectInfo, getBidModels, getDraftModels,
@@ -11,6 +11,7 @@ import {
 } from './api'
 import { restoreFilesIntoFormData } from './api/files'
 import { compressPdf, getCompressionErrorMessage } from './api/compression.api'
+import { buildSpecificationExcel } from './exportSpecificationExcel'
 import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
 import {
@@ -261,6 +262,7 @@ export default function BidPdfEditor() {
   const [wideLayout,     setWideLayout]     = useState(() => window.innerWidth > 1500)
   const [printing,       setPrinting]       = useState(false)
   const [downloading,    setDownloading]    = useState(false)
+  const [exportingExcel, setExportingExcel] = useState(false)
   const [compressionDpi, setCompressionDpi] = useState(() => Number(localStorage.getItem('pdfCompressionDpi')) || 600)
 
   // ── Имя файла по маске Word ──────────────────────────────────────────────────
@@ -364,6 +366,31 @@ export default function BidPdfEditor() {
       console.error('PDF download error:', e)
     } finally {
       setDownloading(false)
+    }
+  }
+
+  const handleExportExcel = async () => {
+    if (!models.length) {
+      message.warning('В КП нет позиций для выгрузки')
+      return
+    }
+    setExportingExcel(true)
+    try {
+      const buffer = await buildSpecificationExcel({ models, formData, currency, companyId })
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = getPdfFileName().replace(/\.pdf$/i, ' — спецификация.xlsx')
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+    } catch (error) {
+      console.error('Excel export error:', error)
+      message.error('Не удалось сформировать спецификацию Excel')
+    } finally {
+      setExportingExcel(false)
     }
   }
   const { covers, reload: reloadCovers } = useCovers(companyId)
@@ -1042,6 +1069,10 @@ export default function BidPdfEditor() {
               loading={downloading}
               onClick={handleDownload}
               title={getPdfFileName()}>Скачать PDF</Button>
+            <Button icon={<FileExcelOutlined />} size="default"
+              loading={exportingExcel}
+              onClick={handleExportExcel}
+              title="Спецификация с фотографиями">Скачать Excel</Button>
             <Select
               value={compressionDpi}
               options={COMPRESSION_DPI_OPTIONS}

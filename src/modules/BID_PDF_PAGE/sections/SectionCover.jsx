@@ -3,6 +3,7 @@ import { Button, Image, Input, Modal, Popover, Segmented, Tag } from 'antd'
 import { PlusOutlined, UndoOutlined } from '@ant-design/icons'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
 import { useCovers, CoversDrawer } from '../components/CoversDrawer'
+import { HAT_HEADER_TEXT_DEFAULTS } from '../utils/companyHeader'
 
 const SITE_DEFAULTS = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
 
@@ -24,20 +25,6 @@ const FOOTER_LOGO_OPTIONS = [
   { key: 'affa',    label: 'AFFA',    src: '/brands/footer/logo_affa.png'    },
   { key: 'lda',     label: 'LDA',     src: '/brands/footer/logo_lda.png'     },
 ]
-
-const HAT_HEADER_TEXT_DEFAULTS = {
-  '2': `ООО «АРСТЕЛ»
-+7 (812) 207-50-97
-sales@arstel.com
-www.arstel.com`,
-  '3': `ООО «РОНДО-САУНД»
-196006, Россия, Санкт-Петербург
-Московский проспект, дом 91, литера А
-помещение 11Н, офис 229
-zakaz@rondo-sound.ru
-www.rondo-sound.ru
-+7 (812) 339 8972`,
-}
 
 function formatToday() {
   const d = new Date()

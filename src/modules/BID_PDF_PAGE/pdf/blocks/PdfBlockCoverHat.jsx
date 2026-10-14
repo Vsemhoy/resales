@@ -2,11 +2,7 @@ import React from 'react'
 import { View, Image } from '@react-pdf/renderer'
 import { Text } from '../shared/PdfText'
 import { mm } from '../theme/units'
-
-const HAT_TEXT_DEFAULTS = {
-  '2': `ООО «АРСТЕЛ»\n+7 (812) 207-50-97\nsales@arstel.com\nwww.arstel.com`,
-  '3': `ООО «РОНДО-САУНД»\n196006, Россия, Санкт-Петербург\nМосковский проспект, дом 91, литера А\nпомещение 11Н, офис 229\nzakaz@rondo-sound.ru\nwww.rondo-sound.ru\n+7 (812) 339 8972`,
-}
+import { HAT_HEADER_TEXT_DEFAULTS } from '../../utils/companyHeader'
 
 function absUrl(src) {
   if (!src || typeof src !== 'string') return null
@@ -23,7 +19,7 @@ export function PdfBlockCoverHat({ cfg, data, draft, companyId }) {
   const hatUrl = absUrl(data?.hatImage)
 
   // Если hatHeaderText не сохранён явно — берём дефолт компании
-  const rawHeaderText = data?.hatHeaderText ?? HAT_TEXT_DEFAULTS[String(companyId)] ?? ''
+  const rawHeaderText = data?.hatHeaderText ?? HAT_HEADER_TEXT_DEFAULTS[String(companyId)] ?? ''
   const hatHeaderText = typeof rawHeaderText === 'string' ? rawHeaderText.trim() : ''
 
   return (

@@ -4,9 +4,8 @@ import { Text } from '../shared/PdfText'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
 import { HTTP_ROOT } from '../../../../config/config'
-import { cleanAlphaNumeric, cleanModelName } from '../../utils/splitText'
-
-const CURRENCY_SYMBOLS = { '1': '$', '2': '€', '3': '₽' }
+import { cleanAlphaNumeric } from '../../utils/splitText'
+import { buildSpecificationRows, CURRENCY_SYMBOLS } from '../../utils/specificationData'
 
 const fmt = (n) => Number(parseFloat(n) || 0)
   .toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -15,24 +14,6 @@ function absUrl(name) {
   let rt = HTTP_ROOT + '/api/soma/pdf/modfiles/' + cleanAlphaNumeric(name)
   if (!rt.startsWith('http')) rt = 'http://' + rt
   return rt
-}
-
-function getPresenceLabel(model) {
-  const presenceName = model.precence?.name || model.presence_data?.name || model.presenceInfo?.name || model.presence?.name
-  if (presenceName) return presenceName
-
-  return Number(model.presence) > 0 ? '\u0412 \u043d\u0430\u043b.' : '+'
-}
-
-function normalizeNdsPercent(value) {
-  const numericValue = Number(value)
-  return Number.isFinite(numericValue) && numericValue > 0 ? numericValue : 0
-}
-
-function withoutNdsPrice(price, ndsPercent) {
-  const numericPrice = Number.parseFloat(price) || 0
-  const normalizedNds = normalizeNdsPercent(ndsPercent)
-  return normalizedNds > 0 ? numericPrice / (1 + normalizedNds / 100) : numericPrice
 }
 
 export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact', modelImages = {}, withoutNds = false, ndsPercent = 0, forceBreak = false }) {
@@ -55,7 +36,8 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
   }
   const nameW = cW - W.num - W.qty - W.price - W.total - W.presence - (withPhotos ? photoW : 0)
 
-  const totalSum = models.reduce((s, m) => s + (withoutNds ? withoutNdsPrice(m.price, ndsPercent) : (parseFloat(m.price) || 0)) / 100 * (m.model_count || 0), 0)
+  const rows = buildSpecificationRows(models, { withoutNds, ndsPercent })
+  const totalSum = rows.reduce((sum, row) => sum + row.total, 0)
 
   const cellBase = { paddingHorizontal: space.xs, paddingVertical: space.xs }
 
@@ -94,13 +76,8 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
       </View>
 
       {/* Строки */}
-      {models.map((m, i) => {
-        const rawPrice = withoutNds ? withoutNdsPrice(m.price, ndsPercent) : (parseFloat(m.price) || 0)
-        const price = rawPrice / 100
-        const total = price * (m.model_count || 0)
+      {rows.map(({ model: m, name, note, quantity, price, total, presence }, i) => {
         const bg    = i % 2 === 1 ? color.tableRowEven : color.tableRowOdd
-        const name  = cleanModelName(m.name || m.info_model?.name || `Позиция ${i + 1}`)
-        const note  = m.info_model?.short_note_new || m.info_model?.short_note || ''
 
         return (
           <View key={m.id || i} style={{ flexDirection: 'row', backgroundColor: bg }} wrap={false}>
@@ -115,11 +92,11 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
                 </Text>
               ) : null}
             </View>
-            <Text style={[rowText('center'), { width: W.qty  }]}>{m.model_count || 0}</Text>
+            <Text style={[rowText('center'), { width: W.qty  }]}>{quantity}</Text>
             <Text style={[rowText('right'),  { width: W.price}]}>{fmt(price)}</Text>
             <Text style={[rowText('right'),  { width: W.total, fontFamily: font.bold, fontWeight: weight.semibold }]}>{fmt(total)}</Text>
             <Text style={[rowText('center'), { width: W.presence, color: color.textSecondary }]}>
-              {getPresenceLabel(m)}
+              {presence}
             </Text>
             {withPhotos && (
               <View style={{ width: photoW, ...cellBase, alignItems: 'center', justifyContent: 'center' }}>
