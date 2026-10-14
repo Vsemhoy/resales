@@ -1037,7 +1037,7 @@ export default function BidPdfEditor() {
             <Button type="primary" icon={<PrinterOutlined />} size="default"
               loading={printing}
               onClick={handlePrint}
-              style={{ background: accent, borderColor: accent }}>В печать!</Button>
+              style={{ background: accent, borderColor: accent }}>Просмотр</Button>
             <Button icon={<DownloadOutlined />} size="default"
               loading={downloading}
               onClick={handleDownload}

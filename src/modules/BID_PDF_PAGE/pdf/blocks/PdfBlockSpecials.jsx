@@ -188,7 +188,7 @@ export function PdfBlockSpecials({ cfg, data, models = [], sectionNumber }) {
           <View
             key={id}
             style={{
-              marginBottom: space.xl,
+              marginBottom: space.md,
             }}
           >
             {/* Заголовок, описание и фото остаются одним блоком. */}
