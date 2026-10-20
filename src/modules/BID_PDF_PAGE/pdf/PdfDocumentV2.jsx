@@ -16,6 +16,7 @@ import { PdfBlockCustom }            from './blocks/PdfBlockCustom'
 import { PdfBlockToc }               from './blocks/PdfBlockToc'
 import { PdfBlockPageBreak }         from './blocks/PdfBlockPageBreak'
 import { PdfBlockRondoDelivery }     from './blocks/PdfBlockRondoDelivery'
+import { PdfBlockManager }           from './blocks/PdfBlockManager'
 import { PdfBlockSystemChars }       from './blocks/PdfBlockSystemChars'
 
 registerFonts()
@@ -150,7 +151,7 @@ export function PdfDocumentV2({
             return wrap(<PdfBlockRecommendations cfg={cfg} data={formData} currency={currency} sectionNumber={n} />)
 
           if (key === 'specifications')
-            return wrap(<PdfBlockSpecifications cfg={cfg} models={models} currency={currency} tableFootnote={formData.tableFootnote} tableStyle={formData.tableStyle} modelImages={formData._modelImages ?? {}} withoutNds={formData._withoutNds} ndsPercent={formData._ndsPercent} sectionNumber={n} />)
+            return wrap(<PdfBlockSpecifications cfg={cfg} models={models} currency={currency} tableStyle={formData.tableStyle} modelImages={formData._modelImages ?? {}} withoutNds={formData._withoutNds} ndsPercent={formData._ndsPercent} sectionNumber={n} />)
 
           // «Описание оборудования» — самостоятельный блок-книга. Он всегда
           // начинается с новой страницы независимо от ручных разделителей.
@@ -181,6 +182,9 @@ export function PdfDocumentV2({
           return null
         })}
 
+        {/* Самостоятельный блок менеджера всегда идёт после контента, перед оглавлением. */}
+        <PdfBlockManager cfg={cfg} data={formData} companyId={companyId} />
+
         {/* Оглавление — в конце документа, только так можно получить страницы */}
         {renderableEnabledSections.toc !== false && (() => {
           // Ищем назад от конца, пропуская отключённые секции
@@ -203,6 +207,7 @@ export function PdfDocumentV2({
               getLabel={getLabel}
               sectionPageNumbers={sectionPageNumbers}
               forceBreak={tocBreak}
+              topGap={formData?.showManager === false ? 0 : 15}
             />
           )
         })()}

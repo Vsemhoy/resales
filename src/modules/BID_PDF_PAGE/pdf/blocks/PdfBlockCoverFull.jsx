@@ -17,7 +17,7 @@ export function PdfBlockCoverFull({ cfg, data, draft }) {
     <View style={{ flexDirection: 'row', minHeight: layout.contentH * 0.85 }}>
 
       {/* ── Левая колонка ──────────────────────────────────────────────── */}
-      <View style={{ flex: 1, paddingRight: space.xl, paddingTop: space.xxl, justifyContent: 'space-between' }}>
+      <View style={{ flex: 1, paddingRight: space.xl, paddingTop: space.xxl }}>
 
         {/* Верх: КП + название */}
         <View>
@@ -62,25 +62,6 @@ export function PdfBlockCoverFull({ cfg, data, draft }) {
           )}
         </View>
 
-        {/* Низ: менеджер */}
-        <View style={{ paddingBottom: space.lg }}>
-          {data?.manager_name && (
-            <Text style={{ fontSize: text.sm, color: color.textPrimary, fontFamily: font.bold, fontWeight: weight.semibold }}>
-              {String(data.manager_name || '').trim()}
-            </Text>
-          )}
-          {data?.manager_occupy && (
-            <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>
-              {String(data.manager_occupy || '').trim()}
-            </Text>
-          )}
-          {(data?.tel || data?.email) && (
-            <View style={{ marginTop: space.sm }}>
-              {data.tel   && <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>{String(data.tel || '').trim()}</Text>}
-              {data.email && <Text style={{ fontSize: text.xs, color: color.textSecondary, fontFamily: font.regular }}>{String(data.email || '').trim()}</Text>}
-            </View>
-          )}
-        </View>
       </View>
 
       {/* ── Правая колонка — картинка ───────────────────────────────────── */}

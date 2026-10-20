@@ -22,10 +22,6 @@ function SectionHeading({ theme, number, title }) {
   )
 }
 
-function stripHtml(html) {
-  return (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
-}
-
 function getPresenceLabel(model) {
   const presenceName = model.precence?.name || model.presence_data?.name || model.presenceInfo?.name || model.presence?.name
   if (presenceName) return presenceName
@@ -33,7 +29,7 @@ function getPresenceLabel(model) {
   return Number(model.presence) > 0 ? '\u0412 \u043d\u0430\u043b.' : '+'
 }
 
-export function PdfSpecifications({ theme, models, currency, tableFootnote, sectionNumber }) {
+export function PdfSpecifications({ theme, models, currency, sectionNumber }) {
   const sym  = CURRENCY_SYMBOLS[currency?.value] || '₽'
   const rows = models || []
 
@@ -102,11 +98,6 @@ export function PdfSpecifications({ theme, models, currency, tableFootnote, sect
         <Text style={[headerCell, { width: W.presence }]} />
       </View>
 
-      {tableFootnote ? (
-        <Text style={{ fontSize: theme.fontSize.xs, color: theme.gray, fontFamily: theme.fonts.regular, marginTop: mm(3) }}>
-          {stripHtml(tableFootnote)}
-        </Text>
-      ) : null}
     </View>
   )
 }

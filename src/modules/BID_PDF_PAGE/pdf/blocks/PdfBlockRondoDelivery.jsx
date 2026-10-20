@@ -101,58 +101,6 @@ function Bullet({ bullet, cfg, isLast }) {
   )
 }
 
-function ManagerBlock({ cfg, data }) {
-  const { color, text, font, weight, space } = cfg
-  const rd          = data?.rondoDelivery || {}
-  const byeLabel    = rd.byeLabel    ?? 'Ваш менеджер'
-  const byeName     = rd.byeName     ?? data?.manager_name ?? ''
-  const byeContacts = rd.byeContacts ?? [data?.tel, data?.email].filter(Boolean).join('\n')
-
-  if (!(rd.showManager ?? true)) return null
-  if (!byeName && !byeContacts) return null
-
-  return (
-    <View style={{
-      marginTop:       space.xl,
-      paddingLeft:     space.md,
-      borderLeftWidth: 1,
-      borderLeftColor: color.tableTotal,
-    }}>
-      <Text style={{
-        fontSize:      text.xs,
-        fontFamily:    font.bold,
-        fontWeight:    weight.semibold,
-        color:         color.accent,
-        marginBottom:  space.xxs,
-        textTransform: 'uppercase',
-      }}>
-        {byeLabel}
-      </Text>
-      {byeName ? (
-        <Text style={{
-          fontSize:     text.base,
-          fontFamily:   font.regular,
-          fontWeight:   weight.regular,
-          color:        color.textPrimary,
-          marginBottom: space.xs,
-        }}>
-          {byeName}
-        </Text>
-      ) : null}
-      {byeContacts ? (
-        <Text style={{
-          fontSize:   text.sm,
-          fontFamily: font.regular,
-          color:      color.textSecondary,
-          lineHeight: 1.6,
-        }}>
-          {byeContacts}
-        </Text>
-      ) : null}
-    </View>
-  )
-}
-
 export function PdfBlockRondoDelivery({ cfg, data, sectionNumber, forceBreak = false }) {
   const { space } = cfg
   const rd      = data?.rondoDelivery || {}
@@ -175,7 +123,6 @@ export function PdfBlockRondoDelivery({ cfg, data, sectionNumber, forceBreak = f
         ))}
       </View>
 
-      <ManagerBlock cfg={cfg} data={data} />
     </View>
   )
 }

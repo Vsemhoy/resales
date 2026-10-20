@@ -3,7 +3,7 @@ import { View } from '@react-pdf/renderer'
 import { Text } from '../shared/PdfText'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
 
-export function PdfBlockToc({ cfg, sectionNumbers, enabledSections, sectionOrder, getLabel, sectionPageNumbers = {}, forceBreak = false }) {
+export function PdfBlockToc({ cfg, sectionNumbers, enabledSections, sectionOrder, getLabel, sectionPageNumbers = {}, forceBreak = false, topGap = 0 }) {
   const { color, text, font, weight, space } = cfg
 
   // Собираем строки: только включённые драггабельные секции (не pageBreak, не custom)
@@ -23,7 +23,7 @@ export function PdfBlockToc({ cfg, sectionNumbers, enabledSections, sectionOrder
   if (!rows.length) return null
 
   return (
-    <View break={forceBreak} style={{ marginBottom: space.end }}>
+    <View break={forceBreak} style={{ marginTop: topGap, marginBottom: space.end }}>
       <PdfSectionBar cfg={cfg} title="Содержание" />
 
       {/* Строки */}

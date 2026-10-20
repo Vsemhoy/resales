@@ -12,6 +12,7 @@ import {
 import { restoreFilesIntoFormData } from './api/files'
 import { compressPdf, getCompressionErrorMessage } from './api/compression.api'
 import { buildSpecificationExcel } from './exportSpecificationExcel'
+import { COMPANY_PHONE, COMPANY_SITE, capitalizeFirstLetter, defaultManagerContacts } from './utils/managerContacts'
 import { useDraftStatus, STATUS_META, ENGINEER_ROLES } from './useDraftStatus'
 import { useAutoSave } from './useAutoSave'
 import {
@@ -58,11 +59,6 @@ const SECTION_COMPONENTS = {
 }
 
 const COMPANY_ACCENT = { '2': '#FF5903', '3': '#269435' }
-const COMPANY_PHONE = {
-  '2': '+7 (812) 207-50-97',
-  '3': '+7 (812) 339-8972',
-}
-const COMPANY_SITE = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
 const COMPRESSION_DPI_OPTIONS = [150, 300, 600, 1200].map(value => ({ value, label: `${value} DPI` }))
 
 const COMPACT_THEME = {
@@ -75,9 +71,6 @@ const COMPACT_THEME = {
 
 const uuid = () => Math.random().toString(36).slice(2, 8)
 const DEFAULT_NDS_PERCENT = 22
-const FOOTNOTE_PREFIX = '\u041f\u043e \u0443\u0441\u043b\u043e\u0432\u0438\u044f\u043c \u0434\u043e\u0433\u043e\u0432\u043e\u0440\u0430 \u043f\u043e\u0441\u0442\u0430\u0432\u043a\u0430 \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u0435\u0442\u0441\u044f \u043f\u0440\u0438 100% \u043f\u0440\u0435\u0434\u043e\u043f\u043b\u0430\u0442\u0435 \u0441\u043e \u0441\u043a\u043b\u0430\u0434\u0430 \u0432 \u0421\u0430\u043d\u043a\u0442-\u041f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433\u0435.'
-const FOOTNOTE_SUFFIX = '\u0421\u0440\u043e\u043a \u043f\u043e\u0441\u0442\u0430\u0432\u043a\u0438 \u043e\u0431\u043e\u0440\u0443\u0434\u043e\u0432\u0430\u043d\u0438\u044f \u043f\u043e\u0434 \u0437\u0430\u043a\u0430\u0437 - 3 \u043c\u0435\u0441\u044f\u0446\u0430 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430 \u043e\u043f\u043b\u0430\u0442\u044b \u0441\u0447\u0435\u0442\u0430.'
-const FOOTNOTE_PRICE_PREFIX = '\u0426\u0435\u043d\u044b \u0443\u043a\u0430\u0437\u0430\u043d\u044b'
 
 function isWithoutNdsFlag(value) {
   if (value === true || value === 'yes' || value === 'true') return true
@@ -85,17 +78,6 @@ function isWithoutNdsFlag(value) {
 
   const numericValue = Number(value)
   return Number.isFinite(numericValue) && numericValue > 0
-}
-
-function buildTableFootnoteDefault({ withoutNds = false, ndsPercent = DEFAULT_NDS_PERCENT } = {}) {
-  const ndsValue = ndsPercent === null || ndsPercent === undefined || ndsPercent === ''
-    ? DEFAULT_NDS_PERCENT
-    : ndsPercent
-  const priceText = withoutNds
-    ? '\u0426\u0435\u043d\u044b \u0443\u043a\u0430\u0437\u0430\u043d\u044b \u0431\u0435\u0437 \u0443\u0447\u0451\u0442\u0430 \u041d\u0414\u0421.'
-    : `\u0426\u0435\u043d\u044b \u0443\u043a\u0430\u0437\u0430\u043d\u044b \u0441 \u0443\u0447\u0435\u0442\u043e\u043c \u041d\u0414\u0421 ${ndsValue}%.`
-
-  return `${FOOTNOTE_PREFIX} ${priceText} ${FOOTNOTE_SUFFIX}`
 }
 
 function normalizeCompanyPart(value = '') {
@@ -216,25 +198,6 @@ async function resolveRecipientMorpher({ name, position, contactId }) {
   }
 }
 
-function stripFootnoteHtml(value = '') {
-  return String(value)
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
-function isGeneratedTableFootnote(value) {
-  const text = stripFootnoteHtml(value)
-  if (!text) return true
-
-  const normalizedSuffix = FOOTNOTE_SUFFIX.replace(/\.$/, '')
-  return text.startsWith(FOOTNOTE_PREFIX)
-    && text.includes(FOOTNOTE_PRICE_PREFIX)
-    && text.includes('\u041d\u0414\u0421')
-    && (text.endsWith(FOOTNOTE_SUFFIX) || text.endsWith(normalizedSuffix))
-}
 export default function BidPdfEditor() {
   const { bidId, draftId } = useParams()
 
@@ -459,10 +422,6 @@ export default function BidPdfEditor() {
 
         const ndsPercent = data.NDS ?? data.nds ?? DEFAULT_NDS_PERCENT
         const withoutNds = isWithoutNdsFlag(data.source_bid?.woNDS)
-        const tableFootnoteDefault = buildTableFootnoteDefault({
-          withoutNds,
-          ndsPercent,
-        })
 
         // По умолчанию блок подписывает создатель PDF-черновика. Для старых
         // драфтов без creator используем назначенного менеджера или менеджера БИДа.
@@ -477,7 +436,9 @@ export default function BidPdfEditor() {
               || srcManager.name
             )
           : (fd.manager_name || '')
-        const bidManagerOccupy = srcManager?.occupy || fd.manager_occupy || ''
+        const bidManagerOccupy = srcManager?.occupy
+          ? capitalizeFirstLetter(srcManager.occupy)
+          : (fd.manager_occupy || '')
         // В КП печатается общий телефон компании, не внутренний номер сотрудника.
         const bidManagerPhone = COMPANY_PHONE[String(compId)] ?? ''
         const bidManagerEmail = srcManager?.email || ''
@@ -485,7 +446,10 @@ export default function BidPdfEditor() {
         const resolvedManagerId = managerWasInitialized
           ? fd._manager_id
           : (srcManager?.id ?? null)
-        const resolvedManagerName = fd.manager_name || bidManagerName
+        const savedDelivery = fd.rondoDelivery
+        const resolvedManagerName = fd.managerContacts === undefined && savedDelivery?.byeName !== undefined
+          ? savedDelivery.byeName
+          : (fd.manager_name || bidManagerName)
         const resolvedManagerOccupy = fd.manager_occupy || bidManagerOccupy
         // Телефон во всех менеджерских блоках всегда общий для компании.
         const resolvedManagerPhone = bidManagerPhone
@@ -493,7 +457,6 @@ export default function BidPdfEditor() {
           ? (fd.email ?? '')
           : (fd.email || bidManagerEmail)
         const companySite = COMPANY_SITE[String(compId)] ?? ''
-        const savedDelivery = fd.rondoDelivery
         const savedContactLines = String(savedDelivery?.byeContacts || '')
           .split(/\r?\n/)
           .map(line => line.trim())
@@ -505,21 +468,20 @@ export default function BidPdfEditor() {
             && savedContactLines.length <= 3
             && savedContactLines.at(-1) === companySite
           )
-        const resolvedDelivery = contactsWereGenerated
-          ? {
-              ...savedDelivery,
-              byeContacts: [bidManagerPhone, resolvedManagerEmail, companySite]
-                .filter(Boolean)
-                .join('\n'),
-              byeContactsAuto: true,
-            }
-          : savedDelivery
+        const resolvedManagerContactsAuto = fd.managerContactsAuto
+          ?? (savedDelivery?.byeContacts === undefined ? true : contactsWereGenerated)
+        const resolvedManagerContacts = resolvedManagerContactsAuto
+          ? defaultManagerContacts(compId, resolvedManagerEmail)
+          : (fd.managerContacts ?? savedDelivery?.byeContacts ?? defaultManagerContacts(compId, resolvedManagerEmail))
+        const resolvedShowManager = fd.showManager ?? savedDelivery?.showManager ?? true
         const shouldPersistManager = !managerWasInitialized
           || fd.manager_name !== resolvedManagerName
           || fd.manager_occupy !== resolvedManagerOccupy
           || fd.tel !== resolvedManagerPhone
           || fd.email !== resolvedManagerEmail
-          || resolvedDelivery !== savedDelivery
+          || fd.managerContacts !== resolvedManagerContacts
+          || fd.managerContactsAuto !== resolvedManagerContactsAuto
+          || fd.showManager !== resolvedShowManager
 
         const orgUser = data.org_user || null
         const bidTargetName = orgUser
@@ -681,8 +643,6 @@ export default function BidPdfEditor() {
         setFormData({
           ...fd,
           date:           today,
-          tableFootnote:  isGeneratedTableFootnote(fd.tableFootnote) ? tableFootnoteDefault : fd.tableFootnote,
-          _tableFootnoteDefault: tableFootnoteDefault,
           _withoutNds: withoutNds,
           _ndsPercent: ndsPercent,
           target_name:    resolvedTargetName,
@@ -693,7 +653,9 @@ export default function BidPdfEditor() {
           tel:            resolvedManagerPhone,
           email:          resolvedManagerEmail,
           _manager_id:    resolvedManagerId,
-          ...(resolvedDelivery ? { rondoDelivery: resolvedDelivery } : {}),
+          managerContacts: resolvedManagerContacts,
+          managerContactsAuto: resolvedManagerContactsAuto,
+          showManager: resolvedShowManager,
           object_name:    fd.object_name   ?? bidObjectName,
           object_address: fd.object_address ?? projectAddress,
           coverTitle:     resolvedCoverTitle,
@@ -728,16 +690,12 @@ export default function BidPdfEditor() {
     setCompanyId(v)
     dirtySet(fd => {
       const phone = COMPANY_PHONE[String(v)] ?? ''
-      const site = COMPANY_SITE[String(v)] ?? ''
-      const delivery = fd.rondoDelivery
       return {
         ...fd,
         tel: phone,
-        ...(delivery?.byeContactsAuto === true ? {
-          rondoDelivery: {
-            ...delivery,
-            byeContacts: [phone, fd.email, site].filter(Boolean).join('\n'),
-          },
+        ...(fd.managerContactsAuto !== false ? {
+          managerContacts: defaultManagerContacts(v, fd.email),
+          managerContactsAuto: true,
         } : {}),
         _meta: { ...(fd._meta || {}), companyId: v },
       }

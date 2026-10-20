@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react'
-import { Button, Image, Input, Modal, Popover, Segmented, Tag } from 'antd'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { AutoComplete, Button, Image, Input, Modal, Popover, Segmented, Switch, Tag } from 'antd'
 import { PlusOutlined, UndoOutlined } from '@ant-design/icons'
 import { Section, Field, Grid2, TabWrap } from '../components/FormParts'
 import { useCovers, CoversDrawer } from '../components/CoversDrawer'
 import { HAT_HEADER_TEXT_DEFAULTS } from '../utils/companyHeader'
+import { getPdfManagers } from '../api'
+import { COMPANY_PHONE, capitalizeFirstLetter, defaultManagerContacts } from '../utils/managerContacts'
 
 const SITE_DEFAULTS = { '2': 'arstel.com', '3': 'rondo-sound.ru' }
 
@@ -142,6 +144,46 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
   const accent    = companyId === '3' ? '#269435' : '#FF5903'
   const set       = (key, val) => onChange({ ...data, [key]: val })
   const coverMode = data.coverMode ?? 'hat'
+  const [managers, setManagers] = useState([])
+  const [managersLoading, setManagersLoading] = useState(false)
+
+  useEffect(() => {
+    let alive = true
+    setManagersLoading(true)
+    getPdfManagers()
+      .then(items => { if (alive) setManagers(Array.isArray(items) ? items : []) })
+      .catch(() => { if (alive) setManagers([]) })
+      .finally(() => { if (alive) setManagersLoading(false) })
+    return () => { alive = false }
+  }, [])
+
+  const managerOptions = useMemo(() => managers.map(manager => {
+    const name = [manager.surname, manager.name, manager.secondname].filter(Boolean).join(' ').trim()
+    const details = [manager.occupy, manager.email].filter(Boolean).join(' · ')
+    return {
+      value: name,
+      label: <div><div>{name}</div>{details && <div style={{ color: '#8c8c8c', fontSize: 11 }}>{details}</div>}</div>,
+      search: `${name} ${manager.email || ''} ${manager.occupy || ''}`.toLocaleLowerCase('ru-RU'),
+      managerId: manager.id,
+    }
+  }), [managers])
+
+  const selectManager = (_, option) => {
+    const manager = managers.find(item => String(item.id) === String(option.managerId))
+    if (!manager) return
+    const name = [manager.surname, manager.name, manager.secondname].filter(Boolean).join(' ').trim()
+    const phone = COMPANY_PHONE[String(companyId)] ?? ''
+    onChange({
+      ...data,
+      manager_name: name,
+      manager_occupy: capitalizeFirstLetter(manager.occupy || ''),
+      tel: phone,
+      email: manager.email || '',
+      _manager_id: manager.id,
+      managerContacts: defaultManagerContacts(companyId, manager.email),
+      managerContactsAuto: true,
+    })
+  }
 
   // Дефолты: из coverDefaults (данные БИДа) или фолбэк на текущие значения при первом рендере
   const initRef = useRef(null)
@@ -276,13 +318,46 @@ export default function SectionCover({ data, onChange, draftId, companyId, cover
         />
       </Section>
 
-      <Section title="Менеджер">
-        <Grid2>
-          <ResetField data={data} set={set} defaults={D} label="Имя"       fieldKey="manager_name"   placeholder="Кошелев Александр" />
+      <Section title="Менеджер" description="Отображается последним блоком перед оглавлением">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <Switch size="small" checked={data.showManager ?? true} onChange={value => set('showManager', value)} />
+          <span style={{ fontSize: 12, color: '#595959' }}>
+            {(data.showManager ?? true) ? 'Блок включён' : 'Блок отключён'}
+          </span>
+        </div>
+        {(data.showManager ?? true) && <>
           <ResetField data={data} set={set} defaults={D} label="Должность" fieldKey="manager_occupy" placeholder="Коммерческий директор" />
-          <ResetField data={data} set={set} defaults={D} label="Телефон"   fieldKey="tel"            placeholder="+7 (812) 123-45-67" />
-          <ResetField data={data} set={set} defaults={D} label="Email"     fieldKey="email"          placeholder="sales@arstel.com" />
-        </Grid2>
+          <Field label="Имя">
+            <div style={{ display: 'flex', gap: 6 }}>
+              <AutoComplete
+                value={data.manager_name ?? D.manager_name ?? ''}
+                options={managerOptions}
+                onChange={value => onChange({ ...data, manager_name: value, _manager_id: null })}
+                onSelect={selectManager}
+                filterOption={(input, option) => String(option?.search || option?.value || '')
+                  .includes(input.toLocaleLowerCase('ru-RU'))}
+                placeholder="Выберите менеджера или введите имя"
+                notFoundContent={managersLoading ? 'Загрузка…' : 'Можно ввести имя вручную'}
+                style={{ flex: 1 }}
+              />
+              {(data.manager_name ?? D.manager_name) !== D.manager_name &&
+                <Button size="small" icon={<UndoOutlined />} onClick={() => set('manager_name', D.manager_name)} />}
+            </div>
+          </Field>
+          <Field label="Контакты">
+            <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+              <Input.TextArea
+                autoSize={{ minRows: 3 }}
+                value={data.managerContacts ?? defaultManagerContacts(companyId, data.email)}
+                onChange={e => onChange({ ...data, managerContacts: e.target.value, managerContactsAuto: false })}
+              />
+              {data.managerContacts !== undefined && data.managerContacts !== defaultManagerContacts(companyId, data.email) &&
+                <Button size="small" icon={<UndoOutlined />}
+                  onClick={() => onChange({ ...data, managerContacts: defaultManagerContacts(companyId, data.email), managerContactsAuto: true })}
+                  style={{ flexShrink: 0 }} />}
+            </div>
+          </Field>
+        </>}
       </Section>
 
       {/* ─── Конструктор подвала ──────────────────────────────────────────── */}

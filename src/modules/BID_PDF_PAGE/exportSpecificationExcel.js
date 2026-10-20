@@ -10,13 +10,6 @@ const ACCENT = 'FFFF7700'
 const PALE = 'FFF3F5F7'
 const BORDER = { style: 'thin', color: { argb: 'FFDDE2E8' } }
 
-function plainText(html) {
-  if (!html) return ''
-  const element = document.createElement('div')
-  element.innerHTML = String(html).replace(/<br\s*\/?\s*>/gi, '\n').replace(/<\/p>/gi, '\n')
-  return (element.textContent || '').trim()
-}
-
 function addMergedText(ws, rowNumber, from, to, value, style = {}) {
   ws.mergeCells(rowNumber, from, rowNumber, to)
   const cell = ws.getRow(rowNumber).getCell(from)
@@ -192,13 +185,7 @@ export async function buildSpecificationExcel({ models = [], formData = {}, curr
     cell.alignment = { vertical: 'middle', horizontal: cell.col === 6 ? 'right' : 'left' }
   })
 
-  const footnote = plainText(formData.tableFootnote)
-  if (footnote) {
-    const rowNumber = totalRowNumber + 2
-    addMergedText(ws, rowNumber, 1, 7, footnote, { font: { size: 9 }, alignment: { vertical: 'top' } })
-    ws.getRow(rowNumber).height = Math.min(100, Math.max(32, footnote.split('\n').length * 14))
-  }
-  ws.pageSetup.printArea = `A1:G${footnote ? totalRowNumber + 2 : totalRowNumber}`
+  ws.pageSetup.printArea = `A1:G${totalRowNumber}`
 
   return workbook.xlsx.writeBuffer()
 }

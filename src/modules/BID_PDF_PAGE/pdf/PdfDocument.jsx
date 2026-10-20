@@ -77,7 +77,7 @@ export function PdfDocument({ formData, draft, currency, companyId, enabledSecti
             case 'recommendations':
               return <PdfRecommendations key={key} theme={theme} data={formData} currency={currency} sectionNumber={n} />
             case 'specifications':
-              return <PdfSpecifications  key={key} theme={theme} models={models} currency={currency} tableFootnote={formData.tableFootnote} sectionNumber={n} />
+              return <PdfSpecifications  key={key} theme={theme} models={models} currency={currency} sectionNumber={n} />
             case 'specials':
               return <PdfSpecials        key={key} theme={theme} data={formData} models={models} sectionNumber={n} />
             default:

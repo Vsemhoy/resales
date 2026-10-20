@@ -1,10 +1,5 @@
 import React from 'react'
-import { Button } from 'antd'
-import { UndoOutlined } from '@ant-design/icons'
-import { RichTextEditor } from '../components/RichTextEditor'
-import { Section, Field, TabWrap } from '../components/FormParts'
-
-const FOOTNOTE_DEFAULT = 'По условиям договора поставка осуществляется при 100% предоплате со склада в Санкт-Петербурге. Цены указаны с учетом НДС 22%. Срок поставки оборудования под заказ - 3 месяца с момента оплаты счета.'
+import { Section, TabWrap } from '../components/FormParts'
 
 // Визуальный скелетон-превью таблицы
 function TableSkeletonPreview({ style }) {
@@ -43,7 +38,6 @@ const TABLE_STYLES = [
 export default function SectionSpecifications({ data, onChange, companyId }) {
   const accent     = companyId === '3' ? '#269435' : '#FF5903'
   const tableStyle = data.tableStyle ?? 'compact'
-  const tableFootnoteDefault = data._tableFootnoteDefault || FOOTNOTE_DEFAULT
   const set        = (key, val) => onChange({ ...data, [key]: val })
 
   return (
@@ -71,29 +65,6 @@ export default function SectionSpecifications({ data, onChange, companyId }) {
             )
           })}
         </div>
-      </Section>
-
-      <Section title="Текст под таблицей" description="Выводится мелким шрифтом после итоговой строки">
-        <Field>
-          <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
-            <div style={{ flex: 1 }}>
-              <RichTextEditor
-                value={data.tableFootnote || ''}
-                onChange={val => set('tableFootnote', val)}
-                accent={accent}
-                placeholder="Например: цены указаны с учётом НДС 20%, действительны до..."
-              />
-            </div>
-            {(data.tableFootnote ?? '') !== tableFootnoteDefault && (
-              <Button
-                size="small"
-                icon={<UndoOutlined />}
-                onClick={() => set('tableFootnote', tableFootnoteDefault)}
-                title="Сбросить к дефолтному тексту"
-              />
-            )}
-          </div>
-        </Field>
       </Section>
     </TabWrap>
   )

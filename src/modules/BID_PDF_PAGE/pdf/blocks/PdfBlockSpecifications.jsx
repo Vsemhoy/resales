@@ -2,7 +2,6 @@ import React from 'react'
 import { View, Image } from '@react-pdf/renderer'
 import { Text } from '../shared/PdfText'
 import { PdfSectionBar } from '../shared/PdfSectionBar'
-import { HtmlToPdfV2, wrapJustify } from '../shared/HtmlToPdfV2'
 import { HTTP_ROOT } from '../../../../config/config'
 import { cleanAlphaNumeric } from '../../utils/splitText'
 import { buildSpecificationRows, CURRENCY_SYMBOLS } from '../../utils/specificationData'
@@ -16,7 +15,7 @@ function absUrl(name) {
   return rt
 }
 
-export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootnote, sectionNumber, tableStyle = 'compact', modelImages = {}, withoutNds = false, ndsPercent = 0, forceBreak = false }) {
+export function PdfBlockSpecifications({ cfg, models = [], currency, sectionNumber, tableStyle = 'compact', modelImages = {}, withoutNds = false, ndsPercent = 0, forceBreak = false }) {
   const { color, text, font, weight, space, layout } = cfg
   if (!models.length) return null
 
@@ -117,17 +116,6 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, tableFootno
         <Text style={[headerStyle, { width: W.presence }]} />
         {withPhotos && <Text style={[headerStyle, { width: photoW }]} />}
       </View>
-
-
-      {/* Сноска — не рендерим если текст пустой или стёрт */}
-      {tableFootnote && tableFootnote.replace(/<[^>]*>/g, '').trim() ? (
-        <View wrap={false}>
-          <View style={{ height: space.sm }} />
-          <View style={{ padding: space.sm, backgroundColor: color.tableRowEven, fontSize: '0.5rem' }}>
-            <HtmlToPdfV2 html={wrapJustify(tableFootnote)} cfg={cfg} />
-          </View>
-        </View>
-      ) : null}
     </View>
   )
 }
