@@ -104,9 +104,9 @@ function Bullet({ bullet, cfg, isLast }) {
 function ManagerBlock({ cfg, data }) {
   const { color, text, font, weight, space } = cfg
   const rd          = data?.rondoDelivery || {}
-  const byeLabel    = rd.byeLabel    || 'Ваш менеджер'
-  const byeName     = rd.byeName     || data?.manager_name || ''
-  const byeContacts = rd.byeContacts || [data?.tel, data?.email].filter(Boolean).join('\n')
+  const byeLabel    = rd.byeLabel    ?? 'Ваш менеджер'
+  const byeName     = rd.byeName     ?? data?.manager_name ?? ''
+  const byeContacts = rd.byeContacts ?? [data?.tel, data?.email].filter(Boolean).join('\n')
 
   if (!(rd.showManager ?? true)) return null
   if (!byeName && !byeContacts) return null
@@ -131,8 +131,8 @@ function ManagerBlock({ cfg, data }) {
       {byeName ? (
         <Text style={{
           fontSize:     text.base,
-          fontFamily:   font.bold,
-          fontWeight:   weight.bold,
+          fontFamily:   font.regular,
+          fontWeight:   weight.regular,
           color:        color.textPrimary,
           marginBottom: space.xs,
         }}>
@@ -156,7 +156,8 @@ function ManagerBlock({ cfg, data }) {
 export function PdfBlockRondoDelivery({ cfg, data, sectionNumber, forceBreak = false }) {
   const { space } = cfg
   const rd      = data?.rondoDelivery || {}
-  const bullets = (rd.bullets?.length ? rd.bullets : DEFAULT_BULLETS)
+  // Пустой сохранённый массив означает, что пользователь удалил все пункты.
+  const bullets = (Array.isArray(rd.bullets) ? rd.bullets : DEFAULT_BULLETS)
     .filter(b => b.text || b.title)
 
   return (

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { Button, Select, Checkbox, ConfigProvider, Spin, Tooltip, Switch, Tag, Dropdown, message } from 'antd'
-import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined, DownloadOutlined, FileExcelOutlined } from '@ant-design/icons'
+import { BarsOutlined, FileOutlined, CodepenOutlined, PrinterOutlined, DownOutlined, RobotOutlined, FileTextOutlined, OrderedListOutlined, DownloadOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import {
   getDraft, getBidInfo, getProjectInfo, getBidModels, getDraftModels,
@@ -1064,15 +1064,25 @@ export default function BidPdfEditor() {
             <Button type="primary" icon={<PrinterOutlined />} size="default"
               loading={printing}
               onClick={handlePrint}
-              style={{ background: accent, borderColor: accent }}>Просмотр</Button>
-            <Button icon={<DownloadOutlined />} size="default"
-              loading={downloading}
-              onClick={handleDownload}
-              title={getPdfFileName()}>Скачать PDF</Button>
-            <Button icon={<FileExcelOutlined />} size="default"
-              loading={exportingExcel}
-              onClick={handleExportExcel}
-              title="Спецификация с фотографиями">Скачать Excel</Button>
+              style={{ background: accent, borderColor: accent }}>Просмотр PDF</Button>
+            <Dropdown
+              trigger={['hover']}
+              placement="bottomRight"
+              menu={{
+                items: [
+                  { key: 'pdf', icon: <FilePdfOutlined />, label: 'PDF', disabled: downloading || exportingExcel },
+                  { key: 'excel', icon: <FileExcelOutlined />, label: 'Excel', disabled: downloading || exportingExcel },
+                ],
+                onClick: ({ key }) => {
+                  if (key === 'pdf') handleDownload()
+                  if (key === 'excel') handleExportExcel()
+                },
+              }}
+            >
+              <Button icon={<DownloadOutlined />} size="default" loading={downloading || exportingExcel}>
+                Скачать <DownOutlined />
+              </Button>
+            </Dropdown>
             <Select
               value={compressionDpi}
               options={COMPRESSION_DPI_OPTIONS}

@@ -37,7 +37,7 @@ function managerName(manager) {
 export default function SectionRondoDelivery({ data, onChange, companyId }) {
   const rd      = data.rondoDelivery || {}
   const set     = (key, val) => onChange({ ...data, rondoDelivery: { ...rd, [key]: val } })
-  const bullets = rd.bullets || DEFAULT_BULLETS
+  const bullets = Array.isArray(rd.bullets) ? rd.bullets : DEFAULT_BULLETS
   const [managers, setManagers] = useState([])
   const [managersLoading, setManagersLoading] = useState(false)
 
@@ -263,7 +263,7 @@ export default function SectionRondoDelivery({ data, onChange, companyId }) {
 
         {(rd.showManager ?? true) && (<>
           <Field label="Заголовок">
-            <Input value={rd.byeLabel || 'Ваш менеджер'} onChange={e => set('byeLabel', e.target.value)} />
+            <Input value={rd.byeLabel ?? 'Ваш менеджер'} onChange={e => set('byeLabel', e.target.value)} />
           </Field>
           <Field label="Имя">
             <div style={{ display: 'flex', gap: 6 }}>
