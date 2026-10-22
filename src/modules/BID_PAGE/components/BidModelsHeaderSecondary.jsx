@@ -1,7 +1,8 @@
 import React from 'react';
+import { BidModelsMetricsHeader } from './BidModelsMetrics';
 
-export const BidModelsHeaderSecondary = () => (
-    <div className={'sa-models-table-row-two sa-header-row'}>
+export const BidModelsHeaderSecondary = ({ showMetrics }) => (
+    <div className={`sa-models-table-row-two sa-header-row${showMetrics ? ' sa-models-with-metrics' : ''}`}>
         <div className={'sa-models-table-cell sa-models-table-cell-header'}>
             <p>№</p>
         </div>
@@ -23,6 +24,7 @@ export const BidModelsHeaderSecondary = () => (
         <div className={'sa-models-table-cell sa-models-table-cell-header'}>
             <p>Наличие</p>
         </div>
+        {showMetrics && <BidModelsMetricsHeader />}
         <div className={'sa-models-table-cell sa-models-table-cell-header'}>
             <p>Склад</p>
         </div>

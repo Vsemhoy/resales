@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Empty } from 'antd';
 import { BidModelsHeaderPrimary } from './BidModelsHeaderPrimary';
 import { BidModelsHeaderSecondary } from './BidModelsHeaderSecondary';
@@ -7,6 +7,8 @@ import { BidModelsRowSecondary } from './BidModelsRowSecondary';
 
 export const BidModelsTable = ({
     isManager,
+    showMetrics,
+    models = [],
     sortedBidModels,
     nameOptionsPrimary,
     nameOptionsSecondary,
@@ -27,9 +29,11 @@ export const BidModelsTable = ({
     onDragOver,
     onDrop,
     onDragEnd,
-}) => (
+}) => {
+    const modelInfoById = useMemo(() => new Map(models.map(model => [String(model.id), model.info])), [models]);
+    return (
     <>
-        {isManager ? <BidModelsHeaderPrimary /> : <BidModelsHeaderSecondary />}
+        {isManager ? <BidModelsHeaderPrimary showMetrics={showMetrics} /> : <BidModelsHeaderSecondary showMetrics={showMetrics} />}
         <div className={'sa-models-table'}>
             {(sortedBidModels && sortedBidModels.length > 0) ? (
                 sortedBidModels.map((bidModel, idx) =>
@@ -37,6 +41,8 @@ export const BidModelsTable = ({
                         <BidModelsRowPrimary
                             key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
                             bidModel={bidModel}
+                            showMetrics={showMetrics}
+                            modelInfo={modelInfoById.get(String(bidModel.model_id))}
                             index={idx}
                             draggable={!isDisabledInputManager}
                             onDragStart={() => onDragStart(idx)}
@@ -59,6 +65,8 @@ export const BidModelsTable = ({
                         <BidModelsRowSecondary
                             key={`bid-model-${idx}-${bidModel.bid_id}-${bidModel.id}-${bidModel.sort}`}
                             bidModel={bidModel}
+                            showMetrics={showMetrics}
+                            modelInfo={modelInfoById.get(String(bidModel.model_id))}
                             index={idx}
                             draggable={!isDisabledInputManager}
                             onDragStart={() => onDragStart(idx)}
@@ -85,5 +93,5 @@ export const BidModelsTable = ({
             )}
         </div>
     </>
-);
-
+    );
+};
