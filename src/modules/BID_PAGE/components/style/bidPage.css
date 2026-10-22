@@ -355,9 +355,23 @@
 .sa-info-models-header {
 	font-size: 16px;
 	font-weight: 600;
-	padding: 10px 0;
+	padding: 10px 45px;
 	position: sticky;
 	top: 0;
+}
+.sa-models-metrics-toggle {
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+.sa-bid-page-models-wrapper.sa-bid-page-models-with-metrics {
+	grid-template-columns: minmax(1000px, 1fr);
+	overflow-x: auto;
+}
+.sa-models-metric-value {
+	width: 100%;
+	cursor: help;
 }
 .sa-models-table-cell {
 	text-align: center;
@@ -419,6 +433,16 @@
 }
 .sa-models-table-row:last-child {
 	border-bottom: none;
+}
+.sa-models-table-row.sa-models-with-metrics {
+	grid-template-columns: 40px minmax(100px, 3fr) minmax(70px, 1fr)
+		minmax(70px, 1fr) minmax(70px, 2fr) minmax(70px, 2fr) minmax(50px, 1.5fr)
+		repeat(3, minmax(80px, 1fr)) 45px 45px;
+}
+.sa-models-table-row-two.sa-models-with-metrics {
+	grid-template-columns: 40px minmax(100px, 1.5fr) minmax(70px, 0.5fr)
+		minmax(70px, 0.5fr) minmax(70px, 1fr) minmax(70px, 1fr) minmax(70px, 1fr)
+		repeat(3, minmax(80px, 0.5fr)) minmax(70px, 0.5fr) 45px;
 }
 .sa-header-row {
 	outline: 1px solid var(--sa-bid-page-divide);

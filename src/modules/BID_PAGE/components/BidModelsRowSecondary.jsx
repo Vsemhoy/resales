@@ -1,4 +1,5 @@
 import React from 'react';
+import { BidModelsMetrics } from './BidModelsMetrics';
 import { Button } from 'antd';
 import { CopyOutlined, InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import NameSelect from './NameSelect';
@@ -7,6 +8,8 @@ import ModelSelect from './ModelSelect';
 
 export const BidModelsRowSecondary = ({
     bidModel,
+    showMetrics,
+    modelInfo,
     index,
     draggable,
     onDragStart,
@@ -27,7 +30,7 @@ export const BidModelsRowSecondary = ({
     onCopyName,
 }) => (
     <div
-        className={'sa-models-table-row-two'}
+        className={`sa-models-table-row-two${showMetrics ? ' sa-models-with-metrics' : ''}`}
         draggable={draggable}
         onDragStart={onDragStart}
         onDragOver={onDragOver}
@@ -97,6 +100,7 @@ export const BidModelsRowSecondary = ({
                 onChangeModel={onChangeModelInfo}
             />
         </div>
+        {showMetrics && <BidModelsMetrics info={modelInfo} count={bidModel.model_count} />}
         <div className={'sa-models-table-cell'}>
             <ModelInput
                 value={bidModel.sklad}

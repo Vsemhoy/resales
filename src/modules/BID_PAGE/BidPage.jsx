@@ -20,6 +20,8 @@ import {BID_INFO, CALC_INFO, CUR_COMPANY, CUR_CURRENCY, PROJECT_INFO, SELECTS} f
 import MODELS from './mock/mock_models';
 import {
 	CheckOutlined,
+    EyeOutlined,
+    EyeInvisibleOutlined,
 	LoadingOutlined,
 	MinusOutlined,
 } from '@ant-design/icons';
@@ -66,6 +68,7 @@ const { TextArea } = Input;
 
 const BidPage = (props) => {
     const queryClient = useQueryClient();
+    const [showModelMetrics, setShowModelMetrics] = useState(false);
 	const { bidId } = useParams();
     const { connected, emit } = useWebSocket();
 	const navigate = useNavigate();
@@ -1196,11 +1199,25 @@ const openCustomModal = (type, title, text, filling, buttons) => {
 							</div>
 						</div>
 
-						<div className={'sa-bid-page-models-wrapper'}>
-							<div className={'sa-info-models-header'}>Спецификация оборудования и материалов</div>
+						<div className={`sa-bid-page-models-wrapper${showModelMetrics ? ' sa-bid-page-models-with-metrics' : ''}`}>
+							<div className={'sa-info-models-header'}>
+                                Спецификация оборудования и материалов
+                                <Tooltip title={showModelMetrics ? 'Скрыть юниты, вес и объем' : 'Показать юниты, вес и объем'}>
+                                    <Button
+                                        className="sa-models-metrics-toggle"
+                                        type="text"
+                                        icon={showModelMetrics ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                                        aria-label={showModelMetrics ? 'Скрыть юниты, вес и объем' : 'Показать юниты, вес и объем'}
+                                        aria-pressed={showModelMetrics}
+                                        onClick={() => setShowModelMetrics(value => !value)}
+                                    />
+                                </Tooltip>
+                            </div>
 
                             <BidModelsTable
                                 isManager={userData?.user?.sales_role === 1}
+                                showMetrics={showModelMetrics}
+                                models={modelsSelect}
                                 sortedBidModels={sortedBidModels}
                                 nameOptionsPrimary={prepareSelect(modelsSelect?.filter(option => [0, 1, 3].includes(option.type_model)))}
                                 nameOptionsSecondary={prepareSelect(modelsSelect)}
