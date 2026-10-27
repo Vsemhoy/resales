@@ -339,7 +339,7 @@ export default function BidPdfEditor() {
     }
     setExportingExcel(true)
     try {
-      const buffer = await buildSpecificationExcel({ models, formData, currency, companyId })
+      const buffer = await buildSpecificationExcel({ models, modelsData, formData, currency })
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
