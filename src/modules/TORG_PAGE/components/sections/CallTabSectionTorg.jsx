@@ -807,7 +807,7 @@ const CallTabSectionTorg = (props) => {
 											}
 										}}
 									/>,
-                  required: false,
+                  required: true,
                   value: subscriber
               },
               {
@@ -935,7 +935,7 @@ const CallTabSectionTorg = (props) => {
             inputs={[
               {
                 edit_mode: editMode,
-                label: 'Заметка',
+                label: 'Заметка*',
                 input:
                   <TextArea
                     key={'tex4tard_654_' + baseData?.id}
