@@ -11,6 +11,8 @@ import {FilterOutlined} from "@ant-design/icons";
 import Sider from "antd/es/layout/Sider";
 import {Content, Header} from "antd/es/layout/layout";
 import ExcelJS from 'exceljs';
+import PricePropertiesExportDialog from './PricePropertiesExportDialog';
+import { getPriceModelPropertyValues } from './priceProperties.api';
 
 
 const Price = (props) => {
@@ -20,6 +22,8 @@ const Price = (props) => {
     const [loading, setLoading] = useState(false);
     const [smallLoading, setSmallLoading] = useState(false);
     const [currentCurrency, setCurrentCurrency] = useState(false);
+    const [propertiesExportOpen, setPropertiesExportOpen] = useState(false);
+    const [exporting, setExporting] = useState(false);
 
     const [userData, setUserData] = useState(null);
 
@@ -305,7 +309,8 @@ const Price = (props) => {
         });
     };
 
-    const handleExport = async () => {
+    const handleExport = async (selectedProperties = null) => {
+        if (exporting) return;
         if (checkedKeys.length === 0) {
             setIsAlertVisible(true);
             setAlertMessage('Внимание!');
@@ -317,24 +322,25 @@ const Price = (props) => {
         const checkedModelIds = checkedKeys
             .filter(key => key.includes('model'))
             .map(key => parseInt(key.split('-').pop()));
+        const checkedModelIdSet = new Set(checkedModelIds);
 
         const buildSections = (nodes, depth = 0) => {
             let sections = [];
 
             nodes.forEach((node) => {
                 const hasSelectedModels = (n) => {
-                    if (n.models?.some(m => checkedModelIds.includes(m.id))) return true;
+                    if (n.models?.some(m => checkedModelIdSet.has(m.id))) return true;
                     return n.childs?.some(child => hasSelectedModels(child));
                 };
 
                 if (!hasSelectedModels(node)) return;
 
-                const selectedModels = node.models?.filter(m => checkedModelIds.includes(m.id)) || [];
+                const selectedModels = node.models?.filter(m => checkedModelIdSet.has(m.id)) || [];
 
                 if (selectedModels.length > 0) {
-                    sections.push({ categoryName: node.name, depth, models: selectedModels });
+                    sections.push({ categoryId: node.id, categoryName: node.name, depth, models: selectedModels });
                 } else {
-                    sections.push({ categoryName: node.name, depth, models: [] });
+                    sections.push({ categoryId: node.id, categoryName: node.name, depth, models: [] });
                 }
 
                 if (node.childs?.length > 0) {
@@ -359,6 +365,18 @@ const Price = (props) => {
             return;
         }
 
+        setExporting(true);
+        try {
+        const withProperties = Array.isArray(selectedProperties);
+        const properties = withProperties ? selectedProperties : [];
+        const propertyValues = withProperties
+            ? await getPriceModelPropertyValues({
+                categoryIds: sections.filter(section => section.models.length > 0).map(section => section.categoryId),
+                modelIds: checkedModelIds,
+                propertyIds: properties.map(property => Number(property.id)),
+            })
+            : new Map();
+
         const firstModel = sections.find(s => s.models.length > 0)?.models[0];
         const currencySymbol = firstModel ? getCurrencySymbol(firstModel.currency) : '';
 
@@ -371,7 +389,18 @@ const Price = (props) => {
         if (checkCol('Прайс 20')) extraColumns.push(`Прайс 20 ${currencySymbol}`);
         if (checkCol('Прайс 30')) extraColumns.push(`Прайс 30 ${currencySymbol}`);
 
-        const allColumns = ['Название', 'Описание', ...extraColumns];
+        const propertyLabels = properties.map(property =>
+            property.dimension ? `${property.name}, ${property.dimension}` : property.name
+        );
+        const labelCounts = new Map();
+        [...extraColumns, ...propertyLabels].forEach(label =>
+            labelCounts.set(label, (labelCounts.get(label) ?? 0) + 1)
+        );
+        const propertyColumns = propertyLabels.map((label, index) =>
+            labelCounts.get(label) > 1 ? `${label} [#${properties[index].id}]` : label
+        );
+        const propertyWidths = propertyColumns.map(label => label.length);
+        const allColumns = ['Название', 'Описание', ...extraColumns, ...propertyColumns];
         const totalCols = allColumns.length;
 
         //const ExcelJS = (await import('exceljs')).default;
@@ -441,7 +470,7 @@ const Price = (props) => {
             if (depth < 2) return;
 
             // Название SUBCATEGORY выводим во второй столбец (Описание), первый оставляем пустым
-            const catRow = ws.addRow([categoryName.trim(), '', ...extraColumns]);
+            const catRow = ws.addRow([categoryName.trim(), '', ...extraColumns, ...propertyColumns]);
             ws.mergeCells(catRow.number, 1, catRow.number, 2);
 
 
@@ -474,15 +503,26 @@ const Price = (props) => {
                     if (checkCol('Прайс 10')) rowData.push(Number(getPrice(m.prices.bo_price_10_rub, m.prices.bo_price_10)));
                     if (checkCol('Прайс 20')) rowData.push(Number(getPrice(m.prices.bo_price_20_rub, m.prices.bo_price_20)));
                     if (checkCol('Прайс 30')) rowData.push(Number(getPrice(m.prices.bo_price_30_rub, m.prices.bo_price_30)));
+                    const modelProperties = propertyValues.get(Number(m.id));
+                    properties.forEach((property, index) => {
+                        const value = modelProperties?.get(Number(property.id)) ?? '';
+                        rowData.push(value);
+                        propertyWidths[index] = Math.max(propertyWidths[index], String(value).length);
+                    });
                     
                     const modelRow = ws.addRow(rowData);
                     modelRow.font = { size: 11 };
                     modelRow.eachCell((cell, i) => {
                         cell.border = borderStyle2;
-                        if (i > 2){
+                        if (i > 2 && i <= 2 + extraColumns.length){
                             cell.numFmt = currentCurrency ? '#,##0.00 "₽"' : '$ #,##0.00';
                         }
                         });
+                    if (withProperties) {
+                        for (let column = 3 + extraColumns.length; column <= totalCols; column++) {
+                            modelRow.getCell(column).border = borderStyle2;
+                        }
+                    }
                         lastRow = modelRow;
                     
                 }
@@ -493,9 +533,19 @@ const Price = (props) => {
         lastRow?.eachCell(cell => {
             cell.border = borderStyleLast;
         });
+        if (withProperties && lastRow) {
+            for (let column = 1; column <= totalCols; column++) {
+                lastRow.getCell(column).border = borderStyleLast;
+            }
+        }
 
         // Фиксированная ширина колонок
-        ws.columns = [
+        ws.columns = withProperties ? [
+            { width: 168 / 8 },
+            { width: 448 / 8 },
+            ...extraColumns.map(() => ({ width: 120 / 8 })),
+            ...propertyWidths.map(width => ({ width: Math.min(80, Math.max(18, width + 2)) })),
+        ] : [
             { width: 168 / 8 },  // Название (128px)
             { width: 448 / 8 },  // Описание (448px)
             { width: 120 / 8 },   // РРЦ (64px)
@@ -510,14 +560,44 @@ const Price = (props) => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${dayjs().format('DD.MM.YYYY')}. Прайс_лист. ${currentCurrency ? 'Рубли' : 'Валюта'}.xlsx`;
+        a.download = `${dayjs().format('DD.MM.YYYY')}. Прайс_лист${withProperties ? ' со свойствами' : ''}. ${currentCurrency ? 'Рубли' : 'Валюта'}.xlsx`;
         a.click();
         URL.revokeObjectURL(url);
+        if (withProperties) setPropertiesExportOpen(false);
+        } catch (error) {
+            console.error('Price export error:', error);
+            setIsAlertVisible(true);
+            setAlertMessage('Не удалось выгрузить прайс-лист');
+            setAlertDescription(error.response?.data?.message || error.message || 'Ошибка выгрузки');
+            setAlertType('error');
+        } finally {
+            setExporting(false);
+        }
+    };
+
+    const openPropertiesExport = () => {
+        if (!checkedKeys.some(key => key.includes('model'))) {
+            setIsAlertVisible(true);
+            setAlertMessage('Внимание!');
+            setAlertDescription('Выберите хотя бы одну модель для экспорта');
+            setAlertType('warning');
+            return;
+        }
+        setPropertiesExportOpen(true);
     };
 
     return (
         <Spin tip="Загрузка прайс-листа..." spinning={loading}>
             <div className={'sa-price-page'}>
+                {propertiesExportOpen && (
+                    <PricePropertiesExportDialog
+                        userId={props.userdata?.user?.id}
+                        modelCount={checkedKeys.filter(key => key.includes('model')).length}
+                        exporting={exporting}
+                        onClose={() => setPropertiesExportOpen(false)}
+                        onExport={handleExport}
+                    />
+                )}
                 <Layout className={'sa-layout sa-w-100'}>
                     <Affix>
                         <Header style={{
@@ -535,8 +615,11 @@ const Price = (props) => {
                                     </div>
                                     <div className={'sa-header-label-container-small'}>
                                         <div className={'sa-vertical-flex'}>
-                                            <Button onClick={handleExport} type="primary">
+                                            <Button onClick={() => handleExport()} type="primary" loading={exporting}>
                                                 Экспортировать выбранное в Excel
+                                            </Button>
+                                            <Button onClick={openPropertiesExport} disabled={exporting}>
+                                                Экспорт со свойствами
                                             </Button>
                                         </div>
                                         <div style={{display: 'flex', alignItems: 'end'}}>

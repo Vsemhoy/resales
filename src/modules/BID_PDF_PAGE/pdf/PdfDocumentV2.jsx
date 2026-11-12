@@ -151,7 +151,7 @@ export function PdfDocumentV2({
             return wrap(<PdfBlockRecommendations cfg={cfg} data={formData} currency={currency} sectionNumber={n} />)
 
           if (key === 'specifications')
-            return wrap(<PdfBlockSpecifications cfg={cfg} models={models} currency={currency} tableStyle={formData.tableStyle} modelImages={formData._modelImages ?? {}} withoutNds={formData._withoutNds} ndsPercent={formData._ndsPercent} sectionNumber={n} />)
+            return wrap(<PdfBlockSpecifications cfg={cfg} models={models} currency={currency} tableStyle={formData.tableStyle} showPrices={formData.specificationShowPrices !== false} modelImages={formData._modelImages ?? {}} withoutNds={formData._withoutNds} ndsPercent={formData._ndsPercent} sectionNumber={n} />)
 
           // «Описание оборудования» — самостоятельный блок-книга. Он всегда
           // начинается с новой страницы независимо от ручных разделителей.

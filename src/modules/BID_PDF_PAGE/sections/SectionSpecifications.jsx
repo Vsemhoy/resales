@@ -1,14 +1,19 @@
 import React from 'react'
+import { Switch } from 'antd'
 import { Section, TabWrap } from '../components/FormParts'
 
 // Визуальный скелетон-превью таблицы
-function TableSkeletonPreview({ style }) {
+function TableSkeletonPreview({ style, showPrices }) {
   const isCompact = style === 'compact'
   const rows      = isCompact ? 8 : 4
 
-  const colWidths = isCompact
-    ? ['8%', '30%', '32%', '10%', '10%', '10%']
-    : ['8%', '42%', '10%', '10%', '10%', '18%']
+  const colWidths = showPrices
+    ? (isCompact
+      ? ['8%', '30%', '32%', '10%', '10%', '10%']
+      : ['8%', '42%', '10%', '10%', '10%', '18%'])
+    : (isCompact
+      ? ['8%', '64%', '13%', '15%']
+      : ['8%', '49%', '12%', '13%', '18%'])
 
   return (
     <div style={{ width: '100%', fontSize: 0 }}>
@@ -38,6 +43,7 @@ const TABLE_STYLES = [
 export default function SectionSpecifications({ data, onChange, companyId }) {
   const accent     = companyId === '3' ? '#269435' : '#FF5903'
   const tableStyle = data.tableStyle ?? 'compact'
+  const showPrices = data.specificationShowPrices !== false
   const set        = (key, val) => onChange({ ...data, [key]: val })
 
   return (
@@ -57,13 +63,21 @@ export default function SectionSpecifications({ data, onChange, companyId }) {
                   transition: 'all 0.15s',
                 }}
               >
-                <TableSkeletonPreview style={opt.id} />
+                <TableSkeletonPreview style={opt.id} showPrices={showPrices} />
                 <div style={{ fontSize: 12, fontWeight: 600, textAlign: 'center', marginTop: 8, color: isActive ? accent : '#595959' }}>
                   {opt.label}
                 </div>
               </div>
             )
           })}
+        </div>
+      </Section>
+      <Section title="Цены в спецификации" description="Для презентации можно скрыть цены, суммы и итоговую строку в PDF">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Switch size="small" checked={showPrices} onChange={value => set('specificationShowPrices', value)} />
+          <span style={{ fontSize: 12, color: '#595959' }}>
+            {showPrices ? 'Показывать цены' : 'Скрыть цены'}
+          </span>
         </div>
       </Section>
     </TabWrap>

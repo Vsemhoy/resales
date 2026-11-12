@@ -15,7 +15,7 @@ function absUrl(name) {
   return rt
 }
 
-export function PdfBlockSpecifications({ cfg, models = [], currency, sectionNumber, tableStyle = 'compact', modelImages = {}, withoutNds = false, ndsPercent = 0, forceBreak = false }) {
+export function PdfBlockSpecifications({ cfg, models = [], currency, sectionNumber, tableStyle = 'compact', showPrices = true, modelImages = {}, withoutNds = false, ndsPercent = 0, forceBreak = false }) {
   const { color, text, font, weight, space, layout } = cfg
   if (!models.length) return null
 
@@ -33,10 +33,10 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, sectionNumb
     total:    layout.tableColTotalW + text.sm,
     presence: layout.tableColPresenceW,
   }
-  const nameW = cW - W.num - W.qty - W.price - W.total - W.presence - (withPhotos ? photoW : 0)
+  const nameW = cW - W.num - W.qty - (showPrices ? W.price + W.total : 0) - W.presence - (withPhotos ? photoW : 0)
 
   const rows = buildSpecificationRows(models, { withoutNds, ndsPercent })
-  const totalSum = rows.reduce((sum, row) => sum + row.total, 0)
+  const totalSum = showPrices ? rows.reduce((sum, row) => sum + row.total, 0) : 0
 
   const cellBase = { paddingHorizontal: space.xs, paddingVertical: space.xs }
 
@@ -66,8 +66,8 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, sectionNumb
         <Text style={[headerStyle, { width: W.num,      textAlign: 'center' }]}>№</Text>
         <Text style={[headerStyle, { width: nameW,      textAlign: 'left'   }]}>Наименование</Text>
         <Text style={[headerStyle, { width: W.qty,      textAlign: 'center' }]}>Кол-во</Text>
-        <Text style={[headerStyle, { width: W.price,    textAlign: 'right'  }]}>Цена, {sym}</Text>
-        <Text style={[headerStyle, { width: W.total,    textAlign: 'right'  }]}>Сумма, {sym}</Text>
+        {showPrices && <Text style={[headerStyle, { width: W.price, textAlign: 'right' }]}>Цена, {sym}</Text>}
+        {showPrices && <Text style={[headerStyle, { width: W.total, textAlign: 'right' }]}>Сумма, {sym}</Text>}
         <Text style={[headerStyle, { width: W.presence, textAlign: 'center' }]}>Наличие</Text>
         {withPhotos && (
           <Text style={[headerStyle, { width: photoW, textAlign: 'center' }]}>Фото</Text>
@@ -92,8 +92,8 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, sectionNumb
               ) : null}
             </View>
             <Text style={[rowText('center'), { width: W.qty  }]}>{quantity}</Text>
-            <Text style={[rowText('right'),  { width: W.price}]}>{fmt(price)}</Text>
-            <Text style={[rowText('right'),  { width: W.total, fontFamily: font.bold, fontWeight: weight.semibold }]}>{fmt(total)}</Text>
+            {showPrices && <Text style={[rowText('right'), { width: W.price }]}>{fmt(price)}</Text>}
+            {showPrices && <Text style={[rowText('right'), { width: W.total, fontFamily: font.bold, fontWeight: weight.semibold }]}>{fmt(total)}</Text>}
             <Text style={[rowText('center'), { width: W.presence, color: color.textSecondary }]}>
               {presence}
             </Text>
@@ -110,12 +110,14 @@ export function PdfBlockSpecifications({ cfg, models = [], currency, sectionNumb
       })}
 
       {/* Итого */}
-      <View style={{ flexDirection: 'row', backgroundColor: color.tableTotal, marginTop: 1 }} wrap={false}>
-        <Text style={[headerStyle, { width: W.num + nameW + W.qty + W.price }]}>ИТОГО</Text>
-        <Text style={[headerStyle, { width: W.total, textAlign: 'right' }]}>{fmt(totalSum)} {sym}</Text>
-        <Text style={[headerStyle, { width: W.presence }]} />
-        {withPhotos && <Text style={[headerStyle, { width: photoW }]} />}
-      </View>
+      {showPrices && (
+        <View style={{ flexDirection: 'row', backgroundColor: color.tableTotal, marginTop: 1 }} wrap={false}>
+          <Text style={[headerStyle, { width: W.num + nameW + W.qty + W.price }]}>ИТОГО</Text>
+          <Text style={[headerStyle, { width: W.total, textAlign: 'right' }]}>{fmt(totalSum)} {sym}</Text>
+          <Text style={[headerStyle, { width: W.presence }]} />
+          {withPhotos && <Text style={[headerStyle, { width: photoW }]} />}
+        </View>
+      )}
     </View>
   )
 }
