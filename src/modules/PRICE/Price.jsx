@@ -338,9 +338,9 @@ const Price = (props) => {
                 const selectedModels = node.models?.filter(m => checkedModelIdSet.has(m.id)) || [];
 
                 if (selectedModels.length > 0) {
-                    sections.push({ categoryId: node.id, categoryName: node.name, depth, models: selectedModels });
+                    sections.push({ categoryName: node.name, depth, models: selectedModels });
                 } else {
-                    sections.push({ categoryId: node.id, categoryName: node.name, depth, models: [] });
+                    sections.push({ categoryName: node.name, depth, models: [] });
                 }
 
                 if (node.childs?.length > 0) {
@@ -371,7 +371,6 @@ const Price = (props) => {
         const properties = withProperties ? selectedProperties : [];
         const propertyValues = withProperties
             ? await getPriceModelPropertyValues({
-                categoryIds: sections.filter(section => section.models.length > 0).map(section => section.categoryId),
                 modelIds: checkedModelIds,
                 propertyIds: properties.map(property => Number(property.id)),
             })

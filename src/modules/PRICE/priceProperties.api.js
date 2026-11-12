@@ -1,7 +1,7 @@
 import { PROD_AXIOS_INSTANCE } from '../../config/Api'
 
-const CATALOG_DATA = '/api/catalog/data'
-const PAGE_LIMIT = 250
+const PRICE_DATA = '/api/sales/price'
+const MODEL_BATCH_SIZE = 500
 const PAGE_BATCH_SIZE = 4
 
 async function getRemainingPages(path, params, totalPages) {
@@ -20,48 +20,37 @@ async function getRemainingPages(path, params, totalPages) {
 }
 
 export async function getPriceProperties() {
-  const first = await PROD_AXIOS_INSTANCE.get(`${CATALOG_DATA}/getproperties`, {
+  const first = await PROD_AXIOS_INSTANCE.get(`${PRICE_DATA}/properties`, {
     params: { page: 1, limit: 500 },
   })
   const firstPage = first.data
   const totalPages = Math.ceil((firstPage.total || 0) / (firstPage.limit || 500))
-  const otherPages = await getRemainingPages(`${CATALOG_DATA}/getproperties`, { limit: 500 }, totalPages)
+  const otherPages = await getRemainingPages(`${PRICE_DATA}/properties`, { limit: 500 }, totalPages)
   return [...new Map([firstPage, ...otherPages]
     .flatMap(page => page.items || [])
     .map(property => [Number(property.id), property])).values()]
 }
 
-export async function getPriceModelPropertyValues({ categoryIds, modelIds, propertyIds }) {
-  const valuesByModel = new Map()
+export async function getPriceModelPropertyValues({ modelIds, propertyIds }) {
+  const valuesByModel = new Map(modelIds.map(id => [Number(id), new Map()]))
   if (!propertyIds.length || !modelIds.length) return valuesByModel
 
-  const selectedModels = new Set(modelIds.map(Number))
-  const params = {
-    cats: [...new Set(categoryIds.map(Number).filter(Number.isFinite))].join(',') || undefined,
-    property_ids: propertyIds.join(','),
-    limit: PAGE_LIMIT,
-  }
-  const first = await PROD_AXIOS_INSTANCE.get(`${CATALOG_DATA}/getmodels`, {
-    params: { ...params, page: 1 },
-  })
-  const firstPage = first.data
-  const totalPages = Math.ceil((firstPage.total || 0) / (firstPage.limit || PAGE_LIMIT))
-  const otherPages = await getRemainingPages(`${CATALOG_DATA}/getmodels`, params, totalPages)
-
-  for (const model of [firstPage, ...otherPages].flatMap(page => page.items || [])) {
-    const modelId = Number(model.id)
-    if (!selectedModels.has(modelId)) continue
-    if (!Array.isArray(model.an_modelproper)) {
-      throw new Error('Каталог не вернул значения свойств. Обновите API каталога.')
+  const uniqueModelIds = [...valuesByModel.keys()]
+  for (let offset = 0; offset < uniqueModelIds.length; offset += MODEL_BATCH_SIZE * PAGE_BATCH_SIZE) {
+    const batch = await Promise.all(
+      Array.from({ length: Math.min(PAGE_BATCH_SIZE, Math.ceil((uniqueModelIds.length - offset) / MODEL_BATCH_SIZE)) }, (_, index) =>
+        PROD_AXIOS_INSTANCE.post(`${PRICE_DATA}/model-properties`, {
+          model_ids: uniqueModelIds.slice(offset + index * MODEL_BATCH_SIZE, offset + (index + 1) * MODEL_BATCH_SIZE),
+          property_ids: propertyIds,
+        }).then(response => response.data),
+      ),
+    )
+    for (const page of batch) {
+      if (!Array.isArray(page.items)) throw new Error('Сервер не вернул значения свойств для прайса.')
+      for (const property of page.items) {
+        valuesByModel.get(Number(property.id_model))?.set(Number(property.id_propertie), property.value)
+      }
     }
-    valuesByModel.set(modelId, new Map(model.an_modelproper.map(property => [
-      Number(property.id_propertie), property.value,
-    ])))
-  }
-
-  const missingModels = [...selectedModels].filter(id => !valuesByModel.has(id))
-  if (missingModels.length) {
-    throw new Error(`Каталог не вернул свойства для ${missingModels.length} выбранных моделей.`)
   }
 
   return valuesByModel
