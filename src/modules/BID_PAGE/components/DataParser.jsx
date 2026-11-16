@@ -152,6 +152,7 @@ const DataParser = ({
 
     const splitModelAndCount = (line) => {
         const countPatterns = [
+            /(?:^|\s)(\d+)[,.]0+\s*$/u,
             /(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)\s*[:=]?\s*(\d+)\b/iu,
             /(?:^|\s)(\d+)\s*(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)(?=\s|$|[,;:)])/iu,
             // Множитель должен быть отдельным от артикула: RH-X011 — это модель.
@@ -228,7 +229,7 @@ const DataParser = ({
     };
 
     const isUnit = (line) => /^(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)$/iu.test(line.trim());
-    const isNumber = (line) => /^\d+$/u.test(line.trim());
+    const isNumber = (line) => /^\d+(?:[,.]0+)?$/u.test(line.trim());
     const looksLikeModelCode = (line) => /[A-Za-zА-Яа-яЁё]/u.test(line) && /\d/u.test(line);
 
     const decodeClipboardText = (text) => text
