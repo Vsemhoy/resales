@@ -95,3 +95,115 @@ div.sa-topmenu-button {
     background-color: #ffbf00 !important;
     color: white !important
 }
+
+/* Top menu presentation for the shared theme only. */
+html[data-page-theme="main"] .sa-top-menu {
+	/* background-color: var(--menu-bg-color); */
+	padding: 0 12px;
+}
+html[data-page-theme="main"] .sa-topmenu-brand {
+	display: none;
+}
+html[data-page-theme="main"] .sa-topmenu-button {
+	/* background-color: var(--menu-buttons-color); */
+}
+html[data-page-theme="main"] .sa-top-menu-buttons {
+	/* background-color: var(--menu-buttons-color);
+    background: linear-gradient(178deg,rgba(79, 143, 207, 1) 0%, rgba(41, 92, 143, 1) 100%); */
+}
+
+html[data-page-theme="main"] .sa-topmenu-select-control {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	margin: 0 4px;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+html[data-page-theme="main"] .sa-topmenu-select {
+	width: 148px;
+}
+
+html[data-page-theme="main"] .sa-topmenu-select-control--theme .sa-topmenu-select {
+	width: 116px;
+}
+
+html[data-page-theme="main"] .sa-topmenu-user {
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	margin: 0 8px;
+	height: 32px;
+	padding: 0 12px;
+	border: 1px solid color-mix(in srgb, var(--app-primary-color) 52%, var(--table-border-divider-color));
+	border-radius: 6px;
+	background: color-mix(in srgb, var(--app-soft-surface-color) 86%, #ffffff 14%);
+	box-shadow: rgba(255, 255, 255, 0.55) 0 0 2px;
+	backdrop-filter: blur(6px);
+	box-sizing: border-box;
+}
+
+html[data-page-theme="main"] .sa-topmenu-initial {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 22px;
+	height: 22px;
+	flex: none;
+	border-radius: 3px;
+	background: var(--sk-active-button, #324760);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+html[data-page-theme="main"] .sa-topmenu-user-name {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--app-text-color);
+	white-space: nowrap;
+}
+
+html[data-page-theme="main"] .ant-dropdown-menu-item.sa-topmenu-user-menu-control-item {
+	height: 40px;
+	line-height: normal;
+	cursor: default;
+}
+
+html[data-page-theme="main"] .sa-user-dropdown-menu .ant-dropdown-menu-item {
+	margin-block: 0;
+	padding-block: 4px;
+}
+
+html[data-page-theme="main"] .sa-user-setting-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	white-space: nowrap;
+}
+
+html[data-page-theme="main"] .sa-user-dropdown-menu .sa-topmenu-select-control > .ant-select {
+	width: 148px;
+	min-width: 148px;
+	flex: none;
+}
+
+html[data-page-theme="main"] .sa-user-dropdown-menu .ant-dropdown-menu-item.sa-topmenu-user-menu-control-item {
+	height: 32px;
+}
+
+html[data-page-theme="main"] .ant-dropdown-menu-item.sa-topmenu-user-menu-control-item:hover {
+	background: transparent !important;
+}
+
+html[data-page-theme="main"] .ant-dropdown-menu-item.sa-topmenu-user-menu-control-item .sa-topmenu-select-control {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	margin: 0;
+	color: var(--app-text-color, #182433);
+}

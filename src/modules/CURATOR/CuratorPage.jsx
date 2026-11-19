@@ -1,3 +1,5 @@
+import MainView from './CuratorPage.main';
+import { usePageTheme } from '../../context/PageThemeContext';
 import React, { useEffect, useState } from 'react';
 import {Affix, Alert, Button, Dropdown, Layout, Pagination, Select, Space, Spin, Tag, Tooltip} from 'antd';
 import { Content } from 'antd/es/layout/layout';
@@ -607,4 +609,5 @@ const CuratorPageNEW = (props) => {
 	);
 };
 
-export default CuratorPageNEW;
+const ThemedCuratorPage = (props) => { const theme = usePageTheme(); return theme === 'main' ? <MainView {...props} /> : <CuratorPageNEW {...props} />; };
+export default ThemedCuratorPage;

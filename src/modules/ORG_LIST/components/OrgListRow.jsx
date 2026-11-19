@@ -28,7 +28,7 @@ import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../.
 import { PROD_AXIOS_INSTANCE } from '../../../config/Api';
 import { values } from 'lodash';
 import HighlightText from '../../../components/helpers/HighlightText';
-import {ProjectOutlined} from "@ant-design/icons";
+import {InfoCircleOutlined, ProjectOutlined} from "@ant-design/icons";
 
 const OrgListRow = (props) => {
 	const { updateURL, getCurrentParamsString, getFullURLWithParams } = useURLParams();
@@ -439,13 +439,21 @@ const antiTruncateText = (text, maxLength = 200) => {
 						className={'sa-table-box-cell'}
 						// style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
 					>
-						<div>
+						<div className="sa-org-id-content">
 							<NavLink
 								to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}
 								state={'hello'}
 							>
 								{orgData.id}
 							</NavLink>
+							{props.company_color && (
+								<span
+									className="sa-org-company-dot"
+									style={{ backgroundColor: props.company_color }}
+									title={props.company_name || 'Принадлежность к компании'}
+									aria-label={props.company_name || 'Принадлежность к компании'}
+								/>
+							)}
 						</div>
 					</div>
 					<div className={'sa-table-box-cell'}>
@@ -521,11 +529,17 @@ const antiTruncateText = (text, maxLength = 200) => {
 									placement='bottom'>
 
 
-									<div className='sa-org-list-row-name-name'>
+					<div className='sa-org-list-row-name-name' title={orgData.name}>
 										<NavLink
 											to={'/orgs/' + orgData.id + '?frompage=orgs&' + getCurrentParamsString()}>
 											<HighlightText text={orgData.name} highlight={filterName}/>
 										</NavLink>
+										{(orgData.middlename || orgData.requisites?.length > 0) && (
+											<InfoCircleOutlined
+												className="sa-org-name-details-icon"
+												aria-label="Есть второе название или фирмы-плательщики"
+											/>
+										)}
 									</div>
 
 									{orgData.middlename ? (
@@ -553,7 +567,7 @@ const antiTruncateText = (text, maxLength = 200) => {
 						</div>
 					</div>
 					<div className={'sa-table-box-cell'}>
-						<div className={'sa-align-left'} title={orgData.region_name}>
+						<div className={'sa-align-left'} title={[orgData.town_name, orgData.region_name].filter(Boolean).join(', ')}>
 							{orgData.town_name}
 						</div>
 					</div>
@@ -567,7 +581,7 @@ const antiTruncateText = (text, maxLength = 200) => {
 						</div>
 					</div>
 					<div className={'sa-table-box-cell'}>
-						<div>{orgData.notes}</div>
+						<div title={orgData.notes}>{orgData.notes}</div>
 					</div>
 					<div className={'sa-table-box-cell'}>
 						<div>{orgData.inn}</div>

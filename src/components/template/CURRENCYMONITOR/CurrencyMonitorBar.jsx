@@ -1,13 +1,16 @@
+import ClassicView from './CurrencyMonitorBar.classic.jsx';
+import { usePageTheme } from '../../../context/PageThemeContext';
 import React, { useEffect, useState } from 'react';
 import './currencymonitorbar.css';
 import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
 import {CUR_COMPANY, CUR_CURRENCY} from "../../../modules/ENGINEER_PAGE/mock/mock";
-import {Spin} from "antd";
+import {Skeleton, Popover, Button} from "antd";
+import {DollarOutlined} from '@ant-design/icons';
 
 const CurrencyMonitorBar = (props) => {
 	const [isMounted, setIsMounted] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const [companyCurrency, setCompanyCurrency] = useState([{id_company: 0, value: 0, name_ru: 'Евро', charcode: 'EUR',}]);
 	const [bankCurrency, setBankCurrency] = useState([{charcode: 'EUR', name_ru: 'Евро', value: 0, sign: '€',}]);
 
@@ -19,8 +22,11 @@ const CurrencyMonitorBar = (props) => {
 
 	const fetchInfo = async () => {
 		setIsLoading(true);
-		setTimeout(() => setIsLoading(false), 1000);
-		await fetchCurrencySelects();
+		try {
+			await fetchCurrencySelects();
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const fetchCurrencySelects = async () => {
@@ -43,9 +49,11 @@ const CurrencyMonitorBar = (props) => {
 		}
 	};
 
-	return (
-		<Spin size="large" spinning={isLoading}>
-			<div className={'sa-currency-monitor-bar'}>
+	const rates = (
+			<div className={'sa-currency-monitor-bar'} aria-busy={isLoading}>
+				{isLoading ? Array.from({ length: 4 }, (_, index) => (
+					<Skeleton.Input key={index} active size="small" style={{ width: 65, minWidth: 65, height: 16 }} />
+				)) : <>
 				<div title="Курс ЦБ" className={'sa-cura-cb'}>
 					USD: <span>{bankCurrency.find(bank => bank.charcode === "USD")?.value}</span>
 				</div>
@@ -58,9 +66,19 @@ const CurrencyMonitorBar = (props) => {
 				<div title="Курс продаж" className={'sa-cura-loc'}>
 					EUR: <span>{companyCurrency.find(cur => cur.charcode === "EUR")?.value}</span>
 				</div>
+				</>}
 			</div>
-		</Spin>
 	);
+	return <>
+		<div className="sa-currency-expanded">{rates}</div>
+		<Popover title="Курсы валют" content={rates} trigger={['hover', 'click']}>
+			<Button className="sa-currency-collapsed" aria-label="Курсы валют" icon={<DollarOutlined />} />
+		</Popover>
+	</>;
 };
 
-export default CurrencyMonitorBar;
+const ThemedCurrencyMonitorBar = (props) => {
+ const theme = usePageTheme();
+ return theme === 'main' ? <CurrencyMonitorBar {...props} /> : <ClassicView {...props} />;
+};
+export default ThemedCurrencyMonitorBar;

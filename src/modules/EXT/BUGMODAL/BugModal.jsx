@@ -392,7 +392,7 @@ useEffect(() => {
           })
         )}
 				title=""
-				visible={visible}
+				open={visible}
 				onCancel={() => props.onClose()} // call the parent's close function when user clicks Cancel button
 				footer={null} // hide default modal footer buttons (Ok and Cancel)
 				width={'100%'}

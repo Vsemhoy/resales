@@ -1,3 +1,5 @@
+import MainView from './EngineerListPage.main';
+import {usePageTheme} from '../../context/PageThemeContext';
 import React, { useEffect, useState } from 'react';
 import { useUserData } from '../../context/UserDataContext';
 
@@ -779,4 +781,4 @@ const EngineerListPage = () => {
 	);
 };
 
-export default EngineerListPage;
+export default function ThemedEngineerListPage(props) { const theme=usePageTheme(); return theme === "main" ? <MainView {...props} /> : <EngineerListPage {...props} />; }

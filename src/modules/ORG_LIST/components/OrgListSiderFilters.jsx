@@ -314,7 +314,8 @@ const OrgListSiderFilter = (props) => {
 	};
 
 	return (
-		<Affix offsetTop={100}>
+		<div className="sa-org-sidebar-filters">
+			<div className="sa-org-sidebar-heading">Фильтры клиентов</div>
 			<div className="sider-body sider-body-filters sa-sai-orgs">
 				<div className={'sider-unit'}>
 					<div className="sider-unit-title">Компания</div>
@@ -659,7 +660,7 @@ const OrgListSiderFilter = (props) => {
 					</div>
 				</div>
 			</div>
-		</Affix>
+		</div>
 	);
 };
 

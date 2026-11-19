@@ -7,6 +7,13 @@
 		<meta name="theme-color" content="#000000" />
 		<meta name="description" content="База отдела продаж 3.0" />
 		<meta http-equiv="content-language" content="ru" />
+		<script>
+			try {
+				if (localStorage.getItem('resales-page-theme') === 'main') {
+					document.documentElement.setAttribute('data-page-theme', 'main');
+				}
+			} catch (error) {}
+		</script>
 		<link rel="apple-touch-icon" href="%BASE_URL%/com/resales/logo192.png" />
 		<!--
       manifest.json provides metadata used when your web app is installed on a

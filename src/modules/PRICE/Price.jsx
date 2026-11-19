@@ -2,7 +2,9 @@
 import {PRODMODE, CSRF_TOKEN, ROUTE_PREFIX} from '../../config/config';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
-import {Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix} from 'antd';
+import {Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix, Skeleton} from 'antd';
+import { usePageTheme } from '../../context/PageThemeContext';
+import './style/price-common.css';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import {DS_CURRENCY, PRICE} from './mock/mock';
 import './style/price_style.css'
@@ -16,6 +18,7 @@ import { getPriceModelPropertyValues } from './priceProperties.api';
 
 
 const Price = (props) => {
+    const isMainTheme = usePageTheme() === 'main';
     const [currency, setCurrency] = useState(null);
     const [treeData, setTreeData] = useState([]);
     const [checkedKeys, setCheckedKeys] = useState([]);
@@ -584,6 +587,40 @@ const Price = (props) => {
         }
         setPropertiesExportOpen(true);
     };
+
+    if (isMainTheme) return (
+        <div className="sa-price-common">
+            <div className="sa-price-common-toolbar">
+                <Button type="primary" icon={<FilterOutlined />} onClick={() => setIsOpenedFilters(!isOpenedFilters)} aria-expanded={isOpenedFilters}>Фильтры</Button>
+                <h1>Прайс-лист</h1>
+                <div className="sa-price-common-actions">
+                    <Button type="primary" loading={exporting} onClick={() => handleExport()}>Экспорт в Excel</Button>
+                    <Button disabled={exporting} onClick={openPropertiesExport}>Экспорт со свойствами</Button>
+                </div>
+            </div>
+            <div className="sa-price-common-layout">
+                {isOpenedFilters && <aside className="sa-price-common-filters">
+                    <div className="sa-price-common-heading">Фильтры прайса</div>
+                    <div className="sa-price-common-filter-fields">
+                        <span>Колонки цен</span>
+                        {checkedList.map((option, idx) => <Checkbox key={option.id} checked={option.checked} onChange={(event) => onChangeCheckbox(event.target.checked, idx)}>{option.name}</Checkbox>)}
+                        <span>Валюта отображения</span>
+                        <Switch checked={currentCurrency} checkedChildren="Рубли" unCheckedChildren="Валюта" onChange={setCurrentCurrency} />
+                    </div>
+                </aside>}
+                <div className="sa-price-common-table" style={{'--price-columns': `minmax(140px, .7fr) minmax(200px, 2fr) ${checkedList.some(item => item.checked) ? `repeat(${checkedList.filter(item => item.checked).length}, minmax(100px, 1fr))` : ''}`}}>
+                    <div className="sa-price-common-heading sa-price-common-columns">
+                        <span>Модель</span><span>Описание</span>
+                        {checkedList.filter(item => item.checked).map(item => <span key={item.id}>{item.name}</span>)}
+                    </div>
+                    {loading || smallLoading ? <div className="sa-price-common-skeleton">{Array.from({length: 20}, (_, index) => <Skeleton.Input key={index} active block size="small" />)}</div> :
+                        <Tree checkable selectable={false} treeData={treeData} checkedKeys={checkedKeys} onCheck={(keys) => setCheckedKeys(keys)} />}
+                </div>
+            </div>
+            {propertiesExportOpen && <PricePropertiesExportDialog userId={props.userdata?.user?.id} modelCount={checkedKeys.filter(key => key.includes('model')).length} exporting={exporting} onClose={() => setPropertiesExportOpen(false)} onExport={handleExport} />}
+            {isAlertVisible && <Alert className="sa-price-common-alert" message={alertMessage} description={alertDescription} type={alertType} showIcon closable onClose={() => setIsAlertVisible(false)} />}
+        </div>
+    );
 
     return (
         <Spin tip="Загрузка прайс-листа..." spinning={loading}>

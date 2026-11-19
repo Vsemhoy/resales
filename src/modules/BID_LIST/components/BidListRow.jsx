@@ -166,10 +166,11 @@ const { getCurrentParamsString } = useURLParams();
 						className={'sa-table-box-cell'}
 						//style={{background:'#ff870002', borderLeft:'6px solid #ff8700'}}
 					>
-						<div>
+						<div className="sa-org-id-content">
 							<NavLink to={`/${isEngineer ? 'bidsPDF' : 'bids'}/${data.id}`} target={'_blank'}>
 								{data.id}
 							</NavLink>
+							{props.company_color && <span className="sa-org-company-dot" style={{backgroundColor: props.company_color}} title={props.company_name} aria-label={props.company_name} />}
 						</div>
 					</div>
 					<div className={'sa-table-box-cell'}>
