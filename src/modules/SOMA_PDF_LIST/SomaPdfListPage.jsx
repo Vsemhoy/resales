@@ -1,3 +1,5 @@
+import MainView from './SomaPdfListPage.main';
+import {usePageTheme} from '../../context/PageThemeContext';
 import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Affix, Button, Empty, Input, Layout, Pagination, Popconfirm, Select, Spin, Tag, Typography } from 'antd'
@@ -163,7 +165,7 @@ function SomaPdfSiderFilters({ filters, onChange }) {
   )
 }
 
-export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
+function SomaPdfListPage({ userdata, new_changed_user_data }) {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -582,3 +584,5 @@ const [filters, setFilters] = useState(() => compactFilters({
     </div>
   )
 }
+
+export default function ThemedSomaPdfListPage(props) { const theme=usePageTheme(); return theme === "main" ? <MainView {...props} /> : <SomaPdfListPage {...props} />; }

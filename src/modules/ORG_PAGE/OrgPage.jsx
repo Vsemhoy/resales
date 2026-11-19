@@ -1,3 +1,4 @@
+import { usePageTheme } from '../../context/PageThemeContext';
 /**
  * OrgPage.jsx - Пример интеграции NotesTabForm
  * 
@@ -51,6 +52,7 @@ const TAB_CONFIG = [
 ];
 
 const OrgPage = ({ userdata }) => {
+ const pageTheme = usePageTheme();
   const { item_id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -364,7 +366,7 @@ const OrgPage = ({ userdata }) => {
       <div className="sa-orgpage-body sa-mw-1400">
         
         {/* Header с табами */}
-        <Affix offsetTop={0}>
+        <Affix offsetTop={pageTheme === 'main' ? 46 : 0}>
           <div className="sa-orgpage-header">
             <div className="sa-flex-space">
               <div className="sa-orgpage-header-title">
@@ -390,7 +392,7 @@ const OrgPage = ({ userdata }) => {
         </Affix>
 
         {/* Sub-header с кнопками */}
-        <Affix offsetTop={36}>
+        <Affix offsetTop={pageTheme === 'main' ? 46 : 36}>
           <div className="sa-orgpage-sub-header sa-flex-space">
             <div className="sa-orgpage-sub-name">{orgName || '...'}</div>
             

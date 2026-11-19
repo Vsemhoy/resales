@@ -1,0 +1,203 @@
+html[data-page-theme="main"] .app:has(.sa-price-common) {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+}
+html[data-page-theme="main"] .app:has(.sa-price-common) > div:nth-child(2) {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+html[data-page-theme="main"] .sa-price-common {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    font: var(--ui-text-size) var(--ui-font);
+    color: var(--ui-text);
+}
+html[data-page-theme="main"] .sa-price-common-toolbar {
+	box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--ui-bar-gap);
+    min-height: var(--ui-pagebar-height);
+    flex-shrink: 0;
+    height: var(--ui-pagebar-height);
+    padding: 4px var(--ui-bar-gutter);
+    background: var(--ui-surface);
+    border-bottom: 1px solid var(--ui-border);
+}
+html[data-page-theme="main"] .sa-price-common-toolbar > .ant-btn {
+    width: 190px;
+    height: 30px;
+    border-radius: 3px;
+}
+html[data-page-theme="main"] .sa-price-common-toolbar h1 {
+    margin: 0;
+    font-size: var(--ui-page-title-size);
+}
+html[data-page-theme="main"] .sa-price-common-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--ui-bar-gap);
+    flex-wrap: wrap;
+}
+
+html[data-page-theme="main"] .sa-price-common-actions .ant-btn {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 3px;
+    font-size: var(--ui-heading-size);
+    font-weight: var(--ui-heading-weight);
+}
+
+html[data-page-theme="main"] .sa-price-common-actions .ant-btn-default {
+    color: var(--sk-active-button);
+    border-color: var(--ui-border);
+    background: var(--ui-surface);
+}
+
+html[data-page-theme="main"] .sa-price-common-actions .ant-btn-default:not(:disabled):hover {
+    color: var(--sk-active-button-hover);
+    border-color: var(--sk-active-button);
+    background: var(--ui-hover-row);
+}
+html[data-page-theme="main"] .sa-price-common-layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    padding: 0 var(--ui-bar-gutter) var(--ui-bar-gutter);
+}
+html[data-page-theme="main"] .sa-price-common-filters {
+    flex: 0 0 280px;
+    overflow: auto;
+    background: var(--ui-surface);
+    border-right: 1px solid var(--ui-border);
+}
+html[data-page-theme="main"] .sa-price-common-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--ui-heading-height);
+    background: var(--ui-heading-bg);
+    color: var(--ui-heading-text);
+    font-size: var(--ui-heading-size);
+    font-weight: var(--ui-heading-weight);
+}
+html[data-page-theme="main"] .sa-price-common-filter-fields {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+}
+html[data-page-theme="main"] .sa-price-common-filter-fields > span {
+    color: var(--ui-heading-bg);
+    font-size: var(--ui-heading-size);
+}
+html[data-page-theme="main"] .sa-price-common-table {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+    background: var(--ui-surface);
+    border: 1px solid var(--ui-border);
+}
+html[data-page-theme="main"] .sa-price-common-columns {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: var(--price-columns);
+    min-width: 900px;
+    padding-left: 48px;
+}
+html[data-page-theme="main"] .sa-price-common-columns > span {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 10px;
+    border-right: 1px solid var(--ui-heading-divider);
+}
+html[data-page-theme="main"] .sa-price-common-table .ant-tree {
+    min-width: 900px;
+    background: var(--ui-surface);
+    color: var(--ui-text);
+}
+html[data-page-theme="main"] .sa-price-common-table .sa-price-option {
+    box-sizing: border-box;
+    grid-template-columns: var(--price-columns);
+    grid-template-rows: var(--ui-row-height);
+    gap: 0;
+    padding: 0;
+    border: 0 !important;
+    border-bottom: 1px solid var(--ui-divider) !important;
+    border-radius: 0;
+    background: transparent !important;
+}
+html[data-page-theme="main"] .sa-price-common-table .sa-price-option > div {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    margin: 0;
+    padding: var(--ui-cell-padding);
+    border-right: 1px solid var(--ui-divider);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+html[data-page-theme="main"] .sa-price-common-table .sa-price-tag .ant-tag {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    line-height: 26px !important;
+}
+html[data-page-theme="main"] .sa-price-common-table .ant-tree-treenode {
+    padding-bottom: 0;
+    min-height: var(--ui-row-height);
+}
+html[data-page-theme="main"] .sa-price-common-table .ant-tree-node-content-wrapper {
+    min-width: 0;
+    padding: 0;
+    line-height: var(--ui-row-height);
+}
+html[data-page-theme="main"] .sa-price-common-table .ant-tree-indent {
+    display: none;
+}
+html[data-page-theme="main"] .sa-price-common-table .ant-tree-switcher {
+    flex: 0 0 24px;
+}
+html[data-page-theme="main"] .sa-price-common-table .ant-tree-checkbox {
+    margin-inline: 0 8px;
+}
+html[data-page-theme="main"] .sa-price-common-table .ant-tree-node-content-wrapper:hover {
+    background: var(--ui-hover-row);
+}
+html[data-page-theme="main"] .sa-price-common-skeleton {
+    display: grid;
+    gap: 12px;
+    padding: 8px 16px;
+}
+html[data-page-theme="main"] .sa-price-common-alert {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    z-index: 1100;
+    width: 350px;
+}
+@media (max-width: 1000px) {
+    html[data-page-theme="main"] .sa-price-common-toolbar {
+        grid-template-columns: auto 1fr;
+        height: auto;
+    }
+    html[data-page-theme="main"] .sa-price-common-actions {
+        grid-column: 1 / -1;
+    }
+    html[data-page-theme="main"] .sa-price-common-filters {
+        flex-basis: 230px;
+    }
+}

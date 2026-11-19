@@ -1,4 +1,5 @@
 import './App.css';
+import { PageThemeContext } from './context/PageThemeContext';
 
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
@@ -8,6 +9,9 @@ import './assets/layout.css';
 import './assets/table.css';
 import './assets/redefiner.css';
 import './assets/sider.css';
+import './components/template/topmenu/style/topmenu.css';
+import './assets/common-theme.css';
+import './assets/common-theme-adoption.css';
 
 import TopMenu from './components/template/topmenu/TopMenu';
 import OrgListPage from './modules/ORG_LIST/OrgListPage';
@@ -17,7 +21,9 @@ import BidPage from './modules/BID_PAGE/BidPage';
 import BidPdfCreator from './modules/BID_PAGE/components/print/BidPdfCreator';
 import Price from './modules/PRICE/Price';
 import CuratorPage from './modules/CURATOR/CuratorPage';
+import CuratorPageMain from './modules/CURATOR/CuratorPage.main.jsx';
 import EngineerListPage from './modules/ENGINEER_LIST/EngineerListPage';
+import EngineerListPageMain from './modules/ENGINEER_LIST/EngineerListPage.main.jsx';
 import EngineerPage from './modules/ENGINEER_PAGE/EngineerPage';
 import AntdIconsPage from './modules/DEV/Icons/AntdIconsPage';
 import HeroIconsPage24 from './modules/DEV/Icons/HeroIconsPage24';
@@ -50,6 +56,15 @@ import HelpPage from './modules/HELP/HelpPage';
 import ManagerSubstitutionsPage from './modules/MANAGER_SUBSTITUTIONS/ManagerSubstitutionsPage';
 
 const DEFAULT_PAGE_TITLE = 'Отдел продаж';
+const PAGE_THEME_STORAGE_KEY = 'resales-page-theme';
+
+const getInitialPageTheme = () => {
+    try {
+        return window.localStorage.getItem(PAGE_THEME_STORAGE_KEY) === 'main' ? 'main' : 'classic';
+    } catch (error) {
+        return 'classic';
+    }
+};
 
 const PAGE_TITLE_RULES = [
     { path: /^\/manager-substitutions$/, title: 'Замещения менеджеров' },
@@ -90,6 +105,33 @@ export const App = () => {
 	const [userdata, setUserdata] = useState({});
 	const [pageLoaded, setPageLoaded] = useState(false);
 	const [topRole, setTopRole] = useState('');
+    const [pageTheme, setPageTheme] = useState(getInitialPageTheme);
+
+    const handlePageThemeChange = (theme) => {
+        if (theme === pageTheme) return;
+        try {
+            window.localStorage.setItem(PAGE_THEME_STORAGE_KEY, theme);
+        } catch (error) {
+            setPageTheme(theme);
+            return;
+        }
+        window.location.reload();
+    };
+
+    useEffect(() => {
+        const root = document.documentElement;
+        if (pageTheme === 'main') {
+            root.setAttribute('data-page-theme', 'main');
+        } else {
+            root.removeAttribute('data-page-theme');
+        }
+
+        try {
+            window.localStorage.setItem(PAGE_THEME_STORAGE_KEY, pageTheme);
+        } catch (error) {
+            // The selected theme still applies for this session when storage is unavailable.
+        }
+    }, [pageTheme]);
 
     const [isAlertVisibleKey, setIsAlertVisibleKey] = useState(0);
     const [alertInfo, setAlertInfo] = useState({
@@ -162,7 +204,7 @@ export const App = () => {
     };
 
 	return (
-		<UserDataProvider>
+		<PageThemeContext.Provider value={pageTheme}><UserDataProvider>
             <ResalesWebSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
                 <ChatSocketProvider url={!PRODMODE ? `http://localhost:${BFF_PORT}` : `${HTTP_HOST}:${BFF_PORT}`}>
                     <BrowserRouter basename={BASE_NAME}>
@@ -170,6 +212,8 @@ export const App = () => {
                         <div className={'app'}>
                             <TopMenu changed_user_data={() => get_userdata()}
                                      onNewAlert={updateAlert}
+                                     pageTheme={pageTheme}
+                                     onPageThemeChange={handlePageThemeChange}
                                      userdata={userdata}
                             />
                             <div>
@@ -252,20 +296,19 @@ export const App = () => {
 
                                     <Route
                                         path={'/curator'}
-                                        element={<CuratorPage userdata={userdata} />}
+                                        element={pageTheme === 'main' ? <CuratorPageMain userdata={userdata} /> : <CuratorPage userdata={userdata} />}
                                     />
-                                    <Route path="/curator" element={<CuratorPage userdata={userdata} />} />
 
-                                    <Route path="/curator_new" element={<CuratorPageNEW userdata={userdata} />} />
+                                    <Route path="/curator_new" element={pageTheme === 'main' ? <CuratorPageMain userdata={userdata} /> : <CuratorPageNEW userdata={userdata} />} />
 
                                     <Route path={'/regtown'} element={<Regtown userdata={userdata} />} />
                                     <Route path="/regtown" element={<Regtown userdata={userdata} />} />
 
                                     <Route
                                         path={'/engine/specs'}
-                                        element={<EngineerListPage userdata={userdata} />}
+                                        element={pageTheme === 'main' ? <EngineerListPageMain userdata={userdata} /> : <EngineerListPage userdata={userdata} />}
                                     />
-                                    <Route path="/engineer" element={<EngineerListPage userdata={userdata} />} />
+                                    <Route path="/engineer" element={pageTheme === 'main' ? <EngineerListPageMain userdata={userdata} /> : <EngineerListPage userdata={userdata} />} />
 
                                     <Route
                                         path={'/engineer/:bidId'}
@@ -329,6 +372,6 @@ export const App = () => {
                     </BrowserRouter>
                 </ChatSocketProvider>
             </ResalesWebSocketProvider>
-		</UserDataProvider>
+		</UserDataProvider></PageThemeContext.Provider>
 	);
 };

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Button, DatePicker, Form, Modal, Select, Space, Spin, Table, Tag, Typography, message } from 'antd';
+import { Alert, Button, DatePicker, Form, Modal, Select, Space, Spin, Table, Tag, Typography, message, Pagination, Skeleton } from 'antd';
+import { usePageTheme } from '../../context/PageThemeContext';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import ruRU from 'antd/es/date-picker/locale/ru_RU';
@@ -17,6 +18,15 @@ export default function ManagerSubstitutionsPage({ userdata }) {
 }
 
 function Substitutions({ companyName }) {
+    const isMainTheme = usePageTheme() === 'main';
+    const tableAreaRef = useRef(null);
+    const [tableHeight, setTableHeight] = useState(400);
+    useEffect(() => {
+        if (!isMainTheme || !tableAreaRef.current) return;
+        const observer = new ResizeObserver(([entry]) => setTableHeight(Math.max(100, entry.contentRect.height - 40)));
+        observer.observe(tableAreaRef.current);
+        return () => observer.disconnect();
+    }, [isMainTheme]);
     const [form] = Form.useForm();
     const [notice, noticeContext] = message.useMessage();
     const [rows, setRows] = useState([]);
@@ -186,7 +196,7 @@ function Substitutions({ companyName }) {
             <div className="manager-substitutions-header">
                 <div>
                     <Typography.Title level={3} style={{ margin: 0 }}>Замещения менеджеров</Typography.Title>
-                    <Typography.Text type="secondary">{companyName} · Обе даты периода включительно</Typography.Text>
+                    {!isMainTheme && <Typography.Text type="secondary">{companyName} · Обе даты периода включительно</Typography.Text>}
                 </div>
                 <Space wrap>
                     <Button icon={<ReloadOutlined />} onClick={refresh} disabled={loading || saving || revoking}>Обновить</Button>
@@ -201,15 +211,18 @@ function Substitutions({ companyName }) {
                 <Alert type="info" showIcon message="Мои замещения" description="Здесь показаны ваши замещения. Управление доступно руководителю." />}
             {listError && <Alert type="error" showIcon message={listError}
                 action={<Button onClick={refresh}>Повторить</Button>} />}
-            <Table rowKey="id" columns={columns} dataSource={rows} loading={loading} scroll={{ x: 800 }}
+            <div className={isMainTheme ? 'sa-substitutions-table-area' : undefined} ref={tableAreaRef}>
+            <Table rowKey="id" columns={isMainTheme && loading ? columns.map(column => ({ ...column, render: () => <Skeleton.Input active block size="small" /> })) : columns} dataSource={isMainTheme && loading ? Array.from({ length: perPage }, (_, index) => ({ id: `skeleton-${index}` })) : rows} loading={!isMainTheme && loading} scroll={isMainTheme ? { x: 800, y: tableHeight } : { x: 800 }}
                 locale={{ emptyText: listError ? 'Список недоступен' : 'Замещений пока нет' }}
-                pagination={{
+                pagination={isMainTheme ? false : {
                     current: page, pageSize: perPage, total: meta.total || 0, showSizeChanger: true,
                     pageSizeOptions: [10, 20, 50], showTotal: (total) => `Всего: ${total}`,
                     onChange: (nextPage, nextSize) => {
                         setPage(nextSize === perPage ? nextPage : 1); setPerPage(nextSize);
                     },
                 }} />
+            </div>
+            {isMainTheme && <div className="sa-substitutions-pagination"><Pagination current={page} pageSize={perPage} total={meta.total || 0} showSizeChanger showQuickJumper pageSizeOptions={[10, 20, 50]} showTotal={(total) => `Всего: ${total}`} onChange={(nextPage, nextSize) => { setPage(nextSize === perPage ? nextPage : 1); setPerPage(nextSize); }} /></div>}
             <Modal title="Назначить замещение" open={open} okText="Назначить" cancelText="Отмена"
                 onOk={() => form.submit()} onCancel={() => !saving && setOpen(false)} confirmLoading={saving}
                 closable={!saving} maskClosable={!saving} keyboard={!saving}

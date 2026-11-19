@@ -1,10 +1,11 @@
+import ClassicView from './OrgListPage.classic.jsx';
+import { usePageTheme } from '../../context/PageThemeContext';
 import React, { useEffect, useState } from 'react';
 import { useUserData } from '../../context/UserDataContext';
 import './components/style/orglistpage.css';
 import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../config/config';
 import { NavLink, useParams, useSearchParams } from 'react-router-dom';
 import {
-	Affix,
 	Button,
 	// DatePicker,
 	Dropdown, Input,
@@ -12,6 +13,7 @@ import {
 	Layout,
 	Modal,
 	Pagination,
+	Space,
 	// Select,
 	Spin,
 	Tag,
@@ -29,9 +31,10 @@ import {
 	FilterOutlined,
 	LoadingOutlined,
 	PlusOutlined,
+	UserOutlined,
+	UsergroupDeleteOutlined,
 } from '@ant-design/icons';
 // import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort';
-import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 // import OrgListRow from './components/OrgListRow';
 import OrgListPreviewModal from './components/OrgModal/OrgListPreviewModal';
 import OrgListSiderFilter from './components/OrgListSiderFilters';
@@ -78,7 +81,7 @@ const OrgListPage = (props) => {
 	const [previousPage, setPreviousPage] = useState(1);
 
 	const [filterBox, setFilterBox] = useState({});
-	const [orderBox, setOrderBox] = useState({});
+	const [orderBox, setOrderBox] = useState([]);
 
 	/** Сортировки как объект, где колонка - ключ, значение - ASC/DESC */
 
@@ -660,7 +663,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 
 	const handleClearAllBoxes = () => {
 		setFilterBox({});
-		setOrderBox({});
+		setOrderBox([]);
 		setSearchValue("");
 	};
 
@@ -669,7 +672,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 	};
 
 	const handleClearOrderBox = () => {
-		setOrderBox({});
+		setOrderBox([]);
 	};
 
 	const handleChangeOnPage = (evt) => {
@@ -716,25 +719,14 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 
 	return (
 		<div
-			className={`app-page ${openedFilters ? 'sa-filer-opened' : ''}`}
+			className={`app-page sa-org-list-page ${openedFilters ? 'sa-filer-opened' : ''}`}
 			style={{ paddingTop: '12px' }}
 		>
-			<Affix offsetTop={-10}>
-				<div className={'sa-control-panel sa-flex-space sa-pa-12 sa-org-list-header'}>
+			<div className={'sa-control-panel sa-flex-space sa-pa-12 sa-org-list-header'}>
 					<div className={'sa-header-label-container'}>
-						<div className={'sa-flex-space'}>
-							<div>
-								<h1 className={'sa-header-label-org'} style={{ width: '100% !important' }}>
-									Клиенты
-								</h1>
-							</div>
-							<div>
-								<CurrencyMonitorBar />
-							</div>
-						</div>
-						<div className={'sa-header-label-container-small'}>
+<div className={'sa-header-label-container-small'}>
 							<div className={'sa-vertical-flex'}>
-								<Button.Group>
+								<Space.Compact>
 									<Button
 										onClick={() => {
 											if (openedFilters) {
@@ -743,39 +735,56 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 											setOpenedFilters(!openedFilters);
 										}}
 										className={`${
-											openedFilters ? 'sa-default-solid-btn-color' : 'sa-default-outlined-btn-color'
+											'sa-org-filter-toggle'
 										}`}
 										color={'default'}
 										variant={openedFilters ? 'solid' : 'outlined'}
 										icon={<FilterOutlined />}
 									>
-										Доп Фильтры
+										Фильтры
 									</Button>
 									{filterSortClearMenu.length > 0 && (
-										<Tooltip title={'Очистить фильтры'} placement={'right'}>
-											<Dropdown menu={{ items: filterSortClearMenu }}>
-												<Button
-													color={'danger'}
-													variant={'solid'}
-													icon={filterAwaiter ? <LoadingOutlined /> : <CloseOutlined />}
-													onClick={handleClearAllBoxes}
-												></Button>
-											</Dropdown>
+										<Tooltip title="Сбросить все фильтры">
+											<Button
+												color="danger"
+												variant="solid"
+												aria-label="Сбросить все фильтры"
+												className="sa-org-filter-reset"
+												icon={filterAwaiter ? <LoadingOutlined /> : <CloseOutlined />}
+												onClick={handleClearAllBoxes}
+											/>
 										</Tooltip>
 									)}
-								</Button.Group>
-								<Tag
-									style={{
-										width: '160px',
-										height: '32px',
-										lineHeight: '27px',
-										textAlign: 'center',
-										fontSize: '14px',
-									}}
-									color="geekblue"
-								>
-									Всего найдено: {total}
-								</Tag>
+								</Space.Compact>
+								<div className={'sa-flex-gap'}>
+									<Tooltip title="Компании без кураторства">
+										<Button
+											color={'default'}
+											size={openedFilters ? 'small' : 'middle'}
+											variant={filterBox?.companies === 1 ? 'solid' : 'filled'}
+											// onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
+											onClick={triggerFreeCompaniesFilterButton}
+											className="sa-org-filter-icon sa-org-filter-icon--free" aria-label="Свободные"
+											icon={<UsergroupDeleteOutlined />}
+										/>
+									</Tooltip>
+									{/* <Tooltip title="Я временный куратор">
+              <Button color="default" variant={false ? "solid" : "filled"} 
+                  // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
+              >Временные</Button>
+              </Tooltip> */}
+									<Tooltip title="Компании с моим кураторством">
+										<Button
+											color={'default'}
+											variant={filterBox?.curator === userdata?.user?.id ? 'solid' : 'filled'}
+											onClick={triggerMyCompaniesFilterButton}
+											size={openedFilters ? 'small' : 'middle'}
+											// onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
+											className="sa-org-filter-icon sa-org-filter-icon--mine" aria-label="Мои компании"
+											icon={<UserOutlined />}
+										/>
+									</Tooltip>
+								</div>
 								{showStarResolver && problemCompanies?.length > 0 && (
 									<Tooltip title={'Компании с ошибкой сохранения без последующего успешного сохранения'}>
 										<Tag
@@ -789,14 +798,14 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 									</Tooltip>
 								)}
 							</div>
-							{/*<div style={{display: 'flex', alignItems: 'end'}}>*/}
+							{/*<h1 className="sa-org-toolbar-title">Клиенты</h1><div className="sa-org-toolbar-search">*/}
 							{/*</div>*/}
-							<div style={{display: 'flex', alignItems: 'end'}}>
+							<h1 className="sa-org-toolbar-title">Клиенты</h1><div className="sa-org-toolbar-search">
 								<Input
 									// style={{  }}
 									value={searchValue}
 									onChange={(e)  => {setSearchValue(e.target.value);}}
-									style={{ width: '100%', marginRight: '10px' }}
+									className="sa-org-global-search" placeholder="Поиск по всем параметрам"
 									// variant="filled"
 									allowClear
 								/>
@@ -820,10 +829,9 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 							</div>
 						</div>
 					</div>
-				</div>
-			</Affix>
+			</div>
 
-			<Layout className={'sa-layout sa-w-100'}>
+			<Layout className={'sa-layout sa-w-100 sa-org-list-layout'}>
 				<Sider
 					collapsed={!openedFilters}
 					collapsedWidth={0}
@@ -845,10 +853,9 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 						)}
 					</div>
 				</Sider>
-				<Content>
-					<Affix offsetTop={94}>
-						<div
-							className={'sa-pagination-panel sa-pa-12'}
+				<Content className="sa-org-list-content">
+					<div
+							className={'sa-pagination-panel sa-org-list-pagination sa-pa-12'}
 							style={{ minHeight: '54px' }}
 						>
 							<div className={'sa-flex-space'}>
@@ -874,42 +881,15 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
             >Всего {total}</Button> */}
 								</div>
 								<div></div>
-								<div className={'sa-flex-gap'}>
-									<Tooltip title="Компании без кураторства">
-										<Button
-											color={'default'}
-											size={openedFilters ? 'small' : 'middle'}
-											variant={filterBox?.companies === 1 ? 'solid' : 'filled'}
-											// onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
-											onClick={triggerFreeCompaniesFilterButton}
-										>
-											Свободные
-										</Button>
-									</Tooltip>
-									{/* <Tooltip title="Я временный куратор">
-              <Button color="default" variant={false ? "solid" : "filled"} 
-                  // onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
-              >Временные</Button>
-              </Tooltip> */}
-									<Tooltip title="Компании с моим кураторством">
-										<Button
-											color={'default'}
-											variant={filterBox?.curator === userdata?.user?.id ? 'solid' : 'filled'}
-											onClick={triggerMyCompaniesFilterButton}
-											size={openedFilters ? 'small' : 'middle'}
-											// onClick={()=>{setShowOnlyCrew(false); setShowOnlyMine(!showOnlyMine)}}
-										>
-											Мои компании
-										</Button>
-									</Tooltip>
-								</div>
+								
 							</div>
 						</div>
-					</Affix>
 
-					<div className={`${openedFilters ? 'sa-pa-tb-12 sa-pa-s-3' : 'sa-pa-12'}`}>
-						<Spin spinning={showLoader} delay={500}>
+					<div className={`sa-org-table-shell ${openedFilters ? 'sa-org-table-shell--filters-open' : ''}`}>
+						<div className="sa-org-table-scroll-area">
+						<Spin spinning={false}>
 							<OrgListTable
+								loading={showLoader}
 								busy_orgs={socketBusyOrglist}
 								companies={companies}
 								base_companies={baseCompanies}
@@ -927,6 +907,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
                                 profiles={baseFiltersData?.profiles?.map(prof => ({id: prof.id, ext: prof.ext}))}
 							/>
 						</Spin>
+						</div>
 
 						{/* {baseOrgs.length > 20 && (
             <div className={'sa-pagination-panel sa-pa-12'}>
@@ -944,7 +925,6 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
               </div>
             </div>
           )} */}
-						<div className={'sa-space-panel sa-pa-12'}></div>
 					</div>
 				</Content>
 			</Layout>
@@ -1031,6 +1011,10 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 	);
 };
 
-export default OrgListPage;
+const ThemedOrgListPage = (props) => {
+ const theme = usePageTheme();
+ return theme === 'main' ? <OrgListPage {...props} /> : <ClassicView {...props} />;
+};
+export default ThemedOrgListPage;
 
 

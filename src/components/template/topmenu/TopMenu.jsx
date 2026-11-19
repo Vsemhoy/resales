@@ -1,27 +1,37 @@
+import ClassicView from './TopMenu.classic.jsx';
+import { usePageTheme } from '../../../context/PageThemeContext';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import './style/topmenu.css';
+import CurrencyMonitorBar from '../CURRENCYMONITOR/CurrencyMonitorBar';
 import ChatBtn from '../../../modules/CHAT/components/ChatBtn';
 import dayjs from 'dayjs';
 
 import { Chat, ChatSocketProvider } from 'corp-chat-library-antd-react-socket';
 //import 'corp-chat-library-antd-react-socket/dist/style.css';
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {BASE_ROUTE, BFF_PORT, CSRF_TOKEN, HTTP_HOST, PRODMODE, ROUTE_PREFIX} from '../../../config/config';
 import {
+	EllipsisOutlined,
 	CalendarOutlined,
+	BankOutlined,
+	BgColorsOutlined,
 	CloseCircleOutlined,
 	DownOutlined,
-	HomeFilled,
+	EnvironmentOutlined,
+	FileTextOutlined,
+	HomeOutlined,
 	LoginOutlined,
 	MediumOutlined,
 	NotificationOutlined,
+	SwapOutlined,
+	TableOutlined,
+	TeamOutlined,
+	ToolOutlined,
 	UserOutlined,
+	UserSwitchOutlined,
 	WechatWorkOutlined
 } from '@ant-design/icons';
-import LogoArstel, { LogoArstelLight } from '../../../assets/Comicon/Logos/LogoArstel';
-import LogoRondo, { LogoRondoLight } from '../../../assets/Comicon/Logos/LogoRondo';
-import {Avatar, Button, Dropdown} from 'antd';
+import {Button, Dropdown, Select, Menu, message} from 'antd';
 import { ShortName } from '../../helpers/TextHelpers';
 import {
 	ArrowTopRightOnSquareIcon,
@@ -75,10 +85,10 @@ const getCalendarEventContactName = (event) => (
 );
 
 const TopMenu = (props) => {
+	const location = useLocation();
 		const [userdata, setUserdata] = useState(props.userdata);
 	// const { userdata, setUserdata } = useUserData();
 	const [roleMenu, setRoleMenu] = useState([]);
-	const [companiesMenu, setCompanieseMenu] = useState([]);
 	const [topRole, setTopRole] = useState(1);
 	const [showDebugger, setShowDebugger] = useState(false);
 	const debuggerRef = useRef(null);
@@ -246,25 +256,6 @@ const TopMenu = (props) => {
 			}
 		}
 
-		setCompanieseMenu(
-			comps.map((item) => ({
-				key: 'compas_' + item.id,
-				label: (
-					<div
-						className={`${item.id === activeCompany ? 'active' : ''}`}
-						onClick={() => {
-							if (item.id !== activeCompany) {
-								changeUserCompany(item.id);
-							}
-						}}
-					>
-						{item.name}
-					</div>
-				),
-				danger: item.id === activeCompany,
-			}))
-		);
-
 		setRoleMenu(roles);
 	}, [userdata]);
 
@@ -331,11 +322,32 @@ const TopMenu = (props) => {
 		};
 	}, [userdata?.user?.active_company, userdata?.user?.id]);
 
+	const companyOptions = (userdata?.companies || [])
+		.filter((company) => Number(company.id) > 1)
+		.map((company) => ({ value: Number(company.id), label: company.name }));
+	const activeCompanyId = Number(userdata?.user?.active_company);
+	const pageThemeOptions = [
+		{ value: 'classic', label: 'Классическая' },
+		{ value: 'main', label: 'Общая' },
+	];
+
+	const salesRoles = [
+		{ value: 1, label: 'Менеджер', acl: 89 },
+		{ value: 2, label: 'Администратор', acl: 91 },
+		{ value: 3, label: 'Бухгалтер', acl: 90 },
+		{ value: 4, label: 'Инженер', acl: 153 },
+	];
+	const salesRoleClass = ['','sa-select-custom-manager','sa-select-custom-admin','sa-select-custom-bugh','sa-select-custom-engineer'][Number(userdata?.user?.sales_role)] || '';
+	const availableSalesRoles = salesRoles.filter((role) => userdata?.acls?.includes(role.acl));
+	const changeSalesRole = async (value) => {
+		try {
+			await PROD_AXIOS_INSTANCE.post(`${ROUTE_PREFIX}/update/sales_role`, { place: value, _token: CSRF_TOKEN });
+			props.changed_user_data?.();
+		} catch (error) {
+			message.error('Не удалось изменить роль');
+		}
+	};
 	const userMenuItems = [
-		{
-			key: 'status',
-			label: 'Статус: Онлайн',
-		},
 		{
 			key: 'help',
 			label: <NavLink to="/help"><div>Инструкция на модуль</div></NavLink>,
@@ -345,6 +357,56 @@ const TopMenu = (props) => {
 			key: 'loclog',
 			label: <NavLink to="/loclog"><div>Локальные логи</div></NavLink>,
 			icon: <RectangleStackIcon height={'18px'} />,
+		},
+		...(Number(userdata?.user?.sales_role) > 0 ? [{
+			key: 'sales-role',
+			className: 'sa-topmenu-user-menu-control-item',
+			label: <div className="sa-topmenu-select-control" onClick={(event) => event.stopPropagation()}>
+				<span className="sa-user-setting-label"><UserSwitchOutlined /> Роль:</span>
+				{availableSalesRoles.length > 1 && ![7, 8, 20].includes(userdata?.user?.id_departament) ?
+					<Select className={salesRoleClass} aria-label="Роль" size="small" value={Number(userdata.user.sales_role)} options={availableSalesRoles} onChange={changeSalesRole} getPopupContainer={(node) => node.parentElement} /> :
+					<span className={salesRoleClass}>{salesRoles.find((role) => role.value === Number(userdata.user.sales_role))?.label}</span>}
+			</div>,
+		}] : []),
+
+		...(companyOptions.length > 0
+			? [{
+				key: 'company-select',
+				className: 'sa-topmenu-user-menu-control-item',
+				label: (
+					<div className="sa-topmenu-select-control sa-topmenu-select-control--company" onClick={(event) => event.stopPropagation()}>
+						<span className="sa-user-setting-label"><BankOutlined /> Компания:</span>
+						<Select
+							aria-label="Компания"
+							className="sa-topmenu-select"
+							size="small"
+							value={companyOptions.some((option) => option.value === activeCompanyId) ? activeCompanyId : undefined}
+							options={companyOptions}
+							placeholder="Выбрать"
+							getPopupContainer={(triggerNode) => triggerNode.parentElement}
+							onChange={(companyId) => changeUserCompany(companyId)}
+						/>
+					</div>
+				),
+			}]
+			: []),
+		{
+			key: 'theme-select',
+			className: 'sa-topmenu-user-menu-control-item',
+			label: (
+				<div className="sa-topmenu-select-control sa-topmenu-select-control--theme" onClick={(event) => event.stopPropagation()}>
+					<span className="sa-user-setting-label"><BgColorsOutlined /> Тема страницы</span>
+					<Select
+						aria-label="Тема страницы"
+						className="sa-topmenu-select"
+						size="small"
+						value={props.pageTheme || 'classic'}
+						options={pageThemeOptions}
+						getPopupContainer={(triggerNode) => triggerNode.parentElement}
+						onChange={props.onPageThemeChange}
+					/>
+				</div>
+			),
 		},
 		{
 			key: `${HTTP_HOST}/logout`,
@@ -415,65 +477,28 @@ const TopMenu = (props) => {
 
 
 	return (
-		<div className="sa-top-menu" style={{ padding: '0 12px' }}>
+		<div className="sa-top-menu ui-topmenu ui-topmenu-sticky">
 			<div className={'sa-flex-space'}>
-				<div className={'sa-top-menu-buttons'}>
-					<NavLink to={`${HTTP_HOST}:3000`}>
-						<div className={'sa-topmenu-button'}>
-							<HomeFilled />
-						</div>
+				<div className="sa-topmenu-brand ui-topmenu-brand">
+					<NavLink to={`${HTTP_HOST}:3000`} aria-label="На главную" title="На главную">
+						<HomeOutlined />
 					</NavLink>
-
-					{[2, 3].includes(topRole) && (
-						<NavLink to="/orgs">
-							<div className={'sa-topmenu-button'}>Организации</div>
-						</NavLink>
-					)}
-
-                    <NavLink to="/bids">
-                        <div className={'sa-topmenu-button'}>Заявки</div>
-                    </NavLink>
-
-					{[2, 3].includes(topRole) && (
-						<NavLink to="/price">
-							<div className={'sa-topmenu-button'}>Прайс</div>
-						</NavLink>
-					)}
-
-					{topRole === 2 && (
-						<NavLink to="/curator">
-							<div className={'sa-topmenu-button'}>Кураторство</div>
-						</NavLink>
-					)}
-
-					<NavLink to="/manager-substitutions"><div className="sa-topmenu-button">Замещения</div></NavLink>
-                    <NavLink to="/regtown">
-						<div className={'sa-topmenu-button'}>Города и регионы</div>
-					</NavLink>
-
-					<Dropdown
-						menu={{
-							items: [
-								{ key: 'specs',   label: <NavLink to="/engine/specs">Спецификации</NavLink> },
-								{ key: 'pdflist', label: <NavLink to="/engine/pdflist">PDF</NavLink> },
-							],
-						}}
-						trigger={['hover']}
-					>
-						<div className={'sa-topmenu-button'}>
-							Инженеры <DownOutlined style={{ fontSize: 10, marginLeft: 4 }} />
-						</div>
-					</Dropdown>
-
-					{topRole === 3 && (
-						<NavLink to="/files_buh">
-							<div className={'sa-topmenu-button'}>Выгрузка счетов</div>
-						</NavLink>
-					)}
+					<strong>ОТДЕЛ ПРОДАЖ</strong>
 				</div>
+				<Menu className="sa-main-navigation" mode="horizontal" selectedKeys={[location.pathname]} overflowedIndicator={<EllipsisOutlined />} items={[
+ ...([2,3].includes(topRole) ? [{key:'/orgs',icon:<TeamOutlined />,label:<NavLink to="/orgs">Организации</NavLink>}] : []),
+ {key:'/bids',icon:<CalendarOutlined />,label:<NavLink to="/bids">Заявки</NavLink>},
+ ...([2,3].includes(topRole) ? [{key:'/price',icon:<TableOutlined />,label:<NavLink to="/price">Прайс</NavLink>}] : []),
+ ...(topRole===2 ? [{key:'/curator',icon:<UserSwitchOutlined />,label:<NavLink to="/curator">Кураторство</NavLink>}] : []),
+ {key:'/manager-substitutions',icon:<SwapOutlined />,label:<NavLink to="/manager-substitutions">Замещения</NavLink>},
+ {key:'/regtown',icon:<EnvironmentOutlined />,label:<NavLink to="/regtown">Города и регионы</NavLink>},
+ {key:'engineers',icon:<ToolOutlined />,label:'Инженеры',children:[{key:'/engine/specs',label:<NavLink to="/engine/specs">Спецификации</NavLink>},{key:'/engine/pdflist',label:<NavLink to="/engine/pdflist">PDF</NavLink>}]},
+ ...(topRole===3 ? [{key:'/files_buh',icon:<FileTextOutlined />,label:<NavLink to="/files_buh">Выгрузка счетов</NavLink>}] : []),
+ ]} />
 
-				<div className={'sa-topmenu-userbox'}>
-                    <div style={{ padding: '6px 12px' }}>
+ <div className={'sa-topmenu-userbox ui-topmenu-actions'}>
+					<div className="sa-topmenu-currency"><CurrencyMonitorBar /></div>
+					<div className="sa-topmenu-action-wrap">
                         <Button color={'geekblue'}
                                 variant={'solid'}
                                 onClick={()=>{setopenBugModal(!openBugModal)}}
@@ -553,52 +578,20 @@ const TopMenu = (props) => {
 						</div>
 					</Dropdown>
 					*/}
-					<Dropdown menu={{ items: userMenuItems }} trigger={['hover']}>
-						<div
-							style={{
-								cursor: 'pointer',
-								display: 'flex',
-								alignItems: 'center',
-								margin: '0 8px',
-								height: '32px',
-								padding: '0 12px',
-								borderRadius: '6px',
-								border: '1px solid color-mix(in srgb, var(--app-primary-color) 52%, var(--table-border-divider-color))',
-								background: 'color-mix(in srgb, var(--app-soft-surface-color) 86%, #ffffff 14%)',
-								boxShadow: 'rgba(255, 255, 255, 0.55) 0px 0px 2px',
-								backdropFilter: 'blur(6px)',
-								boxSizing: 'border-box',
-							}}
-						>
+					<Dropdown menu={{ items: userMenuItems, className: 'sa-user-dropdown-menu' }} trigger={['hover']}>
+						<div className="sa-topmenu-user ui-topmenu-user">
 							{userdata?.user ? (
 								<div style={{ display: 'flex', alignItems: 'center', gap: '8px', lineHeight: 1 }}>
-									<Avatar
-										size={22}
-										style={{
-											backgroundColor: '#fff',
-											color: '#000',
-											border: '1px solid rgba(34, 60, 80, 0.24)',
-											boxShadow: 'rgba(255, 255, 255, 0.55) 0px 0px 2px',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-										}}
-										icon={<UserOutlined />}
-									/>
-									<span style={{fontWeight: 500, color: 'var(--app-text-color)', fontSize: '14px', whiteSpace: 'nowrap'}}>
+									<span className="sa-topmenu-initial ui-topmenu-initial" aria-hidden="true">
+										{(userdata.user.surname || userdata.user.name || '?').trim().charAt(0).toUpperCase()}
+									</span>
+									<span className="sa-topmenu-user-name">
 										{userdata.user.surname} {userdata.user.name}
 									</span>
 								</div>
 							) : (
 								<span>Пользователь</span>
 							)}
-						</div>
-					</Dropdown>
-					<Dropdown menu={{ items: companiesMenu }}>
-						<div style={{ padding: '2px 14px' }}>
-							{userdata?.user?.active_company < 2 && <span>No active company ({userdata?.user?.active_company})</span>}
-							{userdata?.user?.active_company === 2 && <LogoArstelLight height="30px" />}
-							{userdata?.user?.active_company === 3 && <LogoRondoLight height="30px" />}
 						</div>
 					</Dropdown>
 				</div>
@@ -615,4 +608,8 @@ const TopMenu = (props) => {
 	);
 };
 
-export default TopMenu;
+const ThemedTopMenu = (props) => {
+ const theme = usePageTheme();
+ return theme === 'main' ? <TopMenu {...props} /> : <ClassicView {...props} />;
+};
+export default ThemedTopMenu;

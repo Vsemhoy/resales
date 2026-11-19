@@ -1,8 +1,9 @@
-import {Affix, DatePicker, Empty, Input, Select} from 'antd';
+import {Affix, DatePicker, Empty, Input, Select, Skeleton} from 'antd';
 import React, { useEffect, useState } from 'react';
 import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
 import BidListRow from './BidListRow';
 import dayjs from 'dayjs';
+import {UnorderedListOutlined, PaperClipOutlined, UserOutlined} from '@ant-design/icons';
 
 const BidListTable = (props) => {
 	const [sortOrders, setSortOrders] = useState([]);
@@ -176,7 +177,7 @@ const BidListTable = (props) => {
 
 	return (
 		<div className={'sa-table-box'}>
-			<Affix offsetTop={156}>
+			<React.Fragment>
 				<div className={'sa-table-box-header'}>
 					<div
 						className={'sa-table-box-bids sa-table-box-row sa-table-box-row-header'}
@@ -187,11 +188,9 @@ const BidListTable = (props) => {
 									sort_key={'id'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
-								>
-									id
-								</TableHeadNameWithSort>
+								>id</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
-									<Input
+									<Input placeholder="id"
 										type={'number'}
 										size={'small'}
 										style={{width: '100%'}}
@@ -213,11 +212,9 @@ const BidListTable = (props) => {
 									sort_key={'company_name'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
-								>
-									Название организации
-								</TableHeadNameWithSort>
+								>Название организации</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
-									<Input
+									<Input placeholder="Название организации"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -238,11 +235,9 @@ const BidListTable = (props) => {
 									sort_key={'type_status'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
-								>
-									Тип
-								</TableHeadNameWithSort>
+								>Тип</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
-									<Select
+									<Select placeholder="Тип"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -260,11 +255,9 @@ const BidListTable = (props) => {
 									sort_key={'protection_project'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
-								>
-									Защита
-								</TableHeadNameWithSort>
+								>Защита</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
-									<Select
+									<Select placeholder="Защита"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -282,11 +275,9 @@ const BidListTable = (props) => {
 									sort_key={'stage_id'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
-								>
-									Этап
-								</TableHeadNameWithSort>
+								>Этап</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
-									<Select
+									<Select placeholder="Этап"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -304,11 +295,9 @@ const BidListTable = (props) => {
 									sort_key={'date'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
-								>
-									Дата
-								</TableHeadNameWithSort>
+								>Дата</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
-									<DatePicker
+									<DatePicker placeholder="Дата"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -330,11 +319,9 @@ const BidListTable = (props) => {
 									sort_key={'username'}
 									on_sort_change={handleActivateSorter}
 									active_sort_items={sortOrders}
-								>
-									Менеджер
-								</TableHeadNameWithSort>
+								>Менеджер</TableHeadNameWithSort>
 								<div className={'sa-pa-3'}>
-									<Select
+									<Select placeholder="Менеджер"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -353,9 +340,8 @@ const BidListTable = (props) => {
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Счета</div>
 								<div className={'sa-pa-3'}>
-									<Input
+									<Input placeholder="Счета"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -372,9 +358,8 @@ const BidListTable = (props) => {
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Комментарий</div>
 								<div className={'sa-pa-3'}>
-									<Input
+									<Input placeholder="Комментарий"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -391,9 +376,8 @@ const BidListTable = (props) => {
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Объект</div>
 								<div className={'sa-pa-3'}>
-									<Input
+									<Input placeholder="Объект"
 										size={'small'}
 										style={{width: '100%'}}
 										variant="filled"
@@ -413,7 +397,7 @@ const BidListTable = (props) => {
 								className={'sa-table-head-on'}
 								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
 							>
-								<div className={'sa-pa-3'}>Список</div>
+								<div className={'sa-pa-3'} title="Список"><UnorderedListOutlined /></div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
@@ -421,7 +405,7 @@ const BidListTable = (props) => {
 								className={'sa-table-head-on'}
 								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
 							>
-								<div className={'sa-pa-3'}>Файлы</div>
+								<div className={'sa-pa-3'} title="Файлы"><PaperClipOutlined /></div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
@@ -429,16 +413,16 @@ const BidListTable = (props) => {
 								className={'sa-table-head-on'}
 								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
 							>
-								<div className={'sa-pa-3'}> Контакт. лицо
+								<div className={'sa-pa-3'} title="Контактное лицо"><UserOutlined />
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</Affix>
+			</React.Fragment>
 
 			<div className={'sa-table-box-stack'}>
-				{(props.bids && props.bids.length > 0) ?
+				{props.loading ? Array.from({length: 20}, (_, row) => <div className="sa-table-box-bids sa-table-box-row sa-org-skeleton-row" key={row}>{Array.from({length: 13}, (_, col) => <div className="sa-table-box-cell" key={col}><Skeleton.Input active size="small" block /></div>)}</div>) : (props.bids && props.bids.length > 0) ?
 					props.bids.map((bid, index) => (
 						<BidListRow
 							filter_triggered={filterTriggered}
@@ -448,6 +432,7 @@ const BidListTable = (props) => {
 							on_double_click={handlePreviewOpen}
 							key={`bid-row-${bid.id}`}
 							company_color={props.base_companies?.find((item) => item.id === bid.id_company)?.color}
+							company_name={props.base_companies?.find((item) => item.id === bid.id_company)?.name}
 							userdata={props?.userdata}
 							rerenderPage={props.rerenderPage}
 							success_alert={props.success_alert}
