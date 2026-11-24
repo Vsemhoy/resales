@@ -209,6 +209,7 @@ const BidFilesDrawer = (props) => {
     return (
         <Drawer
             title={`Файлы`}
+            className="sa-bid-files-drawer"
             placement="right"
             width={props.bidType === 2 ? 1000 : 600}
             onClose={() => props.closeDrawer()}

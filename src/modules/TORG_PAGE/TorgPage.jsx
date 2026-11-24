@@ -1804,7 +1804,7 @@ useEffect(() => {
           </Affix>
 
 					<div className={'sa-outlet-body'}>
-          <Affix offsetTop={pageTheme === 'main' ? 46 : 36} className={` ${lockBySocket ? 'sa-busy-header' : ''}`}>    
+          <Affix offsetTop={pageTheme === 'main' ? 92 : 36} className={` ${lockBySocket ? 'sa-busy-header' : ''}`}>
 						<div className={'sa-orgpage-sub-header sa-flex-space'}>
 							<div className={'sa-orgpage-sub-title'}>
 								<div className={'sa-orgpage-sub-name'}>{baseMainData?.name}</div>
@@ -1956,6 +1956,7 @@ useEffect(() => {
 							</div>
 						)}
 
+						<div className={`sa-orgpage-tabs-scroll ${activeTab === 'b' || activeTab === 'o' ? 'sa-orgpage-tabs-scroll-table' : ''} ${['c', 'p', 'n'].includes(activeTab) ? 'sa-orgpage-tabs-scroll-paginated' : ''}`}>
 
 						{activeTab === 'o' && (
 							<OrgListModalOffersTab
@@ -2071,6 +2072,7 @@ useEffect(() => {
 						{activeTab === 'h' && (
 							<OrgListModalHistoryTab data={{ id: itemId }} environment={'editor'} />
 						)}
+						</div>
 					</div>
 
 

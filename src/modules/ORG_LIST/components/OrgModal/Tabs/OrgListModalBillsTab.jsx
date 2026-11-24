@@ -149,24 +149,22 @@ const OrgListModalBillsTab = (props) => {
 			<div className={'sa-orgtab-container'}>
 				<div className={'sa-pa-6 sa-flex-space'}>
 					<div className="sa-flex-space">
-						<Pagination
-							size={'small'}
-							current={currentPage}
-							pageSizeOptions={[10, 30, 50, 100]}
-							defaultPageSize={onPage}
-							locale={ANTD_PAGINATION_LOCALE}
-							showQuickJumper
-							total={total}
-							onChange={(ev, on) => {
-								if (ev !== currentPage) {
-									setCurrentPage(ev);
-								}
-								if (on !== onPage) {
-									setOnPage(on);
-								}
-								get_org_data_action(orgId, ev, on);
-							}}
-						/>
+						<div className="sa-orgtab-pagination-top">
+							<Pagination
+								size={'small'}
+								current={currentPage}
+								pageSizeOptions={[10, 30, 50, 100]}
+								defaultPageSize={onPage}
+								locale={ANTD_PAGINATION_LOCALE}
+								showQuickJumper
+								total={total}
+								onChange={(ev, on) => {
+									if (ev !== currentPage) setCurrentPage(ev);
+									if (on !== onPage) setOnPage(on);
+									get_org_data_action(orgId, ev, on);
+								}}
+							/>
+						</div>
 						<Tag color="#cdd2d6ff" style={{ color: '#5a5a5aff' }}>
 							Всего {dataList.length}
 						</Tag>
@@ -224,6 +222,22 @@ const OrgListModalBillsTab = (props) => {
 						))}
 					</div>
 				</Spin>
+				<div className="ui-pagination sa-orgtab-pagination-bottom" style={{ display: 'none' }}>
+					<Pagination
+						size={'small'}
+						current={currentPage}
+						pageSizeOptions={[10, 30, 50, 100]}
+						defaultPageSize={onPage}
+						locale={ANTD_PAGINATION_LOCALE}
+						showQuickJumper
+						total={total}
+						onChange={(ev, on) => {
+							if (ev !== currentPage) setCurrentPage(ev);
+							if (on !== onPage) setOnPage(on);
+							get_org_data_action(orgId, ev, on);
+						}}
+					/>
+				</div>
 			</div>
 		</Spin>
 	);

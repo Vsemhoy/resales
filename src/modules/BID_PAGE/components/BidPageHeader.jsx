@@ -17,7 +17,7 @@ export const BidPageHeader = ({
     statusActionsProps,
 }) => (
     <div
-        className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}
+        className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header sa-bid-page-header'}
         style={{ margin: 0 }}
     >
         <div className={'sa-header-label-container'}>

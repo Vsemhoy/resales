@@ -432,22 +432,25 @@ const DataParser = ({
         {
             title: "Наименование",
             dataIndex: "name",
-            render: (name, record) => (
-                <div>
+            render: (name, record) => {
+                const nameLabel = (
                     <span style={record.matchStatus === 'exact' ? undefined : {
                         background: record.matchStatus === 'suggested' ? '#fff7e6' : '#fff1f0',
                         color: record.matchStatus === 'suggested' ? '#ad4e00' : '#cf1322',
                         padding: '0 4px',
                     }}>{name}</span>
-                    {record.matchStatus !== 'exact' && (
-                        <div style={{ fontSize: 12, color: '#666' }}>
-                            {record.matchStatus === 'suggested'
-                                ? `Предполагаемая модель. Исходная строка: ${record.source}`
-                                : 'Не распознано'}
-                        </div>
-                    )}
-                </div>
-            ),
+                );
+
+                if (record.matchStatus === 'exact') return nameLabel;
+
+                return (
+                    <Tooltip title={record.matchStatus === 'suggested'
+                        ? `Предполагаемая модель. Исходная строка: ${record.source}`
+                        : 'Не распознано'}>
+                        {nameLabel}
+                    </Tooltip>
+                );
+            },
         },
         {
             title: "Количество",
