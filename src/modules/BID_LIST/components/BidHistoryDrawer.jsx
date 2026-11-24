@@ -210,6 +210,7 @@ const BidHistoryDrawer = (props) => {
     return (
         <Drawer
             title={`История действий`}
+            className="sa-bid-history-actions-drawer"
             placement="right"
             width={600}
             onClose={() => props.closeDrawer?.()}

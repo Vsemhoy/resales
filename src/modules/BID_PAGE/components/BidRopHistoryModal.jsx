@@ -111,7 +111,7 @@ export default function BidRopHistoryModal({ bidId, onClose, loadHistory, select
     }, [bidId, pagination, loadHistory, retry]);
 
     return (
-        <Modal title={'История РОП — бид №' + bidId} open onCancel={onClose} footer={null} width="95vw"
+        <Modal title={'История РОП — бид №' + bidId} className="sa-bid-rop-history-modal" open onCancel={onClose} footer={null} width="95vw"
             style={{ top: '2.5vh', paddingBottom: 0, maxWidth: '95vw' }}
             styles={{
                 content: { height: '95vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' },
