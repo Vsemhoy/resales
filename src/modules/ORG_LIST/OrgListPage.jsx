@@ -1,6 +1,6 @@
 import ClassicView from './OrgListPage.classic.jsx';
 import { usePageTheme } from '../../context/PageThemeContext';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useUserData } from '../../context/UserDataContext';
 import './components/style/orglistpage.css';
 import {BASE_ROUTE, CSRF_TOKEN, HTTP_ROOT, PRODMODE, ROUTE_PREFIX} from '../../config/config';
@@ -67,6 +67,10 @@ const OrgListPage = (props) => {
 
 	// Это селекты
 	const [baseFiltersData, setBaseFilterstData] = useState(null);
+	const tableProfiles = useMemo(
+		() => baseFiltersData?.profiles?.map((prof) => ({ id: prof.id, ext: prof.ext })) ?? [],
+		[baseFiltersData?.profiles]
+	);
 
 	const [openedFilters, setOpenedFilters] = useState(false);
 
@@ -904,7 +908,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 								selected_item={previewItem}
 								on_select_change={handleSelectedItemChange}
 								on_change_proc={handleOnChangeProcessFilter}
-                                profiles={baseFiltersData?.profiles?.map(prof => ({id: prof.id, ext: prof.ext}))}
+	                                profiles={tableProfiles}
 							/>
 						</Spin>
 						</div>

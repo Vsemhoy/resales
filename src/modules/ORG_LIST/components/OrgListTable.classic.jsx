@@ -1,12 +1,13 @@
-import { Affix, DatePicker, Input, Select, Tooltip } from 'antd';
-import React, { useEffect, useState } from 'react';
-import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
+import TableHeaderFilter from '../../../components/template/TABLE/TableHeaderFilter';
+import { Affix, DatePicker, Input, Select } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import OrgListRow from './OrgListRow.classic.jsx';
 import dayjs from 'dayjs';
 import {ProjectOutlined} from "@ant-design/icons";
 import {BriefcaseIcon, InboxStackIcon, PhoneArrowUpRightIcon} from "@heroicons/react/24/solid";
 
 const OrgListTable = (props) => {
+
 	const [userdata, setUserdata] = useState(null);
 	const [sortOrders, setSortOrders] = useState([]);
 
@@ -25,6 +26,7 @@ const OrgListTable = (props) => {
 	// const [filterMeetings, setFilterMeetings] = useState(null);
 	// const [filterCalls, setFilterCalls] = useState(null);
 	const [filterCurator, setFilterCurator] = useState(null);
+	const emittedFiltersRef = useRef({});
 
 	/** Выделенная строка */
 	const [selectedItem, setSelectedItem] = useState(null);
@@ -61,7 +63,7 @@ const OrgListTable = (props) => {
 		}
 		// Создаём отложенную отправку через setTimeout
 		const timer = setTimeout(() => {
-			let filterBox = props.base_filters ?? {};
+			let filterBox = { ...(props.base_filters ?? {}) };
 
 			console.log('MOUNT TOP FILTERS', props.base_filters);
 
@@ -74,10 +76,11 @@ const OrgListTable = (props) => {
 
 			console.log(filterBox);
 			if (props.on_change_filters) {
+				emittedFiltersRef.current = { ...emittedFiltersRef.current, ...filterBox };
 				props.on_change_filters(filterBox);
 				console.log('CALLBACK');
 			}
-		}, 400);
+		}, 900);
 
 		// Очищаем таймер, если эффект пересоздаётся (чтобы не было утечек)
 		return () => clearTimeout(timer);
@@ -93,29 +96,23 @@ const OrgListTable = (props) => {
 		//   setCuratorList(props.curator_list);
 		// }
 		console.log(props.base_filters);
-		if (props.base_filters?.towns !== null) {
-			setFilterTown(props.base_filters.towns);
-		} else {
-			setFilterTown(null);
-		}
-		if (props.base_filters?.id !== null) {
-			setFilterId(props.base_filters.id);
-		} else {
-			setFilterId(null);
-		}
-		if (props.base_filters?.name !== null) {
-			setFilterName(props.base_filters.name);
-		} else {
-			setFilterName(null);
-		}
-		if (props.base_filters?.inn !== null) {
-			setFilterInn(props.base_filters.inn);
-		} else {
-			setFilterInn(null);
-		}
-		if (props.base_filters?.comment !== null) {
-			setFilterComment(props.base_filters.comment);
-		}
+		const syncFilterFromParent = (key, setter) => {
+			const value = props.base_filters?.[key] ?? null;
+			if (
+				Object.prototype.hasOwnProperty.call(emittedFiltersRef.current, key) &&
+				Object.is(emittedFiltersRef.current[key] ?? null, value)
+			) {
+				delete emittedFiltersRef.current[key];
+				return;
+			}
+			setter(value);
+		};
+
+		syncFilterFromParent('towns', setFilterTown);
+		syncFilterFromParent('id', setFilterId);
+		syncFilterFromParent('name', setFilterName);
+		syncFilterFromParent('inn', setFilterInn);
+		syncFilterFromParent('comment', setFilterComment);
 		if (
 			props.base_filters?.curator !== null &&
 			props.base_filters?.curator !== '' &&
@@ -123,9 +120,9 @@ const OrgListTable = (props) => {
 			!Number.isNaN(Number(props.base_filters?.curator)) &&
 			props.base_filters?.curator !== undefined
 		) {
-			setFilterCurator(parseInt(props.base_filters.curator));
+			syncFilterFromParent('curator', (value) => setFilterCurator(parseInt(value)));
 		} else {
-			setFilterCurator(null);
+			syncFilterFromParent('curator', setFilterCurator);
 		}
 	}, [props.base_filters, props.curator_list]);
 
@@ -212,146 +209,121 @@ const OrgListTable = (props) => {
 			<Affix offsetTop={146}>
 				<div className={'sa-table-box-header'}>
 					<div className={'sa-table-box-orgs sa-table-box-row'}>
-						<div className={'sa-table-box-cell'}>
+						<div className="sa-table-box-cell">
+							<TableHeaderFilter
+								label="id"
+								sortKey={'id'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={filterId}
+									onChange={(ev) => {
+										setFilterId(ev.target.value);
+									}}
+									allowClear
+								/>
+							</TableHeaderFilter>
+						</div>
+						<div className="sa-table-box-cell">
+							<TableHeaderFilter
+								label="Название организации"
+								sortKey={'name'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={filterName}
+									onChange={(ev) => {
+										setFilterName(ev.target.value);
+									}}
+									allowClear
+								/>
+							</TableHeaderFilter>
+						</div>
+						<div className="sa-table-box-cell">
+							<TableHeaderFilter
+								label="Город"
+								sortKey={'town'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={filterTown}
+									onChange={(ev) => {
+										setFilterTown(ev.target.value);
+									}}
+									allowClear
+								/>
+							</TableHeaderFilter>
+						</div>
+						<div className="sa-table-box-cell">
 							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'id'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									id
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										value={filterId}
-										onChange={(ev) => {
-											setFilterId(ev.target.value);
-										}}
-										allowClear
-									/>
-								</div>
+								<div className={'sa-pa-3 sa-org-filter-heading-label'}>Профиль</div>
 							</div>
 						</div>
-						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'name'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Название организации
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										value={filterName}
-										onChange={(ev) => {
-											setFilterName(ev.target.value);
-										}}
-										allowClear
-									/>
-								</div>
-							</div>
+						<div className="sa-table-box-cell">
+							<TableHeaderFilter
+								label="Памятка"
+								sortKey={'comment'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={filterComment}
+									onChange={(ev) => {
+										setFilterComment(ev.target.value);
+									}}
+									onClear={() => setFilterComment(null)}
+									allowClear
+								/>
+							</TableHeaderFilter>
 						</div>
-						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'town'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Город
-								</TableHeadNameWithSort>
-								<Tooltip placement="bottom">
-									<div className={'sa-pa-3'}>
-										<Input
-											size={'small'}
-											style={{width: '100%'}}
-											variant="filled"
-											value={filterTown}
-											onChange={(ev) => {
-												setFilterTown(ev.target.value);
-											}}
-											allowClear
-										/>
-									</div>
-								</Tooltip>
-							</div>
+						<div className="sa-table-box-cell">
+							<TableHeaderFilter label="ИНН">
+								<Input
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={filterInn}
+									onChange={(ev) => {
+										setFilterInn(ev.target.value);
+									}}
+									allowClear
+								/>
+							</TableHeaderFilter>
 						</div>
-						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Профиль</div>
-								<div className={'sa-pa-3'}></div>
-							</div>
-						</div>
-						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'comment'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Памятка
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										value={filterComment}
-										onChange={(ev) => {
-											setFilterComment(ev.target.value);
-										}}
-										allowClear
-									/>
-								</div>
-							</div>
-						</div>
-						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>ИНН</div>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										value={filterInn}
-										onChange={(ev) => {
-											setFilterInn(ev.target.value);
-										}}
-										allowClear
-									/>
-								</div>
-							</div>
-						</div>
-						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'curator'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Куратор
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Select
-										size={'small'}
-										showSearch
-										optionFilterProp="label"
-										style={{width: '100%'}}
-										variant="filled"
-										options={curatorList}
-										allowClear
-										onChange={setFilterCurator}
-										value={filterCurator}
-									/>
-								</div>
-							</div>
+						<div className="sa-table-box-cell">
+							<TableHeaderFilter
+								label="Куратор"
+								sortKey={'curator'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Select
+									size={'small'}
+									showSearch
+									optionFilterProp="label"
+									style={{width: '100%'}}
+									variant="filled"
+									options={curatorList}
+									allowClear
+									onChange={setFilterCurator}
+									value={filterCurator}
+								/>
+							</TableHeaderFilter>
 						</div>
 						{/*<div className={'sa-table-box-cell'}>*/}
 						{/*	<div className={'sa-table-head-on'}>*/}

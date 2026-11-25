@@ -84,15 +84,14 @@
   grid-template-columns:
     minmax(60px, 70px)
     minmax(70px, 80px)
-    minmax(92px, 102px)
+    minmax(225px, 240px) /* Этап */
     minmax(50px, 60px)
-    minmax(100px, 0.3fr)
-    minmax(100px, 0.7fr)
-    minmax(90px, 120px)
-    minmax(90px, 120px)
+    minmax(100px, 0.65fr) /* Организация */
+    minmax(100px, 0.35fr) /* Объект */
+    minmax(140px, 185px) /* Менеджер */
+    minmax(155px, 200px) /* Автор */
     minmax(100px, 60px)
     minmax(90px, 120px)
-    minmax(80px, 100px)
     minmax(80px, 100px);
 }
 
@@ -122,8 +121,11 @@
   justify-content: flex-start;
 }
 
+.companyMarkedRow > :global(.sa-table-box-cell) > * {
+  height: auto !important;
+}
+
 .pdfTableRow > .orgNameCell {
-  align-items: flex-start;
   line-height: 1.25;
   min-width: 0;
   overflow: hidden;
@@ -168,16 +170,6 @@
   gap: 5px;
 }
 
-.emptyFilter {
-  display: block;
-  width: 100%;
-  height: 24px;
-  line-height: 24px;
-  color: #bfbfbf;
-  font-size: 12px;
-  text-align: center;
-}
-
 .muted {
   color: #bfbfbf;
 }
@@ -187,23 +179,4 @@
   width: 100%;
   min-width: 0;
   max-width: 100%;
-}
-
-.creatorCell {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.deleteIcon {
-  flex-shrink: 0;
-  color: #bfbfbf;
-  font-size: 14px;
-  cursor: pointer;
-  transition: color 0.15s;
-}
-
-.deleteIcon:hover {
-  color: #ff4d4f;
 }
