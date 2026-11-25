@@ -138,7 +138,7 @@ const OrgListTable = (props) => {
 
 	useEffect(() => {
 		console.log('BAESE ORDERS', props.base_orders);
-		setSortOrders(props.base_orders);
+		setSortOrders(Array.isArray(props.base_orders) ? props.base_orders : []);
 	}, [props.base_orders]);
 
 	/**

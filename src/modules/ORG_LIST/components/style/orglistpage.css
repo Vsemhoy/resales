@@ -20,7 +20,7 @@
 }
 
 .sa-table-box-header .sa-org-filter-heading-label {
-	color: #fff;
+	color: var(--table-filter-label-color, #182433);
 	text-align: center;
 }
 

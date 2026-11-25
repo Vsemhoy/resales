@@ -78,7 +78,7 @@ const OrgListPage = (props) => {
 	const [previousPage, setPreviousPage] = useState(1);
 
 	const [filterBox, setFilterBox] = useState({});
-	const [orderBox, setOrderBox] = useState({});
+	const [orderBox, setOrderBox] = useState([]);
 
 	/** Сортировки как объект, где колонка - ключ, значение - ASC/DESC */
 
@@ -660,7 +660,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 
 	const handleClearAllBoxes = () => {
 		setFilterBox({});
-		setOrderBox({});
+		setOrderBox([]);
 		setSearchValue("");
 	};
 
@@ -669,7 +669,7 @@ const get_orglist_async = async (overridePage = null, overrideOnPage = null) => 
 	};
 
 	const handleClearOrderBox = () => {
-		setOrderBox({});
+		setOrderBox([]);
 	};
 
 	const handleChangeOnPage = (evt) => {

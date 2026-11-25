@@ -1,16 +1,19 @@
 import React from 'react';
 import { CaretDownFilled, CaretUpFilled } from '@ant-design/icons';
+import { usePageTheme } from '../../../context/PageThemeContext';
 
 export default function TableHeaderFilter({ label, children, sortKey, sortOrders, onSort }) {
-	const order = Number(sortOrders?.find(item => item.key === sortKey)?.order) || 0;
+	const isClassic = usePageTheme() === 'classic';
+	const activeSort = Array.isArray(sortOrders) ? sortOrders.find(item => item?.key === sortKey) : undefined;
+	const order = Number(activeSort?.order) || 0;
 
 	return (
-		<div className="sa-table-header-filter">
+		<div className={`sa-table-header-filter${children ? ' sa-table-header-filter--with-control' : ''}`}>
 			<div className="sa-table-header-filter-field">
 				<span className="sa-table-header-filter-label" aria-hidden={children ? true : undefined}>{label}</span>
 				{children && React.cloneElement(children, {
 					size: 'small',
-					placeholder: ' ',
+					placeholder: isClassic ? undefined : ' ',
 					'aria-label': children.props['aria-label'] ?? label,
 				})}
 			</div>
