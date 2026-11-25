@@ -19,6 +19,11 @@
 		minmax(80px, 80px);
 }
 
+.sa-table-box-header .sa-org-filter-heading-label {
+	color: #fff;
+	text-align: center;
+}
+
 .sa-filer-opened .sa-table-box-orgs {
 	/*grid-template-columns: 85px 3fr 2fr 66px 3fr 150px 250px 1.2fr 80px 80px 80px 80px !important;*/
 

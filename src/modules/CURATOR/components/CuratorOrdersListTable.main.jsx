@@ -1,7 +1,7 @@
 import { Skeleton } from 'antd';
 import {Affix, DatePicker, Empty, Input, Select} from 'antd';
 import React, { useEffect, useState } from 'react';
-import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
+import TableHeaderFilter from '../../../components/template/TABLE/TableHeaderFilter';
 import dayjs from 'dayjs';
 import CuratorOrdersListRow from "./CuratorOrdersListRow";
 import {CSRF_TOKEN, PRODMODE} from "../../../config/config";
@@ -124,120 +124,110 @@ const CuratorOrdersListTable = (props) => {
 						className={'sa-table-box-curators sa-table-box-row sa-table-box-row-header'}
 					>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'id'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>id</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input placeholder="id"
-										type={'number'}
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={orderId}
-										onChange={(val) =>
-											val.target.value && +val.target.value !== 0
-												? setOrderId(val.target.value)
-												: setOrderId(null)
-										}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="id"
+								sortKey={'id'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input placeholder="id"
+									type={'number'}
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={orderId}
+									onChange={(val) =>
+										val.target.value && +val.target.value !== 0
+											? setOrderId(val.target.value)
+											: setOrderId(null)
+									}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'date'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>Дата заявки</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<DatePicker placeholder="Дата заявки"
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={dates ? dayjs.unix(Number(dates)) : null}
-										onChange={(date, dateString) => {
-											console.log(date);
-											console.log(dateString);
-											setDates(date ? date.unix() : null);
-										}}
-										format="DD.MM.YYYY"
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Дата заявки"
+								sortKey={'date'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<DatePicker placeholder="Дата заявки"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={dates ? dayjs.unix(Number(dates)) : null}
+									onChange={(date, dateString) => {
+										console.log(date);
+										console.log(dateString);
+										setDates(date ? date.unix() : null);
+									}}
+									format="DD.MM.YYYY"
+								/>
+							</TableHeaderFilter>
 						</div>
-                        <div className="sa-table-box-cell"><div className={'sa-table-head-on'}>
-                            <TableHeadNameWithSort
-                                sort_key={'org_id'}
-                                on_sort_change={handleActivateSorter}
-                                active_sort_items={sortOrders}
-                            >id организации</TableHeadNameWithSort>
-                            <div className={'sa-pa-3'}>
-                                <Input placeholder="id организации"
-                                    type={'number'}
-                                    size={'small'}
-                                    style={{width: '100%'}}
-                                    variant="filled"
-                                    allowClear
-                                    value={orgId}
-                                    onChange={(val) =>
-                                        val.target.value && +val.target.value !== 0
-                                            ? setOrgId(val.target.value)
-                                            : setOrgId(null)
-                                    }
-                                />
-                            </div>
-                        </div></div>
+                        <div className="sa-table-box-cell"><TableHeaderFilter
+                            label="id организации"
+                            sortKey={'org_id'}
+                            sortOrders={sortOrders}
+                            onSort={handleActivateSorter}
+                        >
+                            <Input placeholder="id организации"
+                                type={'number'}
+                                size={'small'}
+                                style={{width: '100%'}}
+                                variant="filled"
+                                allowClear
+                                value={orgId}
+                                onChange={(val) =>
+                                    val.target.value && +val.target.value !== 0
+                                        ? setOrgId(val.target.value)
+                                        : setOrgId(null)
+                                }
+                            />
+                        </TableHeaderFilter></div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'company_name'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>Название организации</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input placeholder="Название организации"
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={companyName}
-										onChange={(val) =>
-											val.target.value && +val.target.value !== 0
-												? setCompanyName(val.target.value)
-												: setCompanyName(null)
-										}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Название организации"
+								sortKey={'company_name'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input placeholder="Название организации"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={companyName}
+									onChange={(val) =>
+										val.target.value && +val.target.value !== 0
+											? setCompanyName(val.target.value)
+											: setCompanyName(null)
+									}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'user_name'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>Инициатор</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input placeholder="Инициатор"
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={userName}
-										onChange={(val) =>
-											val.target.value && +val.target.value !== 0
-												? setUserName(val.target.value)
-												: setUserName(null)
-										}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Инициатор"
+								sortKey={'user_name'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input placeholder="Инициатор"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={userName}
+									onChange={(val) =>
+										val.target.value && +val.target.value !== 0
+											? setUserName(val.target.value)
+											: setUserName(null)
+									}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>
