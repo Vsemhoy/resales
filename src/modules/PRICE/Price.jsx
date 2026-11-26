@@ -465,10 +465,10 @@ const Price = (props) => {
         
         let lastRow = null;
         sections.forEach(({ categoryName, depth, models }) => {
-            // Показываем только SUBCATEGORY (depth === 2), COMPANY и CATEGORY пропускаем
-            if (depth < 2) return;
+            // Пропускаем только пустые верхние ветки, но выгружаем модели на любом уровне.
+            if (depth < 2 && models.length === 0) return;
 
-            // Название SUBCATEGORY выводим во второй столбец (Описание), первый оставляем пустым
+            // Название категории выводим во второй столбец, первый оставляем пустым.
             const catRow = ws.addRow([categoryName.trim(), '', ...extraColumns, ...propertyColumns]);
             ws.mergeCells(catRow.number, 1, catRow.number, 2);
 
