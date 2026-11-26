@@ -44,7 +44,23 @@
     border-radius: 6px;
     position: sticky;
     top: 120px;
-    height: 196px;
+    min-height: 196px;
+}
+.sa-price-markup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+}
+.sa-price-markup-field {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex: 0 0 auto;
+}
+.sa-price-markup-input {
+    width: 62px;
 }
 .sa-price-grid-cell {
     text-align: left;

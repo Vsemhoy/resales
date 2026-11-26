@@ -3,7 +3,7 @@ import {PRODMODE, CSRF_TOKEN, ROUTE_PREFIX} from '../../config/config';
 import { useMemo, useRef } from 'react';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
-import {Tree, Table, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix, Skeleton, Tooltip} from 'antd';
+import {Tree, Table, Button, Spin, Tag, Switch, Checkbox, InputNumber, Layout, Alert, Affix, Skeleton, Tooltip} from 'antd';
 import { usePageTheme } from '../../context/PageThemeContext';
 import './style/price-common.css';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
@@ -16,6 +16,7 @@ import {Content, Header} from "antd/es/layout/layout";
 import ExcelJS from 'exceljs';
 import PricePropertiesExportDialog from './PricePropertiesExportDialog';
 import { getPriceModelPropertyValues } from './priceProperties.api';
+import { applyPriceMarkup } from './priceMarkup';
 
 
 const Price = (props) => {
@@ -30,6 +31,7 @@ const Price = (props) => {
     const [exporting, setExporting] = useState(false);
     const [tableViewport, setTableViewport] = useState({ width: 900, height: 400 });
     const priceTableContainerRef = useRef(null);
+    const previousTreeDataRef = useRef(null);
 
     const [userData, setUserData] = useState(null);
 
@@ -39,26 +41,31 @@ const Price = (props) => {
             id: 0,
             name: 'РРЦ',
             checked: true,
+            markup: 0,
         },
         {
             id: 1,
             name: 'Розница',
             checked: true,
+            markup: 0,
         },
         {
             id: 2,
             name: 'Прайс 10',
             checked: true,
+            markup: 0,
         },
         {
             id: 3,
             name: 'Прайс 20',
             checked: true,
+            markup: 0,
         },
         {
             id: 4,
             name: 'Прайс 30',
             checked: true,
+            markup: 0,
         },
     ];
     const [checkedList, setCheckedList] = useState(defaultCheckedList);
@@ -78,11 +85,17 @@ const Price = (props) => {
             setSmallLoading(false);
             return undefined;
         }
-        setSmallLoading(true);
+        const dataChanged = previousTreeDataRef.current !== data;
+        previousTreeDataRef.current = data;
+        if (dataChanged) setSmallLoading(true);
         const treeNodes = mapDataToTreeNodes(data);
         setTreeData(treeNodes);
-        setTimeout(() => setSmallLoading(false), 500);
-        return undefined;
+        if (!dataChanged) {
+            setSmallLoading(false);
+            return undefined;
+        }
+        const timer = setTimeout(() => setSmallLoading(false), 500);
+        return () => clearTimeout(timer);
     }, [data, checkedList, currentCurrency, isMainTheme]);
     useEffect(() => {
         const container = priceTableContainerRef.current;
@@ -189,6 +202,33 @@ const Price = (props) => {
         checkedListUpd[idx].checked = checked;
         setCheckedList(checkedListUpd);
     };
+    const onChangeMarkup = (markup, idx) => {
+        setCheckedList((previous) => previous.map((option, optionIndex) =>
+            optionIndex === idx ? { ...option, markup } : option));
+    };
+    const getAdjustedPrice = (priceMinor, optionId) =>
+        applyPriceMarkup(priceMinor, checkedList.find((option) => option.id === optionId)?.markup);
+    const renderPriceControl = (option, idx) => (
+        <div className="sa-price-markup-row" key={option.id}>
+            <Checkbox checked={option.checked} onChange={(event) => onChangeCheckbox(event.target.checked, idx)}>
+                {option.name}
+            </Checkbox>
+            <div className="sa-price-markup-field">
+                <InputNumber
+                    className="sa-price-markup-input"
+                    size="small"
+                    min={0}
+                    precision={2}
+                    controls={false}
+                    value={option.markup}
+                    placeholder="0"
+                    onChange={(value) => onChangeMarkup(value, idx)}
+                    aria-label={`Наценка ${option.name}, процентов`}
+                />
+                <span aria-hidden="true">%</span>
+            </div>
+        </div>
+    );
     //const convertToRub = (price, curr) => price * currency.company[curr].value;
     const getCurrencySymbol = (c) => {
         return currentCurrency ? '₽' : c === 0 ? '$' : '€';
@@ -224,10 +264,7 @@ const Price = (props) => {
                                         >
                                             РРЦ:{' '}
                                             <Tag  color={'geekblue'}>
-                                                { currentCurrency ?
-                                                    ((model.prices.bo_price_40_rub) / 100).toFixed(2) :
-                                                    ((model.prices.bo_price_40) / 100).toFixed(2)
-                                                }
+                                                {getAdjustedPrice(currentCurrency ? model.prices.bo_price_40_rub : model.prices.bo_price_40, 0).toFixed(2)}
                                                 {getCurrencySymbol(model.currency)}
                                             </Tag>
                                         </Tag>
@@ -245,10 +282,7 @@ const Price = (props) => {
                                         >
                                             Розница:{' '}
                                             <Tag color={'blue'}>
-                                                { currentCurrency ?
-                                                    ((model.prices.bo_price_0_rub) / 100).toFixed(2) :
-                                                    ((model.prices.bo_price_0) / 100).toFixed(2)
-                                                }
+                                                {getAdjustedPrice(currentCurrency ? model.prices.bo_price_0_rub : model.prices.bo_price_0, 1).toFixed(2)}
                                                 {getCurrencySymbol(model.currency)}
                                             </Tag>
                                         </Tag>
@@ -266,10 +300,7 @@ const Price = (props) => {
                                         >
                                             Прайс 10:{' '}
                                             <Tag color={'green'}>
-                                                { currentCurrency ?
-                                                    ((model.prices.bo_price_10_rub) / 100).toFixed(2) :
-                                                    ((model.prices.bo_price_10) / 100).toFixed(2)
-                                                }
+                                                {getAdjustedPrice(currentCurrency ? model.prices.bo_price_10_rub : model.prices.bo_price_10, 2).toFixed(2)}
                                                 {getCurrencySymbol(model.currency)}
                                             </Tag>
                                         </Tag>
@@ -287,10 +318,7 @@ const Price = (props) => {
                                         >
                                             Прайс 20:{' '}
                                             <Tag color={'gold'}>
-                                                { currentCurrency ?
-                                                    ((model.prices.bo_price_20_rub) / 100).toFixed(2) :
-                                                    ((model.prices.bo_price_20) / 100).toFixed(2)
-                                                }
+                                                {getAdjustedPrice(currentCurrency ? model.prices.bo_price_20_rub : model.prices.bo_price_20, 3).toFixed(2)}
                                                 {getCurrencySymbol(model.currency)}
                                             </Tag>
                                         </Tag>
@@ -308,10 +336,7 @@ const Price = (props) => {
                                         >
                                             Прайс 30:{' '}
                                             <Tag color={'volcano'}>
-                                                { currentCurrency ?
-                                                    ((model.prices.bo_price_30_rub) / 100).toFixed(2) :
-                                                    ((model.prices.bo_price_30) / 100).toFixed(2)
-                                                }
+                                                {getAdjustedPrice(currentCurrency ? model.prices.bo_price_30_rub : model.prices.bo_price_30, 4).toFixed(2)}
                                                 {getCurrencySymbol(model.currency)}
                                             </Tag>
                                         </Tag>
@@ -423,7 +448,7 @@ const Price = (props) => {
             render: (_, record) => {
                 if (record.rowType === 'category') return null;
                 const rawPrice = currentCurrency ? record.prices?.[definition.rub] : record.prices?.[definition.price];
-                const formattedPrice = Number(rawPrice || 0) / 100;
+                const formattedPrice = getAdjustedPrice(rawPrice, definition.id);
                 return (
                     <span className="sa-price-table-price">
                         <span>{definition.label}:</span>
@@ -617,16 +642,16 @@ const Price = (props) => {
         });
         
         models.forEach((m) => {
-            const getPrice = (rub, val) =>
-                ((currentCurrency ? rub : val) / 100).toFixed(2);
+            const getPrice = (rub, val, optionId) =>
+                getAdjustedPrice(currentCurrency ? rub : val, optionId);
 
                 if (m.name || m.name.trim() !== ''){
                     const rowData = [m.name, m.descr];
-                    if (checkCol('РРЦ'))      rowData.push(Number(getPrice(m.prices.bo_price_40_rub, m.prices.bo_price_40)));
-                    if (checkCol('Розница'))  rowData.push(Number(getPrice(m.prices.bo_price_0_rub,  m.prices.bo_price_0)));
-                    if (checkCol('Прайс 10')) rowData.push(Number(getPrice(m.prices.bo_price_10_rub, m.prices.bo_price_10)));
-                    if (checkCol('Прайс 20')) rowData.push(Number(getPrice(m.prices.bo_price_20_rub, m.prices.bo_price_20)));
-                    if (checkCol('Прайс 30')) rowData.push(Number(getPrice(m.prices.bo_price_30_rub, m.prices.bo_price_30)));
+                    if (checkCol('РРЦ'))      rowData.push(getPrice(m.prices.bo_price_40_rub, m.prices.bo_price_40, 0));
+                    if (checkCol('Розница'))  rowData.push(getPrice(m.prices.bo_price_0_rub,  m.prices.bo_price_0, 1));
+                    if (checkCol('Прайс 10')) rowData.push(getPrice(m.prices.bo_price_10_rub, m.prices.bo_price_10, 2));
+                    if (checkCol('Прайс 20')) rowData.push(getPrice(m.prices.bo_price_20_rub, m.prices.bo_price_20, 3));
+                    if (checkCol('Прайс 30')) rowData.push(getPrice(m.prices.bo_price_30_rub, m.prices.bo_price_30, 4));
                     const modelProperties = propertyValues.get(Number(m.id));
                     properties.forEach((property, index) => {
                         const value = modelProperties?.get(Number(property.id)) ?? '';
@@ -725,7 +750,7 @@ const Price = (props) => {
                     <div className="sa-price-common-heading">Фильтры прайса</div>
                     <div className="sa-price-common-filter-fields">
                         <span>Колонки цен</span>
-                        {checkedList.map((option, idx) => <Checkbox key={option.id} checked={option.checked} onChange={(event) => onChangeCheckbox(event.target.checked, idx)}>{option.name}</Checkbox>)}
+                        {checkedList.map(renderPriceControl)}
                         <span>Валюта отображения</span>
                         <Switch checked={currentCurrency} checkedChildren="Рубли" unCheckedChildren="Валюта" onChange={setCurrentCurrency} />
                     </div>
@@ -840,7 +865,7 @@ const Price = (props) => {
                         <Sider
                             collapsed={!isOpenedFilters}
                             collapsedWidth={0}
-                            width={'170px'}
+                            width={'220px'}
                             style={{
                                 backgroundColor: '#ffffff',
                                 overflow: 'hidden',
@@ -853,13 +878,7 @@ const Price = (props) => {
                                 <div className={'sa-sider'}>
                                     {isOpenedFilters && (
                                         <div className={'sa-price-sider'}>
-                                            {checkedList.map((option, idx) => (
-                                                <Checkbox onChange={(e) => onChangeCheckbox(e.target.checked, idx)}
-                                                          checked={option.checked}
-                                                >
-                                                    {option.name}
-                                                </Checkbox>
-                                            ))}
+                                            {checkedList.map(renderPriceControl)}
                                             <Switch
                                                 checkedChildren="Рубли"
                                                 unCheckedChildren="Валюта"
