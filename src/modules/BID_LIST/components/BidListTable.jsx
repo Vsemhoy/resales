@@ -1,8 +1,9 @@
-import {Affix, DatePicker, Empty, Input, Select} from 'antd';
+import {Affix, DatePicker, Empty, Input, Select, Skeleton} from 'antd';
 import React, { useEffect, useState } from 'react';
-import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
+import TableHeaderFilter from '../../../components/template/TABLE/TableHeaderFilter';
 import BidListRow from './BidListRow';
 import dayjs from 'dayjs';
+import {UnorderedListOutlined, PaperClipOutlined, UserOutlined} from '@ant-design/icons';
 
 const BidListTable = (props) => {
 	const [sortOrders, setSortOrders] = useState([]);
@@ -176,236 +177,207 @@ const BidListTable = (props) => {
 
 	return (
 		<div className={'sa-table-box'}>
-			<Affix offsetTop={156}>
+			<React.Fragment>
 				<div className={'sa-table-box-header'}>
 					<div
 						className={'sa-table-box-bids sa-table-box-row sa-table-box-row-header'}
 					>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'id'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									id
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input
-										type={'number'}
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={bidId}
-										onChange={(val) =>
-											val.target.value && +val.target.value !== 0
-												? setBidId(val.target.value)
-												: setBidId(null)
-										}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="id"
+								sortKey={'id'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input placeholder="id"
+									type={'number'}
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={bidId}
+									onChange={(val) =>
+										val.target.value && +val.target.value !== 0
+											? setBidId(val.target.value)
+											: setBidId(null)
+									}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'company_name'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Название организации
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={companyName}
-										onChange={(val) =>
-											val.target.value && +val.target.value !== 0
-												? setCompanyName(val.target.value)
-												: setCompanyName(null)
-										}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Название организации"
+								sortKey={'company_name'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input placeholder="Название организации"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={companyName}
+									onChange={(val) =>
+										val.target.value && +val.target.value !== 0
+											? setCompanyName(val.target.value)
+											: setCompanyName(null)
+									}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'type_status'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Тип
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Select
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										value={type}
-										options={props.filter_bid_types}
-										onChange={(val) => setType(val)}
-										allowClear
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Тип"
+								sortKey={'type_status'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Select placeholder="Тип"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={type}
+									options={props.filter_bid_types}
+									onChange={(val) => setType(val)}
+									allowClear
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'protection_project'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Защита
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Select
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										value={protectStatus}
-										options={props.filter_protection_projects}
-										onChange={(val) => setProtectStatus(val)}
-										allowClear
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Защита"
+								sortKey={'protection_project'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Select placeholder="Защита"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={protectStatus}
+									options={props.filter_protection_projects}
+									onChange={(val) => setProtectStatus(val)}
+									allowClear
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'stage_id'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Этап
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Select
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										value={stageStatus}
-										options={props.filter_steps}
-										onChange={(val) => setStageStatus(val)}
-										allowClear
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Этап"
+								sortKey={'stage_id'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Select placeholder="Этап"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={stageStatus}
+									options={props.filter_steps}
+									onChange={(val) => setStageStatus(val)}
+									allowClear
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'date'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Дата
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<DatePicker
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={dates ? dayjs.unix(dates) : null}
-										onChange={(date, dateString) => {
-											console.log(date);
-											console.log(dateString);
-											setDates(date ? date.unix() : null);
-										}}
-										format="DD.MM.YYYY"
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Дата"
+								sortKey={'date'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<DatePicker placeholder="Дата"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={dates ? dayjs.unix(dates) : null}
+									onChange={(date, dateString) => {
+										console.log(date);
+										console.log(dateString);
+										setDates(date ? date.unix() : null);
+									}}
+									format="DD.MM.YYYY"
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'username'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Менеджер
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Select
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										value={manager}
-										options={props.filter_managers}
-										onChange={(val) => setManager(val)}
-										allowClear
-										showSearch
-										optionFilterProp="label"
-										filterOption={(input, option) =>
-											option.label.toLowerCase().includes(input.toLowerCase())
-										}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Менеджер"
+								sortKey={'username'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Select placeholder="Менеджер"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									value={manager}
+									options={props.filter_managers}
+									onChange={(val) => setManager(val)}
+									allowClear
+									showSearch
+									optionFilterProp="label"
+									filterOption={(input, option) =>
+										option.label.toLowerCase().includes(input.toLowerCase())
+									}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Счета</div>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={billNumber}
-										onChange={(val) =>
-											val.target.value && +val.target.value !== 0
-												? setBillNumber(val.target.value)
-												: setBillNumber(null)
-										}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter label="Счета">
+								<Input placeholder="Счета"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={billNumber}
+									onChange={(val) =>
+										val.target.value && +val.target.value !== 0
+											? setBillNumber(val.target.value)
+											: setBillNumber(null)
+									}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Комментарий</div>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={comment}
-										onChange={(val) =>
-											val.target.value && +val.target.value !== 0
-												? setComment(val.target.value)
-												: setComment(null)
-										}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter label="Комментарий">
+								<Input placeholder="Комментарий"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={comment}
+									onChange={(val) =>
+										val.target.value && +val.target.value !== 0
+											? setComment(val.target.value)
+											: setComment(null)
+									}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Объект</div>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{width: '100%'}}
-										variant="filled"
-										allowClear
-										value={objectName}
-										onChange={(val) =>
-											val.target.value && +val.target.value !== 0
-												? setObjectName(val.target.value)
-												: setObjectName(null)
-										}
-									/>
-								</div>
+							<TableHeaderFilter label="Объект">
+								<Input placeholder="Объект"
+									size={'small'}
+									style={{width: '100%'}}
+									variant="filled"
+									allowClear
+									value={objectName}
+									onChange={(val) =>
+										val.target.value && +val.target.value !== 0
+											? setObjectName(val.target.value)
+											: setObjectName(null)
+									}
+								/>
+							</TableHeaderFilter>
+						</div>
+						<div className={'sa-table-box-cell'}>
+							<div
+								className={'sa-table-head-on'}
+								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+							>
+								<div className={'sa-pa-3'} title="Список"><UnorderedListOutlined /></div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
@@ -413,7 +385,7 @@ const BidListTable = (props) => {
 								className={'sa-table-head-on'}
 								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
 							>
-								<div className={'sa-pa-3'}>Список</div>
+								<div className={'sa-pa-3'} title="Файлы"><PaperClipOutlined /></div>
 							</div>
 						</div>
 						<div className={'sa-table-box-cell'}>
@@ -421,24 +393,16 @@ const BidListTable = (props) => {
 								className={'sa-table-head-on'}
 								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
 							>
-								<div className={'sa-pa-3'}>Файлы</div>
-							</div>
-						</div>
-						<div className={'sa-table-box-cell'}>
-							<div
-								className={'sa-table-head-on'}
-								style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
-							>
-								<div className={'sa-pa-3'}> Контакт. лицо
+								<div className={'sa-pa-3'} title="Контактное лицо"><UserOutlined />
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</Affix>
+			</React.Fragment>
 
 			<div className={'sa-table-box-stack'}>
-				{(props.bids && props.bids.length > 0) ?
+				{props.loading ? Array.from({length: 20}, (_, row) => <div className="sa-table-box-bids sa-table-box-row sa-org-skeleton-row" key={row}>{Array.from({length: 13}, (_, col) => <div className="sa-table-box-cell" key={col}><Skeleton.Input active size="small" block /></div>)}</div>) : (props.bids && props.bids.length > 0) ?
 					props.bids.map((bid, index) => (
 						<BidListRow
 							filter_triggered={filterTriggered}
@@ -448,6 +412,7 @@ const BidListTable = (props) => {
 							on_double_click={handlePreviewOpen}
 							key={`bid-row-${bid.id}`}
 							company_color={props.base_companies?.find((item) => item.id === bid.id_company)?.color}
+							company_name={props.base_companies?.find((item) => item.id === bid.id_company)?.name}
 							userdata={props?.userdata}
 							rerenderPage={props.rerenderPage}
 							success_alert={props.success_alert}

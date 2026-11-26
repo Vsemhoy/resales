@@ -1,0 +1,596 @@
+import React, { useEffect, useState } from 'react';
+import {Affix, Alert, Button, Dropdown, Layout, Pagination, Select, Space, Spin, Tag, Tooltip} from 'antd';
+import { Content } from 'antd/es/layout/layout';
+import CuratorListTable from './components/CuratorListTable';
+import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
+import {CONFIRM_LIST, COUNT, SUPERVISOR} from './mock/mock';
+import { PROD_AXIOS_INSTANCE } from '../../config/Api';
+import './components/style/curatorlistpage.css';
+import CurrencyMonitorBar from "../../components/template/CURRENCYMONITOR/CurrencyMonitorBar";
+import {CaretLeftFilled, CloseOutlined, FilterOutlined} from "@ant-design/icons";
+import Sider from "antd/es/layout/Sider";
+import {NavLink, useSearchParams} from "react-router-dom";
+import BidListTable from "../BID_LIST/components/BidListTable";
+import dayjs from "dayjs";
+import {BID_LIST, FILTERS} from "../BID_LIST/mock/mock";
+import CuratorOrdersListSiderFilters from "./components/CuratorOrdersListSiderFilters.main";
+import OrderListSider from "../ENGINEER_LIST/components/OrderListSider";
+import CuratorOrdersListTable from "./components/CuratorOrdersListTable.main";
+import Helper from "../../components/helpers/Helper";
+import {toInteger} from "lodash";
+
+const CuratorPageNEW = (props) => {
+	const { userdata } = props;
+	const [isMounted, setIsMounted] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [isOpenedFilters, setIsOpenedFilters] = useState(false);
+	const [total, setTotal] = useState(0);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const [onPage, setOnPage] = useState(parseInt(searchParams.get('onPage')) || 30);
+	const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('currentPage')) || 1);
+
+	const [curatorOrders, setCuratorOrders] = useState([]);
+
+	const [filterSortClearMenu, setFilterSortClearMenu] = useState([]);
+	const [companies, setCompanies] = useState([]);
+
+	const [filterUsersSelect, setFilterUsersSelect] = useState([]);
+	const [statusCurators, setStatusCurators] = useState([]);
+
+	const [supervisor, setSupervisor] = useState(false);
+	const [orderBox, setOrderBox] = useState([]);
+
+
+
+	const [isAlertVisible, setIsAlertVisible] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertDescription, setAlertDescription] = useState('');
+	const [alertType, setAlertType] = useState('');
+
+
+	const [filterBox, setFilterBox] = useState({
+		/* header */
+		order_id: searchParams.get('order_id') || null,
+		org_id: searchParams.get('org_id') || null,
+		company_name: searchParams.get('company_name') || null,
+		user_name: searchParams.get('user_name') || null,
+		dates: searchParams.get('dates') || null,
+		status: parseInt(searchParams.get('status')) || null,
+		// /* sider */
+		target_status: parseInt(searchParams.get('target_status')) || null,
+	});
+
+	const initialFilterBox = {
+		/* header */
+		order_id: null,
+		org_id: null,
+		company_name: null,
+		user_name: null,
+		status: null,
+		dates: null,
+		// /* sider */
+		target_status: null,
+	};
+
+	const handleSearchParamsChange = (key, value) => {
+		setSearchParams((prevParams) => {
+			const newParams = new URLSearchParams(prevParams);
+			if (value) {
+				newParams.set(key, value);
+			} else {
+				newParams.delete(key);
+			}
+			return newParams;
+		});
+	};
+
+	const handleSearchParamsZeroing = (obj) => {
+		setSearchParams((prevParams) => {
+			const newParams = new URLSearchParams(prevParams);
+			for (const key in obj) {
+				if (obj[key] === null) {
+				}
+				{
+					newParams.delete(key);
+				}
+			}
+
+			setTimeout(() => console.log(newParams), 1000);
+
+			return newParams;
+		});
+	};
+
+	const handleClearAllFilterBox = () => {
+		setFilterBox(initialFilterBox);
+		setTimeout(() => handleSearchParamsZeroing(initialFilterBox), 1000);
+	};
+
+	const handleClearAllBoxes = () => {
+		handleClearAllFilterBox();
+	};
+
+	useEffect(() => {
+		makeFilterMenu();
+	}, [filterBox, orderBox]);
+
+	useEffect(() => {
+		fetchInfo().then();
+		setIsMounted(true);
+
+		handleSearchParamsChange('currentPage', currentPage);
+		handleSearchParamsChange('onPage', onPage);
+	}, []);
+
+	useEffect(() => {
+		if (isMounted && currentPage && onPage && filterBox) {
+			const timer = setTimeout(() => {
+				setIsLoading(true);
+				fetchCuratorOrders().then(() => {
+					setIsLoading(false);
+				});
+			}, 200);
+
+			return () => clearTimeout(timer);
+		}
+	}, [currentPage, onPage, filterBox]);
+
+	const fetchInfo = async () => {
+		setIsLoading(true);
+		await fetchFilterSelects();
+		await fetchCuratorOrders();
+		setIsLoading(false);
+	};
+
+	const fetchCuratorOrders = async () => {
+		if (PRODMODE) {
+			let dates = null;
+			if (filterBox.dates) {
+				const dateObj = dayjs.unix(filterBox.dates);
+				dates = [dateObj.startOf('day').unix() * 1000, dateObj.endOf('day').unix() * 1000];
+			}
+			const data = {
+				/* header */
+				company_name: filterBox.company_name,
+				user_name: filterBox.user_name,
+				order_id: parseInt(filterBox.order_id),
+				org_id: parseInt(filterBox.org_id),
+				status: filterBox.status,
+				dates: dates,
+				// /* sider */
+				target_status: filterBox.target_status,
+
+				to: 0,
+				page: currentPage,
+				limit: onPage,
+			};
+			console.log(data);
+			const path = `${ROUTE_PREFIX}/v2/curators`;
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
+					data,
+					_token: CSRF_TOKEN,
+				});
+				setCuratorOrders(response.data.curators)
+				//setBids(response.data.bid_list);
+				setTotal(response.data.count);
+				setSupervisor(response.data.supervisor);
+
+				let max = onPage * currentPage - (onPage - 1);
+				if (response.data.count < max) {
+					setCurrentPage(1);
+					handleSearchParamsChange('currentPage', 1);
+				}
+			} catch (e) {
+				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
+			}
+		} else {
+			console.log(123);
+			setCuratorOrders(CONFIRM_LIST);
+			setTotal(COUNT);
+			setSupervisor(SUPERVISOR);
+		}
+	};
+
+	const handleUpdateFilterBoxHeader = (newFilterBox) => {
+		const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
+
+		if (filterBox.order_id !== newFilterBox.order_id) {
+			filterBoxUpd.order_id = newFilterBox.order_id;
+			handleSearchParamsChange('order_id', newFilterBox.order_id);
+		}
+        if (filterBox.org_id !== newFilterBox.org_id) {
+			filterBoxUpd.org_id = newFilterBox.org_id;
+			handleSearchParamsChange('org_id', newFilterBox.org_id);
+		}
+		if (filterBox.company_name !== newFilterBox.company_name) {
+			filterBoxUpd.company_name = newFilterBox.company_name;
+			handleSearchParamsChange('company_name', newFilterBox.company_name);
+		}
+		if (filterBox.dates !== newFilterBox.dates) {
+			filterBoxUpd.dates = newFilterBox.dates;
+			handleSearchParamsChange('dates', newFilterBox.dates);
+		}
+
+		if (filterBox.user_name !== newFilterBox.user_name) {
+			filterBoxUpd.user_name = newFilterBox.user_name;
+			handleSearchParamsChange('user_name', newFilterBox.user_name);
+		}
+
+		console.log(areObjectsEqual(filterBox, filterBoxUpd));
+		console.log(searchParams);
+		if (!areObjectsEqual(filterBox, filterBoxUpd)) {
+			setFilterBox(filterBoxUpd);
+		}
+	};
+
+	const makeFilterMenu = () => {
+		let clearItems = [];
+		let hasFilter = false;
+		let hasSorter = false;
+
+		for (const key in filterBox) {
+			const fib = filterBox[key];
+			if (fib !== null) {
+				if (key === 'updated_date' && fib[0] !== null) {
+					hasFilter = true;
+				} else if (key === 'created_date' && fib[0] !== null) {
+					hasFilter = true;
+				} else if (
+					key !== 'updated_date' &&
+					key !== 'created_date' &&
+					key !== 'page' &&
+					key !== 'onpage' &&
+					key !== 'limit'
+				)
+					hasFilter = true;
+			}
+		}
+		for (const key in orderBox) {
+			const fib = orderBox[key];
+			if (fib !== null) {
+				hasSorter = true;
+			}
+		}
+
+		if (hasFilter) {
+			clearItems.push({
+				key: 'clarboxofilta',
+				value: 'clear_filters',
+				label: <div onClick={handleClearAllFilterBox}>Очистить фильтры</div>,
+			});
+		}
+
+		if (hasSorter) {
+			clearItems.push({
+				key: 'clarboxsorta',
+				value: 'clear_filters',
+				label: <div onClick={handleClearOrderBox}>Очистить cортировки</div>,
+			});
+		}
+		setFilterSortClearMenu(clearItems);
+	};
+
+	const handleSearchParamsSortChange = (sortBoxArray) => {
+		setSearchParams((prevParams) => {
+			const newParams = new URLSearchParams(prevParams);
+			if (sortBoxArray && sortBoxArray.length > 0) {
+				let sortUpd = '';
+				sortBoxArray.forEach((sort) => {
+					console.log(sort.order);
+					sortUpd += `${sort.key}-${sort.order}` + ` `;
+				});
+				newParams.set('sort', sortUpd);
+				console.log(sortUpd);
+			} else {
+				newParams.delete('sort');
+			}
+			return newParams;
+		});
+	};
+
+	const arraysEqualIgnore = (arr1, arr2) => {
+		if (arr1.length !== arr2.length) {
+			return false;
+		}
+
+		// Создаем копии и сортируем по key для consistent comparison
+		const sorted1 = [...arr1].sort((a, b) => a.key - b.key);
+		const sorted2 = [...arr2].sort((a, b) => a.key - b.key);
+
+		// Сравниваем каждый объект
+		for (let i = 0; i < sorted1.length; i++) {
+			if (sorted1[i].key !== sorted2[i].key || sorted1[i].order !== sorted2[i].order) {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	const handleUpdateOrderBox = (newOrderBox) => {
+		if (!arraysEqualIgnore(orderBox, newOrderBox)) {
+			setOrderBox(newOrderBox);
+			handleSearchParamsSortChange(newOrderBox);
+		}
+	};
+
+	const handleClearOrderBox = () => {
+		setOrderBox([]);
+		handleSearchParamsSortChange([]);
+	};
+
+	const fetchFilterSelects = async () => {
+		if (PRODMODE) {
+			const path = `${ROUTE_PREFIX}/v2/curators/selects`;
+			try {
+				let response = await PROD_AXIOS_INSTANCE.post(path, {
+					_token: CSRF_TOKEN,
+				});
+				if (response.data) {
+					const filters = response.data.content;
+					setStatusCurators(filters.statuses);
+					setFilterUsersSelect(filters.users);
+				}
+			} catch (e) {
+				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
+			}
+		} else {
+			setFilterUsersSelect(FILTERS.users);
+			setStatusCurators(FILTERS.status)
+		}
+	};
+
+	function areObjectsEqual(obj1, obj2) {
+		const keys = Object.keys(obj1);
+
+		for (const key of keys) {
+			const value1 = obj1[key];
+			const value2 = obj2[key];
+
+			// Если оба значения null - считаем равными
+			if (value1 === null && value2 === null) {
+				continue; // переходим к следующему ключу
+			}
+
+			// Если одно значение null, а другое нет - не равны
+			if (value1 === null || value2 === null) {
+				return false;
+			}
+
+			// Если оба не null - сравниваем как обычно
+			if (value1 !== value2) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	const handleUpdateFilterBoxSider = (newFilterBox) => {
+		const filterBoxUpd = JSON.parse(JSON.stringify(filterBox));
+
+		if (filterBox.target_status !== newFilterBox.target_status) {
+			filterBoxUpd.target_status = newFilterBox.target_status;
+			handleSearchParamsChange('target_status', newFilterBox.target_status);
+		}
+
+		console.log(areObjectsEqual(filterBox, filterBoxUpd));
+		if (!areObjectsEqual(filterBox, filterBoxUpd)) {
+			setFilterBox(filterBoxUpd);
+		}
+	};
+
+	const handleRerenderPage = () => {
+		fetchCuratorOrders().then();
+	};
+
+	
+	const handleStatusChange = async (order_id, status) => {
+		if (PRODMODE) {
+			const path = `${ROUTE_PREFIX}/v2/curators/approved/` + order_id;
+			try {
+				let response = await PROD_AXIOS_INSTANCE.put(path, {
+					data: {
+						status:status
+					},
+					_token: CSRF_TOKEN,
+				});
+
+				setIsAlertVisible(true);
+				setAlertMessage(`Успешно`);
+				// let message = status === 2 ? "Успешное подтверждение" : "Вы отклонили заявку"
+				setAlertDescription(response.data.message);
+				setAlertType('success');
+
+				await fetchCuratorOrders()
+			} catch (e) {
+				console.log(e);
+				setIsAlertVisible(true);
+				setAlertMessage(`Произошла ошибка! ${path}`);
+				setAlertDescription(e.response?.data?.message || e.message || 'Неизвестная ошибка');
+				setAlertType('error');
+			}
+		} else {
+			setIsAlertVisible(true);
+			setAlertMessage(`Успешно`);
+			let message = status === 2 ? "Успешное подтверждение" : "Вы отклонили заявку"
+			setAlertDescription(message);
+			setAlertType('success');
+		}
+	}
+
+	return (
+		<div className={`app-page sa-app-page sa-org-list-page sa-bid-list-page sa-curator-common ${isOpenedFilters ? 'sa-filer-opened' : ''}`}>
+			<React.Fragment>
+				<div style={{ padding: '0', backgroundColor: '#b4c9e1' }}>
+					<div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
+						<div className={'sa-header-label-container'}>
+							<div className={'sa-header-label-container-small'}>
+								<h1 className={'sa-header-label'}>Кураторство</h1>
+								<div>
+									
+								</div>
+							</div>
+							<div className={'sa-header-label-container-small'}>
+								<div className={'sa-vertical-flex'}>
+									<Space.Compact>
+										<Button
+											onClick={() => {
+												setIsOpenedFilters(!isOpenedFilters);
+											}}
+											className={`${
+												isOpenedFilters
+													? 'sa-default-solid-btn-color'
+													: 'sa-default-outlined-btn-color'
+											}`}
+											color={'default'}
+											variant={isOpenedFilters ? 'solid' : 'outlined'}
+											icon={<FilterOutlined />}
+										>
+											Фильтры
+										</Button>
+										{filterSortClearMenu.length > 0 && (
+											<Tooltip title={'Очистить фильтры'} placement={'right'}>
+												<Dropdown menu={{ items: filterSortClearMenu }}>
+													<Button
+														color={'danger'}
+														variant={'solid'}
+														icon={<CloseOutlined />}
+														onClick={handleClearAllBoxes}
+													></Button>
+												</Dropdown>
+											</Tooltip>
+										)}
+									</Space.Compact>
+									
+								</div>
+								<div style={{ display: 'flex', alignItems: 'end' }}></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</React.Fragment>
+
+			<Layout className={'sa-layout sa-w-100 sa-org-list-layout'}>
+				<Sider
+					collapsed={!isOpenedFilters}
+					collapsedWidth={0}
+					width={'300px'}
+					style={{ backgroundColor: '#ffffff', overflow: 'hidden' }}
+				>
+					<div className={'sa-sider'}>
+						{isOpenedFilters && (
+							<CuratorOrdersListSiderFilters
+								filter_statuses_select={Helper.prepareSelectOptions(statusCurators)}
+								filter_users_select={Helper.prepareSelectOptions(filterUsersSelect)}
+								filter_box={filterBox}
+								on_change_filter_box={handleUpdateFilterBoxSider}
+							/>
+						)}
+					</div>
+				</Sider>
+
+				<Content className="sa-org-list-content">
+					<React.Fragment>
+						<div className={'sa-pagination-panel sa-pa-12-24 sa-back sa-org-list-pagination'}>
+							<div className={'sa-flex-space'}>
+								<div className={'sa-flex-gap'}>
+									<Pagination
+										defaultCurrent={1}
+										pageSize={onPage}
+										pageSizeOptions={[30, 50, 100, 200, 300]}
+										current={currentPage}
+										total={total}
+										onChange={(val, newOnPage) => {
+											if (val !== currentPage) {
+												handleSearchParamsChange('currentPage', val);
+												setCurrentPage(val);
+											}
+											if (newOnPage !== onPage) {
+												handleSearchParamsChange('onPage', newOnPage);
+												setOnPage(newOnPage);
+											}
+										}}
+										showQuickJumper
+										locale={{
+											items_per_page: 'на странице',
+											jump_to: 'Перейти',
+											jump_to_confirm: 'OK',
+											page: 'Страница',
+										}}
+									/>
+								</div>
+								<div></div>
+								<div className={'sa-flex-gap'}></div>
+							</div>
+						</div>
+					</React.Fragment>
+
+					<div className="sa-org-table-shell"><div className="sa-org-table-scroll-area">
+						<Spin spinning={false}>
+							<CuratorOrdersListTable loading={isLoading}
+								companies={companies}
+								orders={curatorOrders}
+
+								on_change_filter_box={handleUpdateFilterBoxHeader}
+
+								filter_box={filterBox}
+
+								supervisor={supervisor}
+
+								handleStatusChange={handleStatusChange}
+								on_set_sort_orders={handleUpdateOrderBox}
+
+								userdata={userdata}
+								rerenderPage={handleRerenderPage}
+								success_alert={(message) => {
+									setIsAlertVisible(true);
+									setAlertMessage(`Успех!`);
+									setAlertDescription(message);
+									setAlertType('success');
+								}}
+								error_alert={(path, e) => {
+									setIsAlertVisible(true);
+									setAlertMessage(`Произошла ошибка! ${path}`);
+									setAlertDescription(
+										e.response?.data?.message || e.message || 'Неизвестная ошибка'
+									);
+									setAlertType('error');
+								}}
+							/>
+						</Spin>
+						</div>
+					</div>
+				</Content>
+			</Layout>
+			{isAlertVisible && (
+				<Alert
+					message={alertMessage}
+					description={alertDescription}
+					type={alertType}
+					showIcon
+					closable
+					style={{
+						position: 'fixed',
+						top: 20,
+						right: 20,
+						zIndex: 9999,
+						width: 350,
+					}}
+					onClose={() => setIsAlertVisible(false)}
+				/>
+			)}
+		</div>
+	);
+};
+
+export default CuratorPageNEW;

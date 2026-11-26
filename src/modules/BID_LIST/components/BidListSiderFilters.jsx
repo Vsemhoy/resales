@@ -79,7 +79,7 @@ const BidListSiderFilters = (props) => {
 	]);
 
 	return (
-		<Affix offsetTop={115}>
+		<div className="sa-org-sidebar-filters"><div className="sa-org-sidebar-heading">Фильтры заявок</div>
 			<div className="sider-body sider-body-filters">
 				<div className={'sider-unit'}>
 					<div className="sider-unit-title">Компания</div>
@@ -217,7 +217,7 @@ const BidListSiderFilters = (props) => {
 					</div>
 				</div>
 			</div>
-		</Affix>
+		</div>
 	);
 };
 

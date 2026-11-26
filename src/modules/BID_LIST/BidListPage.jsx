@@ -1,3 +1,5 @@
+import ClassicView from './BidListPage.classic.jsx';
+import { usePageTheme } from '../../context/PageThemeContext';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './components/style/bidlistpage.css';
 import {CSRF_TOKEN, PRODMODE, ROUTE_PREFIX} from '../../config/config';
@@ -5,7 +7,7 @@ import {NavLink, useParams, useSearchParams} from 'react-router-dom';
 import {Affix, Alert, Button, Dropdown, Layout, Pagination, Select, Space, Spin, Tag, Tooltip,} from 'antd';
 import {Content} from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
-import {CaretLeftFilled, CloseOutlined, FilterOutlined} from '@ant-design/icons';
+import {CaretLeftFilled, CloseOutlined, FilterOutlined, UserOutlined} from '@ant-design/icons';
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar';
 import BidListTable from './components/BidListTable';
 import BidListSiderFilters from './components/BidListSiderFilters';
@@ -827,15 +829,15 @@ const BidListPage = (props) => {
 	};
 
 	return (
-		<div className={`app-page sa-app-page ${isOpenedFilters ? 'sa-filer-opened' : ''}`}>
-			<Affix>
+		<div className={`app-page sa-app-page sa-org-list-page sa-bid-list-page ${isOpenedFilters ? 'sa-filer-opened' : ''}`}>
+			<React.Fragment>
 				<div style={{ padding: '0', backgroundColor: '#b4c9e1' }}>
 					<div className={'sa-control-panel sa-flex-space sa-pa-12 sa-list-header'}>
 						<div className={'sa-header-label-container'}>
 							<div className={'sa-header-label-container-small'}>
 								<h1 className={'sa-header-label'}>Список заявок</h1>
 								<div>
-                                    {isEngineer ? null : <CurrencyMonitorBar/>}
+                                    
 								</div>
 							</div>
 							<div className={'sa-header-label-container-small'}>
@@ -854,7 +856,7 @@ const BidListPage = (props) => {
 											variant={isOpenedFilters ? 'solid' : 'outlined'}
 											icon={<FilterOutlined />}
 										>
-											Доп Фильтры
+											Фильтры
 										</Button>
 										{filterSortClearMenu.length > 0 && (
 											<Tooltip title={'Очистить фильтры'} placement={'right'}>
@@ -868,73 +870,32 @@ const BidListPage = (props) => {
 												</Dropdown>
 											</Tooltip>
 										)}
-									</Space.Compact>
-									<Tag
-										style={{
-											/*width: '160px',*/
-											height: '32px',
-											lineHeight: '27px',
-											textAlign: 'center',
-											fontSize: '14px',
-										}}
-										color="geekblue"
-									>
-										Всего найдено: {total}
-									</Tag>
+									</Space.Compact>{isEngineer ? null :
+                                        <Tooltip placement="bottom" title="Заявки созданные Вами">
+                                        <Button
+                                            color="default"
+                                            variant={myBids ? 'solid' : 'filled'}
+                                            className="sa-bid-my-filter"
+                                            aria-label="Мои заявки"
+                                            onClick={() => {
+                                                setMyBids(!myBids);
+                                            }}
+                                        >
+                                            <UserOutlined />
+                                        </Button>
+                                    </Tooltip>}
+									
 								</div>
 								<div style={{ display: 'flex', alignItems: 'end' }}>
-									{activeRole > 0 && (
-										<div>
-											{isOneRole ? (
-												<div
-													style={{
-														display: 'flex',
-														alignItems: 'center',
-														gap: '5px',
-														justifyContent: 'end',
-													}}
-												>
-													Роль:
-													<Tag
-														className={`
-                                    sa-tag-custom
-                                    ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
-                                    ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
-                                    ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
-                                    ${activeRole === 4 ? 'sa-select-custom-engineer' : ''}
-                                  `}
-													>
-														{roles.find((role) => role.value === activeRole)?.label ||
-															'Неизвестная роль'}
-													</Tag>
-												</div>
-											) : !isEngineer ? (
-												<div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-													Роль:
-													<Select
-														className={`
-                                        ${activeRole === 1 ? 'sa-select-custom-manager' : ''}
-                                        ${activeRole === 2 ? 'sa-select-custom-admin' : ''}
-                                        ${activeRole === 3 ? 'sa-select-custom-bugh' : ''}
-                                        ${activeRole === 4 ? 'sa-select-custom-engineer' : ''}
-                                      `}
-														style={{ width: '150px', marginRight: '8px' }}
-														options={roles.filter((role) => userdata?.acls?.includes(role.acl))}
-														value={activeRole}
-														onChange={fetchChangeRole}
-													/>
-												</div>
-											) : null}
-										</div>
-									)}
+									
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</Affix>
+			</React.Fragment>
 
-			<Layout className={'sa-layout sa-w-100'}>
+			<Layout className={'sa-layout sa-w-100 sa-org-list-layout'}>
 				<Sider
 					collapsed={!isOpenedFilters}
 					collapsedWidth={0}
@@ -959,9 +920,9 @@ const BidListPage = (props) => {
 					</div>
 				</Sider>
 
-				<Content>
-					<Affix offsetTop={106}>
-						<div className={'sa-pagination-panel sa-pa-12 sa-back'}>
+				<Content className="sa-org-list-content">
+					<React.Fragment>
+						<div className={'sa-pagination-panel sa-pa-12 sa-back sa-org-list-pagination'}>
 							<div className={'sa-flex-space'}>
 								<div className={'sa-flex-gap'}>
 									{fromId && (
@@ -998,29 +959,15 @@ const BidListPage = (props) => {
 								</div>
 								<div></div>
 								<div className={'sa-flex-gap'}>
-                                    {isEngineer ? null :
-                                        <Tooltip placement="bottom" title="Заявки созданные Вами">
-                                        <Button
-                                            color="default"
-                                            variant={myBids ? 'solid' : 'filled'}
-                                            onClick={() => {
-                                                setMyBids(!myBids);
-                                            }}
-                                        >
-                                            Мои заявки
-                                        </Button>
-                                    </Tooltip>}
+                                    
 								</div>
 							</div>
 						</div>
-					</Affix>
+					</React.Fragment>
 
-					<div
-						className={`${isOpenedFilters ? 'sa-pa-tb-12 sa-pa-s-3' : 'sa-pa-12'} sa-table`}
-						style={{ paddingTop: 0 }}
-					>
-						<Spin spinning={isLoading}>
-							<BidListTable
+					<div className="sa-org-table-shell"><div className="sa-org-table-scroll-area">
+						<Spin spinning={false}>
+							<BidListTable loading={isLoading}
 								companies={companies}
 								bids={bids}
 								filter_steps={prepareSelectOptions(filterStep)}
@@ -1053,7 +1000,7 @@ const BidListPage = (props) => {
 								}}
 							/>
 						</Spin>
-						<div className={'sa-space-panel sa-pa-12'}></div>
+						</div>
 					</div>
 				</Content>
 			</Layout>
@@ -1078,4 +1025,8 @@ const BidListPage = (props) => {
 	);
 };
 
-export default BidListPage;
+const ThemedBidListPage = (props) => {
+ const theme = usePageTheme();
+ return theme === 'main' ? <BidListPage {...props} /> : <ClassicView {...props} />;
+};
+export default ThemedBidListPage;

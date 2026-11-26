@@ -1,6 +1,6 @@
 import {Affix, Alert, DatePicker, Input, Select} from 'antd';
 import React, { useEffect, useState } from 'react';
-import TableHeadNameWithSort from '../../../components/template/TABLE/TableHeadNameWithSort';
+import TableHeaderFilter from '../../../components/template/TABLE/TableHeaderFilter';
 import CopyMessageView from "../../ENGINEER_PAGE/components/CopyMessageView";
 import {BASE_ROUTE, CSRF_TOKEN, PRODMODE} from "../../../config/config";
 import {PROD_AXIOS_INSTANCE} from "../../../config/Api";
@@ -71,103 +71,89 @@ const CuratorListTableNew = (props) => {
 				<div className={'sa-table-box-header'}>
 					<div className={'sa-table-box-curators sa-table-box-curators'}>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'id'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									id
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input
-										type={'number'}
-										size={'small'}
-										style={{ width: '100%' }}
-										variant="filled"
-										onChange={(val) => props.on_change_filter_box('bid_id', val.target.value)}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="id"
+								sortKey={'id'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input
+									placeholder="id"
+									type={'number'}
+									size={'small'}
+									style={{ width: '100%' }}
+									variant="filled"
+									onChange={(val) => props.on_change_filter_box('bid_id', val.target.value)}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'created_at'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Дата создания
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<DatePicker
-										size={'small'}
-										style={{ width: '100%' }}
-										variant="filled"
-										onChange={(val) => {
-											if (val) {
-												props.on_change_filter_box('created_at', [
-													val.startOf('day').unix() * 1000,
-													val.endOf('day').unix() * 1000,
-												]);
-											} else {
-												props.on_change_filter_box('created_at', null);
-											}
-										}}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Дата создания"
+								sortKey={'created_at'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<DatePicker
+									placeholder="Дата создания"
+									size={'small'}
+									style={{ width: '100%' }}
+									variant="filled"
+									onChange={(val) => {
+										if (val) {
+											props.on_change_filter_box('created_at', [
+												val.startOf('day').unix() * 1000,
+												val.endOf('day').unix() * 1000,
+											]);
+										} else {
+											props.on_change_filter_box('created_at', null);
+										}
+									}}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'org_id'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Инициатор
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{ width: '100%' }}
-										variant="filled"
-										onChange={(val) => props.on_change_filter_box('org_id', val.target.value)}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Инициатор"
+								sortKey={'org_id'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input
+									placeholder="Инициатор"
+									size={'small'}
+									style={{ width: '100%' }}
+									variant="filled"
+									onChange={(val) => props.on_change_filter_box('org_id', val.target.value)}
+								/>
+							</TableHeaderFilter>
 						</div>
                         <div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<TableHeadNameWithSort
-									sort_key={'username'}
-									on_sort_change={handleActivateSorter}
-									active_sort_items={sortOrders}
-								>
-									Инициатор
-								</TableHeadNameWithSort>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{ width: '100%' }}
-										variant="filled"
-										onChange={(val) => props.on_change_filter_box('manager', val.target.value)}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter
+								label="Инициатор"
+								sortKey={'username'}
+								sortOrders={sortOrders}
+								onSort={handleActivateSorter}
+							>
+								<Input
+									placeholder="Инициатор"
+									size={'small'}
+									style={{ width: '100%' }}
+									variant="filled"
+									onChange={(val) => props.on_change_filter_box('manager', val.target.value)}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
-							<div className={'sa-table-head-on'}>
-								<div className={'sa-pa-3'}>Компания</div>
-								<div className={'sa-pa-3'}>
-									<Input
-										size={'small'}
-										style={{ width: '100%' }}
-										variant="filled"
-										onChange={(val) => props.on_change_filter_box('company_name', val.target.value)}
-									/>
-								</div>
-							</div>
+							<TableHeaderFilter label="Компания">
+								<Input
+									placeholder="Компания"
+									size={'small'}
+									style={{ width: '100%' }}
+									variant="filled"
+									onChange={(val) => props.on_change_filter_box('company_name', val.target.value)}
+								/>
+							</TableHeaderFilter>
 						</div>
 						<div className={'sa-table-box-cell'}>
 							<div className={'sa-table-head-on'}>Спецификация</div>

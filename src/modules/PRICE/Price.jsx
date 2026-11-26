@@ -1,8 +1,11 @@
 ﻿import React, { useEffect, useState } from 'react';
 import {PRODMODE, CSRF_TOKEN, ROUTE_PREFIX} from '../../config/config';
+import { useMemo, useRef } from 'react';
 import dayjs from 'dayjs';
 import './components/style/orgpage.css';
-import {Tree, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix} from 'antd';
+import {Tree, Table, Button, Spin, Tag, Switch, Checkbox, Layout, Alert, Affix, Skeleton, Tooltip} from 'antd';
+import { usePageTheme } from '../../context/PageThemeContext';
+import './style/price-common.css';
 import { PROD_AXIOS_INSTANCE } from '../../config/Api';
 import {DS_CURRENCY, PRICE} from './mock/mock';
 import './style/price_style.css'
@@ -16,6 +19,7 @@ import { getPriceModelPropertyValues } from './priceProperties.api';
 
 
 const Price = (props) => {
+    const isMainTheme = usePageTheme() === 'main';
     const [currency, setCurrency] = useState(null);
     const [treeData, setTreeData] = useState([]);
     const [checkedKeys, setCheckedKeys] = useState([]);
@@ -24,6 +28,8 @@ const Price = (props) => {
     const [currentCurrency, setCurrentCurrency] = useState(false);
     const [propertiesExportOpen, setPropertiesExportOpen] = useState(false);
     const [exporting, setExporting] = useState(false);
+    const [tableViewport, setTableViewport] = useState({ width: 900, height: 400 });
+    const priceTableContainerRef = useRef(null);
 
     const [userData, setUserData] = useState(null);
 
@@ -68,11 +74,35 @@ const Price = (props) => {
         setCheckedList(defaultCheckedList);
     }, []);
     useEffect(() => {
+        if (isMainTheme) {
+            setSmallLoading(false);
+            return undefined;
+        }
         setSmallLoading(true);
         const treeNodes = mapDataToTreeNodes(data);
         setTreeData(treeNodes);
         setTimeout(() => setSmallLoading(false), 500);
-    }, [data, checkedList, currentCurrency]);
+        return undefined;
+    }, [data, checkedList, currentCurrency, isMainTheme]);
+    useEffect(() => {
+        const container = priceTableContainerRef.current;
+        if (!isMainTheme || !container || typeof ResizeObserver === 'undefined') return undefined;
+
+        const updateTableViewport = () => {
+            const nextViewport = {
+                width: container.clientWidth,
+                height: Math.max(120, container.clientHeight - 42),
+            };
+            setTableViewport((current) => current.width === nextViewport.width && current.height === nextViewport.height
+                ? current
+                : nextViewport);
+        };
+
+        const observer = new ResizeObserver(updateTableViewport);
+        observer.observe(container);
+        updateTableViewport();
+        return () => observer.disconnect();
+    }, [isMainTheme]);
     useEffect(() => {
         if (isAlertVisible && alertType !== 'error') {
             const timer = setTimeout(() => {
@@ -163,14 +193,13 @@ const Price = (props) => {
     const getCurrencySymbol = (c) => {
         return currentCurrency ? '₽' : c === 0 ? '$' : '€';
     };
-    const mapDataToTreeNodes = (data, parentKey = '') => {
+    const mapDataToTreeNodes = (data, parentKey = '', level = 0) => {
         return data.map((item, index) => {
             const key = parentKey ? `${parentKey}-${index}-${item.id}` : `${index}-${item.id}`;
             const children = [];
 
             if (item.models) {
                 item.models.forEach((model, mIndex) => {
-                    console.log(model);
                     children.push({
                         key: `${key}-model-${mIndex}-${model.id}`,
                         title: (
@@ -178,7 +207,11 @@ const Price = (props) => {
                                 <div className={'sa-price-grid-cell'} style={{ alignItems: 'center' }}>
                                     {model.name}
                                 </div>
-                                <div className={'sa-price-grid-cell'}>{model.descr}</div>
+                                <div className={'sa-price-grid-cell sa-price-description-cell'}>
+                                    <Tooltip title={model.descr || null} placement="topLeft">
+                                        <span className="sa-price-description-text">{model.descr}</span>
+                                    </Tooltip>
+                                </div>
                                 {checkedList.find((c) => c.id === 0)?.checked && (
                                     <div className={'sa-price-tag'}>
                                         <Tag
@@ -293,14 +326,21 @@ const Price = (props) => {
             }
 
             if (item.childs) {
-                children.push(...mapDataToTreeNodes(item.childs, key));
+                children.push(...mapDataToTreeNodes(item.childs, key, level + 1));
             }
 
             return {
                 key,
                 title: (
-                    <span>
-						<b>{item.name}</b> {item.descr && `- ${item.descr}`}
+                    <span className={`sa-price-category sa-price-category-level-${level}`}>
+						<span className="sa-price-category-label">
+							<b>{item.name}</b> {item.descr && `- ${item.descr}`}
+						</span>
+						<span className="sa-price-category-count">
+							{item.childs?.length
+								? `Подкатегорий: ${item.childs.length}`
+								: `Моделей: ${item.models?.length ?? 0}`}
+						</span>
 					</span>
                 ),
                 children,
@@ -308,6 +348,91 @@ const Price = (props) => {
             };
         });
     };
+
+    const priceTableRows = useMemo(() => {
+        const mapRows = (items, parentKey = '', level = 0) => (items || []).map((item, index) => {
+            const key = parentKey ? `${parentKey}-${index}-${item.id}` : `${index}-${item.id}`;
+            const modelRows = (item.models || []).map((model, modelIndex) => ({
+                ...model,
+                key: `${key}-model-${modelIndex}-${model.id}`,
+                rowType: 'model',
+                level: level + 1,
+            }));
+            const categoryRows = mapRows(item.childs || [], key, level + 1);
+            const children = [...modelRows, ...categoryRows];
+
+            return {
+                key,
+                rowType: 'category',
+                level,
+                categoryName: item.name,
+                categoryDescr: item.descr,
+                subcategoryCount: item.childs?.length || 0,
+                modelCount: item.models?.length || 0,
+                ...(children.length ? { children } : {}),
+            };
+        });
+        return mapRows(data);
+    }, [data]);
+    const visiblePriceOptions = checkedList.filter((option) => option.checked);
+    const priceTableColumnCount = visiblePriceOptions.length + 2;
+    const priceDefinitions = [
+        { id: 0, label: 'РРЦ', price: 'bo_price_40', rub: 'bo_price_40_rub', color: '#2f54eb' },
+        { id: 1, label: 'Розница', price: 'bo_price_0', rub: 'bo_price_0_rub', color: '#1677ff' },
+        { id: 2, label: 'Прайс 10', price: 'bo_price_10', rub: 'bo_price_10_rub', color: '#389e0d' },
+        { id: 3, label: 'Прайс 20', price: 'bo_price_20', rub: 'bo_price_20_rub', color: '#d48806' },
+        { id: 4, label: 'Прайс 30', price: 'bo_price_30', rub: 'bo_price_30_rub', color: '#d4380d' },
+    ];
+    const priceTableColumns = useMemo(() => [
+        {
+            title: 'Модель',
+            dataIndex: 'name',
+            key: 'name',
+            width: 170,
+            onCell: (record) => record.rowType === 'category' ? { colSpan: priceTableColumnCount } : {},
+            render: (name, record) => record.rowType === 'category' ? (
+                <div className="sa-price-category-table-title">
+                    <span className="sa-price-category-table-label">
+                        <b>{record.categoryName}</b>{record.categoryDescr && ` - ${record.categoryDescr}`}
+                    </span>
+                    <span className="sa-price-category-table-count">
+                        {record.subcategoryCount
+                            ? `Подкатегорий: ${record.subcategoryCount}`
+                            : `Моделей: ${record.modelCount}`}
+                    </span>
+                </div>
+            ) : <span className="sa-price-model-name" style={{ paddingLeft: `${record.level * 18}px` }}>{name}</span>,
+        },
+        {
+            title: 'Описание',
+            dataIndex: 'descr',
+            key: 'descr',
+            width: 360,
+            onCell: (record) => record.rowType === 'category' ? { colSpan: 0 } : {},
+            render: (descr, record) => record.rowType === 'category' ? null : (
+                <Tooltip title={descr || null} placement="topLeft">
+                    <span className="sa-price-table-description">{descr}</span>
+                </Tooltip>
+            ),
+        },
+        ...priceDefinitions.filter((definition) => visiblePriceOptions.some((option) => option.id === definition.id)).map((definition) => ({
+            title: definition.label,
+            key: definition.label,
+            width: 160,
+            onCell: (record) => record.rowType === 'category' ? { colSpan: 0 } : {},
+            render: (_, record) => {
+                if (record.rowType === 'category') return null;
+                const rawPrice = currentCurrency ? record.prices?.[definition.rub] : record.prices?.[definition.price];
+                const formattedPrice = Number(rawPrice || 0) / 100;
+                return (
+                    <span className="sa-price-table-price">
+                        <span>{definition.label}:</span>
+                        <span style={{ color: definition.color }}>{formattedPrice.toFixed(2)}{getCurrencySymbol(record.currency)}</span>
+                    </span>
+                );
+            },
+        })),
+    ], [checkedList, currentCurrency]);
 
     const handleExport = async (selectedProperties = null) => {
         if (exporting) return;
@@ -584,6 +709,59 @@ const Price = (props) => {
         }
         setPropertiesExportOpen(true);
     };
+
+    if (isMainTheme) return (
+        <div className="sa-price-common">
+            <div className="sa-price-common-toolbar">
+                <Button type="primary" icon={<FilterOutlined />} onClick={() => setIsOpenedFilters(!isOpenedFilters)} aria-expanded={isOpenedFilters}>Фильтры</Button>
+                <h1>Прайс-лист</h1>
+                <div className="sa-price-common-actions">
+                    <Button type="primary" loading={exporting} onClick={() => handleExport()}>Экспорт в Excel</Button>
+                    <Button disabled={exporting} onClick={openPropertiesExport}>Экспорт со свойствами</Button>
+                </div>
+            </div>
+            <div className="sa-price-common-layout">
+                {isOpenedFilters && <aside className="sa-price-common-filters">
+                    <div className="sa-price-common-heading">Фильтры прайса</div>
+                    <div className="sa-price-common-filter-fields">
+                        <span>Колонки цен</span>
+                        {checkedList.map((option, idx) => <Checkbox key={option.id} checked={option.checked} onChange={(event) => onChangeCheckbox(event.target.checked, idx)}>{option.name}</Checkbox>)}
+                        <span>Валюта отображения</span>
+                        <Switch checked={currentCurrency} checkedChildren="Рубли" unCheckedChildren="Валюта" onChange={setCurrentCurrency} />
+                    </div>
+                </aside>}
+                <div className="sa-price-common-table" ref={priceTableContainerRef}>
+                    {loading || smallLoading ? <div className="sa-price-common-skeleton">{Array.from({length: 20}, (_, index) => <Skeleton.Input key={index} active block size="small" />)}</div> :
+                        <Table
+                            className="sa-price-data-table"
+                            size="small"
+                            virtual
+                            tableLayout="fixed"
+                            columns={priceTableColumns}
+                            dataSource={priceTableRows}
+                            rowKey="key"
+                            pagination={false}
+                            scroll={{
+                                x: Math.max(tableViewport.width, 570 + 160 * visiblePriceOptions.length),
+                                y: tableViewport.height,
+                            }}
+                            rowSelection={{
+                                selectedRowKeys: checkedKeys,
+                                checkStrictly: false,
+                                columnWidth: 40,
+                                onChange: (keys) => setCheckedKeys(keys),
+                            }}
+                            expandable={{ defaultExpandAllRows: false, indentSize: 18, expandRowByClick: true }}
+                            rowClassName={(record) => record.rowType === 'category'
+                                ? `sa-price-category-row sa-price-category-row-level-${record.level}`
+                                : 'sa-price-model-row'}
+                        />}
+                </div>
+            </div>
+            {propertiesExportOpen && <PricePropertiesExportDialog userId={props.userdata?.user?.id} modelCount={checkedKeys.filter(key => key.includes('model')).length} exporting={exporting} onClose={() => setPropertiesExportOpen(false)} onExport={handleExport} />}
+            {isAlertVisible && <Alert className="sa-price-common-alert" message={alertMessage} description={alertDescription} type={alertType} showIcon closable onClose={() => setIsAlertVisible(false)} />}
+        </div>
+    );
 
     return (
         <Spin tip="Загрузка прайс-листа..." spinning={loading}>

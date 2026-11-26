@@ -1,10 +1,12 @@
+import MainView from './SomaPdfListPage.main';
+import {usePageTheme} from '../../context/PageThemeContext';
 import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Affix, Button, Empty, Input, Layout, Pagination, Popconfirm, Select, Spin, Tag, Typography } from 'antd'
-import { DeleteOutlined } from '@ant-design/icons'
-import { getDraftsList, deleteDraft } from '../BID_PDF_PAGE/api/drafts.api'
+import { Affix, Button, Empty, Input, Layout, Pagination, Select, Spin, Tag, Typography } from 'antd'
+import PdfDraftRowMenu from './PdfDraftRowMenu'
+import { getDraftsList } from '../BID_PDF_PAGE/api/drafts.api'
 import { STATUS_META } from '../BID_PDF_PAGE/useDraftStatus'
-import TableHeadNameWithSort from '../../components/template/TABLE/TableHeadNameWithSort'
+import TableHeaderFilter from '../../components/template/TABLE/TableHeaderFilter'
 import CurrencyMonitorBar from '../../components/template/CURRENCYMONITOR/CurrencyMonitorBar'
 import { CSRF_TOKEN, ROUTE_PREFIX } from '../../config/config'
 import { PROD_AXIOS_INSTANCE } from '../../config/Api'
@@ -97,26 +99,18 @@ const EllipsisText = ({ children, className }) => (
 function HeaderCell({ label, sortKey, orderBox, onSortChange, children }) {
   return (
     <div className="sa-table-box-cell">
-      <div className="sa-table-head-on">
-        <TableHeadNameWithSort
-          sort_key={sortKey}
-          active_sort_items={orderBox}
-          on_sort_change={onSortChange}
-        >
-          {label}
-        </TableHeadNameWithSort>
-        <div className="sa-pa-3">
-          {children}
-        </div>
-      </div>
+      <TableHeaderFilter label={label} sortKey={sortKey} sortOrders={orderBox} onSort={onSortChange}>
+        {children}
+      </TableHeaderFilter>
     </div>
   )
 }
 
-function TextFilter({ value, onChange, type = 'text' }) {
+function TextFilter({ value, onChange, type = 'text', ...inputProps }) {
   return (
     <Input
       size="small"
+      {...inputProps}
       type={type}
       variant="filled"
       allowClear
@@ -127,10 +121,11 @@ function TextFilter({ value, onChange, type = 'text' }) {
   )
 }
 
-function SelectFilter({ value, onChange, options }) {
+function SelectFilter({ value, onChange, options, ...inputProps }) {
   return (
     <Select
       size="small"
+      {...inputProps}
       variant="filled"
       allowClear
       value={value ?? null}
@@ -163,7 +158,7 @@ function SomaPdfSiderFilters({ filters, onChange }) {
   )
 }
 
-export default function SomaPdfListPage({ userdata, new_changed_user_data }) {
+function SomaPdfListPage({ userdata, new_changed_user_data }) {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -478,21 +473,12 @@ const [filters, setFilters] = useState(() => compactFilters({
                   <HeaderCell label="Менеджер" sortKey="manager" orderBox={orderBox} onSortChange={handleSortChange}>
                     <TextFilter value={filters.manager} onChange={value => setFilter('manager', value)} />
                   </HeaderCell>
-                  <HeaderCell label="Инженер" sortKey="engineer" orderBox={orderBox} onSortChange={handleSortChange}>
-                    <TextFilter value={filters.engineer} onChange={value => setFilter('engineer', value)} />
-                  </HeaderCell>
+                  <HeaderCell label="Автор" sortKey="creator" orderBox={orderBox} onSortChange={handleSortChange} />
                   <HeaderCell label="Моделей" sortKey="model_count" orderBox={orderBox} onSortChange={handleSortChange}>
                     <TextFilter value={filters.model} onChange={value => setFilter('model', value)} />
                   </HeaderCell>
-                  <HeaderCell label="Создан" sortKey="created_at" orderBox={orderBox} onSortChange={handleSortChange}>
-                    <span className={classes.emptyFilter}>—</span>
-                  </HeaderCell>
-                  <HeaderCell label="Изменён" sortKey="updated_at" orderBox={orderBox} onSortChange={handleSortChange}>
-                    <span className={classes.emptyFilter}>—</span>
-                  </HeaderCell>
-                  <HeaderCell label="Автор" sortKey="creator" orderBox={orderBox} onSortChange={handleSortChange}>
-                    <span className={classes.emptyFilter}>—</span>
-                  </HeaderCell>
+                  <HeaderCell label="Создан" sortKey="created_at" orderBox={orderBox} onSortChange={handleSortChange} />
+                  <HeaderCell label="Изменён" sortKey="updated_at" orderBox={orderBox} onSortChange={handleSortChange} />
                 </div>
               </div>
             </Affix>
@@ -503,75 +489,54 @@ const [filters, setFilters] = useState(() => compactFilters({
               const orgName     = row.form_data?.client_company?.name || row.form_data?.target_occupy || '—'
               const objectName  = row.object || row.bid_object || null
               const managerName = getPersonName(row.manager) || row.form_data?.manager_name || '—'
-              const engineerName = getPersonName(row.engineer) || '—'
               const creatorName = getPersonName(row.creator) || '—'
 
               const isMyEngineerRow = activeRole === 4 && row.engineer_id === meId
               const isMyManagerRow  = (activeRole === 1 || activeRole === 2) && row.creator?.id === meId
 
               return (
-                <div
-                  key={row.id}
-                  className={`${classes.pdfTableRow} ${classes.companyMarkedRow} sa-table-box-row`}
-                  style={{
-                    '--company-color': getCompanyColor(row.id_company),
-                    '--row-highlight': isMyEngineerRow ? '#ffe58f52' : isMyManagerRow ? '#8fd6ff14' : 'transparent',
-                  }}
-                  onDoubleClick={() => window.open(editorUrl(row.bid_id, row.id), '_blank')}
-                >
-                  <div className="sa-table-box-cell">
-                    <a
-                      onClick={e => { e.stopPropagation(); navigate(editorUrl(row.bid_id, row.id)) }}
-                      style={
-                        (row.engineer_id === meId || row.creator?.id === meId)
-                          ? { fontWeight: 500, color: '#007bff' }
-                          : undefined
+                <PdfDraftRowMenu key={row.id} canDelete={isAdmin} draftId={row.id} orgName={orgName} onDeleted={load}>
+                  <div
+                    className={`${classes.pdfTableRow} ${classes.companyMarkedRow} sa-table-box-row`}
+                    style={{
+                      '--company-color': getCompanyColor(row.id_company),
+                      '--row-highlight': isMyEngineerRow ? '#ffe58f52' : isMyManagerRow ? '#8fd6ff14' : 'transparent',
+                    }}
+                    onDoubleClick={() => window.open(editorUrl(row.bid_id, row.id), '_blank')}
+                  >
+                    <div className="sa-table-box-cell">
+                      <a
+                        onClick={e => { e.stopPropagation(); navigate(editorUrl(row.bid_id, row.id)) }}
+                        style={
+                          (row.engineer_id === meId || row.creator?.id === meId)
+                            ? { fontWeight: 500, color: '#007bff' }
+                            : undefined
+                        }
+                      >{row.id}</a>
+                    </div>
+                    <div className="sa-table-box-cell">
+                      <a onClick={e => { e.stopPropagation(); navigate(bidUrl(row.bid_id)) }}>{row.bid_id}</a>
+                    </div>
+                    <div className="sa-table-box-cell">{renderStatus(row.status)}</div>
+                    <div className="sa-table-box-cell">{KP_TYPE_LABELS[row.kp_type] || row.kp_type || '—'}</div>
+                    <div className={`sa-table-box-cell text-align-left ${classes.orgNameCell}`}>{orgName}</div>
+                    <div className={`sa-table-box-cell text-align-left ${classes.orgNameCell}`}>
+                      {objectName
+                        ? objectName
+                        : <span className={classes.muted}>—</span>
                       }
-                    >{row.id}</a>
+                    </div>
+                    <div className="sa-table-box-cell text-align-left">
+                      <EllipsisText>{managerName}</EllipsisText>
+                    </div>
+                    <div className="sa-table-box-cell text-align-left">
+                      <EllipsisText>{creatorName}</EllipsisText>
+                    </div>
+                    <div className="sa-table-box-cell">{row.bid_model_count}</div>
+                    <div className="sa-table-box-cell">{formatDate(row.created_at)}</div>
+                    <div className="sa-table-box-cell">{formatDate(row.updated_at)}</div>
                   </div>
-                  <div className="sa-table-box-cell">
-                    <a onClick={e => { e.stopPropagation(); navigate(bidUrl(row.bid_id)) }}>{row.bid_id}</a>
-                  </div>
-                  <div className="sa-table-box-cell">{renderStatus(row.status)}</div>
-                  <div className="sa-table-box-cell">{KP_TYPE_LABELS[row.kp_type] || row.kp_type || '—'}</div>
-                  <div className={`sa-table-box-cell text-align-left ${classes.orgNameCell}`}>{orgName}</div>
-                  <div className={`sa-table-box-cell text-align-left ${classes.orgNameCell}`}>
-                    {objectName
-                      ? objectName
-                      : <span className={classes.muted}>—</span>
-                    }
-                  </div>
-                  <div className="sa-table-box-cell text-align-left">
-                    <EllipsisText>{managerName}</EllipsisText>
-                  </div>
-                  <div className="sa-table-box-cell text-align-left">
-                    {engineerName === '—' ? <span className={classes.muted}>—</span> : <EllipsisText>{engineerName}</EllipsisText>}
-                  </div>
-                  <div className="sa-table-box-cell">{row.bid_model_count}</div>
-                  <div className="sa-table-box-cell">{formatDate(row.created_at)}</div>
-                  <div className="sa-table-box-cell">{formatDate(row.updated_at)}</div>
-                  <div className={`sa-table-box-cell text-align-left ${classes.creatorCell}`}>
-                    <EllipsisText>{creatorName}</EllipsisText>
-                    {isAdmin && (
-                      <Popconfirm
-                          title="Удалить черновик?"
-                          description={`#${row.id} — ${orgName}`}
-                          okText="Удалить"
-                          okType="danger"
-                          cancelText="Отмена"
-                          placement="left"
-                          onConfirm={() => deleteDraft(row.id).then(() => load()).catch(() => {})}
-                          onPopupClick={e => e.stopPropagation()}
-                        >
-                          <DeleteOutlined
-                            className={classes.deleteIcon}
-                            onClick={e => { e.stopPropagation(); e.preventDefault() }}
-                            onDoubleClick={e => { e.stopPropagation(); e.preventDefault() }}
-                          />
-                        </Popconfirm>
-                    )}
-                  </div>
-                </div>
+                </PdfDraftRowMenu>
               )
             })}
           </div>
@@ -582,3 +547,5 @@ const [filters, setFilters] = useState(() => compactFilters({
     </div>
   )
 }
+
+export default function ThemedSomaPdfListPage(props) { const theme=usePageTheme(); return theme === "main" ? <MainView {...props} /> : <SomaPdfListPage {...props} />; }

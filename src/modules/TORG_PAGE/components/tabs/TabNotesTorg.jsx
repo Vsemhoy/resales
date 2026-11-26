@@ -235,27 +235,6 @@ const TabNotesTorg = (props) => {
 					<div className={'sa-orgtab-container'}>
 						<div className={'sa-pa-6 sa-flex-space'} style={{ paddingTop: '9px' }}>
 							<div>
-								<Pagination
-									disabled={editMode}
-									size={'small'}
-									current={currentPage}
-									pageSizeOptions={[50, 100]}
-									defaultPageSize={onPage}
-									locale={ANTD_PAGINATION_LOCALE}
-									showQuickJumper
-									total={total}
-									onChange={(ev, on) => {
-										if (ev !== currentPage) {
-											setCurrentPage(ev);
-										}
-										if (on !== onPage) {
-											setOnPage(on);
-										}
-										// get_org_data_action(orgId, ev, on);
-									}}
-								/>
-							</div>
-							<div>
 								{editMode && (
 									<Button
 										type={'primary'}
@@ -313,6 +292,22 @@ const TabNotesTorg = (props) => {
                 <Empty />
               )}
             </div>
+						<div className="ui-pagination sa-orgtab-pagination-bottom sa-orgpage-tab-pagination">
+							<Pagination
+								disabled={editMode}
+								size={'small'}
+								current={currentPage}
+								pageSizeOptions={[50, 100]}
+								defaultPageSize={onPage}
+								locale={ANTD_PAGINATION_LOCALE}
+								showQuickJumper
+								total={total}
+								onChange={(ev, on) => {
+									if (ev !== currentPage) setCurrentPage(ev);
+									if (on !== onPage) setOnPage(on);
+								}}
+							/>
+						</div>
 					</div>
 				</Spin>
 

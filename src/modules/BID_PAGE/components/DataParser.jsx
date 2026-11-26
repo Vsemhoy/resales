@@ -152,6 +152,7 @@ const DataParser = ({
 
     const splitModelAndCount = (line) => {
         const countPatterns = [
+            /(?:^|\s)(\d+)[,.]0+\s*$/u,
             /(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)\s*[:=]?\s*(\d+)\b/iu,
             /(?:^|\s)(\d+)\s*(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)(?=\s|$|[,;:)])/iu,
             // Множитель должен быть отдельным от артикула: RH-X011 — это модель.
@@ -228,7 +229,7 @@ const DataParser = ({
     };
 
     const isUnit = (line) => /^(?:шт\.?|штук(?:а|и)?|ед\.?|pcs?\.?)$/iu.test(line.trim());
-    const isNumber = (line) => /^\d+$/u.test(line.trim());
+    const isNumber = (line) => /^\d+(?:[,.]0+)?$/u.test(line.trim());
     const looksLikeModelCode = (line) => /[A-Za-zА-Яа-яЁё]/u.test(line) && /\d/u.test(line);
 
     const decodeClipboardText = (text) => text
@@ -431,22 +432,25 @@ const DataParser = ({
         {
             title: "Наименование",
             dataIndex: "name",
-            render: (name, record) => (
-                <div>
+            render: (name, record) => {
+                const nameLabel = (
                     <span style={record.matchStatus === 'exact' ? undefined : {
                         background: record.matchStatus === 'suggested' ? '#fff7e6' : '#fff1f0',
                         color: record.matchStatus === 'suggested' ? '#ad4e00' : '#cf1322',
                         padding: '0 4px',
                     }}>{name}</span>
-                    {record.matchStatus !== 'exact' && (
-                        <div style={{ fontSize: 12, color: '#666' }}>
-                            {record.matchStatus === 'suggested'
-                                ? `Предполагаемая модель. Исходная строка: ${record.source}`
-                                : 'Не распознано'}
-                        </div>
-                    )}
-                </div>
-            ),
+                );
+
+                if (record.matchStatus === 'exact') return nameLabel;
+
+                return (
+                    <Tooltip title={record.matchStatus === 'suggested'
+                        ? `Предполагаемая модель. Исходная строка: ${record.source}`
+                        : 'Не распознано'}>
+                        {nameLabel}
+                    </Tooltip>
+                );
+            },
         },
         {
             title: "Количество",
